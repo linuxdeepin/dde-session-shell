@@ -1,8 +1,8 @@
 #ifndef SHUTDOWNWORKER_H
 #define SHUTDOWNWORKER_H
 
-#include "authinterface.h"
-#include "dbus/dbushotzone.h"
+#include "src/session-widgets/authinterface.h"
+#include "src/global_util/dbus/dbushotzone.h"
 #include <QObject>
 
 class ShutdownWorker : public Auth::AuthInterface

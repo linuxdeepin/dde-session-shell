@@ -30,16 +30,16 @@
 
 #include <libintl.h>
 
-#include "dbus/dbusvariant.h"
+#include "src/global_util/dbus/dbusvariant.h"
 #include "contentwidget.h"
 #include "multiuserswarningview.h"
 #include "inhibitwarnview.h"
 
-#include "dbus/dbuscontrolcenter.h"
+#include "src/global_util/dbus/dbuscontrolcenter.h"
 
-#include "sessionbasemodel.h"
-#include "public_func.h"
-#include "constants.h"
+#include "src/session-widgets/sessionbasemodel.h"
+#include "src/global_util/public_func.h"
+#include "src/global_util/constants.h"
 
 ContentWidget::ContentWidget(QWidget *parent)
     : QFrame(parent)

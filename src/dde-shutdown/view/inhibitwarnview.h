@@ -27,8 +27,8 @@
 #define INHIBITWARNVIEW_H
 
 #include "warningview.h"
-#include "common.h"
-#include "rounditembutton.h"
+#include "src/dde-shutdown/common.h"
+#include "src/widgets/rounditembutton.h"
 
 #include <QWidget>
 

@@ -36,12 +36,12 @@
 #include <com_deepin_daemon_appearance.h>
 #include <com_deepin_daemon_imageblur.h>
 
-#include "rounditembutton.h"
-#include "util_updateui.h"
-#include "dbus/dbusvariant.h"
-#include "dbus/dbuslogin1manager.h"
-#include "common.h"
-#include "dbus/dbussessionmanager.h"
+#include "src/widgets/rounditembutton.h"
+#include "src/global_util/util_updateui.h"
+#include "src/global_util/dbus/dbusvariant.h"
+#include "src/global_util/dbus/dbuslogin1manager.h"
+#include "src/dde-shutdown/common.h"
+#include "src/global_util/dbus/dbussessionmanager.h"
 #include "systemmonitor.h"
 #include "warningview.h"
 #include "inhibitwarnview.h"

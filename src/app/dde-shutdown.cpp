@@ -33,13 +33,13 @@
 
 #include <DLog>
 
-#include "app/shutdownframe.h"
-#include "sessionbasemodel.h"
-#include "shutdownworker.h"
-#include "propertygroup.h"
-#include "multiscreenmanager.h"
+#include "src/dde-shutdown/app/shutdownframe.h"
+#include "src/session-widgets/sessionbasemodel.h"
+#include "src/dde-shutdown/shutdownworker.h"
+#include "src/widgets/propertygroup.h"
+#include "src/global_util/multiscreenmanager.h"
 
-#include "dbusshutdownagent.h"
+#include "src/dde-shutdown/dbusshutdownagent.h"
 
 const QString DBUS_PATH = "/com/deepin/dde/shutdownFront";
 const QString DBUS_NAME = "com.deepin.dde.shutdownFront";

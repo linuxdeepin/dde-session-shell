@@ -28,8 +28,8 @@
 
 #include <QFrame>
 
-#include "fullscreenbackground.h"
-#include "view/contentwidget.h"
+#include "src/widgets/fullscreenbackground.h"
+#include "src/dde-shutdown/view/contentwidget.h"
 
 class ShutdownFrontDBus;
 class SessionBaseModel;

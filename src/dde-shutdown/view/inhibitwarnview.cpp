@@ -24,7 +24,7 @@
  */
 
 #include "inhibitwarnview.h"
-#include "framedatabind.h"
+#include "src/session-widgets/framedatabind.h"
 
 #include <QHBoxLayout>
 

@@ -29,9 +29,9 @@
 #include <QFrame>
 #include "warningview.h"
 #include <dimagebutton.h>
-#include "common.h"
-#include "rounditembutton.h"
-#include "userinfo.h"
+#include "src/dde-shutdown/common.h"
+#include "src/widgets/rounditembutton.h"
+#include "src/session-widgets/userinfo.h"
 
 class QListWidget;
 class QLabel;

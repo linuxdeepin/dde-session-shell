@@ -26,8 +26,8 @@
 #include <QDebug>
 
 #include "shutdownframe.h"
-#include "sessionbasemodel.h"
-#include "dbusshutdownagent.h"
+#include "src/session-widgets/sessionbasemodel.h"
+#include "src/dde-shutdown/dbusshutdownagent.h"
 
 const QString WallpaperKey = "pictureUri";
 

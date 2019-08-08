@@ -202,28 +202,28 @@ set(LOCK_SRCS
 #    ./src/lightdm-deepin-greeter/main.cpp
 #)
 
-#set(SHUTDOWN_SRCS
-#    ./src/dde-shutdown/common.h
-#    ./src/dde-shutdown/app/shutdownframe.h
-#    ./src/dde-shutdown/view/multiuserswarningview.h
-#    ./src/dde-shutdown/view/contentwidget.h
-#    ./src/dde-shutdown/view/systemmonitor.h
-#    ./src/dde-shutdown/view/warningview.h
-#    ./src/dde-shutdown/view/inhibitwarnview.h
-#    ./src/dde-shutdown/shutdownworker.h
-#    ./src/dde-shutdown/dbusshutdownagent.h
-#    ./src/dde-shutdown/shutdownworker.cpp
-#    ./src/dde-shutdown/user/userwidget.cpp
-#    ./src/dde-shutdown/user/userframe.cpp
-#    ./src/dde-shutdown/user/imagebutton.cpp
-#    ./src/dde-shutdown/app/shutdownframe.cpp
-#    ./src/dde-shutdown/dbusshutdownagent.cpp
-#    ./src/dde-shutdown/view/systemmonitor.cpp
-#    ./src/dde-shutdown/view/inhibitwarnview.cpp
-#    ./src/dde-shutdown/view/multiuserswarningview.cpp
-#    ./src/dde-shutdown/view/contentwidget.cpp
-#    ./src/dde-shutdown/main.cpp
-#)
+set(SHUTDOWN_SRCS
+    ${dde_control_center_DBUS_SCRS}
+    ${GLOBAL_UTILS_SRCS}
+    ${WIDGETS_SRCS}
+    ${SESSION_WIDGETS_SRCS}
+    ./src/dde-shutdown/common.h
+    ./src/dde-shutdown/app/shutdownframe.h
+    ./src/dde-shutdown/view/multiuserswarningview.h
+    ./src/dde-shutdown/view/contentwidget.h
+    ./src/dde-shutdown/view/systemmonitor.h
+    ./src/dde-shutdown/view/warningview.h
+    ./src/dde-shutdown/view/inhibitwarnview.h
+    ./src/dde-shutdown/shutdownworker.h
+    ./src/dde-shutdown/dbusshutdownagent.h
+    ./src/dde-shutdown/shutdownworker.cpp
+    ./src/dde-shutdown/app/shutdownframe.cpp
+    ./src/dde-shutdown/dbusshutdownagent.cpp
+    ./src/dde-shutdown/view/systemmonitor.cpp
+    ./src/dde-shutdown/view/inhibitwarnview.cpp
+    ./src/dde-shutdown/view/multiuserswarningview.cpp
+    ./src/dde-shutdown/view/contentwidget.cpp
+)
 
 set(QRCS
     ./src/widgets/widgetsimages.qrc
@@ -239,7 +239,6 @@ add_executable(
     ./src/dde-lock/logintheme.qrc
 )
 target_include_directories(dde-lock PUBLIC
-    ${LOCK_SRCS}
     ${DtkWidget_INCLUDE_DIRS}
     ${XCB_EWMH_INCLUDE_DIRS}
     ${DFrameworkDBus_INCLUDE_DIRS}
@@ -261,3 +260,39 @@ target_link_libraries(dde-lock PRIVATE
     ${Qt5Multimedia_LIBRARIES}
     ${QGSettings_LIBRARIES}
 )
+
+add_executable(
+    dde-shutdown
+    ${SHUTDOWN_SRCS}
+    ./src/app/dde-shutdown.cpp
+    ${QRCS}
+    ./src/dde-shutdown/dde-shutdown.pro
+    ./src/dde-shutdown/image.qrc
+    ./src/dde-shutdown/qss.qrc
+)
+target_include_directories(dde-shutdown PUBLIC
+    ${DtkWidget_INCLUDE_DIRS}
+    ${XCB_EWMH_INCLUDE_DIRS}
+    ${DFrameworkDBus_INCLUDE_DIRS}
+    ${Qt5Gui_PRIVATE_INCLUDE_DIRS}
+    ${PROJECT_BINARY_DIR}
+    ${QGSettings_INCLUDE_DIRS}
+    ${Qt5X11Extras_INCLUDE_DIRS}
+)
+target_link_libraries(dde-shutdown PRIVATE
+    ${Qt_LIBS}
+    ${XCB_EWMH_LIBRARIES}
+    ${DFrameworkDBus_LIBRARIES}
+    ${DtkWidget_LIBRARIES}
+    ${Qt5Widgets_LIBRARIES}
+    ${Qt5Concurrent_LIBRARIES}
+    ${Qt5X11Extras_LIBRARIES}
+    ${Qt5DBus_LIBRARIES}
+    ${Qt5Network_LIBRARIES}
+    ${Qt5Multimedia_LIBRARIES}
+    ${QGSettings_LIBRARIES}
+)
+
+#target_compile_definitions(lightdm-deepin-greeter
+#    PRIVATE ENABLE_SESSION
+#)
