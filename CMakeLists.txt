@@ -1,0 +1,263 @@
+cmake_minimum_required(VERSION 3.13.4)
+project(dde-session-shell C CXX)
+
+set(CMAKE_CXX_STANDARD 14)
+set(CMAKE_INCLUDE_CURRENT_DIR ON)
+set(CMAKE_AUTOMOC ON)
+set(CMAKE_AUTORCC ON)
+set(CMAKE_CXX_FLAGS "-g -Wall")
+
+# Find the library
+find_package(PkgConfig REQUIRED)
+find_package(DtkWidget REQUIRED)
+find_package(DtkCMake REQUIRED)
+find_package(Qt5 COMPONENTS
+    Core
+    Widgets
+    Concurrent
+    X11Extras
+    DBus
+    Multimedia
+    Xml
+    Svg
+REQUIRED)
+
+pkg_check_modules(XCB_EWMH REQUIRED xcb-ewmh x11 xi xcursor xfixes xrandr xext xtst)
+pkg_check_modules(DFrameworkDBus REQUIRED dframeworkdbus)
+pkg_check_modules(QGSettings REQUIRED gsettings-qt)
+pkg_check_modules(Greeter REQUIRED liblightdm-qt5-3)
+
+set(Qt_LIBS
+    Qt5::Core
+    Qt5::Gui
+    Qt5::DBus
+    Qt5::Widgets
+    Qt5::X11Extras
+    Qt5::Multimedia
+    Qt5::Xml
+    Qt5::Svg
+)
+
+function(generation_dbus_interface xml class_name class_file option)
+    execute_process(COMMAND qdbusxml2cpp ${option} -p ${class_file} -c ${class_name} ${xml}
+    WORKING_DIRECTORY ${CMAKE_CURRENT_BINARY_DIR})
+endfunction(generation_dbus_interface)
+
+set(dde_control_center_DBUS_SCRS xml/com.deepin.dde.ControlCenter.xml)
+qt5_add_dbus_interface(dde_control_center_DBUS_SCRS
+xml/com.deepin.dde.ControlCenter.xml
+ControlCenterAdaptor
+)
+
+set(agent_adapter_DBUS_SRCS xml/com.deepin.daemon.authority.Agent.xml)
+qt5_add_dbus_adaptor(agent_adapter_DBUS_SRCS
+xml/com.deepin.daemon.authority.Agent.xml
+./src/libdde-auth/authagent.h
+AuthAgent
+)
+
+generation_dbus_interface(
+    ${CMAKE_SOURCE_DIR}/xml/com.deepin.daemon.Authority.xml
+    AuthorityInterface
+    ${CMAKE_CURRENT_BINARY_DIR}/authority_interface
+    -N
+)
+set(authority_DBUS_SCRS
+    ${CMAKE_CURRENT_BINARY_DIR}/authority_interface.h
+    ${CMAKE_CURRENT_BINARY_DIR}/authority_interface.cpp
+)
+
+generation_dbus_interface(
+    ${CMAKE_SOURCE_DIR}/xml/com.deepin.daemon.authority.Transaction.xml
+    TransactionInterface
+    ${CMAKE_CURRENT_BINARY_DIR}/transaction_interface
+    -N
+)
+set(transaction_DBUS_SCRS
+    ${CMAKE_CURRENT_BINARY_DIR}/transaction_interface.h
+    ${CMAKE_CURRENT_BINARY_DIR}/transaction_interface.cpp
+)
+
+set(GLOBAL_UTILS_SRCS
+    ./src/global_util/util_updateui.h
+    ./src/global_util/dbus/dbuslockservice.h
+    ./src/global_util/dbus/dbuslockfront.h
+    ./src/global_util/dbus/dbuskeyboard.h
+    ./src/global_util/dbus/dbusdisplaymanager.h
+    ./src/global_util/dbus/displayinterface.h
+    ./src/global_util/dbus/dbusmediaplayer2.h
+    ./src/global_util/dbus/dbusvariant.h
+    ./src/global_util/dbus/dbuslogin1manager.h
+    ./src/global_util/dbus/dbussessionmanager.h
+    ./src/global_util/dbus/dbuscontrolcenter.h
+    ./src/global_util/dbus/dbusinputdevices.h
+    ./src/global_util/dbus/dbushotzone.h
+    ./src/global_util/multiscreenmanager.h
+    ./src/global_util/xkbparser.h
+    ./src/global_util/public_func.h
+    ./src/global_util/constants.h
+    ./src/global_util/xkbparser.cpp
+    ./src/global_util/dbus/dbusdisplaymanager.cpp
+    ./src/global_util/dbus/dbuslogin1manager.cpp
+    ./src/global_util/dbus/dbussessionmanager.cpp
+    ./src/global_util/dbus/dbuscontrolcenter.cpp
+    ./src/global_util/dbus/displayinterface.cpp
+    ./src/global_util/dbus/dbusvariant.cpp
+    ./src/global_util/dbus/dbusmediaplayer2.cpp
+    ./src/global_util/dbus/dbuslockfront.cpp
+    ./src/global_util/dbus/dbuskeyboard.cpp
+    ./src/global_util/dbus/dbusinputdevices.cpp
+    ./src/global_util/dbus/dbushotzone.cpp
+    ./src/global_util/dbus/dbuslockservice.cpp
+    ./src/global_util/util_updateui.cpp
+    ./src/global_util/multiscreenmanager.cpp
+    ./src/global_util/public_func.cpp
+)
+
+set(WIDGETS_SRCS
+    ./src/widgets/useravatar.h
+    ./src/widgets/loginbutton.h
+    ./src/widgets/fullscreenbackground.h
+    ./src/widgets/userbutton.h
+    ./src/widgets/otheruserinput.h
+    ./src/widgets/controlwidget.h
+    ./src/widgets/sessionwidget.h
+    ./src/widgets/errortooltip.h
+    ./src/widgets/keyboardmonitor.h
+    ./src/widgets/shutdownwidget.h
+    ./src/widgets/dbreathinglabel.h
+    ./src/widgets/rounditembutton.h
+    ./src/widgets/kblayoutwidget.h
+    ./src/widgets/mediawidget.h
+    ./src/widgets/propertygroup.h
+    ./src/widgets/darrowrectangle.h
+    ./src/widgets/userbreathinglabel.h
+    ./src/widgets/virtualkbinstance.h
+    ./src/widgets/fullscreenbackground.cpp
+    ./src/widgets/keyboardmonitor.cpp
+    ./src/widgets/sessionwidget.cpp
+    ./src/widgets/loginbutton.cpp
+    ./src/widgets/dbreathinglabel.cpp
+    ./src/widgets/errortooltip.cpp
+    ./src/widgets/darrowrectangle.cpp
+    ./src/widgets/mediawidget.cpp
+    ./src/widgets/controlwidget.cpp
+    ./src/widgets/virtualkbinstance.cpp
+    ./src/widgets/propertygroup.cpp
+    ./src/widgets/rounditembutton.cpp
+    ./src/widgets/useravatar.cpp
+    ./src/widgets/userbutton.cpp
+    ./src/widgets/shutdownwidget.cpp
+    ./src/widgets/otheruserinput.cpp
+    ./src/widgets/userbreathinglabel.cpp
+    ./src/widgets/kblayoutwidget.cpp
+)
+
+set(SESSION_WIDGETS_SRCS
+    ./src/session-widgets/userframe.h
+    ./src/session-widgets/sessionbasemodel.h
+    ./src/session-widgets/authinterface.h
+    ./src/session-widgets/lockpasswordwidget.h
+    ./src/session-widgets/framedatabind.h
+    ./src/session-widgets/userinputwidget.h
+    ./src/session-widgets/sessionbasewindow.h
+    ./src/session-widgets/lockcontent.h
+    ./src/session-widgets/userinfo.h
+    ./src/session-widgets/lockpasswordwidget.cpp
+    ./src/session-widgets/authinterface.cpp
+    ./src/session-widgets/userinfo.cpp
+    ./src/session-widgets/framedatabind.cpp
+    ./src/session-widgets/sessionbasewindow.cpp
+    ./src/session-widgets/userframe.cpp
+    ./src/session-widgets/userinputwidget.cpp
+    ./src/session-widgets/lockcontent.cpp
+    ./src/session-widgets/sessionbasemodel.cpp
+)
+
+set(LOCK_SRCS
+    ${authority_DBUS_SCRS}
+    ${transaction_DBUS_SCRS}
+    ${agent_adapter_DBUS_SRCS}
+    ${dde_control_center_DBUS_SCRS}
+    ${GLOBAL_UTILS_SRCS}
+    ${WIDGETS_SRCS}
+    ${SESSION_WIDGETS_SRCS}
+    ./src/libdde-auth/deepinauthframework.cpp
+    ./src/libdde-auth/authagent.cpp
+    ./src/libdde-auth/authdbusadapter.cpp
+    ./src/dde-lock/lockframe.cpp
+    ./src/dde-lock/dbus/dbuslockagent.cpp
+    ./src/dde-lock/dbus/dbuslockfrontservice.cpp
+    ./src/dde-lock/lockworker.cpp
+    ./src/dde-lock/timewidget.cpp
+)
+
+#set(GREETER_SRCS
+#    ./src/lightdm-deepin-greeter/loginwindow.h
+#    ./src/lightdm-deepin-greeter/view/logowidget.h
+#    ./src/lightdm-deepin-greeter/greeterworkek.h
+#    ./src/lightdm-deepin-greeter/loginwindow.cpp
+#    ./src/lightdm-deepin-greeter/greeterworkek.cpp
+#    ./src/lightdm-deepin-greeter/view/logowidget.cpp
+#    ./src/lightdm-deepin-greeter/main.cpp
+#)
+
+#set(SHUTDOWN_SRCS
+#    ./src/dde-shutdown/common.h
+#    ./src/dde-shutdown/app/shutdownframe.h
+#    ./src/dde-shutdown/view/multiuserswarningview.h
+#    ./src/dde-shutdown/view/contentwidget.h
+#    ./src/dde-shutdown/view/systemmonitor.h
+#    ./src/dde-shutdown/view/warningview.h
+#    ./src/dde-shutdown/view/inhibitwarnview.h
+#    ./src/dde-shutdown/shutdownworker.h
+#    ./src/dde-shutdown/dbusshutdownagent.h
+#    ./src/dde-shutdown/shutdownworker.cpp
+#    ./src/dde-shutdown/user/userwidget.cpp
+#    ./src/dde-shutdown/user/userframe.cpp
+#    ./src/dde-shutdown/user/imagebutton.cpp
+#    ./src/dde-shutdown/app/shutdownframe.cpp
+#    ./src/dde-shutdown/dbusshutdownagent.cpp
+#    ./src/dde-shutdown/view/systemmonitor.cpp
+#    ./src/dde-shutdown/view/inhibitwarnview.cpp
+#    ./src/dde-shutdown/view/multiuserswarningview.cpp
+#    ./src/dde-shutdown/view/contentwidget.cpp
+#    ./src/dde-shutdown/main.cpp
+#)
+
+set(QRCS
+    ./src/widgets/widgetsimages.qrc
+    ./src/widgets/widgetstheme.qrc
+)
+
+add_executable(
+    dde-lock
+    ${LOCK_SRCS}
+    ./src/app/dde-lock.cpp
+    ${QRCS}
+    ./src/dde-lock/images.qrc
+    ./src/dde-lock/logintheme.qrc
+)
+target_include_directories(dde-lock PUBLIC
+    ${LOCK_SRCS}
+    ${DtkWidget_INCLUDE_DIRS}
+    ${XCB_EWMH_INCLUDE_DIRS}
+    ${DFrameworkDBus_INCLUDE_DIRS}
+    ${Qt5Gui_PRIVATE_INCLUDE_DIRS}
+    ${PROJECT_BINARY_DIR}
+    ${QGSettings_INCLUDE_DIRS}
+    ${Qt5X11Extras_INCLUDE_DIRS}
+)
+target_link_libraries(dde-lock PRIVATE
+    ${Qt_LIBS}
+    ${XCB_EWMH_LIBRARIES}
+    ${DFrameworkDBus_LIBRARIES}
+    ${DtkWidget_LIBRARIES}
+    ${Qt5Widgets_LIBRARIES}
+    ${Qt5Concurrent_LIBRARIES}
+    ${Qt5X11Extras_LIBRARIES}
+    ${Qt5DBus_LIBRARIES}
+    ${Qt5Network_LIBRARIES}
+    ${Qt5Multimedia_LIBRARIES}
+    ${QGSettings_LIBRARIES}
+)
