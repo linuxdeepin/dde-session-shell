@@ -26,8 +26,6 @@
 #ifndef SESSIONWIDGET_H
 #define SESSIONWIDGET_H
 
-#ifdef ENABLE_SESSIONN
-
 #include <QFrame>
 #include <QList>
 #include <QSettings>
@@ -85,6 +83,5 @@ private:
     QLightDM::SessionsModel *m_sessionModel;
     QList<RoundItemButton *> m_sessionBtns;
 };
-#endif
 
 #endif // SESSIONWIDGET_H

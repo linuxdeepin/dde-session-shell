@@ -15,15 +15,18 @@ class ControlWidget;
 class UserInputWidget;
 class User;
 class UserFrame;
-#ifdef ENABLE_SESSIONN
-class SessionWidget;
-#endif
 class ShutdownWidget;
 class LockContent : public SessionBaseWindow
 {
     Q_OBJECT
 public:
     explicit LockContent(SessionBaseModel * const model, QWidget *parent = nullptr);
+
+    virtual void onCurrentUserChanged(std::shared_ptr<User> user);
+    virtual void onStatusChanged(SessionBaseModel::ModeStatus status);
+    virtual void releaseAllKeyboard();
+    virtual void restoreCenterContent();
+    virtual void restoreMode();
 
 signals:
     void requestBackground(const QString &path);
@@ -32,13 +35,8 @@ signals:
     void requestSetLayout(std::shared_ptr<User> user, const QString &value);
 
 public slots:
-    void onCurrentUserChanged(std::shared_ptr<User> user);
     void pushUserFrame();
-#ifdef ENABLE_SESSIONN
-    void pushSessionFrame();
-#endif
     void pushShutdownFrame();
-    void onStatusChanged(SessionBaseModel::ModeStatus status);
 
 protected:
     void mouseReleaseEvent(QMouseEvent *event) Q_DECL_OVERRIDE;
@@ -46,24 +44,18 @@ protected:
     void hideEvent(QHideEvent *event) Q_DECL_OVERRIDE;
     void resizeEvent(QResizeEvent *event) Q_DECL_OVERRIDE;
 
-private:
-    void releaseAllKeyboard();
-    void restoreCenterContent();
-    void restoreMode();
+protected:
     void updateBackground(const QString &path);
     void onBlurDone(const QString &source, const QString &blur, bool status);
     void toggleVirtualKB();
     void updateVirtualKBPosition();
     void onUserListChanged(QList<std::shared_ptr<User>> list);
 
-private:
+protected:
     SessionBaseModel *m_model;
     ControlWidget *m_controlWidget;
     UserInputWidget *m_userInputWidget;
     UserFrame *m_userFrame;
-#ifdef ENABLE_SESSIONN
-    SessionWidget *m_sessionFrame;
-#endif
     ShutdownWidget *m_shutdownFrame;
     ImageBlur *m_imageBlurInter;
     QWidget *m_virtualKB;

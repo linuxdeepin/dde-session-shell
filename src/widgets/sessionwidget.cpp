@@ -25,8 +25,6 @@
 
 #include "sessionwidget.h"
 
-#ifdef ENABLE_SESSIONN
-
 #include "src/global_util/constants.h"
 #include "src/session-widgets/sessionbasemodel.h"
 
@@ -308,5 +306,3 @@ void SessionWidget::loadSessionList()
         m_sessionBtns.append(sbtn);
     }
 }
-
-#endif

@@ -1,7 +1,7 @@
 #include "greeterworkek.h"
-#include "sessionbasemodel.h"
-#include "userinfo.h"
-#include "keyboardmonitor.h"
+#include "src/session-widgets/sessionbasemodel.h"
+#include "src/session-widgets/userinfo.h"
+#include "src/widgets/keyboardmonitor.h"
 
 #include <libintl.h>
 

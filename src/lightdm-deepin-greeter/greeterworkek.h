@@ -5,9 +5,9 @@
 #include <QLightDM/SessionsModel>
 #include <QObject>
 
-#include "dbus/dbuslockservice.h"
-#include "authinterface.h"
-#include "dbus/dbuslogin1manager.h"
+#include "src/global_util/dbus/dbuslockservice.h"
+#include "src/session-widgets/authinterface.h"
+#include "src/global_util/dbus/dbuslogin1manager.h"
 
 class GreeterWorkek : public Auth::AuthInterface {
     Q_OBJECT

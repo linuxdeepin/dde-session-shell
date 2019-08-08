@@ -4,9 +4,6 @@
 #include "userinputwidget.h"
 #include "sessionbasemodel.h"
 #include "userframe.h"
-#ifdef ENABLE_SESSIONN
-#include "src/widgets/sessionwidget.h"
-#endif
 #include "src/widgets/shutdownwidget.h"
 #include "src/widgets/virtualkbinstance.h"
 
@@ -34,21 +31,6 @@ LockContent::LockContent(SessionBaseModel * const model, QWidget *parent)
     setRightBottomWidget(m_controlWidget);
 
     switch (model->currentType()) {
-#ifdef ENABLE_SESSION
-    case SessionBaseModel::AuthType::LightdmType:
-        m_sessionFrame = new SessionWidget;
-        m_sessionFrame->setModel(model);
-        m_controlWidget->setSessionSwitchEnable(m_sessionFrame->sessionCount() > 1);
-
-        connect(m_sessionFrame, &SessionWidget::hideFrame, this, &LockContent::restoreMode);
-        connect(m_sessionFrame, &SessionWidget::sessionChanged, this, &LockContent::restoreMode);
-        connect(m_controlWidget, &ControlWidget::requestSwitchSession, this, [=] {
-            m_model->setCurrentModeState(SessionBaseModel::ModeStatus::SessionMode);
-        });
-        connect(m_model, &SessionBaseModel::onSessionKeyChanged, m_controlWidget, &ControlWidget::chooseToSession);
-        connect(m_model, &SessionBaseModel::onSessionKeyChanged, this, &LockContent::restoreMode);
-        break;
-#endif
     case SessionBaseModel::AuthType::LockType:
         m_controlWidget->setMPRISEnable(true);
         break;
@@ -150,12 +132,6 @@ void LockContent::onCurrentUserChanged(std::shared_ptr<User> user)
 
     m_userInputWidget->setUser(user);
 
-#ifdef ENABLE_SESSIONN
-    if (m_model->currentType() == SessionBaseModel::AuthType::LightdmType) {
-        m_sessionFrame->switchToUser(user->name());
-    }
-#endif
-
     //TODO: refresh blur image
     QTimer::singleShot(0, this, [=] {
         updateBackground(user->greeterBackgroundPath());
@@ -170,17 +146,6 @@ void LockContent::pushUserFrame()
 
     QTimer::singleShot(300, m_userFrame, &UserFrame::grabKeyboard);
 }
-
-#ifdef ENABLE_SESSIONN
-void LockContent::pushSessionFrame()
-{
-    releaseAllKeyboard();
-    setCenterContent(m_sessionFrame);
-    m_sessionFrame->show();
-
-    QTimer::singleShot(300, m_sessionFrame, &SessionWidget::grabKeyboard);
-}
-#endif
 
 void LockContent::pushShutdownFrame()
 {
@@ -199,11 +164,6 @@ void LockContent::onStatusChanged(SessionBaseModel::ModeStatus status)
     case SessionBaseModel::ModeStatus::UserMode:
         pushUserFrame();
         break;
-#ifdef ENABLE_SESSIONN
-    case SessionBaseModel::ModeStatus::SessionMode:
-        pushSessionFrame();
-        break;
-#endif
     case SessionBaseModel::ModeStatus::PowerMode:
         pushShutdownFrame();
         break;
@@ -257,12 +217,6 @@ void LockContent::releaseAllKeyboard()
     m_userInputWidget->releaseKeyboard();
     m_userFrame->releaseKeyboard();
     m_shutdownFrame->releaseKeyboard();
-
-#ifdef ENABLE_SESSIONN
-    if (m_model->currentType() == SessionBaseModel::AuthType::LightdmType) {
-        m_sessionFrame->releaseKeyboard();
-    }
-#endif
 }
 
 void LockContent::restoreCenterContent()

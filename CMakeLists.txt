@@ -121,7 +121,6 @@ set(WIDGETS_SRCS
     ./src/widgets/userbutton.h
     ./src/widgets/otheruserinput.h
     ./src/widgets/controlwidget.h
-    ./src/widgets/sessionwidget.h
     ./src/widgets/errortooltip.h
     ./src/widgets/keyboardmonitor.h
     ./src/widgets/shutdownwidget.h
@@ -135,7 +134,6 @@ set(WIDGETS_SRCS
     ./src/widgets/virtualkbinstance.h
     ./src/widgets/fullscreenbackground.cpp
     ./src/widgets/keyboardmonitor.cpp
-    ./src/widgets/sessionwidget.cpp
     ./src/widgets/loginbutton.cpp
     ./src/widgets/dbreathinglabel.cpp
     ./src/widgets/errortooltip.cpp
@@ -192,15 +190,20 @@ set(LOCK_SRCS
     ./src/dde-lock/timewidget.cpp
 )
 
-#set(GREETER_SRCS
-#    ./src/lightdm-deepin-greeter/loginwindow.h
-#    ./src/lightdm-deepin-greeter/view/logowidget.h
-#    ./src/lightdm-deepin-greeter/greeterworkek.h
-#    ./src/lightdm-deepin-greeter/loginwindow.cpp
-#    ./src/lightdm-deepin-greeter/greeterworkek.cpp
-#    ./src/lightdm-deepin-greeter/view/logowidget.cpp
-#    ./src/lightdm-deepin-greeter/main.cpp
-#)
+set(GREETER_SRCS
+    ${GLOBAL_UTILS_SRCS}
+    ${WIDGETS_SRCS}
+    ${SESSION_WIDGETS_SRCS}
+    ./src/widgets/sessionwidget.h
+    ./src/widgets/sessionwidget.cpp
+    ./src/lightdm-deepin-greeter/loginwindow.h
+    ./src/lightdm-deepin-greeter/view/logowidget.h
+    ./src/lightdm-deepin-greeter/greeterworkek.h
+    ./src/lightdm-deepin-greeter/loginwindow.cpp
+    ./src/lightdm-deepin-greeter/greeterworkek.cpp
+    ./src/lightdm-deepin-greeter/view/logowidget.cpp
+    ./src/lightdm-deepin-greeter/logincontent.cpp
+)
 
 set(SHUTDOWN_SRCS
     ${dde_control_center_DBUS_SCRS}
@@ -293,6 +296,38 @@ target_link_libraries(dde-shutdown PRIVATE
     ${QGSettings_LIBRARIES}
 )
 
-#target_compile_definitions(lightdm-deepin-greeter
-#    PRIVATE ENABLE_SESSION
-#)
+add_executable(
+    lightdm-deepin-greeter
+    ${GREETER_SRCS}
+    ./src/app/lightdm-deepin-greeter.cpp
+    ${QRCS}
+    ./src/lightdm-deepin-greeter/logintheme.qrc
+    ./src/lightdm-deepin-greeter/image.qrc
+)
+target_include_directories(lightdm-deepin-greeter PUBLIC
+    ${DtkWidget_INCLUDE_DIRS}
+    ${XCB_EWMH_INCLUDE_DIRS}
+    ${DFrameworkDBus_INCLUDE_DIRS}
+    ${Qt5Gui_PRIVATE_INCLUDE_DIRS}
+    ${PROJECT_BINARY_DIR}
+    ${QGSettings_INCLUDE_DIRS}
+    ${Qt5X11Extras_INCLUDE_DIRS}
+    ${Greeter_INCLUDE_DIRS}
+)
+target_compile_definitions(lightdm-deepin-greeter
+    PRIVATE ENABLE_SESSION
+)
+target_link_libraries(lightdm-deepin-greeter PRIVATE
+    ${Qt_LIBS}
+    ${XCB_EWMH_LIBRARIES}
+    ${DFrameworkDBus_LIBRARIES}
+    ${DtkWidget_LIBRARIES}
+    ${Qt5Widgets_LIBRARIES}
+    ${Qt5Concurrent_LIBRARIES}
+    ${Qt5X11Extras_LIBRARIES}
+    ${Qt5DBus_LIBRARIES}
+    ${Qt5Network_LIBRARIES}
+    ${Qt5Multimedia_LIBRARIES}
+    ${QGSettings_LIBRARIES}
+    ${Greeter_LIBRARIES}
+)
