@@ -161,6 +161,7 @@ set(SESSION_WIDGETS_SRCS
     ./src/session-widgets/sessionbasewindow.h
     ./src/session-widgets/lockcontent.h
     ./src/session-widgets/userinfo.h
+    ./src/session-widgets/userloginwidget.h
     ./src/session-widgets/lockpasswordwidget.cpp
     ./src/session-widgets/authinterface.cpp
     ./src/session-widgets/userinfo.cpp
@@ -170,6 +171,7 @@ set(SESSION_WIDGETS_SRCS
     ./src/session-widgets/userinputwidget.cpp
     ./src/session-widgets/lockcontent.cpp
     ./src/session-widgets/sessionbasemodel.cpp
+    ./src/session-widgets/userloginwidget.cpp
 )
 
 set(LOCK_SRCS
