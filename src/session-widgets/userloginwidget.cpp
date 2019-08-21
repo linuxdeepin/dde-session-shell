@@ -1,3 +1,24 @@
+/*
+ * Copyright (C) 2019 ~ 2019 Deepin Technology Co., Ltd.
+ *
+ * Author:     lixin <lixin_cm@deepin.com>
+ *
+ * Maintainer: lixin <lixin_cm@deepin.com>
+ *
+ * This program is free software: you can redistribute it and/or modify
+ * it under the terms of the GNU General Public License as published by
+ * the Free Software Foundation, either version 3 of the License, or
+ * any later version.
+ *
+ * This program is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+ * GNU General Public License for more details.
+ *
+ * You should have received a copy of the GNU General Public License
+ * along with this program.  If not, see <http://www.gnu.org/licenses/>.
+ */
+
 #include "userloginwidget.h"
 #include "lockpasswordwidget.h"
 #include "framedatabind.h"
@@ -26,7 +47,6 @@ UserLoginWidget::UserLoginWidget(QWidget *parent)
     , m_lockButton(new DFloatingButton(tr("Login")))
     , m_showType(NormalType)
     , m_isLock(false)
-    , m_selected(false)
     , m_isLogin(false)
 {
     initUI();
@@ -167,18 +187,10 @@ void UserLoginWidget::showEvent(QShowEvent *event)
     return QWidget::showEvent(event);
 }
 
-//paintEvent函数中绘制背景，当UserFrameList中用户被选中时绘制，颜色和不透明度是V15版本的，后续样式确定后再调整
-void UserLoginWidget::paintEvent(QPaintEvent *event)
+void UserLoginWidget::mousePressEvent(QMouseEvent *event)
 {
     Q_UNUSED(event);
-    if (!m_selected)
-        return;
-
-    QPainter painter(this);
-    painter.setPen(QPen(QColor(255, 255, 255, 51), 2));
-    painter.setBrush(QColor(0, 0, 0, 76));
-    painter.setRenderHint(QPainter::Antialiasing, true);
-    painter.drawRoundedRect(QRect(0, 0, width(), height()), BlurRectRadius, BlurRectRadius, Qt::RelativeSize);
+    emit clicked();
 }
 
 //初始化窗体控件
@@ -270,20 +282,16 @@ void UserLoginWidget::setAvatar(const QString &avatar)
 }
 
 //设置用户头像尺寸
-void UserLoginWidget::setUserAvatarSize(int width, int height)
+void UserLoginWidget::setUserAvatarSize(const AvatarSize &avatarSize)
 {
-    m_userAvatar->setFixedSize(width, height);
-}
-
-bool UserLoginWidget::getSelected() const
-{
-    return m_selected;
-}
-
-void UserLoginWidget::setSelected(bool selected)
-{
-    m_selected = selected;
-    update();
+    if (avatarSize == AvatarSmallSize) {
+        m_userAvatar->setAvatarSize(m_userAvatar->AvatarSmallSize);
+    } else if (avatarSize == AvatarNormalSize) {
+        m_userAvatar->setAvatarSize(m_userAvatar->AvatarNormalSize);
+    } else {
+        m_userAvatar->setAvatarSize(m_userAvatar->AvatarLargeSize);
+    }
+    m_userAvatar->setFixedSize(avatarSize, avatarSize);
 }
 
 void UserLoginWidget::setWidgetWidth(int width)

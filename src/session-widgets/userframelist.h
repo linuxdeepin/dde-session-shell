@@ -45,10 +45,12 @@ public:
 
 signals:
     void requestSwitchUser(std::shared_ptr<User> user);
-    void hideFrame();
+    void clicked();
 
 protected:
     void resizeEvent(QResizeEvent *event) override;
+    void mouseReleaseEvent(QMouseEvent *event) override;
+    void hideEvent(QHideEvent *event) override;
 
 private:
     void initUI();

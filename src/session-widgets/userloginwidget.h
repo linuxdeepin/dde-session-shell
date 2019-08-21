@@ -52,6 +52,12 @@ public:
         UserFrameLoginType      //用户列表,已登录
     };
 
+    enum AvatarSize {
+        AvatarSmallSize = 80,
+        AvatarNormalSize = 90,
+        AvatarLargeSize = 100
+    };
+
     explicit UserLoginWidget(QWidget *parent = nullptr);
     void resetAllState();
     void grabKeyboard();
@@ -61,9 +67,7 @@ public:
     void setWidgetShowType(WidgetShowType showType);
     void setName(const QString &name);
     void setAvatar(const QString &avatar);
-    void setUserAvatarSize(int width, int height);
-    bool getSelected() const;
-    void setSelected(bool selected);
+    void setUserAvatarSize(const AvatarSize &avatarSize);
     void setWidgetWidth(int width);
     void setIsLogin(bool isLogin);
     bool getIsLogin();
@@ -79,7 +83,7 @@ public slots:
 protected:
     void resizeEvent(QResizeEvent *event) override;
     void showEvent(QShowEvent *event) override;
-    void paintEvent(QPaintEvent *event) override;
+    void mousePressEvent(QMouseEvent *event) override;
 
 private:
     void initUI();
@@ -100,7 +104,6 @@ private:
     QVBoxLayout *m_userLayout;                     //用户输入框布局
     QVBoxLayout *m_lockLayout;                     //解锁按钮布局
     bool m_isLock;                                 //解锁功能是否被锁定(连续5次密码输入错误锁定)
-    bool m_selected;                               //是否选中（UserFrame中使用）
     bool m_isLogin;                                //是否登录（UserFrame中使用）
 };
 

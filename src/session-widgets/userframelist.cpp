@@ -28,11 +28,11 @@
 
 #include <QVBoxLayout>
 #include <QScrollArea>
+#include <QMouseEvent>
 
 const int UserFrameHeight = 150;
 const int UserFrameWidth = 200;
 const int UserFrameSpaceing = 30;
-const int UserAvatarSize = 50;
 const int UserFrameRowCount = 2;
 const int UserFrameColCount = 5;
 
@@ -62,9 +62,12 @@ void UserFrameList::addUser(std::shared_ptr<User> user)
 {
     UserLoginWidget *widget = new UserLoginWidget(this);
     widget->setFixedSize(QSize(UserFrameWidth, UserFrameHeight));
-    widget->setUserAvatarSize(UserAvatarSize, UserAvatarSize);
+    connect(widget, &UserLoginWidget::clicked, this, &UserFrameList::onUserClicked);
+    widget->setUserAvatarSize(UserLoginWidget::AvatarSmallSize);
     widget->setAvatar(user->avatarPath());
     widget->setName(user->name());
+    widget->setWidgetShowType(UserLoginWidget::UserFrameType);
+    widget->setIsLogin(user->isLogin());
 
     m_userLoginWidgets[user->uid()] = widget;
     m_folwLayout->addWidget(widget);
@@ -84,7 +87,9 @@ void UserFrameList::onUserClicked()
     UserLoginWidget *widget = static_cast<UserLoginWidget *>(sender());
     if (!widget) return;
 
-    emit requestSwitchUser(m_model->findUserByUid(m_userLoginWidgets.key(widget))); \
+    emit requestSwitchUser(m_model->findUserByUid(m_userLoginWidgets.key(widget)));
+
+    emit clicked();
 }
 
 void UserFrameList::resizeEvent(QResizeEvent *event)
@@ -94,6 +99,21 @@ void UserFrameList::resizeEvent(QResizeEvent *event)
     int width = qMin((UserFrameWidth + UserFrameSpaceing) * UserFrameColCount, m_userLoginWidgets.size() * (UserFrameWidth + UserFrameSpaceing));
     m_centerWidget->setFixedWidth(width);
     m_scrollArea->setFixedWidth(width + 10);
+}
+
+void UserFrameList::mouseReleaseEvent(QMouseEvent *event)
+{
+    emit clicked();
+    hide();
+
+    return QWidget::mouseReleaseEvent(event);
+}
+
+void UserFrameList::hideEvent(QHideEvent *event)
+{
+    releaseKeyboard();
+
+    return QWidget::hideEvent(event);
 }
 
 void UserFrameList::initUI()
