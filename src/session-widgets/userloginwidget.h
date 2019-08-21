@@ -26,6 +26,7 @@
 
 #include <DBlurEffectWidget>
 #include <DPasswdEditAnimated>
+#include <DFloatingButton>
 
 DWIDGET_USE_NAMESPACE
 
@@ -44,31 +45,41 @@ class UserLoginWidget : public QWidget
     Q_OBJECT
 public:
     enum WidgetShowType {
-        NoPasswordType,
-        NormalType,
-        IDAndPasswordType
+        NoPasswordType,         //无密码登录显示模式
+        NormalType,             //正常显示模式-密码登录
+        IDAndPasswordType,      //ID和密码登录显示模式
+        UserFrameType,          //用户列表显示模式
+        UserFrameLoginType      //用户列表,已登录
     };
 
     explicit UserLoginWidget(QWidget *parent = nullptr);
     void resetAllState();
     void grabKeyboard();
+    void disablePassword(bool disable, uint lockNum = 0);
+    void setFaildMessage(const QString &message);
     void setFaildTipMessage(const QString &message);
     void setWidgetShowType(WidgetShowType showType);
     void setName(const QString &name);
     void setAvatar(const QString &avatar);
     void setUserAvatarSize(int width, int height);
+    bool getSelected() const;
+    void setSelected(bool selected);
+    void setWidgetWidth(int width);
+    void setIsLogin(bool isLogin);
+    bool getIsLogin();
 
 signals:
     void requestAuthUser(const QString &password);
+    void clicked();
 
 public slots:
-    void disablePassword(bool disable);
     void updateAuthType(SessionBaseModel::AuthType type);
     void refreshBlurEffectPosition();
 
 protected:
     void resizeEvent(QResizeEvent *event) override;
     void showEvent(QShowEvent *event) override;
+    void paintEvent(QPaintEvent *event) override;
 
 private:
     void initUI();
@@ -76,18 +87,21 @@ private:
     void updateUI();
 
 private:
-    DBlurEffectWidget *m_blurEffectWidget;                  //阴影窗体
-    UserAvatar *m_userAvatar;                               //用户头像
-    QLabel *m_nameLbl;                                      //用户名
-    DPasswdEditAnimated *m_passwordEdit;                    //密码输入框
+    DBlurEffectWidget *m_blurEffectWidget;         //阴影窗体
+    UserAvatar *m_userAvatar;                      //用户头像
+    QLabel *m_nameLbl;                             //用户名
+    DPasswdEditAnimated *m_passwordEdit;           //密码输入框
+    LockPasswordWidget *m_lockPasswordWidget;      //密码锁定后,错误信息提示框
     QMap<uint, QString> m_passwords;
-    QList<QMetaObject::Connection> m_currentUserConnects;
-    SessionBaseModel::AuthType m_authType;                  //认证类型
-    QPushButton *m_loginButton;                             //test code
+    SessionBaseModel::AuthType m_authType;         //认证类型
     OtherUserInput *m_otherUserInput;
-    WidgetShowType m_showType;                              //窗体显示模式,分为无密码登录模式\正常模式\ID和密码登录模式
-    QVBoxLayout *m_userLayout;                              //用户输入框布局
-    QVBoxLayout *m_lockLayout;                              //解锁按钮布局
+    DFloatingButton *m_lockButton;                 //解锁按钮
+    WidgetShowType m_showType;                     //窗体显示模式,分为无密码登录模式\正常模式\ID和密码登录模式
+    QVBoxLayout *m_userLayout;                     //用户输入框布局
+    QVBoxLayout *m_lockLayout;                     //解锁按钮布局
+    bool m_isLock;                                 //解锁功能是否被锁定(连续5次密码输入错误锁定)
+    bool m_selected;                               //是否选中（UserFrame中使用）
+    bool m_isLogin;                                //是否登录（UserFrame中使用）
 };
 
 #endif // USERLOGINWIDGET_H
