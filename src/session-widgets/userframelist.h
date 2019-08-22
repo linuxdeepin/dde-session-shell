@@ -30,6 +30,7 @@
 
 class User;
 class SessionBaseModel;
+class FrameDataBind;
 class UserLoginWidget;
 class QVBoxLayout;
 class QScrollArea;
@@ -51,18 +52,23 @@ protected:
     void resizeEvent(QResizeEvent *event) override;
     void mouseReleaseEvent(QMouseEvent *event) override;
     void hideEvent(QHideEvent *event) override;
+    void keyPressEvent(QKeyEvent *event) override;
 
 private:
     void initUI();
     void addUser(std::shared_ptr<User> user);
     void removeUser(const uint uid);
     void onUserClicked();
+    void switchNextUser();
+    void switchPreviousUser();
+    void onOtherPageChanged(const QVariant &value);
 
 private:
     QScrollArea *m_scrollArea;
     DFlowLayout *m_folwLayout;
     QMap<uint, UserLoginWidget *> m_userLoginWidgets;
     SessionBaseModel *m_model;
+    FrameDataBind *m_frameDataBind;
     QWidget *m_centerWidget;
 };
 

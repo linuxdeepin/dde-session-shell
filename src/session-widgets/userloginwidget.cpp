@@ -193,6 +193,19 @@ void UserLoginWidget::mousePressEvent(QMouseEvent *event)
     emit clicked();
 }
 
+void UserLoginWidget::paintEvent(QPaintEvent *event)
+{
+    Q_UNUSED(event);
+    if (!m_isSelected)
+        return;
+    QPainter painter(this);
+    //选中时，在窗体底端居中，绘制92*4尺寸的圆角矩形，样式数据来源于设计图
+    painter.setPen(QColor(255, 255, 255, 76));
+    painter.setBrush(QColor(255, 255, 255, 76));
+    painter.setRenderHint(QPainter::Antialiasing, true);
+    painter.drawRoundedRect(QRect(width() / 2 - 46, height() - 4, 92, 4), 2, 2);
+}
+
 //初始化窗体控件
 void UserLoginWidget::initUI()
 {
@@ -213,6 +226,9 @@ void UserLoginWidget::initUI()
     m_passwordEdit->lineEdit()->setContextMenuPolicy(Qt::NoContextMenu);
     m_passwordEdit->setSizePolicy(QSizePolicy::Expanding, QSizePolicy::Fixed);
     m_passwordEdit->setFocusPolicy(Qt::StrongFocus);
+
+    m_lockPasswordWidget->setSizePolicy(QSizePolicy::Expanding, QSizePolicy::Fixed);
+    m_otherUserInput->setSizePolicy(QSizePolicy::Expanding, QSizePolicy::Fixed);
 
     m_passwordEdit->setVisible(true);
     m_passwordEdit->setFocus();
@@ -244,6 +260,8 @@ void UserLoginWidget::initUI()
     mainLayout->addStretch();
     mainLayout->addLayout(m_userLayout);
     mainLayout->addLayout(m_lockLayout);
+    //此处插入18的间隔，是为了在登录和锁屏多用户切换时，绘制选中的样式（一个92*4的圆角矩形，距离阴影下边间隔14像素）
+    mainLayout->addSpacing(18);
     mainLayout->addStretch();
 
     setLayout(mainLayout);
@@ -302,11 +320,20 @@ void UserLoginWidget::setWidgetWidth(int width)
 void UserLoginWidget::setIsLogin(bool isLogin)
 {
     m_isLogin = isLogin;
-    if (!m_isLogin) return;
-    setWidgetShowType(UserFrameLoginType);
 }
 
 bool UserLoginWidget::getIsLogin()
 {
     return  m_isLogin;
+}
+
+bool UserLoginWidget::getSelected()
+{
+    return  m_isSelected;
+}
+
+void UserLoginWidget::setSelected(bool isSelected)
+{
+    m_isSelected = isSelected;
+    update();
 }

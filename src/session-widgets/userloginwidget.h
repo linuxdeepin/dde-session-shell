@@ -71,6 +71,8 @@ public:
     void setWidgetWidth(int width);
     void setIsLogin(bool isLogin);
     bool getIsLogin();
+    void setSelected(bool isSelected);
+    bool getSelected();
 
 signals:
     void requestAuthUser(const QString &password);
@@ -84,6 +86,7 @@ protected:
     void resizeEvent(QResizeEvent *event) override;
     void showEvent(QShowEvent *event) override;
     void mousePressEvent(QMouseEvent *event) override;
+    void paintEvent(QPaintEvent *event) override;
 
 private:
     void initUI();
@@ -105,6 +108,7 @@ private:
     QVBoxLayout *m_lockLayout;                     //解锁按钮布局
     bool m_isLock;                                 //解锁功能是否被锁定(连续5次密码输入错误锁定)
     bool m_isLogin;                                //是否登录（UserFrame中使用）
+    bool m_isSelected;
 };
 
 #endif // USERLOGINWIDGET_H

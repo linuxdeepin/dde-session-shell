@@ -25,20 +25,23 @@
 #include "userloginwidget.h"
 
 #include "dflowlayout.h"
+#include "framedatabind.h"
 
 #include <QVBoxLayout>
 #include <QScrollArea>
 #include <QMouseEvent>
+#include <QScrollBar>
 
-const int UserFrameHeight = 150;
-const int UserFrameWidth = 200;
-const int UserFrameSpaceing = 30;
+const int UserFrameHeight = 174;
+const int UserFrameWidth = 226;
+const int UserFrameSpaceing = 40;
 const int UserFrameRowCount = 2;
 const int UserFrameColCount = 5;
 
 UserFrameList::UserFrameList(QWidget *parent)
     : QWidget(parent)
     , m_scrollArea(new QScrollArea(this))
+    , m_frameDataBind(FrameDataBind::Instance())
 {
     initUI();
 }
@@ -66,8 +69,14 @@ void UserFrameList::addUser(std::shared_ptr<User> user)
     widget->setUserAvatarSize(UserLoginWidget::AvatarSmallSize);
     widget->setAvatar(user->avatarPath());
     widget->setName(user->name());
-    widget->setWidgetShowType(UserLoginWidget::UserFrameType);
     widget->setIsLogin(user->isLogin());
+    widget->setSelected(m_model->currentUser()->uid() == user->uid());
+
+    if (user->isLogin()) {
+        widget->setWidgetShowType(UserLoginWidget::UserFrameLoginType);
+    } else {
+        widget->setWidgetShowType(UserLoginWidget::UserFrameType);
+    }
 
     m_userLoginWidgets[user->uid()] = widget;
     m_folwLayout->addWidget(widget);
@@ -116,9 +125,44 @@ void UserFrameList::hideEvent(QHideEvent *event)
     return QWidget::hideEvent(event);
 }
 
+void UserFrameList::keyPressEvent(QKeyEvent *event)
+{
+    switch (event->key()) {
+    case Qt::Key_Left:
+        switchPreviousUser();
+        break;
+    case Qt::Key_Right:
+        switchNextUser();
+        break;
+    case Qt::Key_Return:
+    case Qt::Key_Enter:
+        for (auto it = m_userLoginWidgets.constBegin(); it != m_userLoginWidgets.constEnd(); ++it) {
+            if (it.value()->getSelected()) {
+                emit it.value()->clicked();
+                break;
+            }
+        }
+        break;
+    case Qt::Key_Escape:
+        emit clicked();
+        break;
+    default:
+        break;
+    }
+    return QWidget::keyPressEvent(event);
+}
+
 void UserFrameList::initUI()
 {
     setFocusPolicy(Qt::NoFocus);
+
+    std::function<void (QVariant)> function = std::bind(&UserFrameList::onOtherPageChanged, this, std::placeholders::_1);
+    int index = m_frameDataBind->registerFunction("UserFrameList", function);
+
+    connect(this, &UserFrameList::destroyed, this, [ = ] {
+        m_frameDataBind->unRegisterFunction("UserFrameList", index);
+    });
+
     m_folwLayout = new DFlowLayout;
     m_folwLayout->setFlow(QListView::LeftToRight);
     m_folwLayout->setMargin(0);
@@ -142,4 +186,70 @@ void UserFrameList::initUI()
     mainLayout = new QVBoxLayout;
     mainLayout->addWidget(m_scrollArea, 0, Qt::AlignCenter);
     setLayout(mainLayout);
+}
+
+//切换下一个用户
+void UserFrameList::switchNextUser()
+{
+    QList<UserLoginWidget *> widgets = m_userLoginWidgets.values();
+
+    for (int i = 0; i != widgets.size(); ++i) {
+        if (widgets[i]->getSelected()) {
+            widgets[i]->setSelected(false);
+            if (i == (widgets.size() - 1)) {
+                widgets.first()->setSelected(true);
+                //处理m_scrollArea翻页显示
+                m_scrollArea->verticalScrollBar()->setValue(0);
+                m_frameDataBind->updateValue("UserFrameList", m_userLoginWidgets.key(m_userLoginWidgets.first()));
+            } else {
+                //处理m_scrollArea翻页显示
+                int selectedRight = widgets[i]->geometry().right();
+                int scrollRight = m_scrollArea->widget()->geometry().right();
+                if (selectedRight + UserFrameSpaceing == scrollRight) {
+                    QPoint topLeft = widgets[i]->geometry().topLeft();
+                    m_scrollArea->verticalScrollBar()->setValue(topLeft.y());
+                }
+                widgets[i + 1]->setSelected(true);
+                m_frameDataBind->updateValue("UserFrameList", m_userLoginWidgets.key(widgets[i + 1]));
+            }
+            break;
+        }
+    }
+}
+
+//切换上一个用户
+void UserFrameList::switchPreviousUser()
+{
+    QList<UserLoginWidget *> widgets = m_userLoginWidgets.values();
+
+    for (int i = 0; i != widgets.size(); ++i) {
+        if (widgets[i]->getSelected()) {
+            widgets[i]->setSelected(false);
+            if (i == 0) {
+                widgets.last()->setSelected(true);
+                //处理m_scrollArea翻页显示
+                m_scrollArea->verticalScrollBar()->setValue(m_scrollArea->verticalScrollBar()->maximum());
+                m_frameDataBind->updateValue("UserFrameList", m_userLoginWidgets.key(m_userLoginWidgets.last()));
+            } else {
+                //处理m_scrollArea翻页显示
+                QPoint topLeft = widgets[i]->geometry().topLeft();
+                if (topLeft.x() == 0) {
+                    m_scrollArea->verticalScrollBar()->setValue(widgets[i - 1]->geometry().topLeft().y());
+                }
+                widgets[i - 1]->setSelected(true);
+                m_frameDataBind->updateValue("UserFrameList", m_userLoginWidgets.key(widgets[i - 1]));
+            }
+            break;
+        }
+    }
+}
+
+void UserFrameList::onOtherPageChanged(const QVariant &value)
+{
+    QList<UserLoginWidget *> widgets = m_userLoginWidgets.values();
+
+    for (UserLoginWidget *widget : widgets) {
+        widget->setSelected(false);
+    }
+    m_userLoginWidgets[value.toUInt()]->setSelected(true);
 }
