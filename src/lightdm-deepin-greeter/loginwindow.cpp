@@ -25,7 +25,7 @@
 
 #include "loginwindow.h"
 #include "src/session-widgets/lockcontent.h"
-#include "view/logowidget.h"
+#include "src/widgets/logowidget.h"
 #include "src/session-widgets/userinfo.h"
 
 LoginWindow::LoginWindow(SessionBaseModel * const model, QWidget *parent)

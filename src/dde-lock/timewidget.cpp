@@ -57,7 +57,7 @@ TimeWidget::TimeWidget(QWidget *parent)
     vLayout->addWidget(m_timeLabel);
     vLayout->addWidget(m_dateLabel);
     vLayout->setSpacing(0);
-    vLayout->setContentsMargins(48, 0, 0, 0);
+    vLayout->setContentsMargins(0, 0, 0, 0);
 
     setLayout(vLayout);
 

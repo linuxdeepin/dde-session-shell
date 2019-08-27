@@ -66,6 +66,18 @@ void UserLoginWidget::grabKeyboard()
         m_passwordEdit->lineEdit()->grabKeyboard();
         return;
     }
+
+    if (m_otherUserInput->isVisible()) {
+        m_passwordEdit->lineEdit()->releaseKeyboard();
+        m_otherUserInput->grabKeyboard();
+        return;
+    }
+
+    if (m_lockButton->isVisible()) {
+        m_lockButton->grabKeyboard();
+        m_lockButton->setFocus();
+        return;
+    }
 }
 
 //密码连续输入错误5次，设置提示信息
@@ -102,18 +114,23 @@ void UserLoginWidget::setWidgetShowType(UserLoginWidget::WidgetShowType showType
 void UserLoginWidget::updateUI()
 {
     m_lockPasswordWidget->hide();
+    m_otherUserInput->hide();
     switch (m_showType) {
     case NoPasswordType: {
+        bool isNopassword = true;
+        if (m_authType == SessionBaseModel::LockType) {
+            isNopassword = false;
+        }
         m_passwordEdit->abortAuth();
-        m_passwordEdit->hide();
-        m_otherUserInput->hide();
+        m_passwordEdit->setVisible(!isNopassword && !m_isLock);
+        m_lockPasswordWidget->setVisible(m_isLock);
+
         m_lockButton->show();
         break;
     }
     case NormalType: {
         m_passwordEdit->abortAuth();
         m_passwordEdit->setVisible(!m_isLock);
-        m_otherUserInput->hide();
         m_lockButton->show();
         m_lockPasswordWidget->setVisible(m_isLock);
         break;
@@ -127,13 +144,11 @@ void UserLoginWidget::updateUI()
     }
     case UserFrameType: {
         m_passwordEdit->hide();
-        m_otherUserInput->hide();
         m_lockButton->hide();
         break;
     }
     case UserFrameLoginType: {
         m_passwordEdit->hide();
-        m_otherUserInput->hide();
         m_lockButton->hide();
         break;
     }
@@ -175,7 +190,7 @@ void UserLoginWidget::refreshBlurEffectPosition()
 //窗体resize事件,更新阴影窗体的位置
 void UserLoginWidget::resizeEvent(QResizeEvent *event)
 {
-    refreshBlurEffectPosition();
+    QTimer::singleShot(0, this, &UserLoginWidget::refreshBlurEffectPosition);
 
     return QWidget::resizeEvent(event);
 }
@@ -250,6 +265,8 @@ void UserLoginWidget::initUI()
     m_blurEffectWidget->setBlurRectXRadius(BlurRectRadius);
     m_blurEffectWidget->setBlurRectYRadius(BlurRectRadius);
 
+    m_lockButton->setFocusPolicy(Qt::StrongFocus);
+
     m_lockLayout = new QVBoxLayout;
     m_lockLayout->setMargin(0);
     m_lockLayout->setSpacing(0);
@@ -281,7 +298,7 @@ void UserLoginWidget::initConnect()
 
     connect(m_lockButton, &QPushButton::clicked, this, [ = ] {
         QString password = m_passwordEdit->lineEdit()->text();
-        if (password.isEmpty()) return;
+        if (password.isEmpty() && m_showType != NoPasswordType) return;
         emit requestAuthUser(password);
     });
     connect(m_userAvatar, &UserAvatar::clicked, this, &UserLoginWidget::clicked);

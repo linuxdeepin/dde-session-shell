@@ -132,6 +132,7 @@ set(WIDGETS_SRCS
     ./src/widgets/darrowrectangle.h
     ./src/widgets/userbreathinglabel.h
     ./src/widgets/virtualkbinstance.h
+    ./src/widgets/logowidget.h
     ./src/widgets/fullscreenbackground.cpp
     ./src/widgets/keyboardmonitor.cpp
     ./src/widgets/loginbutton.cpp
@@ -149,6 +150,7 @@ set(WIDGETS_SRCS
     ./src/widgets/otheruserinput.cpp
     ./src/widgets/userbreathinglabel.cpp
     ./src/widgets/kblayoutwidget.cpp
+    ./src/widgets/logowidget.cpp
 )
 
 set(SESSION_WIDGETS_SRCS
@@ -201,11 +203,9 @@ set(GREETER_SRCS
     ./src/widgets/sessionwidget.h
     ./src/widgets/sessionwidget.cpp
     ./src/lightdm-deepin-greeter/loginwindow.h
-    ./src/lightdm-deepin-greeter/view/logowidget.h
     ./src/lightdm-deepin-greeter/greeterworkek.h
     ./src/lightdm-deepin-greeter/loginwindow.cpp
     ./src/lightdm-deepin-greeter/greeterworkek.cpp
-    ./src/lightdm-deepin-greeter/view/logowidget.cpp
     ./src/lightdm-deepin-greeter/logincontent.cpp
 )
 

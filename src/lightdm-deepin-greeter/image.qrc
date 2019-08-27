@@ -55,6 +55,5 @@
         <file>img/switchframe/userswitch_hover.png</file>
         <file>img/switchframe/userswitch_normal.png</file>
         <file>img/switchframe/userswitch_press.png</file>
-        <file>img/logo.svg</file>
     </qresource>
 </RCC>
