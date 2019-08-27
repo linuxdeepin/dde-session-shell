@@ -133,6 +133,7 @@ set(WIDGETS_SRCS
     ./src/widgets/userbreathinglabel.h
     ./src/widgets/virtualkbinstance.h
     ./src/widgets/logowidget.h
+    ./src/widgets/timewidget.h
     ./src/widgets/fullscreenbackground.cpp
     ./src/widgets/keyboardmonitor.cpp
     ./src/widgets/loginbutton.cpp
@@ -151,6 +152,7 @@ set(WIDGETS_SRCS
     ./src/widgets/userbreathinglabel.cpp
     ./src/widgets/kblayoutwidget.cpp
     ./src/widgets/logowidget.cpp
+    ./src/widgets/timewidget.cpp
 )
 
 set(SESSION_WIDGETS_SRCS
@@ -193,7 +195,6 @@ set(LOCK_SRCS
     ./src/dde-lock/dbus/dbuslockagent.cpp
     ./src/dde-lock/dbus/dbuslockfrontservice.cpp
     ./src/dde-lock/lockworker.cpp
-    ./src/dde-lock/timewidget.cpp
 )
 
 set(GREETER_SRCS

@@ -33,20 +33,25 @@
 TimeWidget::TimeWidget(QWidget *parent)
     : QWidget(parent)
 {
-    int id = QFontDatabase::addApplicationFont(":/fonts/fonts/MavenProLight-200.otf");
+    int id = QFontDatabase::addApplicationFont(":/fonts/MavenProLight-200.otf");
     const QString fontFamily = QFontDatabase::applicationFontFamilies(id).first();
     const QFont timeFont(fontFamily);
 
     m_timeLabel = new QLabel;
     m_timeLabel->setFont(timeFont);
-    m_timeLabel->setAlignment(Qt::AlignLeft);
-    m_timeLabel->setStyleSheet("color:white;"
-                               "font-size:68px;");
+    m_timeLabel->setAlignment(Qt::AlignCenter);
+    QPalette palette = m_timeLabel->palette();
+    palette.setColor(QPalette::WindowText, Qt::white);
+    m_timeLabel->setPalette(palette);
+    DFontSizeManager::instance()->bind(m_timeLabel, DFontSizeManager::T1);
+
     m_dateLabel = new QLabel;
-    m_dateLabel->setAlignment(Qt::AlignLeft);
-    m_dateLabel->setStyleSheet("color:white;"
-                               "padding:3px 0;"
-                               "font-size:16px;");
+    m_dateLabel->setAlignment(Qt::AlignCenter);
+    palette = m_dateLabel->palette();
+    palette.setColor(QPalette::WindowText, Qt::white);
+    m_dateLabel->setPalette(palette);
+    DFontSizeManager::instance()->bind(m_dateLabel, DFontSizeManager::T6);
+
     refreshTime();
 
     m_refreshTimer = new QTimer(this);

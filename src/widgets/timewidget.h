@@ -26,9 +26,13 @@
 #ifndef TIMEWIDGET_H
 #define TIMEWIDGET_H
 
+#include <DFontSizeManager>
+
 #include <QWidget>
 #include <QLabel>
 #include <QTimer>
+
+DWIDGET_USE_NAMESPACE
 
 class TimeWidget : public QWidget
 {
