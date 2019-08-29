@@ -153,7 +153,10 @@ void LockWorker::enableZoneDetected(bool disable)
 
 void LockWorker::onDisplayErrorMsg(const QString &msg)
 {
-    emit m_model->authFaildTipsMessage(msg);
+    Q_UNUSED(msg);
+    //V20版本新需求，在指纹解锁失败和超时情况下，不提示任何信息
+    emit m_model->authFaildMessage("");
+//    emit m_model->authFaildTipsMessage(msg);
 }
 
 void LockWorker::onDisplayTextInfo(const QString &msg)

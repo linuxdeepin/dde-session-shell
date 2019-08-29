@@ -246,8 +246,16 @@ void GreeterWorkek::message(QString text, QLightDM::Greeter::MessageType type)
 
     if (text == "Verification timed out") {
         m_isThumbAuth = true;
-        emit m_model->authFaildMessage(tr(
-            "Fingerprint verification timed out, please enter your password manually"));
+
+        //V20版本新需求：若用户输入了密码，当指纹解锁超时，自动校验一次密码登录
+        if(!m_password.isEmpty())
+        {
+            QTimer::singleShot(300, this, [=] {
+                m_greeter->respond(m_password);
+            });
+        }
+//        emit m_model->authFaildMessage(tr(
+//            "Fingerprint verification timed out, please enter your password manually"));
         return;
     }
 
@@ -261,7 +269,8 @@ void GreeterWorkek::message(QString text, QLightDM::Greeter::MessageType type)
             qWarning() << "error message from lightdm: " << text;
             if (text == "Failed to match fingerprint") {
                 emit m_model->authFaildMessage("");
-                emit m_model->authFaildTipsMessage(tr("Failed to match fingerprint"));
+                //V20版本新需求，在指纹解锁失败和超时情况下，不提示任何信息
+                //emit m_model->authFaildTipsMessage(tr("Failed to match fingerprint"));
             }
             break;
     }
