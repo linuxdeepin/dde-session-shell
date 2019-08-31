@@ -40,11 +40,13 @@ public:
     void setUser(std::shared_ptr<User> user);
     UserLoginWidget *getUserLoginWidget();
     UserFrameList *getUserFrameList();
+    void hideKBLayout();
 
 signals:
     void requestAuthUser(const QString &password);
     void requestSwitchUser(std::shared_ptr<User> user);
     void hideUserFrameList();
+    void requestSetLayout(std::shared_ptr<User> user, const QString &value);
 
 private:
     void userLockChanged(bool disable);

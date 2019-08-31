@@ -47,6 +47,8 @@ void UserLoginInfo::setUser(std::shared_ptr<User> user)
     m_currentUserConnects << connect(user.get(), &User::lockChanged, this, &UserLoginInfo::userLockChanged);
     m_currentUserConnects << connect(user.get(), &User::avatarChanged, m_userLoginWidget, &UserLoginWidget::setAvatar);
     m_currentUserConnects << connect(user.get(), &User::displayNameChanged, m_userLoginWidget, &UserLoginWidget::setName);
+    m_currentUserConnects << connect(user.get(), &User::kbLayoutListChanged, m_userLoginWidget, &UserLoginWidget::updateKBLayout, Qt::UniqueConnection);
+    m_currentUserConnects << connect(user.get(), &User::currentKBLayoutChanged, m_userLoginWidget, &UserLoginWidget::setDefaultKBLayout, Qt::UniqueConnection);
 
     m_user = user;
 
@@ -55,6 +57,8 @@ void UserLoginInfo::setUser(std::shared_ptr<User> user)
     m_userLoginWidget->setUserAvatarSize(UserLoginWidget::AvatarLargeSize);
     m_userLoginWidget->updateAuthType(m_model->currentType());
     m_userLoginWidget->disablePassword(user.get()->isLock(), user->lockNum());
+    m_userLoginWidget->setKBLayoutList(user->kbLayoutList());
+    m_userLoginWidget->setDefKBLayout(user->currentKBLayout());
 
     if (m_user->isNoPasswdGrp()) {
         m_userLoginWidget->setWidgetShowType(UserLoginWidget::NoPasswordType);
@@ -74,6 +78,9 @@ void UserLoginInfo::initConnect()
             m_userLoginWidget->resetAllState();
         }
     });
+    connect(m_userLoginWidget, &UserLoginWidget::requestUserKBLayoutChanged, this, [ = ](const QString & value) {
+        emit requestSetLayout(m_user, value);
+    });
 
     //UserFrameList
     connect(m_userFrameList, &UserFrameList::clicked, this, &UserLoginInfo::hideUserFrameList);
@@ -88,6 +95,11 @@ UserLoginWidget *UserLoginInfo::getUserLoginWidget()
 UserFrameList *UserLoginInfo::getUserFrameList()
 {
     return m_userFrameList;
+}
+
+void UserLoginInfo::hideKBLayout()
+{
+    m_userLoginWidget->hideKBLayout();
 }
 
 void UserLoginInfo::userLockChanged(bool disable)

@@ -24,6 +24,7 @@
 
 #include "sessionbasemodel.h"
 
+#include <darrowrectangle.h>
 #include <DBlurEffectWidget>
 #include <DPasswdEditAnimated>
 #include <DFloatingButton>
@@ -39,6 +40,7 @@ class LockPasswordWidget;
 class FrameDataBind;
 class OtherUserInput;
 class QVBoxLayout;
+class KbLayoutWidget;
 
 class UserLoginWidget : public QWidget
 {
@@ -59,6 +61,7 @@ public:
     };
 
     explicit UserLoginWidget(QWidget *parent = nullptr);
+    ~UserLoginWidget() override;
     void resetAllState();
     void grabKeyboard();
     void disablePassword(bool disable, uint lockNum = 0);
@@ -73,10 +76,16 @@ public:
     bool getIsLogin();
     void setSelected(bool isSelected);
     bool getSelected();
+    void updateKBLayout(const QStringList &list);
+    void setDefaultKBLayout(const QString &layout);
+    void hideKBLayout();
+    void setKBLayoutList(QStringList kbLayoutList);
+    void setDefKBLayout(QString defKBLayout);
 
 signals:
     void requestAuthUser(const QString &password);
     void clicked();
+    void requestUserKBLayoutChanged(const QString &layout);
 
 public slots:
     void updateAuthType(SessionBaseModel::AuthType type);
@@ -92,6 +101,11 @@ private:
     void initUI();
     void initConnect();
     void updateUI();
+    void onOtherPagePasswordChanged(const QVariant &value);
+    void onOtherPageKBLayoutChanged(const QVariant &value);
+
+    void toggleKBLayoutWidget();
+    void refreshKBLayoutWidgetPosition();
 
 private:
     DBlurEffectWidget *m_blurEffectWidget;         //阴影窗体
@@ -103,12 +117,17 @@ private:
     SessionBaseModel::AuthType m_authType;         //认证类型
     OtherUserInput *m_otherUserInput;
     DFloatingButton *m_lockButton;                 //解锁按钮
+    DArrowRectangle *m_kbLayoutBorder;             //键盘布局异性框类
+    KbLayoutWidget *m_kbLayoutWidget;              //键盘布局窗体
     WidgetShowType m_showType;                     //窗体显示模式,分为无密码登录模式\正常模式\ID和密码登录模式
     QVBoxLayout *m_userLayout;                     //用户输入框布局
     QVBoxLayout *m_lockLayout;                     //解锁按钮布局
     bool m_isLock;                                 //解锁功能是否被锁定(连续5次密码输入错误锁定)
     bool m_isLogin;                                //是否登录（UserFrame中使用）
     bool m_isSelected;
+    QStringList m_KBLayoutList;
+    QString m_defkBLayout;
+    QLabel *m_loginLabel;
 };
 
 #endif // USERLOGINWIDGET_H

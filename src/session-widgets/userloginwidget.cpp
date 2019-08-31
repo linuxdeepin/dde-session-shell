@@ -27,6 +27,8 @@
 #include "src/widgets/loginbutton.h"
 #include "src/global_util/constants.h"
 #include "src/widgets/otheruserinput.h"
+#include "src/widgets/kblayoutwidget.h"
+#include "src/session-widgets/framedatabind.h"
 
 #include <DFontSizeManager>
 #include <DPalette>
@@ -45,12 +47,19 @@ UserLoginWidget::UserLoginWidget(QWidget *parent)
     , m_lockPasswordWidget(new LockPasswordWidget)
     , m_otherUserInput(new OtherUserInput(this))
     , m_lockButton(new DFloatingButton(tr("Login")))
+    , m_kbLayoutBorder(new DArrowRectangle(DArrowRectangle::ArrowTop))
+    , m_kbLayoutWidget(new KbLayoutWidget(QStringList()))
     , m_showType(NormalType)
     , m_isLock(false)
     , m_isLogin(false)
 {
     initUI();
     initConnect();
+}
+
+UserLoginWidget::~UserLoginWidget()
+{
+    m_kbLayoutBorder->deleteLater();
 }
 
 //重置控件的状态
@@ -85,7 +94,7 @@ void UserLoginWidget::setFaildMessage(const QString &message)
 {
     m_passwordEdit->abortAuth();
 
-    if (m_isLock) {
+    if (m_isLock && !message.isEmpty()) {
         m_lockPasswordWidget->setMessage(message);
         return;
     }
@@ -131,6 +140,8 @@ void UserLoginWidget::updateUI()
     case NormalType: {
         m_passwordEdit->abortAuth();
         m_passwordEdit->setVisible(!m_isLock);
+        updateKBLayout(m_KBLayoutList);
+        setDefaultKBLayout(m_defkBLayout);
         m_lockButton->show();
         m_lockPasswordWidget->setVisible(m_isLock);
         break;
@@ -155,6 +166,50 @@ void UserLoginWidget::updateUI()
     default:
         break;
     }
+}
+
+void UserLoginWidget::onOtherPagePasswordChanged(const QVariant &value)
+{
+    m_passwordEdit->lineEdit()->setText(value.toString());
+}
+
+void UserLoginWidget::onOtherPageKBLayoutChanged(const QVariant &value)
+{
+    if (value.toBool()) {
+        m_kbLayoutBorder->setParent(window());
+    }
+
+    m_kbLayoutBorder->setVisible(value.toBool());
+
+    if (m_kbLayoutBorder->isVisible()) {
+        m_kbLayoutBorder->raise();
+    }
+
+    refreshKBLayoutWidgetPosition();
+}
+
+void UserLoginWidget::toggleKBLayoutWidget()
+{
+    if (m_kbLayoutBorder->isVisible()) {
+        m_kbLayoutBorder->hide();
+    } else {
+        // 保证布局选择控件不会被其它控件遮挡
+        // 必须要将它作为主窗口的子控件
+        m_kbLayoutBorder->setParent(window());
+        m_kbLayoutBorder->setVisible(true);
+        m_kbLayoutBorder->raise();
+        refreshKBLayoutWidgetPosition();
+    }
+
+    FrameDataBind::Instance()->updateValue("KBLayout", m_kbLayoutBorder->isVisible());
+}
+
+void UserLoginWidget::refreshKBLayoutWidgetPosition()
+{
+    const QPoint &point = mapTo(m_kbLayoutBorder->parentWidget(), QPoint(m_passwordEdit->geometry().x() + (m_passwordEdit->width() / 2),
+                                                                         m_passwordEdit->geometry().bottomLeft().y()));
+    m_kbLayoutBorder->move(point.x(), point.y());
+    m_kbLayoutBorder->setArrowX(15);
 }
 
 //设置密码输入框不可用
@@ -191,6 +246,7 @@ void UserLoginWidget::refreshBlurEffectPosition()
 void UserLoginWidget::resizeEvent(QResizeEvent *event)
 {
     QTimer::singleShot(0, this, &UserLoginWidget::refreshBlurEffectPosition);
+    QTimer::singleShot(0, this, &UserLoginWidget::refreshKBLayoutWidgetPosition);
 
     return QWidget::resizeEvent(event);
 }
@@ -226,6 +282,25 @@ void UserLoginWidget::initUI()
 {
     m_userAvatar->setAvatarSize(UserAvatar::AvatarLargeSize);
 
+    QMap<QString, int> registerFunctionIndexs;
+    std::function<void (QVariant)> passwordChanged = std::bind(&UserLoginWidget::onOtherPagePasswordChanged, this, std::placeholders::_1);
+    registerFunctionIndexs["Password"] = FrameDataBind::Instance()->registerFunction("Password", passwordChanged);
+
+    std::function<void (QVariant)> kblayoutChanged = std::bind(&UserLoginWidget::onOtherPageKBLayoutChanged, this, std::placeholders::_1);
+    registerFunctionIndexs["KBLayout"] = FrameDataBind::Instance()->registerFunction("KBLayout", kblayoutChanged);
+
+    connect(this, &UserLoginWidget::destroyed, this, [ = ] {
+        for (auto it = registerFunctionIndexs.constBegin(); it != registerFunctionIndexs.constEnd(); ++it)
+        {
+            FrameDataBind::Instance()->unRegisterFunction(it.key(), it.value());
+        }
+    });
+
+    QTimer::singleShot(0, this, [ = ] {
+        FrameDataBind::Instance()->refreshData("Password");
+        FrameDataBind::Instance()->refreshData("KBLayout");
+    });
+
     QPalette palette = m_nameLbl->palette();
     palette.setColor(QPalette::WindowText, Qt::white);
     m_nameLbl->setPalette(palette);
@@ -233,14 +308,24 @@ void UserLoginWidget::initUI()
     DFontSizeManager::instance()->bind(m_nameLbl, DFontSizeManager::T2);
     m_nameLbl->setAlignment(Qt::AlignCenter);
 
-    //暂时先将键盘布局按钮\解锁按钮等隐藏
-    m_passwordEdit->setKeyboardButtonEnable(false);
+    //暂时先将解锁按钮等隐藏
     m_passwordEdit->setEyeButtonEnable(false);
     m_passwordEdit->setSubmitButtonEnable(false);
     m_passwordEdit->setContentsMargins(0, 0, 0, 0);
+    m_passwordEdit->lineEdit()->setAlignment(Qt::AlignCenter);
     m_passwordEdit->lineEdit()->setContextMenuPolicy(Qt::NoContextMenu);
     m_passwordEdit->setSizePolicy(QSizePolicy::Expanding, QSizePolicy::Fixed);
     m_passwordEdit->setFocusPolicy(Qt::StrongFocus);
+
+    m_kbLayoutBorder->hide();
+    m_kbLayoutBorder->setBackgroundColor(QColor(255, 255, 255, 51));    //255*0.2
+    m_kbLayoutBorder->setBorderColor(QColor(0, 0, 0, 0));
+    m_kbLayoutBorder->setBorderWidth(0);
+    m_kbLayoutBorder->setMargin(0);
+    m_kbLayoutBorder->setContent(m_kbLayoutWidget);
+    m_kbLayoutBorder->setFixedWidth(DDESESSIONCC::PASSWDLINEEIDT_WIDTH);
+    m_kbLayoutWidget->setFixedWidth(DDESESSIONCC::PASSWDLINEEIDT_WIDTH);
+    connect(m_passwordEdit, &DPasswdEditAnimated::keyboardButtonClicked, this, &UserLoginWidget::toggleKBLayoutWidget);
 
     m_lockPasswordWidget->setSizePolicy(QSizePolicy::Expanding, QSizePolicy::Fixed);
     m_otherUserInput->setSizePolicy(QSizePolicy::Expanding, QSizePolicy::Fixed);
@@ -255,7 +340,20 @@ void UserLoginWidget::initUI()
     m_userLayout->setSpacing(WidgetsSpacing);
 
     m_userLayout->addWidget(m_userAvatar, 0, Qt::AlignHCenter);
-    m_userLayout->addWidget(m_nameLbl, 0, Qt::AlignHCenter);
+
+    QHBoxLayout *nameLayout = new QHBoxLayout;
+    nameLayout->setMargin(0);
+    nameLayout->setSpacing(0);
+    //在用户名前，插入一个图标(m_loginLabel)用来表示多用户切换时已登录用户的标记
+    //TODO 图标后续需要替换
+    m_loginLabel = new QLabel(tr("Login"));
+    m_loginLabel->hide();
+    nameLayout->addWidget(m_loginLabel);
+    nameLayout->addWidget(m_nameLbl);
+    QFrame *nameFrame = new QFrame;
+    nameFrame->setLayout(nameLayout);
+    m_userLayout->addWidget(nameFrame, 0, Qt::AlignHCenter);
+
     m_userLayout->addWidget(m_otherUserInput);
     m_userLayout->addWidget(m_passwordEdit);
     m_userLayout->addWidget(m_lockPasswordWidget);
@@ -302,6 +400,10 @@ void UserLoginWidget::initConnect()
         emit requestAuthUser(password);
     });
     connect(m_userAvatar, &UserAvatar::clicked, this, &UserLoginWidget::clicked);
+
+    connect(m_kbLayoutWidget, &KbLayoutWidget::setButtonClicked, this, &UserLoginWidget::requestUserKBLayoutChanged);
+    //鼠标点击切换键盘布局，就将DArrowRectangle隐藏掉
+    connect(m_kbLayoutWidget, &KbLayoutWidget::setButtonClicked, m_kbLayoutBorder, &DArrowRectangle::hide);
 }
 
 //设置用户名
@@ -337,6 +439,9 @@ void UserLoginWidget::setWidgetWidth(int width)
 void UserLoginWidget::setIsLogin(bool isLogin)
 {
     m_isLogin = isLogin;
+    if (m_isLogin) {
+        m_loginLabel->show();
+    }
 }
 
 bool UserLoginWidget::getIsLogin()
@@ -347,6 +452,33 @@ bool UserLoginWidget::getIsLogin()
 bool UserLoginWidget::getSelected()
 {
     return  m_isSelected;
+}
+
+void UserLoginWidget::updateKBLayout(const QStringList &list)
+{
+    m_passwordEdit->setKeyboardButtonEnable(list.size() > 1);
+    m_kbLayoutWidget->updateButtonList(list);
+    m_kbLayoutBorder->setContent(m_kbLayoutWidget);
+}
+
+void UserLoginWidget::setDefaultKBLayout(const QString &layout)
+{
+    m_kbLayoutWidget->setDefault(layout);
+}
+
+void UserLoginWidget::hideKBLayout()
+{
+    m_kbLayoutBorder->hide();
+}
+
+void UserLoginWidget::setKBLayoutList(QStringList kbLayoutList)
+{
+    m_KBLayoutList = kbLayoutList;
+}
+
+void UserLoginWidget::setDefKBLayout(QString defKBLayout)
+{
+    m_defkBLayout = defKBLayout;
 }
 
 void UserLoginWidget::setSelected(bool isSelected)
