@@ -8,6 +8,7 @@
 
 #include "sessionbasewindow.h"
 #include "sessionbasemodel.h"
+#include "src/widgets/mediawidget.h"
 
 using ImageBlur = com::deepin::daemon::ImageBlur;
 
@@ -16,6 +17,10 @@ class UserInputWidget;
 class User;
 class UserFrame;
 class ShutdownWidget;
+class LogoWidget;
+class TimeWidget;
+class UserLoginInfo;
+
 class LockContent : public SessionBaseWindow
 {
     Q_OBJECT
@@ -37,6 +42,7 @@ signals:
 public slots:
     void pushUserFrame();
     void pushShutdownFrame();
+    void setMPRISEnable(const bool state);
 
 protected:
     void mouseReleaseEvent(QMouseEvent *event) Q_DECL_OVERRIDE;
@@ -62,6 +68,10 @@ protected:
     std::shared_ptr<User> m_user;
     QList<QMetaObject::Connection> m_currentUserConnects;
     QTranslator *m_translator;
+    LogoWidget *m_logoWidget;
+    TimeWidget *m_timeWidget;
+	MediaWidget *m_mediaWidget;
+    UserLoginInfo *m_userLoginInfo;
 };
 
 #endif // LOCKCONTENT_H

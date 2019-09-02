@@ -27,7 +27,6 @@
 #include "src/session-widgets/lockcontent.h"
 #include "src/session-widgets/sessionbasemodel.h"
 #include "src/session-widgets/userinfo.h"
-#include "timewidget.h"
 
 #include <QApplication>
 #include <QX11Info>
@@ -42,7 +41,6 @@ LockFrame::LockFrame(SessionBaseModel * const model, QWidget* parent)
     qDebug() << "LockFrame geometry:" << geometry();
 
     m_content = new LockContent(model);
-    m_content->setLeftBottomWidget(new TimeWidget);
     setContent(m_content);
     m_content->hide();
     connect(m_content, &LockContent::requestSwitchToUser, this, &LockFrame::requestSwitchToUser);

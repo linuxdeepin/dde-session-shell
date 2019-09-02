@@ -84,9 +84,9 @@ void UserAvatar::paintEvent(QPaintEvent *)
     }
 
     QPainter painter(this);
-    QRect ellipseRec((width() -iconSize) / 2.0, (height() - iconSize) / 2.0, iconSize, iconSize);
+    QRect roundedRect((width() -iconSize) / 2.0, (height() - iconSize) / 2.0, iconSize, iconSize);
     QPainterPath path;
-    path.addEllipse(ellipseRec);
+    path.addRoundedRect(roundedRect, AVATAR_ROUND_RADIUS, AVATAR_ROUND_RADIUS);
 
     painter.setRenderHint(QPainter::Antialiasing);
     painter.setRenderHint(QPainter::SmoothPixmapTransform);
@@ -101,7 +101,7 @@ void UserAvatar::paintEvent(QPaintEvent *)
 
     QImage tmpImg(imgPath);
 
-    painter.drawImage(ellipseRec, this->isEnabled() ? tmpImg : imageToGray(tmpImg));
+    painter.drawImage(roundedRect, this->isEnabled() ? tmpImg : imageToGray(tmpImg));
 
     QColor penColor = m_selected ? m_borderSelectedColor : m_borderColor;
 

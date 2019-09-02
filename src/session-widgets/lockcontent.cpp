@@ -6,6 +6,11 @@
 #include "userframe.h"
 #include "src/widgets/shutdownwidget.h"
 #include "src/widgets/virtualkbinstance.h"
+#include "src/widgets/logowidget.h"
+#include "src/widgets/timewidget.h"
+#include "userlogininfo.h"
+#include "userloginwidget.h"
+#include "userframelist.h"
 
 #include <QMouseEvent>
 
@@ -15,11 +20,15 @@ LockContent::LockContent(SessionBaseModel * const model, QWidget *parent)
     , m_imageBlurInter(new ImageBlur("com.deepin.daemon.Accounts", "/com/deepin/daemon/ImageBlur", QDBusConnection::systemBus(), this))
     , m_virtualKB(nullptr)
     , m_translator(new QTranslator)
+    , m_userLoginInfo(new UserLoginInfo(model))
 {
     m_controlWidget = new ControlWidget;
     m_userInputWidget = new UserInputWidget;
     m_userFrame = new UserFrame;
     m_shutdownFrame = new ShutdownWidget;
+    m_logoWidget = new LogoWidget;
+    m_timeWidget = new TimeWidget;
+    m_mediaWidget = nullptr;
 
     m_userInputWidget->updateAuthType(model->currentType());
 
@@ -29,10 +38,17 @@ LockContent::LockContent(SessionBaseModel * const model, QWidget *parent)
     model->setCurrentModeState(SessionBaseModel::ModeStatus::PasswordMode);
 
     setRightBottomWidget(m_controlWidget);
+    setCenterTopWidget(m_timeWidget);
+    setLeftBottomWidget(m_logoWidget);
+    connect(model, &SessionBaseModel::currentUserChanged, this, [ = ](std::shared_ptr<User> user) {
+        if (user.get()) {
+            m_logoWidget->updateLocale(user->locale().split(".").first());
+        }
+    });
 
     switch (model->currentType()) {
     case SessionBaseModel::AuthType::LockType:
-        m_controlWidget->setMPRISEnable(true);
+        setMPRISEnable(true);
         break;
     default:
         break;
@@ -53,6 +69,14 @@ LockContent::LockContent(SessionBaseModel * const model, QWidget *parent)
     });
     connect(m_controlWidget, &ControlWidget::requestSwitchVirtualKB, this, &LockContent::toggleVirtualKB);
     connect(m_userFrame, &UserFrame::hideFrame, this, &LockContent::restoreMode);
+
+    //lixin
+    connect(m_userLoginInfo, &UserLoginInfo::requestAuthUser, this, &LockContent::requestAuthUser);
+    connect(m_userLoginInfo, &UserLoginInfo::hideUserFrameList, this, &LockContent::restoreMode);
+    connect(m_userLoginInfo, &UserLoginInfo::requestSwitchUser, this, &LockContent::requestSwitchToUser);
+    connect(m_userLoginInfo, &UserLoginInfo::requestSwitchUser, this, &LockContent::restoreMode);
+    connect(m_userLoginInfo, &UserLoginInfo::requestSetLayout, this, &LockContent::requestSetLayout);
+
     connect(m_shutdownFrame, &ShutdownWidget::abortOperation, this, &LockContent::restoreMode);
 
     connect(model, &SessionBaseModel::authFinished, this, [=] (bool success) {
@@ -132,6 +156,9 @@ void LockContent::onCurrentUserChanged(std::shared_ptr<User> user)
 
     m_userInputWidget->setUser(user);
 
+    //lixin
+    m_userLoginInfo->setUser(user);
+
     //TODO: refresh blur image
     QTimer::singleShot(0, this, [=] {
         updateBackground(user->greeterBackgroundPath());
@@ -141,10 +168,13 @@ void LockContent::onCurrentUserChanged(std::shared_ptr<User> user)
 void LockContent::pushUserFrame()
 {
     releaseAllKeyboard();
-    setCenterContent(m_userFrame);
-    m_userFrame->expansion(true);
+//    setCenterContent(m_userFrame);
+//    m_userFrame->expansion(true);
 
-    QTimer::singleShot(300, m_userFrame, &UserFrame::grabKeyboard);
+//    QTimer::singleShot(300, m_userFrame, &UserFrame::grabKeyboard);
+
+    setCenterContent(m_userLoginInfo->getUserFrameList());
+    QTimer::singleShot(300, m_userLoginInfo->getUserFrameList(), &UserFrameList::grabKeyboard);
 }
 
 void LockContent::pushShutdownFrame()
@@ -153,6 +183,17 @@ void LockContent::pushShutdownFrame()
     setCenterContent(m_shutdownFrame);
 
     QTimer::singleShot(300, m_shutdownFrame, &ShutdownWidget::grabKeyboard);
+}
+
+void LockContent::setMPRISEnable(const bool state)
+{
+    if (m_mediaWidget) {
+        m_mediaWidget->setVisible(state);
+    } else {
+        m_mediaWidget = new MediaWidget;
+        m_mediaWidget->initMediaPlayer();
+        setCenterBottomWidget(m_mediaWidget);
+    }
 }
 
 void LockContent::onStatusChanged(SessionBaseModel::ModeStatus status)
@@ -181,6 +222,7 @@ void LockContent::mouseReleaseEvent(QMouseEvent *event)
 
     // hide keyboardlayout widget
     m_userInputWidget->hideKeyboard();
+    m_userLoginInfo->hideKBLayout();
 
     restoreCenterContent();
 
@@ -216,15 +258,17 @@ void LockContent::releaseAllKeyboard()
 {
     m_userInputWidget->releaseKeyboard();
     m_userFrame->releaseKeyboard();
+    m_userLoginInfo->getUserLoginWidget()->releaseKeyboard();
+    m_userLoginInfo->getUserFrameList()->releaseKeyboard();
     m_shutdownFrame->releaseKeyboard();
 }
 
 void LockContent::restoreCenterContent()
 {
     releaseAllKeyboard();
-    setCenterContent(m_userInputWidget);
 
-    QTimer::singleShot(300, m_userInputWidget, &UserInputWidget::grabKeyboard);
+    setCenterContent(m_userLoginInfo->getUserLoginWidget());
+    QTimer::singleShot(300, m_userLoginInfo->getUserLoginWidget(), &UserLoginWidget::grabKeyboard);
 }
 
 void LockContent::restoreMode()
@@ -234,9 +278,10 @@ void LockContent::restoreMode()
 
 void LockContent::updateBackground(const QString &path)
 {
-    const QString &wallpaper = m_imageBlurInter->Get(path);
+//    const QString &wallpaper = m_imageBlurInter->Get(path);
 
-    emit requestBackground(wallpaper.isEmpty() ? path : wallpaper);
+//    emit requestBackground(wallpaper.isEmpty() ? path : wallpaper);
+    emit requestBackground(path);
 }
 
 void LockContent::onBlurDone(const QString &source, const QString &blur, bool status)

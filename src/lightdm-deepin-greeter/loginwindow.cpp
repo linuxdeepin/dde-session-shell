@@ -25,15 +25,12 @@
 
 #include "loginwindow.h"
 #include "src/session-widgets/lockcontent.h"
-#include "src/widgets/logowidget.h"
 #include "src/session-widgets/userinfo.h"
 
 LoginWindow::LoginWindow(SessionBaseModel * const model, QWidget *parent)
     : FullscreenBackground(parent)
     , m_loginFrame( new LockContent(model, this))
 {
-    LogoWidget *logoWidget = new LogoWidget;
-    m_loginFrame->setLeftBottomWidget(logoWidget);
     setContent(m_loginFrame);
     m_loginFrame->hide();
 
@@ -58,10 +55,4 @@ LoginWindow::LoginWindow(SessionBaseModel * const model, QWidget *parent)
     connect(m_loginFrame, &LockContent::requestAuthUser, this, &LoginWindow::requestAuthUser);
     connect(m_loginFrame, &LockContent::requestSwitchToUser, this, &LoginWindow::requestSwitchToUser);
     connect(m_loginFrame, &LockContent::requestSetLayout, this, &LoginWindow::requestSetLayout);
-
-    connect(model, &SessionBaseModel::currentUserChanged, this, [=] (std::shared_ptr<User> user) {
-        if (user.get()) {
-            logoWidget->updateLocale(user->locale().split(".").first());
-        }
-    });
 }

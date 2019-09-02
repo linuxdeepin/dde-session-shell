@@ -109,6 +109,7 @@ private:
     const int SMALL_ICON_SIZE = 80;
     const int NORMAL_ICON_SIZE = 90;
     const int LARGE_ICON_SIZE = 100;
+    const int AVATAR_ROUND_RADIUS = 18;
 
     QPalette m_palette;
     QPropertyAnimation *m_showAnimation;
