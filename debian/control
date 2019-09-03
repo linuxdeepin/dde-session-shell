@@ -1,0 +1,38 @@
+Source: dde-session-shell
+Section: devel
+Priority: optional
+Maintainer: Deepin Sysdev <sysdev@deepin.com>
+Build-Depends: debhelper (>= 8.0.0), pkg-config,
+ cmake,
+ qtbase5-dev,
+ liblightdm-qt5-3-dev | liblightdm-qt-dev,
+ libxcb-ewmh-dev,
+ libqt5x11extras5-dev,
+ libgsettings-qt-dev,
+ libqt5svg5-dev,
+ libglib2.0-dev,
+ libdtkwidget-dev,
+ qtdeclarative5-dev,
+ qttools5-dev-tools,
+ libpam0g-dev,libsystemd-dev,
+ libdframeworkdbus-dev,
+ deepin-gettext-tools,
+ libxtst-dev,
+ libxcursor-dev,
+ libxrandr-dev,
+ libdtkcore5-bin
+Standards-Version: 3.9.4
+Homepage: http://www.deepin.org/
+
+Package: dde-session-shell
+Architecture: any
+Depends: ${shlibs:Depends}, ${misc:Depends}, ${dist:Depends}, deepin-desktop-schemas (>= 2.91.2), dde-daemon, x11-xserver-utils, dbus-x11
+Provides: lightdm-greeter
+Recommends: onboard
+Conflicts: dde-workspace,
+ startdde (<< 2.91.1),
+ deepin-notifications
+Replaces: deepin-notifications
+Breaks: dde-workspace, startdde(<< 2.91.1)
+Description: deepin desktop-environment - dde-session-shell module
+ Deepin desktop environment 2015 - dde-session-shell module.
