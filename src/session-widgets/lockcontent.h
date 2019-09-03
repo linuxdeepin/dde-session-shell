@@ -56,6 +56,7 @@ protected:
     void toggleVirtualKB();
     void updateVirtualKBPosition();
     void onUserListChanged(QList<std::shared_ptr<User>> list);
+    bool getUse24HourFormat() const;
 
 protected:
     SessionBaseModel *m_model;
@@ -72,6 +73,8 @@ protected:
     TimeWidget *m_timeWidget;
 	MediaWidget *m_mediaWidget;
     UserLoginInfo *m_userLoginInfo;
+    QDBusInterface *m_lock24HourFormatInter;
+    QDBusInterface *m_greeter24HourFormatInter;
 };
 
 #endif // LOCKCONTENT_H

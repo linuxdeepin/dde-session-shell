@@ -30,8 +30,9 @@
 #include <QFontDatabase>
 #include <QSettings>
 
-TimeWidget::TimeWidget(QWidget *parent)
+TimeWidget::TimeWidget(bool use24HourFormat, QWidget *parent)
     : QWidget(parent)
+    , m_use24HourFormat(use24HourFormat)
 {
     int id = QFontDatabase::addApplicationFont(":/fonts/MavenProLight-200.otf");
     const QString fontFamily = QFontDatabase::applicationFontFamilies(id).first();
@@ -71,7 +72,11 @@ TimeWidget::TimeWidget(QWidget *parent)
 
 void TimeWidget::refreshTime()
 {
-    m_timeLabel->setText(QDateTime::currentDateTime().toString(tr("hh:mm")));
+    if (m_use24HourFormat) {
+        m_timeLabel->setText(QDateTime::currentDateTime().toString(tr("hh:mm")));
+    } else {
+        m_timeLabel->setText(QDateTime::currentDateTime().toString(tr("hh:mm ap")));
+    }
+
     m_dateLabel->setText(QDateTime::currentDateTime().toString(tr("yyyy-MM-dd dddd")));
 }
-

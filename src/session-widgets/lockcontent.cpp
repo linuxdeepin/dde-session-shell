@@ -27,7 +27,14 @@ LockContent::LockContent(SessionBaseModel * const model, QWidget *parent)
     m_userFrame = new UserFrame;
     m_shutdownFrame = new ShutdownWidget;
     m_logoWidget = new LogoWidget;
-    m_timeWidget = new TimeWidget;
+
+    uint userID = m_model->currentUser()->uid();
+    const QString lockDBusPath = QString("%1%2").arg("/com/deepin/daemon/Accounts/User", QString::number(userID));
+    m_greeter24HourFormatInter = new QDBusInterface("com.deepin.daemon.Accounts", lockDBusPath, "com.deepin.daemon.Accounts.User",
+                                                    QDBusConnection::systemBus(), this);
+    m_lock24HourFormatInter = new QDBusInterface("com.deepin.daemon.Timedate", "/com/deepin/daemon/Timedate", "com.deepin.daemon.Timedate",
+                                                 QDBusConnection::sessionBus(), this);
+    m_timeWidget = new TimeWidget(getUse24HourFormat());
     m_mediaWidget = nullptr;
 
     m_userInputWidget->updateAuthType(model->currentType());
@@ -323,4 +330,13 @@ void LockContent::onUserListChanged(QList<std::shared_ptr<User> > list)
     const bool alwaysShowUserSwitchButton = m_model->alwaysShowUserSwitchButton();
 
     m_controlWidget->setUserSwitchEnable(alwaysShowUserSwitchButton || (allowShowUserSwitchButton && list.size() > 1));
+}
+
+bool LockContent::getUse24HourFormat() const
+{
+    if (m_model->currentType() == SessionBaseModel::LightdmType) {
+        return (m_lock24HourFormatInter->property("Use24HourFormat").toBool());
+    } else {
+        return (m_greeter24HourFormatInter->property("Use24HourFormat").toBool());
+    }
 }

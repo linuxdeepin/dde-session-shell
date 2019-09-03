@@ -38,7 +38,7 @@ class TimeWidget : public QWidget
 {
     Q_OBJECT
 public:
-    explicit TimeWidget(QWidget *parent = 0);
+    explicit TimeWidget(bool use24HourFormat = true, QWidget *parent = nullptr);
 
 private:
     void refreshTime();
@@ -48,6 +48,7 @@ private:
     QLabel *m_dateLabel;
 
     QTimer *m_refreshTimer;
+    bool m_use24HourFormat;
 };
 
 #endif // TIMEWIDGET_H
