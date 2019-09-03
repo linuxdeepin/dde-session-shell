@@ -238,6 +238,7 @@ set(SHUTDOWN_SRCS
 set(QRCS
     ./src/widgets/widgetsimages.qrc
     ./src/widgets/widgetstheme.qrc
+    ./src/session-widgets/widgetsimages.qrc
 )
 
 add_executable(

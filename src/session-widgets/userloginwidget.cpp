@@ -29,11 +29,13 @@
 #include "src/widgets/otheruserinput.h"
 #include "src/widgets/kblayoutwidget.h"
 #include "src/session-widgets/framedatabind.h"
+#include "src/widgets/keyboardmonitor.h"
 
 #include <DFontSizeManager>
 #include <DPalette>
 
 #include <QVBoxLayout>
+#include <QAction>
 
 static const int BlurRectRadius = 15;
 static const int WidgetsSpacing = 10;
@@ -43,15 +45,16 @@ UserLoginWidget::UserLoginWidget(QWidget *parent)
     , m_blurEffectWidget(new DBlurEffectWidget(this))
     , m_userAvatar(new UserAvatar(this))
     , m_nameLbl(new QLabel(this))
-    , m_passwordEdit(new DPasswdEditAnimated(this))
+    , m_passwordEdit(new DPasswordEdit(this))
     , m_lockPasswordWidget(new LockPasswordWidget)
     , m_otherUserInput(new OtherUserInput(this))
-    , m_lockButton(new DFloatingButton(tr("Login")))
+    , m_lockButton(new DFloatingButton(DStyle::SP_LockElement))
     , m_kbLayoutBorder(new DArrowRectangle(DArrowRectangle::ArrowTop))
     , m_kbLayoutWidget(new KbLayoutWidget(QStringList()))
     , m_showType(NormalType)
     , m_isLock(false)
     , m_isLogin(false)
+    , m_capslockMonitor(KeyboardMonitor::instance())
 {
     initUI();
     initConnect();
@@ -65,19 +68,18 @@ UserLoginWidget::~UserLoginWidget()
 //重置控件的状态
 void UserLoginWidget::resetAllState()
 {
-    m_passwordEdit->lineEdit()->clear();
-    m_passwordEdit->abortAuth();
+    m_passwordEdit->clear();
 }
 
 void UserLoginWidget::grabKeyboard()
 {
     if (m_passwordEdit->isVisible()) {
-        m_passwordEdit->lineEdit()->grabKeyboard();
+        m_passwordEdit->grabKeyboard();
         return;
     }
 
     if (m_otherUserInput->isVisible()) {
-        m_passwordEdit->lineEdit()->releaseKeyboard();
+        m_passwordEdit->releaseKeyboard();
         m_otherUserInput->grabKeyboard();
         return;
     }
@@ -92,23 +94,21 @@ void UserLoginWidget::grabKeyboard()
 //密码连续输入错误5次，设置提示信息
 void UserLoginWidget::setFaildMessage(const QString &message)
 {
-    m_passwordEdit->abortAuth();
-
     if (m_isLock && !message.isEmpty()) {
         m_lockPasswordWidget->setMessage(message);
         return;
     }
 
-    m_passwordEdit->lineEdit()->setPlaceholderText(message);
+    m_passwordEdit->setPlaceholderText(message);
 }
 
 //密码输入错误,设置错误信息
 void UserLoginWidget::setFaildTipMessage(const QString &message)
 {
     if (message.isEmpty()) {
-        m_passwordEdit->hideAlert();
+        m_passwordEdit->hideAlertMessage();
     } else {
-        m_passwordEdit->showAlert(message);
+        m_passwordEdit->showAlertMessage(message);
     }
 }
 
@@ -130,7 +130,6 @@ void UserLoginWidget::updateUI()
         if (m_authType == SessionBaseModel::LockType) {
             isNopassword = false;
         }
-        m_passwordEdit->abortAuth();
         m_passwordEdit->setVisible(!isNopassword && !m_isLock);
         m_lockPasswordWidget->setVisible(m_isLock);
 
@@ -138,12 +137,12 @@ void UserLoginWidget::updateUI()
         break;
     }
     case NormalType: {
-        m_passwordEdit->abortAuth();
         m_passwordEdit->setVisible(!m_isLock);
         updateKBLayout(m_KBLayoutList);
         setDefaultKBLayout(m_defkBLayout);
         m_lockButton->show();
         m_lockPasswordWidget->setVisible(m_isLock);
+        m_passwordEdit->setFocus();
         break;
     }
     case IDAndPasswordType: {
@@ -170,7 +169,7 @@ void UserLoginWidget::updateUI()
 
 void UserLoginWidget::onOtherPagePasswordChanged(const QVariant &value)
 {
-    m_passwordEdit->lineEdit()->setText(value.toString());
+    m_passwordEdit->setText(value.toString());
 }
 
 void UserLoginWidget::onOtherPageKBLayoutChanged(const QVariant &value)
@@ -212,11 +211,20 @@ void UserLoginWidget::refreshKBLayoutWidgetPosition()
     m_kbLayoutBorder->setArrowX(15);
 }
 
+void UserLoginWidget::capslockStatusChanged(bool on)
+{
+    if(on) {
+        m_capsAction->setVisible(true);
+    } else {
+        m_capsAction->setVisible(false);
+    }
+}
+
 //设置密码输入框不可用
 void UserLoginWidget::disablePassword(bool disable, uint lockNum)
 {
     m_isLock = disable;
-    m_passwordEdit->lineEdit()->setDisabled(disable);
+    m_passwordEdit->setDisabled(disable);
     m_passwordEdit->setVisible(!disable);
     m_lockPasswordWidget->setVisible(disable);
 
@@ -281,6 +289,7 @@ void UserLoginWidget::paintEvent(QPaintEvent *event)
 void UserLoginWidget::initUI()
 {
     m_userAvatar->setAvatarSize(UserAvatar::AvatarLargeSize);
+    m_capslockMonitor->start(QThread::LowestPriority);
 
     QMap<QString, int> registerFunctionIndexs;
     std::function<void (QVariant)> passwordChanged = std::bind(&UserLoginWidget::onOtherPagePasswordChanged, this, std::placeholders::_1);
@@ -308,14 +317,14 @@ void UserLoginWidget::initUI()
     DFontSizeManager::instance()->bind(m_nameLbl, DFontSizeManager::T2);
     m_nameLbl->setAlignment(Qt::AlignCenter);
 
-    //暂时先将解锁按钮等隐藏
-    m_passwordEdit->setEyeButtonEnable(false);
-    m_passwordEdit->setSubmitButtonEnable(false);
-    m_passwordEdit->setContentsMargins(0, 0, 0, 0);
-    m_passwordEdit->lineEdit()->setAlignment(Qt::AlignCenter);
-    m_passwordEdit->lineEdit()->setContextMenuPolicy(Qt::NoContextMenu);
     m_passwordEdit->setSizePolicy(QSizePolicy::Expanding, QSizePolicy::Fixed);
-    m_passwordEdit->setFocusPolicy(Qt::StrongFocus);
+    m_KBAction = new QAction;
+    m_KBAction->setIcon(QIcon(":/images/img/action_icons/keyboard-clicked.svg"));
+    m_capsAction = new QAction;
+    m_capsAction->setIcon(QIcon(":/images/img/action_icons/capslock.svg"));
+    m_passwordEdit->addAction(m_KBAction, QLineEdit::LeadingPosition);
+    m_passwordEdit->addAction(m_capsAction, QLineEdit::TrailingPosition);
+    m_capsAction->setVisible(m_capslockMonitor->isCapslockOn());
 
     m_kbLayoutBorder->hide();
     m_kbLayoutBorder->setBackgroundColor(QColor(255, 255, 255, 51));    //255*0.2
@@ -325,15 +334,14 @@ void UserLoginWidget::initUI()
     m_kbLayoutBorder->setContent(m_kbLayoutWidget);
     m_kbLayoutBorder->setFixedWidth(DDESESSIONCC::PASSWDLINEEIDT_WIDTH);
     m_kbLayoutWidget->setFixedWidth(DDESESSIONCC::PASSWDLINEEIDT_WIDTH);
-    connect(m_passwordEdit, &DPasswdEditAnimated::keyboardButtonClicked, this, &UserLoginWidget::toggleKBLayoutWidget);
 
     m_lockPasswordWidget->setSizePolicy(QSizePolicy::Expanding, QSizePolicy::Fixed);
     m_otherUserInput->setSizePolicy(QSizePolicy::Expanding, QSizePolicy::Fixed);
 
     m_passwordEdit->setVisible(true);
-    m_passwordEdit->setFocus();
-    m_passwordEdit->lineEdit()->setAttribute(Qt::WA_InputMethodEnabled, false);
-    this->setFocusProxy(m_passwordEdit->lineEdit());
+
+    m_userAvatar->setFocusProxy(m_passwordEdit);
+    m_lockButton->setFocusProxy(m_passwordEdit);
 
     m_userLayout = new QVBoxLayout;
     m_userLayout->setMargin(WidgetsSpacing);
@@ -386,16 +394,17 @@ void UserLoginWidget::initUI()
 //初始化槽函数连接
 void UserLoginWidget::initConnect()
 {
-    connect(m_passwordEdit->lineEdit(), &QLineEdit::textChanged, this, [ = ](const QString & value) {
+    connect(m_passwordEdit, &QLineEdit::textChanged, this, [ = ](const QString & value) {
         FrameDataBind::Instance()->updateValue(tr("Password"), value);
     });
-    connect(m_passwordEdit, &DPasswdEditAnimated::submit, this, [ = ](const QString & passwd) {
+    connect(m_passwordEdit, &DPasswordEdit::returnPressed, this, [ = ] {
+        const QString passwd = m_passwordEdit->text();
         if (passwd.isEmpty()) return;
         emit requestAuthUser(passwd);
     });
 
     connect(m_lockButton, &QPushButton::clicked, this, [ = ] {
-        QString password = m_passwordEdit->lineEdit()->text();
+        QString password = m_passwordEdit->text();
         if (password.isEmpty() && m_showType != NoPasswordType) return;
         emit requestAuthUser(password);
     });
@@ -404,6 +413,10 @@ void UserLoginWidget::initConnect()
     connect(m_kbLayoutWidget, &KbLayoutWidget::setButtonClicked, this, &UserLoginWidget::requestUserKBLayoutChanged);
     //鼠标点击切换键盘布局，就将DArrowRectangle隐藏掉
     connect(m_kbLayoutWidget, &KbLayoutWidget::setButtonClicked, m_kbLayoutBorder, &DArrowRectangle::hide);
+    //点击键盘布局Action
+    connect(m_KBAction, &QAction::triggered, this, &UserLoginWidget::toggleKBLayoutWidget);
+    //大小写锁定状态改变
+    connect(m_capslockMonitor, &KeyboardMonitor::capslockStatusChanged, this, &UserLoginWidget::capslockStatusChanged);
 }
 
 //设置用户名
@@ -456,9 +469,13 @@ bool UserLoginWidget::getSelected()
 
 void UserLoginWidget::updateKBLayout(const QStringList &list)
 {
-    m_passwordEdit->setKeyboardButtonEnable(list.size() > 1);
     m_kbLayoutWidget->updateButtonList(list);
     m_kbLayoutBorder->setContent(m_kbLayoutWidget);
+    if(list.size() > 1) {
+        m_KBAction->setVisible(true);
+    } else {
+        m_KBAction->setVisible(false);
+    }
 }
 
 void UserLoginWidget::setDefaultKBLayout(const QString &layout)

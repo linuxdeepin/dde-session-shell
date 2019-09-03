@@ -26,8 +26,8 @@
 
 #include <darrowrectangle.h>
 #include <DBlurEffectWidget>
-#include <DPasswdEditAnimated>
 #include <DFloatingButton>
+#include <dpasswordedit.h>
 
 DWIDGET_USE_NAMESPACE
 
@@ -41,6 +41,7 @@ class FrameDataBind;
 class OtherUserInput;
 class QVBoxLayout;
 class KbLayoutWidget;
+class KeyboardMonitor;
 
 class UserLoginWidget : public QWidget
 {
@@ -103,15 +104,15 @@ private:
     void updateUI();
     void onOtherPagePasswordChanged(const QVariant &value);
     void onOtherPageKBLayoutChanged(const QVariant &value);
-
     void toggleKBLayoutWidget();
     void refreshKBLayoutWidgetPosition();
+    void capslockStatusChanged(bool on);
 
 private:
     DBlurEffectWidget *m_blurEffectWidget;         //阴影窗体
     UserAvatar *m_userAvatar;                      //用户头像
     QLabel *m_nameLbl;                             //用户名
-    DPasswdEditAnimated *m_passwordEdit;           //密码输入框
+    DPasswordEdit *m_passwordEdit;                 //密码输入框
     LockPasswordWidget *m_lockPasswordWidget;      //密码锁定后,错误信息提示框
     QMap<uint, QString> m_passwords;
     SessionBaseModel::AuthType m_authType;         //认证类型
@@ -128,6 +129,9 @@ private:
     QStringList m_KBLayoutList;
     QString m_defkBLayout;
     QLabel *m_loginLabel;
+    QAction *m_KBAction;                           //键盘布局Action
+    QAction *m_capsAction;                         //大小写锁定Action
+    KeyboardMonitor *m_capslockMonitor;
 };
 
 #endif // USERLOGINWIDGET_H
