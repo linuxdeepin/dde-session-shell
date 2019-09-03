@@ -339,3 +339,17 @@ target_link_libraries(lightdm-deepin-greeter PRIVATE
     ${QGSettings_LIBRARIES}
     ${Greeter_LIBRARIES}
 )
+
+# Install settings
+if (CMAKE_INSTALL_PREFIX_INITIALIZED_TO_DEFAULT)
+    set(CMAKE_INSTALL_PREFIX /usr)
+endif ()
+
+# bin
+install(TARGETS dde-lock dde-shutdown lightdm-deepin-greeter DESTINATION bin)
+install(FILES files/deepin-greeter DESTINATION bin)
+
+file(GLOB SCRIPTS  scripts/*)
+install(FILES ${SCRIPTS} DESTINATION /etc/deepin/greeters.d)
+
+install(FILES files/lightdm-deepin-greeter.desktop DESTINATION share/xgreeters/)
