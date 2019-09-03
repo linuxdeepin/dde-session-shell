@@ -117,6 +117,24 @@ void UserLoginWidget::setWidgetShowType(UserLoginWidget::WidgetShowType showType
 {
     m_showType = showType;
     updateUI();
+    if (m_showType == NormalType || m_showType == IDAndPasswordType) {
+        QMap<QString, int> registerFunctionIndexs;
+        std::function<void (QVariant)> passwordChanged = std::bind(&UserLoginWidget::onOtherPagePasswordChanged, this, std::placeholders::_1);
+        registerFunctionIndexs["UserLoginPassword"] = FrameDataBind::Instance()->registerFunction("UserLoginPassword", passwordChanged);
+        std::function<void (QVariant)> kblayoutChanged = std::bind(&UserLoginWidget::onOtherPageKBLayoutChanged, this, std::placeholders::_1);
+        registerFunctionIndexs["UserLoginKBLayout"] = FrameDataBind::Instance()->registerFunction("UserLoginKBLayout", kblayoutChanged);
+        connect(this, &UserLoginWidget::destroyed, this, [ = ] {
+            for (auto it = registerFunctionIndexs.constBegin(); it != registerFunctionIndexs.constEnd(); ++it)
+            {
+                FrameDataBind::Instance()->unRegisterFunction(it.key(), it.value());
+            }
+        });
+
+        QTimer::singleShot(0, this, [ = ] {
+            FrameDataBind::Instance()->refreshData("UserLoginPassword");
+            FrameDataBind::Instance()->refreshData("UserLoginKBLayout");
+        });
+    }
 }
 
 //更新窗体控件显示
@@ -199,8 +217,7 @@ void UserLoginWidget::toggleKBLayoutWidget()
         m_kbLayoutBorder->raise();
         refreshKBLayoutWidgetPosition();
     }
-
-    FrameDataBind::Instance()->updateValue("KBLayout", m_kbLayoutBorder->isVisible());
+    FrameDataBind::Instance()->updateValue("UserLoginKBLayout", m_kbLayoutBorder->isVisible());
 }
 
 void UserLoginWidget::refreshKBLayoutWidgetPosition()
@@ -213,7 +230,7 @@ void UserLoginWidget::refreshKBLayoutWidgetPosition()
 
 void UserLoginWidget::capslockStatusChanged(bool on)
 {
-    if(on) {
+    if (on) {
         m_capsAction->setVisible(true);
     } else {
         m_capsAction->setVisible(false);
@@ -291,25 +308,6 @@ void UserLoginWidget::initUI()
     m_userAvatar->setAvatarSize(UserAvatar::AvatarLargeSize);
     m_capslockMonitor->start(QThread::LowestPriority);
 
-    QMap<QString, int> registerFunctionIndexs;
-    std::function<void (QVariant)> passwordChanged = std::bind(&UserLoginWidget::onOtherPagePasswordChanged, this, std::placeholders::_1);
-    registerFunctionIndexs["Password"] = FrameDataBind::Instance()->registerFunction("Password", passwordChanged);
-
-    std::function<void (QVariant)> kblayoutChanged = std::bind(&UserLoginWidget::onOtherPageKBLayoutChanged, this, std::placeholders::_1);
-    registerFunctionIndexs["KBLayout"] = FrameDataBind::Instance()->registerFunction("KBLayout", kblayoutChanged);
-
-    connect(this, &UserLoginWidget::destroyed, this, [ = ] {
-        for (auto it = registerFunctionIndexs.constBegin(); it != registerFunctionIndexs.constEnd(); ++it)
-        {
-            FrameDataBind::Instance()->unRegisterFunction(it.key(), it.value());
-        }
-    });
-
-    QTimer::singleShot(0, this, [ = ] {
-        FrameDataBind::Instance()->refreshData("Password");
-        FrameDataBind::Instance()->refreshData("KBLayout");
-    });
-
     QPalette palette = m_nameLbl->palette();
     palette.setColor(QPalette::WindowText, Qt::white);
     m_nameLbl->setPalette(palette);
@@ -321,7 +319,7 @@ void UserLoginWidget::initUI()
     m_KBAction = new QAction;
     m_KBAction->setIcon(QIcon(":/images/img/action_icons/keyboard-clicked.svg"));
     m_capsAction = new QAction;
-    m_capsAction->setIcon(QIcon(":/images/img/action_icons/capslock.svg"));
+    m_capsAction->setIcon(QIcon(":/images/img/action_icons/caps_lock.svg"));
     m_passwordEdit->addAction(m_KBAction, QLineEdit::LeadingPosition);
     m_passwordEdit->addAction(m_capsAction, QLineEdit::TrailingPosition);
     m_capsAction->setVisible(m_capslockMonitor->isCapslockOn());
@@ -395,7 +393,7 @@ void UserLoginWidget::initUI()
 void UserLoginWidget::initConnect()
 {
     connect(m_passwordEdit, &QLineEdit::textChanged, this, [ = ](const QString & value) {
-        FrameDataBind::Instance()->updateValue(tr("Password"), value);
+        FrameDataBind::Instance()->updateValue(tr("UserLoginPassword"), value);
     });
     connect(m_passwordEdit, &DPasswordEdit::returnPressed, this, [ = ] {
         const QString passwd = m_passwordEdit->text();
@@ -471,7 +469,7 @@ void UserLoginWidget::updateKBLayout(const QStringList &list)
 {
     m_kbLayoutWidget->updateButtonList(list);
     m_kbLayoutBorder->setContent(m_kbLayoutWidget);
-    if(list.size() > 1) {
+    if (list.size() > 1) {
         m_KBAction->setVisible(true);
     } else {
         m_KBAction->setVisible(false);
