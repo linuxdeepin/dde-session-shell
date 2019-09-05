@@ -46,8 +46,6 @@ void ControlWidget::setVirtualKBVisible(bool visible)
 
 void ControlWidget::initUI()
 {
-    m_mediaWidget = nullptr;
-
     m_mainLayout = new QHBoxLayout;
 
     m_virtualKBBtn = new DImageButton;
@@ -104,18 +102,6 @@ void ControlWidget::hideTips()
 #else
     m_sessionTip->move(m_tipWidget->width(), 0);
 #endif
-}
-
-void ControlWidget::setMPRISEnable(const bool state)
-{
-    if (m_mediaWidget) {
-        m_mediaWidget->setVisible(state);
-    } else {
-        m_mediaWidget = new MediaWidget;
-        m_mediaWidget->initMediaPlayer();
-        m_mainLayout->insertWidget(0, m_mediaWidget);
-        m_mainLayout->insertStretch(0);
-    }
 }
 
 void ControlWidget::setUserSwitchEnable(const bool visible)

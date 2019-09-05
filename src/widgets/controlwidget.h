@@ -47,7 +47,6 @@ signals:
 
 public slots:
     void setVirtualKBVisible(bool visible);
-    void setMPRISEnable(const bool state);
     void setUserSwitchEnable(const bool visible);
     void setSessionSwitchEnable(const bool visible);
     void chooseToSession(const QString &session);
@@ -66,7 +65,6 @@ private:
     DImageButton *m_virtualKBBtn = nullptr;
     DImageButton *m_switchUserBtn = nullptr;
     DImageButton *m_powerBtn = nullptr;
-    MediaWidget *m_mediaWidget = nullptr;
     DImageButton *m_sessionBtn = nullptr;
     QLabel *m_sessionTip = nullptr;
     QWidget *m_tipWidget = nullptr;

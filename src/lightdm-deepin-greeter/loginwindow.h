@@ -30,7 +30,7 @@
 
 #include <memory>
 
-class LockContent;
+class LoginContent;
 class SessionBaseModel;
 class User;
 class LoginWindow : public FullscreenBackground
@@ -46,7 +46,7 @@ signals:
     void requestSetLayout(std::shared_ptr<User> user, const QString &layout);
 
 private:
-    LockContent *m_loginFrame;
+    LoginContent *m_loginContent;
 };
 
 #endif // LOGINWINDOW_H

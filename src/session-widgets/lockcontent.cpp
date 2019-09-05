@@ -135,10 +135,11 @@ LockContent::LockContent(SessionBaseModel * const model, QWidget *parent)
     connect(model, &SessionBaseModel::onUserListChanged, this, &LockContent::onUserListChanged);
     connect(m_imageBlurInter, &ImageBlur::BlurDone, this, &LockContent::onBlurDone);
 
-    onCurrentUserChanged(model->currentUser());
-    initVirtualKB(model->hasVirtualKB());
-
-    onUserListChanged(model->userList());
+    QTimer::singleShot(0, this, [=] {
+        onCurrentUserChanged(model->currentUser());
+        initVirtualKB(model->hasVirtualKB());
+        onUserListChanged(model->userList());
+    });
 }
 
 void LockContent::onCurrentUserChanged(std::shared_ptr<User> user)
