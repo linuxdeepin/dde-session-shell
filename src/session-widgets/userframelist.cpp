@@ -68,7 +68,7 @@ void UserFrameList::addUser(std::shared_ptr<User> user)
     connect(widget, &UserLoginWidget::clicked, this, &UserFrameList::onUserClicked);
     widget->setUserAvatarSize(UserLoginWidget::AvatarSmallSize);
     widget->setAvatar(user->avatarPath());
-    widget->setName(user->name());
+    widget->setName(user->displayName());
     widget->setIsLogin(user->isLogin());
     widget->setSelected(m_model->currentUser()->uid() == user->uid());
 
