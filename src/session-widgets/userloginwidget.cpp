@@ -110,6 +110,7 @@ void UserLoginWidget::setFaildTipMessage(const QString &message)
         m_passwordEdit->hideAlertMessage();
     } else {
         m_passwordEdit->showAlertMessage(message);
+        m_passwordEdit->selectAll();
     }
 }
 
@@ -148,6 +149,7 @@ void UserLoginWidget::updateUI()
         bool isNopassword = true;
         if (m_authType == SessionBaseModel::LockType) {
             isNopassword = false;
+            m_passwordEdit->setFocus();
         }
         m_passwordEdit->setVisible(!isNopassword && !m_isLock);
         m_lockPasswordWidget->setVisible(m_isLock);
