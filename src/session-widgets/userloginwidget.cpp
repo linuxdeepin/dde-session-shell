@@ -36,6 +36,7 @@
 
 #include <QVBoxLayout>
 #include <QAction>
+#include <QImage>
 
 static const int BlurRectRadius = 15;
 static const int WidgetsSpacing = 10;
@@ -231,10 +232,44 @@ void UserLoginWidget::refreshKBLayoutWidgetPosition()
 void UserLoginWidget::capslockStatusChanged(bool on)
 {
     if (on) {
-        m_capsAction->setVisible(true);
+        m_capsAction->setIcon(QIcon(":/images/img/action_icons/caps_lock.svg"));
     } else {
-        m_capsAction->setVisible(false);
+        QImage image = generateImageFromString("");
+        m_capsAction->setIcon(QIcon(QPixmap::fromImage(image)));
     }
+}
+
+void UserLoginWidget::receiveUserKBLayoutChanged(const QString &layout)
+{
+    QString layoutName = layout;
+    layoutName = layoutName.replace(";", "");
+
+    if (m_KBLayoutList.size() == 1) {
+        layoutName = "";
+    }
+
+    QImage image = generateImageFromString(layoutName);
+    m_KBAction->setIcon(QIcon(QPixmap::fromImage(image)));
+    emit requestUserKBLayoutChanged(layout);
+}
+
+QImage UserLoginWidget::generateImageFromString(const QString &name)
+{
+    QFont font = m_passwordEdit->font();
+    font.setPixelSize(32);
+    font.setWeight(QFont::DemiBold);
+    int word_size = QFontMetrics(font).height();
+    QImage image(QSize(word_size, word_size) * m_passwordEdit->devicePixelRatioF(), QImage::Format_ARGB32);
+    image.fill(Qt::transparent);
+    image.setDevicePixelRatio(m_passwordEdit->devicePixelRatioF());
+
+    QPainter painter(&image);
+    painter.setFont(font);
+    painter.setPen(Qt::white);
+
+    QRect r(image.rect());
+    painter.drawText(r, Qt::AlignCenter, name);
+    return image;
 }
 
 //设置密码输入框不可用
@@ -316,13 +351,12 @@ void UserLoginWidget::initUI()
     m_nameLbl->setAlignment(Qt::AlignCenter);
 
     m_passwordEdit->setSizePolicy(QSizePolicy::Expanding, QSizePolicy::Fixed);
+    m_passwordEdit->setAlignment(Qt::AlignCenter);
     m_KBAction = new QAction;
-    m_KBAction->setIcon(QIcon(":/images/img/action_icons/keyboard-clicked.svg"));
     m_capsAction = new QAction;
-    m_capsAction->setIcon(QIcon(":/images/img/action_icons/caps_lock.svg"));
+    capslockStatusChanged(m_capslockMonitor->isCapslockOn());
     m_passwordEdit->addAction(m_KBAction, QLineEdit::LeadingPosition);
     m_passwordEdit->addAction(m_capsAction, QLineEdit::TrailingPosition);
-    m_capsAction->setVisible(m_capslockMonitor->isCapslockOn());
 
     m_kbLayoutBorder->hide();
     m_kbLayoutBorder->setBackgroundColor(QColor(255, 255, 255, 51));    //255*0.2
@@ -386,7 +420,6 @@ void UserLoginWidget::initUI()
     mainLayout->addStretch();
 
     setLayout(mainLayout);
-    updateUI();
 }
 
 //初始化槽函数连接
@@ -408,11 +441,9 @@ void UserLoginWidget::initConnect()
     });
     connect(m_userAvatar, &UserAvatar::clicked, this, &UserLoginWidget::clicked);
 
-    connect(m_kbLayoutWidget, &KbLayoutWidget::setButtonClicked, this, &UserLoginWidget::requestUserKBLayoutChanged);
+    connect(m_kbLayoutWidget, &KbLayoutWidget::setButtonClicked, this, &UserLoginWidget::receiveUserKBLayoutChanged);
     //鼠标点击切换键盘布局，就将DArrowRectangle隐藏掉
     connect(m_kbLayoutWidget, &KbLayoutWidget::setButtonClicked, m_kbLayoutBorder, &DArrowRectangle::hide);
-    //点击键盘布局Action
-    connect(m_KBAction, &QAction::triggered, this, &UserLoginWidget::toggleKBLayoutWidget);
     //大小写锁定状态改变
     connect(m_capslockMonitor, &KeyboardMonitor::capslockStatusChanged, this, &UserLoginWidget::capslockStatusChanged);
 }
@@ -469,11 +500,6 @@ void UserLoginWidget::updateKBLayout(const QStringList &list)
 {
     m_kbLayoutWidget->updateButtonList(list);
     m_kbLayoutBorder->setContent(m_kbLayoutWidget);
-    if (list.size() > 1) {
-        m_KBAction->setVisible(true);
-    } else {
-        m_KBAction->setVisible(false);
-    }
 }
 
 void UserLoginWidget::setDefaultKBLayout(const QString &layout)
@@ -489,6 +515,13 @@ void UserLoginWidget::hideKBLayout()
 void UserLoginWidget::setKBLayoutList(QStringList kbLayoutList)
 {
     m_KBLayoutList = kbLayoutList;
+    if (kbLayoutList.size() > 1) {
+        //连接点击键盘布局Action槽函数
+        connect(m_KBAction, &QAction::triggered, this, &UserLoginWidget::toggleKBLayoutWidget);
+    } else {
+        //解除点击键盘布局Action槽函数
+        disconnect(m_KBAction, &QAction::triggered, this, &UserLoginWidget::toggleKBLayoutWidget);
+    }
 }
 
 void UserLoginWidget::setDefKBLayout(QString defKBLayout)

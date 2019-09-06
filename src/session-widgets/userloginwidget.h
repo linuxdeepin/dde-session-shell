@@ -107,6 +107,8 @@ private:
     void toggleKBLayoutWidget();
     void refreshKBLayoutWidgetPosition();
     void capslockStatusChanged(bool on);
+    void receiveUserKBLayoutChanged(const QString &layout);
+    QImage generateImageFromString(const QString &name);
 
 private:
     DBlurEffectWidget *m_blurEffectWidget;         //阴影窗体
