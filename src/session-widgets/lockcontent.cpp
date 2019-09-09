@@ -336,8 +336,8 @@ void LockContent::onUserListChanged(QList<std::shared_ptr<User> > list)
 bool LockContent::getUse24HourFormat() const
 {
     if (m_model->currentType() == SessionBaseModel::LightdmType) {
-        return (m_lock24HourFormatInter->property("Use24HourFormat").toBool());
-    } else {
         return (m_greeter24HourFormatInter->property("Use24HourFormat").toBool());
+    } else {
+        return (m_lock24HourFormatInter->property("Use24HourFormat").toBool());
     }
 }

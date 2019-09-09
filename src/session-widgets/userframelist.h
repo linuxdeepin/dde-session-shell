@@ -70,6 +70,8 @@ private:
     SessionBaseModel *m_model;
     FrameDataBind *m_frameDataBind;
     QWidget *m_centerWidget;
+    int m_colCount;
+    int m_rowCount;
 };
 
 #endif // USERFRAMELIST_H

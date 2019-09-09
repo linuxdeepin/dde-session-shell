@@ -35,8 +35,6 @@
 const int UserFrameHeight = 174;
 const int UserFrameWidth = 226;
 const int UserFrameSpaceing = 40;
-const int UserFrameRowCount = 2;
-const int UserFrameColCount = 5;
 
 UserFrameList::UserFrameList(QWidget *parent)
     : QWidget(parent)
@@ -105,7 +103,15 @@ void UserFrameList::resizeEvent(QResizeEvent *event)
 {
     Q_UNUSED(event);
     //处理窗体数量小于5个时的居中显示，取 窗体数量*窗体宽度 和 最大宽度 的较小值，设置为m_centerWidget的宽度
-    int width = qMin((UserFrameWidth + UserFrameSpaceing) * UserFrameColCount, m_userLoginWidgets.size() * (UserFrameWidth + UserFrameSpaceing));
+    int maxWidth = this->width();
+    int maxHeight = this->height();
+    m_colCount = maxWidth / (UserFrameWidth + UserFrameSpaceing);
+    m_colCount = m_colCount > 5 ? 5 : m_colCount;
+    m_rowCount = maxHeight / (UserFrameHeight + UserFrameSpaceing);
+    m_rowCount = m_rowCount > 2 ? 2 : m_rowCount;
+
+    m_scrollArea->setFixedHeight((UserFrameHeight + UserFrameSpaceing) * m_rowCount);
+    int width = qMin((UserFrameWidth + UserFrameSpaceing) * m_colCount, m_userLoginWidgets.size() * (UserFrameWidth + UserFrameSpaceing));
     m_centerWidget->setFixedWidth(width);
     m_scrollArea->setFixedWidth(width + 10);
 }
@@ -155,6 +161,8 @@ void UserFrameList::keyPressEvent(QKeyEvent *event)
 void UserFrameList::initUI()
 {
     setFocusPolicy(Qt::NoFocus);
+    m_colCount = 5;
+    m_rowCount = 2;
 
     std::function<void (QVariant)> function = std::bind(&UserFrameList::onOtherPageChanged, this, std::placeholders::_1);
     int index = m_frameDataBind->registerFunction("UserFrameList", function);
@@ -170,8 +178,6 @@ void UserFrameList::initUI()
 
     m_centerWidget = new QWidget;
     m_centerWidget->setLayout(m_folwLayout);
-    //m_centerWidget设置固定宽度，实现m_folwLayout布局插入UserLoginWidget时，一行最多插入5个
-    m_centerWidget->setFixedWidth((UserFrameWidth + UserFrameSpaceing) * UserFrameColCount);
 
     m_scrollArea->setWidgetResizable(true);
     m_scrollArea->setSizePolicy(QSizePolicy::Expanding, QSizePolicy::Expanding);
@@ -179,8 +185,6 @@ void UserFrameList::initUI()
     m_scrollArea->setVerticalScrollBarPolicy(Qt::ScrollBarAsNeeded);
     m_scrollArea->setHorizontalScrollBarPolicy(Qt::ScrollBarAlwaysOff);
     m_scrollArea->setWidget(m_centerWidget);
-    //设置m_scrollArea固定宽度为两行窗体高，控制滑动条的显示
-    m_scrollArea->setFixedHeight((UserFrameHeight + UserFrameSpaceing) * UserFrameRowCount);
 
     QVBoxLayout *mainLayout;
     mainLayout = new QVBoxLayout;
@@ -206,7 +210,12 @@ void UserFrameList::switchNextUser()
                 int selectedRight = widgets[i]->geometry().right();
                 int scrollRight = m_scrollArea->widget()->geometry().right();
                 if (selectedRight + UserFrameSpaceing == scrollRight) {
-                    QPoint topLeft = widgets[i]->geometry().topLeft();
+                    QPoint topLeft;
+                    if(m_rowCount == 1) {
+                        topLeft = widgets[i + 1]->geometry().topLeft();
+                    } else {
+                        topLeft = widgets[i]->geometry().topLeft();
+                    }
                     m_scrollArea->verticalScrollBar()->setValue(topLeft.y());
                 }
                 widgets[i + 1]->setSelected(true);
