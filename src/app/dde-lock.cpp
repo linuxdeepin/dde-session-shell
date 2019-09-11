@@ -41,6 +41,7 @@
 #include <dapplication.h>
 #include <QDBusInterface>
 #include <QDesktopWidget>
+#include <DGuiApplicationHelper>
 
 DCORE_USE_NAMESPACE
 DWIDGET_USE_NAMESPACE
@@ -52,6 +53,18 @@ int main(int argc, char *argv[])
     app.setOrganizationName("deepin");
     app.setApplicationName("dde-lock");
     app.setApplicationVersion("2015.1.0");
+
+    DGuiApplicationHelper::instance()->setPaletteType(DGuiApplicationHelper::LightType);
+    DPalette pa = DGuiApplicationHelper::instance()->applicationPalette();
+    pa.setColor(QPalette::Normal, DPalette::WindowText, QColor("#FFFFFF"));
+    pa.setColor(QPalette::Normal, DPalette::AlternateBase, QColor(0, 0, 0, 76));
+    pa.setColor(QPalette::Normal, DPalette::Button, QColor("255, 255, 255, 76"));
+    pa.setColor(QPalette::Normal, DPalette::ButtonText, QColor("#FFFFFF"));
+    DGuiApplicationHelper::generatePaletteColor(pa, DPalette::WindowText, DGuiApplicationHelper::LightType);
+    DGuiApplicationHelper::generatePaletteColor(pa, DPalette::AlternateBase, DGuiApplicationHelper::LightType);
+    DGuiApplicationHelper::generatePaletteColor(pa, DPalette::Button, DGuiApplicationHelper::LightType);
+    DGuiApplicationHelper::generatePaletteColor(pa, DPalette::ButtonText, DGuiApplicationHelper::LightType);
+    app.setPalette(pa);
 
     DLogManager::registerConsoleAppender();
     DLogManager::registerFileAppender();

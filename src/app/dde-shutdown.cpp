@@ -30,6 +30,7 @@
 #include <QDebug>
 #include <QDBusAbstractInterface>
 #include <DDBusSender>
+#include <DGuiApplicationHelper>
 
 #include <DLog>
 
@@ -53,7 +54,19 @@ int main(int argc, char* argv[])
     DApplication app(argc, argv);
     app.setOrganizationName("deepin");
     app.setApplicationName("dde-shutdown");
-    app.setTheme("light");
+//    app.setTheme("light");
+
+    DGuiApplicationHelper::instance()->setPaletteType(DGuiApplicationHelper::LightType);
+    DPalette pa = DGuiApplicationHelper::instance()->applicationPalette();
+    pa.setColor(QPalette::Normal, DPalette::WindowText, QColor("#FFFFFF"));
+    pa.setColor(QPalette::Normal, DPalette::AlternateBase, QColor(0, 0, 0, 76));
+    pa.setColor(QPalette::Normal, DPalette::Button, QColor("255, 255, 255, 76"));
+    pa.setColor(QPalette::Normal, DPalette::ButtonText, QColor("#FFFFFF"));
+    DGuiApplicationHelper::generatePaletteColor(pa, DPalette::WindowText, DGuiApplicationHelper::LightType);
+    DGuiApplicationHelper::generatePaletteColor(pa, DPalette::AlternateBase, DGuiApplicationHelper::LightType);
+    DGuiApplicationHelper::generatePaletteColor(pa, DPalette::Button, DGuiApplicationHelper::LightType);
+    DGuiApplicationHelper::generatePaletteColor(pa, DPalette::ButtonText, DGuiApplicationHelper::LightType);
+    app.setPalette(pa);
 
     DLogManager::registerConsoleAppender();
     DLogManager::registerFileAppender();
