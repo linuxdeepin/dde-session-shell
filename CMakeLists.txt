@@ -350,7 +350,7 @@ install(TARGETS dde-lock dde-shutdown lightdm-deepin-greeter DESTINATION bin)
 install(FILES files/deepin-greeter DESTINATION bin)
 
 file(GLOB SCRIPTS  scripts/*)
-install(FILES ${SCRIPTS} DESTINATION /etc/deepin/greeters.d)
+install(PROGRAMS ${SCRIPTS} DESTINATION /etc/deepin/greeters.d)
 
 install(FILES files/lightdm-deepin-greeter.desktop DESTINATION share/xgreeters/)
 
