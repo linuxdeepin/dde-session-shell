@@ -124,22 +124,12 @@ void ContentWidget::keyPressEvent(QKeyEvent *event)
     case Qt::Key_Return:
     case Qt::Key_Enter: enterKeyPushed(); break;
     case Qt::Key_Left: {
-        if (m_warningView) {
-            m_warningView->toggleButtonState();
-            break;
-        }
-
         if (m_systemMonitor)
             m_systemMonitor->setState(SystemMonitor::Leave);
         setPreviousChildFocus();
         break;
     }
     case Qt::Key_Right: {
-        if (m_warningView) {
-            m_warningView->toggleButtonState();
-            break;
-        }
-
         if (m_systemMonitor)
             m_systemMonitor->setState(SystemMonitor::Leave);
         setNextChildFocus();
@@ -147,6 +137,7 @@ void ContentWidget::keyPressEvent(QKeyEvent *event)
     }
     case Qt::Key_Up: {
         if (m_warningView) {
+            m_warningView->toggleButtonState();
             break;
         }
 
@@ -158,6 +149,7 @@ void ContentWidget::keyPressEvent(QKeyEvent *event)
     }
     case Qt::Key_Down: {
         if (m_warningView) {
+            m_warningView->toggleButtonState();
             break;
         }
 
@@ -325,7 +317,16 @@ bool ContentWidget::beforeInvokeAction(const Actions action)
         view->setInhibitorList(inhibitors);
         view->setInhibitConfirmMessage(tr("The programs are preventing the computer from shutting down / hibernation, and forcing shut down / hibernate may cause data loss.") + "\n" +
                                        tr("To close the program, Click Cancel, and then close the program."));
-        view->setAcceptVisible(false);
+
+        bool isAccept = true;
+        for (auto inhib : inhibitors) {
+            if (inhib.who.compare("Deepin Store") == 0) {
+                isAccept = false;
+                break;
+            }
+        }
+        view->setAcceptVisible(isAccept);
+
         if (action == Shutdown)
             view->setAcceptReason(tr("Shut down"));
         else if (action == Restart)

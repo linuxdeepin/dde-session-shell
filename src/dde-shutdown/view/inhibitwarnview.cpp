@@ -27,6 +27,11 @@
 #include "src/session-widgets/framedatabind.h"
 
 #include <QHBoxLayout>
+#include <QPushButton>
+
+const int ButtonIconSize = 28;
+const int ButtonWidth = 200;
+const int ButtonHeight = 64;
 
 InhibitorRow::InhibitorRow(QString who, QString why, const QIcon &icon, QWidget *parent)
     : QWidget(parent)
@@ -50,6 +55,7 @@ InhibitorRow::InhibitorRow(QString who, QString why, const QIcon &icon, QWidget 
     layout->addWidget(whoLabel);
     layout->addWidget(whyLabel);
     layout->addStretch();
+    this->setSizePolicy(QSizePolicy::Fixed, QSizePolicy::Fixed);
     this->setLayout(layout);
 }
 
@@ -58,24 +64,37 @@ InhibitorRow::~InhibitorRow()
 
 }
 
+void InhibitorRow::paintEvent(QPaintEvent *event)
+{
+    QWidget::paintEvent(event);
+    QPainter painter(this);
+
+    painter.setPen(Qt::NoPen);
+    painter.setBrush(QColor(255, 255, 255, 25));
+    painter.setRenderHint(QPainter::Antialiasing, true);
+    painter.drawRoundedRect(this->rect(), 18, 18);
+}
+
 InhibitWarnView::InhibitWarnView(Actions inhibitType, QWidget *parent)
     : WarningView(parent)
     , m_inhibitType(inhibitType)
 {
-    m_acceptBtn = new RoundItemButton(QString());
-    m_cancelBtn = new RoundItemButton(tr("Cancel"));
+    m_acceptBtn = new QPushButton(QString());
     m_acceptBtn->setObjectName("AcceptButton");
-    m_cancelBtn->setObjectName("CancelButton");
+    m_acceptBtn->setIconSize(QSize(ButtonIconSize, ButtonIconSize));
+    m_acceptBtn->setFixedSize(ButtonWidth, ButtonHeight);
+
+    m_cancelBtn = new QPushButton(QIcon(":/img/cancel_normal.svg"), tr("Cancel"), this);
+    m_cancelBtn->setObjectName("CancelButton");    
+    m_cancelBtn->setIconSize(QSize(ButtonIconSize, ButtonIconSize));
+    m_cancelBtn->setFixedSize(ButtonWidth, ButtonHeight);
+
     m_confirmTextLabel = new QLabel;
 
     m_inhibitorListLayout = new QVBoxLayout;
 
     std::function<void (QVariant)> buttonChanged = std::bind(&InhibitWarnView::onOtherPageDataChanged, this, std::placeholders::_1);
     m_dataBindIndex = FrameDataBind::Instance()->registerFunction("InhibitWarnView", buttonChanged);
-
-    m_cancelBtn->setNormalPic(":/img/cancel_normal.svg");
-    m_cancelBtn->setHoverPic(":/img/cancel_hover.svg");
-    m_cancelBtn->setPressPic(":/img/cancel_press.svg");
 
     m_confirmTextLabel->setText("The reason of inhibit.");
     m_confirmTextLabel->setAlignment(Qt::AlignCenter);
@@ -87,21 +106,15 @@ InhibitWarnView::InhibitWarnView(Actions inhibitType, QWidget *parent)
     QVBoxLayout *acceptLayout = new QVBoxLayout;
     acceptLayout->addWidget(m_acceptBtn);
 
-    QHBoxLayout *btnsLayout = new QHBoxLayout;
-    btnsLayout->setSpacing(20);
-    btnsLayout->setObjectName("ButtonLayout");
-    btnsLayout->addStretch();
-    btnsLayout->addLayout(cancelLayout);
-    btnsLayout->addLayout(acceptLayout);
-    btnsLayout->addStretch();
-
     QVBoxLayout *centralLayout = new QVBoxLayout;
     centralLayout->addStretch();
     centralLayout->addLayout(m_inhibitorListLayout);
     centralLayout->addSpacing(20);
     centralLayout->addWidget(m_confirmTextLabel);
     centralLayout->addSpacing(20);
-    centralLayout->addLayout(btnsLayout);
+    centralLayout->addWidget(m_cancelBtn, 0, Qt::AlignHCenter);
+    centralLayout->addSpacing(20);
+    centralLayout->addWidget(m_acceptBtn, 0, Qt::AlignHCenter);
     centralLayout->addStretch();
 
     setLayout(centralLayout);
@@ -109,8 +122,8 @@ InhibitWarnView::InhibitWarnView(Actions inhibitType, QWidget *parent)
     m_acceptBtn->setChecked(true);
     m_currentBtn = m_acceptBtn;
 
-    connect(m_cancelBtn, &RoundItemButton::clicked, this, &InhibitWarnView::cancelled);
-    connect(m_acceptBtn, &RoundItemButton::clicked, [this] {emit actionInvoked(m_action);});
+    connect(m_cancelBtn, &QPushButton::clicked, this, &InhibitWarnView::cancelled);
+    connect(m_acceptBtn, &QPushButton::clicked, [this] {emit actionInvoked(m_action);});
 }
 
 InhibitWarnView::~InhibitWarnView()
@@ -143,7 +156,7 @@ void InhibitWarnView::setInhibitorList(const QList<InhibitorData> &list)
 
         QWidget * inhibitorWidget = new InhibitorRow(inhibitor.who, inhibitor.why, icon, this);
         m_inhibitorPtrList.append(inhibitorWidget);
-        m_inhibitorListLayout->addWidget(inhibitorWidget);
+        m_inhibitorListLayout->addWidget(inhibitorWidget, 0, Qt::AlignHCenter);
     }
 }
 
@@ -163,19 +176,13 @@ void InhibitWarnView::setAction(const Actions action)
 
     switch (action) {
     case Actions::Shutdown:
-        m_acceptBtn->setNormalPic(":/img/poweroff_warning_normal.svg");
-        m_acceptBtn->setHoverPic(":/img/poweroff_warning_hover.svg");
-        m_acceptBtn->setPressPic(":/img/poweroff_warning_press.svg");
+        m_acceptBtn->setIcon(QIcon(":/img/poweroff_warning_normal.svg"));
         break;
     case Actions::Logout:
-        m_acceptBtn->setNormalPic(":/img/logout_warning_normal.svg");
-        m_acceptBtn->setHoverPic(":/img/logout_warning_hover.svg");
-        m_acceptBtn->setPressPic(":/img/logout_warning_press.svg");
+        m_acceptBtn->setIcon(QIcon(":/img/logout_warning_normal.svg"));
         break;
     default:
-        m_acceptBtn->setNormalPic(":/img/reboot_warning_normal.svg");
-        m_acceptBtn->setHoverPic(":/img/reboot_warning_hover.svg");
-        m_acceptBtn->setPressPic(":/img/reboot_warning_press.svg");
+        m_acceptBtn->setIcon(QIcon(":/img/reboot_warning_normal.svg"));
         break;
     }
 }

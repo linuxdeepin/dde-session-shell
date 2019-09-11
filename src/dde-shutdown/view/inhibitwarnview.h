@@ -32,12 +32,16 @@
 
 #include <QWidget>
 
+class QPushButton;
 class InhibitorRow : public QWidget
 {
     Q_OBJECT
 public:
     InhibitorRow(QString who, QString why, const QIcon &icon = QIcon(), QWidget *parent = nullptr);
     ~InhibitorRow() override;
+
+protected:
+    void paintEvent(QPaintEvent* event) override;
 };
 
 class InhibitWarnView : public WarningView
@@ -78,9 +82,9 @@ private:
     QList<QWidget*> m_inhibitorPtrList;
     QVBoxLayout *m_inhibitorListLayout = nullptr;
     QLabel *m_confirmTextLabel = nullptr;
-    RoundItemButton *m_acceptBtn;
-    RoundItemButton *m_cancelBtn;
-    RoundItemButton *m_currentBtn;
+    QPushButton *m_acceptBtn;
+    QPushButton *m_cancelBtn;
+    QPushButton *m_currentBtn;
     int m_dataBindIndex;
     Actions m_inhibitType;
 };
