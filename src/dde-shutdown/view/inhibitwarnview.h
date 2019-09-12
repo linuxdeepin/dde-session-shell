@@ -55,6 +55,7 @@ public:
     struct InhibitorData {
         QString who;
         QString why;
+        QString mode;
         quint32 pid;
     };
 

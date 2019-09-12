@@ -320,7 +320,7 @@ bool ContentWidget::beforeInvokeAction(const Actions action)
 
         bool isAccept = true;
         for (auto inhib : inhibitors) {
-            if (inhib.who.compare("Deepin Store") == 0) {
+            if (inhib.mode.compare("block") == 0) {
                 isAccept = false;
                 break;
             }
@@ -682,10 +682,9 @@ QList<InhibitWarnView::InhibitorData> ContentWidget::listInhibitors(const Action
             for(int i = 0; i < inhibitList.count();i++) {
                 // Just take care of DStore's inhibition, ignore others'.
                 const Inhibit &inhibitor = inhibitList.at(i);
-                if (inhibitor.what.split(':', QString::SkipEmptyParts).contains(type)
-                        && inhibitor.mode == "block")
+                if (inhibitor.what.split(':', QString::SkipEmptyParts).contains(type))
                 {
-                    inhibitorList.append({inhibitor.who, inhibitor.why, inhibitor.pid});
+                    inhibitorList.append({inhibitor.who, inhibitor.why, inhibitor.mode, inhibitor.pid});
                 }
             }
 //            showTips(reminder_tooltip);

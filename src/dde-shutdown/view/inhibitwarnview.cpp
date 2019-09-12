@@ -55,6 +55,7 @@ InhibitorRow::InhibitorRow(QString who, QString why, const QIcon &icon, QWidget 
     layout->addWidget(whoLabel);
     layout->addWidget(whyLabel);
     layout->addStretch();
+    this->setFixedHeight(ButtonHeight);
     this->setSizePolicy(QSizePolicy::Fixed, QSizePolicy::Fixed);
     this->setLayout(layout);
 }
