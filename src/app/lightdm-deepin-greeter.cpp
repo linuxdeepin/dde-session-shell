@@ -200,13 +200,17 @@ int main(int argc, char* argv[])
     DPalette pa = DGuiApplicationHelper::instance()->applicationPalette();
     pa.setColor(QPalette::Normal, DPalette::WindowText, QColor("#FFFFFF"));
     pa.setColor(QPalette::Normal, DPalette::AlternateBase, QColor(0, 0, 0, 76));
-    pa.setColor(QPalette::Normal, DPalette::Button, QColor("255, 255, 255, 76"));
+    pa.setColor(QPalette::Normal, DPalette::Button, QColor(255, 255, 255, 76));
+    pa.setColor(QPalette::Normal, DPalette::Light, QColor(255, 255, 255, 76));
+    pa.setColor(QPalette::Normal, DPalette::Dark, QColor(255, 255, 255, 76));
     pa.setColor(QPalette::Normal, DPalette::ButtonText, QColor("#FFFFFF"));
     DGuiApplicationHelper::generatePaletteColor(pa, DPalette::WindowText, DGuiApplicationHelper::LightType);
     DGuiApplicationHelper::generatePaletteColor(pa, DPalette::AlternateBase, DGuiApplicationHelper::LightType);
     DGuiApplicationHelper::generatePaletteColor(pa, DPalette::Button, DGuiApplicationHelper::LightType);
+    DGuiApplicationHelper::generatePaletteColor(pa, DPalette::Light, DGuiApplicationHelper::LightType);
+    DGuiApplicationHelper::generatePaletteColor(pa, DPalette::Dark, DGuiApplicationHelper::LightType);
     DGuiApplicationHelper::generatePaletteColor(pa, DPalette::ButtonText, DGuiApplicationHelper::LightType);
-    a.setPalette(pa);
+    DGuiApplicationHelper::instance()->setApplicationPalette(pa);
 
     DLogManager::registerConsoleAppender();
 
