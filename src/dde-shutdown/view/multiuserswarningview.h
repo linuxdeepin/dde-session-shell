@@ -30,7 +30,6 @@
 #include "warningview.h"
 #include <dimagebutton.h>
 #include "src/dde-shutdown/common.h"
-#include "src/widgets/rounditembutton.h"
 #include "src/session-widgets/userinfo.h"
 
 class QListWidget;
@@ -39,6 +38,7 @@ class QVBoxLayout;
 
 DWIDGET_USE_NAMESPACE
 
+class QPushButton;
 class MultiUsersWarningView : public WarningView
 {
     Q_OBJECT
@@ -66,10 +66,13 @@ private:
     QVBoxLayout * m_vLayout;
     QListWidget * m_userList;
     QLabel * m_warningTip;
-    RoundItemButton * m_cancelBtn;
-    RoundItemButton * m_actionBtn;
-    RoundItemButton *m_currentBtn;
+    QPushButton * m_cancelBtn;
+    QPushButton * m_actionBtn;
+    QPushButton *m_currentBtn;
     Actions m_action;
+    const int m_buttonIconSize = 28;
+    const int m_buttonWidth = 200;
+    const int m_buttonHeight = 64;
 };
 
 class UserListItem : public QFrame

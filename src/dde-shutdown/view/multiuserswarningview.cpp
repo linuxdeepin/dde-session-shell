@@ -32,6 +32,7 @@
 #include <QPainter>
 #include <QPainterPath>
 #include <QVBoxLayout>
+#include <QPushButton>
 
 const static QSize UserAvatarSize = QSize(64, 64);
 const static QSize UserListItemSize = QSize(180, 80);
@@ -41,8 +42,8 @@ MultiUsersWarningView::MultiUsersWarningView(QWidget *parent)
     , m_vLayout(new QVBoxLayout(this))
     , m_userList(new QListWidget)
     , m_warningTip(new QLabel)
-    , m_cancelBtn(new RoundItemButton(tr("Cancel")))
-    , m_actionBtn(new RoundItemButton(QString()))
+    , m_cancelBtn(new QPushButton(tr("Cancel")))
+    , m_actionBtn(new QPushButton(QString()))
     , m_currentBtn(nullptr)
 {
     m_userList->setAttribute(Qt::WA_TranslucentBackground);
@@ -63,14 +64,18 @@ MultiUsersWarningView::MultiUsersWarningView(QWidget *parent)
     m_warningTip->setAlignment(Qt::AlignCenter);
     m_warningTip->setSizePolicy(QSizePolicy::Expanding, QSizePolicy::Fixed);
 
-    m_cancelBtn->setNormalPic(":/img/cancel_normal.svg");
-    m_cancelBtn->setHoverPic(":/img/cancel_hover.svg");
-    m_cancelBtn->setPressPic(":/img/cancel_press.svg");
+    m_actionBtn->setIconSize(QSize(m_buttonIconSize, m_buttonIconSize));
+    m_actionBtn->setFixedSize(m_buttonWidth, m_buttonHeight);
+    m_cancelBtn->setIconSize(QSize(m_buttonIconSize, m_buttonIconSize));
+    m_cancelBtn->setFixedSize(m_buttonWidth, m_buttonHeight);
 
-    QHBoxLayout * btnLayout = new QHBoxLayout;
+    m_cancelBtn->setIcon(QIcon(":/img/cancel_normal.svg"));
+
+    QVBoxLayout * btnLayout = new QVBoxLayout;
     btnLayout->addStretch(1);
-    btnLayout->addWidget(m_cancelBtn);
-    btnLayout->addWidget(m_actionBtn);
+    btnLayout->addWidget(m_cancelBtn, 0, Qt::AlignHCenter);
+    btnLayout->addSpacing(20);
+    btnLayout->addWidget(m_actionBtn, 0, Qt::AlignHCenter);
     btnLayout->addStretch(1);
 
     m_vLayout->addStretch();
@@ -84,8 +89,8 @@ MultiUsersWarningView::MultiUsersWarningView(QWidget *parent)
     m_cancelBtn->setChecked(true);
     m_currentBtn = m_cancelBtn;
 
-    connect(m_cancelBtn, &RoundItemButton::clicked, this, &MultiUsersWarningView::cancelled);
-    connect(m_actionBtn, &RoundItemButton::clicked, this, &MultiUsersWarningView::actionInvoked);
+    connect(m_cancelBtn, &QPushButton::clicked, this, &MultiUsersWarningView::cancelled);
+    connect(m_actionBtn, &QPushButton::clicked, this, &MultiUsersWarningView::actionInvoked);
 }
 
 MultiUsersWarningView::~MultiUsersWarningView()
@@ -117,15 +122,11 @@ void MultiUsersWarningView::setAction(const Actions action)
 {
     switch (action) {
     case Actions::Shutdown:
-        m_actionBtn->setNormalPic(":/img/poweroff_warning_normal.svg");
-        m_actionBtn->setHoverPic(":/img/poweroff_warning_hover.svg");
-        m_actionBtn->setPressPic(":/img/poweroff_warning_press.svg");
+        m_actionBtn->setIcon(QIcon(":/img/poweroff_warning_normal.svg"));
         m_warningTip->setText(tr("The above users are still logged in and data will be lost due to shutdown, are you sure you want to shut down?"));
         break;
     default:
-        m_actionBtn->setNormalPic(":/img/reboot_warning_normal.svg");
-        m_actionBtn->setHoverPic(":/img/reboot_warning_hover.svg");
-        m_actionBtn->setPressPic(":/img/reboot_warning_press.svg");
+        m_actionBtn->setIcon(QIcon(":/img/reboot_warning_normal.svg"));
         m_warningTip->setText(tr("The above users are still logged in and data will be lost due to reboot, are you sure you want to reboot?"));
         break;
     }
