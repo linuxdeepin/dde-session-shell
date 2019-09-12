@@ -95,17 +95,19 @@ void RoundItemButton::initUI() {
     m_itemIcon->installEventFilter(this);
 
     m_itemText->setWordWrap(true);
-    m_itemText->setStyleSheet("color: rgba(255, 255, 255, 255);"
-                              "margin:0 5px;");
-    m_itemText->setAlignment(Qt::AlignHCenter | Qt::AlignTop);
-    m_itemText->setSizePolicy(QSizePolicy::Expanding, QSizePolicy::Expanding);
+    m_itemText->setForegroundRole(QPalette::WindowText);
+    QPalette palette = m_itemText->palette();
+    palette.setColor(QPalette::WindowText, Qt::white);
+    m_itemText->setPalette(palette);
+    m_itemText->setAlignment(Qt::AlignCenter | Qt::AlignTop);
+    m_itemText->setSizePolicy(QSizePolicy::Fixed, QSizePolicy::Fixed);
 
     QVBoxLayout *mainLayout = new QVBoxLayout;
     mainLayout->setMargin(0);
     mainLayout->addSpacing(10);
     mainLayout->addWidget(m_itemIcon);
     mainLayout->setAlignment(m_itemIcon, Qt::AlignHCenter);
-    mainLayout->addWidget(m_itemText);
+    mainLayout->addWidget(m_itemText, 0, Qt::AlignCenter);
 
     setFocusPolicy(Qt::NoFocus);
     setFocusPolicy(Qt::StrongFocus);
@@ -177,18 +179,41 @@ bool RoundItemButton::eventFilter(QObject *watched, QEvent *event)
     return false;
 }
 
+void RoundItemButton::resizeEvent(QResizeEvent *event)
+{
+    Q_UNUSED(event);
+
+    QRect rect = m_itemText->geometry();
+    QPoint topLeft(rect.topLeft().x() - 10, rect.topLeft().y() - 5);
+    rect.setTopLeft(topLeft);
+    rect.setWidth(rect.width() + 20);
+    rect.setHeight(rect.height() + 10);
+
+    m_itemText->setGeometry(rect);
+}
+
 void RoundItemButton::paintEvent(QPaintEvent* event)
 {
     QWidget::paintEvent(event);
-
-    if (m_state != Checked)
-        return;
-
     QPainter painter(this);
-    painter.setPen(Qt::NoPen);
-    painter.setBrush(QColor(0, 0, 0, 105));
-    painter.setRenderHint(QPainter::Antialiasing, true);
-    painter.drawRoundedRect(QRect(1, 1, width() - 2, height() - 2), 10, 10, Qt::RelativeSize);
+
+    if (m_state == Checked) {
+        QPen pen;
+        QColor penColor(151, 151, 151, 255);
+        pen.setColor(penColor);
+        pen.setWidth(m_penWidth);
+        painter.setPen(pen);
+        painter.setBrush(QColor(0, 0, 0, 105));
+        painter.setRenderHint(QPainter::Antialiasing, true);
+        painter.drawRoundedRect(m_itemText->geometry(), m_rectRadius, m_rectRadius);
+        painter.drawEllipse(m_itemIcon->geometry());
+    } else if (m_state == Hover) {
+        painter.setPen(Qt::NoPen);
+        painter.setBrush(QColor(255, 255, 255, 127));
+        painter.setRenderHint(QPainter::Antialiasing, true);
+        painter.drawRoundedRect(m_itemText->geometry(), m_rectRadius, m_rectRadius);
+        painter.drawEllipse(m_itemIcon->geometry());
+    }
 }
 
 void RoundItemButton::updateIcon()
@@ -212,6 +237,17 @@ void RoundItemButton::updateState(const RoundItemButton::State state)
     if (m_state != state) {
         m_state = state;
         emit stateChanged(state);
+    }
+
+    //Hover状态下，字体颜色设置为黑色
+    if (state == Hover) {
+        QPalette palette = m_itemText->palette();
+        palette.setColor(QPalette::WindowText, Qt::black);
+        m_itemText->setPalette(palette);
+    } else {
+        QPalette palette = m_itemText->palette();
+        palette.setColor(QPalette::WindowText, Qt::white);
+        m_itemText->setPalette(palette);
     }
 
     QAbstractButton::setChecked(m_state == Checked);

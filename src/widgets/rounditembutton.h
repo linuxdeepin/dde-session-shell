@@ -82,6 +82,7 @@ protected:
     void mousePressEvent(QMouseEvent* event) Q_DECL_OVERRIDE;
     void mouseReleaseEvent(QMouseEvent* e) Q_DECL_OVERRIDE;
     bool eventFilter(QObject *watched, QEvent *event) Q_DECL_OVERRIDE;
+    void resizeEvent(QResizeEvent *event) override;
 
 private:
     void initUI();
@@ -98,5 +99,7 @@ private:
     QString m_hoverIcon;
     QString m_pressedIcon;
     QString m_currentIcon;
+    int m_penWidth = 3;
+    int m_rectRadius = 8;
 };
 #endif // ROUNDITEMBUTTON
