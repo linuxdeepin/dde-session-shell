@@ -131,5 +131,6 @@ private:
     Appearance *m_dbusAppearance = nullptr;
     ImageBlur *m_blurImageInter;
     SessionBaseModel *m_model;
+    QStringList m_inhibitorBlacklists;
 };
 #endif // CONTENTVIEWWIDGET

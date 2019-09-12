@@ -581,6 +581,8 @@ void ContentWidget::initUI() {
     m_mainLayout->setSpacing(0);
     m_mainLayout->addWidget(m_normalView);
 
+    m_inhibitorBlacklists << "NetworkManager" << "ModemManager" << "com.deepin.daemon.Power";
+
     if (findValueByQSettings<bool>(DDESESSIONCC::SHUTDOWN_CONFIGS, "Shutdown", "enableSystemMonitor", true)) {
         QFile file("/usr/bin/deepin-system-monitor");
         if (file.exists()) {
@@ -682,7 +684,8 @@ QList<InhibitWarnView::InhibitorData> ContentWidget::listInhibitors(const Action
             for(int i = 0; i < inhibitList.count();i++) {
                 // Just take care of DStore's inhibition, ignore others'.
                 const Inhibit &inhibitor = inhibitList.at(i);
-                if (inhibitor.what.split(':', QString::SkipEmptyParts).contains(type))
+                if (inhibitor.what.split(':', QString::SkipEmptyParts).contains(type)
+                        && !m_inhibitorBlacklists.contains(inhibitor.who))
                 {
                     inhibitorList.append({inhibitor.who, inhibitor.why, inhibitor.mode, inhibitor.pid});
                 }
