@@ -49,7 +49,7 @@ signals:
     void clicked();
 
 protected:
-    void resizeEvent(QResizeEvent *event) override;
+    void showEvent(QShowEvent *event) override;
     void mouseReleaseEvent(QMouseEvent *event) override;
     void hideEvent(QHideEvent *event) override;
     void keyPressEvent(QKeyEvent *event) override;

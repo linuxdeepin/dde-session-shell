@@ -94,12 +94,18 @@ void UserFrameList::onUserClicked()
     UserLoginWidget *widget = static_cast<UserLoginWidget *>(sender());
     if (!widget) return;
 
+    for (UserLoginWidget *tempWidget : m_userLoginWidgets) {
+        tempWidget->setSelected(false);
+    }
+    widget->setSelected(true);
+
     emit requestSwitchUser(m_model->findUserByUid(m_userLoginWidgets.key(widget)));
 
     emit clicked();
 }
 
-void UserFrameList::resizeEvent(QResizeEvent *event)
+
+void UserFrameList::showEvent(QShowEvent *event)
 {
     Q_UNUSED(event);
     //处理窗体数量小于5个时的居中显示，取 窗体数量*窗体宽度 和 最大宽度 的较小值，设置为m_centerWidget的宽度
