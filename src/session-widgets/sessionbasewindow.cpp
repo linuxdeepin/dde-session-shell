@@ -106,8 +106,9 @@ void SessionBaseWindow::initUI()
     m_scrollArea->setSizePolicy(QSizePolicy::Expanding, QSizePolicy::Expanding);
     m_scrollArea->setVerticalScrollBarPolicy(Qt::ScrollBarAlwaysOff);
     m_scrollArea->setHorizontalScrollBarPolicy(Qt::ScrollBarAlwaysOff);
-    m_scrollArea->setStyleSheet("background: transparent;");
     m_scrollArea->setWidget(centerWidget);
+    m_scrollArea->viewport()->setAutoFillBackground(false);
+    centerWidget->setAutoFillBackground(false);
 
     QHBoxLayout *bottomLayout = new QHBoxLayout;
     bottomLayout->setMargin(0);
