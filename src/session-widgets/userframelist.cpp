@@ -191,6 +191,9 @@ void UserFrameList::initUI()
     m_scrollArea->setVerticalScrollBarPolicy(Qt::ScrollBarAsNeeded);
     m_scrollArea->setHorizontalScrollBarPolicy(Qt::ScrollBarAlwaysOff);
     m_scrollArea->setWidget(m_centerWidget);
+    m_scrollArea->setFrameStyle(QFrame::NoFrame);
+    m_scrollArea->viewport()->setAutoFillBackground(false);
+    m_centerWidget->setAutoFillBackground(false);
 
     QVBoxLayout *mainLayout;
     mainLayout = new QVBoxLayout;
