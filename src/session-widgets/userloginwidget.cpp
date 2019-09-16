@@ -55,6 +55,7 @@ UserLoginWidget::UserLoginWidget(QWidget *parent)
     , m_showType(NormalType)
     , m_isLock(false)
     , m_isLogin(false)
+    , m_isSelected(false)
     , m_capslockMonitor(KeyboardMonitor::instance())
 {
     initUI();

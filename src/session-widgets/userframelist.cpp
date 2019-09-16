@@ -68,6 +68,11 @@ void UserFrameList::addUser(std::shared_ptr<User> user)
     widget->setAvatar(user->avatarPath());
     widget->setName(user->displayName());
     widget->setIsLogin(user->isLogin());
+
+    connect(user.get(), &User::displayNameChanged, widget, &UserLoginWidget::setName);
+    connect(user.get(), &User::avatarChanged, widget, &UserLoginWidget::setAvatar);
+    connect(user.get(), &User::logindChanged, widget, &UserLoginWidget::setIsLogin);
+
     widget->setSelected(m_model->currentUser()->uid() == user->uid());
 
     if (user->isLogin()) {
@@ -94,11 +99,6 @@ void UserFrameList::onUserClicked()
     UserLoginWidget *widget = static_cast<UserLoginWidget *>(sender());
     if (!widget) return;
 
-    for (UserLoginWidget *tempWidget : m_userLoginWidgets) {
-        tempWidget->setSelected(false);
-    }
-    widget->setSelected(true);
-
     emit requestSwitchUser(m_model->findUserByUid(m_userLoginWidgets.key(widget)));
 
     emit clicked();
@@ -120,6 +120,12 @@ void UserFrameList::showEvent(QShowEvent *event)
     int width = qMin((UserFrameWidth + UserFrameSpaceing) * m_colCount, m_userLoginWidgets.size() * (UserFrameWidth + UserFrameSpaceing));
     m_centerWidget->setFixedWidth(width);
     m_scrollArea->setFixedWidth(width + 10);
+
+    std::shared_ptr<User> user = m_model->currentUser();
+    if (user.get() == nullptr) return;
+    for (auto it = m_userLoginWidgets.constBegin(); it != m_userLoginWidgets.constEnd(); ++it) {
+        it.value()->setSelected(it.key() == user->uid());
+    }
 }
 
 void UserFrameList::mouseReleaseEvent(QMouseEvent *event)
