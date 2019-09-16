@@ -101,6 +101,7 @@ void RoundItemButton::initUI() {
     m_itemText->setPalette(palette);
     m_itemText->setAlignment(Qt::AlignCenter | Qt::AlignTop);
     m_itemText->setSizePolicy(QSizePolicy::Fixed, QSizePolicy::Fixed);
+    m_itemText->setContentsMargins(10, 5, 10, 5);
 
     QVBoxLayout *mainLayout = new QVBoxLayout;
     mainLayout->setMargin(0);
@@ -177,19 +178,6 @@ bool RoundItemButton::eventFilter(QObject *watched, QEvent *event)
     }
 
     return false;
-}
-
-void RoundItemButton::resizeEvent(QResizeEvent *event)
-{
-    Q_UNUSED(event);
-
-    QRect rect = m_itemText->geometry();
-    QPoint topLeft(rect.topLeft().x() - 10, rect.topLeft().y() - 5);
-    rect.setTopLeft(topLeft);
-    rect.setWidth(rect.width() + 20);
-    rect.setHeight(rect.height() + 10);
-
-    m_itemText->setGeometry(rect);
 }
 
 void RoundItemButton::paintEvent(QPaintEvent* event)
