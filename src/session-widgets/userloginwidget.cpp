@@ -379,7 +379,6 @@ void UserLoginWidget::initUI()
     m_passwordEdit->setVisible(true);
 
     m_userAvatar->setFocusProxy(m_passwordEdit);
-    m_lockButton->setFocusProxy(m_passwordEdit);
 
     m_userLayout = new QVBoxLayout;
     m_userLayout->setMargin(WidgetsSpacing);
@@ -442,6 +441,11 @@ void UserLoginWidget::initConnect()
 
     connect(m_lockButton, &QPushButton::clicked, this, [ = ] {
         QString password = m_passwordEdit->text();
+
+        if (m_passwordEdit->isVisible()) {
+            m_passwordEdit->setFocus();
+        }
+
         if (password.isEmpty() && m_showType != NoPasswordType) return;
         emit requestAuthUser(password);
     });
