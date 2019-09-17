@@ -49,7 +49,7 @@ UserLoginWidget::UserLoginWidget(QWidget *parent)
     , m_passwordEdit(new DPasswordEdit(this))
     , m_lockPasswordWidget(new LockPasswordWidget)
     , m_otherUserInput(new OtherUserInput(this))
-    , m_lockButton(new DFloatingButton(DStyle::SP_LockElement))
+    , m_lockButton(new DFloatingButton(DStyle::SP_UnlockElement))
     , m_kbLayoutBorder(new DArrowRectangle(DArrowRectangle::ArrowTop))
     , m_kbLayoutWidget(new KbLayoutWidget(QStringList()))
     , m_showType(NormalType)
@@ -295,6 +295,9 @@ void UserLoginWidget::disablePassword(bool disable, uint lockNum)
 void UserLoginWidget::updateAuthType(SessionBaseModel::AuthType type)
 {
     m_authType = type;
+    if(m_authType == SessionBaseModel::LightdmType) {
+        m_lockButton->setIcon(DStyle::SP_ArrowNext);
+    }
 }
 
 void UserLoginWidget::refreshBlurEffectPosition()
