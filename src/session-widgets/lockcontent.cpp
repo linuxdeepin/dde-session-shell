@@ -14,7 +14,7 @@
 
 #include <QMouseEvent>
 
-LockContent::LockContent(SessionBaseModel * const model, QWidget *parent)
+LockContent::LockContent(SessionBaseModel *const model, QWidget *parent)
     : SessionBaseWindow(parent)
     , m_model(model)
     , m_imageBlurInter(new ImageBlur("com.deepin.daemon.Accounts", "/com/deepin/daemon/ImageBlur", QDBusConnection::systemBus(), this))
@@ -66,12 +66,12 @@ LockContent::LockContent(SessionBaseModel * const model, QWidget *parent)
     connect(m_userInputWidget, &UserInputWidget::requestAuthUser, this, &LockContent::requestAuthUser);
     connect(m_userFrame, &UserFrame::requestSwitchUser, this, &LockContent::requestSwitchToUser);
     connect(m_userFrame, &UserFrame::requestSwitchUser, this, &LockContent::restoreMode);
-    connect(m_controlWidget, &ControlWidget::requestSwitchUser, this, [=] {
+    connect(m_controlWidget, &ControlWidget::requestSwitchUser, this, [ = ] {
         if (m_model->currentModeState() == SessionBaseModel::ModeStatus::UserMode) return;
         m_userFrame->setFixedSize(m_userInputWidget->size());
         m_model->setCurrentModeState(SessionBaseModel::ModeStatus::UserMode);
     });
-    connect(m_controlWidget, &ControlWidget::requestShutdown, this, [=] {
+    connect(m_controlWidget, &ControlWidget::requestShutdown, this, [ = ] {
         m_model->setCurrentModeState(SessionBaseModel::ModeStatus::PowerMode);
     });
     connect(m_controlWidget, &ControlWidget::requestSwitchVirtualKB, this, &LockContent::toggleVirtualKB);
@@ -86,7 +86,7 @@ LockContent::LockContent(SessionBaseModel * const model, QWidget *parent)
 
     connect(m_shutdownFrame, &ShutdownWidget::abortOperation, this, &LockContent::restoreMode);
 
-    connect(model, &SessionBaseModel::authFinished, this, [=] (bool success) {
+    connect(model, &SessionBaseModel::authFinished, this, [ = ](bool success) {
         if (success) {
             m_userInputWidget->resetAllState();
         }
@@ -94,7 +94,7 @@ LockContent::LockContent(SessionBaseModel * const model, QWidget *parent)
     connect(model, &SessionBaseModel::authFaildMessage, m_userInputWidget, &UserInputWidget::setFaildMessage);
     connect(model, &SessionBaseModel::authFaildTipsMessage, m_userInputWidget, &UserInputWidget::setFaildTipMessage);
     connect(model, &SessionBaseModel::onStatusChanged, this, &LockContent::onStatusChanged);
-    connect(model, &SessionBaseModel::onPowerActionChanged, this, [=] (SessionBaseModel::PowerAction poweraction) {
+    connect(model, &SessionBaseModel::onPowerActionChanged, this, [ = ](SessionBaseModel::PowerAction poweraction) {
         switch (poweraction) {
         case SessionBaseModel::RequireNormal:
             m_userInputWidget->normalMode();
@@ -113,15 +113,15 @@ LockContent::LockContent(SessionBaseModel * const model, QWidget *parent)
         }
     });
 
-    connect(m_userInputWidget, &UserInputWidget::abortOperation, this, [=] {
+    connect(m_userInputWidget, &UserInputWidget::abortOperation, this, [ = ] {
         model->setPowerAction(SessionBaseModel::PowerAction::RequireNormal);
     });
 
-    connect(m_userInputWidget, &UserInputWidget::requestUserKBLayoutChanged, this, [=] (const QString &value) {
+    connect(m_userInputWidget, &UserInputWidget::requestUserKBLayoutChanged, this, [ = ](const QString & value) {
         emit requestSetLayout(m_user, value);
     });
 
-    auto initVirtualKB = [&] (bool hasvirtualkb) {
+    auto initVirtualKB = [&](bool hasvirtualkb) {
         if (hasvirtualkb && !m_virtualKB) {
             connect(&VirtualKBInstance::Instance(), &VirtualKBInstance::initFinished, this, [&] {
                 m_virtualKB = VirtualKBInstance::Instance().virtualKBWidget();
@@ -135,7 +135,7 @@ LockContent::LockContent(SessionBaseModel * const model, QWidget *parent)
     connect(model, &SessionBaseModel::onUserListChanged, this, &LockContent::onUserListChanged);
     connect(m_imageBlurInter, &ImageBlur::BlurDone, this, &LockContent::onBlurDone);
 
-    QTimer::singleShot(0, this, [=] {
+    QTimer::singleShot(0, this, [ = ] {
         onCurrentUserChanged(model->currentUser());
         initVirtualKB(model->hasVirtualKB());
         onUserListChanged(model->userList());
@@ -160,7 +160,7 @@ void LockContent::onCurrentUserChanged(std::shared_ptr<User> user)
 
     m_user = user;
 
-    m_currentUserConnects << connect(user.get(), &User::greeterBackgroundPathChanged, this, &LockContent::updateBackground , Qt::UniqueConnection);
+    m_currentUserConnects << connect(user.get(), &User::greeterBackgroundPathChanged, this, &LockContent::updateBackground, Qt::UniqueConnection);
 
     m_userInputWidget->setUser(user);
 
@@ -168,29 +168,22 @@ void LockContent::onCurrentUserChanged(std::shared_ptr<User> user)
     m_userLoginInfo->setUser(user);
 
     //TODO: refresh blur image
-    QTimer::singleShot(0, this, [=] {
+    QTimer::singleShot(0, this, [ = ] {
         updateBackground(user->greeterBackgroundPath());
     });
 }
 
 void LockContent::pushUserFrame()
 {
-    releaseAllKeyboard();
 //    setCenterContent(m_userFrame);
 //    m_userFrame->expansion(true);
 
-//    QTimer::singleShot(300, m_userFrame, &UserFrame::grabKeyboard);
-
     setCenterContent(m_userLoginInfo->getUserFrameList());
-    QTimer::singleShot(300, m_userLoginInfo->getUserFrameList(), &UserFrameList::grabKeyboard);
 }
 
 void LockContent::pushShutdownFrame()
 {
-    releaseAllKeyboard();
     setCenterContent(m_shutdownFrame);
-
-    QTimer::singleShot(300, m_shutdownFrame, &ShutdownWidget::grabKeyboard);
 }
 
 void LockContent::setMPRISEnable(const bool state)
@@ -246,15 +239,14 @@ void LockContent::showEvent(QShowEvent *event)
 
 void LockContent::hideEvent(QHideEvent *event)
 {
-    releaseAllKeyboard();
-
     return QFrame::hideEvent(event);
 }
 
 void LockContent::resizeEvent(QResizeEvent *event)
 {
-    QTimer::singleShot(0, this, [=] {
-        if (m_virtualKB && m_virtualKB->isVisible()) {
+    QTimer::singleShot(0, this, [ = ] {
+        if (m_virtualKB && m_virtualKB->isVisible())
+        {
             updateVirtualKBPosition();
         }
     });
@@ -262,21 +254,9 @@ void LockContent::resizeEvent(QResizeEvent *event)
     return QFrame::resizeEvent(event);
 }
 
-void LockContent::releaseAllKeyboard()
-{
-    m_userInputWidget->releaseKeyboard();
-    m_userFrame->releaseKeyboard();
-    m_userLoginInfo->getUserLoginWidget()->releaseKeyboard();
-    m_userLoginInfo->getUserFrameList()->releaseKeyboard();
-    m_shutdownFrame->releaseKeyboard();
-}
-
 void LockContent::restoreCenterContent()
 {
-    releaseAllKeyboard();
-
     setCenterContent(m_userLoginInfo->getUserLoginWidget());
-    QTimer::singleShot(300, m_userLoginInfo->getUserLoginWidget(), &UserLoginWidget::grabKeyboard);
 }
 
 void LockContent::restoreMode()
@@ -304,7 +284,7 @@ void LockContent::toggleVirtualKB()
 {
     if (!m_virtualKB) {
         VirtualKBInstance::Instance();
-        QTimer::singleShot(500, this, [=] {
+        QTimer::singleShot(500, this, [ = ] {
             m_virtualKB = VirtualKBInstance::Instance().virtualKBWidget();
             qDebug() << "init virtualKB over." << m_virtualKB;
             toggleVirtualKB();

@@ -19,7 +19,7 @@ UserFrame::UserFrame(QWidget *parent)
     std::function<void (QVariant)> function = std::bind(&UserFrame::onOtherPageChanged, this, std::placeholders::_1);
     int index = m_frameDataBind->registerFunction("UserFrame", function);
 
-    connect(this, &UserFrame::destroyed, this, [=] {
+    connect(this, &UserFrame::destroyed, this, [ = ] {
         m_frameDataBind->unRegisterFunction("UserFrame", index);
     });
 }
@@ -58,7 +58,6 @@ void UserFrame::mouseReleaseEvent(QMouseEvent *event)
 
 void UserFrame::hideEvent(QHideEvent *event)
 {
-    releaseKeyboard();
     expansion(false);
 
     return QWidget::hideEvent(event);
@@ -103,7 +102,7 @@ void UserFrame::userAdded(std::shared_ptr<User> user)
 
 void UserFrame::userRemoved(const uint uid)
 {
-    UserButton * button = m_userBtns[uid];
+    UserButton *button = m_userBtns[uid];
     m_userBtns.remove(uid);
     button->deleteLater();
 
@@ -143,8 +142,7 @@ void UserFrame::refreshPosition()
         }
 
         setFixedHeight(USER_HEIGHT * (row + 1));
-    }
-    else {
+    } else {
         for (auto it = m_userBtns.constBegin(); it != m_userBtns.constEnd(); ++it) {
             it.value()->move(QPoint((width() - it.value()->width()) / 2, 0));
         }
@@ -160,7 +158,7 @@ void UserFrame::refreshPosition()
 
 void UserFrame::onUserClicked()
 {
-    UserButton *button = static_cast<UserButton*>(sender());
+    UserButton *button = static_cast<UserButton *>(sender());
 
     expansion(false);
 
@@ -170,7 +168,7 @@ void UserFrame::onUserClicked()
 
 void UserFrame::switchNextUser()
 {
-    QList<UserButton*> btns = m_userBtns.values();
+    QList<UserButton *> btns = m_userBtns.values();
 
     for (int i = 0; i != btns.size(); ++i) {
         if (btns[i]->selected()) {
@@ -178,8 +176,7 @@ void UserFrame::switchNextUser()
             if (i == (btns.size() - 1)) {
                 btns.first()->setSelected(true);
                 m_frameDataBind->updateValue("UserFrame", m_userBtns.key(m_userBtns.first()));
-            }
-            else {
+            } else {
                 btns[i + 1]->setSelected(true);
                 m_frameDataBind->updateValue("UserFrame", m_userBtns.key(btns[i + 1]));
             }
@@ -190,7 +187,7 @@ void UserFrame::switchNextUser()
 
 void UserFrame::switchPreviousUser()
 {
-    QList<UserButton*> btns = m_userBtns.values();
+    QList<UserButton *> btns = m_userBtns.values();
 
     for (int i = 0; i != btns.size(); ++i) {
         if (btns[i]->selected()) {
@@ -198,8 +195,7 @@ void UserFrame::switchPreviousUser()
             if (i == 0) {
                 btns.last()->setSelected(true);
                 m_frameDataBind->updateValue("UserFrame", m_userBtns.key(m_userBtns.last()));
-            }
-            else {
+            } else {
                 btns[i - 1]->setSelected(true);
                 m_frameDataBind->updateValue("UserFrame", m_userBtns.key(btns[i - 1]));
             }
@@ -210,9 +206,9 @@ void UserFrame::switchPreviousUser()
 
 void UserFrame::onOtherPageChanged(const QVariant &value)
 {
-    QList<UserButton*> btns = m_userBtns.values();
+    QList<UserButton *> btns = m_userBtns.values();
 
-    for (UserButton* btn : btns) {
+    for (UserButton *btn : btns) {
         btn->setSelected(false);
     }
 

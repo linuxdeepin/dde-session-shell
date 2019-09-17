@@ -64,7 +64,6 @@ public:
     explicit UserLoginWidget(QWidget *parent = nullptr);
     ~UserLoginWidget() override;
     void resetAllState();
-    void grabKeyboard();
     void disablePassword(bool disable, uint lockNum = 0);
     void setFaildMessage(const QString &message);
     void setFaildTipMessage(const QString &message);

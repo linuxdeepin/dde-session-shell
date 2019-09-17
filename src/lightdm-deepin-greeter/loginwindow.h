@@ -38,7 +38,7 @@ class LoginWindow : public FullscreenBackground
     Q_OBJECT
 
 public:
-    explicit LoginWindow(SessionBaseModel * const model, QWidget *parent = 0);
+    explicit LoginWindow(SessionBaseModel *const model, QWidget *parent = 0);
 
 signals:
     void requestAuthUser(const QString &password);
@@ -47,6 +47,7 @@ signals:
 
 private:
     LoginContent *m_loginContent;
+    void tryGrabKeyboard();
 };
 
 #endif // LOGINWINDOW_H

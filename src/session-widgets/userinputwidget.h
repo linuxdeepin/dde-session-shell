@@ -45,9 +45,6 @@ public:
     void normalMode();
     void restartMode();
 
-    void grabKeyboard();
-    void releaseKeyboard();
-
     void hideKeyboard();
 
 signals:
@@ -60,7 +57,7 @@ protected:
     void keyPressEvent(QKeyEvent *event) Q_DECL_OVERRIDE;
     void resizeEvent(QResizeEvent *event) Q_DECL_OVERRIDE;
     void showEvent(QShowEvent *event) Q_DECL_OVERRIDE;
-    bool eventFilter(QObject* watched, QEvent* event) override;
+    bool eventFilter(QObject *watched, QEvent *event) override;
 
 private:
     void setName(const QString &name);

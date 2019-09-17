@@ -138,8 +138,6 @@ void UserFrameList::mouseReleaseEvent(QMouseEvent *event)
 
 void UserFrameList::hideEvent(QHideEvent *event)
 {
-    releaseKeyboard();
-
     return QWidget::hideEvent(event);
 }
 
@@ -226,7 +224,7 @@ void UserFrameList::switchNextUser()
                 int scrollRight = m_scrollArea->widget()->geometry().right();
                 if (selectedRight + UserFrameSpaceing == scrollRight) {
                     QPoint topLeft;
-                    if(m_rowCount == 1) {
+                    if (m_rowCount == 1) {
                         topLeft = widgets[i + 1]->geometry().topLeft();
                     } else {
                         topLeft = widgets[i]->geometry().topLeft();

@@ -23,7 +23,7 @@
 #include "src/widgets/sessionwidget.h"
 #include "src/widgets/controlwidget.h"
 
-LoginContent::LoginContent(SessionBaseModel * const model, QWidget *parent)
+LoginContent::LoginContent(SessionBaseModel *const model, QWidget *parent)
     : LockContent(model, parent)
 {
     m_sessionFrame = new SessionWidget;
@@ -32,7 +32,7 @@ LoginContent::LoginContent(SessionBaseModel * const model, QWidget *parent)
 
     connect(m_sessionFrame, &SessionWidget::hideFrame, this, &LockContent::restoreMode);
     connect(m_sessionFrame, &SessionWidget::sessionChanged, this, &LockContent::restoreMode);
-    connect(m_controlWidget, &ControlWidget::requestSwitchSession, this, [=] {
+    connect(m_controlWidget, &ControlWidget::requestSwitchSession, this, [ = ] {
         m_model->setCurrentModeState(SessionBaseModel::ModeStatus::SessionMode);
     });
     connect(m_model, &SessionBaseModel::onSessionKeyChanged, m_controlWidget, &ControlWidget::chooseToSession);
@@ -58,17 +58,8 @@ void LoginContent::onStatusChanged(SessionBaseModel::ModeStatus status)
     }
 }
 
-void LoginContent::releaseAllKeyboard()
-{
-    LockContent::releaseAllKeyboard();
-    m_sessionFrame->releaseKeyboard();
-}
-
 void LoginContent::pushSessionFrame()
 {
-    releaseAllKeyboard();
     setCenterContent(m_sessionFrame);
     m_sessionFrame->show();
-
-    QTimer::singleShot(300, m_sessionFrame, &SessionWidget::grabKeyboard);
 }

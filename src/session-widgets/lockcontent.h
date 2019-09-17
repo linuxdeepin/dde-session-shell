@@ -25,11 +25,10 @@ class LockContent : public SessionBaseWindow
 {
     Q_OBJECT
 public:
-    explicit LockContent(SessionBaseModel * const model, QWidget *parent = nullptr);
+    explicit LockContent(SessionBaseModel *const model, QWidget *parent = nullptr);
 
     virtual void onCurrentUserChanged(std::shared_ptr<User> user);
     virtual void onStatusChanged(SessionBaseModel::ModeStatus status);
-    virtual void releaseAllKeyboard();
     virtual void restoreCenterContent();
     virtual void restoreMode();
 
@@ -71,7 +70,7 @@ protected:
     QTranslator *m_translator;
     LogoWidget *m_logoWidget;
     TimeWidget *m_timeWidget;
-	MediaWidget *m_mediaWidget;
+    MediaWidget *m_mediaWidget;
     UserLoginInfo *m_userLoginInfo;
     QDBusInterface *m_lock24HourFormatInter;
     QDBusInterface *m_greeter24HourFormatInter;

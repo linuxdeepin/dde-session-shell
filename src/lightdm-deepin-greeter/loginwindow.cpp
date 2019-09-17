@@ -27,14 +27,16 @@
 #include "logincontent.h"
 #include "src/session-widgets/userinfo.h"
 
-LoginWindow::LoginWindow(SessionBaseModel * const model, QWidget *parent)
+#include <QWindow>
+
+LoginWindow::LoginWindow(SessionBaseModel *const model, QWidget *parent)
     : FullscreenBackground(parent)
-    , m_loginContent( new LoginContent(model, this))
+    , m_loginContent(new LoginContent(model, this))
 {
     setContent(m_loginContent);
     m_loginContent->hide();
 
-    connect(m_loginContent, &LockContent::requestBackground, this, [=] (const QString &wallpaper) {
+    connect(m_loginContent, &LockContent::requestBackground, this, [ = ](const QString & wallpaper) {
         updateBackground(wallpaper);
 #ifdef DISABLE_LOGIN_ANI
         // 在认证成功以后会通过更改背景来实现登录动画，但是禁用登录动画的情况下，会立即调用startSession，
@@ -43,7 +45,7 @@ LoginWindow::LoginWindow(SessionBaseModel * const model, QWidget *parent)
 #endif
     });
 
-    connect(model, &SessionBaseModel::authFinished, this, [=] (bool successd) {
+    connect(model, &SessionBaseModel::authFinished, this, [ = ](bool successd) {
         m_loginContent->setVisible(!successd);
 #ifdef DISABLE_LOGIN_ANI
         // 在认证成功以后会通过更改背景来实现登录动画，但是禁用登录动画的情况下，会立即调用startSession，
@@ -55,4 +57,15 @@ LoginWindow::LoginWindow(SessionBaseModel * const model, QWidget *parent)
     connect(m_loginContent, &LockContent::requestAuthUser, this, &LoginWindow::requestAuthUser);
     connect(m_loginContent, &LockContent::requestSwitchToUser, this, &LoginWindow::requestSwitchToUser);
     connect(m_loginContent, &LockContent::requestSetLayout, this, &LoginWindow::requestSetLayout);
+
+    tryGrabKeyboard();
+}
+
+void LoginWindow::tryGrabKeyboard()
+{
+    if (!windowHandle()) {
+        QTimer::singleShot(100, this, &LoginWindow::tryGrabKeyboard);
+    } else {
+        windowHandle()->setKeyboardGrabEnabled(true);
+    }
 }

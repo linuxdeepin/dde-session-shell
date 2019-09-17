@@ -29,12 +29,10 @@ class LoginContent : public LockContent
 {
     Q_OBJECT
 public:
-    explicit LoginContent(SessionBaseModel * const model, QWidget *parent = nullptr);
+    explicit LoginContent(SessionBaseModel *const model, QWidget *parent = nullptr);
 
     void onCurrentUserChanged(std::shared_ptr<User> user) override;
     void onStatusChanged(SessionBaseModel::ModeStatus status) override;
-    void releaseAllKeyboard() override;
-
     void pushSessionFrame();
 
 private:

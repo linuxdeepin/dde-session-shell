@@ -73,26 +73,6 @@ void UserLoginWidget::resetAllState()
     m_passwordEdit->clear();
 }
 
-void UserLoginWidget::grabKeyboard()
-{
-    if (m_passwordEdit->isVisible()) {
-        m_passwordEdit->grabKeyboard();
-        return;
-    }
-
-    if (m_otherUserInput->isVisible()) {
-        m_passwordEdit->releaseKeyboard();
-        m_otherUserInput->grabKeyboard();
-        return;
-    }
-
-    if (m_lockButton->isVisible()) {
-        m_lockButton->grabKeyboard();
-        m_lockButton->setFocus();
-        return;
-    }
-}
-
 //密码连续输入错误5次，设置提示信息
 void UserLoginWidget::setFaildMessage(const QString &message)
 {
@@ -285,10 +265,6 @@ void UserLoginWidget::disablePassword(bool disable, uint lockNum)
 
     if (disable) {
         setFaildMessage(tr("Please try again %n minute(s) later", "", lockNum));
-    } else {
-        if (isVisible()) {
-            grabKeyboard();
-        }
     }
 }
 

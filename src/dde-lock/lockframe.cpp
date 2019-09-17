@@ -29,12 +29,9 @@
 #include "src/session-widgets/userinfo.h"
 
 #include <QApplication>
-#include <QX11Info>
-#include <X11/Xlib.h>
-#include <X11/keysym.h>
-#include <X11/extensions/XTest.h>
+#include <QWindow>
 
-LockFrame::LockFrame(SessionBaseModel * const model, QWidget* parent)
+LockFrame::LockFrame(SessionBaseModel *const model, QWidget *parent)
     : FullscreenBackground(parent)
     , m_model(model)
 {
@@ -48,7 +45,7 @@ LockFrame::LockFrame(SessionBaseModel * const model, QWidget* parent)
     connect(m_content, &LockContent::requestSetLayout, this, &LockFrame::requestSetLayout);
     connect(m_content, &LockContent::requestBackground, this, static_cast<void (LockFrame::*)(const QString &)>(&LockFrame::updateBackground));
     connect(model, &SessionBaseModel::showUserList, this, &LockFrame::showUserList);
-    connect(model, &SessionBaseModel::authFinished, this, [=] (bool success) {
+    connect(model, &SessionBaseModel::authFinished, this, [ = ](bool success) {
         if (success) {
             Q_EMIT requestEnableHotzone(true);
             hide();
@@ -56,31 +53,24 @@ LockFrame::LockFrame(SessionBaseModel * const model, QWidget* parent)
     });
 }
 
-void LockFrame::showUserList() {
+void LockFrame::showUserList()
+{
     show();
     m_model->setCurrentModeState(SessionBaseModel::ModeStatus::UserMode);
 }
 
 void LockFrame::tryGrabKeyboard()
 {
-    int requestCode = XGrabKeyboard(QX11Info::display(), winId(), true, GrabModeAsync, GrabModeAsync, CurrentTime);
-
-    if (requestCode != 0) {
-        m_failures++;
-
-        if (m_failures == 15) {
-            qDebug() << "Trying grabkeyboard has exceeded the upper limit. dde-lock will quit.";
-            qApp->quit();
-        }
-
+    if (!windowHandle()) {
         QTimer::singleShot(100, this, &LockFrame::tryGrabKeyboard);
+    } else {
+        windowHandle()->setKeyboardGrabEnabled(true);
     }
 }
 
 void LockFrame::keyPressEvent(QKeyEvent *e)
 {
-    switch (e->key())
-    {
+    switch (e->key()) {
 #ifdef QT_DEBUG
     case Qt::Key_Escape:    qApp->quit();       break;
 #endif
@@ -105,6 +95,15 @@ void LockFrame::hideEvent(QHideEvent *event)
     return FullscreenBackground::hideEvent(event);
 }
 
-LockFrame::~LockFrame() {
+void LockFrame::setVisible(bool visible)
+{
+    if (visible)
+        tryGrabKeyboard();
+
+    FullscreenBackground::setVisible(visible);
+}
+
+LockFrame::~LockFrame()
+{
 
 }

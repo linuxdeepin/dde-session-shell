@@ -34,13 +34,14 @@ UserInputWidget::UserInputWidget(QWidget *parent)
     std::function<void (QVariant)> kblayoutChanged = std::bind(&UserInputWidget::onOtherPageKBLayoutChanged, this, std::placeholders::_1);
     registerFunctionIndexs["KBLayout"] = FrameDataBind::Instance()->registerFunction("KBLayout", kblayoutChanged);
 
-    connect(this, &UserInputWidget::destroyed, this, [=] {
-        for (auto it = registerFunctionIndexs.constBegin(); it != registerFunctionIndexs.constEnd(); ++it) {
+    connect(this, &UserInputWidget::destroyed, this, [ = ] {
+        for (auto it = registerFunctionIndexs.constBegin(); it != registerFunctionIndexs.constEnd(); ++it)
+        {
             FrameDataBind::Instance()->unRegisterFunction(it.key(), it.value());
         }
     });
 
-    QTimer::singleShot(0, this, [=] {
+    QTimer::singleShot(0, this, [ = ] {
         FrameDataBind::Instance()->refreshData("Password");
         FrameDataBind::Instance()->refreshData("KBLayout");
     });
@@ -130,16 +131,17 @@ UserInputWidget::UserInputWidget(QWidget *parent)
 
 //        emit requestAuthUser(passwd);
 //    });
-    connect(m_loginBtn, &LoginButton::clicked, this, [=] {
+    connect(m_loginBtn, &LoginButton::clicked, this, [ = ] {
         emit requestAuthUser(QString());
     });
 
-    connect(m_otherUserInput, &OtherUserInput::submit, this, [=] {
-        if (ADDomainUser *user = dynamic_cast<ADDomainUser*>(m_user.get())) {
-           user->setUserName(m_otherUserInput->account());
-           emit requestAuthUser(m_otherUserInput->passwd());
-        }
-        else {
+    connect(m_otherUserInput, &OtherUserInput::submit, this, [ = ] {
+        if (ADDomainUser *user = dynamic_cast<ADDomainUser *>(m_user.get()))
+        {
+            user->setUserName(m_otherUserInput->account());
+            emit requestAuthUser(m_otherUserInput->passwd());
+        } else
+        {
             qWarning() << "unknow error, check dynamic_cast<ADDomainUser>.";
         }
     });
@@ -227,8 +229,7 @@ void UserInputWidget::setFaildTipMessage(const QString &message)
 {
     if (message.isEmpty()) {
 //        m_passwordEdit->hideAlert();
-    }
-    else {
+    } else {
 //        m_passwordEdit->showAlert(message);
     }
 }
@@ -253,11 +254,6 @@ void UserInputWidget::disablePassword(bool disable)
 
     if (disable) {
         setFaildMessage(tr("Please try again %n minute(s) later", "", m_user->lockNum()));
-    }
-    else {
-        if (isVisible()) {
-            grabKeyboard();
-        }
     }
 }
 
@@ -294,8 +290,7 @@ void UserInputWidget::normalMode()
 //        m_passwordEdit->setSubmitIcon(":/img/action_icons/login_normal.svg",
 //                                      ":/img/action_icons/login_hover.svg",
 //                                      ":/img/action_icons/login_press.svg");
-    }
-    else {
+    } else {
 //        m_passwordEdit->setSubmitIcon(":/img/action_icons/unlock_normal.svg",
 //                                      ":/img/action_icons/unlock_hover.svg",
 //                                      ":/img/action_icons/unlock_press.svg");
@@ -314,34 +309,6 @@ void UserInputWidget::restartMode()
     m_loginBtn->setText(QApplication::translate("ShutdownWidget", "Reboot"));
 }
 
-void UserInputWidget::grabKeyboard()
-{
-    if (m_passwordEdit->isVisible()) {
-//        m_passwordEdit->lineEdit()->grabKeyboard();
-        return;
-    }
-
-    if (m_loginBtn->isVisible()) {
-        m_loginBtn->grabKeyboard();
-        m_loginBtn->setFocus();
-        return;
-    }
-
-    // other input
-    if (m_otherUserInput->isVisible()) {
-//        m_passwordEdit->lineEdit()->releaseKeyboard();
-        m_otherUserInput->grabKeyboard();
-        return;
-    }
-}
-
-void UserInputWidget::releaseKeyboard()
-{
-//    m_passwordEdit->lineEdit()->releaseKeyboard();
-    m_loginBtn->releaseKeyboard();
-    m_otherUserInput->releaseKeyboard();
-}
-
 void UserInputWidget::hideKeyboard()
 {
     m_kbLayoutBorder->hide();
@@ -354,7 +321,7 @@ bool UserInputWidget::event(QEvent *event)
     }
 
     if (event->type() == QEvent::Show) {
-        QTimer::singleShot(400, this, [=] {
+        QTimer::singleShot(400, this, [ = ] {
 //            m_passwordEdit->lineEdit()->setFocus();
         });
     }
@@ -390,10 +357,6 @@ void UserInputWidget::showEvent(QShowEvent *event)
 
 bool UserInputWidget::eventFilter(QObject *watched, QEvent *event)
 {
-    if (qobject_cast<QLineEdit*>(watched) && event->type() == QEvent::MouseButtonPress) {
-        grabKeyboard();
-    }
-
     return QWidget::eventFilter(watched, event);
 }
 
@@ -427,8 +390,7 @@ void UserInputWidget::toggleKBLayoutWidget()
 {
     if (m_kbLayoutBorder->isVisible()) {
         m_kbLayoutBorder->hide();
-    }
-    else {
+    } else {
         // 保证布局选择控件不会被其它控件遮挡
         // 必须要将它作为主窗口的子控件
         m_kbLayoutBorder->setParent(window());
@@ -464,13 +426,10 @@ void UserInputWidget::refreshInputState()
         m_otherUserInput->show();
         frameHeight += m_otherUserInput->height();
         m_otherUserInput->setFocus();
-    }
-    else if (m_user->type() == User::ADDomain) {
+    } else if (m_user->type() == User::ADDomain) {
         m_passwordEdit->show();
         frameHeight += DDESESSIONCC::PASSWDLINEEDIT_HEIGHT;
-        grabKeyboard();
-    }
-    else {
+    } else {
         setIsNoPasswordGrp(m_user->isNoPasswdGrp());
         updateKBLayout(m_user->kbLayoutList());
         setDefaultKBLayout(m_user->currentKBLayout());

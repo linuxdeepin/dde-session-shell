@@ -62,7 +62,7 @@ ContentWidget::ContentWidget(QWidget *parent)
     initBackground();
 }
 
-void ContentWidget::setModel(SessionBaseModel * const model)
+void ContentWidget::setModel(SessionBaseModel *const model)
 {
     m_model = model;
 
@@ -97,18 +97,17 @@ void ContentWidget::showEvent(QShowEvent *event)
     QFrame::showEvent(event);
 
     DDBusSender()
-            .service("com.deepin.dde.Launcher")
-            .interface("com.deepin.dde.Launcher")
-            .path("/com/deepin/dde/Launcher")
-            .method("Hide")
-            .call();
+    .service("com.deepin.dde.Launcher")
+    .interface("com.deepin.dde.Launcher")
+    .path("/com/deepin/dde/Launcher")
+    .method("Hide")
+    .call();
 
     // hide dde-control-center
     if (m_controlCenterInter->isValid())
         m_controlCenterInter->HideImmediately();
 
-    QTimer::singleShot(1, this, [=] {
-        grabKeyboard();
+    QTimer::singleShot(1, this, [ = ] {
         activateWindow();
     });
 
@@ -173,8 +172,6 @@ void ContentWidget::resizeEvent(QResizeEvent *event)
 void ContentWidget::hideEvent(QHideEvent *event)
 {
     QFrame::hideEvent(event);
-
-    releaseKeyboard();
 }
 
 void ContentWidget::setConfirm(const bool confirm)
@@ -184,8 +181,7 @@ void ContentWidget::setConfirm(const bool confirm)
 
 bool ContentWidget::powerAction(const Actions action)
 {
-    switch (action)
-    {
+    switch (action) {
     case Shutdown:
     case Restart:
     case Suspend:
@@ -199,11 +195,12 @@ bool ContentWidget::powerAction(const Actions action)
     return true;
 }
 
-void ContentWidget::initConnect() {
+void ContentWidget::initConnect()
+{
     connect(m_shutdownButton, &RoundItemButton::clicked, [this] { beforeInvokeAction(Shutdown);});
     connect(m_restartButton, &RoundItemButton::clicked, [this] { beforeInvokeAction(Restart);});
     connect(m_suspendButton, &RoundItemButton::clicked, [this] { beforeInvokeAction(Suspend);});
-    connect(m_hibernateButton, &RoundItemButton::clicked, [=] {beforeInvokeAction(Hibernate);});
+    connect(m_hibernateButton, &RoundItemButton::clicked, [ = ] {beforeInvokeAction(Hibernate);});
     connect(m_lockButton, &RoundItemButton::clicked, [this] { shutDownFrameActions(Lock);});
     connect(m_logoutButton, &RoundItemButton::clicked, [this] {emit beforeInvokeAction(Logout);});
     connect(m_switchUserBtn, &RoundItemButton::clicked, [this] { shutDownFrameActions(SwitchUser);});
@@ -218,7 +215,7 @@ void ContentWidget::initConnect() {
 void ContentWidget::initData()
 {
     m_sessionInterface = new DBusSessionManagerInterface("com.deepin.SessionManager", "/com/deepin/SessionManager",
-            QDBusConnection::sessionBus(), this);
+                                                         QDBusConnection::sessionBus(), this);
 }
 
 void ContentWidget::enterKeyPushed()
@@ -243,13 +240,13 @@ void ContentWidget::enterKeyPushed()
     else if (m_currentSelectedBtn == m_restartButton)
         beforeInvokeAction(Restart);
     else if (m_currentSelectedBtn == m_suspendButton)
-         beforeInvokeAction(Suspend);
+        beforeInvokeAction(Suspend);
     else if (m_currentSelectedBtn == m_lockButton)
-         shutDownFrameActions(Lock);
+        shutDownFrameActions(Lock);
     else if (m_currentSelectedBtn == m_logoutButton)
         emit beforeInvokeAction(Logout);
     else if (m_currentSelectedBtn == m_switchUserBtn)
-         shutDownFrameActions(SwitchUser);
+        shutDownFrameActions(SwitchUser);
     else if (m_currentSelectedBtn == m_hibernateButton)
         beforeInvokeAction(Hibernate);
 }
@@ -297,9 +294,8 @@ bool ContentWidget::beforeInvokeAction(const Actions action)
     const QList<std::shared_ptr<User>> &loginUsers = m_model->logindUser();
 
     // change ui
-    if (m_confirm || !inhibitors.isEmpty() || loginUsers.length() > 1)
-    {
-        for (RoundItemButton* btn : *m_btnsList) {
+    if (m_confirm || !inhibitors.isEmpty() || loginUsers.length() > 1) {
+        for (RoundItemButton *btn : *m_btnsList) {
             btn->hide();
         }
 
@@ -310,8 +306,7 @@ bool ContentWidget::beforeInvokeAction(const Actions action)
         }
     }
 
-    if (!inhibitors.isEmpty())
-    {
+    if (!inhibitors.isEmpty()) {
         InhibitWarnView *view = new InhibitWarnView(action, this);
         view->setAction(action);
         view->setInhibitorList(inhibitors);
@@ -344,7 +339,7 @@ bool ContentWidget::beforeInvokeAction(const Actions action)
 
         connect(view, &InhibitWarnView::cancelled, this, &ContentWidget::onCancel);
         connect(view, &InhibitWarnView::actionInvoked, [this, action] {
-             shutDownFrameActions(action);
+            shutDownFrameActions(action);
         });
 
         return false;
@@ -375,30 +370,24 @@ bool ContentWidget::beforeInvokeAction(const Actions action)
 
         connect(view, &MultiUsersWarningView::cancelled, this, &ContentWidget::onCancel);
         connect(view, &MultiUsersWarningView::actionInvoked, [this, action] {
-             shutDownFrameActions(action);
+            shutDownFrameActions(action);
         });
 
         return false;
     }
 
-    if (m_confirm && (action == Shutdown || action == Restart || action == Logout))
-    {
+    if (m_confirm && (action == Shutdown || action == Restart || action == Logout)) {
         m_confirm = false;
 
         InhibitWarnView *view = new InhibitWarnView(action, this);
         view->setAction(action);
-        if (action == Shutdown)
-        {
+        if (action == Shutdown) {
             view->setAcceptReason(tr("Shut down"));
             view->setInhibitConfirmMessage(tr("Are you sure you want to shut down?"));
-        }
-        else if (action == Restart)
-        {
+        } else if (action == Restart) {
             view->setAcceptReason(tr("Reboot"));
             view->setInhibitConfirmMessage(tr("Are you sure you want to reboot?"));
-        }
-        else if (action == Logout)
-        {
+        } else if (action == Logout) {
             view->setAcceptReason(tr("Log out"));
             view->setInhibitConfirmMessage(tr("Are you sure you want to log out?"));
         }
@@ -410,15 +399,15 @@ bool ContentWidget::beforeInvokeAction(const Actions action)
 
         connect(view, &InhibitWarnView::cancelled, this, &ContentWidget::onCancel);
         connect(view, &InhibitWarnView::actionInvoked, [this, action] {
-             shutDownFrameActions(action);
+            shutDownFrameActions(action);
         });
 
         return false;
     }
 
-     shutDownFrameActions(action);
+    shutDownFrameActions(action);
 
-     return true;
+    return true;
 }
 
 void ContentWidget::hideToplevelWindow()
@@ -447,14 +436,13 @@ void ContentWidget::shutDownFrameActions(const Actions action)
     case Hibernate:      m_sessionInterface->RequestHibernate();     break;
     case Lock:           m_sessionInterface->RequestLock();          break;
     case Logout:         m_sessionInterface->RequestLogout();        break;
-    case SwitchUser:
-    {
+    case SwitchUser: {
         DDBusSender()
-                .service("com.deepin.dde.lockFront")
-                .interface("com.deepin.dde.lockFront")
-                .path("/com/deepin/dde/lockFront")
-                .method("ShowUserList")
-                .call();
+        .service("com.deepin.dde.lockFront")
+        .interface("com.deepin.dde.lockFront")
+        .path("/com/deepin/dde/lockFront")
+        .method("ShowUserList")
+        .call();
         break;
     }
     default:
@@ -469,11 +457,13 @@ void ContentWidget::currentWorkspaceChanged()
 {
     QDBusPendingCall call = m_wmInter->GetCurrentWorkspaceBackground();
     QDBusPendingCallWatcher *watcher = new QDBusPendingCallWatcher(call, this);
-    connect(watcher, &QDBusPendingCallWatcher::finished, [=] {
-        if (!call. isError()) {
+    connect(watcher, &QDBusPendingCallWatcher::finished, [ = ] {
+        if (!call. isError())
+        {
             QDBusReply<QString> reply = call.reply();
             updateWallpaper(reply.value());
-        } else {
+        } else
+        {
             qWarning() << "get current workspace background error: " << call.error().message();
             updateWallpaper("/usr/share/backgrounds/deepin/desktop.jpg");
         }
@@ -523,7 +513,8 @@ void ContentWidget::enableSleepBtn(bool enable)
     }
 }
 
-void ContentWidget::initUI() {
+void ContentWidget::initUI()
+{
     m_btnsList = new QList<RoundItemButton *>;
     m_shutdownButton = new RoundItemButton(tr("Shut down"));
     m_shutdownButton->setAutoExclusive(true);
@@ -566,7 +557,7 @@ void ContentWidget::initUI() {
 
     defaultpageLayout->setMargin(0);
 #ifdef QT_DEBUG
-    QLabel * m_debugHint = new QLabel("!!! DEBUG MODE !!!", this);
+    QLabel *m_debugHint = new QLabel("!!! DEBUG MODE !!!", this);
     m_debugHint->setStyleSheet("color: #FFF;");
     defaultpageLayout->addWidget(m_debugHint);
     defaultpageLayout->setAlignment(m_debugHint, Qt::AlignCenter);
@@ -613,7 +604,7 @@ void ContentWidget::initUI() {
     // blumia: seems this call is useless..
 //    listInhibitors();
 
-    QTimer* checkTooltip = new QTimer(this);
+    QTimer *checkTooltip = new QTimer(this);
     checkTooltip->setInterval(10000);
     checkTooltip->setSingleShot(false);
     connect(checkTooltip,  &QTimer::timeout, [this] {
@@ -624,7 +615,8 @@ void ContentWidget::initUI() {
         QList<InhibitWarnView::InhibitorData> list = listInhibitors(view->inhibitType());
         view->setInhibitorList(list);
 
-        if (list.isEmpty()) {
+        if (list.isEmpty())
+        {
             // 清空提示的内容
             view->setInhibitConfirmMessage(QString());
             view->setAcceptVisible(true);
@@ -637,14 +629,13 @@ void ContentWidget::initBackground()
 {
     if (m_wmInter->isValid()) {
         currentWorkspaceChanged();
-    }
-    else {
-        QTimer::singleShot(0, this, [=] {
+    } else {
+        QTimer::singleShot(0, this, [ = ] {
             updateWallpaper(m_dbusAppearance->background());
         });
     }
 
-    connect(m_dbusAppearance, &Appearance::Changed, this, [=](const QString &type, const QString &path){
+    connect(m_dbusAppearance, &Appearance::Changed, this, [ = ](const QString & type, const QString & path) {
         if (type == "background") {
             updateWallpaper(path.split(";").first());
         }
@@ -661,7 +652,7 @@ QList<InhibitWarnView::InhibitorData> ContentWidget::listInhibitors(const Action
         QDBusPendingReply<InhibitorsList> reply = m_login1Inter->ListInhibitors();
         reply.waitForFinished();
 
-        if (!reply.isError()){
+        if (!reply.isError()) {
             InhibitorsList inhibitList = qdbus_cast<InhibitorsList>(reply.argumentAt(0));
             qDebug() << "inhibitList:" << inhibitList.count();
 
@@ -681,12 +672,11 @@ QList<InhibitWarnView::InhibitorData> ContentWidget::listInhibitors(const Action
                 return {};
             }
 
-            for(int i = 0; i < inhibitList.count();i++) {
+            for (int i = 0; i < inhibitList.count(); i++) {
                 // Just take care of DStore's inhibition, ignore others'.
                 const Inhibit &inhibitor = inhibitList.at(i);
                 if (inhibitor.what.split(':', QString::SkipEmptyParts).contains(type)
-                        && !m_inhibitorBlacklists.contains(inhibitor.who))
-                {
+                        && !m_inhibitorBlacklists.contains(inhibitor.who)) {
                     inhibitorList.append({inhibitor.who, inhibitor.why, inhibitor.mode, inhibitor.pid});
                 }
             }
@@ -712,7 +702,7 @@ QList<InhibitWarnView::InhibitorData> ContentWidget::listInhibitors(const Action
 
 void ContentWidget::recoveryLayout()
 {
-    for (RoundItemButton* btn : *m_btnsList) {
+    for (RoundItemButton *btn : *m_btnsList) {
         btn->show();
 
         // check user switch button
@@ -747,7 +737,7 @@ void ContentWidget::setPreviousChildFocus()
     if (m_warningView && m_warningView->isVisible()) return;
 
     if (!m_currentSelectedBtn->isDisabled() &&
-        !m_currentSelectedBtn->isChecked())
+            !m_currentSelectedBtn->isChecked())
         m_currentSelectedBtn->updateState(RoundItemButton::Normal);
 
     const int lastPos = m_btnsList->indexOf(m_currentSelectedBtn);
@@ -766,7 +756,7 @@ void ContentWidget::setNextChildFocus()
     if (m_warningView && m_warningView->isVisible()) return;
 
     if (!m_currentSelectedBtn->isDisabled() &&
-        !m_currentSelectedBtn->isChecked())
+            !m_currentSelectedBtn->isChecked())
         m_currentSelectedBtn->updateState(RoundItemButton::Normal);
 
     const int lastPos = m_btnsList->indexOf(m_currentSelectedBtn);
