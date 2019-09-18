@@ -74,16 +74,16 @@ SessionWidget::SessionWidget(QWidget *parent)
     std::function<void (QVariant)> function = std::bind(&SessionWidget::onOtherPageChanged, this, std::placeholders::_1);
     int index = m_frameDataBind->registerFunction("SessionWidget", function);
 
-    connect(this, &SessionWidget::destroyed, this, [=] {
+    connect(this, &SessionWidget::destroyed, this, [ = ] {
         m_frameDataBind->unRegisterFunction("SessionWidget", index);
     });
 
-    QTimer::singleShot(0, this, [=] {
+    QTimer::singleShot(0, this, [ = ] {
         m_frameDataBind->refreshData("SessionWidget");
     });
 }
 
-void SessionWidget::setModel(SessionBaseModel * const model)
+void SessionWidget::setModel(SessionBaseModel *const model)
 {
     m_model = model;
 }
@@ -176,13 +176,13 @@ void SessionWidget::keyReleaseEvent(QKeyEvent *event)
     case Qt::Key_Return:
         chooseSession();
         break;
-    case Qt::Key_Left:
-        leftKeySwitch();
-        break;
-    case Qt::Key_Right:
-    case Qt::Key_Tab:
-        rightKeySwitch();
-        break;
+//    case Qt::Key_Left:
+//        leftKeySwitch();
+//        break;
+//    case Qt::Key_Right:
+//    case Qt::Key_Tab:
+//        rightKeySwitch();
+//        break;
     case Qt::Key_Escape:
         emit hideFrame();
         break;
@@ -284,8 +284,7 @@ void SessionWidget::loadSessionList()
 {
     // add sessions button
     const int count = m_sessionModel->rowCount(QModelIndex());
-    for (int i(0); i != count; ++i)
-    {
+    for (int i(0); i != count; ++i) {
         const QString &session_name = m_sessionModel->data(m_sessionModel->index(i), QLightDM::SessionsModel::KeyRole).toString();
         const QString &session_icon = session_standard_icon_name(session_name);
         const QString normalIcon = QString(":/img/sessions_icon/%1_normal.svg").arg(session_icon);

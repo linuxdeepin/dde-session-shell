@@ -28,7 +28,7 @@
 
 #include <QWidget>
 #include <QHBoxLayout>
-#include <dimagebutton.h>
+#include <DFloatingButton>
 #include "mediawidget.h"
 
 DWIDGET_USE_NAMESPACE
@@ -62,10 +62,10 @@ private:
 
 private:
     QHBoxLayout *m_mainLayout = nullptr;
-    DImageButton *m_virtualKBBtn = nullptr;
-    DImageButton *m_switchUserBtn = nullptr;
-    DImageButton *m_powerBtn = nullptr;
-    DImageButton *m_sessionBtn = nullptr;
+    DFloatingButton *m_virtualKBBtn = nullptr;
+    DFloatingButton *m_switchUserBtn = nullptr;
+    DFloatingButton *m_powerBtn = nullptr;
+    DFloatingButton *m_sessionBtn = nullptr;
     QLabel *m_sessionTip = nullptr;
     QWidget *m_tipWidget = nullptr;
 #ifndef SHENWEI_PLATFORM

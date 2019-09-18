@@ -30,6 +30,10 @@
 #include <QEvent>
 #include <QWheelEvent>
 #include <QGraphicsDropShadowEffect>
+#include <QPainter>
+
+#define BUTTON_ICON_SIZE QSize(26,26)
+#define BUTTON_SIZE QSize(52,52)
 
 DWIDGET_USE_NAMESPACE
 
@@ -46,23 +50,32 @@ void ControlWidget::setVirtualKBVisible(bool visible)
 
 void ControlWidget::initUI()
 {
+    setFocusPolicy(Qt::StrongFocus);
+
     m_mainLayout = new QHBoxLayout;
 
-    m_virtualKBBtn = new DImageButton;
-    m_virtualKBBtn->setNormalPic(":/img/screen_keyboard_normal.svg");
-    m_virtualKBBtn->setHoverPic(":/img/screen_keyboard_hover.svg");
-    m_virtualKBBtn->setPressPic(":/img/screen_keyboard_press.svg");
+    m_virtualKBBtn = new DFloatingButton(this);
+    m_virtualKBBtn->setIcon(QIcon::fromTheme(":/img/screen_keyboard_normal.svg"));
     m_virtualKBBtn->hide();
+    m_virtualKBBtn->setIconSize(BUTTON_ICON_SIZE);
+    m_virtualKBBtn->setFixedSize(BUTTON_SIZE);
+    m_virtualKBBtn->setFocusPolicy(Qt::StrongFocus);
+    m_virtualKBBtn->setBackgroundRole(DPalette::Button);
+    setFocusProxy(m_virtualKBBtn);
 
-    m_switchUserBtn = new DImageButton;
-    m_switchUserBtn->setNormalPic(":/img/bottom_actions/userswitch_normal.svg");
-    m_switchUserBtn->setHoverPic(":/img/bottom_actions/userswitch_hover.svg");
-    m_switchUserBtn->setPressPic(":/img/bottom_actions/userswitch_press.svg");
+    m_switchUserBtn = new DFloatingButton(this);
+    m_switchUserBtn->setIcon(QIcon::fromTheme(":/img/bottom_actions/userswitch_normal.svg"));
+    m_switchUserBtn->setIconSize(BUTTON_ICON_SIZE);
+    m_switchUserBtn->setFixedSize(BUTTON_SIZE);
+    m_switchUserBtn->setFocusPolicy(Qt::StrongFocus);
+    m_switchUserBtn->setBackgroundRole(DPalette::Button);
 
-    m_powerBtn = new DImageButton;
-    m_powerBtn->setNormalPic(":/img/bottom_actions/shutdown_normal.svg");
-    m_powerBtn->setHoverPic(":/img/bottom_actions/shutdown_hover.svg");
-    m_powerBtn->setPressPic(":/img/bottom_actions/shutdown_press.svg");
+    m_powerBtn = new DFloatingButton(this);
+    m_powerBtn->setIcon(QIcon(":/img/bottom_actions/shutdown_normal.svg"));
+    m_powerBtn->setIconSize(BUTTON_ICON_SIZE);
+    m_powerBtn->setFixedSize(BUTTON_SIZE);
+    m_powerBtn->setFocusPolicy(Qt::StrongFocus);
+    m_powerBtn->setBackgroundRole(DPalette::Button);
 
     m_mainLayout->setMargin(0);
     m_mainLayout->setSpacing(26);
@@ -77,9 +90,9 @@ void ControlWidget::initUI()
 
 void ControlWidget::initConnect()
 {
-    connect(m_switchUserBtn, &DImageButton::clicked, this, &ControlWidget::requestSwitchUser);
-    connect(m_powerBtn, &DImageButton::clicked, this, &ControlWidget::requestShutdown);
-    connect(m_virtualKBBtn, &DImageButton::clicked, this, &ControlWidget::requestSwitchVirtualKB);
+    connect(m_switchUserBtn, &DFloatingButton::clicked, this, &ControlWidget::requestSwitchUser);
+    connect(m_powerBtn, &DFloatingButton::clicked, this, &ControlWidget::requestShutdown);
+    connect(m_virtualKBBtn, &DFloatingButton::clicked, this, &ControlWidget::requestSwitchVirtualKB);
 }
 
 void ControlWidget::showTips()
@@ -112,8 +125,11 @@ void ControlWidget::setUserSwitchEnable(const bool visible)
 void ControlWidget::setSessionSwitchEnable(const bool visible)
 {
     if (!m_sessionBtn) {
-        m_sessionBtn = new DImageButton;
-        m_sessionBtn->setFixedSize(40, 40);
+        m_sessionBtn = new DFloatingButton(this);
+        m_sessionBtn->setIconSize(BUTTON_ICON_SIZE);
+        m_sessionBtn->setFixedSize(BUTTON_SIZE);
+        m_sessionBtn->setBackgroundRole(DPalette::Button);
+        m_sessionBtn->setFocusPolicy(Qt::StrongFocus);
 #ifndef SHENWEI_PLATFORM
         m_sessionBtn->installEventFilter(this);
 #else
@@ -126,7 +142,7 @@ void ControlWidget::setSessionSwitchEnable(const bool visible)
         m_mainLayout->insertWidget(1, m_sessionBtn);
         m_mainLayout->setAlignment(m_sessionBtn, Qt::AlignBottom);
 
-        connect(m_sessionBtn, &DImageButton::clicked, this, &ControlWidget::requestSwitchSession);
+        connect(m_sessionBtn, &DFloatingButton::clicked, this, &ControlWidget::requestSwitchSession);
     }
 
     if (!m_tipWidget) {
@@ -147,7 +163,7 @@ void ControlWidget::setSessionSwitchEnable(const bool visible)
                                     "font-size:12px;");
 #else
         QPalette pe;
-        pe.setColor(QPalette::WindowText,Qt::white);
+        pe.setColor(QPalette::WindowText, Qt::white);
         m_sessionTip->setPalette(pe);
 #endif
 
@@ -180,29 +196,23 @@ void ControlWidget::chooseToSession(const QString &session)
 
         const QString sessionId = session.toLower();
         const QString normalIcon = QString(":/img/sessions/%1_indicator_normal.svg").arg(sessionId);
-        const QString hoverIcon = QString(":/img/sessions/%1_indicator_hover.svg").arg(sessionId);
-        const QString checkedIcon = QString(":/img/sessions/%1_indicator_press.svg").arg(sessionId);
 
-        if (QFile(normalIcon).exists() && QFile(hoverIcon).exists() && QFile(checkedIcon).exists()) {
-    #ifndef SHENWEI_PLATFORM
-            m_sessionBtn->setNormalPic(normalIcon);
-            m_sessionBtn->setHoverPic(hoverIcon);
-            m_sessionBtn->setPressPic(checkedIcon);
-    #else
+        if (QFile(normalIcon).exists()) {
+#ifndef SHENWEI_PLATFORM
+            m_sessionBtn->setIcon(QIcon::fromTheme(normalIcon));
+#else
             m_sessionBtn->setProperty("normalIcon", normalIcon);
             m_sessionBtn->setProperty("hoverIcon", hoverIcon);
             m_sessionBtn->setProperty("checkedIcon", checkedIcon);
-    #endif
+#endif
         } else {
-    #ifndef SHENWEI_PLATFORM
-            m_sessionBtn->setNormalPic(":/img/sessions/unknown_indicator_normal.svg");
-            m_sessionBtn->setHoverPic(":/img/sessions/unknown_indicator_hover.svg");
-            m_sessionBtn->setPressPic(":/img/sessions/unknown_indicator_press.svg");
-    #else
+#ifndef SHENWEI_PLATFORM
+            m_sessionBtn->setIcon(QIcon::fromTheme(":/img/sessions/unknown_indicator_normal.svg"));
+#else
             m_sessionBtn->setProperty("normalIcon", ":/img/sessions/unknown_indicator_normal.svg");
             m_sessionBtn->setProperty("hoverIcon", ":/img/sessions/unknown_indicator_hover.svg");
             m_sessionBtn->setProperty("checkedIcon", ":/img/sessions/unknown_indicator_press.svg");
-    #endif
+#endif
         }
     }
 }

@@ -61,7 +61,7 @@ void UserFrameList::setModel(SessionBaseModel *model)
 //创建用户窗体
 void UserFrameList::addUser(std::shared_ptr<User> user)
 {
-    UserLoginWidget *widget = new UserLoginWidget(this);
+    UserLoginWidget *widget = new UserLoginWidget(m_centerWidget);
     widget->setFixedSize(QSize(UserFrameWidth, UserFrameHeight));
     connect(widget, &UserLoginWidget::clicked, this, &UserFrameList::onUserClicked);
     widget->setUserAvatarSize(UserLoginWidget::AvatarSmallSize);
@@ -170,7 +170,7 @@ void UserFrameList::keyPressEvent(QKeyEvent *event)
 
 void UserFrameList::initUI()
 {
-    setFocusPolicy(Qt::NoFocus);
+    setFocusPolicy(Qt::StrongFocus);
     m_colCount = 5;
     m_rowCount = 2;
 
@@ -198,7 +198,7 @@ void UserFrameList::initUI()
     m_scrollArea->setFrameStyle(QFrame::NoFrame);
     m_scrollArea->viewport()->setAutoFillBackground(false);
     m_centerWidget->setAutoFillBackground(false);
-
+    m_scrollArea->setFocusPolicy(Qt::NoFocus);
     QVBoxLayout *mainLayout;
     mainLayout = new QVBoxLayout;
     mainLayout->addWidget(m_scrollArea, 0, Qt::AlignCenter);

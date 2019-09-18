@@ -168,6 +168,9 @@ void UserLoginWidget::updateUI()
     default:
         break;
     }
+
+    if (m_passwordEdit->isVisible())
+        m_userAvatar->setFocusProxy(m_passwordEdit);
 }
 
 void UserLoginWidget::onOtherPagePasswordChanged(const QVariant &value)
@@ -324,6 +327,8 @@ void UserLoginWidget::paintEvent(QPaintEvent *event)
 void UserLoginWidget::initUI()
 {
     m_userAvatar->setAvatarSize(UserAvatar::AvatarLargeSize);
+    m_userAvatar->setFocusPolicy(Qt::NoFocus);
+
     m_capslockMonitor->start(QThread::LowestPriority);
 
     QPalette palette = m_nameLbl->palette();
@@ -354,8 +359,6 @@ void UserLoginWidget::initUI()
     m_otherUserInput->setSizePolicy(QSizePolicy::Expanding, QSizePolicy::Fixed);
 
     m_passwordEdit->setVisible(true);
-
-    m_userAvatar->setFocusProxy(m_passwordEdit);
 
     m_userLayout = new QVBoxLayout;
     m_userLayout->setMargin(WidgetsSpacing);
@@ -419,7 +422,8 @@ void UserLoginWidget::initConnect()
     connect(m_lockButton, &QPushButton::clicked, this, [ = ] {
         QString password = m_passwordEdit->text();
 
-        if (m_passwordEdit->isVisible()) {
+        if (m_passwordEdit->isVisible())
+        {
             m_passwordEdit->setFocus();
         }
 

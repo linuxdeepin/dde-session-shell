@@ -27,13 +27,13 @@
 
 #if 0 // storage i10n
 QT_TRANSLATE_NOOP("ShutdownWidget", "Shut down"),
-QT_TRANSLATE_NOOP("ShutdownWidget", "Reboot"),
-QT_TRANSLATE_NOOP("ShutdownWidget", "Suspend"),
-QT_TRANSLATE_NOOP("ShutdownWidget", "Hibernate")
+                  QT_TRANSLATE_NOOP("ShutdownWidget", "Reboot"),
+                  QT_TRANSLATE_NOOP("ShutdownWidget", "Suspend"),
+                  QT_TRANSLATE_NOOP("ShutdownWidget", "Hibernate")
 #endif
 
-ShutdownWidget::ShutdownWidget(QWidget *parent)
-    : QFrame(parent)
+                  ShutdownWidget::ShutdownWidget(QWidget *parent)
+                      : QFrame(parent)
 {
     m_frameDataBind = FrameDataBind::Instance();
     initUI();
@@ -42,30 +42,30 @@ ShutdownWidget::ShutdownWidget(QWidget *parent)
     std::function<void (QVariant)> function = std::bind(&ShutdownWidget::onOtherPageChanged, this, std::placeholders::_1);
     int index = m_frameDataBind->registerFunction("ShutdownWidget", function);
 
-    connect(this, &ShutdownWidget::destroyed, this, [=] {
+    connect(this, &ShutdownWidget::destroyed, this, [ = ] {
         m_frameDataBind->unRegisterFunction("ShutdownWidget", index);
     });
 
-    QTimer::singleShot(0, this, [=] {
+    QTimer::singleShot(0, this, [ = ] {
         m_frameDataBind->refreshData("ShutdownWidget");
     });
 }
 
 void ShutdownWidget::initConnect()
 {
-    connect(m_requireRestartButton, &RoundItemButton::clicked, this, [=] {
+    connect(m_requireRestartButton, &RoundItemButton::clicked, this, [ = ] {
         m_currentSelectedBtn = m_requireRestartButton;
         shutdownAction();
     });
-    connect(m_requireShutdownButton, &RoundItemButton::clicked, this, [=] {
+    connect(m_requireShutdownButton, &RoundItemButton::clicked, this, [ = ] {
         m_currentSelectedBtn = m_requireShutdownButton;
         shutdownAction();
     });
-    connect(m_requireSuspendButton, &RoundItemButton::clicked, this, [=] {
+    connect(m_requireSuspendButton, &RoundItemButton::clicked, this, [ = ] {
         m_currentSelectedBtn = m_requireSuspendButton;
         shutdownAction();
     });
-    connect(m_requireHibernateButton, &RoundItemButton::clicked, this, [=] {
+    connect(m_requireHibernateButton, &RoundItemButton::clicked, this, [ = ] {
         m_currentSelectedBtn = m_requireHibernateButton;
         shutdownAction();
     });
@@ -206,12 +206,12 @@ void ShutdownWidget::keyReleaseEvent(QKeyEvent *event)
         hide();
         emit abortOperation();
         break;
-    case Qt::Key_Left:
-        leftKeySwitch();
-        break;
-    case Qt::Key_Right:
-        rightKeySwitch();
-        break;
+//    case Qt::Key_Left:
+//        leftKeySwitch();
+//        break;
+//    case Qt::Key_Right:
+//        rightKeySwitch();
+//        break;
     case Qt::Key_Enter:
     case Qt::Key_Return:
         shutdownAction();
@@ -240,7 +240,7 @@ ShutdownWidget::~ShutdownWidget()
 {
 }
 
-void ShutdownWidget::setModel(SessionBaseModel * const model)
+void ShutdownWidget::setModel(SessionBaseModel *const model)
 {
     m_model = model;
 
