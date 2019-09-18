@@ -40,6 +40,7 @@
 
 static const int BlurRectRadius = 15;
 static const int WidgetsSpacing = 10;
+static const int Margins = 16;
 
 UserLoginWidget::UserLoginWidget(QWidget *parent)
     : QWidget(parent)
@@ -215,7 +216,7 @@ void UserLoginWidget::refreshKBLayoutWidgetPosition()
 void UserLoginWidget::capslockStatusChanged(bool on)
 {
     if (on) {
-        m_capsAction->setIcon(QIcon(":/images/img/action_icons/caps_lock.svg"));
+        m_capsAction->setIcon(QIcon(":/icons/dedpin/builtin/caps_lock.svg"));
     } else {
         QImage image = generateImageFromString("");
         m_capsAction->setIcon(QIcon(QPixmap::fromImage(image)));
@@ -271,7 +272,7 @@ void UserLoginWidget::disablePassword(bool disable, uint lockNum)
 void UserLoginWidget::updateAuthType(SessionBaseModel::AuthType type)
 {
     m_authType = type;
-    if(m_authType == SessionBaseModel::LightdmType) {
+    if (m_authType == SessionBaseModel::LightdmType) {
         m_lockButton->setIcon(DStyle::SP_ArrowNext);
     }
 }
@@ -362,18 +363,18 @@ void UserLoginWidget::initUI()
 
     m_userLayout->addWidget(m_userAvatar, 0, Qt::AlignHCenter);
 
-    QHBoxLayout *nameLayout = new QHBoxLayout;
-    nameLayout->setMargin(0);
-    nameLayout->setSpacing(0);
+    m_nameLayout = new QHBoxLayout;
+    m_nameLayout->setMargin(0);
+    m_nameLayout->setSpacing(5);
     //在用户名前，插入一个图标(m_loginLabel)用来表示多用户切换时已登录用户的标记
-    //TODO 图标后续需要替换
-    m_loginLabel = new QLabel(tr("Login"));
+    m_loginLabel = new QLabel();
+    m_loginLabel->setPixmap(QPixmap(":/icons/dedpin/builtin/select.svg"));
     m_loginLabel->hide();
-    nameLayout->addWidget(m_loginLabel);
-    nameLayout->addWidget(m_nameLbl);
-    QFrame *nameFrame = new QFrame;
-    nameFrame->setLayout(nameLayout);
-    m_userLayout->addWidget(nameFrame, 0, Qt::AlignHCenter);
+    m_nameLayout->addWidget(m_loginLabel);
+    m_nameLayout->addWidget(m_nameLbl);
+    m_nameFrame = new QFrame;
+    m_nameFrame->setLayout(m_nameLayout);
+    m_userLayout->addWidget(m_nameFrame, 0, Qt::AlignHCenter);
 
     m_userLayout->addWidget(m_otherUserInput);
     m_userLayout->addWidget(m_passwordEdit);
@@ -467,8 +468,11 @@ void UserLoginWidget::setWidgetWidth(int width)
 void UserLoginWidget::setIsLogin(bool isLogin)
 {
     m_isLogin = isLogin;
+    m_loginLabel->setVisible(isLogin);
     if (m_isLogin) {
-        m_loginLabel->show();
+        m_nameFrame->setContentsMargins(0, 0, Margins, 0);
+    } else {
+        m_nameFrame->setContentsMargins(0, 0, 0, 0);
     }
 }
 

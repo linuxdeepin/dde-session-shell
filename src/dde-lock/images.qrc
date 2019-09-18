@@ -1,3 +1,8 @@
 <RCC>
     <qresource prefix="/fonts"/>
+    <qresource prefix="/">
+        <file>icons/dedpin/builtin/select.svg</file>
+        <file>icons/dedpin/builtin/keyboard-clicked.svg</file>
+        <file>icons/dedpin/builtin/caps_lock.svg</file>
+    </qresource>
 </RCC>

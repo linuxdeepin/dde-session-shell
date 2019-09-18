@@ -133,6 +133,8 @@ private:
     QAction *m_KBAction;                           //键盘布局Action
     QAction *m_capsAction;                         //大小写锁定Action
     KeyboardMonitor *m_capslockMonitor;
+    QHBoxLayout *m_nameLayout;
+    QFrame *m_nameFrame;
 };
 
 #endif // USERLOGINWIDGET_H
