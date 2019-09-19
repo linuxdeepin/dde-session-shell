@@ -63,9 +63,14 @@ LoginWindow::LoginWindow(SessionBaseModel *const model, QWidget *parent)
 
 void LoginWindow::tryGrabKeyboard()
 {
-    if (!windowHandle()) {
+    if (!windowHandle() || !windowHandle()->setKeyboardGrabEnabled(true)) {
+        m_failures++;
+
+        if (m_failures == 15) {
+            qDebug() << "Trying grabkeyboard has exceeded the upper limit. dde-lock will quit.";
+            return;
+        }
+
         QTimer::singleShot(100, this, &LoginWindow::tryGrabKeyboard);
-    } else {
-        windowHandle()->setKeyboardGrabEnabled(true);
     }
 }
