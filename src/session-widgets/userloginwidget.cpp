@@ -132,6 +132,8 @@ void UserLoginWidget::updateUI()
         if (m_authType == SessionBaseModel::LockType) {
             isNopassword = false;
             m_passwordEdit->setFocus();
+        } else {
+            m_lockButton->setFocus();
         }
         m_passwordEdit->setVisible(!isNopassword && !m_isLock);
         m_lockPasswordWidget->setVisible(m_isLock);
@@ -302,6 +304,7 @@ void UserLoginWidget::resizeEvent(QResizeEvent *event)
 void UserLoginWidget::showEvent(QShowEvent *event)
 {
     updateUI();
+    refreshBlurEffectPosition();
 
     return QWidget::showEvent(event);
 }

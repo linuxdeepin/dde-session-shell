@@ -70,6 +70,7 @@ SessionWidget::SessionWidget(QWidget *parent)
 //                  "}");
     setSizePolicy(QSizePolicy::Expanding, QSizePolicy::Expanding);
     loadSessionList();
+    setFocusPolicy(Qt::StrongFocus);
 
     std::function<void (QVariant)> function = std::bind(&SessionWidget::onOtherPageChanged, this, std::placeholders::_1);
     int index = m_frameDataBind->registerFunction("SessionWidget", function);
@@ -176,13 +177,12 @@ void SessionWidget::keyReleaseEvent(QKeyEvent *event)
     case Qt::Key_Return:
         chooseSession();
         break;
-//    case Qt::Key_Left:
-//        leftKeySwitch();
-//        break;
-//    case Qt::Key_Right:
-//    case Qt::Key_Tab:
-//        rightKeySwitch();
-//        break;
+    case Qt::Key_Left:
+        leftKeySwitch();
+        break;
+    case Qt::Key_Right:
+        rightKeySwitch();
+        break;
     case Qt::Key_Escape:
         emit hideFrame();
         break;
@@ -299,6 +299,7 @@ void SessionWidget::loadSessionList()
         sbtn->setProperty("hoverIcon", hoverIcon);
         sbtn->setProperty("checkedIcon", checkedIcon);
         sbtn->hide();
+        sbtn->setFocusPolicy(Qt::NoFocus);
 
         connect(sbtn, &RoundItemButton::clicked, this, &SessionWidget::onSessionButtonClicked);
 

@@ -56,6 +56,7 @@ void SessionBaseWindow::setCenterContent(QWidget * const widget)
     m_centerLayout->addWidget(widget);
     m_centerWidget = widget;
 
+    widget->setFocus();
     widget->show();
 }
 

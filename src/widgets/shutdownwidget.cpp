@@ -90,25 +90,30 @@ void ShutdownWidget::onOtherPageChanged(const QVariant &value)
 
 void ShutdownWidget::initUI()
 {
+    setFocusPolicy(Qt::StrongFocus);
     m_requireShutdownButton = new RoundItemButton(this);
+    m_requireShutdownButton->setFocusPolicy(Qt::NoFocus);
     m_requireShutdownButton->setObjectName("RequireShutdownButton");
     m_requireShutdownButton->setAutoExclusive(true);
     updateTr(m_requireShutdownButton, "Shut down");
     m_actionMap[m_requireShutdownButton] = SessionBaseModel::RequireShutdown;
 
     m_requireRestartButton = new RoundItemButton(tr("Reboot"), this);
+    m_requireRestartButton->setFocusPolicy(Qt::NoFocus);
     m_requireRestartButton->setObjectName("RequireRestartButton");
     m_requireRestartButton->setAutoExclusive(true);
     updateTr(m_requireRestartButton, "Reboot");
     m_actionMap[m_requireRestartButton] = SessionBaseModel::RequireRestart;
 
     m_requireSuspendButton = new RoundItemButton(tr("Suspend"), this);
+    m_requireSuspendButton->setFocusPolicy(Qt::NoFocus);
     m_requireSuspendButton->setObjectName("RequireSuspendButton");
     m_requireSuspendButton->setAutoExclusive(true);
     updateTr(m_requireSuspendButton, "Suspend");
     m_actionMap[m_requireSuspendButton] = SessionBaseModel::RequireSuspend;
 
     m_requireHibernateButton = new RoundItemButton(tr("Hibernate"), this);
+    m_requireHibernateButton->setFocusPolicy(Qt::NoFocus);
     m_requireHibernateButton->setObjectName("RequireHibernateButton");
     m_requireHibernateButton->setAutoExclusive(true);
     updateTr(m_requireHibernateButton, "Hibernate");
@@ -206,12 +211,12 @@ void ShutdownWidget::keyReleaseEvent(QKeyEvent *event)
         hide();
         emit abortOperation();
         break;
-//    case Qt::Key_Left:
-//        leftKeySwitch();
-//        break;
-//    case Qt::Key_Right:
-//        rightKeySwitch();
-//        break;
+    case Qt::Key_Left:
+        leftKeySwitch();
+        break;
+    case Qt::Key_Right:
+        rightKeySwitch();
+        break;
     case Qt::Key_Enter:
     case Qt::Key_Return:
         shutdownAction();
