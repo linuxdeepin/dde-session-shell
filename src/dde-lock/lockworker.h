@@ -25,7 +25,7 @@ class LockWorker : public Auth::AuthInterface, public DeepinAuthInterface
 {
     Q_OBJECT
 public:
-    explicit LockWorker(SessionBaseModel * const model, QObject *parent = nullptr);
+    explicit LockWorker(SessionBaseModel *const model, QObject *parent = nullptr);
 
     void switchToUser(std::shared_ptr<User> user) override;
     void authUser(const QString &password) override;
@@ -47,16 +47,17 @@ private:
     void onUnlockFinished(bool unlocked);
 
     Q_DECL_DEPRECATED bool isDeepin();
+    void userAuthForLock(std::shared_ptr<User> user);
 private:
     bool m_authenticating;
     bool m_isThumbAuth;
     DBusLockService *m_lockInter;
-    DBusLogin1Manager* m_login1ManagerInterface;
+    DBusLogin1Manager *m_login1ManagerInterface;
     DBusHotzone *m_hotZoneInter;
     DeepinAuthFramework *m_authFramework;
     QString m_password;
     QMap<std::shared_ptr<User>, bool> m_lockUser;
-    SessionManager* m_sessionManager;
+    SessionManager *m_sessionManager;
 };
 
 #endif // LOCKWORKER_H

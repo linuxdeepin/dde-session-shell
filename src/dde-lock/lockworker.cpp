@@ -20,7 +20,7 @@
 using PowerInter = com::deepin::daemon::Power;
 using namespace Auth;
 
-LockWorker::LockWorker(SessionBaseModel * const model, QObject *parent)
+LockWorker::LockWorker(SessionBaseModel *const model, QObject *parent)
     : AuthInterface(model, parent)
     , m_authenticating(false)
     , m_isThumbAuth(false)
@@ -30,27 +30,27 @@ LockWorker::LockWorker(SessionBaseModel * const model, QObject *parent)
 {
     m_authFramework = new DeepinAuthFramework(this, this);
 
-    m_login1ManagerInterface =new DBusLogin1Manager("org.freedesktop.login1", "/org/freedesktop/login1", QDBusConnection::systemBus(), this);
+    m_login1ManagerInterface = new DBusLogin1Manager("org.freedesktop.login1", "/org/freedesktop/login1", QDBusConnection::systemBus(), this);
     if (!m_login1ManagerInterface->isValid()) {
-        qWarning() <<"m_login1ManagerInterface:" << m_login1ManagerInterface->lastError().type();
+        qWarning() << "m_login1ManagerInterface:" << m_login1ManagerInterface->lastError().type();
     }
 
     m_currentUserUid = getuid();
 
-    connect(model, &SessionBaseModel::onPowerActionChanged, this, [=] (SessionBaseModel::PowerAction poweraction) {
+    connect(model, &SessionBaseModel::onPowerActionChanged, this, [ = ](SessionBaseModel::PowerAction poweraction) {
         switch (poweraction) {
-            case SessionBaseModel::PowerAction::RequireSuspend:
-                m_login1ManagerInterface->Suspend(true);
-                break;
-            case SessionBaseModel::PowerAction::RequireHibernate:
-                m_login1ManagerInterface->Hibernate(true);
-                break;
-            default:
-                break;
+        case SessionBaseModel::PowerAction::RequireSuspend:
+            m_login1ManagerInterface->Suspend(true);
+            break;
+        case SessionBaseModel::PowerAction::RequireHibernate:
+            m_login1ManagerInterface->Hibernate(true);
+            break;
+        default:
+            break;
         }
     });
 
-    connect(model, &SessionBaseModel::visibleChanged, this, [=] (bool isVisible) {
+    connect(model, &SessionBaseModel::visibleChanged, this, [ = ](bool isVisible) {
         if (!isVisible || model->currentType() != SessionBaseModel::AuthType::LockType || m_authFramework->isAuthenticate()) return;
 
         std::shared_ptr<User> user_ptr = model->currentUser();
@@ -58,17 +58,11 @@ LockWorker::LockWorker(SessionBaseModel * const model, QObject *parent)
 
         if (user_ptr->type() == User::ADDomain && user_ptr->uid() == 0) return;
 
-        if (isDeepin()) {
-            m_authFramework->SetUser(user_ptr);
-            m_authFramework->Authenticate();
-        }
-        else {
-            m_lockInter->AuthenticateUser(user_ptr->name());
-        }
+        userAuthForLock(user_ptr);
     });
 
     connect(m_lockInter, &DBusLockService::Event, this, &LockWorker::lockServiceEvent);
-    connect(model, &SessionBaseModel::onStatusChanged, this, [=] (SessionBaseModel::ModeStatus status) {
+    connect(model, &SessionBaseModel::onStatusChanged, this, [ = ](SessionBaseModel::ModeStatus status) {
         if (status == SessionBaseModel::ModeStatus::PowerMode) {
             checkPowerInfo();
         }
@@ -77,7 +71,7 @@ LockWorker::LockWorker(SessionBaseModel * const model, QObject *parent)
     connect(m_loginedInter, &LoginedInter::LastLogoutUserChanged, this, &LockWorker::onLastLogoutUserChanged);
     connect(m_loginedInter, &LoginedInter::UserListChanged, this, &LockWorker::onLoginUserListChanged);
 
-    connect(m_sessionManager, &SessionManager::Unlock, this, [=] {
+    connect(m_sessionManager, &SessionManager::Unlock, this, [ = ] {
         m_authenticating = false;
         m_password.clear();
         emit m_model->authFinished(true);
@@ -95,7 +89,7 @@ LockWorker::LockWorker(SessionBaseModel * const model, QObject *parent)
     // init ADDomain User
     if (valueByQSettings<bool>("", "loginPromptInput", false)) {
         std::shared_ptr<User> user = std::make_shared<ADDomainUser>(0);
-        static_cast<ADDomainUser*>(user.get())->setUserDisplayName(tr("Domain account"));
+        static_cast<ADDomainUser *>(user.get())->setUserDisplayName(tr("Domain account"));
         m_model->userAdd(user);
     }
 }
@@ -172,8 +166,7 @@ void LockWorker::onPasswordResult(const QString &msg)
     if (msg.isEmpty()) {
         //FIXME(lxz): 不知道为什么收不到错误
         onUnlockFinished(false);
-    }
-    else {
+    } else {
         m_lockInter->AuthenticateUser(user->name());
         m_lockInter->UnlockCheck(user->name(), m_password);
     }
@@ -188,13 +181,7 @@ void LockWorker::onUserAdded(const QString &user)
     if (user_ptr->uid() == m_currentUserUid) {
         m_model->setCurrentUser(user_ptr);
 
-        if (isDeepin()) {
-            m_authFramework->SetUser(user_ptr);
-            m_authFramework->Authenticate();
-        }
-        else {
-            m_lockInter->AuthenticateUser(user_ptr->name());
-        }
+        userAuthForLock(user_ptr);
     }
 
     if (user_ptr->uid() == m_lastLogoutUid) {
@@ -302,4 +289,16 @@ bool LockWorker::isDeepin()
 #else
     return valueByQSettings<bool>("OS", "isDeepin", false);
 #endif
+}
+
+void LockWorker::userAuthForLock(std::shared_ptr<User> user)
+{
+    if (user->isNoPasswdGrp()) return;
+
+    if (isDeepin()) {
+        m_authFramework->SetUser(user);
+        m_authFramework->Authenticate();
+    } else {
+        m_lockInter->AuthenticateUser(user->name());
+    }
 }
