@@ -175,7 +175,9 @@ void UserLoginWidget::updateUI()
 
 void UserLoginWidget::onOtherPagePasswordChanged(const QVariant &value)
 {
+    int cursorIndex =  m_passwordEdit->cursorPosition();
     m_passwordEdit->setText(value.toString());
+    m_passwordEdit->setCursorPosition(cursorIndex);
 }
 
 void UserLoginWidget::onOtherPageKBLayoutChanged(const QVariant &value)
