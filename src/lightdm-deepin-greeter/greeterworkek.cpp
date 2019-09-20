@@ -76,6 +76,7 @@ GreeterWorkek::GreeterWorkek(SessionBaseModel *const model, QObject *parent)
     });
 
     connect(model, &SessionBaseModel::currentUserChanged, this, &GreeterWorkek::recoveryUserKBState);
+    connect(m_lockInter, &DBusLockService::UserChanged, this, &GreeterWorkek::onCurrentUserChanged);
 
     const QString &switchUserButtonValue { valueByQSettings<QString>("Lock", "showSwitchUserButton", "ondemand") };
     m_model->setAlwaysShowUserSwitchButton(switchUserButtonValue == "always");
@@ -108,17 +109,13 @@ void GreeterWorkek::switchToUser(std::shared_ptr<User> user)
     if (user->isLogin()) {
         // switch to user Xorg
         QProcess::startDetached("dde-switchtogreeter", QStringList() << user->name());
+        return;
     }
-    else {
-        m_model->setCurrentUser(user);
 
-        // Skip LDAP login inputbox
-        if (user->type() == User::ADDomain && user->uid() == 0) {
-            return;
-        }
-
-        userAuthForLightdm(user);
-    }
+    QJsonObject json;
+    json["Uid"] = static_cast<int>(user->uid());
+    json["Type"] = user->type();
+    m_lockInter->SwitchToUser(QString(QJsonDocument(json).toJson(QJsonDocument::Compact))).waitForFinished();
 }
 
 void GreeterWorkek::authUser(const QString &password)
@@ -192,7 +189,7 @@ void GreeterWorkek::onCurrentUserChanged(const QString &user)
     m_currentUserUid = static_cast<uint>(obj["Uid"].toInt());
 
     for (std::shared_ptr<User> user : m_model->userList()) {
-        if (user->uid() == m_currentUserUid) {
+        if (!user->isLogin() && user->uid() == m_currentUserUid) {
             m_model->setCurrentUser(user);
             userAuthForLightdm(user);
             break;
