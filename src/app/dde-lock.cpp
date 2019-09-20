@@ -50,6 +50,8 @@ int main(int argc, char *argv[])
 {
     DApplication::loadDXcbPlugin();
     DApplication app(argc, argv);
+    //解决Qt在Retina屏幕上图片模糊问题
+    QApplication::setAttribute(Qt::AA_UseHighDpiPixmaps);
     app.setOrganizationName("deepin");
     app.setApplicationName("dde-lock");
     app.setApplicationVersion("2015.1.0");

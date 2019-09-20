@@ -250,15 +250,17 @@ QImage UserLoginWidget::generateImageFromString(const QString &name)
     font.setPixelSize(32);
     font.setWeight(QFont::DemiBold);
     int word_size = QFontMetrics(font).height();
-    QImage image(QSize(word_size, word_size) * m_passwordEdit->devicePixelRatioF(), QImage::Format_ARGB32);
+    qreal device_ratio = m_passwordEdit->devicePixelRatioF();
+    QImage image(QSize(word_size, word_size) * device_ratio, QImage::Format_ARGB32);
     image.fill(Qt::transparent);
-    image.setDevicePixelRatio(m_passwordEdit->devicePixelRatioF());
+    image.setDevicePixelRatio(device_ratio);
 
     QPainter painter(&image);
     painter.setFont(font);
     painter.setPen(Qt::white);
 
-    QRect r(image.rect());
+    QRect image_rect = image.rect();
+    QRect r(image_rect.left(), image_rect.top(), word_size, word_size);
     painter.drawText(r, Qt::AlignCenter, name);
     return image;
 }
