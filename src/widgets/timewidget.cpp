@@ -30,9 +30,8 @@
 #include <QFontDatabase>
 #include <QSettings>
 
-TimeWidget::TimeWidget(bool use24HourFormat, QWidget *parent)
+TimeWidget::TimeWidget(QWidget *parent)
     : QWidget(parent)
-    , m_use24HourFormat(use24HourFormat)
 {
     int id = QFontDatabase::addApplicationFont(":/fonts/MavenProLight-200.otf");
     const QString fontFamily = QFontDatabase::applicationFontFamilies(id).first();
@@ -68,6 +67,12 @@ TimeWidget::TimeWidget(bool use24HourFormat, QWidget *parent)
     setLayout(vLayout);
 
     connect(m_refreshTimer, &QTimer::timeout, this, &TimeWidget::refreshTime);
+}
+
+void TimeWidget::set24HourFormat(bool use24HourFormat)
+{
+    m_use24HourFormat = use24HourFormat;
+    refreshTime();
 }
 
 void TimeWidget::refreshTime()
