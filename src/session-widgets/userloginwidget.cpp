@@ -343,6 +343,7 @@ void UserLoginWidget::initUI()
     DFontSizeManager::instance()->bind(m_nameLbl, DFontSizeManager::T2);
     m_nameLbl->setAlignment(Qt::AlignCenter);
 
+    m_passwordEdit->setContextMenuPolicy(Qt::NoContextMenu);
     m_passwordEdit->setSizePolicy(QSizePolicy::Expanding, QSizePolicy::Fixed);
     m_passwordEdit->setAlignment(Qt::AlignCenter);
     m_KBAction = new QAction;
