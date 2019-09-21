@@ -346,6 +346,7 @@ void UserLoginWidget::initUI()
     m_passwordEdit->setContextMenuPolicy(Qt::NoContextMenu);
     m_passwordEdit->setSizePolicy(QSizePolicy::Expanding, QSizePolicy::Fixed);
     m_passwordEdit->setAlignment(Qt::AlignCenter);
+    m_passwordEdit->setEchoButtonIsVisible(false);
     m_KBAction = new QAction;
     m_capsAction = new QAction;
     capslockStatusChanged(m_capslockMonitor->isCapslockOn());

@@ -76,6 +76,7 @@ UserInputWidget::UserInputWidget(QWidget *parent)
     m_loginBtn->setFixedWidth(128);
     m_loginBtn->setFocusPolicy(Qt::StrongFocus);
 
+    m_passwordEdit->setEchoButtonIsVisible(false);
     m_passwordEdit->setVisible(true);
     m_passwordEdit->setFocus();
 //    m_passwordEdit->lineEdit()->setAttribute(Qt::WA_InputMethodEnabled, false);
