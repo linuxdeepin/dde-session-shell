@@ -27,7 +27,6 @@
 #include <darrowrectangle.h>
 #include <DBlurEffectWidget>
 #include <DFloatingButton>
-#include <dpasswordedit.h>
 
 DWIDGET_USE_NAMESPACE
 
@@ -42,6 +41,7 @@ class OtherUserInput;
 class QVBoxLayout;
 class KbLayoutWidget;
 class KeyboardMonitor;
+class DPasswordEditEx;
 
 class UserLoginWidget : public QWidget
 {
@@ -113,7 +113,7 @@ private:
     DBlurEffectWidget *m_blurEffectWidget;         //阴影窗体
     UserAvatar *m_userAvatar;                      //用户头像
     QLabel *m_nameLbl;                             //用户名
-    DPasswordEdit *m_passwordEdit;                 //密码输入框
+    DPasswordEditEx *m_passwordEdit;               //密码输入框
     LockPasswordWidget *m_lockPasswordWidget;      //密码锁定后,错误信息提示框
     QMap<uint, QString> m_passwords;
     SessionBaseModel::AuthType m_authType;         //认证类型

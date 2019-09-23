@@ -30,6 +30,7 @@
 #include "src/widgets/kblayoutwidget.h"
 #include "src/session-widgets/framedatabind.h"
 #include "src/widgets/keyboardmonitor.h"
+#include "src/widgets/dpasswordeditex.h"
 
 #include <DFontSizeManager>
 #include <DPalette>
@@ -47,7 +48,7 @@ UserLoginWidget::UserLoginWidget(QWidget *parent)
     , m_blurEffectWidget(new DBlurEffectWidget(this))
     , m_userAvatar(new UserAvatar(this))
     , m_nameLbl(new QLabel(this))
-    , m_passwordEdit(new DPasswordEdit(this))
+    , m_passwordEdit(new DPasswordEditEx(this))
     , m_lockPasswordWidget(new LockPasswordWidget)
     , m_otherUserInput(new OtherUserInput(this))
     , m_lockButton(new DFloatingButton(DStyle::SP_UnlockElement))
@@ -348,7 +349,6 @@ void UserLoginWidget::initUI()
     m_passwordEdit->setContextMenuPolicy(Qt::NoContextMenu);
     m_passwordEdit->setSizePolicy(QSizePolicy::Expanding, QSizePolicy::Fixed);
     m_passwordEdit->setAlignment(Qt::AlignCenter);
-    m_passwordEdit->setEchoButtonIsVisible(false);
     m_KBAction = new QAction;
     m_capsAction = new QAction;
     capslockStatusChanged(m_capslockMonitor->isCapslockOn());
@@ -422,7 +422,7 @@ void UserLoginWidget::initConnect()
     connect(m_passwordEdit, &QLineEdit::textChanged, this, [ = ](const QString & value) {
         FrameDataBind::Instance()->updateValue(tr("UserLoginPassword"), value);
     });
-    connect(m_passwordEdit, &DPasswordEdit::returnPressed, this, [ = ] {
+    connect(m_passwordEdit, &DPasswordEditEx::returnPressed, this, [ = ] {
         const QString passwd = m_passwordEdit->text();
         if (passwd.isEmpty()) return;
         emit requestAuthUser(passwd);
