@@ -57,20 +57,4 @@ LoginWindow::LoginWindow(SessionBaseModel *const model, QWidget *parent)
     connect(m_loginContent, &LockContent::requestAuthUser, this, &LoginWindow::requestAuthUser);
     connect(m_loginContent, &LockContent::requestSwitchToUser, this, &LoginWindow::requestSwitchToUser);
     connect(m_loginContent, &LockContent::requestSetLayout, this, &LoginWindow::requestSetLayout);
-
-    tryGrabKeyboard();
-}
-
-void LoginWindow::tryGrabKeyboard()
-{
-    if (!windowHandle() || !windowHandle()->setKeyboardGrabEnabled(true)) {
-        m_failures++;
-
-        if (m_failures == 15) {
-            qDebug() << "Trying grabkeyboard has exceeded the upper limit. dde-lock will quit.";
-            return;
-        }
-
-        QTimer::singleShot(100, this, &LoginWindow::tryGrabKeyboard);
-    }
 }

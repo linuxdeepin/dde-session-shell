@@ -55,7 +55,6 @@ signals:
 
 public slots:
     void showUserList();
-    void tryGrabKeyboard();
 
 protected:
     void keyPressEvent(QKeyEvent *e) Q_DECL_OVERRIDE;
@@ -65,7 +64,6 @@ protected:
 private:
     LockContent *m_content;
     SessionBaseModel *m_model;
-    int m_failures = 0;
 };
 
 #endif // LOCKFRAME

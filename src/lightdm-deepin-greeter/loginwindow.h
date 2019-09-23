@@ -47,8 +47,6 @@ signals:
 
 private:
     LoginContent *m_loginContent;
-    void tryGrabKeyboard();
-    int m_failures = 0;
 };
 
 #endif // LOGINWINDOW_H

@@ -55,6 +55,7 @@ protected:
     void toggleVirtualKB();
     void updateVirtualKBPosition();
     void onUserListChanged(QList<std::shared_ptr<User>> list);
+    void tryGrabKeyboard();
 
 protected:
     SessionBaseModel *m_model;
@@ -72,6 +73,7 @@ protected:
     MediaWidget *m_mediaWidget;
     UserLoginInfo *m_userLoginInfo;
     QDBusInterface *m_24HourFormatInter;
+    int m_failures = 0;
 };
 
 #endif // LOCKCONTENT_H

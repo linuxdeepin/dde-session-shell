@@ -235,6 +235,8 @@ void LockContent::showEvent(QShowEvent *event)
 
     m_timeWidget->set24HourFormat(m_24HourFormatInter->property("Use24HourFormat").toBool());
 
+    tryGrabKeyboard();
+
     return QFrame::showEvent(event);
 }
 
@@ -312,4 +314,22 @@ void LockContent::onUserListChanged(QList<std::shared_ptr<User> > list)
     const bool alwaysShowUserSwitchButton = m_model->alwaysShowUserSwitchButton();
 
     m_controlWidget->setUserSwitchEnable(alwaysShowUserSwitchButton || (allowShowUserSwitchButton && list.size() > 1));
+}
+
+void LockContent::tryGrabKeyboard()
+{
+    if (window()->windowHandle() && window()->windowHandle()->setKeyboardGrabEnabled(true)) {
+        m_failures = 0;
+        return;
+    }
+
+    m_failures++;
+
+    if (m_failures == 15) {
+        qDebug() << "Trying grabkeyboard has exceeded the upper limit. dde-lock will quit.";
+        qApp->quit();
+        return;
+    }
+
+    QTimer::singleShot(100, this, &LockContent::tryGrabKeyboard);
 }

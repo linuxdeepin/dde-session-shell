@@ -59,24 +59,6 @@ void LockFrame::showUserList()
     m_model->setCurrentModeState(SessionBaseModel::ModeStatus::UserMode);
 }
 
-void LockFrame::tryGrabKeyboard()
-{
-    if (windowHandle() && windowHandle()->setKeyboardGrabEnabled(true)) {
-        m_failures = 0;
-        return;
-    }
-
-    m_failures++;
-
-    if (m_failures == 15) {
-        qDebug() << "Trying grabkeyboard has exceeded the upper limit. dde-lock will quit.";
-        qApp->quit();
-        return;
-    }
-
-    QTimer::singleShot(100, this, &LockFrame::tryGrabKeyboard);
-}
-
 void LockFrame::keyPressEvent(QKeyEvent *e)
 {
     switch (e->key()) {
@@ -91,8 +73,6 @@ void LockFrame::showEvent(QShowEvent *event)
     emit requestEnableHotzone(false);
 
     m_model->setIsShow(true);
-
-    tryGrabKeyboard();
 
     return FullscreenBackground::showEvent(event);
 }
