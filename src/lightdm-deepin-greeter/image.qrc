@@ -55,5 +55,7 @@
         <file>img/switchframe/userswitch_hover.png</file>
         <file>img/switchframe/userswitch_normal.png</file>
         <file>img/switchframe/userswitch_press.png</file>
+        <file>icons/dedpin/builtin/caps_lock.svg</file>
+        <file>icons/dedpin/builtin/select.svg</file>
     </qresource>
 </RCC>
