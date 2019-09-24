@@ -116,6 +116,11 @@ void UserFrameList::showEvent(QShowEvent *event)
     m_rowCount = maxHeight / (UserFrameHeight + UserFrameSpaceing);
     m_rowCount = m_rowCount > 2 ? 2 : m_rowCount;
 
+    //fix BUG 3268
+    if (m_userLoginWidgets.size() <= m_colCount) {
+        m_rowCount = 1;
+    }
+
     m_scrollArea->setFixedHeight((UserFrameHeight + UserFrameSpaceing) * m_rowCount);
     int width = qMin((UserFrameWidth + UserFrameSpaceing) * m_colCount, m_userLoginWidgets.size() * (UserFrameWidth + UserFrameSpaceing));
     m_centerWidget->setFixedWidth(width);
