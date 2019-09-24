@@ -328,7 +328,7 @@ void UserLoginWidget::paintEvent(QPaintEvent *event)
     painter.setPen(QColor(255, 255, 255, 76));
     painter.setBrush(QColor(255, 255, 255, 76));
     painter.setRenderHint(QPainter::Antialiasing, true);
-    painter.drawRoundedRect(QRect(width() / 2 - 46, height() - 4, 92, 4), 2, 2);
+    painter.drawRoundedRect(QRect(width() / 2 - 46, rect().bottom() - 4, 92, 4), 2, 2);
 }
 
 //初始化窗体控件
