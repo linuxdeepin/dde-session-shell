@@ -50,9 +50,13 @@ public slots:
     void setUserSwitchEnable(const bool visible);
     void setSessionSwitchEnable(const bool visible);
     void chooseToSession(const QString &session);
+    void onControlButtonClicked();
+    void leftKeySwitch();
+    void rightKeySwitch();
 
 protected:
     bool eventFilter(QObject *watched, QEvent *event) Q_DECL_OVERRIDE;
+    void keyReleaseEvent(QKeyEvent *event) Q_DECL_OVERRIDE;
 
 private:
     void initUI();
@@ -61,6 +65,9 @@ private:
     void hideTips();
 
 private:
+    int m_index = 0;
+    QList<DFloatingButton *> m_btnList;
+
     QHBoxLayout *m_mainLayout = nullptr;
     DFloatingButton *m_virtualKBBtn = nullptr;
     DFloatingButton *m_switchUserBtn = nullptr;

@@ -225,7 +225,6 @@ void ShutdownWidget::keyReleaseEvent(QKeyEvent *event)
         break;
     }
 
-
     QFrame::keyReleaseEvent(event);
 }
 
@@ -236,6 +235,15 @@ bool ShutdownWidget::event(QEvent *e)
         for (auto it = m_trList.constBegin(); it != m_trList.constEnd(); ++it) {
             it->first(qApp->translate("ShutdownWidget", it->second.toUtf8()));
         }
+    }
+
+    if (e->type() == QEvent::FocusOut) {
+        m_btnList.at(m_index)->updateState(RoundItemButton::Normal);
+    }
+
+    if (e->type() == QEvent::FocusIn) {
+        m_index = 0;
+        m_btnList.at(m_index)->updateState(RoundItemButton::Checked);
     }
 
     return QFrame::event(e);

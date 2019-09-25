@@ -60,6 +60,7 @@ void ControlWidget::initUI()
     m_virtualKBBtn->setIconSize(BUTTON_ICON_SIZE);
     m_virtualKBBtn->setFixedSize(BUTTON_SIZE);
     m_virtualKBBtn->setFocusPolicy(Qt::StrongFocus);
+    m_virtualKBBtn->setAutoExclusive(true);
     m_virtualKBBtn->setBackgroundRole(DPalette::Button);
     setFocusProxy(m_virtualKBBtn);
 
@@ -68,6 +69,7 @@ void ControlWidget::initUI()
     m_switchUserBtn->setIconSize(BUTTON_ICON_SIZE);
     m_switchUserBtn->setFixedSize(BUTTON_SIZE);
     m_switchUserBtn->setFocusPolicy(Qt::StrongFocus);
+    m_switchUserBtn->setAutoExclusive(true);
     m_switchUserBtn->setBackgroundRole(DPalette::Button);
 
     m_powerBtn = new DFloatingButton(this);
@@ -75,7 +77,12 @@ void ControlWidget::initUI()
     m_powerBtn->setIconSize(BUTTON_ICON_SIZE);
     m_powerBtn->setFixedSize(BUTTON_SIZE);
     m_powerBtn->setFocusPolicy(Qt::StrongFocus);
+    m_powerBtn->setAutoExclusive(true);
     m_powerBtn->setBackgroundRole(DPalette::Button);
+
+    m_btnList.append(m_virtualKBBtn);
+    m_btnList.append(m_switchUserBtn);
+    m_btnList.append(m_powerBtn);
 
     m_mainLayout->setMargin(0);
     m_mainLayout->setSpacing(26);
@@ -141,6 +148,7 @@ void ControlWidget::setSessionSwitchEnable(const bool visible)
 
         m_mainLayout->insertWidget(1, m_sessionBtn);
         m_mainLayout->setAlignment(m_sessionBtn, Qt::AlignBottom);
+        m_btnList.append(m_sessionBtn);
 
         connect(m_sessionBtn, &DFloatingButton::clicked, this, &ControlWidget::requestSwitchSession);
     }
@@ -217,6 +225,56 @@ void ControlWidget::chooseToSession(const QString &session)
     }
 }
 
+void ControlWidget::onControlButtonClicked()
+{
+    DFloatingButton *btn = qobject_cast<DFloatingButton *>(sender());
+    Q_ASSERT(btn);
+    Q_ASSERT(m_btnList.contains(btn));
+
+    btn->setChecked(true);
+    m_index = m_btnList.indexOf(btn);
+}
+
+void ControlWidget::leftKeySwitch()
+{
+    if (m_index == 0) {
+        m_index = m_btnList.length() - 1;
+    } else {
+        m_index -= 1;
+    }
+
+    for (int i = m_btnList.size(); i != 0; --i) {
+        int index = (m_index + i) % m_btnList.size();
+
+        if (m_btnList[index]->isVisible()) {
+            m_index = index;
+            break;
+        }
+    }
+
+    m_btnList.at(m_index)->setFocus();
+}
+
+void ControlWidget::rightKeySwitch()
+{
+    if (m_index == m_btnList.size() - 1) {
+        m_index = 0;
+    } else {
+        ++m_index;
+    }
+
+    for (int i = 0; i < m_btnList.size(); ++i) {
+        int index = (m_index + i) % m_btnList.size();
+
+        if (m_btnList[index]->isVisible()) {
+            m_index = index;
+            break;
+        }
+    }
+
+    m_btnList.at(m_index)->setFocus();
+}
+
 bool ControlWidget::eventFilter(QObject *watched, QEvent *event)
 {
 #ifndef SHENWEI_PLATFORM
@@ -231,4 +289,18 @@ bool ControlWidget::eventFilter(QObject *watched, QEvent *event)
     Q_UNUSED(event);
 #endif
     return false;
+}
+
+void ControlWidget::keyReleaseEvent(QKeyEvent *event)
+{
+    switch (event->key()) {
+    case Qt::Key_Left:
+        leftKeySwitch();
+        break;
+    case Qt::Key_Right:
+        rightKeySwitch();
+        break;
+    default:
+        break;
+    }
 }
