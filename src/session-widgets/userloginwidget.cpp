@@ -73,6 +73,7 @@ UserLoginWidget::~UserLoginWidget()
 //重置控件的状态
 void UserLoginWidget::resetAllState()
 {
+    m_passwordEdit->hideLoadSlider();
     m_passwordEdit->clear();
 }
 

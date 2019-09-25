@@ -42,7 +42,10 @@ void LoadSlider::paintEvent(QPaintEvent *event)
     QLinearGradient grad(0, height() / 2, width(), height() / 2);
     grad.setColorAt(0.0, Qt::transparent);
     grad.setColorAt(1.0, m_loadSliderColor);
-    painter.fillRect(0, 1, width(), height() - 2, grad);
+
+    QPainterPath path;
+    path.addRoundRect(0, 1, width(), height() - 2, 48, 48);
+    painter.fillPath(path, grad);
 
     QWidget::paintEvent(event);
 }
@@ -86,8 +89,8 @@ void DPasswordEditEx::showLoadSlider()
             m_isLoading = true;
             m_loadSlider->show();
             m_loadSlider->setGeometry(0, 0, LoadSliderWidth, this->height());
-            m_loadSliderAnim->setStartValue(QPoint(0 - LoadSliderWidth, 0));
-            m_loadSliderAnim->setEndValue(QPoint(this->width(), 0));
+            m_loadSliderAnim->setStartValue(QPoint(0, 0));
+            m_loadSliderAnim->setEndValue(QPoint(this->width() - LoadSliderWidth, 0));
             m_loadSliderAnim->start();
         }
     }
