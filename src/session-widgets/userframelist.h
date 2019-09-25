@@ -53,6 +53,8 @@ protected:
     void mouseReleaseEvent(QMouseEvent *event) override;
     void hideEvent(QHideEvent *event) override;
     void keyPressEvent(QKeyEvent *event) override;
+    void focusInEvent(QFocusEvent  *event) override;
+    void focusOutEvent(QFocusEvent  *event) override;
 
 private:
     void initUI();
@@ -67,6 +69,7 @@ private:
     QScrollArea *m_scrollArea;
     DFlowLayout *m_folwLayout;
     QMap<uint, UserLoginWidget *> m_userLoginWidgets;
+    UserLoginWidget *currentSelectedUser = nullptr;
     SessionBaseModel *m_model;
     FrameDataBind *m_frameDataBind;
     QWidget *m_centerWidget;

@@ -173,6 +173,21 @@ void UserFrameList::keyPressEvent(QKeyEvent *event)
     return QWidget::keyPressEvent(event);
 }
 
+void UserFrameList::focusInEvent(QFocusEvent  *event)
+{
+    Q_UNUSED(event);
+    QList<UserLoginWidget *> widgets = m_userLoginWidgets.values();
+    currentSelectedUser = widgets.first();
+    currentSelectedUser->setSelected(true);
+}
+
+void UserFrameList::focusOutEvent(QFocusEvent  *event)
+{
+    Q_UNUSED(event);
+    if (currentSelectedUser != nullptr)
+        currentSelectedUser->setSelected(false);
+}
+
 void UserFrameList::initUI()
 {
     setFocusPolicy(Qt::StrongFocus);
@@ -219,7 +234,8 @@ void UserFrameList::switchNextUser()
         if (widgets[i]->getSelected()) {
             widgets[i]->setSelected(false);
             if (i == (widgets.size() - 1)) {
-                widgets.first()->setSelected(true);
+                currentSelectedUser = widgets.first();
+                currentSelectedUser->setSelected(true);
                 //处理m_scrollArea翻页显示
                 m_scrollArea->verticalScrollBar()->setValue(0);
                 m_frameDataBind->updateValue("UserFrameList", m_userLoginWidgets.key(m_userLoginWidgets.first()));
@@ -236,7 +252,9 @@ void UserFrameList::switchNextUser()
                     }
                     m_scrollArea->verticalScrollBar()->setValue(topLeft.y());
                 }
-                widgets[i + 1]->setSelected(true);
+
+                currentSelectedUser = widgets[i + 1];
+                currentSelectedUser->setSelected(true);
                 m_frameDataBind->updateValue("UserFrameList", m_userLoginWidgets.key(widgets[i + 1]));
             }
             break;
@@ -253,7 +271,8 @@ void UserFrameList::switchPreviousUser()
         if (widgets[i]->getSelected()) {
             widgets[i]->setSelected(false);
             if (i == 0) {
-                widgets.last()->setSelected(true);
+                currentSelectedUser = widgets.last();
+                currentSelectedUser->setSelected(true);
                 //处理m_scrollArea翻页显示
                 m_scrollArea->verticalScrollBar()->setValue(m_scrollArea->verticalScrollBar()->maximum());
                 m_frameDataBind->updateValue("UserFrameList", m_userLoginWidgets.key(m_userLoginWidgets.last()));
@@ -263,7 +282,9 @@ void UserFrameList::switchPreviousUser()
                 if (topLeft.x() == 0) {
                     m_scrollArea->verticalScrollBar()->setValue(widgets[i - 1]->geometry().topLeft().y());
                 }
-                widgets[i - 1]->setSelected(true);
+
+                currentSelectedUser = widgets[i - 1];
+                currentSelectedUser->setSelected(true);
                 m_frameDataBind->updateValue("UserFrameList", m_userLoginWidgets.key(widgets[i - 1]));
             }
             break;
