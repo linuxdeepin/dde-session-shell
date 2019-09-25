@@ -102,6 +102,7 @@ private:
     void onUserListChanged(QList<std::shared_ptr<User>> list);
     void enableHibernateBtn(bool enable);
     void enableSleepBtn(bool enable);
+    void tryGrabKeyboard();
 
     RoundItemButton *m_currentSelectedBtn = nullptr;
     RoundItemButton *m_shutdownButton;
@@ -132,5 +133,6 @@ private:
     ImageBlur *m_blurImageInter;
     SessionBaseModel *m_model;
     QStringList m_inhibitorBlacklists;
+    int m_failures = 0;
 };
 #endif // CONTENTVIEWWIDGET

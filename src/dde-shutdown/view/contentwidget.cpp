@@ -114,6 +114,8 @@ void ContentWidget::showEvent(QShowEvent *event)
     if (m_warningView) {
         m_mainLayout->setCurrentWidget(m_warningView);
     }
+
+    tryGrabKeyboard();
 }
 
 void ContentWidget::keyPressEvent(QKeyEvent *event)
@@ -802,4 +804,23 @@ void ContentWidget::disableBtns(const QStringList &btnsName)
 void ContentWidget::onCancel()
 {
     hideToplevelWindow();
+}
+
+
+void ContentWidget::tryGrabKeyboard()
+{
+    if (window()->windowHandle() && window()->windowHandle()->setKeyboardGrabEnabled(true)) {
+        m_failures = 0;
+        return;
+    }
+
+    m_failures++;
+
+    if (m_failures == 15) {
+        qDebug() << "Trying grabkeyboard has exceeded the upper limit. dde-lock will quit.";
+        qApp->quit();
+        return;
+    }
+
+    QTimer::singleShot(100, this, &ContentWidget::tryGrabKeyboard);
 }
