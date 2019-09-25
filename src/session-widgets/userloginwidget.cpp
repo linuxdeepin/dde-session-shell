@@ -398,6 +398,8 @@ void UserLoginWidget::initUI()
     m_lockPasswordWidget->hide();
 
     m_blurEffectWidget->setMaskColor(DBlurEffectWidget::LightColor);
+    // fix BUG 3400 设置模糊窗体的不透明度为30%
+    m_blurEffectWidget->setMaskAlpha(76);
     m_blurEffectWidget->setBlurRectXRadius(BlurRectRadius);
     m_blurEffectWidget->setBlurRectYRadius(BlurRectRadius);
 
