@@ -34,6 +34,7 @@
 
 #include <DFontSizeManager>
 #include <DPalette>
+#include "dhidpihelper.h"
 
 #include <QVBoxLayout>
 #include <QAction>
@@ -380,7 +381,9 @@ void UserLoginWidget::initUI()
     m_nameLayout->setSpacing(5);
     //在用户名前，插入一个图标(m_loginLabel)用来表示多用户切换时已登录用户的标记
     m_loginLabel = new QLabel();
-    m_loginLabel->setPixmap(QPixmap(":/icons/dedpin/builtin/select.svg"));
+    QPixmap pixmap = DHiDPIHelper::loadNxPixmap(":/icons/dedpin/builtin/select.svg");
+    pixmap.setDevicePixelRatio(devicePixelRatioF());
+    m_loginLabel->setPixmap(pixmap);
     m_loginLabel->hide();
     m_nameLayout->addWidget(m_loginLabel);
     m_nameLayout->addWidget(m_nameLbl);
