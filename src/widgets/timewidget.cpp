@@ -33,11 +33,12 @@
 TimeWidget::TimeWidget(QWidget *parent)
     : QWidget(parent)
 {
-    int id = QFontDatabase::addApplicationFont(":/fonts/MavenProLight-200.otf");
+    int id = QFontDatabase::addApplicationFont("://fonts/NotoSans-ExtraLight.ttf");
     const QString fontFamily = QFontDatabase::applicationFontFamilies(id).first();
-    const QFont timeFont(fontFamily);
+    QFont timeFont(fontFamily);
 
     m_timeLabel = new QLabel;
+    timeFont.setWeight(QFont::ExtraLight);
     m_timeLabel->setFont(timeFont);
     m_timeLabel->setAlignment(Qt::AlignCenter);
     QPalette palette = m_timeLabel->palette();

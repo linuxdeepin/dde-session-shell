@@ -129,6 +129,6 @@
         <file>img/nopassword_login_hover.svg</file>
         <file>img/nopassword_login_normal.svg</file>
         <file>img/logo.svg</file>
-        <file>fonts/MavenProLight-200.otf</file>
+        <file>fonts/NotoSans-ExtraLight.ttf</file>
     </qresource>
 </RCC>
