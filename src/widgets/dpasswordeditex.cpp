@@ -22,6 +22,30 @@
 #include "dpasswordeditex.h"
 
 #include <QPainter>
+#include <QPropertyAnimation>
+
+LoadSlider::LoadSlider(QWidget *parent)
+    : QWidget(parent)
+    , m_loadSliderColor(Qt::gray)
+{
+}
+
+void LoadSlider::setLoadSliderColor(const QColor &color)
+{
+    m_loadSliderColor = color;
+    update();
+}
+
+void LoadSlider::paintEvent(QPaintEvent *event)
+{
+    QPainter painter(this);
+    QLinearGradient grad(0, height() / 2, width(), height() / 2);
+    grad.setColorAt(0.0, Qt::transparent);
+    grad.setColorAt(1.0, m_loadSliderColor);
+    painter.fillRect(0, 1, width(), height() - 2, grad);
+
+    QWidget::paintEvent(event);
+}
 
 DPasswordEditEx::DPasswordEditEx(QWidget *parent)
     : DLineEdit(parent)
@@ -30,6 +54,52 @@ DPasswordEditEx::DPasswordEditEx(QWidget *parent)
     setEchoMode(QLineEdit::Password);
     //禁用DLineEdit类的删除按钮
     setClearButtonEnabled(false);
+
+    //初始化动画
+    m_loadSlider = new LoadSlider(this);
+    m_loadSlider->hide();
+    m_loadSliderAnim = new QPropertyAnimation(m_loadSlider, "pos", m_loadSlider);
+    m_loadSliderAnim->setDuration(1000);
+    m_loadSliderAnim->setLoopCount(-1);
+    m_loadSliderAnim->setEasingCurve(QEasingCurve::Linear);
+
+    m_loadAnimEnable = true;
+    m_isLoading = false;
+
+    connect(this,  &DPasswordEditEx::returnPressed, this, &DPasswordEditEx::inputDone);
+}
+
+void DPasswordEditEx::inputDone()
+{
+    this->hideAlertMessage();
+
+    QString input = this->text();
+    if (input.length() > 0) {
+        showLoadSlider();
+    }
+}
+
+void DPasswordEditEx::showLoadSlider()
+{
+    if (m_loadAnimEnable) {
+        if (!m_isLoading) {
+            m_isLoading = true;
+            m_loadSlider->show();
+            m_loadSlider->setGeometry(0, 0, LoadSliderWidth, this->height());
+            m_loadSliderAnim->setStartValue(QPoint(0 - LoadSliderWidth, 0));
+            m_loadSliderAnim->setEndValue(QPoint(this->width(), 0));
+            m_loadSliderAnim->start();
+        }
+    }
+}
+
+void DPasswordEditEx::hideLoadSlider()
+{
+    if (m_isLoading) {
+        m_isLoading = false;
+        m_loadSliderAnim->stop();
+        m_loadSlider->hide();
+    }
 }
 
 //重写QLineEdit paintEvent函数，实现当文本设置居中后，holderText仍然显示的需求

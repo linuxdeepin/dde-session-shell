@@ -92,6 +92,7 @@ void UserLoginWidget::setFaildTipMessage(const QString &message)
     if (message.isEmpty()) {
         m_passwordEdit->hideAlertMessage();
     } else {
+        m_passwordEdit->hideLoadSlider();
         m_passwordEdit->showAlertMessage(message);
         m_passwordEdit->selectAll();
     }
@@ -226,8 +227,7 @@ void UserLoginWidget::capslockStatusChanged(bool on)
     if (on) {
         m_capsAction->setIcon(QIcon(":/icons/dedpin/builtin/caps_lock.svg"));
     } else {
-        QImage image = generateImageFromString("");
-        m_capsAction->setIcon(QIcon(QPixmap::fromImage(image)));
+        m_capsAction->setIcon(QIcon());
     }
 }
 

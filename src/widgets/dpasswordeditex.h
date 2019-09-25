@@ -26,13 +26,48 @@
 
 DWIDGET_USE_NAMESPACE
 
+class QPropertyAnimation;
+class LoadSlider : public QWidget
+{
+public:
+    LoadSlider(QWidget *parent = nullptr);
+
+public:
+    QColor loadSliderColor() const;
+    void setLoadSliderColor(const QColor &color);
+
+protected:
+    void paintEvent(QPaintEvent *event) Q_DECL_OVERRIDE;
+
+private:
+    QColor m_loadSliderColor;
+};
+
 class DPasswordEditEx : public DLineEdit
 {
+    Q_OBJECT
 public:
     DPasswordEditEx(QWidget *parent = nullptr);
 
+public Q_SLOTS:
+    void inputDone();
+    void showLoadSlider();
+    void hideLoadSlider();
+
 protected:
     void paintEvent(QPaintEvent *event) override;
+
+protected:
+    Q_DISABLE_COPY(DPasswordEditEx)
+
+private:
+    LoadSlider *m_loadSlider;
+    QPropertyAnimation *m_loadSliderAnim;
+
+    bool m_loadAnimEnable;
+    bool m_isLoading;
+
+    const int LoadSliderWidth = 40;
 };
 
 #endif // DPASSWORDEDITEX_H
