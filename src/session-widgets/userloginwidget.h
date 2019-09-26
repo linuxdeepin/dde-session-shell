@@ -105,9 +105,7 @@ private:
     void onOtherPageKBLayoutChanged(const QVariant &value);
     void toggleKBLayoutWidget();
     void refreshKBLayoutWidgetPosition();
-    void capslockStatusChanged(bool on);
     void receiveUserKBLayoutChanged(const QString &layout);
-    QImage generateImageFromString(const QString &name);
 
 private:
     DBlurEffectWidget *m_blurEffectWidget;         //阴影窗体
@@ -130,8 +128,6 @@ private:
     QStringList m_KBLayoutList;
     QString m_defkBLayout;
     QLabel *m_loginLabel;
-    QAction *m_KBAction;                           //键盘布局Action
-    QAction *m_capsAction;                         //大小写锁定Action
     KeyboardMonitor *m_capslockMonitor;
     QHBoxLayout *m_nameLayout;
     QFrame *m_nameFrame;

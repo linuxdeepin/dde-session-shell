@@ -43,30 +43,43 @@ private:
     QColor m_loadSliderColor;
 };
 
+class QPushButton;
 class DPasswordEditEx : public DLineEdit
 {
     Q_OBJECT
 public:
     DPasswordEditEx(QWidget *parent = nullptr);
+    void addButton();
+
+signals:
+    void toggleKBLayoutWidget();
 
 public Q_SLOTS:
     void inputDone();
     void showLoadSlider();
     void hideLoadSlider();
+    void capslockStatusChanged(bool on);
+    void receiveUserKBLayoutChanged(const QString &layout);
+    void setKBLayoutList(QStringList kbLayoutList);
 
 protected:
     void paintEvent(QPaintEvent *event) override;
-
-protected:
     Q_DISABLE_COPY(DPasswordEditEx)
+
+private:
+    void initUI();
+    void initAnimation();
+    QImage generateImageFromString(const QString &name);
 
 private:
     LoadSlider *m_loadSlider;
     QPropertyAnimation *m_loadSliderAnim;
+    QStringList m_KBLayoutList;
+    QPushButton *m_KBButton;                           //键盘布局Button
+    QPushButton *m_capsButton;                         //大小写锁定Button
 
     bool m_loadAnimEnable;
     bool m_isLoading;
-
     const int LoadSliderWidth = 40;
 };
 

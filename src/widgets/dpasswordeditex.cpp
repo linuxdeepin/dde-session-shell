@@ -23,6 +23,8 @@
 
 #include <QPainter>
 #include <QPropertyAnimation>
+#include <QPushButton>
+#include <QHBoxLayout>
 
 LoadSlider::LoadSlider(QWidget *parent)
     : QWidget(parent)
@@ -53,11 +55,40 @@ void LoadSlider::paintEvent(QPaintEvent *event)
 DPasswordEditEx::DPasswordEditEx(QWidget *parent)
     : DLineEdit(parent)
 {
+    initUI();
+    initAnimation();
+}
+
+void DPasswordEditEx::initUI()
+{
     //设置密码框文本显示模式
     setEchoMode(QLineEdit::Password);
     //禁用DLineEdit类的删除按钮
     setClearButtonEnabled(false);
 
+    //设置键盘和大小写锁定按钮
+    m_KBButton = new QPushButton(this);
+    m_KBButton->setFocusPolicy(Qt::NoFocus);
+    m_KBButton->setCursor(Qt::ArrowCursor);
+
+    m_capsButton = new QPushButton(this);
+    m_capsButton->setFocusPolicy(Qt::NoFocus);
+    m_capsButton->setCursor(Qt::ArrowCursor);
+    m_capsButton->setStyleSheet("border:none");
+    m_capsButton->setFlat(true);
+    m_capsButton->setIcon(QIcon(":/icons/dedpin/builtin/caps_lock.svg"));
+    m_capsButton->setFixedWidth(m_KBButton->iconSize().width());
+
+    QHBoxLayout *layout = new QHBoxLayout;
+    layout->addWidget(m_KBButton);
+    layout->addStretch();
+    layout->addWidget(m_capsButton);
+    layout->setContentsMargins(5, 5, 8, 5);
+    setLayout(layout);
+}
+
+void DPasswordEditEx::initAnimation()
+{
     //初始化动画
     m_loadSlider = new LoadSlider(this);
     m_loadSlider->hide();
@@ -70,6 +101,58 @@ DPasswordEditEx::DPasswordEditEx(QWidget *parent)
     m_isLoading = false;
 
     connect(this,  &DPasswordEditEx::returnPressed, this, &DPasswordEditEx::inputDone);
+}
+
+void DPasswordEditEx::setKBLayoutList(QStringList kbLayoutList)
+{
+    m_KBLayoutList = kbLayoutList;
+    if (kbLayoutList.size() > 1) {
+        //连接点击键盘布局Action槽函数
+        connect(m_KBButton, &QPushButton::clicked, this, &DPasswordEditEx::toggleKBLayoutWidget);
+    } else {
+        //解除点击键盘布局Action槽函数
+        disconnect(m_KBButton, &QPushButton::clicked, this, &DPasswordEditEx::toggleKBLayoutWidget);
+    }
+}
+
+void DPasswordEditEx::receiveUserKBLayoutChanged(const QString &layout)
+{
+    QString layoutName = layout;
+    layoutName = layoutName.split(";").first();
+
+    if (m_KBLayoutList.size() == 1) {
+        layoutName = "";
+    }
+
+    QImage image = generateImageFromString(layoutName);
+    m_KBButton->setIcon(QIcon(QPixmap::fromImage(image)));
+    setTextMargins(m_KBButton->width(), 0, m_capsButton->width() + 5, 0);
+}
+
+QImage DPasswordEditEx::generateImageFromString(const QString &name)
+{
+    QFont font = this->font();
+    font.setPixelSize(32);
+    font.setWeight(QFont::DemiBold);
+    int word_size = QFontMetrics(font).height();
+    qreal device_ratio = this->devicePixelRatioF();
+    QImage image(QSize(word_size, word_size) * device_ratio, QImage::Format_ARGB32);
+    image.fill(Qt::transparent);
+    image.setDevicePixelRatio(device_ratio);
+
+    QPainter painter(&image);
+    painter.setFont(font);
+    painter.setPen(Qt::white);
+
+    QRect image_rect = image.rect();
+    QRect r(image_rect.left(), image_rect.top(), word_size, word_size);
+    painter.drawText(r, Qt::AlignCenter, name);
+    return image;
+}
+
+void DPasswordEditEx::capslockStatusChanged(bool on)
+{
+    m_capsButton->setVisible(on);
 }
 
 void DPasswordEditEx::inputDone()
