@@ -85,7 +85,7 @@ void UserLoginWidget::setFaildMessage(const QString &message)
         return;
     }
 
-    m_passwordEdit->setPlaceholderText(message);
+    m_passwordEdit->lineEdit()->setPlaceholderText(message);
 }
 
 //密码输入错误,设置错误信息
@@ -96,7 +96,7 @@ void UserLoginWidget::setFaildTipMessage(const QString &message)
     } else {
         m_passwordEdit->hideLoadSlider();
         m_passwordEdit->showAlertMessage(message);
-        m_passwordEdit->selectAll();
+        m_passwordEdit->lineEdit()->selectAll();
     }
 }
 
@@ -181,9 +181,9 @@ void UserLoginWidget::updateUI()
 
 void UserLoginWidget::onOtherPagePasswordChanged(const QVariant &value)
 {
-    int cursorIndex =  m_passwordEdit->cursorPosition();
+    int cursorIndex =  m_passwordEdit->lineEdit()->cursorPosition();
     m_passwordEdit->setText(value.toString());
-    m_passwordEdit->setCursorPosition(cursorIndex);
+    m_passwordEdit->lineEdit()->setCursorPosition(cursorIndex);
 }
 
 void UserLoginWidget::onOtherPageKBLayoutChanged(const QVariant &value)
@@ -310,9 +310,9 @@ void UserLoginWidget::initUI()
     DFontSizeManager::instance()->bind(m_nameLbl, DFontSizeManager::T2);
     m_nameLbl->setAlignment(Qt::AlignCenter);
 
-    m_passwordEdit->setContextMenuPolicy(Qt::NoContextMenu);
+    m_passwordEdit->lineEdit()->setContextMenuPolicy(Qt::NoContextMenu);
     m_passwordEdit->setSizePolicy(QSizePolicy::Expanding, QSizePolicy::Fixed);
-    m_passwordEdit->setAlignment(Qt::AlignCenter);
+    m_passwordEdit->lineEdit()->setAlignment(Qt::AlignCenter);
     m_passwordEdit->capslockStatusChanged(m_capslockMonitor->isCapslockOn());
 
     m_kbLayoutBorder->hide();
@@ -383,7 +383,7 @@ void UserLoginWidget::initUI()
 //初始化槽函数连接
 void UserLoginWidget::initConnect()
 {
-    connect(m_passwordEdit, &QLineEdit::textChanged, this, [ = ](const QString & value) {
+    connect(m_passwordEdit->lineEdit(), &QLineEdit::textChanged, this, [ = ](const QString & value) {
         FrameDataBind::Instance()->updateValue(tr("UserLoginPassword"), value);
     });
     connect(m_passwordEdit, &DPasswordEditEx::returnPressed, this, [ = ] {

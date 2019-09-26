@@ -125,7 +125,7 @@ void DPasswordEditEx::receiveUserKBLayoutChanged(const QString &layout)
 
     QImage image = generateImageFromString(layoutName);
     m_KBButton->setIcon(QIcon(QPixmap::fromImage(image)));
-    setTextMargins(m_KBButton->width(), 0, m_capsButton->width() + 5, 0);
+    lineEdit()->setTextMargins(m_KBButton->width(), 0, m_capsButton->width() + 5, 0);
 }
 
 QImage DPasswordEditEx::generateImageFromString(const QString &name)
@@ -190,9 +190,7 @@ void DPasswordEditEx::hideLoadSlider()
 //重写QLineEdit paintEvent函数，实现当文本设置居中后，holderText仍然显示的需求
 void DPasswordEditEx::paintEvent(QPaintEvent *event)
 {
-    QLineEdit::paintEvent(event);
-
-    if (hasFocus() && alignment() == Qt::AlignCenter && !placeholderText().isEmpty() && text().isEmpty()) {
+    if (hasFocus() && lineEdit()->alignment() == Qt::AlignCenter && !lineEdit()->placeholderText().isEmpty() && text().isEmpty()) {
         QPainter pa(this);
         QPalette pal = palette();
         QColor col = pal.text().color();
@@ -201,6 +199,6 @@ void DPasswordEditEx::paintEvent(QPaintEvent *event)
         pa.setPen(col);
         QTextOption option;
         option.setAlignment(Qt::AlignCenter);
-        pa.drawText(rect(), placeholderText(), option);
+        pa.drawText(rect(), lineEdit()->placeholderText(), option);
     }
 }
