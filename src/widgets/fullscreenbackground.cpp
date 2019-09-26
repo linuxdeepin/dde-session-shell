@@ -42,6 +42,7 @@ FullscreenBackground::FullscreenBackground(QWidget *parent)
 {
     setWindowFlags(Qt::WindowStaysOnTopHint | Qt::X11BypassWindowManagerHint);
 
+    installEventFilter(this);
     m_fadeOutAni->setEasingCurve(QEasingCurve::InOutCubic);
     m_fadeOutAni->setDuration(1000);
     m_fadeOutAni->setStartValue(1.0f);
@@ -203,6 +204,17 @@ void FullscreenBackground::showEvent(QShowEvent *event)
     }
 
     return QWidget::showEvent(event);
+}
+
+bool FullscreenBackground::eventFilter(QObject *watched, QEvent *e)
+{
+    if (e->type() == QEvent::WindowDeactivate) {
+        if (QWindow *w = windowHandle()) {
+            w->requestActivate();
+        }
+    }
+
+    return QWidget::eventFilter(watched, e);
 }
 
 const QPixmap FullscreenBackground::pixmapHandle(const QPixmap &pixmap)
