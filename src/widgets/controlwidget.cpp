@@ -164,16 +164,14 @@ void ControlWidget::setSessionSwitchEnable(const bool visible)
 
     if (!m_tipWidget) {
         m_tipWidget = new QWidget;
-        m_tipWidget->setFixedSize(80, 40);
-
         m_mainLayout->insertWidget(1, m_tipWidget);
-        m_mainLayout->setAlignment(m_tipWidget, Qt::AlignBottom);
+        m_mainLayout->setAlignment(m_tipWidget, Qt::AlignCenter);
     }
 
     if (!m_sessionTip) {
         m_sessionTip = new QLabel(m_tipWidget);
-        m_sessionTip->setAlignment(Qt::AlignRight | Qt::AlignVCenter);
-        m_sessionTip->setFixedSize(80, 40);
+        m_sessionTip->setAlignment(Qt::AlignHCenter | Qt::AlignVCenter);
+        m_sessionTip->installEventFilter(this);
 
 #ifndef SHENWEI_PLATFORM
         m_sessionTip->setStyleSheet("color:white;"
@@ -215,7 +213,8 @@ void ControlWidget::chooseToSession(const QString &session)
             return;
 
         m_sessionTip->setText(session);
-
+        m_sessionTip->move(0, 0);
+        m_sessionTip->adjustSize();
         const QString sessionId = session.toLower();
         const QString normalIcon = QString(":/img/sessions/%1_indicator_normal.svg").arg(sessionId);
 
@@ -297,6 +296,12 @@ bool ControlWidget::eventFilter(QObject *watched, QEvent *event)
             showTips();
         else if (event->type() == QEvent::Leave)
             hideTips();
+    }
+
+    if (watched == m_sessionTip) {
+        if (event->type() == QEvent::Resize) {
+            m_tipWidget->setFixedSize(m_sessionTip->size());
+        }
     }
 #else
     Q_UNUSED(watched);
