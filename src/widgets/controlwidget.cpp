@@ -102,6 +102,13 @@ void ControlWidget::initConnect()
     connect(m_virtualKBBtn, &DFloatingButton::clicked, this, &ControlWidget::requestSwitchVirtualKB);
 }
 
+void ControlWidget::bindTabOrder()
+{
+    QWidget::setTabOrder(m_sessionBtn, m_virtualKBBtn);
+    QWidget::setTabOrder(m_virtualKBBtn, m_switchUserBtn);
+    QWidget::setTabOrder(m_switchUserBtn, m_powerBtn);
+}
+
 void ControlWidget::showTips()
 {
 #ifndef SHENWEI_PLATFORM
@@ -135,6 +142,7 @@ void ControlWidget::setSessionSwitchEnable(const bool visible)
         m_sessionBtn = new DFloatingButton(this);
         m_sessionBtn->setIconSize(BUTTON_ICON_SIZE);
         m_sessionBtn->setFixedSize(BUTTON_SIZE);
+        m_sessionBtn->setAutoExclusive(true);
         m_sessionBtn->setBackgroundRole(DPalette::Button);
         m_sessionBtn->setFocusPolicy(Qt::StrongFocus);
 #ifndef SHENWEI_PLATFORM
@@ -149,6 +157,7 @@ void ControlWidget::setSessionSwitchEnable(const bool visible)
         m_mainLayout->insertWidget(1, m_sessionBtn);
         m_mainLayout->setAlignment(m_sessionBtn, Qt::AlignBottom);
         m_btnList.append(m_sessionBtn);
+        bindTabOrder();
 
         connect(m_sessionBtn, &DFloatingButton::clicked, this, &ControlWidget::requestSwitchSession);
     }
@@ -189,6 +198,11 @@ void ControlWidget::setSessionSwitchEnable(const bool visible)
         m_tipsAni = new QPropertyAnimation(m_sessionTip, "pos", this);
     }
 #endif
+
+    if (visible)
+        setFocusProxy(m_sessionBtn);
+    else
+        setFocusProxy(m_virtualKBBtn);
 
     m_sessionBtn->setVisible(visible);
 }

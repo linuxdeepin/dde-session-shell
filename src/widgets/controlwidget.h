@@ -63,6 +63,7 @@ private:
     void initConnect();
     void showTips();
     void hideTips();
+    void bindTabOrder();
 
 private:
     int m_index = 0;

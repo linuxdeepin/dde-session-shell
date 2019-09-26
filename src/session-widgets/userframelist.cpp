@@ -99,8 +99,8 @@ void UserFrameList::onUserClicked()
     UserLoginWidget *widget = static_cast<UserLoginWidget *>(sender());
     if (!widget) return;
 
+    currentSelectedUser = widget;
     emit requestSwitchUser(m_model->findUserByUid(m_userLoginWidgets.key(widget)));
-
     emit clicked();
 }
 
@@ -176,9 +176,8 @@ void UserFrameList::keyPressEvent(QKeyEvent *event)
 void UserFrameList::focusInEvent(QFocusEvent  *event)
 {
     Q_UNUSED(event);
-    QList<UserLoginWidget *> widgets = m_userLoginWidgets.values();
-    currentSelectedUser = widgets.first();
-    currentSelectedUser->setSelected(true);
+    if (currentSelectedUser != nullptr)
+        currentSelectedUser->setSelected(true);
 }
 
 void UserFrameList::focusOutEvent(QFocusEvent  *event)

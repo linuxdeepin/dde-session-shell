@@ -74,7 +74,6 @@ void DPasswordEditEx::initUI()
     m_capsButton = new QPushButton(this);
     m_capsButton->setFocusPolicy(Qt::NoFocus);
     m_capsButton->setCursor(Qt::ArrowCursor);
-    m_capsButton->setStyleSheet("border:none");
     m_capsButton->setFlat(true);
     m_capsButton->setIcon(QIcon(":/icons/dedpin/builtin/caps_lock.svg"));
     m_capsButton->setFixedWidth(m_KBButton->iconSize().width());
