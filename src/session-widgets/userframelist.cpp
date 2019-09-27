@@ -129,7 +129,12 @@ void UserFrameList::showEvent(QShowEvent *event)
     std::shared_ptr<User> user = m_model->currentUser();
     if (user.get() == nullptr) return;
     for (auto it = m_userLoginWidgets.constBegin(); it != m_userLoginWidgets.constEnd(); ++it) {
-        it.value()->setSelected(it.key() == user->uid());
+        if (it.key() == user->uid()) {
+            currentSelectedUser = it.value();
+            currentSelectedUser->setSelected(true);
+        } else {
+            currentSelectedUser->setSelected(false);
+        }
     }
 }
 
@@ -176,8 +181,9 @@ void UserFrameList::keyPressEvent(QKeyEvent *event)
 void UserFrameList::focusInEvent(QFocusEvent  *event)
 {
     Q_UNUSED(event);
-    if (currentSelectedUser != nullptr)
+    if (currentSelectedUser != nullptr) {
         currentSelectedUser->setSelected(true);
+    }
 }
 
 void UserFrameList::focusOutEvent(QFocusEvent  *event)
