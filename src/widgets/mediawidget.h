@@ -42,22 +42,14 @@ public:
     void initMediaPlayer();
 
 private slots:
-    void onVolumeChanged();
-    void onMuteSwitchChanged();
     void changeVisible();
-
-protected:
-    bool eventFilter(QObject *watched, QEvent *event) Q_DECL_OVERRIDE;
 
 private:
     void initUI();
     void initConnect();
 
 private:
-    DImageButton *m_volumeBtn;
     DMPRISControl *m_dmprisWidget;
-    QLabel *m_volumeNums;
-    double m_lastVolumeNums;
     DBusMediaPlayer2 *m_dbusInter;
 };
 
