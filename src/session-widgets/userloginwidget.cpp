@@ -147,8 +147,6 @@ void UserLoginWidget::updateUI()
     }
     case NormalType: {
         m_passwordEdit->setVisible(!m_isLock);
-        updateKBLayout(m_KBLayoutList);
-        setDefaultKBLayout(m_defkBLayout);
         m_lockButton->show();
         m_lockPasswordWidget->setVisible(m_isLock);
         m_passwordEdit->setFocus();
@@ -272,6 +270,8 @@ void UserLoginWidget::showEvent(QShowEvent *event)
 {
     updateUI();
     refreshBlurEffectPosition();
+    //fixed BUG 3521
+    m_passwordEdit->lineEdit()->clear();
 
     return QWidget::showEvent(event);
 }
@@ -293,6 +293,14 @@ void UserLoginWidget::paintEvent(QPaintEvent *event)
     painter.setBrush(QColor(255, 255, 255, 76));
     painter.setRenderHint(QPainter::Antialiasing, true);
     painter.drawRoundedRect(QRect(width() / 2 - 46, rect().bottom() - 4, 92, 4), 2, 2);
+}
+
+//fixed BUG 3518
+void UserLoginWidget::hideEvent(QHideEvent *event)
+{
+    Q_UNUSED(event);
+
+    m_kbLayoutBorder->hide();
 }
 
 //初始化窗体控件
@@ -483,12 +491,13 @@ void UserLoginWidget::hideKBLayout()
 void UserLoginWidget::setKBLayoutList(QStringList kbLayoutList)
 {
     m_KBLayoutList = kbLayoutList;
+    updateKBLayout(m_KBLayoutList);
     m_passwordEdit->setKBLayoutList(kbLayoutList);
 }
 
 void UserLoginWidget::setDefKBLayout(QString defKBLayout)
 {
-    m_defkBLayout = defKBLayout;
+    m_kbLayoutWidget->setDefault(defKBLayout);
 }
 
 void UserLoginWidget::setSelected(bool isSelected)

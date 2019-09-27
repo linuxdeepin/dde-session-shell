@@ -96,6 +96,7 @@ protected:
     void showEvent(QShowEvent *event) override;
     void mousePressEvent(QMouseEvent *event) override;
     void paintEvent(QPaintEvent *event) override;
+    void hideEvent(QHideEvent *event) override;
 
 private:
     void initUI();
@@ -126,7 +127,6 @@ private:
     bool m_isLogin;                                //是否登录（UserFrame中使用）
     bool m_isSelected;
     QStringList m_KBLayoutList;
-    QString m_defkBLayout;
     QLabel *m_loginLabel;
     KeyboardMonitor *m_capslockMonitor;
     QHBoxLayout *m_nameLayout;
