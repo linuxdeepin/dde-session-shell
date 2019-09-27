@@ -47,6 +47,9 @@ void SessionBaseWindow::setRightBottomWidget(QWidget * const widget)
 
 void SessionBaseWindow::setCenterContent(QWidget * const widget)
 {
+    if (m_centerWidget == widget)
+        return;
+
     if (m_centerWidget != nullptr) {
         m_centerLayout->removeWidget(m_centerWidget);
         m_centerWidget->hide();
