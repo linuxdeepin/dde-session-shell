@@ -121,12 +121,15 @@ void DPasswordEditEx::receiveUserKBLayoutChanged(const QString &layout)
 
     if (m_KBLayoutList.size() == 1) {
         layoutName = "";
+        m_KBButton->hide();
+        lineEdit()->setTextMargins(5, 0, m_capsButton->width() + 5, 0);
+    } else {
+        m_KBButton->show();
+        QImage image = generateImageFromString(layoutName);
+        m_KBButton->setIcon(QIcon(QPixmap::fromImage(image)));
+        m_KBButton->setFixedWidth(lineEdit()->height());
+        lineEdit()->setTextMargins(m_KBButton->width() + 5, 0, m_capsButton->width() + 5, 0);
     }
-
-    QImage image = generateImageFromString(layoutName);
-    m_KBButton->setIcon(QIcon(QPixmap::fromImage(image)));
-    m_KBButton->setFixedWidth(lineEdit()->height());
-    lineEdit()->setTextMargins(m_KBButton->width() + 5, 0, m_capsButton->width() + 5, 0);
 }
 
 QImage DPasswordEditEx::generateImageFromString(const QString &name)
