@@ -123,11 +123,12 @@ void ControlWidget::showTips()
 void ControlWidget::hideTips()
 {
 #ifndef SHENWEI_PLATFORM
-    m_tipsAni->setEndValue(QPoint(m_tipWidget->width(), 0));
+    //在退出动画时候会出现白边，+1
+    m_tipsAni->setEndValue(QPoint(m_tipWidget->width() + 1, 0));
     m_tipsAni->setStartValue(QPoint());
     m_tipsAni->start();
 #else
-    m_sessionTip->move(m_tipWidget->width(), 0);
+    m_sessionTip->move(m_tipWidget->width() + 1, 0);
 #endif
 }
 
@@ -213,8 +214,9 @@ void ControlWidget::chooseToSession(const QString &session)
             return;
 
         m_sessionTip->setText(session);
-        m_sessionTip->move(0, 0);
         m_sessionTip->adjustSize();
+        //当session长度改变时，应该移到它的width来隐藏
+        m_sessionTip->move(m_sessionTip->size().width() + 1, 0);
         const QString sessionId = session.toLower();
         const QString normalIcon = QString(":/img/sessions/%1_indicator_normal.svg").arg(sessionId);
 
