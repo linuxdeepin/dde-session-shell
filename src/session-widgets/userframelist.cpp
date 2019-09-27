@@ -133,7 +133,7 @@ void UserFrameList::showEvent(QShowEvent *event)
             currentSelectedUser = it.value();
             currentSelectedUser->setSelected(true);
         } else {
-            currentSelectedUser->setSelected(false);
+            it.value()->setSelected(false);
         }
     }
 }
