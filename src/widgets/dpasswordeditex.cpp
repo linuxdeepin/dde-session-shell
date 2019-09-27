@@ -83,7 +83,7 @@ void DPasswordEditEx::initUI()
     layout->addStretch();
     layout->addWidget(m_capsButton);
     layout->setContentsMargins(5, 5, 8, 5);
-    setLayout(layout);
+    lineEdit()->setLayout(layout);
 }
 
 void DPasswordEditEx::initAnimation()
@@ -125,7 +125,8 @@ void DPasswordEditEx::receiveUserKBLayoutChanged(const QString &layout)
 
     QImage image = generateImageFromString(layoutName);
     m_KBButton->setIcon(QIcon(QPixmap::fromImage(image)));
-    lineEdit()->setTextMargins(m_KBButton->width(), 0, m_capsButton->width() + 5, 0);
+    m_KBButton->setFixedWidth(lineEdit()->height());
+    lineEdit()->setTextMargins(m_KBButton->width() + 5, 0, m_capsButton->width() + 5, 0);
 }
 
 QImage DPasswordEditEx::generateImageFromString(const QString &name)
