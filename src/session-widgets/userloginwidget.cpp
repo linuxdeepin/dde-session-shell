@@ -135,7 +135,7 @@ void UserLoginWidget::updateUI()
         bool isNopassword = true;
         if (m_authType == SessionBaseModel::LockType) {
             isNopassword = false;
-            m_passwordEdit->setFocus();
+            m_passwordEdit->lineEdit()->setFocus();
         } else {
             m_lockButton->setFocus();
         }
@@ -149,7 +149,7 @@ void UserLoginWidget::updateUI()
         m_passwordEdit->setVisible(!m_isLock);
         m_lockButton->show();
         m_lockPasswordWidget->setVisible(m_isLock);
-        m_passwordEdit->setFocus();
+        m_passwordEdit->lineEdit()->setFocus();
         break;
     }
     case IDAndPasswordType: {
@@ -174,7 +174,7 @@ void UserLoginWidget::updateUI()
     }
 
     if (m_passwordEdit->isVisible())
-        m_userAvatar->setFocusProxy(m_passwordEdit);
+        m_userAvatar->setFocusProxy(m_passwordEdit->lineEdit());
 }
 
 void UserLoginWidget::onOtherPagePasswordChanged(const QVariant &value)
@@ -405,7 +405,7 @@ void UserLoginWidget::initConnect()
 
         if (m_passwordEdit->isVisible())
         {
-            m_passwordEdit->setFocus();
+            m_passwordEdit->lineEdit()->setFocus();
         }
 
         if (password.isEmpty() && m_showType != NoPasswordType) return;
