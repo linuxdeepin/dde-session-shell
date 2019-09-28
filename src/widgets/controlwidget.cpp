@@ -312,7 +312,7 @@ bool ControlWidget::eventFilter(QObject *watched, QEvent *event)
     return false;
 }
 
-void ControlWidget::keyReleaseEvent(QKeyEvent *event)
+void ControlWidget::keyPressEvent(QKeyEvent *event)
 {
     switch (event->key()) {
     case Qt::Key_Left:

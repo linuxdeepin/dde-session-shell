@@ -170,7 +170,7 @@ void SessionWidget::switchToUser(const QString &userName)
     qDebug() << userName << "default session is: " << sessionName << m_currentSessionIndex;
 }
 
-void SessionWidget::keyReleaseEvent(QKeyEvent *event)
+void SessionWidget::keyPressEvent(QKeyEvent *event)
 {
     switch (event->key()) {
     case Qt::Key_Enter:
@@ -203,6 +203,16 @@ void SessionWidget::resizeEvent(QResizeEvent *event)
     QTimer::singleShot(0, this, &SessionWidget::show);
 
     return QFrame::resizeEvent(event);
+}
+
+void SessionWidget::focusInEvent(QFocusEvent *)
+{
+    m_sessionBtns.at(m_currentSessionIndex)->setChecked(true);
+}
+
+void SessionWidget::focusOutEvent(QFocusEvent *)
+{
+    m_sessionBtns.at(m_currentSessionIndex)->setChecked(false);
 }
 
 void SessionWidget::onSessionButtonClicked()

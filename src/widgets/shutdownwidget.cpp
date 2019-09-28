@@ -204,7 +204,7 @@ void ShutdownWidget::shutdownAction()
     emit abortOperation();
 }
 
-void ShutdownWidget::keyReleaseEvent(QKeyEvent *event)
+void ShutdownWidget::keyPressEvent(QKeyEvent *event)
 {
     switch (event->key()) {
     case Qt::Key_Escape:

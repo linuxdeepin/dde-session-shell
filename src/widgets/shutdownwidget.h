@@ -53,7 +53,7 @@ public slots:
     void shutdownAction();
 
 protected:
-    void keyReleaseEvent(QKeyEvent *event) Q_DECL_OVERRIDE;
+    void keyPressEvent(QKeyEvent *event) Q_DECL_OVERRIDE;
     bool event(QEvent *e) Q_DECL_OVERRIDE;
 
 private:
