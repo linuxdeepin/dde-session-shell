@@ -23,6 +23,7 @@
 
 #include <QPainter>
 #include <QPropertyAnimation>
+#include <DStyleHelper>
 #include <QPushButton>
 #include <QHBoxLayout>
 
@@ -44,10 +45,7 @@ void LoadSlider::paintEvent(QPaintEvent *event)
     QLinearGradient grad(0, height() / 2, width(), height() / 2);
     grad.setColorAt(0.0, Qt::transparent);
     grad.setColorAt(1.0, m_loadSliderColor);
-
-    QPainterPath path;
-    path.addRoundRect(0, 1, width(), height() - 2, 48, 48);
-    painter.fillPath(path, grad);
+    painter.fillRect(0, 1, width(), height() - 2, grad);
 
     QWidget::paintEvent(event);
 }
@@ -90,6 +88,7 @@ void DPasswordEditEx::initAnimation()
 {
     //初始化动画
     m_loadSlider = new LoadSlider(this);
+    m_loadSlider->setLoadSliderColor(QColor(255, 255, 255, 90));
     m_loadSlider->hide();
     m_loadSliderAnim = new QPropertyAnimation(m_loadSlider, "pos", m_loadSlider);
     m_loadSliderAnim->setDuration(1000);
@@ -99,6 +98,7 @@ void DPasswordEditEx::initAnimation()
     m_loadAnimEnable = true;
     m_isLoading = false;
 
+    m_clipEffectWidget = new DClipEffectWidget(this);
     connect(this,  &DPasswordEditEx::returnPressed, this, &DPasswordEditEx::inputDone);
 }
 
@@ -175,8 +175,10 @@ void DPasswordEditEx::showLoadSlider()
             m_isLoading = true;
             m_loadSlider->show();
             m_loadSlider->setGeometry(0, 0, LoadSliderWidth, this->height());
-            m_loadSliderAnim->setStartValue(QPoint(0, 0));
-            m_loadSliderAnim->setEndValue(QPoint(this->width() - LoadSliderWidth, 0));
+            m_loadSliderAnim->setStartValue(QPoint(0 - LoadSliderWidth, 0));
+            m_loadSliderAnim->setEndValue(QPoint(this->width(), 0));
+            lineEdit()->setEnabled(false);
+
             m_loadSliderAnim->start();
         }
     }
@@ -188,6 +190,8 @@ void DPasswordEditEx::hideLoadSlider()
         m_isLoading = false;
         m_loadSliderAnim->stop();
         m_loadSlider->hide();
+        lineEdit()->setEnabled(true);
+        lineEdit()->setFocus();
     }
 }
 
@@ -205,4 +209,15 @@ void DPasswordEditEx::paintEvent(QPaintEvent *event)
         option.setAlignment(Qt::AlignCenter);
         pa.drawText(rect(), lineEdit()->placeholderText(), option);
     }
+}
+
+void DPasswordEditEx::resizeEvent(QResizeEvent *event)
+{
+    DLineEdit::resizeEvent(event);
+
+    QPainterPath path;
+    DStyleHelper dstyle(style());
+    const int round = dstyle.pixelMetric(DStyle::PM_FrameRadius);
+    path.addRoundedRect(rect(), round, round);
+    m_clipEffectWidget->setClipPath(path);
 }

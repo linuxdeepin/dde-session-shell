@@ -23,6 +23,7 @@
 #define DPASSWORDEDITEX_H
 
 #include <DLineEdit>
+#include <DClipEffectWidget>
 
 DWIDGET_USE_NAMESPACE
 
@@ -64,7 +65,7 @@ public Q_SLOTS:
 
 protected:
     void paintEvent(QPaintEvent *event) override;
-    Q_DISABLE_COPY(DPasswordEditEx)
+    void resizeEvent(QResizeEvent *event) override;
 
 private:
     void initUI();
@@ -74,6 +75,7 @@ private:
 private:
     LoadSlider *m_loadSlider;
     QPropertyAnimation *m_loadSliderAnim;
+    DClipEffectWidget *m_clipEffectWidget;
     QStringList m_KBLayoutList;
     QPushButton *m_KBButton;                           //键盘布局Button
     QPushButton *m_capsButton;                         //大小写锁定Button
