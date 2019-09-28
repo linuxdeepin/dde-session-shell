@@ -93,7 +93,7 @@ void UserLoginWidget::setFaildTipMessage(const QString &message)
 {
     if (message.isEmpty()) {
         m_passwordEdit->hideAlertMessage();
-    } else {
+    } else if (m_passwordEdit->isVisible()) {
         m_passwordEdit->hideLoadSlider();
         m_passwordEdit->showAlertMessage(message);
         m_passwordEdit->lineEdit()->selectAll();
@@ -300,6 +300,7 @@ void UserLoginWidget::hideEvent(QHideEvent *event)
 {
     Q_UNUSED(event);
 
+    m_passwordEdit->hideAlertMessage();
     m_kbLayoutBorder->hide();
 }
 
