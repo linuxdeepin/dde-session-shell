@@ -86,6 +86,7 @@ void UserLoginWidget::setFaildMessage(const QString &message)
     }
 
     m_passwordEdit->lineEdit()->setPlaceholderText(message);
+    m_passwordEdit->lineEdit()->update();
 }
 
 //密码输入错误,设置错误信息

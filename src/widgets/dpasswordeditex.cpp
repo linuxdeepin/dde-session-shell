@@ -198,7 +198,10 @@ void DPasswordEditEx::hideLoadSlider()
 //重写QLineEdit paintEvent函数，实现当文本设置居中后，holderText仍然显示的需求
 void DPasswordEditEx::paintEvent(QPaintEvent *event)
 {
-    if (hasFocus() && lineEdit()->alignment() == Qt::AlignCenter && !lineEdit()->placeholderText().isEmpty() && text().isEmpty()) {
+    Q_UNUSED(event);
+
+    if (lineEdit()->hasFocus() && lineEdit()->alignment() == Qt::AlignCenter
+            && !lineEdit()->placeholderText().isEmpty() && lineEdit()->text().isEmpty()) {
         QPainter pa(this);
         QPalette pal = palette();
         QColor col = pal.text().color();
@@ -207,7 +210,7 @@ void DPasswordEditEx::paintEvent(QPaintEvent *event)
         pa.setPen(col);
         QTextOption option;
         option.setAlignment(Qt::AlignCenter);
-        pa.drawText(rect(), lineEdit()->placeholderText(), option);
+        pa.drawText(lineEdit()->rect(), lineEdit()->placeholderText(), option);
     }
 }
 
