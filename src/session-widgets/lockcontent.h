@@ -56,7 +56,6 @@ protected:
     void updateVirtualKBPosition();
     void onUserListChanged(QList<std::shared_ptr<User>> list);
     void tryGrabKeyboard();
-    void requestActivate();
 
 protected:
     SessionBaseModel *m_model;

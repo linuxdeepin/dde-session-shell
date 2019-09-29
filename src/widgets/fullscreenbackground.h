@@ -56,6 +56,7 @@ protected:
     void setContent(QWidget * const w);
     void keyPressEvent(QKeyEvent *e) Q_DECL_OVERRIDE;
     void showEvent(QShowEvent *event) override;
+    bool eventFilter(QObject *watched, QEvent *e) override;
 
 private:
     void paintEvent(QPaintEvent *e) Q_DECL_OVERRIDE;

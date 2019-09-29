@@ -47,6 +47,8 @@ FullscreenBackground::FullscreenBackground(QWidget *parent)
     m_fadeOutAni->setStartValue(1.0f);
     m_fadeOutAni->setEndValue(0.0f);
 
+    installEventFilter(this);
+
     connect(m_fadeOutAni, &QVariantAnimation::valueChanged, this, static_cast<void (FullscreenBackground::*)()>(&FullscreenBackground::update));
 }
 
@@ -245,4 +247,19 @@ void FullscreenBackground::updateScreen(QScreen *screen)
 void FullscreenBackground::updateGeometry()
 {
     setGeometry(m_screen->geometry());
+}
+
+/********************************************************
+ * 监听主窗体属性。
+ * 用户登录界面，主窗体在某时刻会被设置为WindowDeactivate，
+ * 此时登录界面获取不到焦点，需要调用requestActivate激活窗体。
+********************************************************/
+bool FullscreenBackground::eventFilter(QObject *watched, QEvent *e)
+{
+    if (e->type() == QEvent::WindowDeactivate) {
+        if (m_content->isVisible())
+            windowHandle()->requestActivate();
+    }
+
+    return QWidget::eventFilter(watched, e);
 }

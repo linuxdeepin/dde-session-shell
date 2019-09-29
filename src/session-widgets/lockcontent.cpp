@@ -235,7 +235,6 @@ void LockContent::showEvent(QShowEvent *event)
 
     m_timeWidget->set24HourFormat(m_24HourFormatInter->property("Use24HourFormat").toBool());
 
-    requestActivate();
     tryGrabKeyboard();
 
     return QFrame::showEvent(event);
@@ -333,16 +332,4 @@ void LockContent::tryGrabKeyboard()
     }
 
     QTimer::singleShot(100, this, &LockContent::tryGrabKeyboard);
-}
-
-/********************************************************
- * 监听主窗体属性。
- * 用户登录界面，主窗体在某时刻会被设置为WindowDeactivate，
- * 此时登录界面获取不到焦点，需要调用requestActivate激活窗体。
-********************************************************/
-void LockContent::requestActivate()
-{
-    if (!window()->windowHandle()->isActive()) {
-        window()->windowHandle()->requestActivate();
-    }
 }
