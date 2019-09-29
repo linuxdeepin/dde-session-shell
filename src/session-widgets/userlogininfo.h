@@ -50,6 +50,7 @@ signals:
 
 private:
     void userLockChanged(bool disable);
+    void receiveSwitchUser(std::shared_ptr<User> user);
 
 private:
     std::shared_ptr<User> m_user;

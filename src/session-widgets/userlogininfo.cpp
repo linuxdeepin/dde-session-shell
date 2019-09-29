@@ -84,7 +84,7 @@ void UserLoginInfo::initConnect()
 
     //UserFrameList
     connect(m_userFrameList, &UserFrameList::clicked, this, &UserLoginInfo::hideUserFrameList);
-    connect(m_userFrameList, &UserFrameList::requestSwitchUser, this, &UserLoginInfo::requestSwitchUser);
+    connect(m_userFrameList, &UserFrameList::requestSwitchUser, this, &UserLoginInfo::receiveSwitchUser);
 }
 
 UserLoginWidget *UserLoginInfo::getUserLoginWidget()
@@ -105,4 +105,13 @@ void UserLoginInfo::hideKBLayout()
 void UserLoginInfo::userLockChanged(bool disable)
 {
     m_userLoginWidget->disablePassword(disable, m_user->lockNum());
+}
+
+void UserLoginInfo::receiveSwitchUser(std::shared_ptr<User> user)
+{
+    if (m_user != user) {
+        m_userLoginWidget->clearPassWord();
+    }
+
+    emit requestSwitchUser(user);
 }

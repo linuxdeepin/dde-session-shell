@@ -74,7 +74,7 @@ UserLoginWidget::~UserLoginWidget()
 void UserLoginWidget::resetAllState()
 {
     m_passwordEdit->hideLoadSlider();
-    m_passwordEdit->clear();
+    m_passwordEdit->lineEdit()->clear();
 }
 
 //密码连续输入错误5次，设置提示信息
@@ -270,8 +270,6 @@ void UserLoginWidget::showEvent(QShowEvent *event)
 {
     updateUI();
     refreshBlurEffectPosition();
-    //fixed BUG 3521
-    m_passwordEdit->lineEdit()->clear();
 
     return QWidget::showEvent(event);
 }
@@ -499,6 +497,11 @@ void UserLoginWidget::setKBLayoutList(QStringList kbLayoutList)
 void UserLoginWidget::setDefKBLayout(QString defKBLayout)
 {
     m_kbLayoutWidget->setDefault(defKBLayout);
+}
+
+void UserLoginWidget::clearPassWord()
+{
+    m_passwordEdit->lineEdit()->clear();
 }
 
 void UserLoginWidget::setSelected(bool isSelected)

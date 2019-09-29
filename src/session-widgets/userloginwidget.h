@@ -81,6 +81,7 @@ public:
     void hideKBLayout();
     void setKBLayoutList(QStringList kbLayoutList);
     void setDefKBLayout(QString defKBLayout);
+    void clearPassWord();
 
 signals:
     void requestAuthUser(const QString &password);
