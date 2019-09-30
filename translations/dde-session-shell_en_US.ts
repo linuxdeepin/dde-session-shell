@@ -151,7 +151,7 @@
     </message>
     <message>
         <location filename="../src/session-widgets/userinputwidget.cpp" line="301"/>
-        <source>Login</source>
+        <source>Log in</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
@@ -204,7 +204,7 @@
     <name>UserInputWidget</name>
     <message>
         <location filename="../src/session-widgets/userinputwidget.cpp" line="13"/>
-        <source>Login</source>
+        <source>Log in</source>
         <translation type="unfinished"></translation>
     </message>
     <message numerus="yes">
@@ -225,11 +225,6 @@
             <numerusform></numerusform>
             <numerusform></numerusform>
         </translation>
-    </message>
-    <message>
-        <location filename="../src/session-widgets/userloginwidget.cpp" line="395"/>
-        <source>UserLoginPassword</source>
-        <translation type="unfinished"></translation>
     </message>
 </context>
 </TS>
