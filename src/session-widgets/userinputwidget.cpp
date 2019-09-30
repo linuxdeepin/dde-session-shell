@@ -10,7 +10,7 @@
 #include <QApplication>
 
 #if 0
-QT_TRANSLATE_NOOP("UserInputWidget", "Login")
+QT_TRANSLATE_NOOP("UserInputWidget", "Log in")
 #endif
 
 UserInputWidget::UserInputWidget(QWidget *parent)
@@ -298,7 +298,7 @@ void UserInputWidget::normalMode()
     }
 
 //    m_passwordEdit->hideAlert();
-    m_loginBtn->setText(QApplication::translate("ShutdownWidget", "Login"));
+    m_loginBtn->setText(QApplication::translate("ShutdownWidget", "Log in"));
 }
 
 void UserInputWidget::restartMode()

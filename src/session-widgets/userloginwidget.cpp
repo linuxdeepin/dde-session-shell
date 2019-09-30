@@ -392,7 +392,7 @@ void UserLoginWidget::initUI()
 void UserLoginWidget::initConnect()
 {
     connect(m_passwordEdit->lineEdit(), &QLineEdit::textChanged, this, [ = ](const QString & value) {
-        FrameDataBind::Instance()->updateValue(tr("UserLoginPassword"), value);
+        FrameDataBind::Instance()->updateValue("UserLoginPassword", value);
     });
     connect(m_passwordEdit, &DPasswordEditEx::returnPressed, this, [ = ] {
         const QString passwd = m_passwordEdit->text();
