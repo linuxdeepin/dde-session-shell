@@ -27,6 +27,8 @@
 #include <QPushButton>
 #include <QHBoxLayout>
 
+#define KB_MARGIN 5
+
 LoadSlider::LoadSlider(QWidget *parent)
     : QWidget(parent)
     , m_loadSliderColor(Qt::gray)
@@ -80,7 +82,7 @@ void DPasswordEditEx::initUI()
     layout->addWidget(m_KBButton);
     layout->addStretch();
     layout->addWidget(m_capsButton);
-    layout->setContentsMargins(5, 5, 8, 5);
+    layout->setContentsMargins(KB_MARGIN, KB_MARGIN, 8, KB_MARGIN);
     lineEdit()->setLayout(layout);
 }
 
@@ -122,13 +124,11 @@ void DPasswordEditEx::receiveUserKBLayoutChanged(const QString &layout)
     if (m_KBLayoutList.size() == 1) {
         layoutName = "";
         m_KBButton->hide();
-        lineEdit()->setTextMargins(5, 0, m_capsButton->width() + 5, 0);
+        lineEdit()->setTextMargins(KB_MARGIN, 0, m_capsButton->width() + KB_MARGIN, 0);
     } else {
         m_KBButton->show();
         QImage image = generateImageFromString(layoutName);
         m_KBButton->setIcon(QIcon(QPixmap::fromImage(image)));
-        m_KBButton->setFixedWidth(lineEdit()->height());
-        lineEdit()->setTextMargins(m_KBButton->width() + 5, 0, m_capsButton->width() + 5, 0);
     }
 }
 
@@ -223,4 +223,11 @@ void DPasswordEditEx::resizeEvent(QResizeEvent *event)
     const int round = dstyle.pixelMetric(DStyle::PM_FrameRadius);
     path.addRoundedRect(rect(), round, round);
     m_clipEffectWidget->setClipPath(path);
+
+    int kb_height = lineEdit()->height() - KB_MARGIN * 2;
+    m_KBButton->setFixedWidth(kb_height);
+    m_KBButton->setFixedHeight(kb_height);
+    if (m_KBLayoutList.size() > 1) {
+        lineEdit()->setTextMargins(m_KBButton->width() + KB_MARGIN, 0, m_capsButton->width() + KB_MARGIN, 0);
+    }
 }
