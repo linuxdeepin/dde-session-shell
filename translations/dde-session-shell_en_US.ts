@@ -10,7 +10,7 @@
     </message>
     <message>
         <location filename="../src/dde-shutdown/view/contentwidget.cpp" line="316"/>
-        <source>To close the program, Click Cancel, and then close the program.</source>
+        <source>To close the program, click Cancel, and then close the program.</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
