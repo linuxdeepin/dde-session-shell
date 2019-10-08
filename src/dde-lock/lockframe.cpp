@@ -37,6 +37,11 @@ LockFrame::LockFrame(SessionBaseModel *const model, QWidget *parent)
 {
     qDebug() << "LockFrame geometry:" << geometry();
 
+    QTimer::singleShot(0, this, [ = ] {
+        auto user = model->currentUser();
+        if (user != nullptr) updateBackground(user->greeterBackgroundPath());
+    });
+
     m_content = new LockContent(model);
     setContent(m_content);
     m_content->hide();
