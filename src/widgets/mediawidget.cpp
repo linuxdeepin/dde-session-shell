@@ -47,7 +47,7 @@ void MediaWidget::initUI()
 
     setLayout(mainlayout);
 
-    updateStyle(":/skin/mediawidget.qss", this);
+    //updateStyle(":/skin/mediawidget.qss", this);
 }
 
 void MediaWidget::initConnect()
