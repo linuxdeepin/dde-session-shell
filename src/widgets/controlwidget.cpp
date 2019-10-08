@@ -59,7 +59,7 @@ void ControlWidget::initUI()
     m_virtualKBBtn->hide();
     m_virtualKBBtn->setIconSize(BUTTON_ICON_SIZE);
     m_virtualKBBtn->setFixedSize(BUTTON_SIZE);
-    m_virtualKBBtn->setFocusPolicy(Qt::StrongFocus);
+    m_virtualKBBtn->setFocusPolicy(Qt::ClickFocus);
     m_virtualKBBtn->setAutoExclusive(true);
     m_virtualKBBtn->setBackgroundRole(DPalette::Button);
     setFocusProxy(m_virtualKBBtn);
@@ -68,7 +68,7 @@ void ControlWidget::initUI()
     m_switchUserBtn->setIcon(QIcon::fromTheme(":/img/bottom_actions/userswitch_normal.svg"));
     m_switchUserBtn->setIconSize(BUTTON_ICON_SIZE);
     m_switchUserBtn->setFixedSize(BUTTON_SIZE);
-    m_switchUserBtn->setFocusPolicy(Qt::StrongFocus);
+    m_switchUserBtn->setFocusPolicy(Qt::ClickFocus);
     m_switchUserBtn->setAutoExclusive(true);
     m_switchUserBtn->setBackgroundRole(DPalette::Button);
 
@@ -76,7 +76,7 @@ void ControlWidget::initUI()
     m_powerBtn->setIcon(QIcon(":/img/bottom_actions/shutdown_normal.svg"));
     m_powerBtn->setIconSize(BUTTON_ICON_SIZE);
     m_powerBtn->setFixedSize(BUTTON_SIZE);
-    m_powerBtn->setFocusPolicy(Qt::StrongFocus);
+    m_powerBtn->setFocusPolicy(Qt::ClickFocus);
     m_powerBtn->setAutoExclusive(true);
     m_powerBtn->setBackgroundRole(DPalette::Button);
 
@@ -145,7 +145,7 @@ void ControlWidget::setSessionSwitchEnable(const bool visible)
         m_sessionBtn->setFixedSize(BUTTON_SIZE);
         m_sessionBtn->setAutoExclusive(true);
         m_sessionBtn->setBackgroundRole(DPalette::Button);
-        m_sessionBtn->setFocusPolicy(Qt::StrongFocus);
+        m_sessionBtn->setFocusPolicy(Qt::ClickFocus);
 #ifndef SHENWEI_PLATFORM
         m_sessionBtn->installEventFilter(this);
 #else
@@ -157,7 +157,7 @@ void ControlWidget::setSessionSwitchEnable(const bool visible)
 
         m_mainLayout->insertWidget(1, m_sessionBtn);
         m_mainLayout->setAlignment(m_sessionBtn, Qt::AlignBottom);
-        m_btnList.append(m_sessionBtn);
+        m_btnList.push_front(m_sessionBtn);
         bindTabOrder();
 
         connect(m_sessionBtn, &DFloatingButton::clicked, this, &ControlWidget::requestSwitchSession);
@@ -312,7 +312,7 @@ bool ControlWidget::eventFilter(QObject *watched, QEvent *event)
     return false;
 }
 
-void ControlWidget::keyPressEvent(QKeyEvent *event)
+void ControlWidget::keyReleaseEvent(QKeyEvent *event)
 {
     switch (event->key()) {
     case Qt::Key_Left:
