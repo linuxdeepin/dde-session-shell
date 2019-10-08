@@ -313,7 +313,7 @@ bool ContentWidget::beforeInvokeAction(const Actions action)
         view->setAction(action);
         view->setInhibitorList(inhibitors);
         view->setInhibitConfirmMessage(tr("The programs are preventing the computer from shutting down / hibernation, and forcing shut down / hibernate may cause data loss.") + "\n" +
-                                       tr("To close the program, Click Cancel, and then close the program."));
+                                       tr("To close the program, click Cancel, and then close the program."));
 
         bool isAccept = true;
         for (auto inhib : inhibitors) {
