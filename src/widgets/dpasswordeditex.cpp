@@ -70,13 +70,14 @@ void DPasswordEditEx::initUI()
     m_KBButton = new QPushButton(this);
     m_KBButton->setFocusPolicy(Qt::NoFocus);
     m_KBButton->setCursor(Qt::ArrowCursor);
+    m_KBButton->hide();
 
     m_capsButton = new QPushButton(this);
     m_capsButton->setFocusPolicy(Qt::NoFocus);
     m_capsButton->setCursor(Qt::ArrowCursor);
     m_capsButton->setFlat(true);
     m_capsButton->setIcon(QIcon(":/icons/dedpin/builtin/caps_lock.svg"));
-    m_capsButton->setFixedWidth(m_KBButton->iconSize().width());
+    m_capsButton->setFixedWidth(m_capsButton->iconSize().width());
 
     QHBoxLayout *layout = new QHBoxLayout;
     layout->addWidget(m_KBButton);
@@ -156,6 +157,7 @@ QImage DPasswordEditEx::generateImageFromString(const QString &name)
 void DPasswordEditEx::capslockStatusChanged(bool on)
 {
     m_capsButton->setVisible(on);
+    updateTextMargins();
 }
 
 void DPasswordEditEx::inputDone()
@@ -195,6 +197,13 @@ void DPasswordEditEx::hideLoadSlider()
     }
 }
 
+void DPasswordEditEx::updateTextMargins()
+{
+    int kbtn_width = m_KBButton->isHidden() ? 0 : (m_KBButton->width() + KB_MARGIN);
+    int kbtn_height = m_capsButton->isHidden() ? 0 : (m_capsButton->width() + KB_MARGIN);
+    lineEdit()->setTextMargins(kbtn_width, 0, kbtn_height, 0);
+}
+
 //重写QLineEdit paintEvent函数，实现当文本设置居中后，holderText仍然显示的需求
 void DPasswordEditEx::paintEvent(QPaintEvent *event)
 {
@@ -227,7 +236,6 @@ void DPasswordEditEx::resizeEvent(QResizeEvent *event)
     int kb_height = lineEdit()->height() - KB_MARGIN * 2;
     m_KBButton->setFixedWidth(kb_height);
     m_KBButton->setFixedHeight(kb_height);
-    if (m_KBLayoutList.size() > 1) {
-        lineEdit()->setTextMargins(m_KBButton->width() + KB_MARGIN, 0, m_capsButton->width() + KB_MARGIN, 0);
-    }
+
+    updateTextMargins();
 }

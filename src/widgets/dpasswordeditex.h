@@ -71,6 +71,7 @@ private:
     void initUI();
     void initAnimation();
     QImage generateImageFromString(const QString &name);
+    void updateTextMargins();
 
 private:
     LoadSlider *m_loadSlider;
