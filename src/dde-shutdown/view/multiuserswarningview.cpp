@@ -69,9 +69,11 @@ MultiUsersWarningView::MultiUsersWarningView(QWidget *parent)
     m_cancelBtn->setIconSize(QSize(m_buttonIconSize, m_buttonIconSize));
     m_cancelBtn->setFixedSize(m_buttonWidth, m_buttonHeight);
 
-    m_cancelBtn->setIcon(QIcon(":/img/cancel_normal.svg"));
+    const auto ratio = devicePixelRatioF();
+    QIcon icon_pix = QIcon::fromTheme(":/img/cancel_normal.svg").pixmap(m_cancelBtn->iconSize() * ratio);
+    m_cancelBtn->setIcon(icon_pix);
 
-    QVBoxLayout * btnLayout = new QVBoxLayout;
+    QVBoxLayout *btnLayout = new QVBoxLayout;
     btnLayout->addStretch(1);
     btnLayout->addWidget(m_cancelBtn, 0, Qt::AlignHCenter);
     btnLayout->addSpacing(20);
@@ -120,16 +122,21 @@ Actions MultiUsersWarningView::action() const
 
 void MultiUsersWarningView::setAction(const Actions action)
 {
+    QString icon_string;
     switch (action) {
     case Actions::Shutdown:
-        m_actionBtn->setIcon(QIcon(":/img/poweroff_warning_normal.svg"));
+        icon_string = ":/img/poweroff_warning_normal.svg";
         m_warningTip->setText(tr("The above users are still logged in and data will be lost due to shutdown, are you sure you want to shut down?"));
         break;
     default:
-        m_actionBtn->setIcon(QIcon(":/img/reboot_warning_normal.svg"));
+        icon_string = ":/img/reboot_warning_normal.svg";
         m_warningTip->setText(tr("The above users are still logged in and data will be lost due to reboot, are you sure you want to reboot?"));
         break;
     }
+
+    const auto ratio = devicePixelRatioF();
+    QIcon icon_pix = QIcon::fromTheme(icon_string).pixmap(m_actionBtn->iconSize() * ratio);
+    m_actionBtn->setIcon(icon_pix);
 }
 
 void MultiUsersWarningView::toggleButtonState()

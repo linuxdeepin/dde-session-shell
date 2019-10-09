@@ -85,10 +85,13 @@ InhibitWarnView::InhibitWarnView(Actions inhibitType, QWidget *parent)
     m_acceptBtn->setIconSize(QSize(ButtonIconSize, ButtonIconSize));
     m_acceptBtn->setFixedSize(ButtonWidth, ButtonHeight);
 
-    m_cancelBtn = new QPushButton(QIcon(":/img/cancel_normal.svg"), tr("Cancel"), this);
-    m_cancelBtn->setObjectName("CancelButton");    
+    m_cancelBtn = new QPushButton(tr("Cancel"), this);
+    m_cancelBtn->setObjectName("CancelButton");
     m_cancelBtn->setIconSize(QSize(ButtonIconSize, ButtonIconSize));
     m_cancelBtn->setFixedSize(ButtonWidth, ButtonHeight);
+    const auto ratio = devicePixelRatioF();
+    QIcon icon_pix = QIcon::fromTheme(":/img/cancel_normal.svg").pixmap(m_cancelBtn->iconSize() * ratio);
+    m_cancelBtn->setIcon(icon_pix);
 
     m_confirmTextLabel = new QLabel;
 
@@ -175,17 +178,22 @@ void InhibitWarnView::setAction(const Actions action)
 {
     m_action = action;
 
+    QString icon_string;
     switch (action) {
     case Actions::Shutdown:
-        m_acceptBtn->setIcon(QIcon(":/img/poweroff_warning_normal.svg"));
+        icon_string = ":/img/poweroff_warning_normal.svg";
         break;
     case Actions::Logout:
-        m_acceptBtn->setIcon(QIcon(":/img/logout_warning_normal.svg"));
+        icon_string = ":/img/logout_warning_normal.svg";
         break;
     default:
-        m_acceptBtn->setIcon(QIcon(":/img/reboot_warning_normal.svg"));
+        icon_string = ":/img/reboot_warning_normal.svg";
         break;
     }
+
+    const auto ratio = devicePixelRatioF();
+    QIcon icon_pix = QIcon::fromTheme(icon_string).pixmap(m_acceptBtn->iconSize() * ratio);
+    m_acceptBtn->setIcon(icon_pix);
 }
 
 void InhibitWarnView::setAcceptVisible(const bool acceptable)
