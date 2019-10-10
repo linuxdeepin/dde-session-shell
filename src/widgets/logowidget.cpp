@@ -59,7 +59,7 @@ void LogoWidget::initUI() {
     m_logoLabel = new QLabel();
     m_logoLabel->setPixmap(systemLogo());
     m_logoLabel->setObjectName("Logo");
-    m_logoLabel->setFixedSize(150, 38);
+    m_logoLabel->setFixedSize(128, 48);
 
     m_logoVersionLabel = new QLabel;
     m_logoVersionLabel->setObjectName("LogoVersion");
@@ -102,7 +102,8 @@ QString LogoWidget::getVersion() {
 
     qDebug() << "Deepin Version:" << version << type;
 
-    return QString("%1 %2 %3").arg(version).arg(type).arg(milestone);
+//    return QString("%1 %2 %3").arg(version).arg(type).arg(milestone);
+    return version;
 }
 
 LogoWidget::~LogoWidget()
