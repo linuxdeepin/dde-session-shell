@@ -2,7 +2,6 @@
 
 #include <QPainter>
 #include <QHBoxLayout>
-#include <QLabel>
 #include <DHiDPIHelper>
 
 DWIDGET_USE_NAMESPACE
@@ -14,7 +13,7 @@ LockPasswordWidget::LockPasswordWidget(QWidget *parent) : QWidget(parent)
     QHBoxLayout *layout = new QHBoxLayout;
     layout->setMargin(0);
     layout->setSpacing(0);
-    QLabel *lockLbl = new QLabel(this);
+    lockLbl = new QLabel(this);
     lockLbl->setPixmap(DHiDPIHelper::loadNxPixmap(":/img/action_icons/unlock_normal.svg"));
     layout->addSpacing(5);
     layout->addWidget(lockLbl);
@@ -36,6 +35,9 @@ void LockPasswordWidget::paintEvent(QPaintEvent *event)
     QPainter painter(this);
     painter.setRenderHint(QPainter::HighQualityAntialiasing);
 
+    QFont font;
+    font.setWordSpacing(-2);
+    painter.setFont(font);
     painter.setBrush(Qt::white);
     painter.setPen(Qt::NoPen);
     painter.setOpacity(0.1);
