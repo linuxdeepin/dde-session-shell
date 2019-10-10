@@ -362,6 +362,10 @@ install(FILES files/deepin-greeter DESTINATION bin)
 file(GLOB SCRIPTS  scripts/*)
 install(PROGRAMS ${SCRIPTS} DESTINATION /etc/deepin/greeters.d)
 
+file(GLOB QM_FILES "translations/*.qm")
+install(FILES ${QM_FILES}
+        DESTINATION share/dde-session-shell/translations)
+
 install(FILES files/lightdm-deepin-greeter.desktop DESTINATION share/xgreeters/)
 
 # services
