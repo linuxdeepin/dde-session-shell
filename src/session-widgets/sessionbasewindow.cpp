@@ -53,6 +53,7 @@ void SessionBaseWindow::setCenterContent(QWidget * const widget)
     if (m_centerWidget != nullptr) {
         m_centerLayout->removeWidget(m_centerWidget);
         m_centerWidget->hide();
+        m_centerWidget->setParent(nullptr);
     }
 
     widget->setSizePolicy(QSizePolicy::Expanding, QSizePolicy::Expanding);
