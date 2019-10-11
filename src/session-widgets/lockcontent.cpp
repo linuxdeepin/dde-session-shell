@@ -43,7 +43,6 @@ LockContent::LockContent(SessionBaseModel *const model, QWidget *parent)
 
     model->setCurrentModeState(SessionBaseModel::ModeStatus::PasswordMode);
 
-    setRightBottomWidget(m_controlWidget);
     setCenterTopWidget(m_timeWidget);
     setLeftBottomWidget(m_logoWidget);
     connect(model, &SessionBaseModel::currentUserChanged, this, [ = ](std::shared_ptr<User> user) {
@@ -59,6 +58,7 @@ LockContent::LockContent(SessionBaseModel *const model, QWidget *parent)
     default:
         break;
     }
+    setRightBottomWidget(m_controlWidget);
 
     // init connect
     connect(model, &SessionBaseModel::currentUserChanged, this, &LockContent::onCurrentUserChanged);

@@ -264,7 +264,6 @@ void UserLoginWidget::resizeEvent(QResizeEvent *event)
     QTimer::singleShot(0, this, &UserLoginWidget::refreshBlurEffectPosition);
     QTimer::singleShot(0, this, &UserLoginWidget::refreshKBLayoutWidgetPosition);
 
-    m_lockPasswordWidget->setFixedSize(QSize(m_passwordEdit->width(), m_passwordEdit->height()));
     return QWidget::resizeEvent(event);
 }
 
@@ -273,6 +272,7 @@ void UserLoginWidget::showEvent(QShowEvent *event)
     updateUI();
     refreshBlurEffectPosition();
 
+    m_lockPasswordWidget->setFixedSize(QSize(m_passwordEdit->width(), m_passwordEdit->height()));
     return QWidget::showEvent(event);
 }
 
@@ -372,6 +372,7 @@ void UserLoginWidget::initUI()
     m_blurEffectWidget->setBlurRectYRadius(BlurRectRadius);
 
     m_lockButton->setFocusPolicy(Qt::StrongFocus);
+    m_lockButton->setAutoExclusive(true);
 
     m_lockLayout = new QVBoxLayout;
     m_lockLayout->setMargin(0);
