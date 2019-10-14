@@ -33,7 +33,7 @@
 TimeWidget::TimeWidget(QWidget *parent)
     : QWidget(parent)
 {
-    int id = QFontDatabase::addApplicationFont("://fonts/NotoSans-ExtraLight.ttf");
+    int id = QFontDatabase::addApplicationFont("://fonts/NotoSansCJKsc-Thin.otf");
     const QString fontFamily = QFontDatabase::applicationFontFamilies(id).first();
     QFont timeFont(fontFamily);
 
