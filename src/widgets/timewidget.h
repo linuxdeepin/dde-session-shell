@@ -40,6 +40,7 @@ class TimeWidget : public QWidget
 public:
     explicit TimeWidget(QWidget *parent = nullptr);
     void set24HourFormat(bool use24HourFormat);
+    void updateLocale(const QLocale &locale);
 
 private:
     void refreshTime();
@@ -50,6 +51,7 @@ private:
 
     QTimer *m_refreshTimer;
     bool m_use24HourFormat;
+    QLocale m_locale;
 };
 
 #endif // TIMEWIDGET_H

@@ -76,13 +76,19 @@ void TimeWidget::set24HourFormat(bool use24HourFormat)
     refreshTime();
 }
 
+void TimeWidget::updateLocale(const QLocale &locale)
+{
+    m_locale = locale;
+    refreshTime();
+}
+
 void TimeWidget::refreshTime()
 {
     if (m_use24HourFormat) {
-        m_timeLabel->setText(QDateTime::currentDateTime().toString(tr("hh:mm")));
+        m_timeLabel->setText(m_locale.toString(QDateTime::currentDateTime(), "hh:mm"));
     } else {
-        m_timeLabel->setText(QDateTime::currentDateTime().toString(tr("hh:mm ap")));
+        m_timeLabel->setText(m_locale.toString(QDateTime::currentDateTime(), "hh:mm ap"));
     }
 
-    m_dateLabel->setText(QDateTime::currentDateTime().toString(tr("yyyy-MM-dd dddd")));
+    m_dateLabel->setText(m_locale.toString(QDateTime::currentDateTime(), "yyyy-MM-dd dddd"));
 }
