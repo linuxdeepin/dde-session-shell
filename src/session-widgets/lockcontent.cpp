@@ -123,6 +123,7 @@ void LockContent::onCurrentUserChanged(std::shared_ptr<User> user)
     qApp->installTranslator(m_translator);
 
     m_logoWidget->updateLocale(user->locale());
+    m_timeWidget->updateLocale(user->locale());
 
     for (auto connect : m_currentUserConnects) {
         m_user.get()->disconnect(connect);
