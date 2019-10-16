@@ -23,6 +23,7 @@
 #define USERLOGININFO_H
 
 #include <QObject>
+#include <QPointer>
 
 #include <memory>
 
@@ -55,7 +56,7 @@ private:
 private:
     std::shared_ptr<User> m_user;
     SessionBaseModel *m_model;
-    UserLoginWidget *m_userLoginWidget;
+    QPointer<UserLoginWidget> m_userLoginWidget;
     UserFrameList *m_userFrameList;
     QList<QMetaObject::Connection> m_currentUserConnects;
 };

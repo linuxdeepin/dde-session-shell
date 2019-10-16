@@ -74,7 +74,7 @@ void UserLoginInfo::initConnect()
     connect(m_model, &SessionBaseModel::authFaildMessage, m_userLoginWidget, &UserLoginWidget::setFaildMessage);
     connect(m_model, &SessionBaseModel::authFaildTipsMessage, m_userLoginWidget, &UserLoginWidget::setFaildTipMessage);
     connect(m_model, &SessionBaseModel::authFinished, this, [ = ](bool success) {
-        if (success) {
+        if (success && !m_userLoginWidget.isNull()) {
             m_userLoginWidget->resetAllState();
         }
     });
