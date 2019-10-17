@@ -50,13 +50,14 @@ public slots:
     void setUserSwitchEnable(const bool visible);
     void setSessionSwitchEnable(const bool visible);
     void chooseToSession(const QString &session);
-    void onControlButtonClicked();
     void leftKeySwitch();
     void rightKeySwitch();
 
 protected:
     bool eventFilter(QObject *watched, QEvent *event) Q_DECL_OVERRIDE;
     void keyReleaseEvent(QKeyEvent *event) Q_DECL_OVERRIDE;
+    void focusInEvent(QFocusEvent *event) Q_DECL_OVERRIDE;
+    void focusOutEvent(QFocusEvent *event) Q_DECL_OVERRIDE;
 
 private:
     void initUI();

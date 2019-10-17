@@ -62,7 +62,7 @@ void ControlWidget::initUI()
     m_virtualKBBtn->setFocusPolicy(Qt::ClickFocus);
     m_virtualKBBtn->setAutoExclusive(true);
     m_virtualKBBtn->setBackgroundRole(DPalette::Button);
-    setFocusProxy(m_virtualKBBtn);
+    m_virtualKBBtn->installEventFilter(this);
 
     m_switchUserBtn = new DFloatingButton(this);
     m_switchUserBtn->setIcon(QIcon::fromTheme(":/img/bottom_actions/userswitch_normal.svg"));
@@ -71,6 +71,7 @@ void ControlWidget::initUI()
     m_switchUserBtn->setFocusPolicy(Qt::ClickFocus);
     m_switchUserBtn->setAutoExclusive(true);
     m_switchUserBtn->setBackgroundRole(DPalette::Button);
+    m_switchUserBtn->installEventFilter(this);
 
     m_powerBtn = new DFloatingButton(this);
     m_powerBtn->setIcon(QIcon(":/img/bottom_actions/shutdown_normal.svg"));
@@ -79,6 +80,7 @@ void ControlWidget::initUI()
     m_powerBtn->setFocusPolicy(Qt::ClickFocus);
     m_powerBtn->setAutoExclusive(true);
     m_powerBtn->setBackgroundRole(DPalette::Button);
+    m_powerBtn->installEventFilter(this);
 
     m_btnList.append(m_virtualKBBtn);
     m_btnList.append(m_switchUserBtn);
@@ -198,11 +200,6 @@ void ControlWidget::setSessionSwitchEnable(const bool visible)
     }
 #endif
 
-    if (visible)
-        setFocusProxy(m_sessionBtn);
-    else
-        setFocusProxy(m_virtualKBBtn);
-
     m_sessionBtn->setVisible(visible);
 }
 
@@ -240,22 +237,12 @@ void ControlWidget::chooseToSession(const QString &session)
     }
 }
 
-void ControlWidget::onControlButtonClicked()
-{
-    DFloatingButton *btn = qobject_cast<DFloatingButton *>(sender());
-    Q_ASSERT(btn);
-    Q_ASSERT(m_btnList.contains(btn));
-
-    btn->setChecked(true);
-    m_index = m_btnList.indexOf(btn);
-}
-
 void ControlWidget::leftKeySwitch()
 {
     if (m_index == 0) {
         m_index = m_btnList.length() - 1;
     } else {
-        m_index -= 1;
+        --m_index;
     }
 
     for (int i = m_btnList.size(); i != 0; --i) {
@@ -305,11 +292,28 @@ bool ControlWidget::eventFilter(QObject *watched, QEvent *event)
             m_tipWidget->setFixedSize(m_sessionTip->size());
         }
     }
+
+    DFloatingButton *btn = dynamic_cast<DFloatingButton *>(watched);
+    if (m_btnList.contains(btn)) {
+        if (event->type() == QEvent::Enter) {
+            m_index = m_btnList.indexOf(btn);
+        }
+    }
 #else
     Q_UNUSED(watched);
     Q_UNUSED(event);
 #endif
     return false;
+}
+
+void ControlWidget::focusInEvent(QFocusEvent *)
+{
+    m_btnList.at(m_index)->setFocus();
+}
+
+void ControlWidget::focusOutEvent(QFocusEvent *)
+{
+    m_btnList.at(m_index)->setFocus();
 }
 
 void ControlWidget::keyReleaseEvent(QKeyEvent *event)

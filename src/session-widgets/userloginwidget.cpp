@@ -247,6 +247,7 @@ void UserLoginWidget::updateAuthType(SessionBaseModel::AuthType type)
 void UserLoginWidget::receiveUserKBLayoutChanged(const QString &layout)
 {
     m_passwordEdit->receiveUserKBLayoutChanged(layout);
+    m_passwordEdit->lineEdit()->setFocus();
     emit requestUserKBLayoutChanged(layout);
 }
 
