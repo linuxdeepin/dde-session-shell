@@ -243,7 +243,7 @@ void UserFrameList::switchNextUser()
                 currentSelectedUser->setSelected(true);
                 //处理m_scrollArea翻页显示
                 m_scrollArea->verticalScrollBar()->setValue(0);
-                m_frameDataBind->updateValue("UserFrameList", m_userLoginWidgets.key(m_userLoginWidgets.first()));
+                m_frameDataBind->updateValue("UserFrameList", m_userLoginWidgets.keys().first());
             } else {
                 //处理m_scrollArea翻页显示
                 int selectedRight = widgets[i]->geometry().right();
@@ -280,7 +280,7 @@ void UserFrameList::switchPreviousUser()
                 currentSelectedUser->setSelected(true);
                 //处理m_scrollArea翻页显示
                 m_scrollArea->verticalScrollBar()->setValue(m_scrollArea->verticalScrollBar()->maximum());
-                m_frameDataBind->updateValue("UserFrameList", m_userLoginWidgets.key(m_userLoginWidgets.last()));
+                m_frameDataBind->updateValue("UserFrameList", m_userLoginWidgets.keys().last());
             } else {
                 //处理m_scrollArea翻页显示
                 QPoint topLeft = widgets[i]->geometry().topLeft();
