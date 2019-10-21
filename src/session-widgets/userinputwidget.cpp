@@ -237,6 +237,8 @@ void UserInputWidget::setFaildTipMessage(const QString &message)
 
 void UserInputWidget::updateKBLayout(const QStringList &list)
 {
+    qDebug() << "keyboardlayout---updateKBLayout:" << list;
+
 //    m_passwordEdit->setKeyboardButtonEnable(list.size() > 1);
     m_kbLayoutWidget->updateButtonList(list);
     m_kbLayoutBorder->setContent(m_kbLayoutWidget);
@@ -244,6 +246,8 @@ void UserInputWidget::updateKBLayout(const QStringList &list)
 
 void UserInputWidget::setDefaultKBLayout(const QString &layout)
 {
+    qDebug() << "keyboardlayout---setDefaultKBLayout:" << layout;
+
     m_kbLayoutWidget->setDefault(layout);
 }
 
@@ -413,6 +417,8 @@ void UserInputWidget::refreshKBLayoutWidgetPosition()
 
 void UserInputWidget::refreshInputState()
 {
+    qDebug() << "keyboardlayout---refreshInputState";
+
     m_loginBtn->hide();
     m_passwordEdit->hide();
     m_otherUserInput->hide();
@@ -421,6 +427,8 @@ void UserInputWidget::refreshInputState()
     int frameHeight = (m_userAvatar->height() + 20 + m_nameLbl->height() + 18) * 2;
 
     if (!m_user) return;
+
+    qDebug() << "keyboardlayout---refreshInputState---user---type:" << m_user->type();
 
     if (m_user->type() == User::ADDomain && m_user->uid() == 0) {
         m_passwordEdit->hide();

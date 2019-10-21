@@ -494,6 +494,8 @@ void UserLoginWidget::hideKBLayout()
 
 void UserLoginWidget::setKBLayoutList(QStringList kbLayoutList)
 {
+    qDebug() << "keyboardlayout---UserLoginWidget---setKBLayoutList:" << kbLayoutList;
+
     m_KBLayoutList = kbLayoutList;
     updateKBLayout(m_KBLayoutList);
     m_passwordEdit->setKBLayoutList(kbLayoutList);
@@ -501,6 +503,8 @@ void UserLoginWidget::setKBLayoutList(QStringList kbLayoutList)
 
 void UserLoginWidget::setDefKBLayout(QString defKBLayout)
 {
+    qDebug() << "keyboardlayout---UserLoginWidget---setDefKBLayout:" << defKBLayout;
+
     m_kbLayoutWidget->setDefault(defKBLayout);
 }
 
