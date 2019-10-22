@@ -116,6 +116,9 @@ void ContentWidget::showEvent(QShowEvent *event)
     }
 
     tryGrabKeyboard();
+
+    m_currentSelectedBtn = m_lockButton;
+    m_currentSelectedBtn->updateState(RoundItemButton::Checked);
 }
 
 void ContentWidget::keyPressEvent(QKeyEvent *event)
@@ -598,9 +601,6 @@ void ContentWidget::initUI()
     m_btnsList->append(m_lockButton);
     m_btnsList->append(m_switchUserBtn);
     m_btnsList->append(m_logoutButton);
-
-    m_currentSelectedBtn = m_lockButton;
-    m_currentSelectedBtn->updateState(RoundItemButton::Checked);
 
     //// Inhibit to shutdown
     // blumia: seems this call is useless..
