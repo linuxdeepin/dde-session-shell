@@ -514,6 +514,11 @@ void UserLoginWidget::clearPassWord()
     m_passwordEdit->lineEdit()->clear();
 }
 
+void UserLoginWidget::setPassWordEditFocus()
+{
+    m_passwordEdit->lineEdit()->setFocus();
+}
+
 void UserLoginWidget::setUid(uint uid){
     m_uid = uid;
 }

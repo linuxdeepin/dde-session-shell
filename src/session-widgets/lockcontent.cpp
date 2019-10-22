@@ -300,6 +300,7 @@ void LockContent::toggleVirtualKB()
     m_virtualKB->setParent(this);
     m_virtualKB->setVisible(!m_virtualKB->isVisible());
     m_virtualKB->raise();
+    m_userLoginInfo->getUserLoginWidget()->setPassWordEditFocus();
 
     updateVirtualKBPosition();
 }

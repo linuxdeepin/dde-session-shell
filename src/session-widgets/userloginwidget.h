@@ -84,6 +84,7 @@ public:
     void clearPassWord();
     void setUid(uint uid);
     uint uid();
+    void setPassWordEditFocus();
 
 signals:
     void requestAuthUser(const QString &password);
