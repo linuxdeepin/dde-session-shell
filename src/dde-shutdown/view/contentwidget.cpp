@@ -606,25 +606,25 @@ void ContentWidget::initUI()
     // blumia: seems this call is useless..
 //    listInhibitors();
 
-    QTimer *checkTooltip = new QTimer(this);
-    checkTooltip->setInterval(10000);
-    checkTooltip->setSingleShot(false);
-    connect(checkTooltip,  &QTimer::timeout, [this] {
-        InhibitWarnView *view = qobject_cast<InhibitWarnView *>(m_warningView);
-        if (!view)
-            return;
+//    QTimer *checkTooltip = new QTimer(this);
+//    checkTooltip->setInterval(10000);
+//    checkTooltip->setSingleShot(false);
+//    connect(checkTooltip,  &QTimer::timeout, [this] {
+//        InhibitWarnView *view = qobject_cast<InhibitWarnView *>(m_warningView);
+//        if (!view)
+//            return;
 
-        QList<InhibitWarnView::InhibitorData> list = listInhibitors(view->inhibitType());
-        view->setInhibitorList(list);
+//        QList<InhibitWarnView::InhibitorData> list = listInhibitors(view->inhibitType());
+//        view->setInhibitorList(list);
 
-        if (list.isEmpty())
-        {
-            // 清空提示的内容
-            view->setInhibitConfirmMessage(QString());
-            view->setAcceptVisible(true);
-        }
-    });
-    checkTooltip->start();
+//        if (list.isEmpty())
+//        {
+//            // 清空提示的内容
+//            view->setInhibitConfirmMessage(QString());
+//            view->setAcceptVisible(true);
+//        }
+//    });
+//    checkTooltip->start();
 }
 
 void ContentWidget::initBackground()
