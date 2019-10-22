@@ -82,6 +82,8 @@ public:
     void setKBLayoutList(QStringList kbLayoutList);
     void setDefKBLayout(QString defKBLayout);
     void clearPassWord();
+    void setUid(uint uid);
+    uint uid();
 
 signals:
     void requestAuthUser(const QString &password);
@@ -132,6 +134,7 @@ private:
     KeyboardMonitor *m_capslockMonitor;
     QHBoxLayout *m_nameLayout;
     QFrame *m_nameFrame;
+    uint m_uid;
 };
 
 #endif // USERLOGINWIDGET_H

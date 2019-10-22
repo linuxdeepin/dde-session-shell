@@ -81,16 +81,21 @@ void UserFrameList::addUser(std::shared_ptr<User> user)
         widget->setWidgetShowType(UserLoginWidget::UserFrameType);
     }
 
-    m_userLoginWidgets[user->uid()] = widget;
+    widget->setUid(user->uid());
+    m_loginWidgets.push_back(widget);
     m_folwLayout->addWidget(widget);
 }
 
 //删除用户
 void UserFrameList::removeUser(const uint uid)
 {
-    UserLoginWidget *widget = m_userLoginWidgets[uid];
-    m_userLoginWidgets.remove(uid);
-    widget->deleteLater();
+    foreach (auto w, m_loginWidgets) {
+        if (w->uid() == uid) {
+            m_loginWidgets.removeOne(w);
+            w->deleteLater();
+            break;
+        }
+    }
 }
 
 //点击用户
@@ -100,7 +105,7 @@ void UserFrameList::onUserClicked()
     if (!widget) return;
 
     currentSelectedUser = widget;
-    emit requestSwitchUser(m_model->findUserByUid(m_userLoginWidgets.key(widget)));
+    emit requestSwitchUser(m_model->findUserByUid(widget->uid()));
     emit clicked();
 }
 
@@ -117,23 +122,25 @@ void UserFrameList::showEvent(QShowEvent *event)
     m_rowCount = m_rowCount > 2 ? 2 : m_rowCount;
 
     //fix BUG 3268
-    if (m_userLoginWidgets.size() <= m_colCount) {
+    if (m_loginWidgets.size() <= m_colCount) {
         m_rowCount = 1;
     }
 
     m_scrollArea->setFixedHeight((UserFrameHeight + UserFrameSpaceing) * m_rowCount);
-    int width = qMin((UserFrameWidth + UserFrameSpaceing) * m_colCount, m_userLoginWidgets.size() * (UserFrameWidth + UserFrameSpaceing));
+    int width = qMin((UserFrameWidth + UserFrameSpaceing) * m_colCount, m_loginWidgets.size() * (UserFrameWidth + UserFrameSpaceing));
     m_centerWidget->setFixedWidth(width);
     m_scrollArea->setFixedWidth(width + 10);
 
     std::shared_ptr<User> user = m_model->currentUser();
     if (user.get() == nullptr) return;
-    for (auto it = m_userLoginWidgets.constBegin(); it != m_userLoginWidgets.constEnd(); ++it) {
-        if (it.key() == user->uid()) {
-            currentSelectedUser = it.value();
+    for (auto it = m_loginWidgets.constBegin(); it != m_loginWidgets.constEnd(); ++it) {
+        auto login_widget = *it;
+
+        if (login_widget->uid() == user->uid()) {
+            currentSelectedUser = login_widget;
             currentSelectedUser->setSelected(true);
         } else {
-            it.value()->setSelected(false);
+            login_widget->setSelected(false);
         }
     }
 }
@@ -162,9 +169,9 @@ void UserFrameList::keyPressEvent(QKeyEvent *event)
         break;
     case Qt::Key_Return:
     case Qt::Key_Enter:
-        for (auto it = m_userLoginWidgets.constBegin(); it != m_userLoginWidgets.constEnd(); ++it) {
-            if (it.value()->getSelected()) {
-                emit it.value()->clicked();
+        for (auto it = m_loginWidgets.constBegin(); it != m_loginWidgets.constEnd(); ++it) {
+            if ((*it)->getSelected()) {
+                emit(*it)->clicked();
                 break;
             }
         }
@@ -233,34 +240,32 @@ void UserFrameList::initUI()
 //切换下一个用户
 void UserFrameList::switchNextUser()
 {
-    QList<UserLoginWidget *> widgets = m_userLoginWidgets.values();
-
-    for (int i = 0; i != widgets.size(); ++i) {
-        if (widgets[i]->getSelected()) {
-            widgets[i]->setSelected(false);
-            if (i == (widgets.size() - 1)) {
-                currentSelectedUser = widgets.first();
+    for (int i = 0; i != m_loginWidgets.size(); ++i) {
+        if (m_loginWidgets[i]->getSelected()) {
+            m_loginWidgets[i]->setSelected(false);
+            if (i == (m_loginWidgets.size() - 1)) {
+                currentSelectedUser = m_loginWidgets.first();
                 currentSelectedUser->setSelected(true);
                 //处理m_scrollArea翻页显示
                 m_scrollArea->verticalScrollBar()->setValue(0);
-                m_frameDataBind->updateValue("UserFrameList", m_userLoginWidgets.keys().first());
+                m_frameDataBind->updateValue("UserFrameList", currentSelectedUser->uid());
             } else {
                 //处理m_scrollArea翻页显示
-                int selectedRight = widgets[i]->geometry().right();
+                int selectedRight = m_loginWidgets[i]->geometry().right();
                 int scrollRight = m_scrollArea->widget()->geometry().right();
                 if (selectedRight + UserFrameSpaceing == scrollRight) {
                     QPoint topLeft;
                     if (m_rowCount == 1) {
-                        topLeft = widgets[i + 1]->geometry().topLeft();
+                        topLeft = m_loginWidgets[i + 1]->geometry().topLeft();
                     } else {
-                        topLeft = widgets[i]->geometry().topLeft();
+                        topLeft = m_loginWidgets[i]->geometry().topLeft();
                     }
                     m_scrollArea->verticalScrollBar()->setValue(topLeft.y());
                 }
 
-                currentSelectedUser = widgets[i + 1];
+                currentSelectedUser = m_loginWidgets[i + 1];
                 currentSelectedUser->setSelected(true);
-                m_frameDataBind->updateValue("UserFrameList", m_userLoginWidgets.key(widgets[i + 1]));
+                m_frameDataBind->updateValue("UserFrameList", currentSelectedUser->uid());
             }
             break;
         }
@@ -270,27 +275,25 @@ void UserFrameList::switchNextUser()
 //切换上一个用户
 void UserFrameList::switchPreviousUser()
 {
-    QList<UserLoginWidget *> widgets = m_userLoginWidgets.values();
-
-    for (int i = 0; i != widgets.size(); ++i) {
-        if (widgets[i]->getSelected()) {
-            widgets[i]->setSelected(false);
+    for (int i = 0; i != m_loginWidgets.size(); ++i) {
+        if (m_loginWidgets[i]->getSelected()) {
+            m_loginWidgets[i]->setSelected(false);
             if (i == 0) {
-                currentSelectedUser = widgets.last();
+                currentSelectedUser = m_loginWidgets.last();
                 currentSelectedUser->setSelected(true);
                 //处理m_scrollArea翻页显示
                 m_scrollArea->verticalScrollBar()->setValue(m_scrollArea->verticalScrollBar()->maximum());
-                m_frameDataBind->updateValue("UserFrameList", m_userLoginWidgets.keys().last());
+                m_frameDataBind->updateValue("UserFrameList", currentSelectedUser->uid());
             } else {
                 //处理m_scrollArea翻页显示
-                QPoint topLeft = widgets[i]->geometry().topLeft();
+                QPoint topLeft = m_loginWidgets[i]->geometry().topLeft();
                 if (topLeft.x() == 0) {
-                    m_scrollArea->verticalScrollBar()->setValue(widgets[i - 1]->geometry().topLeft().y());
+                    m_scrollArea->verticalScrollBar()->setValue(m_loginWidgets[i - 1]->geometry().topLeft().y());
                 }
 
-                currentSelectedUser = widgets[i - 1];
+                currentSelectedUser = m_loginWidgets[i - 1];
                 currentSelectedUser->setSelected(true);
-                m_frameDataBind->updateValue("UserFrameList", m_userLoginWidgets.key(widgets[i - 1]));
+                m_frameDataBind->updateValue("UserFrameList", currentSelectedUser->uid());
             }
             break;
         }
@@ -299,10 +302,7 @@ void UserFrameList::switchPreviousUser()
 
 void UserFrameList::onOtherPageChanged(const QVariant &value)
 {
-    QList<UserLoginWidget *> widgets = m_userLoginWidgets.values();
-
-    for (UserLoginWidget *widget : widgets) {
-        widget->setSelected(false);
+    foreach (auto w, m_loginWidgets) {
+        w->setSelected(w->uid() == value.toUInt());
     }
-    m_userLoginWidgets[value.toUInt()]->setSelected(true);
 }

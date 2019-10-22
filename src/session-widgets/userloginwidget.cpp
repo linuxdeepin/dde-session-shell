@@ -513,6 +513,14 @@ void UserLoginWidget::clearPassWord()
     m_passwordEdit->lineEdit()->clear();
 }
 
+void UserLoginWidget::setUid(uint uid){
+    m_uid = uid;
+}
+
+uint UserLoginWidget::uid(){
+    return m_uid;
+}
+
 void UserLoginWidget::setSelected(bool isSelected)
 {
     m_isSelected = isSelected;

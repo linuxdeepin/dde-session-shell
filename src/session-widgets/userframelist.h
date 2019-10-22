@@ -24,7 +24,7 @@
 
 #include <dflowlayout.h>
 
-#include <QHash>
+#include <QMap>
 
 #include <memory>
 
@@ -68,7 +68,7 @@ private:
 private:
     QScrollArea *m_scrollArea;
     DFlowLayout *m_folwLayout;
-    QHash<uint, UserLoginWidget *> m_userLoginWidgets;
+    QList<UserLoginWidget *> m_loginWidgets;
     UserLoginWidget *currentSelectedUser = nullptr;
     SessionBaseModel *m_model;
     FrameDataBind *m_frameDataBind;
