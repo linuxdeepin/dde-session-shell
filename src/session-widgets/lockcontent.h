@@ -60,7 +60,6 @@ protected:
 protected:
     SessionBaseModel *m_model;
     ControlWidget *m_controlWidget;
-    UserInputWidget *m_userInputWidget;
     UserFrame *m_userFrame;
     ShutdownWidget *m_shutdownFrame;
     ImageBlur *m_imageBlurInter;

@@ -23,7 +23,6 @@ LockContent::LockContent(SessionBaseModel *const model, QWidget *parent)
     , m_userLoginInfo(new UserLoginInfo(model))
 {
     m_controlWidget = new ControlWidget;
-    m_userInputWidget = new UserInputWidget;
     m_userFrame = new UserFrame;
     m_shutdownFrame = new ShutdownWidget;
     m_logoWidget = new LogoWidget;
@@ -35,8 +34,6 @@ LockContent::LockContent(SessionBaseModel *const model, QWidget *parent)
 
     m_timeWidget = new TimeWidget();
     m_mediaWidget = nullptr;
-
-    m_userInputWidget->updateAuthType(model->currentType());
 
     m_shutdownFrame->setModel(model);
     m_userFrame->setModel(model);
@@ -62,12 +59,10 @@ LockContent::LockContent(SessionBaseModel *const model, QWidget *parent)
 
     // init connect
     connect(model, &SessionBaseModel::currentUserChanged, this, &LockContent::onCurrentUserChanged);
-    connect(m_userInputWidget, &UserInputWidget::requestAuthUser, this, &LockContent::requestAuthUser);
     connect(m_userFrame, &UserFrame::requestSwitchUser, this, &LockContent::requestSwitchToUser);
     connect(m_userFrame, &UserFrame::requestSwitchUser, this, &LockContent::restoreMode);
     connect(m_controlWidget, &ControlWidget::requestSwitchUser, this, [ = ] {
         if (m_model->currentModeState() == SessionBaseModel::ModeStatus::UserMode) return;
-        m_userFrame->setFixedSize(m_userInputWidget->size());
         m_model->setCurrentModeState(SessionBaseModel::ModeStatus::UserMode);
     });
     connect(m_controlWidget, &ControlWidget::requestShutdown, this, [ = ] {
@@ -82,43 +77,8 @@ LockContent::LockContent(SessionBaseModel *const model, QWidget *parent)
     connect(m_userLoginInfo, &UserLoginInfo::requestSwitchUser, this, &LockContent::requestSwitchToUser);
     connect(m_userLoginInfo, &UserLoginInfo::requestSwitchUser, this, &LockContent::restoreMode);
     connect(m_userLoginInfo, &UserLoginInfo::requestSetLayout, this, &LockContent::requestSetLayout);
-
     connect(m_shutdownFrame, &ShutdownWidget::abortOperation, this, &LockContent::restoreMode);
-
-    connect(model, &SessionBaseModel::authFinished, this, [ = ](bool success) {
-        if (success) {
-            m_userInputWidget->resetAllState();
-        }
-    });
-    connect(model, &SessionBaseModel::authFaildMessage, m_userInputWidget, &UserInputWidget::setFaildMessage);
-    connect(model, &SessionBaseModel::authFaildTipsMessage, m_userInputWidget, &UserInputWidget::setFaildTipMessage);
     connect(model, &SessionBaseModel::onStatusChanged, this, &LockContent::onStatusChanged);
-    connect(model, &SessionBaseModel::onPowerActionChanged, this, [ = ](SessionBaseModel::PowerAction poweraction) {
-        switch (poweraction) {
-        case SessionBaseModel::RequireNormal:
-            m_userInputWidget->normalMode();
-            break;
-        case SessionBaseModel::RequireRestart:
-            if (model->currentType() == SessionBaseModel::AuthType::LockType) {
-                m_userInputWidget->restartMode();
-            }
-            break;
-        case SessionBaseModel::RequireShutdown:
-            if (model->currentType() == SessionBaseModel::AuthType::LockType) {
-                m_userInputWidget->shutdownMode();
-            }
-        default:
-            break;
-        }
-    });
-
-    connect(m_userInputWidget, &UserInputWidget::abortOperation, this, [ = ] {
-        model->setPowerAction(SessionBaseModel::PowerAction::RequireNormal);
-    });
-
-    connect(m_userInputWidget, &UserInputWidget::requestUserKBLayoutChanged, this, [ = ](const QString & value) {
-        emit requestSetLayout(m_user, value);
-    });
 
     auto initVirtualKB = [&](bool hasvirtualkb) {
         if (hasvirtualkb && !m_virtualKB) {
@@ -162,8 +122,6 @@ void LockContent::onCurrentUserChanged(std::shared_ptr<User> user)
     m_user = user;
 
     m_currentUserConnects << connect(user.get(), &User::greeterBackgroundPathChanged, this, &LockContent::updateBackground, Qt::UniqueConnection);
-
-    m_userInputWidget->setUser(user);
 
     //lixin
     m_userLoginInfo->setUser(user);
@@ -223,7 +181,6 @@ void LockContent::mouseReleaseEvent(QMouseEvent *event)
     }
 
     // hide keyboardlayout widget
-    m_userInputWidget->hideKeyboard();
     m_userLoginInfo->hideKBLayout();
 
     restoreCenterContent();
