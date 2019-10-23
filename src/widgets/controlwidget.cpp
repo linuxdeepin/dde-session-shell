@@ -141,6 +141,8 @@ void ControlWidget::setUserSwitchEnable(const bool visible)
 
 void ControlWidget::setSessionSwitchEnable(const bool visible)
 {
+    if(!visible) return;
+
     if (!m_sessionBtn) {
         m_sessionBtn = new DFloatingButton(this);
         m_sessionBtn->setIconSize(BUTTON_ICON_SIZE);
@@ -199,8 +201,6 @@ void ControlWidget::setSessionSwitchEnable(const bool visible)
         m_tipsAni = new QPropertyAnimation(m_sessionTip, "pos", this);
     }
 #endif
-
-    m_sessionBtn->setVisible(visible);
 }
 
 void ControlWidget::chooseToSession(const QString &session)
