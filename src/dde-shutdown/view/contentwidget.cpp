@@ -679,7 +679,31 @@ QList<InhibitWarnView::InhibitorData> ContentWidget::listInhibitors(const Action
                 const Inhibit &inhibitor = inhibitList.at(i);
                 if (inhibitor.what.split(':', QString::SkipEmptyParts).contains(type)
                         && !m_inhibitorBlacklists.contains(inhibitor.who)) {
-                    inhibitorList.append({inhibitor.who, inhibitor.why, inhibitor.mode, inhibitor.pid});
+
+                    // 读取翻译后的文本，读取应用图标
+                    QDBusConnection connection = QDBusConnection::sessionBus();
+                    if (!inhibitor.uid) {
+                        connection = QDBusConnection::systemBus();
+                    }
+
+                    if (connection.interface()->isServiceRegistered(inhibitor.who)) {
+                        QString why = inhibitor.why;
+                        QString icon;
+
+                        QDBusInterface ifc(inhibitor.who, "/com/deepin/InhibitHint", "com.deepin.InibitHint", connection);
+                        QDBusMessage msg = ifc.call("Get", QLocale::system().name(), inhibitor.why);
+
+                        if (msg.type() == QDBusMessage::ReplyMessage) {
+                            InhibitHint inhibitHint = qdbus_cast<InhibitHint>(msg.arguments().at(0).value<QDBusArgument>());
+
+                            if (!inhibitHint.why.isEmpty()) {
+                                why = inhibitHint.why;
+                                icon = inhibitHint.icon;
+                            }
+                        }
+
+                        inhibitorList.append({inhibitor.who, why, inhibitor.mode, inhibitor.pid, icon});
+                    }
                 }
             }
 //            showTips(reminder_tooltip);

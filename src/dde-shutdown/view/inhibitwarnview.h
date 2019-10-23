@@ -57,6 +57,7 @@ public:
         QString why;
         QString mode;
         quint32 pid;
+        QString icon;
     };
 
     void setInhibitorList(const QList<InhibitorData> & list);

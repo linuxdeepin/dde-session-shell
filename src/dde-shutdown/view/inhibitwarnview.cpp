@@ -137,7 +137,7 @@ InhibitWarnView::~InhibitWarnView()
 
 void InhibitWarnView::setInhibitorList(const QList<InhibitorData> &list)
 {
-    for (QWidget* widget : m_inhibitorPtrList) {
+    for (QWidget *widget : m_inhibitorPtrList) {
         m_inhibitorListLayout->removeWidget(widget);
         widget->deleteLater();
     };
@@ -146,19 +146,22 @@ void InhibitWarnView::setInhibitorList(const QList<InhibitorData> &list)
     for (const InhibitorData &inhibitor : list) {
         QIcon icon;
 
-        if (inhibitor.pid) {
+        if (inhibitor.icon.isEmpty() && inhibitor.pid) {
             QFileInfo executable_info(QFile::readLink(QString("/proc/%1/exe").arg(inhibitor.pid)));
 
             if (executable_info.exists()) {
                 icon = QIcon::fromTheme(executable_info.fileName());
             }
+        } else {
+            icon = QIcon::fromTheme(inhibitor.icon, QIcon::fromTheme("application-x-desktop"));
         }
 
         if (icon.isNull()) {
             icon = QIcon::fromTheme("application-x-desktop");
         }
 
-        QWidget * inhibitorWidget = new InhibitorRow(inhibitor.who, inhibitor.why, icon, this);
+        QWidget *inhibitorWidget = new InhibitorRow(inhibitor.who, inhibitor.why, icon, this);
+
         m_inhibitorPtrList.append(inhibitorWidget);
         m_inhibitorListLayout->addWidget(inhibitorWidget, 0, Qt::AlignHCenter);
     }
@@ -234,8 +237,7 @@ void InhibitWarnView::onOtherPageDataChanged(const QVariant &value)
         m_cancelBtn->setChecked(false);
         m_acceptBtn->setChecked(true);
         m_currentBtn = m_acceptBtn;
-    }
-    else {
+    } else {
         m_acceptBtn->setChecked(false);
         m_cancelBtn->setChecked(true);
         m_currentBtn = m_cancelBtn;

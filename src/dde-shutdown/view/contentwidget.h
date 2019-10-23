@@ -135,4 +135,17 @@ private:
     QStringList m_inhibitorBlacklists;
     int m_failures = 0;
 };
+
+class InhibitHint{
+public:
+    QString name, icon, why;
+
+    friend const QDBusArgument &operator>>(const QDBusArgument &argument, InhibitHint &obj)
+    {
+        argument.beginStructure();
+        argument >> obj.name >> obj.icon >> obj.why;
+        argument.endStructure();
+        return argument;
+    }
+};
 #endif // CONTENTVIEWWIDGET
