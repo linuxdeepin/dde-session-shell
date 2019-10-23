@@ -143,6 +143,8 @@ void UserFrameList::showEvent(QShowEvent *event)
             login_widget->setSelected(false);
         }
     }
+
+    this->setFocus();
 }
 
 void UserFrameList::mouseReleaseEvent(QMouseEvent *event)
