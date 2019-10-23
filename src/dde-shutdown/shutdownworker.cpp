@@ -14,6 +14,12 @@ ShutdownWorker::ShutdownWorker(SessionBaseModel * const model, QObject *parent)
         initData();
         model->setCurrentUser(model->findUserByUid(getuid()));
     }
+
+    connect(model, &SessionBaseModel::onStatusChanged, this, [ = ](SessionBaseModel::ModeStatus status) {
+        if (status == SessionBaseModel::ModeStatus::PowerMode) {
+            checkPowerInfo();
+        }
+    });
 }
 
 void ShutdownWorker::switchToUser(std::shared_ptr<User> user)
