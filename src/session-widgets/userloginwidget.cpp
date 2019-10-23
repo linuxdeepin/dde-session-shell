@@ -232,6 +232,11 @@ void UserLoginWidget::disablePassword(bool disable, uint lockNum)
     m_passwordEdit->setVisible(!disable);
     m_lockPasswordWidget->setVisible(disable);
 
+    if(!m_passwordEdit->lineEdit()->text().isEmpty()){
+        m_passwordEdit->lineEdit()->clear();
+    }
+    m_passwordEdit->lineEdit()->setFocus();
+
     if (disable) {
         setFaildMessage(tr("Please try again %n minute(s) later", "", lockNum));
     }
