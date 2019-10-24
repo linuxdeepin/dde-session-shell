@@ -127,12 +127,6 @@ void ContentWidget::showEvent(QShowEvent *event)
         case Restart:
             emit m_restartButton->clicked();
             break;
-        case Suspend:
-            emit m_suspendButton->clicked();
-            break;
-        case Hibernate:
-            emit m_hibernateButton->clicked();
-            break;
         default:break;
         }
     }
