@@ -340,7 +340,7 @@ bool ContentWidget::beforeInvokeAction(const Actions action)
         InhibitWarnView *view = new InhibitWarnView(action, this);
         view->setAction(action);
         view->setInhibitorList(inhibitors);
-        view->setInhibitConfirmMessage(tr("The programs are preventing the computer from shutting down / hibernation, and forcing shut down / hibernate may cause data loss.") + "\n" +
+        view->setInhibitConfirmMessage(tr("The programs are preventing the computer from shutting down, and forcing shut down may cause data loss.") + "\n" +
                                        tr("To close the program, click Cancel, and then close the program."));
 
         bool isAccept = true;
@@ -690,12 +690,7 @@ QList<InhibitWarnView::InhibitorData> ContentWidget::listInhibitors(const Action
             switch (action) {
             case Actions::Shutdown:
             case Actions::Restart:
-            case Actions::Logout:
                 type = "shutdown";
-                break;
-            case Actions::Suspend:
-            case Actions::Hibernate:
-                type = "sleep";
                 break;
             default:
                 return {};
