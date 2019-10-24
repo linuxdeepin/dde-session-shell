@@ -696,6 +696,12 @@ QList<InhibitWarnView::InhibitorData> ContentWidget::listInhibitors(const Action
                 if (inhibitor.what.split(':', QString::SkipEmptyParts).contains(type)
                         && !m_inhibitorBlacklists.contains(inhibitor.who)) {
 
+                    InhibitWarnView::InhibitorData inhibitData;
+                    inhibitData.who = inhibitor.who;
+                    inhibitData.why = inhibitor.why;
+                    inhibitData.mode = inhibitor.mode;
+                    inhibitData.pid = inhibitor.pid;
+
                     // 读取翻译后的文本，读取应用图标
                     QDBusConnection connection = QDBusConnection::sessionBus();
                     if (!inhibitor.uid) {
@@ -703,8 +709,6 @@ QList<InhibitWarnView::InhibitorData> ContentWidget::listInhibitors(const Action
                     }
 
                     if (connection.interface()->isServiceRegistered(inhibitor.who)) {
-                        QString why = inhibitor.why;
-                        QString icon;
 
                         QDBusInterface ifc(inhibitor.who, "/com/deepin/InhibitHint", "com.deepin.InibitHint", connection);
                         QDBusMessage msg = ifc.call("Get", QLocale::system().name(), inhibitor.why);
@@ -713,13 +717,13 @@ QList<InhibitWarnView::InhibitorData> ContentWidget::listInhibitors(const Action
                             InhibitHint inhibitHint = qdbus_cast<InhibitHint>(msg.arguments().at(0).value<QDBusArgument>());
 
                             if (!inhibitHint.why.isEmpty()) {
-                                why = inhibitHint.why;
-                                icon = inhibitHint.icon;
+                                inhibitData.why = inhibitHint.why;
+                                inhibitData.icon = inhibitHint.icon;
                             }
                         }
-
-                        inhibitorList.append({inhibitor.who, why, inhibitor.mode, inhibitor.pid, icon});
                     }
+
+                    inhibitorList.append(inhibitData);
                 }
             }
 //            showTips(reminder_tooltip);
