@@ -75,6 +75,12 @@ void UserLoginWidget::resetAllState()
 {
     m_passwordEdit->hideLoadSlider();
     m_passwordEdit->lineEdit()->clear();
+    m_passwordEdit->lineEdit()->setPlaceholderText(QString());
+    if (m_authType == SessionBaseModel::LightdmType) {
+        m_lockButton->setIcon(DStyle::SP_ArrowNext);
+    } else {
+        m_lockButton->setIcon(DStyle::SP_UnlockElement);
+    }
 }
 
 //密码连续输入错误5次，设置提示信息
@@ -177,6 +183,12 @@ void UserLoginWidget::updateUI()
 
     if (m_passwordEdit->isVisible())
         m_userAvatar->setFocusProxy(m_passwordEdit->lineEdit());
+}
+
+void UserLoginWidget::ShutdownPrompt()
+{
+    m_lockButton->setIcon(QIcon(":/img/bottom_actions/shutdown_normal.svg"));
+    setFaildMessage(tr("Enter your password to shut down"));
 }
 
 void UserLoginWidget::onOtherPagePasswordChanged(const QVariant &value)

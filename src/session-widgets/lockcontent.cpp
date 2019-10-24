@@ -78,6 +78,7 @@ LockContent::LockContent(SessionBaseModel *const model, QWidget *parent)
     connect(m_userLoginInfo, &UserLoginInfo::requestSwitchUser, this, &LockContent::restoreMode);
     connect(m_userLoginInfo, &UserLoginInfo::requestSetLayout, this, &LockContent::requestSetLayout);
     connect(m_shutdownFrame, &ShutdownWidget::abortOperation, this, &LockContent::restoreMode);
+    connect(m_shutdownFrame, &ShutdownWidget::abortOperation, m_userLoginInfo, &UserLoginInfo::abortConfirm);
     connect(model, &SessionBaseModel::onStatusChanged, this, &LockContent::onStatusChanged);
 
     auto initVirtualKB = [&](bool hasvirtualkb) {

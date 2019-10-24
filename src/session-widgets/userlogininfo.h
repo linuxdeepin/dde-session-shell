@@ -42,6 +42,7 @@ public:
     UserLoginWidget *getUserLoginWidget();
     UserFrameList *getUserFrameList();
     void hideKBLayout();
+    void abortConfirm();
 
 signals:
     void requestAuthUser(const QString &password);
@@ -54,6 +55,7 @@ private:
     void receiveSwitchUser(std::shared_ptr<User> user);
 
 private:
+    bool m_shutdownAbort = false;
     std::shared_ptr<User> m_user;
     SessionBaseModel *m_model;
     QPointer<UserLoginWidget> m_userLoginWidget;

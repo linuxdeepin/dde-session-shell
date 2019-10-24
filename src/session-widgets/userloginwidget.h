@@ -85,6 +85,7 @@ public:
     void setUid(uint uid);
     uint uid();
     void setPassWordEditFocus();
+    void ShutdownPrompt();
 
 signals:
     void requestAuthUser(const QString &password);

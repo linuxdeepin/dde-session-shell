@@ -87,6 +87,16 @@ void UserLoginInfo::initConnect()
     connect(m_userFrameList, &UserFrameList::requestSwitchUser, this, &UserLoginInfo::receiveSwitchUser);
 }
 
+void UserLoginInfo::abortConfirm()
+{
+    m_shutdownAbort = true;
+    SessionBaseModel::PowerAction action = m_model->powerAction();
+    if(action == SessionBaseModel::PowerAction::RequireRestart ||
+       action == SessionBaseModel::PowerAction::RequireShutdown) {
+        m_userLoginWidget->ShutdownPrompt();
+    }
+}
+
 UserLoginWidget *UserLoginInfo::getUserLoginWidget()
 {
     return m_userLoginWidget;
@@ -113,5 +123,10 @@ void UserLoginInfo::receiveSwitchUser(std::shared_ptr<User> user)
         m_userLoginWidget->clearPassWord();
     }
 
+    if(m_shutdownAbort) {
+        m_shutdownAbort = false;
+        m_userLoginWidget->resetAllState();
+        m_model->setPowerAction(SessionBaseModel::PowerAction::RequireNormal);
+    }
     emit requestSwitchUser(user);
 }
