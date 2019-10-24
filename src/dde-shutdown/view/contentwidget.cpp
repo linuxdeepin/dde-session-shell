@@ -41,6 +41,9 @@
 #include "src/global_util/public_func.h"
 #include "src/global_util/constants.h"
 
+static Actions firstScreenAction;
+static bool isWarnViewShow = false;
+
 ContentWidget::ContentWidget(QWidget *parent)
     : QFrame(parent)
     , m_login1Inter(new DBusLogin1Manager("org.freedesktop.login1", "/org/freedesktop/login1", QDBusConnection::systemBus(), this))
@@ -113,6 +116,25 @@ void ContentWidget::showEvent(QShowEvent *event)
 
     if (m_warningView) {
         m_mainLayout->setCurrentWidget(m_warningView);
+    }
+
+    //解决扩展显示，多屏显示不一致。bug4440
+    if(isWarnViewShow){
+        switch(firstScreenAction){
+        case Shutdown:
+            emit m_shutdownButton->clicked();
+            break;
+        case Restart:
+            emit m_restartButton->clicked();
+            break;
+        case Suspend:
+            emit m_suspendButton->clicked();
+            break;
+        case Hibernate:
+            emit m_hibernateButton->clicked();
+            break;
+        default:break;
+        }
     }
 
     tryGrabKeyboard();
@@ -309,6 +331,9 @@ bool ContentWidget::beforeInvokeAction(const Actions action)
             m_warningView->deleteLater();
             m_warningView = nullptr;
         }
+
+        firstScreenAction = action;
+        isWarnViewShow = true;
     }
 
     if (!inhibitors.isEmpty()) {
@@ -423,6 +448,8 @@ void ContentWidget::hideToplevelWindow()
             widget->hide();
         }
     }
+
+    isWarnViewShow = false;
 }
 
 void ContentWidget::shutDownFrameActions(const Actions action)
