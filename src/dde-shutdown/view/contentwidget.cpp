@@ -334,7 +334,13 @@ bool ContentWidget::beforeInvokeAction(const Actions action)
         InhibitWarnView *view = new InhibitWarnView(action, this);
         view->setAction(action);
         view->setInhibitorList(inhibitors);
-        view->setInhibitConfirmMessage(tr("The programs are preventing the computer from shutting down, and forcing shut down may cause data loss.") + "\n" +
+
+        if(action == Shutdown)
+            view->setInhibitConfirmMessage(tr("The programs are preventing the computer from shutting down, and forcing shut down may cause data loss.") + "\n" +
+                                       tr("To close the program, click Cancel, and then close the program."));
+
+        else if(action == Restart)
+            view->setInhibitConfirmMessage(tr("The programs are preventing the computer from restart, and forcing restart may cause data loss.") + "\n" +
                                        tr("To close the program, click Cancel, and then close the program."));
 
         bool isAccept = true;
