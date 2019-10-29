@@ -321,7 +321,7 @@ bool ContentWidget::beforeInvokeAction(const Actions action)
                                        tr("To close the program, click Cancel, and then close the program."));
 
         else if(action == Restart)
-            view->setInhibitConfirmMessage(tr("The programs are preventing the computer from restart, and forcing restart may cause data loss.") + "\n" +
+            view->setInhibitConfirmMessage(tr("The programs are preventing the computer from reboot, and forcing reboot may cause data loss.") + "\n" +
                                        tr("To close the program, click Cancel, and then close the program."));
 
         bool isAccept = true;
