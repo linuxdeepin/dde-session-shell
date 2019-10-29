@@ -60,6 +60,7 @@ UserLoginWidget::UserLoginWidget(QWidget *parent)
     , m_isLogin(false)
     , m_isSelected(false)
     , m_capslockMonitor(KeyboardMonitor::instance())
+    , m_isAlertMessageShow(false)
 {
     initUI();
     initConnect();
@@ -105,6 +106,7 @@ void UserLoginWidget::setFaildTipMessage(const QString &message)
         m_passwordEdit->hideLoadSlider();
         m_passwordEdit->showAlertMessage(message,-1);
         m_passwordEdit->lineEdit()->selectAll();
+        m_isAlertMessageShow = true;
     }
 }
 
@@ -425,8 +427,7 @@ void UserLoginWidget::initConnect()
     connect(m_lockButton, &QPushButton::clicked, this, [ = ] {
         QString password = m_passwordEdit->text();
 
-        if (m_passwordEdit->isVisible())
-        {
+        if (m_passwordEdit->isVisible()){
             m_passwordEdit->lineEdit()->setFocus();
         }
 
@@ -441,6 +442,7 @@ void UserLoginWidget::initConnect()
     //大小写锁定状态改变
     connect(m_capslockMonitor, &KeyboardMonitor::capslockStatusChanged, m_passwordEdit, &DPasswordEditEx::capslockStatusChanged);
     connect(m_passwordEdit, &DPasswordEditEx::toggleKBLayoutWidget, this, &UserLoginWidget::toggleKBLayoutWidget);
+    connect(m_passwordEdit, &DPasswordEditEx::selectionChanged,this, &UserLoginWidget::hidePasswordEditMessage);
 }
 
 //设置用户名
@@ -548,4 +550,12 @@ void UserLoginWidget::setSelected(bool isSelected)
 {
     m_isSelected = isSelected;
     update();
+}
+
+void UserLoginWidget::hidePasswordEditMessage()
+{
+    if(m_isAlertMessageShow){
+        m_passwordEdit->hideAlertMessage();
+        m_isAlertMessageShow = false;
+    }
 }

@@ -95,6 +95,7 @@ signals:
 public slots:
     void updateAuthType(SessionBaseModel::AuthType type);
     void refreshBlurEffectPosition();
+    void hidePasswordEditMessage();
 
 protected:
     void resizeEvent(QResizeEvent *event) override;
@@ -137,6 +138,7 @@ private:
     QHBoxLayout *m_nameLayout;
     QFrame *m_nameFrame;
     uint m_uid;
+    bool m_isAlertMessageShow;                             //判断密码错误提示是否显示
 };
 
 #endif // USERLOGINWIDGET_H
