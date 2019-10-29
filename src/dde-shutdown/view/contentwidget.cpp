@@ -41,9 +41,6 @@
 #include "src/global_util/public_func.h"
 #include "src/global_util/constants.h"
 
-static Actions firstScreenAction;
-static bool isWarnViewShow = false;
-
 ContentWidget::ContentWidget(QWidget *parent)
     : QFrame(parent)
     , m_login1Inter(new DBusLogin1Manager("org.freedesktop.login1", "/org/freedesktop/login1", QDBusConnection::systemBus(), this))
@@ -116,19 +113,6 @@ void ContentWidget::showEvent(QShowEvent *event)
 
     if (m_warningView) {
         m_mainLayout->setCurrentWidget(m_warningView);
-    }
-
-    //解决扩展显示，多屏显示不一致。bug4440
-    if(isWarnViewShow){
-        switch(firstScreenAction){
-        case Shutdown:
-            emit m_shutdownButton->clicked();
-            break;
-        case Restart:
-            emit m_restartButton->clicked();
-            break;
-        default:break;
-        }
     }
 
     tryGrabKeyboard();
@@ -218,12 +202,12 @@ bool ContentWidget::powerAction(const Actions action)
 
 void ContentWidget::initConnect()
 {
-    connect(m_shutdownButton, &RoundItemButton::clicked, [this] { beforeInvokeAction(Shutdown);});
-    connect(m_restartButton, &RoundItemButton::clicked, [this] { beforeInvokeAction(Restart);});
-    connect(m_suspendButton, &RoundItemButton::clicked, [this] { beforeInvokeAction(Suspend);});
-    connect(m_hibernateButton, &RoundItemButton::clicked, [ = ] {beforeInvokeAction(Hibernate);});
+    connect(m_shutdownButton, &RoundItemButton::clicked, [this] { emit buttonClicked(Shutdown);});
+    connect(m_restartButton, &RoundItemButton::clicked, [this] { emit buttonClicked(Restart);});
+    connect(m_suspendButton, &RoundItemButton::clicked, [this] { emit buttonClicked(Suspend);});
+    connect(m_hibernateButton, &RoundItemButton::clicked, [ = ] {emit buttonClicked(Hibernate);});
     connect(m_lockButton, &RoundItemButton::clicked, [this] { shutDownFrameActions(Lock);});
-    connect(m_logoutButton, &RoundItemButton::clicked, [this] {emit beforeInvokeAction(Logout);});
+    connect(m_logoutButton, &RoundItemButton::clicked, [this] {emit buttonClicked(Logout);});
     connect(m_switchUserBtn, &RoundItemButton::clicked, [this] { shutDownFrameActions(SwitchUser);});
     connect(m_wmInter, &__wm::WorkspaceSwitched, this, &ContentWidget::currentWorkspaceChanged);
     connect(m_blurImageInter, &ImageBlur::BlurDone, this, &ContentWidget::onBlurWallpaperFinished);
@@ -325,9 +309,6 @@ bool ContentWidget::beforeInvokeAction(const Actions action)
             m_warningView->deleteLater();
             m_warningView = nullptr;
         }
-
-        firstScreenAction = action;
-        isWarnViewShow = true;
     }
 
     if (!inhibitors.isEmpty()) {
@@ -448,8 +429,6 @@ void ContentWidget::hideToplevelWindow()
             widget->hide();
         }
     }
-
-    isWarnViewShow = false;
 }
 
 void ContentWidget::shutDownFrameActions(const Actions action)

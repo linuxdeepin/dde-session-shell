@@ -31,7 +31,7 @@
 
 const QString WallpaperKey = "pictureUri";
 
-ShutdownFrame::ShutdownFrame(SessionBaseModel * const model, QWidget *parent)
+ShutdownFrame::ShutdownFrame(SessionBaseModel *const model, QWidget *parent)
     : FullscreenBackground(parent)
     , m_model(model)
 {
@@ -43,8 +43,9 @@ ShutdownFrame::ShutdownFrame(SessionBaseModel * const model, QWidget *parent)
     connect(m_shutdownFrame, &ContentWidget::requestBackground,
             this, static_cast<void (ShutdownFrame::*)(const QString &)>(&ShutdownFrame::updateBackground));
 
+    connect(m_shutdownFrame, &ContentWidget::buttonClicked, this, &ShutdownFrame::buttonClicked);
 
-    connect(model, &SessionBaseModel::visibleChanged, this, [=] (bool visible) {
+    connect(model, &SessionBaseModel::visibleChanged, this, [ = ](bool visible) {
         if (visible) {
             // refresh hibernate and sleep function.
             emit model->onStatusChanged(SessionBaseModel::PowerMode);

@@ -48,7 +48,7 @@ const QString DBUS_NAME = "com.deepin.dde.shutdownFront";
 DCORE_USE_NAMESPACE
 DWIDGET_USE_NAMESPACE
 
-int main(int argc, char* argv[])
+int main(int argc, char *argv[])
 {
     QCoreApplication::setAttribute(Qt::AA_UseHighDpiPixmaps, true);
     DApplication app(argc, argv);
@@ -89,17 +89,17 @@ int main(int argc, char* argv[])
     parser.process(app);
 
     QDBusConnection session = QDBusConnection::sessionBus();
-    if(!session.registerService(DBUS_NAME) ||
-            !app.setSingleInstance(QString("dde-shutdown"), DApplication::UserScope)){
+    if (!session.registerService(DBUS_NAME) ||
+            !app.setSingleInstance(QString("dde-shutdown"), DApplication::UserScope)) {
         qWarning() << "dde-shutdown is running...";
 
         if (!parser.isSet(daemon)) {
             DDBusSender()
-                    .service(DBUS_NAME)
-                    .interface(DBUS_NAME)
-                    .path(DBUS_PATH)
-                    .method("Show")
-                    .call();
+            .service(DBUS_NAME)
+            .interface(DBUS_NAME)
+            .path(DBUS_PATH)
+            .method("Show")
+            .call();
         }
 
         return 0;
@@ -114,7 +114,7 @@ int main(int argc, char* argv[])
 
         property_group->addProperty("contentVisible");
 
-        auto createFrame = [&] (QScreen *screen) -> QWidget* {
+        auto createFrame = [&](QScreen * screen) -> QWidget* {
             ShutdownFrame *frame = new ShutdownFrame(model);
             dbusAgent->addFrame(frame);
             frame->setScreen(screen);
@@ -122,9 +122,27 @@ int main(int argc, char* argv[])
             QObject::connect(model, &SessionBaseModel::visibleChanged, frame, &ShutdownFrame::setVisible);
             QObject::connect(frame, &ShutdownFrame::requestEnableHotzone, worker, &ShutdownWorker::enableZoneDetected);
             QObject::connect(frame, &ShutdownFrame::destroyed, property_group, &PropertyGroup::removeObject);
-            QObject::connect(frame, &ShutdownFrame::destroyed, frame, [=] {
+            QObject::connect(frame, &ShutdownFrame::destroyed, frame, [ = ] {
                 dbusAgent->removeFrame(frame);
             });
+            QObject::connect(frame, &ShutdownFrame::buttonClicked, frame, [ = ](const Actions action)
+            {
+                switch (action) {
+                case Shutdown:
+                    dbusAgent->Shutdown(); break;
+                case Restart:
+                    dbusAgent->Restart(); break;
+                case Suspend:
+                    dbusAgent->Suspend(); break;
+                case Hibernate:
+                    dbusAgent->Hibernate(); break;
+                case Logout:
+                    dbusAgent->Logout(); break;
+                default:
+                    break;
+                }
+            });
+
             frame->setVisible(model->isShow());
             return frame;
         };

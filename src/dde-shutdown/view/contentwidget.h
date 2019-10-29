@@ -63,6 +63,7 @@ public:
 
 signals:
     void requestBackground(const QString &path) const;
+    void buttonClicked(const Actions action);
 
 protected:
     void mouseReleaseEvent(QMouseEvent *event) Q_DECL_OVERRIDE;

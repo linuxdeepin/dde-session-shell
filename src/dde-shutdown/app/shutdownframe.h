@@ -43,6 +43,7 @@ public:
 
 Q_SIGNALS:
     void requestEnableHotzone(bool enable);
+    void buttonClicked(const Actions action);
 
 public slots:
     bool powerAction(const Actions action);
