@@ -65,7 +65,6 @@ public:
     ShutdownFrontDBus(DBusShutdownAgent* parent);
     ~ShutdownFrontDBus();
 
-    Q_SLOT void Ping();
     Q_SLOT void Shutdown();
     Q_SLOT void Restart();
     Q_SLOT void Logout();

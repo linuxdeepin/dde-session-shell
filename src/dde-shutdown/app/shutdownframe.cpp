@@ -96,10 +96,6 @@ ShutdownFrontDBus::~ShutdownFrontDBus()
 {
 }
 
-void ShutdownFrontDBus::Ping()
-{
-}
-
 void ShutdownFrontDBus::Shutdown()
 {
     m_parent->Shutdown();
