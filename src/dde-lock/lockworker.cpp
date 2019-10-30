@@ -37,6 +37,16 @@ LockWorker::LockWorker(SessionBaseModel *const model, QObject *parent)
 
     m_currentUserUid = getuid();
 
+    QObject::connect(model, &SessionBaseModel::onStatusChanged, this, [ = ](SessionBaseModel::ModeStatus state) {
+        if (SessionBaseModel::ModeStatus::PasswordMode == state) {
+            //active fprinter auth
+            m_authFramework->setAuthType(DeepinAuthFramework::AuthType::ALL);
+        } else {
+            //close fprinter auth
+            m_authFramework->setAuthType(DeepinAuthFramework::AuthType::KEYBOARD);
+        }
+    });
+
     connect(model, &SessionBaseModel::onPowerActionChanged, this, [ = ](SessionBaseModel::PowerAction poweraction) {
         switch (poweraction) {
         case SessionBaseModel::PowerAction::RequireSuspend:
@@ -52,7 +62,6 @@ LockWorker::LockWorker(SessionBaseModel *const model, QObject *parent)
 
     connect(model, &SessionBaseModel::visibleChanged, this, [ = ](bool isVisible) {
         if (!isVisible || model->currentType() != SessionBaseModel::AuthType::LockType || m_authFramework->isAuthenticate()) return;
-
         std::shared_ptr<User> user_ptr = model->currentUser();
         if (!user_ptr.get()) return;
 
@@ -250,7 +259,6 @@ void LockWorker::onUnlockFinished(bool unlocked)
     if (unlocked && isDeepin()) {
         m_authFramework->Clear();
     }
-
     emit m_model->authFinished(unlocked);
 
     if (unlocked) {

@@ -13,6 +13,12 @@ class DeepinAuthFramework : public QObject
 {
     Q_OBJECT
 public:
+    enum AuthType {
+        KEYBOARD = 0x01,
+        FPRINT = 0x02,
+        ALL = KEYBOARD | FPRINT
+    } ;
+
     explicit DeepinAuthFramework(DeepinAuthInterface *inter, QObject *parent = nullptr);
     ~DeepinAuthFramework();
 
@@ -25,6 +31,7 @@ public slots:
     void Authenticate();
     void Clear();
     void setPassword(const QString &password);
+    void setAuthType(AuthType type);
 
 private:
     const QString RequestEchoOff(const QString &msg);
@@ -37,6 +44,8 @@ private:
     DeepinAuthInterface *m_interface;
     QPointer<AuthAgent> m_keyboard;
     QPointer<AuthAgent> m_fprint;
+
+    AuthType m_type;
 };
 
 #endif // DEEPINAUTHFRAMEWORK_H
