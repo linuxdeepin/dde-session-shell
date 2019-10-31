@@ -104,7 +104,7 @@ void UserLoginWidget::setFaildTipMessage(const QString &message)
         m_passwordEdit->hideAlertMessage();
     } else if (m_passwordEdit->isVisible()) {
         m_passwordEdit->hideLoadSlider();
-        m_passwordEdit->showAlertMessage(message,-1);
+        m_passwordEdit->showAlertMessage(message, -1);
         m_passwordEdit->lineEdit()->selectAll();
         m_isAlertMessageShow = true;
     }
@@ -187,10 +187,17 @@ void UserLoginWidget::updateUI()
         m_userAvatar->setFocusProxy(m_passwordEdit->lineEdit());
 }
 
-void UserLoginWidget::ShutdownPrompt()
+void UserLoginWidget::ShutdownPrompt(SessionBaseModel::PowerAction action)
 {
-    m_lockButton->setIcon(QIcon(":/img/bottom_actions/shutdown_normal.svg"));
-    setFaildMessage(tr("Enter your password to shut down"));
+    if (action == SessionBaseModel::PowerAction::RequireRestart) {
+        m_lockButton->setIcon(QIcon(":/img/bottom_actions/reboot.svg"));
+        setFaildMessage(tr("Enter your password to reboot"));
+    } else if (action == SessionBaseModel::PowerAction::RequireShutdown) {
+        m_lockButton->setIcon(QIcon(":/img/bottom_actions/shutdown.svg"));
+        setFaildMessage(tr("Enter your password to shut down"));
+    } else {
+        resetAllState();
+    }
 }
 
 void UserLoginWidget::onOtherPagePasswordChanged(const QVariant &value)
@@ -246,7 +253,7 @@ void UserLoginWidget::disablePassword(bool disable, uint lockNum)
     m_passwordEdit->setVisible(!disable);
     m_lockPasswordWidget->setVisible(disable);
 
-    if(!m_passwordEdit->lineEdit()->text().isEmpty()){
+    if (!m_passwordEdit->lineEdit()->text().isEmpty()) {
         m_passwordEdit->lineEdit()->clear();
     }
     m_passwordEdit->lineEdit()->setFocus();
@@ -427,7 +434,8 @@ void UserLoginWidget::initConnect()
     connect(m_lockButton, &QPushButton::clicked, this, [ = ] {
         QString password = m_passwordEdit->text();
 
-        if (m_passwordEdit->isVisible()){
+        if (m_passwordEdit->isVisible())
+        {
             m_passwordEdit->lineEdit()->setFocus();
         }
 
@@ -442,7 +450,7 @@ void UserLoginWidget::initConnect()
     //大小写锁定状态改变
     connect(m_capslockMonitor, &KeyboardMonitor::capslockStatusChanged, m_passwordEdit, &DPasswordEditEx::capslockStatusChanged);
     connect(m_passwordEdit, &DPasswordEditEx::toggleKBLayoutWidget, this, &UserLoginWidget::toggleKBLayoutWidget);
-    connect(m_passwordEdit, &DPasswordEditEx::selectionChanged,this, &UserLoginWidget::hidePasswordEditMessage);
+    connect(m_passwordEdit, &DPasswordEditEx::selectionChanged, this, &UserLoginWidget::hidePasswordEditMessage);
 }
 
 //设置用户名
@@ -538,11 +546,13 @@ void UserLoginWidget::setPassWordEditFocus()
     m_passwordEdit->lineEdit()->setFocus();
 }
 
-void UserLoginWidget::setUid(uint uid){
+void UserLoginWidget::setUid(uint uid)
+{
     m_uid = uid;
 }
 
-uint UserLoginWidget::uid(){
+uint UserLoginWidget::uid()
+{
     return m_uid;
 }
 
@@ -554,7 +564,7 @@ void UserLoginWidget::setSelected(bool isSelected)
 
 void UserLoginWidget::hidePasswordEditMessage()
 {
-    if(m_isAlertMessageShow){
+    if (m_isAlertMessageShow) {
         m_passwordEdit->hideAlertMessage();
         m_isAlertMessageShow = false;
     }

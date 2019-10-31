@@ -130,5 +130,7 @@
         <file>img/nopassword_login_normal.svg</file>
         <file>img/logo.svg</file>
         <file>fonts/NotoSansCJKsc-Thin.otf</file>
+        <file>img/bottom_actions/reboot.svg</file>
+        <file>img/bottom_actions/shutdown.svg</file>
     </qresource>
 </RCC>

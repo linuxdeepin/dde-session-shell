@@ -838,6 +838,10 @@ void ContentWidget::onCancel()
 
 void ContentWidget::tryGrabKeyboard()
 {
+#ifdef QT_DEBUG
+    return;
+#endif
+
     if (window()->windowHandle() && window()->windowHandle()->setKeyboardGrabEnabled(true)) {
         m_failures = 0;
         return;

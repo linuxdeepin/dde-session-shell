@@ -90,11 +90,7 @@ void UserLoginInfo::initConnect()
 void UserLoginInfo::abortConfirm()
 {
     m_shutdownAbort = true;
-    SessionBaseModel::PowerAction action = m_model->powerAction();
-    if(action == SessionBaseModel::PowerAction::RequireRestart ||
-       action == SessionBaseModel::PowerAction::RequireShutdown) {
-        m_userLoginWidget->ShutdownPrompt();
-    }
+    m_userLoginWidget->ShutdownPrompt(m_model->powerAction());
 }
 
 UserLoginWidget *UserLoginInfo::getUserLoginWidget()

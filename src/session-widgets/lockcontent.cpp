@@ -279,6 +279,10 @@ void LockContent::onUserListChanged(QList<std::shared_ptr<User> > list)
 
 void LockContent::tryGrabKeyboard()
 {
+#ifdef QT_DEBUG
+    return;
+#endif
+
     if (window()->windowHandle() && window()->windowHandle()->setKeyboardGrabEnabled(true)) {
         m_failures = 0;
         return;

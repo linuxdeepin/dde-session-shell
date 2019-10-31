@@ -40,7 +40,9 @@ FullscreenBackground::FullscreenBackground(QWidget *parent)
     : QWidget(parent)
     , m_fadeOutAni(new QVariantAnimation(this))
 {
+#ifndef QT_DEBUG
     setWindowFlags(Qt::WindowStaysOnTopHint | Qt::X11BypassWindowManagerHint);
+#endif
 
     m_fadeOutAni->setEasingCurve(QEasingCurve::InOutCubic);
     m_fadeOutAni->setDuration(1000);
@@ -256,10 +258,11 @@ void FullscreenBackground::updateGeometry()
 ********************************************************/
 bool FullscreenBackground::eventFilter(QObject *watched, QEvent *e)
 {
+#ifndef QT_DEBUG
     if (e->type() == QEvent::WindowDeactivate) {
         if (m_content->isVisible())
             windowHandle()->requestActivate();
     }
-
+#endif
     return QWidget::eventFilter(watched, e);
 }

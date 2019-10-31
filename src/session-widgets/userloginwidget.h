@@ -85,7 +85,7 @@ public:
     void setUid(uint uid);
     uint uid();
     void setPassWordEditFocus();
-    void ShutdownPrompt();
+    void ShutdownPrompt(SessionBaseModel::PowerAction action);
 
 signals:
     void requestAuthUser(const QString &password);
