@@ -22,6 +22,7 @@ public:
     void SwitchUser();
     void Show();
 
+    void sync(Actions action);
 private:
     QList<ShutdownFrame*> m_frames;
 };

@@ -127,20 +127,7 @@ int main(int argc, char *argv[])
             });
             QObject::connect(frame, &ShutdownFrame::buttonClicked, frame, [ = ](const Actions action)
             {
-                switch (action) {
-                case Shutdown:
-                    dbusAgent->Shutdown(); break;
-                case Restart:
-                    dbusAgent->Restart(); break;
-                case Suspend:
-                    dbusAgent->Suspend(); break;
-                case Hibernate:
-                    dbusAgent->Hibernate(); break;
-                case Logout:
-                    dbusAgent->Logout(); break;
-                default:
-                    break;
-                }
+                dbusAgent->sync(action);
             });
 
             frame->setVisible(model->isShow());

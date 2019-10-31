@@ -81,3 +81,11 @@ void DBusShutdownAgent::Show()
         frame->show();
     }
 }
+
+void DBusShutdownAgent::sync(Actions action)
+{
+    for (ShutdownFrame *frame : m_frames) {
+        frame->powerAction(action);
+        frame->show();
+    }
+}
