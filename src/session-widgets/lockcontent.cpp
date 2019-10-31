@@ -78,7 +78,9 @@ LockContent::LockContent(SessionBaseModel *const model, QWidget *parent)
     connect(m_userLoginInfo, &UserLoginInfo::requestSwitchUser, this, &LockContent::restoreMode);
     connect(m_userLoginInfo, &UserLoginInfo::requestSetLayout, this, &LockContent::requestSetLayout);
     connect(m_shutdownFrame, &ShutdownWidget::abortOperation, this, &LockContent::restoreMode);
-    connect(m_shutdownFrame, &ShutdownWidget::abortOperation, m_userLoginInfo, &UserLoginInfo::abortConfirm);
+    connect(m_shutdownFrame, &ShutdownWidget::abortOperation, m_userLoginInfo, [ = ] {
+        m_model->setAbortConfirm(true);
+    });
     connect(model, &SessionBaseModel::onStatusChanged, this, &LockContent::onStatusChanged);
 
     auto initVirtualKB = [&](bool hasvirtualkb) {
@@ -183,7 +185,7 @@ void LockContent::mouseReleaseEvent(QMouseEvent *event)
 
     // hide keyboardlayout widget
     m_userLoginInfo->hideKBLayout();
-
+    m_model->setAbortConfirm(false);
     restoreCenterContent();
 
     return SessionBaseWindow::mouseReleaseEvent(event);
@@ -297,4 +299,13 @@ void LockContent::tryGrabKeyboard()
     }
 
     QTimer::singleShot(100, this, &LockContent::tryGrabKeyboard);
+}
+
+void LockContent::keyPressEvent(QKeyEvent *event)
+{
+    switch (event->key()) {
+    case Qt::Key_Escape:
+        m_model->setAbortConfirm(false);
+        break;
+    }
 }

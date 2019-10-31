@@ -42,7 +42,7 @@ public:
     UserLoginWidget *getUserLoginWidget();
     UserFrameList *getUserFrameList();
     void hideKBLayout();
-    void abortConfirm();
+    void abortConfirm(bool abort = true);
 
 signals:
     void requestAuthUser(const QString &password);

@@ -196,6 +196,7 @@ void UserLoginWidget::ShutdownPrompt(SessionBaseModel::PowerAction action)
         m_lockButton->setIcon(QIcon(":/img/bottom_actions/shutdown.svg"));
         setFaildMessage(tr("Enter your password to shut down"));
     } else {
+        setFaildMessage("");
         resetAllState();
     }
 }

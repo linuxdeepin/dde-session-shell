@@ -195,3 +195,9 @@ void SessionBaseModel::setAlwaysShowUserSwitchButton(bool alwaysShowUserSwitchBu
 {
     m_alwaysShowUserSwitchButton = alwaysShowUserSwitchButton;
 }
+
+void SessionBaseModel::setAbortConfirm(bool abortConfirm)
+{
+    m_abortConfirm = abortConfirm;
+    emit abortConfirmChanged(abortConfirm);
+}
