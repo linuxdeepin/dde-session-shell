@@ -316,13 +316,31 @@ bool ContentWidget::beforeInvokeAction(const Actions action)
         view->setAction(action);
         view->setInhibitorList(inhibitors);
 
-        if(action == Shutdown)
+        switch (action) {
+        case Actions::Shutdown:
             view->setInhibitConfirmMessage(tr("The programs are preventing the computer from shutting down, and forcing shut down may cause data loss.") + "\n" +
-                                       tr("To close the program, click Cancel, and then close the program."));
-
-        else if(action == Restart)
+                                           tr("To close the program, click Cancel, and then close the program."));
+            break;
+        case Actions::Restart:
             view->setInhibitConfirmMessage(tr("The programs are preventing the computer from reboot, and forcing reboot may cause data loss.") + "\n" +
-                                       tr("To close the program, click Cancel, and then close the program."));
+                                           tr("To close the program, click Cancel, and then close the program."));
+            break;
+        case Actions::Suspend:
+            view->setInhibitConfirmMessage(tr("The programs are preventing the computer from suspend, and forcing suspend may cause data loss.") + "\n" +
+                                           tr("To close the program, click Cancel, and then close the program."));
+            break;
+        case Actions::Hibernate:
+            view->setInhibitConfirmMessage(tr("The programs are preventing the computer from hibernate, and forcing hibernate may cause data loss.") + "\n" +
+                                           tr("To close the program, click Cancel, and then close the program."));
+            break;
+        case Actions::Logout:
+            view->setInhibitConfirmMessage(tr("The programs are preventing the computer from log out, and forcing log out may cause data loss.") + "\n" +
+                                           tr("To close the program, click Cancel, and then close the program."));
+            break;
+        default:
+            return {};
+        }
+
 
         bool isAccept = true;
         for (auto inhib : inhibitors) {
@@ -669,6 +687,9 @@ QList<InhibitWarnView::InhibitorData> ContentWidget::listInhibitors(const Action
             switch (action) {
             case Actions::Shutdown:
             case Actions::Restart:
+            case Actions::Suspend:
+            case Actions::Hibernate:
+            case Actions::Logout:
                 type = "shutdown";
                 break;
             default:
