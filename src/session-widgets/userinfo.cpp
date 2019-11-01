@@ -6,7 +6,7 @@
 
 #define LOCK_AUTH_NUM 5
 
-static bool checkUserIsNoPWGrp(User const * user)
+static bool checkUserIsNoPWGrp(User const *user)
 {
     if (user->type() == User::ADDomain) {
         return false;
@@ -44,7 +44,8 @@ static bool checkUserIsNoPWGrp(User const * user)
     return false;
 }
 
-static const QString toLocalFile(const QString &path) {
+static const QString toLocalFile(const QString &path)
+{
     QUrl url(path);
 
     if (url.isLocalFile()) {
@@ -84,7 +85,7 @@ User::User(const User &user)
 bool User::operator==(const User &user) const
 {
     return type() == user.type() &&
-            m_uid == user.m_uid;
+           m_uid == user.m_uid;
 }
 
 void User::setLocale(const QString &locale)
@@ -101,7 +102,8 @@ bool User::isNoPasswdGrp() const
     return checkUserIsNoPWGrp(this);
 }
 
-void User::setisLogind(bool isLogind) {
+void User::setisLogind(bool isLogind)
+{
     if (m_isLogind == isLogind) {
         return;
     }
@@ -125,6 +127,8 @@ bool User::isLockForNum()
 
 void User::startLock()
 {
+    m_startTime = time(nullptr);//切换到其他用户时，由于Qtimer自身机制导致无法进入timeout事件，导致被锁定的账户不能继续执行，解决bug4807
+
     if (m_lockTimer->isActive()) return;
 
     m_isLock = true;
@@ -139,14 +143,23 @@ void User::resetLock()
 
 void User::onLockTimeOut()
 {
-    if (m_lockNum == 1) {
+    time_t stopTime = time(nullptr);
+    int min = (stopTime - m_startTime) / 60;
+    if (min >= 3) {
         m_lockTimer->stop();
         m_tryNum = 5;
         m_lockNum = 4;
         m_isLock = false;
-    }
-    else {
-        m_lockNum--;
+        m_startTime = 0;
+    } else if (min >= 2) {
+        m_lockNum = 1;
+        m_lockTimer->start();
+    } else if (min >= 1) {
+        m_lockNum = 2;
+        m_lockTimer->start();
+    } else {
+        m_lockNum = 3;
+
         m_lockTimer->start();
     }
 
@@ -159,15 +172,15 @@ NativeUser::NativeUser(const QString &path, QObject *parent)
     , m_userInter(new UserInter(ACCOUNT_DBUS_SERVICE, path, QDBusConnection::systemBus(), this))
 {
     connect(m_userInter, &UserInter::IconFileChanged, this, &NativeUser::avatarChanged);
-    connect(m_userInter, &UserInter::FullNameChanged, this, [=] (const QString &fullname) {
+    connect(m_userInter, &UserInter::FullNameChanged, this, [ = ](const QString & fullname) {
         emit displayNameChanged(fullname.isEmpty() ? m_userName : fullname);
     });
 
-    connect(m_userInter, &UserInter::DesktopBackgroundsChanged, this, [=] {
+    connect(m_userInter, &UserInter::DesktopBackgroundsChanged, this, [ = ] {
         emit desktopBackgroundPathChanged(desktopBackgroundPath());
     });
 
-    connect(m_userInter, &UserInter::GreeterBackgroundChanged, this, [=] (const QString &path) {
+    connect(m_userInter, &UserInter::GreeterBackgroundChanged, this, [ = ](const QString & path) {
         emit greeterBackgroundPathChanged(toLocalFile(path));
     });
 

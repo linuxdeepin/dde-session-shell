@@ -81,6 +81,7 @@ protected:
     QString m_locale;
     QString m_path;
     std::shared_ptr<QTimer> m_lockTimer;
+    time_t m_startTime;//记录账号锁定的时间搓
 };
 
 class NativeUser : public User
