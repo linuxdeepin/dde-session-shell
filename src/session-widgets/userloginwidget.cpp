@@ -457,6 +457,12 @@ void UserLoginWidget::initConnect()
 //设置用户名
 void UserLoginWidget::setName(const QString &name)
 {
+    int width = fontMetrics().width(name);
+    if (width >= m_nameLbl->width()) {
+        QString str = fontMetrics().elidedText(name, Qt::ElideRight, m_nameLbl->width() - 10);
+        m_nameLbl->setText(str);
+        return ;
+    }
     m_nameLbl->setText(name);
 }
 

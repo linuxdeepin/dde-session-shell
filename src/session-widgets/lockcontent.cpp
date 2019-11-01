@@ -1,7 +1,6 @@
 #include "lockcontent.h"
 
 #include "src/widgets/controlwidget.h"
-#include "userinputwidget.h"
 #include "sessionbasemodel.h"
 #include "userframe.h"
 #include "src/widgets/shutdownwidget.h"
