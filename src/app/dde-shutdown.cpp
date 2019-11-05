@@ -50,11 +50,11 @@ DWIDGET_USE_NAMESPACE
 
 int main(int argc, char *argv[])
 {
-    QCoreApplication::setAttribute(Qt::AA_UseHighDpiPixmaps, true);
     DApplication app(argc, argv);
+    QApplication::setAttribute(Qt::AA_UseHighDpiPixmaps);
     app.setOrganizationName("deepin");
     app.setApplicationName("dde-shutdown");
-//    app.setTheme("light");
+
 
     DGuiApplicationHelper::instance()->setPaletteType(DGuiApplicationHelper::LightType);
     DPalette pa = DGuiApplicationHelper::instance()->applicationPalette();
