@@ -109,7 +109,6 @@ void GreeterWorkek::switchToUser(std::shared_ptr<User> user)
     if (user->isLogin()) {
         // switch to user Xorg
         QProcess::startDetached("dde-switchtogreeter", QStringList() << user->name());
-        return;
     }
 
     QJsonObject json;
