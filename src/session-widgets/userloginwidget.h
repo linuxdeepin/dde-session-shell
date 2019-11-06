@@ -139,6 +139,7 @@ private:
     QFrame *m_nameFrame;
     uint m_uid;
     bool m_isAlertMessageShow;                             //判断密码错误提示是否显示
+    QString m_name;
 };
 
 #endif // USERLOGINWIDGET_H

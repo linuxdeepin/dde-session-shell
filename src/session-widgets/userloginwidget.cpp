@@ -302,6 +302,14 @@ void UserLoginWidget::showEvent(QShowEvent *event)
     refreshBlurEffectPosition();
 
     m_lockPasswordWidget->setFixedSize(QSize(m_passwordEdit->width(), m_passwordEdit->height()));
+
+    // 判断名字是否超过控件宽度
+    int width = m_nameLbl->fontMetrics().width(m_name);
+    if (width > m_nameLbl->width()) {
+        QString str = m_nameLbl->fontMetrics().elidedText(m_name, Qt::ElideRight, m_nameLbl->width());
+        m_nameLbl->setText(str);
+    }
+
     return QWidget::showEvent(event);
 }
 
@@ -457,12 +465,7 @@ void UserLoginWidget::initConnect()
 //设置用户名
 void UserLoginWidget::setName(const QString &name)
 {
-    int width = fontMetrics().width(name);
-    if (width >= m_nameLbl->width()) {
-        QString str = fontMetrics().elidedText(name, Qt::ElideRight, m_nameLbl->width() - 10);
-        m_nameLbl->setText(str);
-        return ;
-    }
+    m_name = name;
     m_nameLbl->setText(name);
 }
 
