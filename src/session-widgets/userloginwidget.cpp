@@ -362,7 +362,7 @@ void UserLoginWidget::initUI()
     m_passwordEdit->capslockStatusChanged(m_capslockMonitor->isCapslockOn());
 
     m_kbLayoutBorder->hide();
-    m_kbLayoutBorder->setBackgroundColor(QColor(255, 255, 255, 51));    //255*0.2
+    m_kbLayoutBorder->setBackgroundColor(QColor(102, 102, 102));    //255*0.2
     m_kbLayoutBorder->setBorderColor(QColor(0, 0, 0, 0));
     m_kbLayoutBorder->setBorderWidth(0);
     m_kbLayoutBorder->setMargin(0);
@@ -449,6 +449,7 @@ void UserLoginWidget::initConnect()
         }
 
         if (password.isEmpty() && m_showType != NoPasswordType) return;
+        m_passwordEdit->showLoadSlider();
         emit requestAuthUser(password);
     });
     connect(m_userAvatar, &UserAvatar::clicked, this, &UserLoginWidget::clicked);
