@@ -91,6 +91,7 @@ void UserLoginInfo::initConnect()
 void UserLoginInfo::abortConfirm(bool abort)
 {
     if (!abort) {
+        m_model->setCurrentModeState(SessionBaseModel::ModeStatus::PasswordMode);
         m_model->setPowerAction(SessionBaseModel::PowerAction::RequireNormal);
     }
 

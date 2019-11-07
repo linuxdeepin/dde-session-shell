@@ -28,6 +28,7 @@ public:
 
     enum ModeStatus {
         PasswordMode,
+        ConfirmPasswordMode,
         UserMode,
         SessionMode,
         PowerMode

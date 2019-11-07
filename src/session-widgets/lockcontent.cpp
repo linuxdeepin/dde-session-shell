@@ -29,7 +29,7 @@ LockContent::LockContent(SessionBaseModel *const model, QWidget *parent)
     uint userID = m_model->currentUser()->uid();
     const QString lockDBusPath = QString("/com/deepin/daemon/Accounts/User%1").arg(userID);
     m_24HourFormatInter = new QDBusInterface("com.deepin.daemon.Accounts", lockDBusPath, "com.deepin.daemon.Accounts.User",
-                                                    QDBusConnection::systemBus(), this);
+                                             QDBusConnection::systemBus(), this);
 
     m_timeWidget = new TimeWidget();
     m_mediaWidget = nullptr;
@@ -78,7 +78,7 @@ LockContent::LockContent(SessionBaseModel *const model, QWidget *parent)
     connect(m_userLoginInfo, &UserLoginInfo::requestSetLayout, this, &LockContent::requestSetLayout);
     connect(m_shutdownFrame, &ShutdownWidget::abortOperation, this, &LockContent::restoreMode);
     connect(m_shutdownFrame, &ShutdownWidget::abortOperation, m_userLoginInfo, [ = ] {
-        m_model->setAbortConfirm(true);
+        m_model->setCurrentModeState(SessionBaseModel::ModeStatus::ConfirmPasswordMode);
     });
     connect(model, &SessionBaseModel::onStatusChanged, this, &LockContent::onStatusChanged);
 
@@ -164,6 +164,10 @@ void LockContent::onStatusChanged(SessionBaseModel::ModeStatus status)
     case SessionBaseModel::ModeStatus::PasswordMode:
         restoreCenterContent();
         break;
+    case SessionBaseModel::ModeStatus::ConfirmPasswordMode:
+        restoreCenterContent();
+        m_model->setAbortConfirm(true);
+        break;
     case SessionBaseModel::ModeStatus::UserMode:
         pushUserFrame();
         break;
@@ -177,14 +181,11 @@ void LockContent::onStatusChanged(SessionBaseModel::ModeStatus status)
 
 void LockContent::mouseReleaseEvent(QMouseEvent *event)
 {
-    if (m_model->currentModeState() != SessionBaseModel::ModeStatus::PasswordMode) {
-        m_model->setCurrentModeState(SessionBaseModel::ModeStatus::PasswordMode);
-        m_model->setPowerAction(SessionBaseModel::PowerAction::RequireNormal);
-    }
+    if (m_model->currentModeState() == SessionBaseModel::ModeStatus::ConfirmPasswordMode)
+        m_model->setAbortConfirm(false);
 
     // hide keyboardlayout widget
     m_userLoginInfo->hideKBLayout();
-    m_model->setAbortConfirm(false);
     restoreCenterContent();
 
     return SessionBaseWindow::mouseReleaseEvent(event);
@@ -303,8 +304,10 @@ void LockContent::tryGrabKeyboard()
 void LockContent::keyPressEvent(QKeyEvent *event)
 {
     switch (event->key()) {
-    case Qt::Key_Escape:
-        m_model->setAbortConfirm(false);
+    case Qt::Key_Escape: {
+        if (m_model->currentModeState() == SessionBaseModel::ModeStatus::ConfirmPasswordMode)
+            m_model->setAbortConfirm(false);
         break;
+    }
     }
 }
