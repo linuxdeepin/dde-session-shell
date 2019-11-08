@@ -9,7 +9,7 @@
     <message>
         <location filename="../src/dde-shutdown/view/contentwidget.cpp" line="316"/>
         <source>To close the program, click Cancel, and then close the program.</source>
-        <translation type="unfinished"/>
+        <translation>Pro zavření programu klepněte na Zrušit, a potom zavřete program.</translation>
     </message>
     <message>
         <location filename="../src/dde-shutdown/view/contentwidget.cpp" line="328"/>

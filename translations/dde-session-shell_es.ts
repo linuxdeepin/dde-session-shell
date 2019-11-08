@@ -208,7 +208,7 @@
     <message numerus="yes">
         <location filename="../src/session-widgets/userinputwidget.cpp" line="257"/>
         <source>Please try again %n minute(s) later</source>
-        <translation><numerusform>Por favor, inténtelo de nuevo %n minuto más tarde</numerusform><numerusform>Por favor, inténtelo de nuevo %n minutos más tarde</numerusform></translation>
+        <translation><numerusform>Por favor, inténtelo de nuevo después de %n minuto</numerusform><numerusform>Por favor, inténtelo de nuevo después de %n minutos</numerusform></translation>
     </message>
 </context>
 <context>
@@ -216,7 +216,7 @@
     <message numerus="yes">
         <location filename="../src/session-widgets/userloginwidget.cpp" line="235"/>
         <source>Please try again %n minute(s) later</source>
-        <translation><numerusform>Por favor, inténtelo de nuevo %n minuto más tarde</numerusform><numerusform>Por favor, inténtelo de nuevo %n minutos más tarde</numerusform></translation>
+        <translation><numerusform>Por favor, inténtelo de nuevo después de %n minuto</numerusform><numerusform>Por favor, inténtelo de nuevo después de %n minutos</numerusform></translation>
     </message>
 </context>
 </TS>

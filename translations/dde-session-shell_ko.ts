@@ -9,7 +9,7 @@
     <message>
         <location filename="../src/dde-shutdown/view/contentwidget.cpp" line="316"/>
         <source>To close the program, click Cancel, and then close the program.</source>
-        <translation type="unfinished"/>
+        <translation>프로그램을 닫려면 취소를 클릭한 다음 프로그램을 닫습니다.</translation>
     </message>
     <message>
         <location filename="../src/dde-shutdown/view/contentwidget.cpp" line="328"/>

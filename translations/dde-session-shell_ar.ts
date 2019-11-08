@@ -9,7 +9,7 @@
     <message>
         <location filename="../src/dde-shutdown/view/contentwidget.cpp" line="316"/>
         <source>To close the program, click Cancel, and then close the program.</source>
-        <translation type="unfinished"/>
+        <translation>لإغلاق البرنامج ، انقر على &quot;إلغاء&quot; ، ثم أغلق البرنامج.</translation>
     </message>
     <message>
         <location filename="../src/dde-shutdown/view/contentwidget.cpp" line="328"/>
@@ -190,7 +190,7 @@
     <message>
         <location filename="../src/widgets/timewidget.cpp" line="84"/>
         <source>hh:mm ap</source>
-        <translation type="unfinished"/>
+        <translation>hh:mm ap</translation>
     </message>
     <message>
         <location filename="../src/widgets/timewidget.cpp" line="87"/>

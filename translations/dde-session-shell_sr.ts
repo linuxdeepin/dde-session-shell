@@ -4,7 +4,7 @@
     <message>
         <location filename="../src/dde-shutdown/view/contentwidget.cpp" line="315"/>
         <source>The programs are preventing the computer from shutting down / hibernation, and forcing shut down / hibernate may cause data loss.</source>
-        <translation>Програми спречавају искључивање / хибернација и принудно искључивање / хибернација може изазвати губитак података.</translation>
+        <translation>Програми спречавају искључивање / хибернацију и принудно искључивање / хибернација може изазвати губитак података.</translation>
     </message>
     <message>
         <location filename="../src/dde-shutdown/view/contentwidget.cpp" line="316"/>

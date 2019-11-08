@@ -4,12 +4,12 @@
     <message>
         <location filename="../src/dde-shutdown/view/contentwidget.cpp" line="315"/>
         <source>The programs are preventing the computer from shutting down / hibernation, and forcing shut down / hibernate may cause data loss.</source>
-        <translation type="unfinished"/>
+        <translation>Programy zapobiegają wyłączeniu/hibernacji komputera, a wymuszenie wyłączenia/hibernacji może spowodować utratę danych.</translation>
     </message>
     <message>
         <location filename="../src/dde-shutdown/view/contentwidget.cpp" line="316"/>
         <source>To close the program, click Cancel, and then close the program.</source>
-        <translation type="unfinished"/>
+        <translation>Aby zamknąć program, kliknij Anuluj, a następnie zamknij program.</translation>
     </message>
     <message>
         <location filename="../src/dde-shutdown/view/contentwidget.cpp" line="328"/>
@@ -190,7 +190,7 @@
     <message>
         <location filename="../src/widgets/timewidget.cpp" line="84"/>
         <source>hh:mm ap</source>
-        <translation type="unfinished"/>
+        <translation>hh:mm</translation>
     </message>
     <message>
         <location filename="../src/widgets/timewidget.cpp" line="87"/>
@@ -208,7 +208,7 @@
     <message numerus="yes">
         <location filename="../src/session-widgets/userinputwidget.cpp" line="257"/>
         <source>Please try again %n minute(s) later</source>
-        <translation type="unfinished"><numerusform></numerusform><numerusform></numerusform><numerusform></numerusform><numerusform></numerusform></translation>
+        <translation><numerusform>Spróbuj ponownie za %n minutę później</numerusform><numerusform>Spróbuj ponownie za %n minut później</numerusform><numerusform>Spróbuj ponownie za %n minut później</numerusform><numerusform>Spróbuj ponownie za %n minut później</numerusform></translation>
     </message>
 </context>
 <context>
@@ -216,7 +216,7 @@
     <message numerus="yes">
         <location filename="../src/session-widgets/userloginwidget.cpp" line="235"/>
         <source>Please try again %n minute(s) later</source>
-        <translation type="unfinished"><numerusform></numerusform><numerusform></numerusform><numerusform></numerusform><numerusform></numerusform></translation>
+        <translation><numerusform>Spróbuj ponownie za %n minutę później</numerusform><numerusform>Spróbuj ponownie za %n minut później</numerusform><numerusform>Spróbuj ponownie za %n minut później</numerusform><numerusform>Spróbuj ponownie za %n minut później</numerusform></translation>
     </message>
 </context>
 </TS>
