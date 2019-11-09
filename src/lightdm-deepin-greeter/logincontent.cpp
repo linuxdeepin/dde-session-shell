@@ -24,7 +24,7 @@
 #include "src/widgets/controlwidget.h"
 
 LoginContent::LoginContent(SessionBaseModel *const model, QWidget *parent)
-    : LockContent(model, parent)
+    : LockContent(model, parent, false)
 {
     m_sessionFrame = new SessionWidget;
     m_sessionFrame->setModel(model);

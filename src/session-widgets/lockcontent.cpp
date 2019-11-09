@@ -13,7 +13,7 @@
 
 #include <QMouseEvent>
 
-LockContent::LockContent(SessionBaseModel *const model, QWidget *parent)
+LockContent::LockContent(SessionBaseModel *const model, QWidget *parent, bool islockapp)
     : SessionBaseWindow(parent)
     , m_model(model)
     , m_imageBlurInter(new ImageBlur("com.deepin.daemon.Accounts", "/com/deepin/daemon/ImageBlur", QDBusConnection::systemBus(), this))
@@ -77,9 +77,12 @@ LockContent::LockContent(SessionBaseModel *const model, QWidget *parent)
     connect(m_userLoginInfo, &UserLoginInfo::requestSwitchUser, this, &LockContent::restoreMode);
     connect(m_userLoginInfo, &UserLoginInfo::requestSetLayout, this, &LockContent::requestSetLayout);
     connect(m_shutdownFrame, &ShutdownWidget::abortOperation, this, &LockContent::restoreMode);
-    connect(m_shutdownFrame, &ShutdownWidget::abortOperation, m_userLoginInfo, [ = ] {
-        m_model->setCurrentModeState(SessionBaseModel::ModeStatus::ConfirmPasswordMode);
-    });
+    if (islockapp) {
+        // 锁屏，点击关机，需要提示“输入密码以关机”。登录不需要这个提示
+        connect(m_shutdownFrame, &ShutdownWidget::abortOperation, m_userLoginInfo, [ = ] {
+            m_model->setCurrentModeState(SessionBaseModel::ModeStatus::ConfirmPasswordMode);
+        });
+    }
     connect(model, &SessionBaseModel::onStatusChanged, this, &LockContent::onStatusChanged);
 
     auto initVirtualKB = [&](bool hasvirtualkb) {
