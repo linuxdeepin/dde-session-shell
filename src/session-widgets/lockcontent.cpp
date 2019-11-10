@@ -224,6 +224,7 @@ void LockContent::resizeEvent(QResizeEvent *event)
 
 void LockContent::restoreCenterContent()
 {
+    restoreMode();
     setCenterContent(m_userLoginInfo->getUserLoginWidget());
 }
 
