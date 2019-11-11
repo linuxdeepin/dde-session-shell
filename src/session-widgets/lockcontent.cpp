@@ -77,7 +77,12 @@ LockContent::LockContent(SessionBaseModel *const model, QWidget *parent, bool is
     connect(m_userLoginInfo, &UserLoginInfo::requestSwitchUser, this, &LockContent::requestSwitchToUser);
     connect(m_userLoginInfo, &UserLoginInfo::requestSwitchUser, this, &LockContent::restoreMode);
     connect(m_userLoginInfo, &UserLoginInfo::requestSetLayout, this, &LockContent::requestSetLayout);
-    connect(m_shutdownFrame, &ShutdownWidget::abortOperation, this, &LockContent::restoreMode);
+    connect(m_shutdownFrame, &ShutdownWidget::abortOperation, this, [ = ] {
+        if (m_model->powerAction() != SessionBaseModel::RequireShutdown &&
+                m_model->powerAction() != SessionBaseModel::RequireRestart)
+            restoreMode();
+    });
+
     if (islockapp) {
         // 锁屏，点击关机，需要提示“输入密码以关机”。登录不需要这个提示
         connect(m_shutdownFrame, &ShutdownWidget::abortOperation, m_userLoginInfo, [ = ] {
