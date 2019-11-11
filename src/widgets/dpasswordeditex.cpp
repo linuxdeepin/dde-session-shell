@@ -202,9 +202,10 @@ void DPasswordEditEx::hideLoadSlider()
 
 void DPasswordEditEx::updateTextMargins()
 {
-    int kbtn_width = m_KBButton->isHidden() ? 0 : m_KBButton->width();
-    int kbtn_height = m_capsButton->isHidden()  && m_showCaps ? 0 : m_capsButton->width();
-    lineEdit()->setTextMargins(kbtn_width, 0, kbtn_height, 0);
+    int left_margin = m_showCaps && m_KBButton->isVisible() ? m_KBButton->width() : 0;
+    int right_margin = m_showCaps && m_capsButton->isVisible() ? m_capsButton->width() : 0;
+
+    lineEdit()->setTextMargins(left_margin, 0, right_margin, 0);
 }
 
 void DPasswordEditEx::onTextChanged(const QString &text)
@@ -214,7 +215,7 @@ void DPasswordEditEx::onTextChanged(const QString &text)
 
     int text_width = lineEdit()->width() - margins.left() - margins.right();
     int width = fm.width(text);
-    if (width >= text_width / 2) {
+    if (width >= text_width / 3) {
         m_showCaps = true;
     } else {
         m_showCaps = false;
