@@ -307,6 +307,11 @@ void LockContent::tryGrabKeyboard()
     if (m_failures == 15) {
         qDebug() << "Trying grabkeyboard has exceeded the upper limit. dde-lock will quit.";
         m_sessionManager->SetLocked(false);
+
+        QSystemTrayIcon *notify = new QSystemTrayIcon(this);
+        notify->setVisible(true);
+        notify->showMessage("", tr("Failed to lock screen"));
+
         qApp->quit();
         return;
     }
