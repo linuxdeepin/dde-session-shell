@@ -113,6 +113,7 @@ private:
     void toggleKBLayoutWidget();
     void refreshKBLayoutWidgetPosition();
     void receiveUserKBLayoutChanged(const QString &layout);
+    void updateNameLabel();
 
 private:
     DBlurEffectWidget *m_blurEffectWidget;         //阴影窗体

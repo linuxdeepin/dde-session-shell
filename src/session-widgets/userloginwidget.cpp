@@ -303,13 +303,7 @@ void UserLoginWidget::showEvent(QShowEvent *event)
 
     m_lockPasswordWidget->setFixedSize(QSize(m_passwordEdit->width(), m_passwordEdit->height()));
 
-    // 判断名字是否超过控件宽度
-    int width = m_nameLbl->fontMetrics().width(m_name);
-    if (width > m_nameLbl->width()) {
-        QString str = m_nameLbl->fontMetrics().elidedText(m_name, Qt::ElideRight, m_nameLbl->width());
-        m_nameLbl->setText(str);
-    }
-
+    updateNameLabel();
     return QWidget::showEvent(event);
 }
 
@@ -578,5 +572,18 @@ void UserLoginWidget::hidePasswordEditMessage()
     if (m_isAlertMessageShow) {
         m_passwordEdit->hideAlertMessage();
         m_isAlertMessageShow = false;
+    }
+}
+
+void UserLoginWidget::updateNameLabel()
+{
+    int width = m_nameLbl->fontMetrics().width(m_name);
+    int labelMaxWidth = this->width() - 3 * m_nameLayout->spacing();
+    if (m_loginLabel->isVisible())
+        labelMaxWidth -= (m_loginLabel->pixmap()->width() + Margins);
+
+    if (width > labelMaxWidth) {
+        QString str = m_nameLbl->fontMetrics().elidedText(m_name, Qt::ElideRight, labelMaxWidth);
+        m_nameLbl->setText(str);
     }
 }

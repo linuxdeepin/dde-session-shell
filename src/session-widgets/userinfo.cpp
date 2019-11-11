@@ -127,7 +127,7 @@ bool User::isLockForNum()
 
 void User::startLock()
 {
-    m_startTime = time(nullptr);//切换到其他用户时，由于Qtimer自身机制导致无法进入timeout事件，导致被锁定的账户不能继续执行，解决bug4807
+    m_startTime = time(nullptr);//切换到其他用户时，由于Qtimer自身机制导致无法进入timeout事件，导致被锁定的账户不能继续执行，解决bug4511
 
     if (m_lockTimer->isActive()) return;
 
