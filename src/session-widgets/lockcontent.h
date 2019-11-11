@@ -5,6 +5,9 @@
 #include <memory>
 
 #include <com_deepin_daemon_imageblur.h>
+#include <com_deepin_sessionmanager.h>
+
+using SessionManager = com::deepin::SessionManager;
 
 #include "sessionbasewindow.h"
 #include "sessionbasemodel.h"
@@ -74,6 +77,7 @@ protected:
     UserLoginInfo *m_userLoginInfo;
     QDBusInterface *m_24HourFormatInter;
     int m_failures = 0;
+    SessionManager *m_sessionManager;
 };
 
 #endif // LOCKCONTENT_H
