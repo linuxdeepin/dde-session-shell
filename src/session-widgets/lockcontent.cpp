@@ -146,6 +146,12 @@ void LockContent::pushUserFrame()
     setCenterContent(m_userLoginInfo->getUserFrameList());
 }
 
+void LockContent::pushConfirmFrame()
+{
+    setCenterContent(m_userLoginInfo->getUserLoginWidget());
+    m_model->setAbortConfirm(true);
+}
+
 void LockContent::pushShutdownFrame()
 {
     setCenterContent(m_shutdownFrame);
@@ -169,8 +175,7 @@ void LockContent::onStatusChanged(SessionBaseModel::ModeStatus status)
         restoreCenterContent();
         break;
     case SessionBaseModel::ModeStatus::ConfirmPasswordMode:
-        restoreCenterContent();
-        m_model->setAbortConfirm(true);
+        pushConfirmFrame();
         break;
     case SessionBaseModel::ModeStatus::UserMode:
         pushUserFrame();
@@ -187,10 +192,12 @@ void LockContent::mouseReleaseEvent(QMouseEvent *event)
 {
     if (m_model->currentModeState() == SessionBaseModel::ModeStatus::ConfirmPasswordMode)
         m_model->setAbortConfirm(false);
+    else {
+        restoreCenterContent();
+    }
 
     // hide keyboardlayout widget
     m_userLoginInfo->hideKBLayout();
-    restoreCenterContent();
 
     return SessionBaseWindow::mouseReleaseEvent(event);
 }

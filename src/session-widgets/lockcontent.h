@@ -43,6 +43,7 @@ signals:
 
 public slots:
     void pushUserFrame();
+    void pushConfirmFrame();
     void pushShutdownFrame();
     void setMPRISEnable(const bool state);
 
