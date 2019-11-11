@@ -26,6 +26,7 @@
 #include <DStyleHelper>
 #include <QPushButton>
 #include <QHBoxLayout>
+#include <QFontMetrics>
 
 #define KB_MARGIN 5
 
@@ -85,6 +86,8 @@ void DPasswordEditEx::initUI()
     layout->addWidget(m_capsButton);
     layout->setContentsMargins(KB_MARGIN, KB_MARGIN, 8, KB_MARGIN);
     lineEdit()->setLayout(layout);
+
+    connect(lineEdit(), &QLineEdit::textChanged, this, &DPasswordEditEx::onTextChanged);
 }
 
 void DPasswordEditEx::initAnimation()
@@ -199,9 +202,24 @@ void DPasswordEditEx::hideLoadSlider()
 
 void DPasswordEditEx::updateTextMargins()
 {
-    int kbtn_width = m_KBButton->isHidden() ? 0 : (m_KBButton->width() + KB_MARGIN);
-    int kbtn_height = m_capsButton->isHidden() ? 0 : (m_capsButton->width() + KB_MARGIN);
+    int kbtn_width = m_KBButton->isHidden() ? 0 : m_KBButton->width();
+    int kbtn_height = m_capsButton->isHidden()  && m_showCaps ? 0 : m_capsButton->width();
     lineEdit()->setTextMargins(kbtn_width, 0, kbtn_height, 0);
+}
+
+void DPasswordEditEx::onTextChanged(const QString &text)
+{
+    QFontMetrics fm = lineEdit()->fontMetrics();
+    QMargins margins = lineEdit()->textMargins();
+
+    int text_width = lineEdit()->width() - margins.left() - margins.right();
+    int width = fm.width(text);
+    if (width >= text_width / 2) {
+        m_showCaps = true;
+    } else {
+        m_showCaps = false;
+    }
+    updateTextMargins();
 }
 
 //重写QLineEdit paintEvent函数，实现当文本设置居中后，holderText仍然显示的需求
@@ -234,8 +252,8 @@ void DPasswordEditEx::resizeEvent(QResizeEvent *event)
     m_clipEffectWidget->setClipPath(path);
 
     int kb_height = lineEdit()->height() - KB_MARGIN * 2;
-    m_KBButton->setFixedWidth(kb_height);
-    m_KBButton->setFixedHeight(kb_height);
+    m_KBButton->setFixedSize(kb_height, kb_height);
+    m_capsButton->setFixedWidth(kb_height);
 
     updateTextMargins();
 }

@@ -62,6 +62,7 @@ public Q_SLOTS:
     void capslockStatusChanged(bool on);
     void receiveUserKBLayoutChanged(const QString &layout);
     void setKBLayoutList(QStringList kbLayoutList);
+    void onTextChanged(const QString &text);
 
 protected:
     void paintEvent(QPaintEvent *event) override;
@@ -83,6 +84,7 @@ private:
 
     bool m_loadAnimEnable;
     bool m_isLoading;
+    bool m_showCaps = false;
     const int LoadSliderWidth = 40;
 };
 
