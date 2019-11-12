@@ -35,6 +35,7 @@
 #include <QKeyEvent>
 #include <QCryptographicHash>
 #include <QWindow>
+#include <QDir>
 
 FullscreenBackground::FullscreenBackground(QWidget *parent)
     : QWidget(parent)
@@ -82,9 +83,19 @@ void FullscreenBackground::updateBackground(const QString &file)
 
     if (QFile::exists(file)) {
         m_bgPath = file;
-    }
-    else {
-        m_bgPath = "/usr/share/wallpapers/deepin/desktop.jpg";
+    } else {
+        QDir dir("/usr/share/wallpapers/deepin");
+        if (dir.exists()) {
+            dir.setFilter(QDir::Files);
+            QFileInfoList list = dir.entryInfoList();
+            foreach (QFileInfo f, list) {
+                if (f.baseName() == "desktop") {
+                    m_bgPath = f.filePath();
+                    break;
+                }
+            }
+        }
+
         if (!QFile::exists(m_bgPath)) {
             m_bgPath = "/usr/share/backgrounds/default_background.jpg";
         }
@@ -116,7 +127,7 @@ void FullscreenBackground::setContentVisible(bool contentVisible)
     emit contentVisibleChanged(contentVisible);
 }
 
-void FullscreenBackground::setContent(QWidget * const w)
+void FullscreenBackground::setContent(QWidget *const w)
 {
     Q_ASSERT(m_content.isNull());
 
@@ -180,8 +191,7 @@ void FullscreenBackground::keyPressEvent(QKeyEvent *e)
 {
     QWidget::keyPressEvent(e);
 
-    switch (e->key())
-    {
+    switch (e->key()) {
 #ifdef QT_DEBUG
     case Qt::Key_Escape:        qApp->quit();       break;
 #endif
@@ -211,7 +221,7 @@ void FullscreenBackground::showEvent(QShowEvent *event)
 
 const QPixmap FullscreenBackground::pixmapHandle(const QPixmap &pixmap)
 {
-    const QSize trueSize { size() * devicePixelRatioF() };
+    const QSize trueSize { size() *devicePixelRatioF() };
     QPixmap pix = pixmap.scaled(trueSize,
                                 Qt::KeepAspectRatioByExpanding,
                                 Qt::SmoothTransformation);
