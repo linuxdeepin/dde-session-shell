@@ -344,5 +344,11 @@ void GreeterWorkek::recoveryUserKBState(std::shared_ptr<User> user)
     const bool enabled = UserNumlockSettings(user->name()).get(false);
 
     qDebug() << "restore numlock status to " << enabled;
+
+    // Resync numlock light with numlock status
+    bool cur_numlock = KeyboardMonitor::instance()->isNumlockOn();
+    KeyboardMonitor::instance()->setNumlockStatus(!cur_numlock);
+    KeyboardMonitor::instance()->setNumlockStatus(cur_numlock);
+
     KeyboardMonitor::instance()->setNumlockStatus(enabled);
 }
