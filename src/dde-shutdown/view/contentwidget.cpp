@@ -716,9 +716,8 @@ QList<InhibitWarnView::InhibitorData> ContentWidget::listInhibitors(const Action
 
                     if (connection.interface()->isServiceRegistered(inhibitor.who)) {
 
-                        QDBusInterface ifc(inhibitor.who, "/com/deepin/InhibitHint", "com.deepin.InibitHint", connection);
-                        QDBusMessage msg = ifc.call("Get", QLocale::system().name(), inhibitor.why);
-
+                        QDBusInterface ifc(inhibitor.who, "/com/deepin/InhibitHint", "com.deepin.InhibitHint", connection);
+                        QDBusMessage msg = ifc.call("Get", getenv("LANG"), inhibitor.why);
                         if (msg.type() == QDBusMessage::ReplyMessage) {
                             InhibitHint inhibitHint = qdbus_cast<InhibitHint>(msg.arguments().at(0).value<QDBusArgument>());
 
