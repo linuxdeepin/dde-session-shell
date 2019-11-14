@@ -128,7 +128,6 @@ void DPasswordEditEx::receiveUserKBLayoutChanged(const QString &layout)
     if (m_KBLayoutList.size() == 1) {
         layoutName = "";
         m_KBButton->hide();
-        lineEdit()->setTextMargins(KB_MARGIN, 0, m_capsButton->width() + KB_MARGIN, 0);
     } else {
         m_KBButton->show();
         QImage image = generateImageFromString(layoutName);
