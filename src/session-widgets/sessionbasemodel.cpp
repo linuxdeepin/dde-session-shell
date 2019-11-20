@@ -34,6 +34,18 @@ std::shared_ptr<User> SessionBaseModel::findUserByUid(const uint uid) const
     return std::shared_ptr<User>(nullptr);
 }
 
+std::shared_ptr<User> SessionBaseModel::findUserByName(const QString &name) const
+{
+    for (auto user : m_userList) {
+        if (user->name() == name) {
+            return user;
+        }
+    }
+
+    qWarning() << "Wrong, you shouldn't be here!";
+    return std::shared_ptr<User>(nullptr);
+}
+
 const QList<std::shared_ptr<User> > SessionBaseModel::logindUser()
 {
     QList<std::shared_ptr<User>> userList;

@@ -50,7 +50,7 @@ class DPasswordEditEx : public DLineEdit
     Q_OBJECT
 public:
     DPasswordEditEx(QWidget *parent = nullptr);
-    void addButton();
+    void setShowKB(bool show);
 
 signals:
     void toggleKBLayoutWidget();
@@ -85,6 +85,7 @@ private:
     bool m_loadAnimEnable;
     bool m_isLoading;
     bool m_showCaps = false;
+    bool m_showKB = true;
     const int LoadSliderWidth = 40;
 };
 

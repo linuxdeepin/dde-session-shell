@@ -70,7 +70,13 @@ void UserLoginInfo::setUser(std::shared_ptr<User> user)
 void UserLoginInfo::initConnect()
 {
     //UserLoginWidget
-    connect(m_userLoginWidget, &UserLoginWidget::requestAuthUser, this, &UserLoginInfo::requestAuthUser);
+    connect(m_userLoginWidget, &UserLoginWidget::requestAuthUser, this, [ = ](const QString & account, const QString & password) {
+        if (!account.isEmpty()) {
+            auto user = m_model->findUserByName(account);
+            if (user != nullptr) m_model->setCurrentUser(user);
+        }
+        emit requestAuthUser(password);
+    });
     connect(m_model, &SessionBaseModel::authFaildMessage, m_userLoginWidget, &UserLoginWidget::setFaildMessage);
     connect(m_model, &SessionBaseModel::authFaildTipsMessage, m_userLoginWidget, &UserLoginWidget::setFaildTipMessage);
     connect(m_model, &SessionBaseModel::authFinished, this, [ = ](bool success) {

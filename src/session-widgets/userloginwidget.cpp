@@ -51,7 +51,7 @@ UserLoginWidget::UserLoginWidget(QWidget *parent)
     , m_nameLbl(new QLabel(this))
     , m_passwordEdit(new DPasswordEditEx(this))
     , m_lockPasswordWidget(new LockPasswordWidget)
-    , m_otherUserInput(new OtherUserInput(this))
+    , m_accountEdit(new QLineEdit(this))
     , m_lockButton(new DFloatingButton(DStyle::SP_UnlockElement))
     , m_kbLayoutBorder(new DArrowRectangle(DArrowRectangle::ArrowTop))
     , m_kbLayoutWidget(new KbLayoutWidget(QStringList()))
@@ -118,6 +118,8 @@ void UserLoginWidget::setWidgetShowType(UserLoginWidget::WidgetShowType showType
     updateUI();
     if (m_showType == NormalType || m_showType == IDAndPasswordType) {
         QMap<QString, int> registerFunctionIndexs;
+        std::function<void (QVariant)> accountChanged = std::bind(&UserLoginWidget::onOtherPageAccountChanged, this, std::placeholders::_1);
+        registerFunctionIndexs["UserLoginAccount"] = FrameDataBind::Instance()->registerFunction("UserLoginAccount", accountChanged);
         std::function<void (QVariant)> passwordChanged = std::bind(&UserLoginWidget::onOtherPagePasswordChanged, this, std::placeholders::_1);
         registerFunctionIndexs["UserLoginPassword"] = FrameDataBind::Instance()->registerFunction("UserLoginPassword", passwordChanged);
         std::function<void (QVariant)> kblayoutChanged = std::bind(&UserLoginWidget::onOtherPageKBLayoutChanged, this, std::placeholders::_1);
@@ -130,6 +132,7 @@ void UserLoginWidget::setWidgetShowType(UserLoginWidget::WidgetShowType showType
         });
 
         QTimer::singleShot(0, this, [ = ] {
+            FrameDataBind::Instance()->refreshData("UserLoginAccount");
             FrameDataBind::Instance()->refreshData("UserLoginPassword");
             FrameDataBind::Instance()->refreshData("UserLoginKBLayout");
         });
@@ -140,7 +143,7 @@ void UserLoginWidget::setWidgetShowType(UserLoginWidget::WidgetShowType showType
 void UserLoginWidget::updateUI()
 {
     m_lockPasswordWidget->hide();
-    m_otherUserInput->hide();
+    m_accountEdit->hide();
     switch (m_showType) {
     case NoPasswordType: {
         bool isNopassword = true;
@@ -164,10 +167,15 @@ void UserLoginWidget::updateUI()
         break;
     }
     case IDAndPasswordType: {
-        m_passwordEdit->hide();
-        m_otherUserInput->show();
-        m_otherUserInput->setFocus();
+        m_passwordEdit->show();
+        m_passwordEdit->setShowKB(false);
+        m_passwordEdit->lineEdit()->setPlaceholderText(tr("Password"));
         m_lockButton->show();
+        m_accountEdit->show();
+        m_accountEdit->setPlaceholderText(tr("Account Login"));
+        m_accountEdit->setFocus();
+
+        m_nameLbl->setText(tr("Account Login"));
         break;
     }
     case UserFrameType: {
@@ -200,6 +208,13 @@ void UserLoginWidget::ShutdownPrompt(SessionBaseModel::PowerAction action)
         setFaildMessage("");
         resetAllState();
     }
+}
+
+void UserLoginWidget::onOtherPageAccountChanged(const QVariant &value)
+{
+    int cursorIndex =  m_accountEdit->cursorPosition();
+    m_accountEdit->setText(value.toString());
+    m_accountEdit->setCursorPosition(cursorIndex);
 }
 
 void UserLoginWidget::onOtherPagePasswordChanged(const QVariant &value)
@@ -367,7 +382,8 @@ void UserLoginWidget::initUI()
 
     m_lockPasswordWidget->setSizePolicy(QSizePolicy::Expanding, QSizePolicy::Fixed);
     m_lockPasswordWidget->setLockIconVisible(false);
-    m_otherUserInput->setSizePolicy(QSizePolicy::Expanding, QSizePolicy::Fixed);
+    m_accountEdit->setSizePolicy(QSizePolicy::Expanding, QSizePolicy::Fixed);
+    m_accountEdit->setAlignment(Qt::AlignCenter);
 
     m_passwordEdit->setVisible(true);
 
@@ -392,7 +408,7 @@ void UserLoginWidget::initUI()
     m_nameFrame->setLayout(m_nameLayout);
     m_userLayout->addWidget(m_nameFrame, 0, Qt::AlignHCenter);
 
-    m_userLayout->addWidget(m_otherUserInput);
+    m_userLayout->addWidget(m_accountEdit);
     m_userLayout->addWidget(m_passwordEdit);
     m_userLayout->addWidget(m_lockPasswordWidget);
     m_lockPasswordWidget->hide();
@@ -432,7 +448,7 @@ void UserLoginWidget::initConnect()
     connect(m_passwordEdit, &DPasswordEditEx::returnPressed, this, [ = ] {
         const QString passwd = m_passwordEdit->text();
         if (passwd.isEmpty()) return;
-        emit requestAuthUser(passwd);
+        emit requestAuthUser(m_accountEdit->text(), passwd);
     });
 
     connect(m_lockButton, &QPushButton::clicked, this, [ = ] {
@@ -445,7 +461,7 @@ void UserLoginWidget::initConnect()
 
         if (password.isEmpty() && m_showType != NoPasswordType) return;
         m_passwordEdit->showLoadSlider();
-        emit requestAuthUser(password);
+        emit requestAuthUser(m_accountEdit->text(), password);
     });
     connect(m_userAvatar, &UserAvatar::clicked, this, &UserLoginWidget::clicked);
 
@@ -461,7 +477,9 @@ void UserLoginWidget::initConnect()
 //设置用户名
 void UserLoginWidget::setName(const QString &name)
 {
-    m_name = name;
+    if (m_showType != IDAndPasswordType) {
+        m_name = name;
+    }
     m_nameLbl->setText(name);
 }
 

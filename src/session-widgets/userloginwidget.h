@@ -87,7 +87,7 @@ public:
     void ShutdownPrompt(SessionBaseModel::PowerAction action);
 
 signals:
-    void requestAuthUser(const QString &password);
+    void requestAuthUser(const QString &account, const QString &password);
     void clicked();
     void requestUserKBLayoutChanged(const QString &layout);
 
@@ -107,6 +107,7 @@ private:
     void initUI();
     void initConnect();
     void updateUI();
+    void onOtherPageAccountChanged(const QVariant &value);
     void onOtherPagePasswordChanged(const QVariant &value);
     void onOtherPageKBLayoutChanged(const QVariant &value);
     void toggleKBLayoutWidget();
@@ -122,7 +123,7 @@ private:
     LockPasswordWidget *m_lockPasswordWidget;      //密码锁定后,错误信息提示框
     QMap<uint, QString> m_passwords;
     SessionBaseModel::AuthType m_authType;         //认证类型
-    OtherUserInput *m_otherUserInput;
+    QLineEdit *m_accountEdit;
     DFloatingButton *m_lockButton;                 //解锁按钮
     DArrowRectangle *m_kbLayoutBorder;             //键盘布局异性框类
     KbLayoutWidget *m_kbLayoutWidget;              //键盘布局窗体

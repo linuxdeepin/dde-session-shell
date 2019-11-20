@@ -122,6 +122,8 @@ void DPasswordEditEx::setKBLayoutList(QStringList kbLayoutList)
 
 void DPasswordEditEx::receiveUserKBLayoutChanged(const QString &layout)
 {
+    if (!m_showKB)  return;
+
     QString layoutName = layout;
     layoutName = layoutName.split(";").first();
 
@@ -220,6 +222,12 @@ void DPasswordEditEx::onTextChanged(const QString &text)
         m_showCaps = false;
     }
     updateTextMargins();
+}
+
+void DPasswordEditEx::setShowKB(bool show)
+{
+    m_KBButton->setVisible(show);
+    m_showKB = show;
 }
 
 //重写QLineEdit paintEvent函数，实现当文本设置居中后，holderText仍然显示的需求

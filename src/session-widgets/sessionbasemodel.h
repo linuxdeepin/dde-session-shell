@@ -41,6 +41,7 @@ public:
     inline std::shared_ptr<User> lastLogoutUser() const { return m_lastLogoutUser; }
 
     std::shared_ptr<User> findUserByUid(const uint uid) const;
+    std::shared_ptr<User> findUserByName(const QString &name) const;
     const QList<std::shared_ptr<User>> userList() const { return m_userList; }
     const QList<std::shared_ptr<User>> logindUser();
 
