@@ -85,6 +85,10 @@ GreeterWorkek::GreeterWorkek(SessionBaseModel *const model, QObject *parent)
     if (valueByQSettings<bool>("", "loginPromptAvatar", true)) {
         initDBus();
         initData();
+
+        if(QFile::exists("/etc/deepin/no_suspend"))
+            m_model->setCanSleep(false);
+
         checkDBusServer(m_accountsInter->isValid());
         onCurrentUserChanged(m_lockInter->CurrentUser());
     }

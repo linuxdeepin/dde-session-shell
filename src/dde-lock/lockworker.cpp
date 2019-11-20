@@ -30,11 +30,6 @@ LockWorker::LockWorker(SessionBaseModel *const model, QObject *parent)
 {
     m_authFramework = new DeepinAuthFramework(this, this);
 
-    m_login1ManagerInterface = new DBusLogin1Manager("org.freedesktop.login1", "/org/freedesktop/login1", QDBusConnection::systemBus(), this);
-    if (!m_login1ManagerInterface->isValid()) {
-        qWarning() << "m_login1ManagerInterface:" << m_login1ManagerInterface->lastError().type();
-    }
-
     m_currentUserUid = getuid();
 
     QObject::connect(model, &SessionBaseModel::onStatusChanged, this, [ = ](SessionBaseModel::ModeStatus state) {
@@ -52,10 +47,10 @@ LockWorker::LockWorker(SessionBaseModel *const model, QObject *parent)
     connect(model, &SessionBaseModel::onPowerActionChanged, this, [ = ](SessionBaseModel::PowerAction poweraction) {
         switch (poweraction) {
         case SessionBaseModel::PowerAction::RequireSuspend:
-            m_login1ManagerInterface->Suspend(true);
+            m_sessionManager->RequestSuspend();
             break;
         case SessionBaseModel::PowerAction::RequireHibernate:
-            m_login1ManagerInterface->Hibernate(true);
+            m_sessionManager->RequestHibernate();
             break;
         default:
             break;
@@ -283,10 +278,10 @@ void LockWorker::onUnlockFinished(bool unlocked)
 
     switch (m_model->powerAction()) {
     case SessionBaseModel::PowerAction::RequireRestart:
-        m_login1ManagerInterface->Reboot(true);
+        m_sessionManager->RequestReboot();
         return;
     case SessionBaseModel::PowerAction::RequireShutdown:
-        m_login1ManagerInterface->PowerOff(true);
+        m_sessionManager->RequestShutdown();
         return;
     default:
         break;

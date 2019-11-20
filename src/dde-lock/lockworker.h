@@ -52,7 +52,6 @@ private:
     bool m_authenticating;
     bool m_isThumbAuth;
     DBusLockService *m_lockInter;
-    DBusLogin1Manager *m_login1ManagerInterface;
     DBusHotzone *m_hotZoneInter;
     DeepinAuthFramework *m_authFramework;
     QString m_password;
