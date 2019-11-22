@@ -27,18 +27,23 @@
 #include <QSvgRenderer>
 #include "rounditembutton.h"
 
+#include <DFontSizeManager>
+
+DWIDGET_USE_NAMESPACE
+
 RoundItemButton::RoundItemButton(QWidget *parent)
     : RoundItemButton("", parent)
 {
 
 }
 
-RoundItemButton::RoundItemButton(const QString &text, QWidget* parent)
+RoundItemButton::RoundItemButton(const QString &text, QWidget *parent)
     : QAbstractButton(parent),
       m_itemIcon(new QLabel(this)),
       m_itemText(new QLabel(this))
 {
     m_itemText->setText(text);
+    DFontSizeManager::instance()->bind(m_itemText, DFontSizeManager::T6);
     m_opacityEffect = new QGraphicsOpacityEffect(this);
     m_opacityEffect->setOpacity(1.0);
     setGraphicsEffect(m_opacityEffect);
