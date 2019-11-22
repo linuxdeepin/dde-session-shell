@@ -192,14 +192,29 @@ void RoundItemButton::paintEvent(QPaintEvent* event)
 
     if (m_state == Checked) {
         QPen pen;
-        QColor penColor(151, 151, 151, 255);
+        QColor penColor(151, 151, 151, 127);
         pen.setColor(penColor);
         pen.setWidth(m_penWidth);
         painter.setPen(pen);
-        painter.setBrush(QColor(0, 0, 0, 105));
         painter.setRenderHint(QPainter::Antialiasing, true);
-        painter.drawRoundedRect(m_itemText->geometry(), m_rectRadius, m_rectRadius);
+
+        //只绘制轮廓，无中间填充色
+        //底下的矩形框轮廓是外描绘，所以需要减去画笔的宽度绘制轮廓
+        QRect itemTextRect = m_itemText->geometry().marginsRemoved(QMargins(m_penWidth / 2, m_penWidth / 2, m_penWidth / 2, m_penWidth / 2));
+        painter.drawRoundedRect(itemTextRect, m_rectRadius, m_rectRadius);
         painter.drawEllipse(m_itemIcon->geometry());
+
+        //填充中间背景
+        painter.setBrush(QColor(0, 15, 39, 178));
+        painter.setPen(Qt::NoPen);
+        //drawEllipse是内描绘，中间填充色需要减去画笔宽度/2
+        QRect m_itemIconRtct(m_itemIcon->geometry().marginsRemoved((QMargins(m_penWidth / 2, m_penWidth / 2, m_penWidth / 2, m_penWidth / 2))));
+        painter.drawEllipse(m_itemIconRtct);
+
+        //drawRoundedRect外描绘，填充色区域需要再减掉画笔宽度
+        QRect textBackgroundRect(m_itemText->geometry().marginsRemoved(QMargins(m_penWidth, m_penWidth, m_penWidth, m_penWidth)));
+        painter.drawRoundedRect(textBackgroundRect, m_rectRadius, m_rectRadius);
+
     } else if (m_state == Hover) {
         painter.setPen(Qt::NoPen);
         painter.setBrush(QColor(255, 255, 255, 127));

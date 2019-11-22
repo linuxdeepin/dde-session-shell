@@ -98,7 +98,7 @@ private:
     QString m_hoverIcon;
     QString m_pressedIcon;
     QString m_currentIcon;
-    int m_penWidth = 3;
+    int m_penWidth = 2;
     int m_rectRadius = 8;
 };
 #endif // ROUNDITEMBUTTON
