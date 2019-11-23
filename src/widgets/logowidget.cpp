@@ -29,21 +29,17 @@
 #include <QPalette>
 #include <QDebug>
 #include <QSettings>
+#include <DSysInfo>
 #include "src/global_util/public_func.h"
 #include "src/global_util/util_updateui.h"
 
 #include "logowidget.h"
 
+DCORE_USE_NAMESPACE
+
 const QPixmap systemLogo()
 {
-    const QSettings settings("/etc/deepin-installer.conf", QSettings::IniFormat);
-    const QString logo_path = settings.value("system_info_vendor_logo").toString();
-    const QPixmap oem_logo(loadPixmap(logo_path));
-
-    if (oem_logo.isNull())
-        return loadPixmap(":img/logo.svg");
-    else
-        return oem_logo;
+    return loadPixmap(DSysInfo::deepinDistributorLogo(DSysInfo::Transparent, ":img/logo.svg"));
 }
 
 LogoWidget::LogoWidget(QWidget* parent)
