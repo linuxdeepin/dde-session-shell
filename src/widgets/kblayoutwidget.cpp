@@ -214,6 +214,10 @@ void KbLayoutWidget::updateButtonList(const QStringList &buttons)
 
     resize(width(), DDESESSIONCC::LAYOUTBUTTON_HEIGHT * m_kbdParseList.count());
     updateStyle(":/skin/keybdlayoutwidget.qss", this);
+
+    if (!m_userLayout.isEmpty()) {
+        setDefault(m_userLayout);
+    }
 }
 
 void KbLayoutWidget::setDefault(const QString &layout)

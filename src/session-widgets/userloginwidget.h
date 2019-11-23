@@ -80,7 +80,6 @@ public:
     void setDefaultKBLayout(const QString &layout);
     void hideKBLayout();
     void setKBLayoutList(QStringList kbLayoutList);
-    void setDefKBLayout(QString defKBLayout);
     void clearPassWord();
     void setUid(uint uid);
     uint uid();

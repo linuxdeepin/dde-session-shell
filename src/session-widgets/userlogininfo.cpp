@@ -58,7 +58,7 @@ void UserLoginInfo::setUser(std::shared_ptr<User> user)
     m_userLoginWidget->updateAuthType(m_model->currentType());
     m_userLoginWidget->disablePassword(user.get()->isLock(), user->lockNum());
     m_userLoginWidget->setKBLayoutList(user->kbLayoutList());
-    m_userLoginWidget->setDefKBLayout(user->currentKBLayout());
+    m_userLoginWidget->setDefaultKBLayout(user->currentKBLayout());
 
     if (m_user->isNoPasswdGrp()) {
         m_userLoginWidget->setWidgetShowType(UserLoginWidget::NoPasswordType);

@@ -515,11 +515,6 @@ void UserLoginWidget::updateKBLayout(const QStringList &list)
     m_kbLayoutBorder->setContent(m_kbLayoutWidget);
 }
 
-void UserLoginWidget::setDefaultKBLayout(const QString &layout)
-{
-    m_kbLayoutWidget->setDefault(layout);
-}
-
 void UserLoginWidget::hideKBLayout()
 {
     m_kbLayoutBorder->hide();
@@ -534,11 +529,11 @@ void UserLoginWidget::setKBLayoutList(QStringList kbLayoutList)
     m_passwordEdit->setKBLayoutList(kbLayoutList);
 }
 
-void UserLoginWidget::setDefKBLayout(QString defKBLayout)
+void UserLoginWidget::setDefaultKBLayout(const QString &layout)
 {
-    qDebug() << "keyboardlayout---UserLoginWidget---setDefKBLayout:" << defKBLayout;
+    qDebug() << "keyboardlayout---UserLoginWidget---setDefaultKBLayout:" << layout;
 
-    m_kbLayoutWidget->setDefault(defKBLayout);
+    m_kbLayoutWidget->setDefault(layout);
 }
 
 void UserLoginWidget::clearPassWord()
