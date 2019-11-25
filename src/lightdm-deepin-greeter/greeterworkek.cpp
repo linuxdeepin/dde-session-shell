@@ -119,6 +119,7 @@ void GreeterWorkek::switchToUser(std::shared_ptr<User> user)
     json["Uid"] = static_cast<int>(user->uid());
     json["Type"] = user->type();
     m_lockInter->SwitchToUser(QString(QJsonDocument(json).toJson(QJsonDocument::Compact))).waitForFinished();
+    m_greeter->cancelAuthentication();
 }
 
 void GreeterWorkek::authUser(const QString &password)

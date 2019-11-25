@@ -114,6 +114,9 @@ void LockWorker::switchToUser(std::shared_ptr<User> user)
     json["Type"] = user->type();
 
     m_lockInter->SwitchToUser(QString(QJsonDocument(json).toJson(QJsonDocument::Compact))).waitForFinished();
+    if (isDeepin()) {
+        m_authFramework->Clear();
+    }
 
     if (user->isLogin()) {
         QProcess::startDetached("dde-switchtogreeter", QStringList() << user->name());
@@ -292,9 +295,9 @@ bool LockWorker::isDeepin()
 {
     // 这是临时的选项，只在Deepin下启用同步认证功能，其他发行版下禁用。
 //#ifdef QT_DEBUG
-    return true;
+//    return true;
 //#else
-//    return valueByQSettings<bool>("OS", "isDeepin", false);
+    return valueByQSettings<bool>("OS", "isDeepin", false);
 //#endif
 }
 
