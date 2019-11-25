@@ -4,7 +4,7 @@
     <message>
         <location filename="../src/dde-shutdown/view/contentwidget.cpp" line="321"/>
         <source>The programs are preventing the computer from shutting down, and forcing shut down may cause data loss.</source>
-        <translation type="unfinished"/>
+        <translation>Ohjelmat estävät tietokoneen sammutusta ja pakottaminen voi aiheuttaa tietojen menetyksen.</translation>
     </message>
     <message>
         <location filename="../src/dde-shutdown/view/contentwidget.cpp" line="322"/>
@@ -18,22 +18,22 @@
     <message>
         <location filename="../src/dde-shutdown/view/contentwidget.cpp" line="325"/>
         <source>The programs are preventing the computer from reboot, and forcing reboot may cause data loss.</source>
-        <translation type="unfinished"/>
+        <translation>Avoimet ohjelmat estävät tietokonetta käynnistymästä uudelleen ja pakottaminen voi aiheuttaa tietojen menetyksen.</translation>
     </message>
     <message>
         <location filename="../src/dde-shutdown/view/contentwidget.cpp" line="329"/>
         <source>The programs are preventing the computer from suspend, and forcing suspend may cause data loss.</source>
-        <translation type="unfinished"/>
+        <translation>Avoimet ohjelmat estävät tietokoneen  valmiustilan ja pakottaminen voi aiheuttaa tietojen menetyksen.</translation>
     </message>
     <message>
         <location filename="../src/dde-shutdown/view/contentwidget.cpp" line="333"/>
         <source>The programs are preventing the computer from hibernate, and forcing hibernate may cause data loss.</source>
-        <translation type="unfinished"/>
+        <translation>Avoimet ohjelmat estävät tietokoneen lepotilan ja pakottaminen voi aiheuttaa tietojen menetyksen.</translation>
     </message>
     <message>
         <location filename="../src/dde-shutdown/view/contentwidget.cpp" line="337"/>
         <source>The programs are preventing the computer from log out, and forcing log out may cause data loss.</source>
-        <translation type="unfinished"/>
+        <translation>Avoimet ohjelmat estävät tietokonetta uloskirjautumasta ja pakottaminen voi aiheuttaa tietojen menetyksen.</translation>
     </message>
     <message>
         <location filename="../src/dde-shutdown/view/contentwidget.cpp" line="355"/>
@@ -97,19 +97,27 @@
     </message>
 </context>
 <context>
+    <name>DeepinAuthFramework</name>
+    <message>
+        <location filename="../src/libdde-auth/deepinauthframework.cpp" line="115"/>
+        <source>Verify your fingerprint or password</source>
+        <translation>Vahvistus sormenjälki tai salasana</translation>
+    </message>
+</context>
+<context>
     <name>GreeterWorkek</name>
     <message>
-        <location filename="../src/lightdm-deepin-greeter/greeterworkek.cpp" line="94"/>
+        <location filename="../src/lightdm-deepin-greeter/greeterworkek.cpp" line="98"/>
         <source>Domain account</source>
         <translation>Verkkotunnus</translation>
     </message>
     <message>
-        <location filename="../src/lightdm-deepin-greeter/greeterworkek.cpp" line="287"/>
+        <location filename="../src/lightdm-deepin-greeter/greeterworkek.cpp" line="292"/>
         <source>Wrong Password</source>
         <translation>Väärä salasana</translation>
     </message>
     <message>
-        <location filename="../src/lightdm-deepin-greeter/greeterworkek.cpp" line="292"/>
+        <location filename="../src/lightdm-deepin-greeter/greeterworkek.cpp" line="297"/>
         <source>The domain account or password is not correct. Please enter again.</source>
         <translation>Verkkotunnuksen tili tai salasana ei ole oikea. Anna uudelleen.</translation>
     </message>
@@ -125,30 +133,30 @@
 <context>
     <name>LockContent</name>
     <message>
-        <location filename="../src/session-widgets/lockcontent.cpp" line="313"/>
+        <location filename="../src/session-widgets/lockcontent.cpp" line="318"/>
         <source>Failed to lock screen</source>
-        <translation type="unfinished"/>
+        <translation>Näytön lukitseminen epäonnistui</translation>
     </message>
 </context>
 <context>
     <name>LockWorker</name>
     <message>
-        <location filename="../src/dde-lock/lockworker.cpp" line="104"/>
+        <location filename="../src/dde-lock/lockworker.cpp" line="99"/>
         <source>Domain account</source>
         <translation>Verkkotunnus</translation>
     </message>
     <message>
-        <location filename="../src/dde-lock/lockworker.cpp" line="223"/>
+        <location filename="../src/dde-lock/lockworker.cpp" line="221"/>
         <source>Fingerprint verification timed out, please enter your password manually</source>
         <translation>Sormenjäljen tarkistus aikakatkaistiin, ole hyvä ja anna salasana manuaalisesti</translation>
     </message>
     <message>
-        <location filename="../src/dde-lock/lockworker.cpp" line="241"/>
+        <location filename="../src/dde-lock/lockworker.cpp" line="239"/>
         <source>Failed to match fingerprint</source>
         <translation>Sormenjälkeä ei tunnistettu</translation>
     </message>
     <message>
-        <location filename="../src/dde-lock/lockworker.cpp" line="276"/>
+        <location filename="../src/dde-lock/lockworker.cpp" line="274"/>
         <source>Wrong Password</source>
         <translation>Väärä salasana</translation>
     </message>

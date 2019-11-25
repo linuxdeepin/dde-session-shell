@@ -97,19 +97,27 @@
     </message>
 </context>
 <context>
+    <name>DeepinAuthFramework</name>
+    <message>
+        <location filename="../src/libdde-auth/deepinauthframework.cpp" line="115"/>
+        <source>Verify your fingerprint or password</source>
+        <translation>একটি আঙ্গুলের ছাপ অথবা পাসওয়ার্ড যাচাই করুন</translation>
+    </message>
+</context>
+<context>
     <name>GreeterWorkek</name>
     <message>
-        <location filename="../src/lightdm-deepin-greeter/greeterworkek.cpp" line="94"/>
+        <location filename="../src/lightdm-deepin-greeter/greeterworkek.cpp" line="98"/>
         <source>Domain account</source>
         <translation>ডোমেন অ্যাকাউন্ট</translation>
     </message>
     <message>
-        <location filename="../src/lightdm-deepin-greeter/greeterworkek.cpp" line="287"/>
+        <location filename="../src/lightdm-deepin-greeter/greeterworkek.cpp" line="292"/>
         <source>Wrong Password</source>
         <translation>ভুল পাসওয়ার্ড</translation>
     </message>
     <message>
-        <location filename="../src/lightdm-deepin-greeter/greeterworkek.cpp" line="292"/>
+        <location filename="../src/lightdm-deepin-greeter/greeterworkek.cpp" line="297"/>
         <source>The domain account or password is not correct. Please enter again.</source>
         <translation>ডোমেন অ্যাকাউন্ট বা পাসওয়ার্ড সঠিক নয়। দয়া করে আবার প্রবেশ করান।</translation>
     </message>
@@ -125,7 +133,7 @@
 <context>
     <name>LockContent</name>
     <message>
-        <location filename="../src/session-widgets/lockcontent.cpp" line="313"/>
+        <location filename="../src/session-widgets/lockcontent.cpp" line="318"/>
         <source>Failed to lock screen</source>
         <translation type="unfinished"/>
     </message>
@@ -133,22 +141,22 @@
 <context>
     <name>LockWorker</name>
     <message>
-        <location filename="../src/dde-lock/lockworker.cpp" line="104"/>
+        <location filename="../src/dde-lock/lockworker.cpp" line="99"/>
         <source>Domain account</source>
         <translation>ডোমেন অ্যাকাউন্ট</translation>
     </message>
     <message>
-        <location filename="../src/dde-lock/lockworker.cpp" line="223"/>
+        <location filename="../src/dde-lock/lockworker.cpp" line="221"/>
         <source>Fingerprint verification timed out, please enter your password manually</source>
         <translation>আঙুলের ছাপ যাচাই করার সময় শেষ, দয়া করে হাত দিয়ে পাসওয়ার্ড প্রবেশ করান।</translation>
     </message>
     <message>
-        <location filename="../src/dde-lock/lockworker.cpp" line="241"/>
+        <location filename="../src/dde-lock/lockworker.cpp" line="239"/>
         <source>Failed to match fingerprint</source>
         <translation>আঙুলের ছাপ মিলাতে ব্যর্থ হয়েছে</translation>
     </message>
     <message>
-        <location filename="../src/dde-lock/lockworker.cpp" line="276"/>
+        <location filename="../src/dde-lock/lockworker.cpp" line="274"/>
         <source>Wrong Password</source>
         <translation>ভুল পাসওয়ার্ড</translation>
     </message>

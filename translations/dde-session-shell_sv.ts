@@ -97,19 +97,27 @@
     </message>
 </context>
 <context>
+    <name>DeepinAuthFramework</name>
+    <message>
+        <location filename="../src/libdde-auth/deepinauthframework.cpp" line="115"/>
+        <source>Verify your fingerprint or password</source>
+        <translation>Verifiera ditt fingeravtryck eller lösenord</translation>
+    </message>
+</context>
+<context>
     <name>GreeterWorkek</name>
     <message>
-        <location filename="../src/lightdm-deepin-greeter/greeterworkek.cpp" line="94"/>
+        <location filename="../src/lightdm-deepin-greeter/greeterworkek.cpp" line="98"/>
         <source>Domain account</source>
         <translation>Domänkonto</translation>
     </message>
     <message>
-        <location filename="../src/lightdm-deepin-greeter/greeterworkek.cpp" line="287"/>
+        <location filename="../src/lightdm-deepin-greeter/greeterworkek.cpp" line="292"/>
         <source>Wrong Password</source>
         <translation>Felaktigt Lösenord</translation>
     </message>
     <message>
-        <location filename="../src/lightdm-deepin-greeter/greeterworkek.cpp" line="292"/>
+        <location filename="../src/lightdm-deepin-greeter/greeterworkek.cpp" line="297"/>
         <source>The domain account or password is not correct. Please enter again.</source>
         <translation>Domänkontot eller lösenordet är ej korrekt. Var god försök igen</translation>
     </message>
@@ -125,7 +133,7 @@
 <context>
     <name>LockContent</name>
     <message>
-        <location filename="../src/session-widgets/lockcontent.cpp" line="313"/>
+        <location filename="../src/session-widgets/lockcontent.cpp" line="318"/>
         <source>Failed to lock screen</source>
         <translation type="unfinished"/>
     </message>
@@ -133,22 +141,22 @@
 <context>
     <name>LockWorker</name>
     <message>
-        <location filename="../src/dde-lock/lockworker.cpp" line="104"/>
+        <location filename="../src/dde-lock/lockworker.cpp" line="99"/>
         <source>Domain account</source>
         <translation>Domänkonto</translation>
     </message>
     <message>
-        <location filename="../src/dde-lock/lockworker.cpp" line="223"/>
+        <location filename="../src/dde-lock/lockworker.cpp" line="221"/>
         <source>Fingerprint verification timed out, please enter your password manually</source>
         <translation>Fingeravtryck tog för lång tid, vänligen skriv in lösenordet istället</translation>
     </message>
     <message>
-        <location filename="../src/dde-lock/lockworker.cpp" line="241"/>
+        <location filename="../src/dde-lock/lockworker.cpp" line="239"/>
         <source>Failed to match fingerprint</source>
         <translation>Misslyckades med att matcha fingeravtryck</translation>
     </message>
     <message>
-        <location filename="../src/dde-lock/lockworker.cpp" line="276"/>
+        <location filename="../src/dde-lock/lockworker.cpp" line="274"/>
         <source>Wrong Password</source>
         <translation>Felaktigt Lösenord</translation>
     </message>

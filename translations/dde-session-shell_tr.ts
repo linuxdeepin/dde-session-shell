@@ -97,19 +97,27 @@
     </message>
 </context>
 <context>
+    <name>DeepinAuthFramework</name>
+    <message>
+        <location filename="../src/libdde-auth/deepinauthframework.cpp" line="115"/>
+        <source>Verify your fingerprint or password</source>
+        <translation>Parmak izinizi ya da parolanızı doğrulayın</translation>
+    </message>
+</context>
+<context>
     <name>GreeterWorkek</name>
     <message>
-        <location filename="../src/lightdm-deepin-greeter/greeterworkek.cpp" line="94"/>
+        <location filename="../src/lightdm-deepin-greeter/greeterworkek.cpp" line="98"/>
         <source>Domain account</source>
         <translation>Etki alanı hesabı</translation>
     </message>
     <message>
-        <location filename="../src/lightdm-deepin-greeter/greeterworkek.cpp" line="287"/>
+        <location filename="../src/lightdm-deepin-greeter/greeterworkek.cpp" line="292"/>
         <source>Wrong Password</source>
         <translation>Yanlış Parola</translation>
     </message>
     <message>
-        <location filename="../src/lightdm-deepin-greeter/greeterworkek.cpp" line="292"/>
+        <location filename="../src/lightdm-deepin-greeter/greeterworkek.cpp" line="297"/>
         <source>The domain account or password is not correct. Please enter again.</source>
         <translation>Etki alanı hesabı veya parola yanlış. Lütfen tekrar girin.</translation>
     </message>
@@ -125,30 +133,30 @@
 <context>
     <name>LockContent</name>
     <message>
-        <location filename="../src/session-widgets/lockcontent.cpp" line="313"/>
+        <location filename="../src/session-widgets/lockcontent.cpp" line="318"/>
         <source>Failed to lock screen</source>
-        <translation type="unfinished"/>
+        <translation>Ekran kilitlenemedi</translation>
     </message>
 </context>
 <context>
     <name>LockWorker</name>
     <message>
-        <location filename="../src/dde-lock/lockworker.cpp" line="104"/>
+        <location filename="../src/dde-lock/lockworker.cpp" line="99"/>
         <source>Domain account</source>
         <translation>Etki alanı hesabı</translation>
     </message>
     <message>
-        <location filename="../src/dde-lock/lockworker.cpp" line="223"/>
+        <location filename="../src/dde-lock/lockworker.cpp" line="221"/>
         <source>Fingerprint verification timed out, please enter your password manually</source>
         <translation>Parmak izi doğrulama zaman aşımına uğradı, lütfen parolanızı elle girin</translation>
     </message>
     <message>
-        <location filename="../src/dde-lock/lockworker.cpp" line="241"/>
+        <location filename="../src/dde-lock/lockworker.cpp" line="239"/>
         <source>Failed to match fingerprint</source>
         <translation>Parmak izi eşleştirilemedi</translation>
     </message>
     <message>
-        <location filename="../src/dde-lock/lockworker.cpp" line="276"/>
+        <location filename="../src/dde-lock/lockworker.cpp" line="274"/>
         <source>Wrong Password</source>
         <translation>Yanlış Parola</translation>
     </message>

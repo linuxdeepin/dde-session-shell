@@ -28,7 +28,7 @@
     <message>
         <location filename="../src/dde-shutdown/view/contentwidget.cpp" line="333"/>
         <source>The programs are preventing the computer from hibernate, and forcing hibernate may cause data loss.</source>
-        <translation type="unfinished"/>
+        <translation>Die Programme verhindern den Ruhezustand des Computers und das Erzwingen des Ruhezustands kann zu Datenverlust führen.</translation>
     </message>
     <message>
         <location filename="../src/dde-shutdown/view/contentwidget.cpp" line="337"/>
@@ -97,19 +97,27 @@
     </message>
 </context>
 <context>
+    <name>DeepinAuthFramework</name>
+    <message>
+        <location filename="../src/libdde-auth/deepinauthframework.cpp" line="115"/>
+        <source>Verify your fingerprint or password</source>
+        <translation>Fingerabdruck verifizieren oder Passwort eingeben</translation>
+    </message>
+</context>
+<context>
     <name>GreeterWorkek</name>
     <message>
-        <location filename="../src/lightdm-deepin-greeter/greeterworkek.cpp" line="94"/>
+        <location filename="../src/lightdm-deepin-greeter/greeterworkek.cpp" line="98"/>
         <source>Domain account</source>
         <translation>Domänen-Konto</translation>
     </message>
     <message>
-        <location filename="../src/lightdm-deepin-greeter/greeterworkek.cpp" line="287"/>
+        <location filename="../src/lightdm-deepin-greeter/greeterworkek.cpp" line="292"/>
         <source>Wrong Password</source>
         <translation>Falsches Passwort</translation>
     </message>
     <message>
-        <location filename="../src/lightdm-deepin-greeter/greeterworkek.cpp" line="292"/>
+        <location filename="../src/lightdm-deepin-greeter/greeterworkek.cpp" line="297"/>
         <source>The domain account or password is not correct. Please enter again.</source>
         <translation>Das Domänenkonto oder Passwort ist nicht korrekt. Bitte erneut versuchen.</translation>
     </message>
@@ -125,30 +133,30 @@
 <context>
     <name>LockContent</name>
     <message>
-        <location filename="../src/session-widgets/lockcontent.cpp" line="313"/>
+        <location filename="../src/session-widgets/lockcontent.cpp" line="318"/>
         <source>Failed to lock screen</source>
-        <translation type="unfinished"/>
+        <translation>Bildschirm konnte nicht gesperrt werden</translation>
     </message>
 </context>
 <context>
     <name>LockWorker</name>
     <message>
-        <location filename="../src/dde-lock/lockworker.cpp" line="104"/>
+        <location filename="../src/dde-lock/lockworker.cpp" line="99"/>
         <source>Domain account</source>
         <translation>Domänen-Konto</translation>
     </message>
     <message>
-        <location filename="../src/dde-lock/lockworker.cpp" line="223"/>
+        <location filename="../src/dde-lock/lockworker.cpp" line="221"/>
         <source>Fingerprint verification timed out, please enter your password manually</source>
         <translation>Fingerabdruck-Überprüfung abgelaufen, bitte geben Sie Ihr Passwort manuell ein. </translation>
     </message>
     <message>
-        <location filename="../src/dde-lock/lockworker.cpp" line="241"/>
+        <location filename="../src/dde-lock/lockworker.cpp" line="239"/>
         <source>Failed to match fingerprint</source>
         <translation>Fingerabdruck stimmt nicht überein</translation>
     </message>
     <message>
-        <location filename="../src/dde-lock/lockworker.cpp" line="276"/>
+        <location filename="../src/dde-lock/lockworker.cpp" line="274"/>
         <source>Wrong Password</source>
         <translation>Falsches Passwort</translation>
     </message>
@@ -220,7 +228,7 @@
     <message numerus="yes">
         <location filename="../src/session-widgets/userloginwidget.cpp" line="263"/>
         <source>Please try again %n minute(s) later</source>
-        <translation type="unfinished"><numerusform></numerusform><numerusform></numerusform></translation>
+        <translation><numerusform>Bitte in %n Minute(n) erneut versuchen</numerusform><numerusform>Bitte in %n Minute(n) erneut versuchen</numerusform></translation>
     </message>
 </context>
 </TS>

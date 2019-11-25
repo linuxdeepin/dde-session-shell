@@ -4,7 +4,7 @@
     <message>
         <location filename="../src/dde-shutdown/view/contentwidget.cpp" line="321"/>
         <source>The programs are preventing the computer from shutting down, and forcing shut down may cause data loss.</source>
-        <translation type="unfinished"/>
+        <translation>Kai kurios programos neleidžia kompiuteriui išsijungti, o priverstinai išjungiant, gali būti prarasti duomenys.</translation>
     </message>
     <message>
         <location filename="../src/dde-shutdown/view/contentwidget.cpp" line="322"/>
@@ -18,22 +18,22 @@
     <message>
         <location filename="../src/dde-shutdown/view/contentwidget.cpp" line="325"/>
         <source>The programs are preventing the computer from reboot, and forcing reboot may cause data loss.</source>
-        <translation type="unfinished"/>
+        <translation>Kai kurios programos neleidžia kompiuteriui pasileisti iš naujo, o priverstinai paleidžiant iš naujo, gali būti prarasti duomenys.</translation>
     </message>
     <message>
         <location filename="../src/dde-shutdown/view/contentwidget.cpp" line="329"/>
         <source>The programs are preventing the computer from suspend, and forcing suspend may cause data loss.</source>
-        <translation type="unfinished"/>
+        <translation>Kai kurios programos neleidžia kompiuteriui būti pristabdytam, o priverstinai pristabdant, gali būti prarasti duomenys.</translation>
     </message>
     <message>
         <location filename="../src/dde-shutdown/view/contentwidget.cpp" line="333"/>
         <source>The programs are preventing the computer from hibernate, and forcing hibernate may cause data loss.</source>
-        <translation type="unfinished"/>
+        <translation>Kai kurios programos neleidžia kompiuteriui būti užmigdytam, o priverstinai užmigdant, gali būti prarasti duomenys.</translation>
     </message>
     <message>
         <location filename="../src/dde-shutdown/view/contentwidget.cpp" line="337"/>
         <source>The programs are preventing the computer from log out, and forcing log out may cause data loss.</source>
-        <translation type="unfinished"/>
+        <translation>Kai kurios programos neleidžia kompiuteriui atsijungti, o priverstinai atsijungiant, gali būti prarasti duomenys.</translation>
     </message>
     <message>
         <location filename="../src/dde-shutdown/view/contentwidget.cpp" line="355"/>
@@ -97,19 +97,27 @@
     </message>
 </context>
 <context>
+    <name>DeepinAuthFramework</name>
+    <message>
+        <location filename="../src/libdde-auth/deepinauthframework.cpp" line="115"/>
+        <source>Verify your fingerprint or password</source>
+        <translation>Patvirtinkite savo piršto atspaudą ar slaptažodį</translation>
+    </message>
+</context>
+<context>
     <name>GreeterWorkek</name>
     <message>
-        <location filename="../src/lightdm-deepin-greeter/greeterworkek.cpp" line="94"/>
+        <location filename="../src/lightdm-deepin-greeter/greeterworkek.cpp" line="98"/>
         <source>Domain account</source>
         <translation>Srities paskyra</translation>
     </message>
     <message>
-        <location filename="../src/lightdm-deepin-greeter/greeterworkek.cpp" line="287"/>
+        <location filename="../src/lightdm-deepin-greeter/greeterworkek.cpp" line="292"/>
         <source>Wrong Password</source>
         <translation>Neteisingas slaptažodis</translation>
     </message>
     <message>
-        <location filename="../src/lightdm-deepin-greeter/greeterworkek.cpp" line="292"/>
+        <location filename="../src/lightdm-deepin-greeter/greeterworkek.cpp" line="297"/>
         <source>The domain account or password is not correct. Please enter again.</source>
         <translation>Srities paskyra ar slaptažodis yra neteisingas. Įveskite dar kartą.</translation>
     </message>
@@ -125,30 +133,30 @@
 <context>
     <name>LockContent</name>
     <message>
-        <location filename="../src/session-widgets/lockcontent.cpp" line="313"/>
+        <location filename="../src/session-widgets/lockcontent.cpp" line="318"/>
         <source>Failed to lock screen</source>
-        <translation type="unfinished"/>
+        <translation>Nepavyko užrakinti ekrano</translation>
     </message>
 </context>
 <context>
     <name>LockWorker</name>
     <message>
-        <location filename="../src/dde-lock/lockworker.cpp" line="104"/>
+        <location filename="../src/dde-lock/lockworker.cpp" line="99"/>
         <source>Domain account</source>
         <translation>Srities paskyra</translation>
     </message>
     <message>
-        <location filename="../src/dde-lock/lockworker.cpp" line="223"/>
+        <location filename="../src/dde-lock/lockworker.cpp" line="221"/>
         <source>Fingerprint verification timed out, please enter your password manually</source>
         <translation>Pasibaigė piršto atspaudo patvirtinimui skirtas laikas, įveskite slaptažodį rankiniu būdu</translation>
     </message>
     <message>
-        <location filename="../src/dde-lock/lockworker.cpp" line="241"/>
+        <location filename="../src/dde-lock/lockworker.cpp" line="239"/>
         <source>Failed to match fingerprint</source>
         <translation>Nepavyko sutapatinti piršto atspaudo</translation>
     </message>
     <message>
-        <location filename="../src/dde-lock/lockworker.cpp" line="276"/>
+        <location filename="../src/dde-lock/lockworker.cpp" line="274"/>
         <source>Wrong Password</source>
         <translation>Neteisingas slaptažodis</translation>
     </message>

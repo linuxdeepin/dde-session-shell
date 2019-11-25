@@ -88,7 +88,7 @@
     <message>
         <location filename="../src/dde-shutdown/view/contentwidget.cpp" line="560"/>
         <source>Lock</source>
-        <translation>قفل کردن</translation>
+        <translation>قفل</translation>
     </message>
     <message>
         <location filename="../src/dde-shutdown/view/contentwidget.cpp" line="567"/>
@@ -97,21 +97,29 @@
     </message>
 </context>
 <context>
+    <name>DeepinAuthFramework</name>
+    <message>
+        <location filename="../src/libdde-auth/deepinauthframework.cpp" line="115"/>
+        <source>Verify your fingerprint or password</source>
+        <translation>اثر انگشت یا رمز عبور خود را تأیید کنید</translation>
+    </message>
+</context>
+<context>
     <name>GreeterWorkek</name>
     <message>
-        <location filename="../src/lightdm-deepin-greeter/greeterworkek.cpp" line="94"/>
+        <location filename="../src/lightdm-deepin-greeter/greeterworkek.cpp" line="98"/>
         <source>Domain account</source>
         <translation>حساب دامنه</translation>
     </message>
     <message>
-        <location filename="../src/lightdm-deepin-greeter/greeterworkek.cpp" line="287"/>
+        <location filename="../src/lightdm-deepin-greeter/greeterworkek.cpp" line="292"/>
         <source>Wrong Password</source>
-        <translation>پسوورد اشتباه</translation>
+        <translation>رمزعبور اشتباه</translation>
     </message>
     <message>
-        <location filename="../src/lightdm-deepin-greeter/greeterworkek.cpp" line="292"/>
+        <location filename="../src/lightdm-deepin-greeter/greeterworkek.cpp" line="297"/>
         <source>The domain account or password is not correct. Please enter again.</source>
-        <translation>حساب دامنه یا رمز عبور صحیح نیست. لطفا دوباره وارد کنید</translation>
+        <translation>حساب دامنه یا رمزعبور صحیح نیست. لطفا دوباره وارد کنید</translation>
     </message>
 </context>
 <context>
@@ -125,32 +133,32 @@
 <context>
     <name>LockContent</name>
     <message>
-        <location filename="../src/session-widgets/lockcontent.cpp" line="313"/>
+        <location filename="../src/session-widgets/lockcontent.cpp" line="318"/>
         <source>Failed to lock screen</source>
-        <translation type="unfinished"/>
+        <translation>قفل صفحه انجام نشد</translation>
     </message>
 </context>
 <context>
     <name>LockWorker</name>
     <message>
-        <location filename="../src/dde-lock/lockworker.cpp" line="104"/>
+        <location filename="../src/dde-lock/lockworker.cpp" line="99"/>
         <source>Domain account</source>
         <translation>حساب دامنه</translation>
     </message>
     <message>
-        <location filename="../src/dde-lock/lockworker.cpp" line="223"/>
+        <location filename="../src/dde-lock/lockworker.cpp" line="221"/>
         <source>Fingerprint verification timed out, please enter your password manually</source>
-        <translation>تایید اثر انگشت منقضی شد , لطفا ً گذرواژه خود را دستی وارد کنید</translation>
+        <translation>تایید اثر انگشت منقضی شد , لطفا ً رمزعبور خود را دستی وارد کنید</translation>
     </message>
     <message>
-        <location filename="../src/dde-lock/lockworker.cpp" line="241"/>
+        <location filename="../src/dde-lock/lockworker.cpp" line="239"/>
         <source>Failed to match fingerprint</source>
         <translation>تطابق اثر انگشت ناموفق بود.</translation>
     </message>
     <message>
-        <location filename="../src/dde-lock/lockworker.cpp" line="276"/>
+        <location filename="../src/dde-lock/lockworker.cpp" line="274"/>
         <source>Wrong Password</source>
-        <translation>پسوورد اشتباه</translation>
+        <translation>رمزعبور اشتباه است</translation>
     </message>
 </context>
 <context>
@@ -210,17 +218,17 @@
     <message>
         <location filename="../src/session-widgets/userloginwidget.cpp" line="194"/>
         <source>Enter your password to reboot</source>
-        <translation>پسورد خود را برای راه اندازی مجدد وارد کنید</translation>
+        <translation>رمزعبور خود را برای راه اندازی مجدد وارد کنید</translation>
     </message>
     <message>
         <location filename="../src/session-widgets/userloginwidget.cpp" line="197"/>
         <source>Enter your password to shut down</source>
-        <translation>پسورد خود را برای خاموش کردن  وارد کنید</translation>
+        <translation>رمزعبور خود را برای خاموش کردن  وارد کنید</translation>
     </message>
     <message numerus="yes">
         <location filename="../src/session-widgets/userloginwidget.cpp" line="263"/>
         <source>Please try again %n minute(s) later</source>
-        <translation><numerusform>لطفاً٪ n دقیقه بعد دوباره امتحان کنید</numerusform><numerusform>لطفاً٪ n دقیقه بعد دوباره امتحان کنید</numerusform></translation>
+        <translation><numerusform>لطفاً٪ n دقیقه بعد دوباره امتحان کنید</numerusform><numerusform>لطفاً ٪n دقیقه بعد دوباره امتحان کنید</numerusform></translation>
     </message>
 </context>
 </TS>
