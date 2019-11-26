@@ -38,6 +38,20 @@ GreeterWorkek::GreeterWorkek(SessionBaseModel *const model, QObject *parent)
     , m_authenticating(false)
     , m_password(QString())
 {
+    m_authFramework = new DeepinAuthFramework(this, this);
+
+    QObject::connect(model, &SessionBaseModel::onStatusChanged, this, [ = ](SessionBaseModel::ModeStatus state) {
+        std::shared_ptr<User> user = m_model->currentUser();
+        m_authFramework->SetUser(user);
+        if (SessionBaseModel::ModeStatus::PasswordMode == state) {
+            //active fprinter auth
+            m_authFramework->setAuthType(DeepinAuthFramework::AuthType::ALL);
+        } else {
+            //close fprinter auth
+            m_authFramework->setAuthType(DeepinAuthFramework::AuthType::KEYBOARD);
+        }
+    });
+
     if (!m_login1ManagerInterface->isValid()) {
         qWarning() << "m_login1ManagerInterface:"
                    << m_login1ManagerInterface->lastError().type();
@@ -49,8 +63,7 @@ GreeterWorkek::GreeterWorkek(SessionBaseModel *const model, QObject *parent)
 
     connect(m_greeter, &QLightDM::Greeter::showPrompt, this, &GreeterWorkek::prompt);
     connect(m_greeter, &QLightDM::Greeter::showMessage, this, &GreeterWorkek::message);
-    connect(m_greeter, &QLightDM::Greeter::authenticationComplete, this,
-            &GreeterWorkek::authenticationComplete);
+    connect(m_greeter, &QLightDM::Greeter::authenticationComplete, this, &GreeterWorkek::authenticationComplete);
 
     connect(model, &SessionBaseModel::onPowerActionChanged, this, [=] (SessionBaseModel::PowerAction poweraction) {
         switch (poweraction) {
@@ -135,18 +148,29 @@ void GreeterWorkek::authUser(const QString &password)
 
     qDebug() << "start authentication of user: " << user->name();
 
-    if (m_greeter->authenticationUser() != user->name()) {
-        m_greeter->cancelAuthentication();
-        QTimer::singleShot(100, this, [=] { m_greeter->authenticate(user->name()); });
+    if (isDeepin() && !user->isNoPasswdGrp()) {
+        m_authFramework->Clear();
+        m_authFramework->SetUser(user);
+        m_authFramework->setPassword(password);
+        m_authFramework->Authenticate();
+        return;
     }
-    else {
-        if (m_greeter->inAuthentication()) {
-            m_greeter->respond(password);
-        }
-        else {
-            m_greeter->authenticate(user->name());
-        }
-    }
+
+    greeterAuthUser(password);
+}
+
+void GreeterWorkek::greeterAuthUser(const QString &password)
+{
+   std::shared_ptr<User> user = m_model->currentUser();
+   m_password = password;
+
+   if (m_greeter->authenticationUser() != user->name()) {
+       m_greeter->cancelAuthentication();
+       QTimer::singleShot(100, this, [=] { m_greeter->authenticate(user->name()); });
+   }
+   else {
+       m_greeter->authenticate(user->name());
+   }
 }
 
 void GreeterWorkek::onUserAdded(const QString &user)
@@ -356,4 +380,29 @@ void GreeterWorkek::recoveryUserKBState(std::shared_ptr<User> user)
     KeyboardMonitor::instance()->setNumlockStatus(cur_numlock);
 
     KeyboardMonitor::instance()->setNumlockStatus(enabled);
+}
+
+void GreeterWorkek::onDisplayErrorMsg(const QString &msg)
+{
+    Q_UNUSED(msg);
+    //V20版本新需求，在指纹解锁失败和超时情况下，不提示任何信息
+    emit m_model->authFaildMessage(msg);
+}
+
+void GreeterWorkek::onDisplayTextInfo(const QString &msg)
+{
+    emit m_model->authFaildMessage(msg);
+}
+
+void GreeterWorkek::onPasswordResult(const QString &msg)
+{
+    m_password = msg;
+    qDebug() << Q_FUNC_INFO << msg;
+
+    if (msg.isEmpty()) {
+        qDebug() << "Authorization failed!";
+        emit m_model->authFaildTipsMessage(tr("Wrong Password"));
+    } else {
+        greeterAuthUser(m_password);
+    }
 }

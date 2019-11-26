@@ -46,7 +46,6 @@ private:
     void lockServiceEvent(quint32 eventType, quint32 pid, const QString &username, const QString &message);
     void onUnlockFinished(bool unlocked);
 
-    Q_DECL_DEPRECATED bool isDeepin();
     void userAuthForLock(std::shared_ptr<User> user);
 private:
     bool m_authenticating;

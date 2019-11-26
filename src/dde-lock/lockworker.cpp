@@ -291,16 +291,6 @@ void LockWorker::onUnlockFinished(bool unlocked)
     }
 }
 
-bool LockWorker::isDeepin()
-{
-    // 这是临时的选项，只在Deepin下启用同步认证功能，其他发行版下禁用。
-//#ifdef QT_DEBUG
-//    return true;
-//#else
-    return valueByQSettings<bool>("OS", "isDeepin", false);
-//#endif
-}
-
 void LockWorker::userAuthForLock(std::shared_ptr<User> user)
 {
     if (user->isNoPasswdGrp()) return;

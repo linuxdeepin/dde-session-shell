@@ -209,9 +209,15 @@ set(LOCK_SRCS
 )
 
 set(GREETER_SRCS
+    ${authority_DBUS_SCRS}
+    ${transaction_DBUS_SCRS}
+    ${agent_adapter_DBUS_SRCS}
     ${GLOBAL_UTILS_SRCS}
     ${WIDGETS_SRCS}
     ${SESSION_WIDGETS_SRCS}
+    ./src/libdde-auth/deepinauthframework.cpp
+    ./src/libdde-auth/authagent.cpp
+    ./src/libdde-auth/authdbusadapter.cpp
     ./src/widgets/sessionwidget.h
     ./src/widgets/sessionwidget.cpp
     ./src/lightdm-deepin-greeter/loginwindow.h

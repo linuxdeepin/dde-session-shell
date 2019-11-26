@@ -216,6 +216,16 @@ bool AuthInterface::isLogined(uint uid)
     return isLogind != m_loginUserList.end();
 }
 
+bool AuthInterface::isDeepin()
+{
+    // 这是临时的选项，只在Deepin下启用同步认证功能，其他发行版下禁用。
+//#ifdef QT_DEBUG
+    return true;
+//#else
+//    return valueByQSettings<bool>("OS", "isDeepin", false);
+//#endif
+}
+
 void AuthInterface::checkPowerInfo()
 {
     m_model->setCanSleep(valueByQSettings<bool>("Power", "sleep", true));
