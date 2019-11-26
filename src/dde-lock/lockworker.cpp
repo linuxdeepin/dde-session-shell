@@ -116,6 +116,8 @@ void LockWorker::switchToUser(std::shared_ptr<User> user)
     m_lockInter->SwitchToUser(QString(QJsonDocument(json).toJson(QJsonDocument::Compact))).waitForFinished();
     if (isDeepin()) {
         m_authFramework->Clear();
+        m_authFramework->SetUser(user);
+        m_authFramework->Authenticate();
     }
 
     if (user->isLogin()) {
