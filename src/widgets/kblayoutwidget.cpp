@@ -208,6 +208,11 @@ void KbLayoutWidget::updateButtonList(const QStringList &buttons)
 
     m_kbdParseList = xkbParse->lookUpKeyboardList(m_buttons);
 
+    if (m_kbdParseList.isEmpty()) {
+        qWarning() << Q_FUNC_INFO << "lookUpKeyboardList failed!";
+        m_kbdParseList = buttons;
+    }
+
     for (int i = 0; i < m_kbdParseList.length(); i++) {
         addButton(m_kbdParseList[i]);
     }
