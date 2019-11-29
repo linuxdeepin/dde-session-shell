@@ -376,11 +376,12 @@ void GreeterWorkek::recoveryUserKBState(std::shared_ptr<User> user)
     KeyboardMonitor::instance()->setNumlockStatus(enabled);
 }
 
-void GreeterWorkek::onDisplayErrorMsg(const QString &msg)
+void GreeterWorkek::onDisplayErrorMsg(const QString &type, const QString &msg)
 {
-    Q_UNUSED(msg);
-    //V20版本新需求，在指纹解锁失败和超时情况下，不提示任何信息
-    emit m_model->authFaildMessage(msg);
+    if (type != "verify-timed-out")
+        emit m_model->authFaildMessage(msg);
+    else
+        emit m_model->authFaildMessage("");
 }
 
 void GreeterWorkek::onDisplayTextInfo(const QString &msg)

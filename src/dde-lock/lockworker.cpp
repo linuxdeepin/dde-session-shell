@@ -157,12 +157,12 @@ void LockWorker::enableZoneDetected(bool disable)
     m_hotZoneInter->EnableZoneDetected(disable);
 }
 
-void LockWorker::onDisplayErrorMsg(const QString &msg)
+void LockWorker::onDisplayErrorMsg(const QString &type, const QString &msg)
 {
-    Q_UNUSED(msg);
-    //V20版本新需求，在指纹解锁失败和超时情况下，不提示任何信息
-    emit m_model->authFaildMessage("");
-//    emit m_model->authFaildTipsMessage(msg);
+    if (type != "verify-timed-out")
+        emit m_model->authFaildMessage(msg);
+    else
+        emit m_model->authFaildMessage("");
 }
 
 void LockWorker::onDisplayTextInfo(const QString &msg)

@@ -16,12 +16,12 @@ public:
 public Q_SLOTS:
     const QString RequestEchoOff(const QString &msg);
     const QString RequestEchoOn(const QString &msg);
-    void DisplayErrorMsg(const QString &msg);
+    void DisplayErrorMsg(const QString &errtype, const QString &msg);
     void DisplayTextInfo(const QString &msg);
     void RespondResult(const QString &msg);
 
 private:
-    AuthAgent *parent() { return qobject_cast<AuthAgent*>(QObject::parent()); }
+    AuthAgent *parent() { return qobject_cast<AuthAgent *>(QObject::parent()); }
 };
 
 #endif // AUTHDBUSADAPTER_H

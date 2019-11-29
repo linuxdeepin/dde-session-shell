@@ -21,7 +21,7 @@ public:
     void authUser(const QString &password) override;
     void onUserAdded(const QString &user) override;
 
-    void onDisplayErrorMsg(const QString &msg) override;
+    void onDisplayErrorMsg(const QString &type, const QString &msg) override;
     void onDisplayTextInfo(const QString &msg) override;
     void onPasswordResult(const QString &msg) override;
 

@@ -11,9 +11,9 @@ const QString AuthDBusAdaptor::RequestEchoOn(const QString &msg)
     return parent()->RequestEchoOn(msg);
 }
 
-void AuthDBusAdaptor::DisplayErrorMsg(const QString &msg)
+void AuthDBusAdaptor::DisplayErrorMsg(const QString &errtype, const QString &msg)
 {
-    parent()->DisplayErrorMsg(msg);
+    parent()->DisplayErrorMsg(errtype, msg);
 }
 
 void AuthDBusAdaptor::DisplayTextInfo(const QString &msg)
