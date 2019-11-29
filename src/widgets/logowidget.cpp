@@ -39,7 +39,7 @@ DCORE_USE_NAMESPACE
 
 const QPixmap systemLogo()
 {
-    return loadPixmap(DSysInfo::deepinDistributorLogo(DSysInfo::Transparent, ":img/logo.svg"));
+    return loadPixmap(DSysInfo::distributionOrgLogo(DSysInfo::Distribution, DSysInfo::Transparent, ":img/logo.svg"));
 }
 
 LogoWidget::LogoWidget(QWidget* parent)
