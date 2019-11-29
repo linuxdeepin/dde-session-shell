@@ -60,10 +60,14 @@ void UserLoginInfo::setUser(std::shared_ptr<User> user)
     m_userLoginWidget->setKBLayoutList(user->kbLayoutList());
     m_userLoginWidget->setDefaultKBLayout(user->currentKBLayout());
 
-    if (m_user->isNoPasswdGrp()) {
-        m_userLoginWidget->setWidgetShowType(UserLoginWidget::NoPasswordType);
+    if(m_model->isServiceAccountLogin()) {
+        m_userLoginWidget->setWidgetShowType(UserLoginWidget::IDAndPasswordType);
     } else {
-        m_userLoginWidget->setWidgetShowType(UserLoginWidget::NormalType);
+        if (m_user->isNoPasswdGrp()) {
+            m_userLoginWidget->setWidgetShowType(UserLoginWidget::NoPasswordType);
+        } else {
+            m_userLoginWidget->setWidgetShowType(UserLoginWidget::NormalType);
+        }
     }
 }
 
@@ -71,9 +75,8 @@ void UserLoginInfo::initConnect()
 {
     //UserLoginWidget
     connect(m_userLoginWidget, &UserLoginWidget::requestAuthUser, this, [ = ](const QString & account, const QString & password) {
-        if (!account.isEmpty()) {
-            auto user = m_model->findUserByName(account);
-            if (user != nullptr) m_model->setCurrentUser(user);
+        if(m_model->isServiceAccountLogin()) {
+             static_cast<ADDomainUser*>(m_model->currentUser().get())->setUserName(account);
         }
         emit requestAuthUser(password);
     });

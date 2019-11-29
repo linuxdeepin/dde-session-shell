@@ -106,11 +106,13 @@ GreeterWorkek::GreeterWorkek(SessionBaseModel *const model, QObject *parent)
         onCurrentUserChanged(m_lockInter->CurrentUser());
     }
 
-    if (valueByQSettings<bool>("", "loginPromptInput", false)) {
+    bool loginPromptInputValue { valueByQSettings<bool>("", "loginPromptInput", false) };
+    if (loginPromptInputValue) {
         std::shared_ptr<User> user = std::make_shared<ADDomainUser>(0);
         static_cast<ADDomainUser*>(user.get())->setUserDisplayName(tr("Domain account"));
         m_model->userAdd(user);
         m_model->setCurrentUser(user);
+        m_model->setIsServiceAccountLogin(loginPromptInputValue);
     }
 }
 

@@ -208,6 +208,11 @@ void SessionBaseModel::setAlwaysShowUserSwitchButton(bool alwaysShowUserSwitchBu
     m_alwaysShowUserSwitchButton = alwaysShowUserSwitchButton;
 }
 
+void SessionBaseModel::setIsServiceAccountLogin(bool isServiceAccountLogin)
+{
+    m_isServiceAccountLogin = isServiceAccountLogin;
+}
+
 void SessionBaseModel::setAbortConfirm(bool abortConfirm)
 {
     m_abortConfirm = abortConfirm;

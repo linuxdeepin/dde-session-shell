@@ -77,6 +77,9 @@ public:
     inline bool alwaysShowUserSwitchButton() const { return m_alwaysShowUserSwitchButton; }
     void setAlwaysShowUserSwitchButton(bool alwaysShowUserSwitchButton);
 
+    inline bool isServiceAccountLogin() const { return m_isServiceAccountLogin; }
+    void setIsServiceAccountLogin(bool isServiceAccountLogin);
+
     void setAbortConfirm(bool abortConfirm);
 
 signals:
@@ -109,6 +112,7 @@ private:
     bool m_allowShowUserSwitchButton;
     bool m_alwaysShowUserSwitchButton;
     bool m_abortConfirm;
+    bool m_isServiceAccountLogin;
     AuthType m_currentType;
     QList<std::shared_ptr<User>> m_userList;
     std::shared_ptr<User> m_currentUser;
