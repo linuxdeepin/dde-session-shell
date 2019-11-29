@@ -148,29 +148,23 @@ void GreeterWorkek::authUser(const QString &password)
 
     qDebug() << "start authentication of user: " << user->name();
 
-    if (isDeepin() && !user->isNoPasswdGrp()) {
-        m_authFramework->Clear();
-        m_authFramework->SetUser(user);
-        m_authFramework->setPassword(password);
-        m_authFramework->Authenticate();
-        return;
-    }
-
-    greeterAuthUser(password);
+    userAuthForLightdm(user);
 }
 
 void GreeterWorkek::greeterAuthUser(const QString &password)
 {
-   std::shared_ptr<User> user = m_model->currentUser();
-   m_password = password;
+    std::shared_ptr<User> user = m_model->currentUser();
+    m_password = password;
 
-   if (m_greeter->authenticationUser() != user->name()) {
-       m_greeter->cancelAuthentication();
-       QTimer::singleShot(100, this, [=] { m_greeter->authenticate(user->name()); });
-   }
-   else {
-       m_greeter->authenticate(user->name());
-   }
+    if (m_greeter->authenticationUser() != user->name()) {
+        m_greeter->cancelAuthentication();
+        QTimer::singleShot(100, this, [ = ] { m_greeter->authenticate(user->name()); });
+    } else {
+        if (m_greeter->inAuthentication()) {
+            m_greeter->cancelAuthentication();
+        }
+        m_greeter->authenticate(user->name());
+    }
 }
 
 void GreeterWorkek::onUserAdded(const QString &user)
@@ -227,15 +221,15 @@ void GreeterWorkek::onCurrentUserChanged(const QString &user)
 
 void GreeterWorkek::userAuthForLightdm(std::shared_ptr<User> user)
 {
-    if (!user->isNoPasswdGrp()) {
-        if (m_greeter->inAuthentication()) {
-            m_greeter->cancelAuthentication();
-        }
-        QTimer::singleShot(100, this, [=] {
-            m_greeter->authenticate(user->name());
-            m_greeter->respond(m_password);
-        });
+    if (isDeepin() && !user->isNoPasswdGrp()) {
+        m_authFramework->Clear();
+        m_authFramework->SetUser(user);
+        m_authFramework->setPassword(m_password);
+        m_authFramework->Authenticate();
+        return;
     }
+
+    greeterAuthUser(m_password);
 }
 
 void GreeterWorkek::prompt(QString text, QLightDM::Greeter::PromptType type)
@@ -401,6 +395,7 @@ void GreeterWorkek::onPasswordResult(const QString &msg)
 
     if (msg.isEmpty()) {
         qDebug() << "Authorization failed!";
+        m_authenticating = false;
         emit m_model->authFaildTipsMessage(tr("Wrong Password"));
     } else {
         greeterAuthUser(m_password);
