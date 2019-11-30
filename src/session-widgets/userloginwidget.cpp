@@ -372,6 +372,7 @@ void UserLoginWidget::initUI()
     m_passwordEdit->setSizePolicy(QSizePolicy::Expanding, QSizePolicy::Fixed);
     m_passwordEdit->lineEdit()->setAlignment(Qt::AlignCenter);
     m_passwordEdit->capslockStatusChanged(m_capslockMonitor->isCapslockOn());
+    m_passwordEdit->setFocusPolicy(Qt::StrongFocus);
 
     m_kbLayoutBorder->hide();
     m_kbLayoutBorder->setBackgroundColor(QColor(102, 102, 102));    //255*0.2
@@ -439,6 +440,9 @@ void UserLoginWidget::initUI()
     mainLayout->addStretch();
 
     setLayout(mainLayout);
+
+    setTabOrder(m_accountEdit, m_passwordEdit->lineEdit());
+    setTabOrder(m_passwordEdit->lineEdit(), m_lockButton);
 }
 
 //初始化槽函数连接
