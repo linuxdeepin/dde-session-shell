@@ -198,7 +198,7 @@ int main(int argc, char* argv[])
     qApp->setApplicationVersion("2015.1.0");
     qApp->setAttribute(Qt::AA_ForceRasterWidgets);
 
-    DGuiApplicationHelper::instance()->setPaletteType(DGuiApplicationHelper::DarkType);
+    DGuiApplicationHelper::instance()->setPaletteType(DGuiApplicationHelper::LightType);
     DPalette pa = DGuiApplicationHelper::instance()->applicationPalette();
     pa.setColor(QPalette::Normal, DPalette::WindowText, QColor("#FFFFFF"));
     pa.setColor(QPalette::Normal, DPalette::Text, QColor("#FFFFFF"));
@@ -207,14 +207,13 @@ int main(int argc, char* argv[])
     pa.setColor(QPalette::Normal, DPalette::Light, QColor(255, 255, 255, 76));
     pa.setColor(QPalette::Normal, DPalette::Dark, QColor(255, 255, 255, 76));
     pa.setColor(QPalette::Normal, DPalette::ButtonText, QColor("#FFFFFF"));
-    pa.setColor(QPalette::Normal, QPalette::Base, Qt::white);
-    DGuiApplicationHelper::generatePaletteColor(pa, DPalette::WindowText, DGuiApplicationHelper::DarkType);
-    DGuiApplicationHelper::generatePaletteColor(pa, DPalette::Text, DGuiApplicationHelper::DarkType);
-    DGuiApplicationHelper::generatePaletteColor(pa, DPalette::AlternateBase, DGuiApplicationHelper::DarkType);
-    DGuiApplicationHelper::generatePaletteColor(pa, DPalette::Button, DGuiApplicationHelper::DarkType);
-    DGuiApplicationHelper::generatePaletteColor(pa, DPalette::Light, DGuiApplicationHelper::DarkType);
-    DGuiApplicationHelper::generatePaletteColor(pa, DPalette::Dark, DGuiApplicationHelper::DarkType);
-    DGuiApplicationHelper::generatePaletteColor(pa, DPalette::ButtonText, DGuiApplicationHelper::DarkType);
+    DGuiApplicationHelper::generatePaletteColor(pa, DPalette::WindowText, DGuiApplicationHelper::LightType);
+    DGuiApplicationHelper::generatePaletteColor(pa, DPalette::Text, DGuiApplicationHelper::LightType);
+    DGuiApplicationHelper::generatePaletteColor(pa, DPalette::AlternateBase, DGuiApplicationHelper::LightType);
+    DGuiApplicationHelper::generatePaletteColor(pa, DPalette::Button, DGuiApplicationHelper::LightType);
+    DGuiApplicationHelper::generatePaletteColor(pa, DPalette::Light, DGuiApplicationHelper::LightType);
+    DGuiApplicationHelper::generatePaletteColor(pa, DPalette::Dark, DGuiApplicationHelper::LightType);
+    DGuiApplicationHelper::generatePaletteColor(pa, DPalette::ButtonText, DGuiApplicationHelper::LightType);
     DGuiApplicationHelper::instance()->setApplicationPalette(pa);
 
     DLogManager::registerConsoleAppender();
