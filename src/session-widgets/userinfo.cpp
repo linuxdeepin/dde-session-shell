@@ -17,16 +17,19 @@ static bool checkUserIsNoPWGrp(User const *user)
 
     int ngroups = 32;
     gid_t groups[32];
-    struct passwd pw;
-    struct group gr;
+    struct passwd *pw = nullptr;
+    struct group *gr = nullptr;
 
     /* Fetch passwd structure (contains first group ID for user) */
-
-    pw = *getpwnam(user->name().toUtf8().data());
+    pw = getpwnam(user->name().toUtf8().data());
+    if (pw == nullptr) {
+        qDebug() << "fetch passwd structure failed, username: " << user->name();
+        return false;
+    }
 
     /* Retrieve group list */
 
-    if (getgrouplist(user->name().toUtf8().data(), pw.pw_gid, groups, &ngroups) == -1) {
+    if (getgrouplist(user->name().toUtf8().data(), pw->pw_gid, groups, &ngroups) == -1) {
         fprintf(stderr, "getgrouplist() returned -1; ngroups = %d\n",
                 ngroups);
         return false;
@@ -35,8 +38,8 @@ static bool checkUserIsNoPWGrp(User const *user)
     /* Display list of retrieved groups, along with group names */
 
     for (int i = 0; i < ngroups; i++) {
-        gr = *getgrgid(groups[i]);
-        if (QString(gr.gr_name) == QString("nopasswdlogin")) {
+        gr = getgrgid(groups[i]);
+        if (gr != nullptr && QString(gr->gr_name) == QString("nopasswdlogin")) {
             return true;
         }
     }
