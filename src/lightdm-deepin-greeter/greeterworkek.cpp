@@ -150,7 +150,15 @@ void GreeterWorkek::authUser(const QString &password)
 
     qDebug() << "start authentication of user: " << user->name();
 
-    userAuthForLightdm(user);
+    if (isDeepin() && !user->isNoPasswdGrp()) {
+        m_authFramework->Clear();
+        m_authFramework->SetUser(user);
+        m_authFramework->setPassword(m_password);
+        m_authFramework->Authenticate();
+        return;
+    }
+
+    greeterAuthUser(password);
 }
 
 void GreeterWorkek::greeterAuthUser(const QString &password)
@@ -231,7 +239,15 @@ void GreeterWorkek::userAuthForLightdm(std::shared_ptr<User> user)
         return;
     }
 
-    greeterAuthUser(m_password);
+    if (!user->isNoPasswdGrp()) {
+        if (m_greeter->inAuthentication()) {
+            m_greeter->cancelAuthentication();
+        }
+        QTimer::singleShot(100, this, [ = ] {
+            m_greeter->authenticate(user->name());
+            m_greeter->respond(m_password);
+        });
+    }
 }
 
 void GreeterWorkek::prompt(QString text, QLightDM::Greeter::PromptType type)
