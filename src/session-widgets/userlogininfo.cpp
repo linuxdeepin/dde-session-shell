@@ -75,8 +75,8 @@ void UserLoginInfo::initConnect()
 {
     //UserLoginWidget
     connect(m_userLoginWidget, &UserLoginWidget::requestAuthUser, this, [ = ](const QString & account, const QString & password) {
-        if(m_model->isServiceAccountLogin()) {
-             static_cast<ADDomainUser*>(m_model->currentUser().get())->setUserName(account);
+        if (m_model->isServiceAccountLogin() && !account.isEmpty()) {
+            static_cast<ADDomainUser *>(m_model->currentUser().get())->setUserName(account);
         }
         emit requestAuthUser(password);
     });

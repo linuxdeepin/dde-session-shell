@@ -455,7 +455,7 @@ void UserLoginWidget::initConnect()
         const QString account = m_accountEdit->text();
         const QString passwd = m_passwordEdit->text();
 
-        if (passwd.isEmpty() || account.isEmpty()) return;
+        if (passwd.isEmpty()) return;
         m_accountEdit->setEnabled(false);
         emit requestAuthUser(account, passwd);
     });
@@ -464,11 +464,12 @@ void UserLoginWidget::initConnect()
         const QString account = m_accountEdit->text();
         const QString password = m_passwordEdit->text();
 
-        if (m_passwordEdit->isVisible()) {
+        if (m_passwordEdit->isVisible())
+        {
             m_passwordEdit->lineEdit()->setFocus();
         }
 
-        if ((password.isEmpty() || account.isEmpty()) && m_showType != NoPasswordType) return;
+        if (password.isEmpty() && m_showType != NoPasswordType) return;
         m_passwordEdit->showLoadSlider();
         m_accountEdit->setEnabled(false);
         emit requestAuthUser(m_accountEdit->text(), password);
