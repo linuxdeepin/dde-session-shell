@@ -78,6 +78,7 @@ protected:
     uint m_lockNum; // minute basis
     uint m_tryNum; // try number
     QString m_userName;
+    QString m_fullName;
     QString m_locale;
     QString m_path;
     std::shared_ptr<QTimer> m_lockTimer;
