@@ -258,38 +258,34 @@ void ContentWidget::enterKeyPushed()
 
 void ContentWidget::hideBtn(const QString &btnName)
 {
-    if (!btnName.compare("Shutdown", Qt::CaseInsensitive))
-        m_shutdownButton->hide();
-    else if (!btnName.compare("Restart", Qt::CaseInsensitive))
-        m_restartButton->hide();
-    else if (!btnName.compare("Suspend", Qt::CaseInsensitive))
-        m_suspendButton->hide();
-    else if (!btnName.compare("Lock", Qt::CaseInsensitive))
-        m_lockButton->hide();
-    else if (!btnName.compare("Logout", Qt::CaseInsensitive))
-        m_logoutButton->hide();
-    else if (!btnName.compare("SwitchUser", Qt::CaseInsensitive))
-        m_switchUserBtn->hide();
-    else
-        return;
+    std::map<RoundItemButton *, QString> map{
+        { m_shutdownButton, "Shutdown" },  { m_restartButton, "Restart" },
+        { m_suspendButton, "Suspend" },    { m_lockButton, "Lock" },
+        { m_logoutButton, "Logout" },      { m_switchUserBtn, "SwitchUser" },
+        { m_hibernateButton, "Hibernate" }
+    };
+
+    for (auto result : map) {
+        if (!btnName.compare(result.second, Qt::CaseInsensitive)) {
+            return result.first->hide();
+        }
+    }
 }
 
 void ContentWidget::disableBtn(const QString &btnName)
 {
-    if (!btnName.compare("Shutdown", Qt::CaseInsensitive))
-        m_shutdownButton->setDisabled(true);
-    else if (!btnName.compare("Restart", Qt::CaseInsensitive))
-        m_restartButton->setDisabled(true);
-    else if (!btnName.compare("Suspend", Qt::CaseInsensitive))
-        m_suspendButton->setDisabled(true);
-    else if (!btnName.compare("Lock", Qt::CaseInsensitive))
-        m_lockButton->setDisabled(true);
-    else if (!btnName.compare("Logout", Qt::CaseInsensitive))
-        m_logoutButton->setDisabled(true);
-    else if (!btnName.compare("SwitchUser", Qt::CaseInsensitive))
-        m_switchUserBtn->setDisabled(true);
-    else
-        return;
+    std::map<RoundItemButton *, QString> map{
+        { m_shutdownButton, "Shutdown" },  { m_restartButton, "Restart" },
+        { m_suspendButton, "Suspend" },    { m_lockButton, "Lock" },
+        { m_logoutButton, "Logout" },      { m_switchUserBtn, "SwitchUser" },
+        { m_hibernateButton, "Hibernate" }
+    };
+
+    for (auto result : map) {
+        if (!btnName.compare(result.second, Qt::CaseInsensitive)) {
+            return result.first->setDisabled(true);
+        }
+    }
 }
 
 bool ContentWidget::beforeInvokeAction(const Actions action)
@@ -531,12 +527,13 @@ void ContentWidget::enableHibernateBtn(bool enable)
 {
     m_hibernateButton->setVisible(enable);
     if (!enable) {
-        m_btnsList->removeOne(m_hibernateButton);
+        hideBtn("Hibernate");
     }
 }
 
 void ContentWidget::enableSleepBtn(bool enable)
 {
+    m_suspendButton->setVisible(enable);
     if (!enable) {
         hideBtn("Suspend");
     }
@@ -755,12 +752,16 @@ void ContentWidget::recoveryLayout()
 {
     for (RoundItemButton *btn : *m_btnsList) {
         btn->show();
-
-        // check user switch button
-        onUserListChanged(m_model->userList());
     }
 
+    // check hibernate
+    enableHibernateBtn(m_model->hasSwap());
 
+    // check sleep
+    enableSleepBtn(m_model->canSleep());
+
+    // check user switch button
+    onUserListChanged(m_model->userList());
 
     if (m_warningView != nullptr) {
         m_mainLayout->removeWidget(m_warningView);
