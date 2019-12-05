@@ -22,6 +22,7 @@
 #include "userlogininfo.h"
 #include "userinfo.h"
 #include "userloginwidget.h"
+#include "userexpiredwidget.h"
 #include "sessionbasemodel.h"
 #include "userframelist.h"
 #include "src/global_util/constants.h"
@@ -30,9 +31,11 @@ UserLoginInfo::UserLoginInfo(SessionBaseModel *model, QObject *parent)
     : QObject(parent)
     , m_model(model)
     , m_userLoginWidget(new UserLoginWidget)
+    , m_userExpiredWidget(new UserExpiredWidget)
     , m_userFrameList(new UserFrameList)
 {
     m_userLoginWidget->setWidgetWidth(DDESESSIONCC::PASSWDLINEEIDT_WIDTH);
+    m_userExpiredWidget->setFixedWidth(DDESESSIONCC::PASSWDLINEEIDT_WIDTH);
     m_userFrameList->setModel(model);
     initConnect();
 }
@@ -60,7 +63,11 @@ void UserLoginInfo::setUser(std::shared_ptr<User> user)
     m_userLoginWidget->setKBLayoutList(user->kbLayoutList());
     m_userLoginWidget->setDefaultKBLayout(user->currentKBLayout());
 
-    if(m_model->isServiceAccountLogin()) {
+    m_userExpiredWidget->setName(user->displayName());
+    m_userExpiredWidget->setAvatar(user->avatarPath());
+    m_userExpiredWidget->setUserAvatarSize(UserExpiredWidget::AvatarLargeSize);
+
+    if (m_model->isServiceAccountLogin()) {
         m_userLoginWidget->setWidgetShowType(UserLoginWidget::IDAndPasswordType);
     } else {
         if (m_user->isNoPasswdGrp()) {
@@ -90,6 +97,7 @@ void UserLoginInfo::initConnect()
     connect(m_userLoginWidget, &UserLoginWidget::requestUserKBLayoutChanged, this, [ = ](const QString & value) {
         emit requestSetLayout(m_user, value);
     });
+    connect(m_userExpiredWidget, &UserExpiredWidget::requestChangePassword, this, &UserLoginInfo::requestChangePassword);
 
     //UserFrameList
     connect(m_userFrameList, &UserFrameList::clicked, this, &UserLoginInfo::hideUserFrameList);
@@ -116,6 +124,11 @@ UserLoginWidget *UserLoginInfo::getUserLoginWidget()
 UserFrameList *UserLoginInfo::getUserFrameList()
 {
     return m_userFrameList;
+}
+
+UserExpiredWidget *UserLoginInfo::getUserExpiredWidget()
+{
+    return m_userExpiredWidget;
 }
 
 void UserLoginInfo::hideKBLayout()

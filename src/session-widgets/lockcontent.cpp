@@ -9,6 +9,7 @@
 #include "src/widgets/timewidget.h"
 #include "userlogininfo.h"
 #include "userloginwidget.h"
+#include "userexpiredwidget.h"
 #include "userframelist.h"
 
 #include <QMouseEvent>
@@ -67,6 +68,7 @@ LockContent::LockContent(SessionBaseModel *const model, QWidget *parent, bool is
 
     //lixin
     connect(m_userLoginInfo, &UserLoginInfo::requestAuthUser, this, &LockContent::requestAuthUser);
+    connect(m_userLoginInfo, &UserLoginInfo::requestChangePassword, this, &LockContent::requestChangePassword);
     connect(m_userLoginInfo, &UserLoginInfo::hideUserFrameList, this, &LockContent::restoreMode);
     connect(m_userLoginInfo, &UserLoginInfo::requestSwitchUser, this, &LockContent::requestSwitchToUser);
     connect(m_userLoginInfo, &UserLoginInfo::requestSwitchUser, this, &LockContent::restoreMode);
@@ -97,6 +99,10 @@ LockContent::LockContent(SessionBaseModel *const model, QWidget *parent, bool is
 
     connect(model, &SessionBaseModel::hasVirtualKBChanged, this, initVirtualKB);
     connect(model, &SessionBaseModel::onUserListChanged, this, &LockContent::onUserListChanged);
+    connect(model, &SessionBaseModel::passwordExpired, this, [ = ] {
+        if (m_model->currentModeState() == SessionBaseModel::ModeStatus::PasswordExpiredMode) return;
+        m_model->setCurrentModeState(SessionBaseModel::ModeStatus::PasswordExpiredMode);
+    });
     connect(m_imageBlurInter, &ImageBlur::BlurDone, this, &LockContent::onBlurDone);
 
     QTimer::singleShot(0, this, [ = ] {
@@ -142,6 +148,11 @@ void LockContent::pushUserFrame()
     setCenterContent(m_userLoginInfo->getUserFrameList());
 }
 
+void LockContent::pushExpiredFrame()
+{
+    setCenterContent(m_userLoginInfo->getUserExpiredWidget());
+}
+
 void LockContent::pushConfirmFrame()
 {
     setCenterContent(m_userLoginInfo->getUserLoginWidget());
@@ -169,6 +180,9 @@ void LockContent::onStatusChanged(SessionBaseModel::ModeStatus status)
     switch (status) {
     case SessionBaseModel::ModeStatus::PasswordMode:
         restoreCenterContent();
+        break;
+    case SessionBaseModel::ModeStatus::PasswordExpiredMode:
+        pushExpiredFrame();
         break;
     case SessionBaseModel::ModeStatus::ConfirmPasswordMode:
         pushConfirmFrame();

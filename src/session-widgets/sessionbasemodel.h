@@ -5,7 +5,6 @@
 
 #include <QObject>
 #include <memory>
-
 #include <com_deepin_sessionmanager.h>
 
 class SessionBaseModel : public QObject
@@ -29,6 +28,7 @@ public:
     enum ModeStatus {
         PasswordMode,
         ConfirmPasswordMode,
+        PasswordExpiredMode,
         UserMode,
         SessionMode,
         PowerMode
@@ -101,6 +101,7 @@ signals:
     void canSleepChanged(bool canSleep);
     void allowShowUserSwitchButtonChanged(bool allowShowUserSwitchButton);
     void abortConfirmChanged(bool abortConfirm);
+    void passwordExpired();
 
 private:
     com::deepin::SessionManager *m_sessionManagerInter;

@@ -357,6 +357,7 @@ void UserLoginWidget::hideEvent(QHideEvent *event)
 void UserLoginWidget::initUI()
 {
     m_userAvatar->setAvatarSize(UserAvatar::AvatarLargeSize);
+    m_userAvatar->setFixedSize(100, 100);
     m_userAvatar->setFocusPolicy(Qt::NoFocus);
 
     m_capslockMonitor->start(QThread::LowestPriority);

@@ -396,8 +396,10 @@ void GreeterWorkek::recoveryUserKBState(std::shared_ptr<User> user)
 
 void GreeterWorkek::onDisplayErrorMsg(const QString &type, const QString &msg)
 {
-    if (type != "verify-timed-out")
+    if (type == "verify-not-match")
         emit m_model->authFaildMessage(msg);
+    else if (type == "password-expired")
+        emit m_model->passwordExpired();
     else
         emit m_model->authFaildMessage("");
 }

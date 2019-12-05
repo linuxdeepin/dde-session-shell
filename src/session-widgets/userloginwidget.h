@@ -121,7 +121,6 @@ private:
     QLabel *m_nameLbl;                             //用户名
     DPasswordEditEx *m_passwordEdit;               //密码输入框
     LockPasswordWidget *m_lockPasswordWidget;      //密码锁定后,错误信息提示框
-    QMap<uint, QString> m_passwords;
     SessionBaseModel::AuthType m_authType;         //认证类型
     QLineEdit *m_accountEdit;
     DFloatingButton *m_lockButton;                 //解锁按钮
