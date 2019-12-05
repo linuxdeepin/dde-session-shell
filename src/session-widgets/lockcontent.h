@@ -18,7 +18,6 @@ using ImageBlur = com::deepin::daemon::ImageBlur;
 class ControlWidget;
 class UserInputWidget;
 class User;
-class UserFrame;
 class ShutdownWidget;
 class LogoWidget;
 class TimeWidget;
@@ -65,7 +64,6 @@ protected:
 protected:
     SessionBaseModel *m_model;
     ControlWidget *m_controlWidget;
-    UserFrame *m_userFrame;
     ShutdownWidget *m_shutdownFrame;
     ImageBlur *m_imageBlurInter;
     QWidget *m_virtualKB;

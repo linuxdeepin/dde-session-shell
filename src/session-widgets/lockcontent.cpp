@@ -23,7 +23,6 @@ LockContent::LockContent(SessionBaseModel *const model, QWidget *parent, bool is
     , m_sessionManager(new SessionManager("com.deepin.SessionManager", "/com/deepin/SessionManager", QDBusConnection::sessionBus(), this))
 {
     m_controlWidget = new ControlWidget;
-    m_userFrame = new UserFrame;
     m_shutdownFrame = new ShutdownWidget;
     m_logoWidget = new LogoWidget;
 
@@ -36,8 +35,6 @@ LockContent::LockContent(SessionBaseModel *const model, QWidget *parent, bool is
     m_mediaWidget = nullptr;
 
     m_shutdownFrame->setModel(model);
-    m_userFrame->setModel(model);
-
     model->setCurrentModeState(SessionBaseModel::ModeStatus::PasswordMode);
 
     setCenterTopWidget(m_timeWidget);
@@ -59,8 +56,6 @@ LockContent::LockContent(SessionBaseModel *const model, QWidget *parent, bool is
 
     // init connect
     connect(model, &SessionBaseModel::currentUserChanged, this, &LockContent::onCurrentUserChanged);
-    connect(m_userFrame, &UserFrame::requestSwitchUser, this, &LockContent::requestSwitchToUser);
-    connect(m_userFrame, &UserFrame::requestSwitchUser, this, &LockContent::restoreMode);
     connect(m_controlWidget, &ControlWidget::requestSwitchUser, this, [ = ] {
         if (m_model->currentModeState() == SessionBaseModel::ModeStatus::UserMode) return;
         m_model->setCurrentModeState(SessionBaseModel::ModeStatus::UserMode);
@@ -69,7 +64,6 @@ LockContent::LockContent(SessionBaseModel *const model, QWidget *parent, bool is
         m_model->setCurrentModeState(SessionBaseModel::ModeStatus::PowerMode);
     });
     connect(m_controlWidget, &ControlWidget::requestSwitchVirtualKB, this, &LockContent::toggleVirtualKB);
-    connect(m_userFrame, &UserFrame::hideFrame, this, &LockContent::restoreMode);
 
     //lixin
     connect(m_userLoginInfo, &UserLoginInfo::requestAuthUser, this, &LockContent::requestAuthUser);
@@ -145,9 +139,6 @@ void LockContent::onCurrentUserChanged(std::shared_ptr<User> user)
 
 void LockContent::pushUserFrame()
 {
-//    setCenterContent(m_userFrame);
-//    m_userFrame->expansion(true);
-
     setCenterContent(m_userLoginInfo->getUserFrameList());
 }
 
