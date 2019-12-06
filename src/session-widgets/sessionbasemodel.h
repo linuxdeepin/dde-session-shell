@@ -27,11 +27,18 @@ public:
 
     enum ModeStatus {
         PasswordMode,
+        ChangePasswordMode,
         ConfirmPasswordMode,
-        PasswordExpiredMode,
         UserMode,
         SessionMode,
         PowerMode
+    };
+
+    enum ErrorType {
+        None,
+        FprintTimeout,
+        FprintNotMatch,
+        PasswordExpired
     };
 
     explicit SessionBaseModel(AuthType type, QObject *parent = nullptr);
@@ -82,6 +89,9 @@ public:
 
     void setAbortConfirm(bool abortConfirm);
 
+    inline ErrorType errorType() { return m_errorType; }
+    void setErrorType(ErrorType type);
+
 signals:
     void onUserAdded(std::shared_ptr<User> user);
     void onUserRemoved(const uint uid);
@@ -101,7 +111,7 @@ signals:
     void canSleepChanged(bool canSleep);
     void allowShowUserSwitchButtonChanged(bool allowShowUserSwitchButton);
     void abortConfirmChanged(bool abortConfirm);
-    void passwordExpired();
+    void errorTypeChanged(ErrorType type);
 
 private:
     com::deepin::SessionManager *m_sessionManagerInter;
@@ -121,6 +131,7 @@ private:
     QString m_sessionKey;
     PowerAction m_powerAction;
     ModeStatus m_currentModeState;
+    ErrorType m_errorType = ErrorType::None;
 };
 
 #endif // SESSIONBASEMODEL_H

@@ -32,11 +32,9 @@
 DWIDGET_USE_NAMESPACE
 
 class User;
-class UserAvatar;
 class LoginButton;
 class FrameDataBind;
 class QVBoxLayout;
-class KeyboardMonitor;
 
 class UserExpiredWidget : public QWidget
 {
@@ -53,13 +51,12 @@ public:
     void resetAllState();
     void setFaildTipMessage(const QString &message);
     void setName(const QString &name);
-    void setAvatar(const QString &avatar);
-    void setUserAvatarSize(const AvatarSize &avatarSize);
 
 signals:
     void requestChangePassword(const QString &password);
 
 public slots:
+    void updateAuthType(SessionBaseModel::AuthType type);
     void refreshBlurEffectPosition();
 
 protected:
@@ -72,21 +69,22 @@ private:
     void initConnect();
     void onOtherPageConfirmPasswordChanged(const QVariant &value);
     void onOtherPagePasswordChanged(const QVariant &value);
+    void onOtherPageOldPasswordChanged(const QVariant &value);
     void onChangePassword();
-    bool errorFilter(const QString &new_pass, const QString &confirm);
+    bool errorFilter(const QString &old_pass, const QString &new_pass, const QString &confirm);
     void updateNameLabel();
 
 private:
     DBlurEffectWidget *m_blurEffectWidget;         //阴影窗体
-    UserAvatar *m_userAvatar;                      //用户头像
     QLabel *m_nameLbl;                             //用户名
+    SessionBaseModel::AuthType m_authType;         //认证类型
+    DLineEdit *m_oldPasswordEdit;                  //旧密码
     DLineEdit *m_passwordEdit;                     //新密码输入框
     DLineEdit *m_confirmPasswordEdit;              //新密码确认
     DFloatingButton *m_lockButton;                 //解锁按钮
     QVBoxLayout *m_userLayout;                     //用户输入框布局
     QVBoxLayout *m_lockLayout;                     //解锁按钮布局
     QStringList m_KBLayoutList;
-    KeyboardMonitor *m_capslockMonitor;
     QHBoxLayout *m_nameLayout;
     QFrame *m_nameFrame;
     QString m_name;

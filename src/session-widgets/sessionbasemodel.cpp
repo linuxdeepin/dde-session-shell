@@ -218,3 +218,9 @@ void SessionBaseModel::setAbortConfirm(bool abortConfirm)
     m_abortConfirm = abortConfirm;
     emit abortConfirmChanged(abortConfirm);
 }
+
+void SessionBaseModel::setErrorType(SessionBaseModel::ErrorType type)
+{
+    m_errorType = type;
+    emit errorTypeChanged(type);
+}

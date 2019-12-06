@@ -52,6 +52,7 @@ signals:
     void requestSwitchUser(std::shared_ptr<User> user);
     void hideUserFrameList();
     void requestSetLayout(std::shared_ptr<User> user, const QString &value);
+    void passwordExpired();
 
 private:
     void userLockChanged(bool disable);

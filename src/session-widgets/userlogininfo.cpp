@@ -64,8 +64,8 @@ void UserLoginInfo::setUser(std::shared_ptr<User> user)
     m_userLoginWidget->setDefaultKBLayout(user->currentKBLayout());
 
     m_userExpiredWidget->setName(user->displayName());
-    m_userExpiredWidget->setAvatar(user->avatarPath());
-    m_userExpiredWidget->setUserAvatarSize(UserExpiredWidget::AvatarLargeSize);
+    m_userExpiredWidget->updateAuthType(m_model->currentType());
+
 
     if (m_model->isServiceAccountLogin()) {
         m_userLoginWidget->setWidgetShowType(UserLoginWidget::IDAndPasswordType);
@@ -85,7 +85,12 @@ void UserLoginInfo::initConnect()
         if (m_model->isServiceAccountLogin() && !account.isEmpty()) {
             static_cast<ADDomainUser *>(m_model->currentUser().get())->setUserName(account);
         }
-        emit requestAuthUser(password);
+
+        if (m_model->errorType() == SessionBaseModel::ErrorType::PasswordExpired) {
+            emit passwordExpired();
+        } else {
+            emit requestAuthUser(password);
+        }
     });
     connect(m_model, &SessionBaseModel::authFaildMessage, m_userLoginWidget, &UserLoginWidget::setFaildMessage);
     connect(m_model, &SessionBaseModel::authFaildTipsMessage, m_userLoginWidget, &UserLoginWidget::setFaildTipMessage);

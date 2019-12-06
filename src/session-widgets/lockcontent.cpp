@@ -67,6 +67,10 @@ LockContent::LockContent(SessionBaseModel *const model, QWidget *parent, bool is
     connect(m_controlWidget, &ControlWidget::requestSwitchVirtualKB, this, &LockContent::toggleVirtualKB);
 
     //lixin
+    connect(m_userLoginInfo, &UserLoginInfo::passwordExpired, this, [ = ] {
+        if (m_model->currentModeState() == SessionBaseModel::ModeStatus::ChangePasswordMode) return;
+        m_model->setCurrentModeState(SessionBaseModel::ModeStatus::ChangePasswordMode);
+    });
     connect(m_userLoginInfo, &UserLoginInfo::requestAuthUser, this, &LockContent::requestAuthUser);
     connect(m_userLoginInfo, &UserLoginInfo::requestChangePassword, this, &LockContent::requestChangePassword);
     connect(m_userLoginInfo, &UserLoginInfo::hideUserFrameList, this, &LockContent::restoreMode);
@@ -99,10 +103,6 @@ LockContent::LockContent(SessionBaseModel *const model, QWidget *parent, bool is
 
     connect(model, &SessionBaseModel::hasVirtualKBChanged, this, initVirtualKB);
     connect(model, &SessionBaseModel::onUserListChanged, this, &LockContent::onUserListChanged);
-    connect(model, &SessionBaseModel::passwordExpired, this, [ = ] {
-        if (m_model->currentModeState() == SessionBaseModel::ModeStatus::PasswordExpiredMode) return;
-        m_model->setCurrentModeState(SessionBaseModel::ModeStatus::PasswordExpiredMode);
-    });
     connect(m_imageBlurInter, &ImageBlur::BlurDone, this, &LockContent::onBlurDone);
 
     QTimer::singleShot(0, this, [ = ] {
@@ -148,7 +148,7 @@ void LockContent::pushUserFrame()
     setCenterContent(m_userLoginInfo->getUserFrameList());
 }
 
-void LockContent::pushExpiredFrame()
+void LockContent::pushChangeFrame()
 {
     setCenterContent(m_userLoginInfo->getUserExpiredWidget());
 }
@@ -181,8 +181,8 @@ void LockContent::onStatusChanged(SessionBaseModel::ModeStatus status)
     case SessionBaseModel::ModeStatus::PasswordMode:
         restoreCenterContent();
         break;
-    case SessionBaseModel::ModeStatus::PasswordExpiredMode:
-        pushExpiredFrame();
+    case SessionBaseModel::ModeStatus::ChangePasswordMode:
+        pushChangeFrame();
         break;
     case SessionBaseModel::ModeStatus::ConfirmPasswordMode:
         pushConfirmFrame();
