@@ -53,7 +53,7 @@ public:
     void setName(const QString &name);
 
 signals:
-    void requestChangePassword(const QString &password);
+    void changePasswordFinished();
 
 public slots:
     void updateAuthType(SessionBaseModel::AuthType type);

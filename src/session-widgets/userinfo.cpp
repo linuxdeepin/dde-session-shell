@@ -244,6 +244,11 @@ bool NativeUser::isNoPasswdGrp() const
     return (m_userInter->passwordStatus() == "NP" || checkUserIsNoPWGrp(this));
 }
 
+bool NativeUser::isPasswordExpired() const
+{
+    return m_userInter->IsPasswordExpired();
+}
+
 ADDomainUser::ADDomainUser(uint uid, QObject *parent)
     : User(parent)
 {

@@ -82,14 +82,15 @@ void UserLoginInfo::initConnect()
 {
     //UserLoginWidget
     connect(m_userLoginWidget, &UserLoginWidget::requestAuthUser, this, [ = ](const QString & account, const QString & password) {
-        if (m_model->isServiceAccountLogin() && !account.isEmpty()) {
-            static_cast<ADDomainUser *>(m_model->currentUser().get())->setUserName(account);
-        }
-
-        if (m_model->errorType() == SessionBaseModel::ErrorType::PasswordExpired) {
+        if (m_model->errorType() == SessionBaseModel::PasswordExpired && m_model->currentType() == SessionBaseModel::LightdmType) {
             emit passwordExpired();
         } else {
-            emit requestAuthUser(password);
+            if (!password.isEmpty()) {
+                if (m_model->isServiceAccountLogin() && !account.isEmpty()) {
+                    static_cast<ADDomainUser *>(m_model->currentUser().get())->setUserName(account);
+                }
+                emit requestAuthUser(password);
+            }
         }
     });
     connect(m_model, &SessionBaseModel::authFaildMessage, m_userLoginWidget, &UserLoginWidget::setFaildMessage);
@@ -102,7 +103,11 @@ void UserLoginInfo::initConnect()
     connect(m_userLoginWidget, &UserLoginWidget::requestUserKBLayoutChanged, this, [ = ](const QString & value) {
         emit requestSetLayout(m_user, value);
     });
-    connect(m_userExpiredWidget, &UserExpiredWidget::requestChangePassword, this, &UserLoginInfo::requestChangePassword);
+    connect(m_userExpiredWidget, &UserExpiredWidget::changePasswordFinished, this, [ = ] {
+        m_userLoginWidget->resetAllState();
+        m_model->setErrorType(SessionBaseModel::ErrorType::None);
+        emit changePasswordFinished();
+    });
 
     //UserFrameList
     connect(m_userFrameList, &UserFrameList::clicked, this, &UserLoginInfo::hideUserFrameList);

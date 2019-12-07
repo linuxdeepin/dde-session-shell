@@ -48,11 +48,11 @@ public:
 
 signals:
     void requestAuthUser(const QString &password);
-    void requestChangePassword(const QString &password);
     void requestSwitchUser(std::shared_ptr<User> user);
     void hideUserFrameList();
     void requestSetLayout(std::shared_ptr<User> user, const QString &value);
     void passwordExpired();
+    void changePasswordFinished();
 
 private:
     void userLockChanged(bool disable);

@@ -282,7 +282,46 @@ void UserExpiredWidget::onChangePassword()
     const QString confirm = m_confirmPasswordEdit->text();
 
     if (errorFilter(old_pass, new_pass, confirm)) {
-        emit requestChangePassword(new_pass);
+#define TIMEOUT 5000
+
+        QProcess process;
+        process.start("su", {m_name});
+        process.setReadChannel(QProcess::StandardError);
+
+        if (!process.waitForStarted(TIMEOUT)) {
+            qWarning() << "failed on start 'su'";
+            return;
+        }
+
+        qDebug() << QString::fromLocal8Bit(process.readAllStandardError());
+        process.write(old_pass.toLocal8Bit());
+        process.write("\n");
+        process.waitForReadyRead(TIMEOUT);
+        const QString errorString = QString::fromLocal8Bit(process.readLine());
+        qDebug() << errorString;
+        qDebug() << QString::fromLocal8Bit(process.readAllStandardError());
+        process.write(old_pass.toLocal8Bit());
+        process.write("\n");
+        process.waitForReadyRead(TIMEOUT);
+        qDebug() << QString::fromLocal8Bit(process.readAllStandardError());
+        process.write(new_pass.toLocal8Bit());
+        process.write("\n");
+        process.waitForReadyRead(TIMEOUT);
+        qDebug() << QString::fromLocal8Bit(process.readAllStandardError());
+        process.write(confirm.toLocal8Bit());
+        process.write("\n");
+        process.waitForFinished(TIMEOUT);
+
+        if (process.exitCode() != 0) {
+            process.terminate();
+            m_confirmPasswordEdit->showAlertMessage(tr("failed to change password"));
+            qDebug() << "password modify failed: " << errorString;
+        } else {
+            emit changePasswordFinished();
+            qDebug() << "password modify success";
+        }
+
+        if (process.state() == QProcess::Running) process.kill();
     }
 }
 

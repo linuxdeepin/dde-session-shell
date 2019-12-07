@@ -47,6 +47,7 @@ public:
     void setLocale(const QString &locale);
 
     virtual bool isNoPasswdGrp() const;
+    virtual bool isPasswordExpired() const { return false; }
 
     void setisLogind(bool isLogind);
     virtual void setCurrentLayout(const QString &layout) { Q_UNUSED(layout); }
@@ -102,6 +103,7 @@ public:
     QStringList kbLayoutList() override;
     QString currentKBLayout() override;
     bool isNoPasswdGrp() const override;
+    bool isPasswordExpired() const override;
 
 private:
     UserInter *m_userInter;

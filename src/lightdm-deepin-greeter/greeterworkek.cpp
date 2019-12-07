@@ -396,14 +396,9 @@ void GreeterWorkek::recoveryUserKBState(std::shared_ptr<User> user)
 
 void GreeterWorkek::onDisplayErrorMsg(const QString &type, const QString &msg)
 {
-    if (type == "verify-not-match") {
-        m_model->setErrorType(SessionBaseModel::ErrorType::FprintNotMatch);
+    if (type != "verify-timed-out") {
         emit m_model->authFaildMessage(msg);
-    } else if (type == "password-expired") {
-        m_model->setErrorType(SessionBaseModel::ErrorType::PasswordExpired);
-        emit m_model->authFaildMessage(tr("password expired need modified"));
     } else {
-        m_model->setErrorType(SessionBaseModel::ErrorType::None);
         emit m_model->authFaildMessage("");
     }
 }
@@ -423,6 +418,12 @@ void GreeterWorkek::onPasswordResult(const QString &msg)
         m_authenticating = false;
         emit m_model->authFaildTipsMessage(tr("Wrong Password"));
     } else {
-        greeterAuthUser(m_password);
+        if (m_model->currentUser()->isPasswordExpired()) {
+            m_model->setErrorType(SessionBaseModel::ErrorType::PasswordExpired);
+            emit m_model->authFaildMessage(tr("password expired need modified"));
+            qDebug() << Q_FUNC_INFO << "password expired";
+        } else {
+            greeterAuthUser(m_password);
+        }
     }
 }

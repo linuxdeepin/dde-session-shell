@@ -71,12 +71,13 @@ LockContent::LockContent(SessionBaseModel *const model, QWidget *parent, bool is
         if (m_model->currentModeState() == SessionBaseModel::ModeStatus::ChangePasswordMode) return;
         m_model->setCurrentModeState(SessionBaseModel::ModeStatus::ChangePasswordMode);
     });
+    connect(m_userLoginInfo, &UserLoginInfo::requestAuthUser, this, &LockContent::restoreMode);
     connect(m_userLoginInfo, &UserLoginInfo::requestAuthUser, this, &LockContent::requestAuthUser);
-    connect(m_userLoginInfo, &UserLoginInfo::requestChangePassword, this, &LockContent::requestChangePassword);
     connect(m_userLoginInfo, &UserLoginInfo::hideUserFrameList, this, &LockContent::restoreMode);
     connect(m_userLoginInfo, &UserLoginInfo::requestSwitchUser, this, &LockContent::requestSwitchToUser);
     connect(m_userLoginInfo, &UserLoginInfo::requestSwitchUser, this, &LockContent::restoreMode);
     connect(m_userLoginInfo, &UserLoginInfo::requestSetLayout, this, &LockContent::requestSetLayout);
+    connect(m_userLoginInfo, &UserLoginInfo::changePasswordFinished, this, &LockContent::restoreMode);
     connect(m_shutdownFrame, &ShutdownWidget::abortOperation, this, [ = ] {
         if (m_model->powerAction() != SessionBaseModel::RequireShutdown &&
                 m_model->powerAction() != SessionBaseModel::RequireRestart)
@@ -248,6 +249,7 @@ void LockContent::restoreCenterContent()
 
 void LockContent::restoreMode()
 {
+    m_model->setErrorType(SessionBaseModel::ErrorType::None);
     m_model->setCurrentModeState(SessionBaseModel::ModeStatus::PasswordMode);
 }
 
