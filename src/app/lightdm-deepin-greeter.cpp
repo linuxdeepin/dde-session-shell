@@ -218,6 +218,10 @@ int main(int argc, char* argv[])
 
     DLogManager::registerConsoleAppender();
 
+    QTranslator translator;
+    translator.load("/usr/share/dde-session-shell/translations/dde-session-shell_" + QLocale::system().name());
+    a.installTranslator(&translator);
+
     SessionBaseModel *model = new SessionBaseModel(SessionBaseModel::AuthType::LightdmType);
     GreeterWorkek *worker = new GreeterWorkek(model); //
 
