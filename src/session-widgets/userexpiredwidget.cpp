@@ -59,6 +59,8 @@ UserExpiredWidget::~UserExpiredWidget()
 //重置控件的状态
 void UserExpiredWidget::resetAllState()
 {
+    m_oldPasswordEdit->lineEdit()->clear();
+    m_passwordEdit->lineEdit()->setPlaceholderText(QString());
     m_passwordEdit->lineEdit()->clear();
     m_passwordEdit->lineEdit()->setPlaceholderText(QString());
     m_confirmPasswordEdit->lineEdit()->clear();

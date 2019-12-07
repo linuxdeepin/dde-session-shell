@@ -90,6 +90,10 @@ void UserLoginInfo::initConnect()
                     static_cast<ADDomainUser *>(m_model->currentUser().get())->setUserName(account);
                 }
                 emit requestAuthUser(password);
+            } else {
+                if (m_user->isNoPasswdGrp()) {
+                    emit requestAuthUser(password);
+                }
             }
         }
     });
@@ -105,6 +109,7 @@ void UserLoginInfo::initConnect()
     });
     connect(m_userExpiredWidget, &UserExpiredWidget::changePasswordFinished, this, [ = ] {
         m_userLoginWidget->resetAllState();
+        m_userExpiredWidget->resetAllState();
         m_model->setPasswordExpired(false);
         emit changePasswordFinished();
     });

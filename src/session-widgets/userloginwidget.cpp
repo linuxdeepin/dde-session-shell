@@ -471,7 +471,6 @@ void UserLoginWidget::initConnect()
             m_passwordEdit->lineEdit()->setFocus();
         }
 
-        if (m_showType != NoPasswordType) return;
         m_passwordEdit->showLoadSlider();
         m_accountEdit->setEnabled(false);
         emit requestAuthUser(m_accountEdit->text(), password);
