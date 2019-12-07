@@ -125,7 +125,7 @@
     <message>
         <location filename="../src/lightdm-deepin-greeter/greeterworkek.cpp" line="424"/>
         <source>Password expired, please change</source>
-        <translation type="unfinished"/>
+        <translation>密码过期需要修改</translation>
     </message>
 </context>
 <context>
@@ -224,12 +224,12 @@
     <message>
         <location filename="../src/session-widgets/userexpiredwidget.cpp" line="146"/>
         <source>Old password</source>
-        <translation type="unfinished"/>
+        <translation>旧密码</translation>
     </message>
     <message>
         <location filename="../src/session-widgets/userexpiredwidget.cpp" line="154"/>
         <source>New password</source>
-        <translation type="unfinished"/>
+        <translation>新密码</translation>
     </message>
     <message>
         <location filename="../src/session-widgets/userexpiredwidget.cpp" line="163"/>
@@ -239,12 +239,12 @@
     <message>
         <location filename="../src/session-widgets/userexpiredwidget.cpp" line="318"/>
         <source>Failed to change your password</source>
-        <translation type="unfinished"/>
+        <translation>修改密码失败</translation>
     </message>
     <message>
         <location filename="../src/session-widgets/userexpiredwidget.cpp" line="335"/>
         <source>Please enter the old password</source>
-        <translation type="unfinished"/>
+        <translation>请输入旧密码</translation>
     </message>
     <message>
         <location filename="../src/session-widgets/userexpiredwidget.cpp" line="341"/>
@@ -254,7 +254,7 @@
     <message>
         <location filename="../src/session-widgets/userexpiredwidget.cpp" line="347"/>
         <source>Please enter the repeat password</source>
-        <translation type="unfinished"/>
+        <translation>请输入确认密码</translation>
     </message>
     <message>
         <location filename="../src/session-widgets/userexpiredwidget.cpp" line="353"/>
@@ -277,7 +277,7 @@
     <message>
         <location filename="../src/session-widgets/userloginwidget.cpp" line="181"/>
         <source>Account Login</source>
-        <translation type="unfinished"/>
+        <translation>帐户登录</translation>
     </message>
     <message>
         <location filename="../src/session-widgets/userloginwidget.cpp" line="207"/>
