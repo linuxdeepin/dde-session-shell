@@ -2,96 +2,96 @@
 <context>
     <name>ContentWidget</name>
     <message>
-        <location filename="../src/dde-shutdown/view/contentwidget.cpp" line="321"/>
+        <location filename="../src/dde-shutdown/view/contentwidget.cpp" line="317"/>
         <source>The programs are preventing the computer from shutting down, and forcing shut down may cause data loss.</source>
         <translation>이 프로그램이 컴퓨터를 종료하지 못하게 하고 있으며, 강제로 종료하면 데이터가 손실될 수 있습니다.</translation>
     </message>
     <message>
+        <location filename="../src/dde-shutdown/view/contentwidget.cpp" line="318"/>
         <location filename="../src/dde-shutdown/view/contentwidget.cpp" line="322"/>
         <location filename="../src/dde-shutdown/view/contentwidget.cpp" line="326"/>
         <location filename="../src/dde-shutdown/view/contentwidget.cpp" line="330"/>
         <location filename="../src/dde-shutdown/view/contentwidget.cpp" line="334"/>
-        <location filename="../src/dde-shutdown/view/contentwidget.cpp" line="338"/>
         <source>To close the program, click Cancel, and then close the program.</source>
         <translation>프로그램을 닫려면 취소를 클릭한 다음 프로그램을 닫습니다.</translation>
     </message>
     <message>
-        <location filename="../src/dde-shutdown/view/contentwidget.cpp" line="325"/>
+        <location filename="../src/dde-shutdown/view/contentwidget.cpp" line="321"/>
         <source>The programs are preventing the computer from reboot, and forcing reboot may cause data loss.</source>
         <translation>이 프로그램이 컴퓨터를 재부팅하지 못하게 하고 있으며, 강제로 재부팅하면 데이터가 손실될 수 있습니다.</translation>
     </message>
     <message>
-        <location filename="../src/dde-shutdown/view/contentwidget.cpp" line="329"/>
+        <location filename="../src/dde-shutdown/view/contentwidget.cpp" line="325"/>
         <source>The programs are preventing the computer from suspend, and forcing suspend may cause data loss.</source>
         <translation>이 프로그램은 컴퓨터가 일시 중단되는 것을 방지하고, 강제로 일시 중단하면 데이터 손실이 발생할 수 있습니다.</translation>
     </message>
     <message>
-        <location filename="../src/dde-shutdown/view/contentwidget.cpp" line="333"/>
+        <location filename="../src/dde-shutdown/view/contentwidget.cpp" line="329"/>
         <source>The programs are preventing the computer from hibernate, and forcing hibernate may cause data loss.</source>
         <translation>이 프로그램으로 인해 컴퓨터가 최대 절전 모드로 전환되지 않으며, 최대 절전 모드로 전환하면 데이터가 손실될 수 있습니다.</translation>
     </message>
     <message>
-        <location filename="../src/dde-shutdown/view/contentwidget.cpp" line="337"/>
+        <location filename="../src/dde-shutdown/view/contentwidget.cpp" line="333"/>
         <source>The programs are preventing the computer from log out, and forcing log out may cause data loss.</source>
         <translation>이 프로그램으로 인해 컴퓨터가 로그아웃되지 않으며, 강제로 로그아웃하면 데이터가 손실될 수 있습니다.</translation>
     </message>
     <message>
-        <location filename="../src/dde-shutdown/view/contentwidget.cpp" line="355"/>
-        <location filename="../src/dde-shutdown/view/contentwidget.cpp" line="392"/>
-        <location filename="../src/dde-shutdown/view/contentwidget.cpp" line="414"/>
-        <location filename="../src/dde-shutdown/view/contentwidget.cpp" line="548"/>
+        <location filename="../src/dde-shutdown/view/contentwidget.cpp" line="351"/>
+        <location filename="../src/dde-shutdown/view/contentwidget.cpp" line="388"/>
+        <location filename="../src/dde-shutdown/view/contentwidget.cpp" line="410"/>
+        <location filename="../src/dde-shutdown/view/contentwidget.cpp" line="545"/>
         <source>Shut down</source>
         <translation>종료</translation>
     </message>
     <message>
-        <location filename="../src/dde-shutdown/view/contentwidget.cpp" line="357"/>
-        <location filename="../src/dde-shutdown/view/contentwidget.cpp" line="394"/>
-        <location filename="../src/dde-shutdown/view/contentwidget.cpp" line="417"/>
-        <location filename="../src/dde-shutdown/view/contentwidget.cpp" line="551"/>
+        <location filename="../src/dde-shutdown/view/contentwidget.cpp" line="353"/>
+        <location filename="../src/dde-shutdown/view/contentwidget.cpp" line="390"/>
+        <location filename="../src/dde-shutdown/view/contentwidget.cpp" line="413"/>
+        <location filename="../src/dde-shutdown/view/contentwidget.cpp" line="548"/>
         <source>Reboot</source>
         <translation>재부팅</translation>
     </message>
     <message>
-        <location filename="../src/dde-shutdown/view/contentwidget.cpp" line="359"/>
-        <location filename="../src/dde-shutdown/view/contentwidget.cpp" line="554"/>
+        <location filename="../src/dde-shutdown/view/contentwidget.cpp" line="355"/>
+        <location filename="../src/dde-shutdown/view/contentwidget.cpp" line="551"/>
         <source>Suspend</source>
         <translation>일시 정지</translation>
     </message>
     <message>
-        <location filename="../src/dde-shutdown/view/contentwidget.cpp" line="361"/>
-        <location filename="../src/dde-shutdown/view/contentwidget.cpp" line="557"/>
+        <location filename="../src/dde-shutdown/view/contentwidget.cpp" line="357"/>
+        <location filename="../src/dde-shutdown/view/contentwidget.cpp" line="554"/>
         <source>Hibernate</source>
         <translation>최대 절전 모드</translation>
     </message>
     <message>
-        <location filename="../src/dde-shutdown/view/contentwidget.cpp" line="363"/>
-        <location filename="../src/dde-shutdown/view/contentwidget.cpp" line="420"/>
-        <location filename="../src/dde-shutdown/view/contentwidget.cpp" line="563"/>
+        <location filename="../src/dde-shutdown/view/contentwidget.cpp" line="359"/>
+        <location filename="../src/dde-shutdown/view/contentwidget.cpp" line="416"/>
+        <location filename="../src/dde-shutdown/view/contentwidget.cpp" line="560"/>
         <source>Log out</source>
         <translation>로그아웃</translation>
     </message>
     <message>
-        <location filename="../src/dde-shutdown/view/contentwidget.cpp" line="415"/>
+        <location filename="../src/dde-shutdown/view/contentwidget.cpp" line="411"/>
         <source>Are you sure you want to shut down?</source>
         <translation>종료 하시겠습니까?</translation>
     </message>
     <message>
-        <location filename="../src/dde-shutdown/view/contentwidget.cpp" line="418"/>
+        <location filename="../src/dde-shutdown/view/contentwidget.cpp" line="414"/>
         <source>Are you sure you want to reboot?</source>
         <translation>재부팅 하시겠습니까?</translation>
     </message>
     <message>
-        <location filename="../src/dde-shutdown/view/contentwidget.cpp" line="421"/>
+        <location filename="../src/dde-shutdown/view/contentwidget.cpp" line="417"/>
         <source>Are you sure you want to log out?</source>
         <translation>로그 아웃 하시겠습니까?</translation>
     </message>
     <message>
-        <location filename="../src/dde-shutdown/view/contentwidget.cpp" line="560"/>
+        <location filename="../src/dde-shutdown/view/contentwidget.cpp" line="557"/>
         <source>Lock</source>
         <translation>잠그기</translation>
     </message>
     <message>
-        <location filename="../src/dde-shutdown/view/contentwidget.cpp" line="567"/>
+        <location filename="../src/dde-shutdown/view/contentwidget.cpp" line="564"/>
         <source>Switch user</source>
         <translation>사용자 전환</translation>
     </message>
@@ -107,19 +107,25 @@
 <context>
     <name>GreeterWorkek</name>
     <message>
-        <location filename="../src/lightdm-deepin-greeter/greeterworkek.cpp" line="98"/>
+        <location filename="../src/lightdm-deepin-greeter/greeterworkek.cpp" line="112"/>
         <source>Domain account</source>
         <translation>도메인 계정</translation>
     </message>
     <message>
-        <location filename="../src/lightdm-deepin-greeter/greeterworkek.cpp" line="292"/>
+        <location filename="../src/lightdm-deepin-greeter/greeterworkek.cpp" line="328"/>
+        <location filename="../src/lightdm-deepin-greeter/greeterworkek.cpp" line="419"/>
         <source>Wrong Password</source>
         <translation>잘못된 비밀번호입니다</translation>
     </message>
     <message>
-        <location filename="../src/lightdm-deepin-greeter/greeterworkek.cpp" line="297"/>
+        <location filename="../src/lightdm-deepin-greeter/greeterworkek.cpp" line="333"/>
         <source>The domain account or password is not correct. Please enter again.</source>
         <translation>이 도매인 계정이나 비밀번호가 잘못되었습니다. 다시 시도하여 주십시오</translation>
+    </message>
+    <message>
+        <location filename="../src/lightdm-deepin-greeter/greeterworkek.cpp" line="424"/>
+        <source>Password expired, please change</source>
+        <translation type="unfinished"/>
     </message>
 </context>
 <context>
@@ -133,7 +139,7 @@
 <context>
     <name>LockContent</name>
     <message>
-        <location filename="../src/session-widgets/lockcontent.cpp" line="318"/>
+        <location filename="../src/session-widgets/lockcontent.cpp" line="325"/>
         <source>Failed to lock screen</source>
         <translation>화면 잠금 실패</translation>
     </message>
@@ -141,22 +147,22 @@
 <context>
     <name>LockWorker</name>
     <message>
-        <location filename="../src/dde-lock/lockworker.cpp" line="99"/>
+        <location filename="../src/dde-lock/lockworker.cpp" line="100"/>
         <source>Domain account</source>
         <translation>도메인 계정</translation>
     </message>
     <message>
-        <location filename="../src/dde-lock/lockworker.cpp" line="221"/>
+        <location filename="../src/dde-lock/lockworker.cpp" line="227"/>
         <source>Fingerprint verification timed out, please enter your password manually</source>
         <translation>지문 인증 시간이 만료되었으니, 비밀번호를 직접 입력하여 주십시오</translation>
     </message>
     <message>
-        <location filename="../src/dde-lock/lockworker.cpp" line="239"/>
+        <location filename="../src/dde-lock/lockworker.cpp" line="245"/>
         <source>Failed to match fingerprint</source>
         <translation>지문 대조 실패</translation>
     </message>
     <message>
-        <location filename="../src/dde-lock/lockworker.cpp" line="274"/>
+        <location filename="../src/dde-lock/lockworker.cpp" line="280"/>
         <source>Wrong Password</source>
         <translation>잘못된 비밀번호입니다</translation>
     </message>
@@ -214,19 +220,77 @@
     </message>
 </context>
 <context>
+    <name>UserExpiredWidget</name>
+    <message>
+        <location filename="../src/session-widgets/userexpiredwidget.cpp" line="146"/>
+        <source>Old password</source>
+        <translation type="unfinished"/>
+    </message>
+    <message>
+        <location filename="../src/session-widgets/userexpiredwidget.cpp" line="154"/>
+        <source>New password</source>
+        <translation type="unfinished"/>
+    </message>
+    <message>
+        <location filename="../src/session-widgets/userexpiredwidget.cpp" line="163"/>
+        <source>Repeat password</source>
+        <translation>재입력 비밀번호</translation>
+    </message>
+    <message>
+        <location filename="../src/session-widgets/userexpiredwidget.cpp" line="318"/>
+        <source>Failed to change your password</source>
+        <translation type="unfinished"/>
+    </message>
+    <message>
+        <location filename="../src/session-widgets/userexpiredwidget.cpp" line="335"/>
+        <source>Please enter the old password</source>
+        <translation type="unfinished"/>
+    </message>
+    <message>
+        <location filename="../src/session-widgets/userexpiredwidget.cpp" line="341"/>
+        <source>Please enter the new password</source>
+        <translation>새로운 비밀번호를 입력하세요.</translation>
+    </message>
+    <message>
+        <location filename="../src/session-widgets/userexpiredwidget.cpp" line="347"/>
+        <source>Please enter the repeat password</source>
+        <translation type="unfinished"/>
+    </message>
+    <message>
+        <location filename="../src/session-widgets/userexpiredwidget.cpp" line="353"/>
+        <source>Passwords do not match</source>
+        <translation>비밀번호가 일치하지 않습니다</translation>
+    </message>
+</context>
+<context>
     <name>UserLoginWidget</name>
     <message>
-        <location filename="../src/session-widgets/userloginwidget.cpp" line="194"/>
+        <location filename="../src/session-widgets/userloginwidget.cpp" line="177"/>
+        <source>Password</source>
+        <translation>비밀번호</translation>
+    </message>
+    <message>
+        <location filename="../src/session-widgets/userloginwidget.cpp" line="179"/>
+        <source>Account</source>
+        <translation>계정</translation>
+    </message>
+    <message>
+        <location filename="../src/session-widgets/userloginwidget.cpp" line="181"/>
+        <source>Account Login</source>
+        <translation type="unfinished"/>
+    </message>
+    <message>
+        <location filename="../src/session-widgets/userloginwidget.cpp" line="207"/>
         <source>Enter your password to reboot</source>
         <translation>다시 시작하려면 비밀번호를 입력하세요</translation>
     </message>
     <message>
-        <location filename="../src/session-widgets/userloginwidget.cpp" line="197"/>
+        <location filename="../src/session-widgets/userloginwidget.cpp" line="210"/>
         <source>Enter your password to shut down</source>
         <translation>종료 할 비밀번호를 입력하십시오</translation>
     </message>
     <message numerus="yes">
-        <location filename="../src/session-widgets/userloginwidget.cpp" line="263"/>
+        <location filename="../src/session-widgets/userloginwidget.cpp" line="283"/>
         <source>Please try again %n minute(s) later</source>
         <translation><numerusform>%n분 후에 다시 시도하십시오</numerusform></translation>
     </message>

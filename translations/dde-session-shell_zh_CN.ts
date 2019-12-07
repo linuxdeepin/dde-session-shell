@@ -1,6 +1,4 @@
-<?xml version="1.0" encoding="utf-8"?>
-<!DOCTYPE TS>
-<TS version="2.1" language="zh_CN">
+<?xml version="1.0" ?><!DOCTYPE TS><TS language="zh_CN" version="2.1">
 <context>
     <name>ContentWidget</name>
     <message>
@@ -114,20 +112,20 @@
         <translation>域帐户</translation>
     </message>
     <message>
-        <location filename="../src/lightdm-deepin-greeter/greeterworkek.cpp" line="325"/>
-        <location filename="../src/lightdm-deepin-greeter/greeterworkek.cpp" line="417"/>
+        <location filename="../src/lightdm-deepin-greeter/greeterworkek.cpp" line="328"/>
+        <location filename="../src/lightdm-deepin-greeter/greeterworkek.cpp" line="419"/>
         <source>Wrong Password</source>
         <translation>密码错误</translation>
     </message>
     <message>
-        <location filename="../src/lightdm-deepin-greeter/greeterworkek.cpp" line="330"/>
+        <location filename="../src/lightdm-deepin-greeter/greeterworkek.cpp" line="333"/>
         <source>The domain account or password is not correct. Please enter again.</source>
         <translation>域帐户或域密码不正确，请重新输入。</translation>
     </message>
     <message>
-        <location filename="../src/lightdm-deepin-greeter/greeterworkek.cpp" line="422"/>
+        <location filename="../src/lightdm-deepin-greeter/greeterworkek.cpp" line="424"/>
         <source>Password expired, please change</source>
-        <translation>密码过期需要修改</translation>
+        <translation type="unfinished"/>
     </message>
 </context>
 <context>
@@ -226,12 +224,12 @@
     <message>
         <location filename="../src/session-widgets/userexpiredwidget.cpp" line="146"/>
         <source>Old password</source>
-        <translation>旧密码</translation>
+        <translation type="unfinished"/>
     </message>
     <message>
         <location filename="../src/session-widgets/userexpiredwidget.cpp" line="154"/>
         <source>New password</source>
-        <translation>新密码</translation>
+        <translation type="unfinished"/>
     </message>
     <message>
         <location filename="../src/session-widgets/userexpiredwidget.cpp" line="163"/>
@@ -241,21 +239,12 @@
     <message>
         <location filename="../src/session-widgets/userexpiredwidget.cpp" line="318"/>
         <source>Failed to change your password</source>
-        <translation>修改密码失败</translation>
-    </message>
-    <message>
-        <location filename="../src/session-widgets/userexpiredwidget.cpp" line="347"/>
-        <source>Please enter the repeat password</source>
-        <translation>请输入确认密码</translation>
-    </message>
-    <message>
-        <source>Failed to change password</source>
-        <translation>修改密码失败</translation>
+        <translation type="unfinished"/>
     </message>
     <message>
         <location filename="../src/session-widgets/userexpiredwidget.cpp" line="335"/>
         <source>Please enter the old password</source>
-        <translation>请输入旧密码</translation>
+        <translation type="unfinished"/>
     </message>
     <message>
         <location filename="../src/session-widgets/userexpiredwidget.cpp" line="341"/>
@@ -263,9 +252,14 @@
         <translation>请输入新密码</translation>
     </message>
     <message>
+        <location filename="../src/session-widgets/userexpiredwidget.cpp" line="347"/>
+        <source>Please enter the repeat password</source>
+        <translation type="unfinished"/>
+    </message>
+    <message>
         <location filename="../src/session-widgets/userexpiredwidget.cpp" line="353"/>
         <source>Passwords do not match</source>
-        <translation>密码不匹配</translation>
+        <translation>密码不一致</translation>
     </message>
 </context>
 <context>
@@ -278,12 +272,12 @@
     <message>
         <location filename="../src/session-widgets/userloginwidget.cpp" line="179"/>
         <source>Account</source>
-        <translation>账户</translation>
+        <translation>帐户</translation>
     </message>
     <message>
         <location filename="../src/session-widgets/userloginwidget.cpp" line="181"/>
         <source>Account Login</source>
-        <translation>账户登录</translation>
+        <translation type="unfinished"/>
     </message>
     <message>
         <location filename="../src/session-widgets/userloginwidget.cpp" line="207"/>
@@ -298,9 +292,7 @@
     <message numerus="yes">
         <location filename="../src/session-widgets/userloginwidget.cpp" line="283"/>
         <source>Please try again %n minute(s) later</source>
-        <translation>
-            <numerusform>请%n分钟后再试</numerusform>
-        </translation>
+        <translation><numerusform>请%n分钟后再试</numerusform></translation>
     </message>
 </context>
 </TS>
