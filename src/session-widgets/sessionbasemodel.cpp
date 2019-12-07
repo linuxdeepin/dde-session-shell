@@ -219,8 +219,8 @@ void SessionBaseModel::setAbortConfirm(bool abortConfirm)
     emit abortConfirmChanged(abortConfirm);
 }
 
-void SessionBaseModel::setErrorType(SessionBaseModel::ErrorType type)
+void SessionBaseModel::setPasswordExpired(bool expired)
 {
-    m_errorType = type;
-    emit errorTypeChanged(type);
+    m_isPasswordExpired = expired;
+    emit passwordExpired(expired);
 }

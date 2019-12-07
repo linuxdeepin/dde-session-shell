@@ -226,6 +226,7 @@ void UserExpiredWidget::initConnect()
         FrameDataBind::Instance()->updateValue("UserConfimPassword", value);
     });
 
+    connect(m_confirmPasswordEdit, &DLineEdit::returnPressed, this, &UserExpiredWidget::onChangePassword);
     connect(m_lockButton, &QPushButton::clicked, this,  &UserExpiredWidget::onChangePassword);
 
     QMap<QString, int> registerFunctionIndexs;
@@ -282,7 +283,7 @@ void UserExpiredWidget::onChangePassword()
     const QString confirm = m_confirmPasswordEdit->text();
 
     if (errorFilter(old_pass, new_pass, confirm)) {
-#define TIMEOUT 5000
+#define TIMEOUT 1000
 
         QProcess process;
         process.start("su", {m_name});

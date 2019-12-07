@@ -82,7 +82,7 @@ void UserLoginInfo::initConnect()
 {
     //UserLoginWidget
     connect(m_userLoginWidget, &UserLoginWidget::requestAuthUser, this, [ = ](const QString & account, const QString & password) {
-        if (m_model->errorType() == SessionBaseModel::PasswordExpired && m_model->currentType() == SessionBaseModel::LightdmType) {
+        if (m_model->isPasswordExpired() && m_model->currentType() == SessionBaseModel::LightdmType) {
             emit passwordExpired();
         } else {
             if (!password.isEmpty()) {
@@ -105,7 +105,7 @@ void UserLoginInfo::initConnect()
     });
     connect(m_userExpiredWidget, &UserExpiredWidget::changePasswordFinished, this, [ = ] {
         m_userLoginWidget->resetAllState();
-        m_model->setErrorType(SessionBaseModel::ErrorType::None);
+        m_model->setPasswordExpired(false);
         emit changePasswordFinished();
     });
 

@@ -418,8 +418,9 @@ void GreeterWorkek::onPasswordResult(const QString &msg)
         m_authenticating = false;
         emit m_model->authFaildTipsMessage(tr("Wrong Password"));
     } else {
-        if (m_model->currentUser()->isPasswordExpired()) {
-            m_model->setErrorType(SessionBaseModel::ErrorType::PasswordExpired);
+        m_model->setPasswordExpired(m_model->currentUser()->isPasswordExpired());
+        if (m_model->isPasswordExpired()) {
+            m_authenticating = false;
             emit m_model->authFaildMessage(tr("password expired need modified"));
             qDebug() << Q_FUNC_INFO << "password expired";
         } else {
