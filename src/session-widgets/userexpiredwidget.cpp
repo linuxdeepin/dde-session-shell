@@ -143,7 +143,7 @@ void UserExpiredWidget::initUI()
     m_nameLbl->setAlignment(Qt::AlignCenter);
 
     setFocusProxy(m_oldPasswordEdit->lineEdit());
-    m_oldPasswordEdit->lineEdit()->setPlaceholderText(tr("old password"));
+    m_oldPasswordEdit->lineEdit()->setPlaceholderText(tr("Old password"));
     m_oldPasswordEdit->lineEdit()->setContextMenuPolicy(Qt::NoContextMenu);
     m_oldPasswordEdit->setSizePolicy(QSizePolicy::Expanding, QSizePolicy::Fixed);
     m_oldPasswordEdit->lineEdit()->setAlignment(Qt::AlignCenter);
@@ -151,7 +151,7 @@ void UserExpiredWidget::initUI()
     m_oldPasswordEdit->setEchoMode(QLineEdit::Password);
     m_oldPasswordEdit->setClearButtonEnabled(false);
 
-    m_passwordEdit->lineEdit()->setPlaceholderText(tr("new password"));
+    m_passwordEdit->lineEdit()->setPlaceholderText(tr("New password"));
     m_passwordEdit->lineEdit()->setContextMenuPolicy(Qt::NoContextMenu);
     m_passwordEdit->setSizePolicy(QSizePolicy::Expanding, QSizePolicy::Fixed);
     m_passwordEdit->lineEdit()->setAlignment(Qt::AlignCenter);
@@ -160,7 +160,7 @@ void UserExpiredWidget::initUI()
     m_passwordEdit->setClearButtonEnabled(false);
     m_passwordEdit->lineEdit()->setFocus();
 
-    m_confirmPasswordEdit->lineEdit()->setPlaceholderText(tr("confirm password"));
+    m_confirmPasswordEdit->lineEdit()->setPlaceholderText(tr("Repeat password"));
     m_confirmPasswordEdit->lineEdit()->setContextMenuPolicy(Qt::NoContextMenu);
     m_confirmPasswordEdit->setSizePolicy(QSizePolicy::Expanding, QSizePolicy::Fixed);
     m_confirmPasswordEdit->lineEdit()->setAlignment(Qt::AlignCenter);
@@ -315,7 +315,7 @@ void UserExpiredWidget::onChangePassword()
 
         if (process.exitCode() != 0) {
             process.terminate();
-            m_confirmPasswordEdit->showAlertMessage(tr("failed to change password"));
+            m_confirmPasswordEdit->showAlertMessage(tr("Failed to change your password"));
             qDebug() << "password modify failed: " << errorString;
         } else {
             emit changePasswordFinished();
@@ -332,25 +332,25 @@ bool UserExpiredWidget::errorFilter(const QString &old_pass, const QString &new_
 
         if (old_pass.isEmpty()) {
             m_oldPasswordEdit->lineEdit()->setFocus();
-            m_oldPasswordEdit->showAlertMessage(tr("please enter the old password"));
+            m_oldPasswordEdit->showAlertMessage(tr("Please enter the old password"));
             return false;
         }
 
         if (new_pass.isEmpty()) {
             m_passwordEdit->lineEdit()->setFocus();
-            m_passwordEdit->showAlertMessage(tr("please enter the new password"));
+            m_passwordEdit->showAlertMessage(tr("Please enter the new password"));
             return false;
         }
 
         if (confirm.isEmpty()) {
             m_confirmPasswordEdit->lineEdit()->setFocus();
-            m_confirmPasswordEdit->showAlertMessage(tr("please enter the confirm password"));
+            m_confirmPasswordEdit->showAlertMessage(tr("Please enter the repeat password"));
             return false;
         }
     } else {
         if (new_pass != confirm) {
             m_confirmPasswordEdit->lineEdit()->setFocus();
-            m_confirmPasswordEdit->showAlertMessage(tr("passwords do not match"));
+            m_confirmPasswordEdit->showAlertMessage(tr("Passwords do not match"));
             return false;
         }
     }
