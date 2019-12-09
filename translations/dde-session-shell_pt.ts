@@ -107,25 +107,25 @@
 <context>
     <name>GreeterWorkek</name>
     <message>
-        <location filename="../src/lightdm-deepin-greeter/greeterworkek.cpp" line="112"/>
+        <location filename="../src/lightdm-deepin-greeter/greeterworkek.cpp" line="116"/>
         <source>Domain account</source>
         <translation>Conta de domínio</translation>
     </message>
     <message>
-        <location filename="../src/lightdm-deepin-greeter/greeterworkek.cpp" line="328"/>
-        <location filename="../src/lightdm-deepin-greeter/greeterworkek.cpp" line="419"/>
+        <location filename="../src/lightdm-deepin-greeter/greeterworkek.cpp" line="332"/>
+        <location filename="../src/lightdm-deepin-greeter/greeterworkek.cpp" line="423"/>
         <source>Wrong Password</source>
         <translation>Palavra-passe errada</translation>
     </message>
     <message>
-        <location filename="../src/lightdm-deepin-greeter/greeterworkek.cpp" line="333"/>
+        <location filename="../src/lightdm-deepin-greeter/greeterworkek.cpp" line="337"/>
         <source>The domain account or password is not correct. Please enter again.</source>
         <translation>A conta de domínio ou a palavra-passe não estão corretas. Por favor, insira novamente.</translation>
     </message>
     <message>
-        <location filename="../src/lightdm-deepin-greeter/greeterworkek.cpp" line="424"/>
+        <location filename="../src/lightdm-deepin-greeter/greeterworkek.cpp" line="428"/>
         <source>Password expired, please change</source>
-        <translation type="unfinished"/>
+        <translation>Palavra-passe expirada, altere</translation>
     </message>
 </context>
 <context>
@@ -139,7 +139,7 @@
 <context>
     <name>LockContent</name>
     <message>
-        <location filename="../src/session-widgets/lockcontent.cpp" line="325"/>
+        <location filename="../src/session-widgets/lockcontent.cpp" line="324"/>
         <source>Failed to lock screen</source>
         <translation>Falha ao bloquear o ecrã</translation>
     </message>
@@ -222,42 +222,42 @@
 <context>
     <name>UserExpiredWidget</name>
     <message>
-        <location filename="../src/session-widgets/userexpiredwidget.cpp" line="146"/>
+        <location filename="../src/session-widgets/userexpiredwidget.cpp" line="148"/>
         <source>Old password</source>
-        <translation type="unfinished"/>
+        <translation>Palavra-passe antiga</translation>
     </message>
     <message>
-        <location filename="../src/session-widgets/userexpiredwidget.cpp" line="154"/>
+        <location filename="../src/session-widgets/userexpiredwidget.cpp" line="156"/>
         <source>New password</source>
-        <translation type="unfinished"/>
+        <translation>Nova palavra-passe</translation>
     </message>
     <message>
-        <location filename="../src/session-widgets/userexpiredwidget.cpp" line="163"/>
+        <location filename="../src/session-widgets/userexpiredwidget.cpp" line="165"/>
         <source>Repeat password</source>
         <translation>Repita a palavra-passe</translation>
     </message>
     <message>
-        <location filename="../src/session-widgets/userexpiredwidget.cpp" line="318"/>
+        <location filename="../src/session-widgets/userexpiredwidget.cpp" line="322"/>
         <source>Failed to change your password</source>
-        <translation type="unfinished"/>
+        <translation>Não foi possível alterar a sua palavra-passe</translation>
     </message>
     <message>
-        <location filename="../src/session-widgets/userexpiredwidget.cpp" line="335"/>
+        <location filename="../src/session-widgets/userexpiredwidget.cpp" line="339"/>
         <source>Please enter the old password</source>
-        <translation type="unfinished"/>
+        <translation>Introduza a palavra-passe antiga</translation>
     </message>
     <message>
-        <location filename="../src/session-widgets/userexpiredwidget.cpp" line="341"/>
+        <location filename="../src/session-widgets/userexpiredwidget.cpp" line="345"/>
         <source>Please enter the new password</source>
-        <translation>Por favor, introduza a nova palavra-passe</translation>
+        <translation>Introduza a nova palavra-passe</translation>
     </message>
     <message>
-        <location filename="../src/session-widgets/userexpiredwidget.cpp" line="347"/>
-        <source>Please enter the repeat password</source>
+        <location filename="../src/session-widgets/userexpiredwidget.cpp" line="351"/>
+        <source>Please repeat the new password</source>
         <translation type="unfinished"/>
     </message>
     <message>
-        <location filename="../src/session-widgets/userexpiredwidget.cpp" line="353"/>
+        <location filename="../src/session-widgets/userexpiredwidget.cpp" line="357"/>
         <source>Passwords do not match</source>
         <translation>As palavras-passe não coincidem</translation>
     </message>
@@ -277,20 +277,20 @@
     <message>
         <location filename="../src/session-widgets/userloginwidget.cpp" line="181"/>
         <source>Account Login</source>
-        <translation type="unfinished"/>
+        <translation>Autenticação da conta</translation>
     </message>
     <message>
-        <location filename="../src/session-widgets/userloginwidget.cpp" line="207"/>
+        <location filename="../src/session-widgets/userloginwidget.cpp" line="209"/>
         <source>Enter your password to reboot</source>
         <translation>Introduza a sua palavra-passe para reiniciar</translation>
     </message>
     <message>
-        <location filename="../src/session-widgets/userloginwidget.cpp" line="210"/>
+        <location filename="../src/session-widgets/userloginwidget.cpp" line="212"/>
         <source>Enter your password to shut down</source>
         <translation>Introduza a sua palavra-passe para encerrar</translation>
     </message>
     <message numerus="yes">
-        <location filename="../src/session-widgets/userloginwidget.cpp" line="283"/>
+        <location filename="../src/session-widgets/userloginwidget.cpp" line="285"/>
         <source>Please try again %n minute(s) later</source>
         <translation><numerusform>Por favor tente novamente %n minuto(s) mais tarde</numerusform><numerusform>Por favor tente novamente %n minuto(s) mais tarde</numerusform></translation>
     </message>

@@ -107,23 +107,23 @@
 <context>
     <name>GreeterWorkek</name>
     <message>
-        <location filename="../src/lightdm-deepin-greeter/greeterworkek.cpp" line="112"/>
+        <location filename="../src/lightdm-deepin-greeter/greeterworkek.cpp" line="116"/>
         <source>Domain account</source>
         <translation>Compte del domini</translation>
     </message>
     <message>
-        <location filename="../src/lightdm-deepin-greeter/greeterworkek.cpp" line="328"/>
-        <location filename="../src/lightdm-deepin-greeter/greeterworkek.cpp" line="419"/>
+        <location filename="../src/lightdm-deepin-greeter/greeterworkek.cpp" line="332"/>
+        <location filename="../src/lightdm-deepin-greeter/greeterworkek.cpp" line="423"/>
         <source>Wrong Password</source>
         <translation>Contrasenya incorrecta</translation>
     </message>
     <message>
-        <location filename="../src/lightdm-deepin-greeter/greeterworkek.cpp" line="333"/>
+        <location filename="../src/lightdm-deepin-greeter/greeterworkek.cpp" line="337"/>
         <source>The domain account or password is not correct. Please enter again.</source>
         <translation>El compte o la contrasenya del domini no són correctes. Torneu a provar-ho.</translation>
     </message>
     <message>
-        <location filename="../src/lightdm-deepin-greeter/greeterworkek.cpp" line="424"/>
+        <location filename="../src/lightdm-deepin-greeter/greeterworkek.cpp" line="428"/>
         <source>Password expired, please change</source>
         <translation type="unfinished"/>
     </message>
@@ -139,7 +139,7 @@
 <context>
     <name>LockContent</name>
     <message>
-        <location filename="../src/session-widgets/lockcontent.cpp" line="325"/>
+        <location filename="../src/session-widgets/lockcontent.cpp" line="324"/>
         <source>Failed to lock screen</source>
         <translation>Ha fallat bloquejar la pantalla.</translation>
     </message>
@@ -222,42 +222,42 @@
 <context>
     <name>UserExpiredWidget</name>
     <message>
-        <location filename="../src/session-widgets/userexpiredwidget.cpp" line="146"/>
+        <location filename="../src/session-widgets/userexpiredwidget.cpp" line="148"/>
         <source>Old password</source>
         <translation type="unfinished"/>
     </message>
     <message>
-        <location filename="../src/session-widgets/userexpiredwidget.cpp" line="154"/>
+        <location filename="../src/session-widgets/userexpiredwidget.cpp" line="156"/>
         <source>New password</source>
         <translation type="unfinished"/>
     </message>
     <message>
-        <location filename="../src/session-widgets/userexpiredwidget.cpp" line="163"/>
+        <location filename="../src/session-widgets/userexpiredwidget.cpp" line="165"/>
         <source>Repeat password</source>
         <translation>Repetiu la contrasenya.</translation>
     </message>
     <message>
-        <location filename="../src/session-widgets/userexpiredwidget.cpp" line="318"/>
+        <location filename="../src/session-widgets/userexpiredwidget.cpp" line="322"/>
         <source>Failed to change your password</source>
         <translation type="unfinished"/>
     </message>
     <message>
-        <location filename="../src/session-widgets/userexpiredwidget.cpp" line="335"/>
+        <location filename="../src/session-widgets/userexpiredwidget.cpp" line="339"/>
         <source>Please enter the old password</source>
         <translation type="unfinished"/>
     </message>
     <message>
-        <location filename="../src/session-widgets/userexpiredwidget.cpp" line="341"/>
+        <location filename="../src/session-widgets/userexpiredwidget.cpp" line="345"/>
         <source>Please enter the new password</source>
         <translation>Si us plau, escriviu la contrasenya nova.</translation>
     </message>
     <message>
-        <location filename="../src/session-widgets/userexpiredwidget.cpp" line="347"/>
-        <source>Please enter the repeat password</source>
+        <location filename="../src/session-widgets/userexpiredwidget.cpp" line="351"/>
+        <source>Please repeat the new password</source>
         <translation type="unfinished"/>
     </message>
     <message>
-        <location filename="../src/session-widgets/userexpiredwidget.cpp" line="353"/>
+        <location filename="../src/session-widgets/userexpiredwidget.cpp" line="357"/>
         <source>Passwords do not match</source>
         <translation>Les contrasenyes no coincideixen</translation>
     </message>
@@ -280,17 +280,17 @@
         <translation type="unfinished"/>
     </message>
     <message>
-        <location filename="../src/session-widgets/userloginwidget.cpp" line="207"/>
+        <location filename="../src/session-widgets/userloginwidget.cpp" line="209"/>
         <source>Enter your password to reboot</source>
         <translation>Escriviu la contrasenya per reiniciar.</translation>
     </message>
     <message>
-        <location filename="../src/session-widgets/userloginwidget.cpp" line="210"/>
+        <location filename="../src/session-widgets/userloginwidget.cpp" line="212"/>
         <source>Enter your password to shut down</source>
         <translation>Escriviu la contrasenya per aturar-me.</translation>
     </message>
     <message numerus="yes">
-        <location filename="../src/session-widgets/userloginwidget.cpp" line="283"/>
+        <location filename="../src/session-widgets/userloginwidget.cpp" line="285"/>
         <source>Please try again %n minute(s) later</source>
         <translation><numerusform>Si us plau, torneu-ho a intentar d&apos;aquí a %n minut.</numerusform><numerusform>Si us plau, torneu-ho a intentar d&apos;aquí a %n minuts.</numerusform></translation>
     </message>

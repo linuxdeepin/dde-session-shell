@@ -107,25 +107,25 @@
 <context>
     <name>GreeterWorkek</name>
     <message>
-        <location filename="../src/lightdm-deepin-greeter/greeterworkek.cpp" line="112"/>
+        <location filename="../src/lightdm-deepin-greeter/greeterworkek.cpp" line="116"/>
         <source>Domain account</source>
         <translation>Учетная запись в домене</translation>
     </message>
     <message>
-        <location filename="../src/lightdm-deepin-greeter/greeterworkek.cpp" line="328"/>
-        <location filename="../src/lightdm-deepin-greeter/greeterworkek.cpp" line="419"/>
+        <location filename="../src/lightdm-deepin-greeter/greeterworkek.cpp" line="332"/>
+        <location filename="../src/lightdm-deepin-greeter/greeterworkek.cpp" line="423"/>
         <source>Wrong Password</source>
         <translation>Неверный Пароль</translation>
     </message>
     <message>
-        <location filename="../src/lightdm-deepin-greeter/greeterworkek.cpp" line="333"/>
+        <location filename="../src/lightdm-deepin-greeter/greeterworkek.cpp" line="337"/>
         <source>The domain account or password is not correct. Please enter again.</source>
         <translation>Учетная запись домена или пароль неверны. Пожалуйста, введите еще раз.</translation>
     </message>
     <message>
-        <location filename="../src/lightdm-deepin-greeter/greeterworkek.cpp" line="424"/>
+        <location filename="../src/lightdm-deepin-greeter/greeterworkek.cpp" line="428"/>
         <source>Password expired, please change</source>
-        <translation type="unfinished"/>
+        <translation>Срок действия пароля истек, пожалуйста, измените</translation>
     </message>
 </context>
 <context>
@@ -139,7 +139,7 @@
 <context>
     <name>LockContent</name>
     <message>
-        <location filename="../src/session-widgets/lockcontent.cpp" line="325"/>
+        <location filename="../src/session-widgets/lockcontent.cpp" line="324"/>
         <source>Failed to lock screen</source>
         <translation>Не удалось заблокировать экран</translation>
     </message>
@@ -222,42 +222,42 @@
 <context>
     <name>UserExpiredWidget</name>
     <message>
-        <location filename="../src/session-widgets/userexpiredwidget.cpp" line="146"/>
+        <location filename="../src/session-widgets/userexpiredwidget.cpp" line="148"/>
         <source>Old password</source>
-        <translation type="unfinished"/>
+        <translation>Прежний пароль</translation>
     </message>
     <message>
-        <location filename="../src/session-widgets/userexpiredwidget.cpp" line="154"/>
+        <location filename="../src/session-widgets/userexpiredwidget.cpp" line="156"/>
         <source>New password</source>
-        <translation type="unfinished"/>
+        <translation>Новый Пароль</translation>
     </message>
     <message>
-        <location filename="../src/session-widgets/userexpiredwidget.cpp" line="163"/>
+        <location filename="../src/session-widgets/userexpiredwidget.cpp" line="165"/>
         <source>Repeat password</source>
         <translation>Повторите пароль</translation>
     </message>
     <message>
-        <location filename="../src/session-widgets/userexpiredwidget.cpp" line="318"/>
+        <location filename="../src/session-widgets/userexpiredwidget.cpp" line="322"/>
         <source>Failed to change your password</source>
-        <translation type="unfinished"/>
+        <translation>Не удалось изменить ваш пароль</translation>
     </message>
     <message>
-        <location filename="../src/session-widgets/userexpiredwidget.cpp" line="335"/>
+        <location filename="../src/session-widgets/userexpiredwidget.cpp" line="339"/>
         <source>Please enter the old password</source>
-        <translation type="unfinished"/>
+        <translation>Пожалуйста, введите старый пароль</translation>
     </message>
     <message>
-        <location filename="../src/session-widgets/userexpiredwidget.cpp" line="341"/>
+        <location filename="../src/session-widgets/userexpiredwidget.cpp" line="345"/>
         <source>Please enter the new password</source>
         <translation>Введите новый пароль</translation>
     </message>
     <message>
-        <location filename="../src/session-widgets/userexpiredwidget.cpp" line="347"/>
-        <source>Please enter the repeat password</source>
+        <location filename="../src/session-widgets/userexpiredwidget.cpp" line="351"/>
+        <source>Please repeat the new password</source>
         <translation type="unfinished"/>
     </message>
     <message>
-        <location filename="../src/session-widgets/userexpiredwidget.cpp" line="353"/>
+        <location filename="../src/session-widgets/userexpiredwidget.cpp" line="357"/>
         <source>Passwords do not match</source>
         <translation>Пароли не совпадают.</translation>
     </message>
@@ -277,20 +277,20 @@
     <message>
         <location filename="../src/session-widgets/userloginwidget.cpp" line="181"/>
         <source>Account Login</source>
-        <translation type="unfinished"/>
+        <translation>Логин Учетной Записи</translation>
     </message>
     <message>
-        <location filename="../src/session-widgets/userloginwidget.cpp" line="207"/>
+        <location filename="../src/session-widgets/userloginwidget.cpp" line="209"/>
         <source>Enter your password to reboot</source>
         <translation>Введите ваш пароль для перезагрузки</translation>
     </message>
     <message>
-        <location filename="../src/session-widgets/userloginwidget.cpp" line="210"/>
+        <location filename="../src/session-widgets/userloginwidget.cpp" line="212"/>
         <source>Enter your password to shut down</source>
         <translation>Введите ваш пароль, чтобы выключить</translation>
     </message>
     <message numerus="yes">
-        <location filename="../src/session-widgets/userloginwidget.cpp" line="283"/>
+        <location filename="../src/session-widgets/userloginwidget.cpp" line="285"/>
         <source>Please try again %n minute(s) later</source>
         <translation><numerusform>Пожалуйста попробуйте снова через %n минут(у)</numerusform><numerusform>Пожалуйста попробуйте снова через %n минут(у)</numerusform><numerusform>Пожалуйста попробуйте снова через %n минут(у)</numerusform><numerusform>Пожалуйста попробуйте снова через %n минут(у)</numerusform></translation>
     </message>
