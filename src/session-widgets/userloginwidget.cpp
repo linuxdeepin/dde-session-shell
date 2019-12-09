@@ -198,6 +198,8 @@ void UserLoginWidget::updateUI()
 
     if (m_passwordEdit->isVisible())
         m_userAvatar->setFocusProxy(m_passwordEdit->lineEdit());
+
+    refreshBlurEffectPosition();
 }
 
 void UserLoginWidget::ShutdownPrompt(SessionBaseModel::PowerAction action)
