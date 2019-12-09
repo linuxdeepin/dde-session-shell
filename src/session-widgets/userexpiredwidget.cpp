@@ -348,7 +348,7 @@ bool UserExpiredWidget::errorFilter(const QString &old_pass, const QString &new_
 
         if (confirm.isEmpty()) {
             m_confirmPasswordEdit->lineEdit()->setFocus();
-            m_confirmPasswordEdit->showAlertMessage(tr("Please enter the repeat password"));
+            m_confirmPasswordEdit->showAlertMessage(tr("Please repeat the new password"));
             return false;
         }
     } else {
