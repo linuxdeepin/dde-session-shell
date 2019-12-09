@@ -254,7 +254,7 @@
     <message>
         <location filename="../src/session-widgets/userexpiredwidget.cpp" line="351"/>
         <source>Please repeat the new password</source>
-        <translation type="unfinished"/>
+        <translation>请输入确认密码</translation>
     </message>
     <message>
         <location filename="../src/session-widgets/userexpiredwidget.cpp" line="357"/>
