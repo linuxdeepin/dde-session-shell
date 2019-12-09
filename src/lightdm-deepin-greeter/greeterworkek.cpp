@@ -49,6 +49,10 @@ GreeterWorkek::GreeterWorkek(SessionBaseModel *const model, QObject *parent)
         } else {
             //close fprinter auth
             m_authFramework->setAuthType(DeepinAuthFramework::AuthType::KEYBOARD);
+
+            if (SessionBaseModel::ModeStatus::ChangePasswordMode != state) {
+                model->setPasswordExpired(false);
+            }
         }
     });
 

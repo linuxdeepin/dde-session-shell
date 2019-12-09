@@ -228,6 +228,8 @@ void UserExpiredWidget::initConnect()
         FrameDataBind::Instance()->updateValue("UserConfimPassword", value);
     });
 
+    connect(m_oldPasswordEdit, &DLineEdit::returnPressed, this, &UserExpiredWidget::onChangePassword);
+    connect(m_passwordEdit, &DLineEdit::returnPressed, this, &UserExpiredWidget::onChangePassword);
     connect(m_confirmPasswordEdit, &DLineEdit::returnPressed, this, &UserExpiredWidget::onChangePassword);
     connect(m_lockButton, &QPushButton::clicked, this,  &UserExpiredWidget::onChangePassword);
 

@@ -249,7 +249,6 @@ void LockContent::restoreCenterContent()
 
 void LockContent::restoreMode()
 {
-    m_model->setPasswordExpired(false);
     m_model->setCurrentModeState(SessionBaseModel::ModeStatus::PasswordMode);
 }
 

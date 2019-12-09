@@ -104,12 +104,16 @@ void UserLoginInfo::initConnect()
             m_userLoginWidget->resetAllState();
         }
     });
+    connect(m_model, &SessionBaseModel::passwordExpired, this, [ = ](bool expired) {
+        if (!expired) {
+            m_userExpiredWidget->resetAllState();
+            m_userLoginWidget->resetAllState();
+        }
+    });
     connect(m_userLoginWidget, &UserLoginWidget::requestUserKBLayoutChanged, this, [ = ](const QString & value) {
         emit requestSetLayout(m_user, value);
     });
     connect(m_userExpiredWidget, &UserExpiredWidget::changePasswordFinished, this, [ = ] {
-        m_userLoginWidget->resetAllState();
-        m_userExpiredWidget->resetAllState();
         m_model->setPasswordExpired(false);
         emit changePasswordFinished();
     });
