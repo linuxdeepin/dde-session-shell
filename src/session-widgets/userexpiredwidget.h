@@ -50,7 +50,8 @@ public:
     ~UserExpiredWidget() override;
     void resetAllState();
     void setFaildTipMessage(const QString &message);
-    void setName(const QString &name);
+    void setDisplayName(const QString &name);
+    void setUserName(const QString &name);
 
 signals:
     void changePasswordFinished();
@@ -87,7 +88,8 @@ private:
     QStringList m_KBLayoutList;
     QHBoxLayout *m_nameLayout;
     QFrame *m_nameFrame;
-    QString m_name;
+    QString m_showName;
+    QString m_userName;
 };
 
 #endif // USEREXPIREDWIDGET_H

@@ -254,19 +254,24 @@ void UserExpiredWidget::initConnect()
     });
 }
 
-void UserExpiredWidget::setName(const QString &name)
+void UserExpiredWidget::setDisplayName(const QString &name)
 {
-    m_name = name;
+    m_showName = name;
     m_nameLbl->setText(name);
+}
+
+void UserExpiredWidget::setUserName(const QString &name)
+{
+    m_userName = name;
 }
 
 void UserExpiredWidget::updateNameLabel()
 {
-    int width = m_nameLbl->fontMetrics().width(m_name);
+    int width = m_nameLbl->fontMetrics().width(m_showName);
     int labelMaxWidth = this->width() - 3 * m_nameLayout->spacing();
 
     if (width > labelMaxWidth) {
-        QString str = m_nameLbl->fontMetrics().elidedText(m_name, Qt::ElideRight, labelMaxWidth);
+        QString str = m_nameLbl->fontMetrics().elidedText(m_showName, Qt::ElideRight, labelMaxWidth);
         m_nameLbl->setText(str);
     }
 }
@@ -290,7 +295,7 @@ void UserExpiredWidget::onChangePassword()
 #define TIMEOUT 1000
 
         QProcess process;
-        process.start("su", {m_name});
+        process.start("su", {m_userName});
         process.setReadChannel(QProcess::StandardError);
 
         if (!process.waitForStarted(TIMEOUT)) {

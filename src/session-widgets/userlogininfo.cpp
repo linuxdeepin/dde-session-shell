@@ -63,7 +63,8 @@ void UserLoginInfo::setUser(std::shared_ptr<User> user)
     m_userLoginWidget->setKBLayoutList(user->kbLayoutList());
     m_userLoginWidget->setDefaultKBLayout(user->currentKBLayout());
 
-    m_userExpiredWidget->setName(user->displayName());
+    m_userExpiredWidget->setDisplayName(user->displayName());
+    m_userExpiredWidget->setUserName(user->name());
     m_userExpiredWidget->updateAuthType(m_model->currentType());
 
 
