@@ -136,7 +136,7 @@ void UserExpiredWidget::initUI()
     m_expiredTips->setText(tr("Password expired, please change"));
     m_expiredTips->setAlignment(Qt::AlignCenter);
 
-    setFocusProxy(m_passwordEdit);
+    setFocusProxy(m_passwordEdit->lineEdit());
     m_passwordEdit->lineEdit()->setPlaceholderText(tr("New password"));
     m_passwordEdit->lineEdit()->setContextMenuPolicy(Qt::NoContextMenu);
     m_passwordEdit->setSizePolicy(QSizePolicy::Expanding, QSizePolicy::Fixed);
@@ -285,8 +285,6 @@ void UserExpiredWidget::onChangePassword()
         process.write(m_password.toLocal8Bit());
         process.write("\n");
         process.waitForReadyRead(TIMEOUT);
-        const QString errorString = QString::fromLocal8Bit(process.readLine());
-        qDebug() << errorString;
         qDebug() << QString::fromLocal8Bit(process.readAllStandardError());
         process.write(m_password.toLocal8Bit());
         process.write("\n");
@@ -300,13 +298,14 @@ void UserExpiredWidget::onChangePassword()
         process.write("\n");
         process.waitForFinished(TIMEOUT);
 
-        if (process.exitCode() != 0) {
+        QString output = process.readAllStandardOutput();
+        QString time = process.readAllStandardError();
+        if (process.exitCode() != 0 || output.isEmpty()) {
             process.terminate();
             m_confirmPasswordEdit->showAlertMessage(tr("Failed to change your password"));
-            qDebug() << "password modify failed: " << errorString;
+            qDebug() << "password modify failed: " << process.readLine();
         } else {
             emit changePasswordFinished();
-            qDebug() << "password modify success";
         }
 
         if (process.state() == QProcess::Running) process.kill();
@@ -317,7 +316,7 @@ bool UserExpiredWidget::errorFilter(const QString &new_pass, const QString &conf
 {
     if (!new_pass.isEmpty()) {
         if (!validatePassword(new_pass)) {
-            m_passwordEdit->showAlertMessage(tr("Password validate failed"));
+            m_passwordEdit->showAlertMessage(tr("Password too weak"));
             return false;
         }
     }
