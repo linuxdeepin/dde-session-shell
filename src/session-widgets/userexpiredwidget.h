@@ -76,6 +76,7 @@ private:
     void onChangePassword();
     bool errorFilter(const QString &new_pass, const QString &confirm);
     void updateNameLabel();
+    bool validatePassword(const QString &password);
 
 private:
     DBlurEffectWidget *m_blurEffectWidget;         //阴影窗体
