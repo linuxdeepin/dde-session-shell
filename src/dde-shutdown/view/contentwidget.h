@@ -57,8 +57,8 @@ class ContentWidget: public QFrame
 {
     Q_OBJECT
 public:
-    ContentWidget(QWidget* parent = nullptr);
-    void setModel(SessionBaseModel * const model);
+    ContentWidget(QWidget *parent = nullptr);
+    void setModel(SessionBaseModel *const model);
     ~ContentWidget() override;
 
 signals:
@@ -71,6 +71,7 @@ protected:
     void keyPressEvent(QKeyEvent *event) Q_DECL_OVERRIDE;
     void resizeEvent(QResizeEvent *event) Q_DECL_OVERRIDE;
     void hideEvent(QHideEvent *event) Q_DECL_OVERRIDE;
+    bool event(QEvent *event) Q_DECL_OVERRIDE;
 
 public slots:
     void setConfirm(const bool confirm);
@@ -117,8 +118,8 @@ private:
 
     QWidget *m_tipsWidget;
     QLabel *m_tipsLabel;
-    DBusLogin1Manager* m_login1Inter;
-    DBusControlCenter* m_controlCenterInter;
+    DBusLogin1Manager *m_login1Inter;
+    DBusControlCenter *m_controlCenterInter;
 
     WarningView *m_warningView = nullptr;
     QWidget *m_normalView = nullptr;
@@ -127,7 +128,7 @@ private:
 
     bool m_confirm = false;
 
-    DBusSessionManagerInterface* m_sessionInterface = nullptr;
+    DBusSessionManagerInterface *m_sessionInterface = nullptr;
     SystemMonitor *m_systemMonitor;
     com::deepin::wm *m_wmInter;
     Appearance *m_dbusAppearance = nullptr;
@@ -137,7 +138,8 @@ private:
     int m_failures = 0;
 };
 
-class InhibitHint{
+class InhibitHint
+{
 public:
     QString name, icon, why;
 

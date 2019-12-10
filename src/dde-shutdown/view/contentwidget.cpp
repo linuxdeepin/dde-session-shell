@@ -174,6 +174,38 @@ void ContentWidget::resizeEvent(QResizeEvent *event)
     m_buttonSpacer->changeSize(0, (height() - m_shutdownButton->height()) / 2);
 }
 
+bool ContentWidget::event(QEvent *event)
+{
+    if (event->type() == QEvent::KeyPress) {
+        QKeyEvent *key_event = static_cast<QKeyEvent *>(event);
+
+        if (key_event->key() == Qt::Key_Tab) {
+            if (m_currentSelectedBtn->isVisible() && m_systemMonitor->isVisible()) {
+                if (m_currentSelectedBtn && m_currentSelectedBtn->isChecked()) {
+                    m_currentSelectedBtn->setChecked(false);
+
+                    if (m_systemMonitor) {
+                        m_systemMonitor->setState(SystemMonitor::Enter);
+                    }
+
+                    return true;
+                }
+
+                if (m_systemMonitor && m_systemMonitor->state() == SystemMonitor::Enter) {
+                    m_systemMonitor->setState(SystemMonitor::Leave);
+
+                    if (m_currentSelectedBtn) {
+                        m_currentSelectedBtn->setChecked(true);
+                    }
+                    return true;
+                }
+            }
+        }
+    }
+
+    return QWidget::event(event);
+}
+
 void ContentWidget::hideEvent(QHideEvent *event)
 {
     QFrame::hideEvent(event);
