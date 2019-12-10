@@ -163,7 +163,7 @@ void LockWorker::enableZoneDetected(bool disable)
 void LockWorker::onDisplayErrorMsg(const QString &type, const QString &msg)
 {
     if (type != "verify-timed-out") {
-        emit m_model->authFaildMessage(msg);
+        emit m_model->authFaildTipsMessage(msg);
     } else {
         emit m_model->authFaildMessage("");
     }

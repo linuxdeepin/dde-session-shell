@@ -401,7 +401,7 @@ void GreeterWorkek::recoveryUserKBState(std::shared_ptr<User> user)
 void GreeterWorkek::onDisplayErrorMsg(const QString &type, const QString &msg)
 {
     if (type != "verify-timed-out") {
-        emit m_model->authFaildMessage(msg);
+        emit m_model->authFaildTipsMessage(msg);
     } else {
         emit m_model->authFaildMessage("");
     }
