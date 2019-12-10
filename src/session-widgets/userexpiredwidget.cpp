@@ -42,7 +42,7 @@ UserExpiredWidget::UserExpiredWidget(QWidget *parent)
     : QWidget(parent)
     , m_blurEffectWidget(new DBlurEffectWidget(this))
     , m_nameLbl(new QLabel(this))
-    , m_oldPasswordEdit(new DLineEdit(this))
+    , m_expiredTips(new DLabel(this))
     , m_passwordEdit(new DLineEdit(this))
     , m_confirmPasswordEdit(new DLineEdit(this))
     , m_lockButton(new DFloatingButton(DStyle::SP_ArrowNext))
@@ -59,12 +59,8 @@ UserExpiredWidget::~UserExpiredWidget()
 //重置控件的状态
 void UserExpiredWidget::resetAllState()
 {
-    m_oldPasswordEdit->lineEdit()->clear();
-    m_passwordEdit->lineEdit()->setPlaceholderText(QString());
     m_passwordEdit->lineEdit()->clear();
-    m_passwordEdit->lineEdit()->setPlaceholderText(QString());
     m_confirmPasswordEdit->lineEdit()->clear();
-    m_confirmPasswordEdit->lineEdit()->setPlaceholderText(QString());
     if (m_authType == SessionBaseModel::LightdmType) {
         m_lockButton->setIcon(DStyle::SP_ArrowNext);
     } else {
@@ -94,13 +90,6 @@ void UserExpiredWidget::onOtherPagePasswordChanged(const QVariant &value)
     int cursorIndex =  m_passwordEdit->lineEdit()->cursorPosition();
     m_passwordEdit->setText(value.toString());
     m_passwordEdit->lineEdit()->setCursorPosition(cursorIndex);
-}
-
-void UserExpiredWidget::onOtherPageOldPasswordChanged(const QVariant &value)
-{
-    int cursorIndex =  m_oldPasswordEdit->lineEdit()->cursorPosition();
-    m_oldPasswordEdit->setText(value.toString());
-    m_oldPasswordEdit->lineEdit()->setCursorPosition(cursorIndex);
 }
 
 void UserExpiredWidget::refreshBlurEffectPosition()
@@ -144,15 +133,10 @@ void UserExpiredWidget::initUI()
     DFontSizeManager::instance()->bind(m_nameLbl, DFontSizeManager::T2);
     m_nameLbl->setAlignment(Qt::AlignCenter);
 
-    setFocusProxy(m_oldPasswordEdit->lineEdit());
-    m_oldPasswordEdit->lineEdit()->setPlaceholderText(tr("Old password"));
-    m_oldPasswordEdit->lineEdit()->setContextMenuPolicy(Qt::NoContextMenu);
-    m_oldPasswordEdit->setSizePolicy(QSizePolicy::Expanding, QSizePolicy::Fixed);
-    m_oldPasswordEdit->lineEdit()->setAlignment(Qt::AlignCenter);
-    m_oldPasswordEdit->setFocusPolicy(Qt::StrongFocus);
-    m_oldPasswordEdit->setEchoMode(QLineEdit::Password);
-    m_oldPasswordEdit->setClearButtonEnabled(false);
+    m_expiredTips->setText(tr("Password expired, please change"));
+    m_expiredTips->setAlignment(Qt::AlignCenter);
 
+    setFocusProxy(m_passwordEdit);
     m_passwordEdit->lineEdit()->setPlaceholderText(tr("New password"));
     m_passwordEdit->lineEdit()->setContextMenuPolicy(Qt::NoContextMenu);
     m_passwordEdit->setSizePolicy(QSizePolicy::Expanding, QSizePolicy::Fixed);
@@ -160,7 +144,6 @@ void UserExpiredWidget::initUI()
     m_passwordEdit->setFocusPolicy(Qt::StrongFocus);
     m_passwordEdit->setEchoMode(QLineEdit::Password);
     m_passwordEdit->setClearButtonEnabled(false);
-    m_passwordEdit->lineEdit()->setFocus();
 
     m_confirmPasswordEdit->lineEdit()->setPlaceholderText(tr("Repeat password"));
     m_confirmPasswordEdit->lineEdit()->setContextMenuPolicy(Qt::NoContextMenu);
@@ -182,7 +165,7 @@ void UserExpiredWidget::initUI()
     m_nameFrame->setLayout(m_nameLayout);
     m_userLayout->addWidget(m_nameFrame, 0, Qt::AlignHCenter);
 
-    m_userLayout->addWidget(m_oldPasswordEdit);
+    m_userLayout->addWidget(m_expiredTips);
     m_userLayout->addWidget(m_passwordEdit);
     m_userLayout->addWidget(m_confirmPasswordEdit);
 
@@ -208,7 +191,6 @@ void UserExpiredWidget::initUI()
 
     setLayout(mainLayout);
 
-    setTabOrder(m_oldPasswordEdit->lineEdit(), m_passwordEdit->lineEdit());
     setTabOrder(m_passwordEdit->lineEdit(), m_confirmPasswordEdit->lineEdit());
     setTabOrder(m_confirmPasswordEdit->lineEdit(), m_lockButton);
 }
@@ -216,10 +198,6 @@ void UserExpiredWidget::initUI()
 //初始化槽函数连接
 void UserExpiredWidget::initConnect()
 {
-    connect(m_oldPasswordEdit->lineEdit(), &QLineEdit::textChanged, this, [ = ](const QString & value) {
-        FrameDataBind::Instance()->updateValue("UserOldPassword", value);
-    });
-
     connect(m_passwordEdit->lineEdit(), &QLineEdit::textChanged, this, [ = ](const QString & value) {
         FrameDataBind::Instance()->updateValue("UserPassword", value);
     });
@@ -228,14 +206,11 @@ void UserExpiredWidget::initConnect()
         FrameDataBind::Instance()->updateValue("UserConfimPassword", value);
     });
 
-    connect(m_oldPasswordEdit, &DLineEdit::returnPressed, this, &UserExpiredWidget::onChangePassword);
     connect(m_passwordEdit, &DLineEdit::returnPressed, this, &UserExpiredWidget::onChangePassword);
     connect(m_confirmPasswordEdit, &DLineEdit::returnPressed, this, &UserExpiredWidget::onChangePassword);
     connect(m_lockButton, &QPushButton::clicked, this,  &UserExpiredWidget::onChangePassword);
 
     QMap<QString, int> registerFunctionIndexs;
-    std::function<void (QVariant)> oldPasswordChanged = std::bind(&UserExpiredWidget::onOtherPageOldPasswordChanged, this, std::placeholders::_1);
-    registerFunctionIndexs["UserOldPassword"] = FrameDataBind::Instance()->registerFunction("UserOldPassword", oldPasswordChanged);
     std::function<void (QVariant)> confirmPaswordChanged = std::bind(&UserExpiredWidget::onOtherPageConfirmPasswordChanged, this, std::placeholders::_1);
     registerFunctionIndexs["UserConfimPassword"] = FrameDataBind::Instance()->registerFunction("UserConfimPassword", confirmPaswordChanged);
     std::function<void (QVariant)> passwordChanged = std::bind(&UserExpiredWidget::onOtherPagePasswordChanged, this, std::placeholders::_1);
@@ -248,7 +223,6 @@ void UserExpiredWidget::initConnect()
     });
 
     QTimer::singleShot(0, this, [ = ] {
-        FrameDataBind::Instance()->refreshData("UserOldPassword");
         FrameDataBind::Instance()->refreshData("UserPassword");
         FrameDataBind::Instance()->refreshData("UserConfimPassword");
     });
@@ -263,6 +237,11 @@ void UserExpiredWidget::setDisplayName(const QString &name)
 void UserExpiredWidget::setUserName(const QString &name)
 {
     m_userName = name;
+}
+
+void UserExpiredWidget::setPassword(const QString &passwd)
+{
+    m_password = passwd;
 }
 
 void UserExpiredWidget::updateNameLabel()
@@ -287,11 +266,10 @@ void UserExpiredWidget::updateAuthType(SessionBaseModel::AuthType type)
 
 void UserExpiredWidget::onChangePassword()
 {
-    const QString old_pass = m_oldPasswordEdit->text();
     const QString new_pass = m_passwordEdit->text();
     const QString confirm = m_confirmPasswordEdit->text();
 
-    if (errorFilter(old_pass, new_pass, confirm)) {
+    if (!m_password.isEmpty() && errorFilter(new_pass, confirm)) {
 #define TIMEOUT 1000
 
         QProcess process;
@@ -304,13 +282,13 @@ void UserExpiredWidget::onChangePassword()
         }
 
         qDebug() << QString::fromLocal8Bit(process.readAllStandardError());
-        process.write(old_pass.toLocal8Bit());
+        process.write(m_password.toLocal8Bit());
         process.write("\n");
         process.waitForReadyRead(TIMEOUT);
         const QString errorString = QString::fromLocal8Bit(process.readLine());
         qDebug() << errorString;
         qDebug() << QString::fromLocal8Bit(process.readAllStandardError());
-        process.write(old_pass.toLocal8Bit());
+        process.write(m_password.toLocal8Bit());
         process.write("\n");
         process.waitForReadyRead(TIMEOUT);
         qDebug() << QString::fromLocal8Bit(process.readAllStandardError());
@@ -335,16 +313,9 @@ void UserExpiredWidget::onChangePassword()
     }
 }
 
-bool UserExpiredWidget::errorFilter(const QString &old_pass, const QString &new_pass, const QString &confirm)
+bool UserExpiredWidget::errorFilter(const QString &new_pass, const QString &confirm)
 {
-    if (old_pass.isEmpty() || new_pass.isEmpty() || confirm.isEmpty()) {
-
-        if (old_pass.isEmpty()) {
-            m_oldPasswordEdit->lineEdit()->setFocus();
-            m_oldPasswordEdit->showAlertMessage(tr("Please enter the old password"));
-            return false;
-        }
-
+    if (new_pass.isEmpty() || confirm.isEmpty()) {
         if (new_pass.isEmpty()) {
             m_passwordEdit->lineEdit()->setFocus();
             m_passwordEdit->showAlertMessage(tr("Please enter the new password"));

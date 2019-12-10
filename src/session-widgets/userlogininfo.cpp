@@ -83,20 +83,14 @@ void UserLoginInfo::initConnect()
 {
     //UserLoginWidget
     connect(m_userLoginWidget, &UserLoginWidget::requestAuthUser, this, [ = ](const QString & account, const QString & password) {
-        if (m_model->isPasswordExpired() && m_model->currentType() == SessionBaseModel::LightdmType) {
-            emit passwordExpired();
-        } else {
-            if (!password.isEmpty()) {
-                if (m_model->isServiceAccountLogin() && !account.isEmpty()) {
-                    static_cast<ADDomainUser *>(m_model->currentUser().get())->setUserName(account);
-                }
-                emit requestAuthUser(password);
-            } else {
-                if (m_user->isNoPasswdGrp()) {
-                    emit requestAuthUser(password);
-                }
-            }
+        if (m_model->isServiceAccountLogin() && !account.isEmpty()) {
+            static_cast<ADDomainUser *>(m_model->currentUser().get())->setUserName(account);
         }
+
+        if (m_model->currentUser()->isPasswordExpired()) {
+            m_userExpiredWidget->setPassword(password);
+        }
+        emit requestAuthUser(password);
     });
     connect(m_model, &SessionBaseModel::authFaildMessage, m_userLoginWidget, &UserLoginWidget::setFaildMessage);
     connect(m_model, &SessionBaseModel::authFaildTipsMessage, m_userLoginWidget, &UserLoginWidget::setFaildTipMessage);
@@ -105,19 +99,10 @@ void UserLoginInfo::initConnect()
             m_userLoginWidget->resetAllState();
         }
     });
-    connect(m_model, &SessionBaseModel::passwordExpired, this, [ = ](bool expired) {
-        if (!expired) {
-            m_userExpiredWidget->resetAllState();
-            m_userLoginWidget->resetAllState();
-        }
-    });
     connect(m_userLoginWidget, &UserLoginWidget::requestUserKBLayoutChanged, this, [ = ](const QString & value) {
         emit requestSetLayout(m_user, value);
     });
-    connect(m_userExpiredWidget, &UserExpiredWidget::changePasswordFinished, this, [ = ] {
-        m_model->setPasswordExpired(false);
-        emit changePasswordFinished();
-    });
+    connect(m_userExpiredWidget, &UserExpiredWidget::changePasswordFinished, this, &UserLoginInfo::changePasswordFinished);
 
     //UserFrameList
     connect(m_userFrameList, &UserFrameList::clicked, this, &UserLoginInfo::hideUserFrameList);
@@ -138,6 +123,7 @@ void UserLoginInfo::abortConfirm(bool abort)
 
 UserLoginWidget *UserLoginInfo::getUserLoginWidget()
 {
+    m_userExpiredWidget->resetAllState();
     return m_userLoginWidget;
 }
 
@@ -148,6 +134,7 @@ UserFrameList *UserLoginInfo::getUserFrameList()
 
 UserExpiredWidget *UserLoginInfo::getUserExpiredWidget()
 {
+    m_userLoginWidget->resetAllState();
     return m_userExpiredWidget;
 }
 

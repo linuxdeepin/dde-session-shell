@@ -82,9 +82,6 @@ public:
 
     void setAbortConfirm(bool abortConfirm);
 
-    inline bool isPasswordExpired() { return m_isPasswordExpired; }
-    void setPasswordExpired(bool expire);
-
 signals:
     void onUserAdded(std::shared_ptr<User> user);
     void onUserRemoved(const uint uid);
@@ -104,7 +101,6 @@ signals:
     void canSleepChanged(bool canSleep);
     void allowShowUserSwitchButtonChanged(bool allowShowUserSwitchButton);
     void abortConfirmChanged(bool abortConfirm);
-    void passwordExpired(bool expired);
 
 private:
     com::deepin::SessionManager *m_sessionManagerInter;
@@ -117,7 +113,6 @@ private:
     bool m_alwaysShowUserSwitchButton;
     bool m_abortConfirm;
     bool m_isServiceAccountLogin;
-    bool m_isPasswordExpired = false;
     AuthType m_currentType;
     QList<std::shared_ptr<User>> m_userList;
     std::shared_ptr<User> m_currentUser;

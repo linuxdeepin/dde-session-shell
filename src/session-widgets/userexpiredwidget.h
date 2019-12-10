@@ -28,6 +28,7 @@
 #include <DBlurEffectWidget>
 #include <DFloatingButton>
 #include <DLineEdit>
+#include <DLabel>
 
 DWIDGET_USE_NAMESPACE
 
@@ -52,6 +53,7 @@ public:
     void setFaildTipMessage(const QString &message);
     void setDisplayName(const QString &name);
     void setUserName(const QString &name);
+    void setPassword(const QString &passwd);
 
 signals:
     void changePasswordFinished();
@@ -72,14 +74,14 @@ private:
     void onOtherPagePasswordChanged(const QVariant &value);
     void onOtherPageOldPasswordChanged(const QVariant &value);
     void onChangePassword();
-    bool errorFilter(const QString &old_pass, const QString &new_pass, const QString &confirm);
+    bool errorFilter(const QString &new_pass, const QString &confirm);
     void updateNameLabel();
 
 private:
     DBlurEffectWidget *m_blurEffectWidget;         //阴影窗体
     QLabel *m_nameLbl;                             //用户名
     SessionBaseModel::AuthType m_authType;         //认证类型
-    DLineEdit *m_oldPasswordEdit;                  //旧密码
+    DLabel *m_expiredTips;                         //提示信息
     DLineEdit *m_passwordEdit;                     //新密码输入框
     DLineEdit *m_confirmPasswordEdit;              //新密码确认
     DFloatingButton *m_lockButton;                 //解锁按钮
@@ -90,6 +92,7 @@ private:
     QFrame *m_nameFrame;
     QString m_showName;
     QString m_userName;
+    QString m_password;
 };
 
 #endif // USEREXPIREDWIDGET_H

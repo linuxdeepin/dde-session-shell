@@ -49,10 +49,6 @@ GreeterWorkek::GreeterWorkek(SessionBaseModel *const model, QObject *parent)
         } else {
             //close fprinter auth
             m_authFramework->setAuthType(DeepinAuthFramework::AuthType::KEYBOARD);
-
-            if (SessionBaseModel::ModeStatus::ChangePasswordMode != state) {
-                model->setPasswordExpired(false);
-            }
         }
     });
 
@@ -422,11 +418,9 @@ void GreeterWorkek::onPasswordResult(const QString &msg)
         m_authenticating = false;
         emit m_model->authFaildTipsMessage(tr("Wrong Password"));
     } else {
-        m_model->setPasswordExpired(m_model->currentUser()->isPasswordExpired());
-        if (m_model->isPasswordExpired()) {
+        if (m_model->currentUser()->isPasswordExpired()) {
             m_authenticating = false;
-            emit m_model->authFaildMessage(tr("Password expired, please change"));
-            qDebug() << Q_FUNC_INFO << "password expired";
+            m_model->setCurrentModeState(SessionBaseModel::ModeStatus::ChangePasswordMode);
         } else {
             greeterAuthUser(m_password);
         }

@@ -67,10 +67,6 @@ LockContent::LockContent(SessionBaseModel *const model, QWidget *parent, bool is
     connect(m_controlWidget, &ControlWidget::requestSwitchVirtualKB, this, &LockContent::toggleVirtualKB);
 
     //lixin
-    connect(m_userLoginInfo, &UserLoginInfo::passwordExpired, this, [ = ] {
-        if (m_model->currentModeState() == SessionBaseModel::ModeStatus::ChangePasswordMode) return;
-        m_model->setCurrentModeState(SessionBaseModel::ModeStatus::ChangePasswordMode);
-    });
     connect(m_userLoginInfo, &UserLoginInfo::requestAuthUser, this, &LockContent::restoreMode);
     connect(m_userLoginInfo, &UserLoginInfo::requestAuthUser, this, &LockContent::requestAuthUser);
     connect(m_userLoginInfo, &UserLoginInfo::hideUserFrameList, this, &LockContent::restoreMode);

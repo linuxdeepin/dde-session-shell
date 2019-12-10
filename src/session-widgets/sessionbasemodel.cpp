@@ -218,9 +218,3 @@ void SessionBaseModel::setAbortConfirm(bool abortConfirm)
     m_abortConfirm = abortConfirm;
     emit abortConfirmChanged(abortConfirm);
 }
-
-void SessionBaseModel::setPasswordExpired(bool expired)
-{
-    m_isPasswordExpired = expired;
-    emit passwordExpired(expired);
-}
