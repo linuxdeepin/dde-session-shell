@@ -347,13 +347,20 @@ bool UserExpiredWidget::errorFilter(const QString &new_pass, const QString &conf
 bool UserExpiredWidget::validatePassword(const QString &password)
 {
     // NOTE(justforlxz): 配置文件由安装器生成，后续改成PAM模块
-    QSettings setting("/etc/deepin/dde-control-center.conf", QSettings::IniFormat);
-    setting.beginGroup("Password");
-    const bool strong_password_check = setting.value("STRONG_PASSWORD", false).toBool();
-    const int  password_min_length   = setting.value("PASSWORD_MIN_LENGTH").toInt();
-    const int  password_max_length   = setting.value("PASSWORD_MAX_LENGTH").toInt();
-    const QStringList validate_policy = setting.value("VALIDATE_POLICY").toString().split(";");
-    const int validate_required      = setting.value("VALIDATE_REQUIRED").toInt();
+    QSettings *setting = nullptr;
+    if (QFile("/etc/deepin/dde-control-center.conf").exists()) {
+        setting = new QSettings("/etc/deepin/dde-control-center.conf", QSettings::IniFormat);
+    } else {
+        setting = new QSettings(":/skin/validate-policy.conf", QSettings::IniFormat);
+    }
+
+    setting->beginGroup("Password");
+    const bool strong_password_check = setting->value("STRONG_PASSWORD", false).toBool();
+    const int  password_min_length   = setting->value("PASSWORD_MIN_LENGTH").toInt();
+    const int  password_max_length   = setting->value("PASSWORD_MAX_LENGTH").toInt();
+    const QStringList validate_policy = setting->value("VALIDATE_POLICY").toString().split(";");
+    const int validate_required      = setting->value("VALIDATE_REQUIRED").toInt();
+    delete setting;
 
     if (!strong_password_check) {
         return true;

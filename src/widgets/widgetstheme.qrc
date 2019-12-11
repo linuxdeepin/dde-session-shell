@@ -6,5 +6,6 @@
         <file>skin/requireshutdown.qss</file>
         <file>skin/mediawidget.qss</file>
         <file>skin/login.qss</file>
+        <file>skin/validate-policy.conf</file>
     </qresource>
 </RCC>
