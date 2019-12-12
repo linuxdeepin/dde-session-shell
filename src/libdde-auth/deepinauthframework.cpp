@@ -105,22 +105,19 @@ void DeepinAuthFramework::DisplayErrorMsg(AuthAgent::Type type, const QString &e
 {
     Q_UNUSED(type);
 
-    m_interface->onDisplayErrorMsg(errtype, msg);
+    m_interface->onDisplayErrorMsg(type, errtype, msg);
 }
 
 void DeepinAuthFramework::DisplayTextInfo(AuthAgent::Type type, const QString &msg)
 {
-
     if (type == AuthAgent::Type::Fprint && !msg.isEmpty()) {
-        m_interface->onDisplayTextInfo(tr("Verify your fingerprint or password"));
+        m_interface->onDisplayTextInfo(type, tr("Verify your fingerprint or password"));
     } else {
-        m_interface->onDisplayTextInfo(msg);
+        m_interface->onDisplayTextInfo(type, msg);
     }
 }
 
 void DeepinAuthFramework::RespondResult(AuthAgent::Type type, const QString &msg)
 {
-    if (type == AuthAgent::Fprint && msg.isEmpty()) return;
-
-    m_interface->onPasswordResult(msg);
+    m_interface->onPasswordResult(type, msg);
 }

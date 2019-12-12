@@ -87,12 +87,18 @@ void UserLoginWidget::resetAllState()
 }
 
 //密码连续输入错误5次，设置提示信息
-void UserLoginWidget::setFaildMessage(const QString &message)
+void UserLoginWidget::setFaildMessage(const QString &message, SessionBaseModel::AuthFaildType type)
 {
     if (m_isLock && !message.isEmpty()) {
         m_lockPasswordWidget->setMessage(message);
         m_passwordEdit->hideAlertMessage();
         return;
+    }
+
+    if (type == SessionBaseModel::KEYBOARD) {
+        m_passwordEdit->hideLoadSlider();
+    } else {
+        m_passwordEdit->hideAlertMessage();
     }
 
     m_passwordEdit->hideLoadSlider();
@@ -102,7 +108,7 @@ void UserLoginWidget::setFaildMessage(const QString &message)
 }
 
 //密码输入错误,设置错误信息
-void UserLoginWidget::setFaildTipMessage(const QString &message)
+void UserLoginWidget::setFaildTipMessage(const QString &message, SessionBaseModel::AuthFaildType type)
 {
     m_accountEdit->setEnabled(true);
     m_passwordEdit->hideLoadSlider();
@@ -111,8 +117,10 @@ void UserLoginWidget::setFaildTipMessage(const QString &message)
         m_passwordEdit->hideAlertMessage();
     } else if (m_passwordEdit->isVisible()) {
         m_passwordEdit->showAlertMessage(message, -1);
-        m_passwordEdit->lineEdit()->selectAll();
-        m_isAlertMessageShow = true;
+        if (type == SessionBaseModel::KEYBOARD) {
+            m_passwordEdit->lineEdit()->selectAll();
+            m_isAlertMessageShow = true;
+        }
     }
 }
 

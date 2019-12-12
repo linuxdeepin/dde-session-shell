@@ -17,6 +17,11 @@ public:
         LightdmType
     };
 
+    enum AuthFaildType {
+        Fprint,
+        KEYBOARD
+    };
+
     enum PowerAction {
         RequireNormal,
         RequireShutdown,
@@ -86,8 +91,8 @@ signals:
     void onUserAdded(std::shared_ptr<User> user);
     void onUserRemoved(const uint uid);
     void currentUserChanged(std::shared_ptr<User> user);
-    void authFaildMessage(const QString &message);
-    void authFaildTipsMessage(const QString &message);
+    void authFaildMessage(const QString &message, AuthFaildType type = KEYBOARD);
+    void authFaildTipsMessage(const QString &message, AuthFaildType type = KEYBOARD);
     void authFinished(bool success);
     void onPowerActionChanged(PowerAction poweraction);
     void onSessionKeyChanged(const QString &sessionKey);

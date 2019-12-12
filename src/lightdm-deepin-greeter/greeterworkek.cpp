@@ -65,26 +65,26 @@ GreeterWorkek::GreeterWorkek(SessionBaseModel *const model, QObject *parent)
     connect(m_greeter, &QLightDM::Greeter::showMessage, this, &GreeterWorkek::message);
     connect(m_greeter, &QLightDM::Greeter::authenticationComplete, this, &GreeterWorkek::authenticationComplete);
 
-    connect(model, &SessionBaseModel::onPowerActionChanged, this, [=] (SessionBaseModel::PowerAction poweraction) {
+    connect(model, &SessionBaseModel::onPowerActionChanged, this, [ = ](SessionBaseModel::PowerAction poweraction) {
         switch (poweraction) {
-            case SessionBaseModel::PowerAction::RequireShutdown:
-                m_login1ManagerInterface->PowerOff(true);
-                break;
-            case SessionBaseModel::PowerAction::RequireRestart:
-                m_login1ManagerInterface->Reboot(true);
-                break;
-            case SessionBaseModel::PowerAction::RequireSuspend:
-                m_login1ManagerInterface->Suspend(true);
-                break;
-            case SessionBaseModel::PowerAction::RequireHibernate:
-                m_login1ManagerInterface->Hibernate(true);
-                break;
-            default:
-                break;
+        case SessionBaseModel::PowerAction::RequireShutdown:
+            m_login1ManagerInterface->PowerOff(true);
+            break;
+        case SessionBaseModel::PowerAction::RequireRestart:
+            m_login1ManagerInterface->Reboot(true);
+            break;
+        case SessionBaseModel::PowerAction::RequireSuspend:
+            m_login1ManagerInterface->Suspend(true);
+            break;
+        case SessionBaseModel::PowerAction::RequireHibernate:
+            m_login1ManagerInterface->Hibernate(true);
+            break;
+        default:
+            break;
         }
     });
 
-    connect(KeyboardMonitor::instance(), &KeyboardMonitor::numlockStatusChanged, this, [=] (bool on) {
+    connect(KeyboardMonitor::instance(), &KeyboardMonitor::numlockStatusChanged, this, [ = ](bool on) {
         saveNumlockStatus(model->currentUser(), on);
     });
 
@@ -99,7 +99,7 @@ GreeterWorkek::GreeterWorkek(SessionBaseModel *const model, QObject *parent)
         initDBus();
         initData();
 
-        if(QFile::exists("/etc/deepin/no_suspend"))
+        if (QFile::exists("/etc/deepin/no_suspend"))
             m_model->setCanSleep(false);
 
         checkDBusServer(m_accountsInter->isValid());
@@ -109,7 +109,7 @@ GreeterWorkek::GreeterWorkek(SessionBaseModel *const model, QObject *parent)
     bool loginPromptInputValue { valueByQSettings<bool>("", "loginPromptInput", false) };
     if (loginPromptInputValue) {
         std::shared_ptr<User> user = std::make_shared<ADDomainUser>(0);
-        static_cast<ADDomainUser*>(user.get())->setUserDisplayName(tr("Domain account"));
+        static_cast<ADDomainUser *>(user.get())->setUserDisplayName(tr("Domain account"));
         m_model->userAdd(user);
         m_model->setCurrentUser(user);
         m_model->setIsServiceAccountLogin(loginPromptInputValue);
@@ -188,7 +188,7 @@ void GreeterWorkek::onUserAdded(const QString &user)
 
     if (m_model->currentUser().get() == nullptr) {
         if (m_model->userList().isEmpty() ||
-            m_model->userList().first()->type() == User::ADDomain) {
+                m_model->userList().first()->type() == User::ADDomain) {
             m_model->setCurrentUser(user_ptr);
 
             if (m_model->currentType() == SessionBaseModel::AuthType::LightdmType) {
@@ -208,10 +208,9 @@ void GreeterWorkek::checkDBusServer(bool isvalid)
 {
     if (isvalid) {
         onUserListChanged(m_accountsInter->userList());
-    }
-    else {
+    } else {
         // FIXME: 我不希望这样做，但是QThread::msleep会导致无限递归
-        QTimer::singleShot(300, this, [=] {
+        QTimer::singleShot(300, this, [ = ] {
             qWarning() << "com.deepin.daemon.Accounts is not start, rechecking!";
             checkDBusServer(m_accountsInter->isValid());
         });
@@ -262,20 +261,19 @@ void GreeterWorkek::prompt(QString text, QLightDM::Greeter::PromptType type)
     const QString msg = text.simplified() == "Password:" ? "" : text;
 
     switch (type) {
-        case QLightDM::Greeter::PromptTypeSecret:
-            if (m_isThumbAuth || m_password.isEmpty()) break;
+    case QLightDM::Greeter::PromptTypeSecret:
+        if (m_isThumbAuth || m_password.isEmpty()) break;
 
-            if (msg.isEmpty()) {
-                m_greeter->respond(m_password);
-            }
-            else {
-                emit m_model->authFaildMessage(msg);
-            }
-            break;
-        case QLightDM::Greeter::PromptTypeQuestion:
-            // trim the right : in the message if exists.
-            emit m_model->authFaildMessage(text.replace(":", ""));
-            break;
+        if (msg.isEmpty()) {
+            m_greeter->respond(m_password);
+        } else {
+            emit m_model->authFaildMessage(msg);
+        }
+        break;
+    case QLightDM::Greeter::PromptTypeQuestion:
+        // trim the right : in the message if exists.
+        emit m_model->authFaildMessage(text.replace(":", ""));
+        break;
     }
 }
 
@@ -288,9 +286,8 @@ void GreeterWorkek::message(QString text, QLightDM::Greeter::MessageType type)
         m_isThumbAuth = true;
 
         //V20版本新需求：若用户输入了密码，当指纹解锁超时，自动校验一次密码登录
-        if(!m_password.isEmpty())
-        {
-            QTimer::singleShot(300, this, [=] {
+        if (!m_password.isEmpty()) {
+            QTimer::singleShot(300, this, [ = ] {
                 m_greeter->respond(m_password);
             });
         }
@@ -300,19 +297,19 @@ void GreeterWorkek::message(QString text, QLightDM::Greeter::MessageType type)
     }
 
     switch (type) {
-        case QLightDM::Greeter::MessageTypeInfo:
-            if (m_isThumbAuth) break;
+    case QLightDM::Greeter::MessageTypeInfo:
+        if (m_isThumbAuth) break;
 
-            emit m_model->authFaildMessage(QString(dgettext("fprintd", text.toLatin1())));
-            break;
-        case QLightDM::Greeter::MessageTypeError:
-            qWarning() << "error message from lightdm: " << text;
-            if (text == "Failed to match fingerprint") {
-                emit m_model->authFaildMessage("");
-                //V20版本新需求，在指纹解锁失败和超时情况下，不提示任何信息
-                //emit m_model->authFaildTipsMessage(tr("Failed to match fingerprint"));
-            }
-            break;
+        emit m_model->authFaildMessage(QString(dgettext("fprintd", text.toLatin1())));
+        break;
+    case QLightDM::Greeter::MessageTypeError:
+        qWarning() << "error message from lightdm: " << text;
+        if (text == "Failed to match fingerprint") {
+            emit m_model->authFaildMessage("");
+            //V20版本新需求，在指纹解锁失败和超时情况下，不提示任何信息
+            //emit m_model->authFaildTipsMessage(tr("Failed to match fingerprint"));
+        }
+        break;
     }
 }
 
@@ -344,18 +341,18 @@ void GreeterWorkek::authenticationComplete()
     }
 
     switch (m_model->powerAction()) {
-        case SessionBaseModel::PowerAction::RequireRestart:
-            m_login1ManagerInterface->Reboot(true);
-            return;
-        case SessionBaseModel::PowerAction::RequireShutdown:
-            m_login1ManagerInterface->PowerOff(true);
-            return;
-        default: break;
+    case SessionBaseModel::PowerAction::RequireRestart:
+        m_login1ManagerInterface->Reboot(true);
+        return;
+    case SessionBaseModel::PowerAction::RequireShutdown:
+        m_login1ManagerInterface->PowerOff(true);
+        return;
+    default: break;
     }
 
     qDebug() << "start session = " << m_model->sessionKey();
 
-    auto startSessionSync = [=]() {
+    auto startSessionSync = [ = ]() {
         QJsonObject json;
         json["Uid"]  = static_cast<int>(m_model->currentUser()->uid());
         json["Type"] = m_model->currentUser()->type();
@@ -375,7 +372,8 @@ void GreeterWorkek::authenticationComplete()
 #endif
 }
 
-void GreeterWorkek::saveNumlockStatus(std::shared_ptr<User> user, const bool &on) {
+void GreeterWorkek::saveNumlockStatus(std::shared_ptr<User> user, const bool &on)
+{
     UserNumlockSettings(user->name()).set(on);
 }
 
@@ -397,35 +395,48 @@ void GreeterWorkek::recoveryUserKBState(std::shared_ptr<User> user)
     KeyboardMonitor::instance()->setNumlockStatus(enabled);
 }
 
-void GreeterWorkek::onDisplayErrorMsg(const QString &type, const QString &msg)
+void GreeterWorkek::onDisplayErrorMsg(AuthAgent::Type type, const QString &errtype, const QString &msg)
 {
-    if (type != "verify-timed-out") {
-        emit m_model->authFaildTipsMessage(msg);
+    if (type == AuthAgent::Fprint) {
+        if (errtype != "verify-timed-out") {
+            emit m_model->authFaildTipsMessage(msg, SessionBaseModel::Fprint);
+        } else {
+            emit m_model->authFaildMessage("", SessionBaseModel::Fprint);
+        }
     } else {
-        emit m_model->authFaildMessage("");
+        emit m_model->authFaildMessage(msg);
     }
 }
 
-void GreeterWorkek::onDisplayTextInfo(const QString &msg)
+void GreeterWorkek::onDisplayTextInfo(AuthAgent::Type type, const QString &msg)
 {
-    emit m_model->authFaildMessage(msg);
+    if (type == AuthAgent::Fprint) {
+        emit m_model->authFaildMessage(msg, SessionBaseModel::Fprint);
+    } else {
+        emit m_model->authFaildMessage(msg);
+    }
 }
 
-void GreeterWorkek::onPasswordResult(const QString &msg)
+void GreeterWorkek::onPasswordResult(AuthAgent::Type type, const QString &msg)
 {
-    m_password = msg;
-    qDebug() << Q_FUNC_INFO << msg;
-
     if (msg.isEmpty()) {
-        qDebug() << "Authorization failed!";
-        m_authenticating = false;
-        emit m_model->authFaildTipsMessage(tr("Wrong Password"));
+        if (type == AuthAgent::Fprint) {
+            qDebug() << Q_FUNC_INFO << "Fprint Failed";
+            emit m_model->authFaildMessage("", SessionBaseModel::Fprint);
+        } else {
+            qDebug() << Q_FUNC_INFO << "Password Failed";
+            authenticationComplete();
+        }
     } else {
+        m_password = msg;
+
         if (m_model->currentUser()->isPasswordExpired()) {
             m_authenticating = false;
             m_model->setCurrentModeState(SessionBaseModel::ModeStatus::ChangePasswordMode);
         } else {
+            qDebug() << Q_FUNC_INFO << msg;
             greeterAuthUser(m_password);
         }
     }
 }
+

@@ -160,21 +160,29 @@ void LockWorker::enableZoneDetected(bool disable)
     m_hotZoneInter->EnableZoneDetected(disable);
 }
 
-void LockWorker::onDisplayErrorMsg(const QString &type, const QString &msg)
+void LockWorker::onDisplayErrorMsg(AuthAgent::Type type, const QString &errtype, const QString &msg)
 {
-    if (type != "verify-timed-out") {
-        emit m_model->authFaildTipsMessage(msg);
+    if (type == AuthAgent::Fprint) {
+        if (errtype != "verify-timed-out") {
+            emit m_model->authFaildTipsMessage(msg, SessionBaseModel::Fprint);
+        } else {
+            emit m_model->authFaildMessage("", SessionBaseModel::Fprint);
+        }
     } else {
-        emit m_model->authFaildMessage("");
+        emit m_model->authFaildMessage(msg);
     }
 }
 
-void LockWorker::onDisplayTextInfo(const QString &msg)
+void LockWorker::onDisplayTextInfo(AuthAgent::Type type, const QString &msg)
 {
-    emit m_model->authFaildMessage(msg);
+    if (type == AuthAgent::Fprint) {
+        emit m_model->authFaildMessage(msg, SessionBaseModel::Fprint);
+    } else {
+        emit m_model->authFaildMessage(msg);
+    }
 }
 
-void LockWorker::onPasswordResult(const QString &msg)
+void LockWorker::onPasswordResult(AuthAgent::Type type, const QString &msg)
 {
     m_password = msg;
     std::shared_ptr<User> user = m_model->currentUser();
@@ -182,6 +190,10 @@ void LockWorker::onPasswordResult(const QString &msg)
     if (msg.isEmpty()) {
         //FIXME(lxz): 不知道为什么收不到错误
         onUnlockFinished(false);
+        if (type == AuthAgent::Fprint) {
+            qDebug() << Q_FUNC_INFO << "Fprint Failed";
+            emit m_model->authFaildMessage("", SessionBaseModel::Fprint);
+        }
     } else {
         m_lockInter->AuthenticateUser(user->name());
         m_lockInter->UnlockCheck(user->name(), m_password);

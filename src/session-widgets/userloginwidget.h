@@ -65,8 +65,8 @@ public:
     ~UserLoginWidget() override;
     void resetAllState();
     void disablePassword(bool disable, uint lockNum = 0);
-    void setFaildMessage(const QString &message);
-    void setFaildTipMessage(const QString &message);
+    void setFaildMessage(const QString &message, SessionBaseModel::AuthFaildType type = SessionBaseModel::KEYBOARD);
+    void setFaildTipMessage(const QString &message, SessionBaseModel::AuthFaildType type = SessionBaseModel::KEYBOARD);
     void setWidgetShowType(WidgetShowType showType);
     void setName(const QString &name);
     void setAvatar(const QString &avatar);
