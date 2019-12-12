@@ -124,10 +124,6 @@
         <source>The domain account or password is not correct. Please enter again.</source>
         <translation>域帐户或域密码不正确，请重新输入。</translation>
     </message>
-    <message>
-        <source>Password expired, please change</source>
-        <translation type="vanished">密码已过期请修改</translation>
-    </message>
 </context>
 <context>
     <name>InhibitWarnView</name>
