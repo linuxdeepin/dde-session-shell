@@ -90,6 +90,8 @@ GreeterWorkek::GreeterWorkek(SessionBaseModel *const model, QObject *parent)
         default:
             break;
         }
+
+        model->setPowerAction(SessionBaseModel::PowerAction::None);
     });
 
     connect(KeyboardMonitor::instance(), &KeyboardMonitor::numlockStatusChanged, this, [ = ](bool on) {

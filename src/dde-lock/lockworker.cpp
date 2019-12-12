@@ -63,6 +63,8 @@ LockWorker::LockWorker(SessionBaseModel *const model, QObject *parent)
         default:
             break;
         }
+
+        model->setPowerAction(SessionBaseModel::PowerAction::None);
     });
 
     connect(model, &SessionBaseModel::visibleChanged, this, [ = ](bool isVisible) {

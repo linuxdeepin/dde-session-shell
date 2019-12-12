@@ -23,6 +23,7 @@ public:
     };
 
     enum PowerAction {
+        None,
         RequireNormal,
         RequireShutdown,
         RequireRestart,
