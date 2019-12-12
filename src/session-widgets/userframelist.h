@@ -67,7 +67,7 @@ private:
 
 private:
     QScrollArea *m_scrollArea;
-    DFlowLayout *m_folwLayout;
+    DFlowLayout *m_flowLayout;
     QList<UserLoginWidget *> m_loginWidgets;
     UserLoginWidget *currentSelectedUser = nullptr;
     SessionBaseModel *m_model;

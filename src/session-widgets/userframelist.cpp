@@ -89,7 +89,7 @@ void UserFrameList::addUser(std::shared_ptr<User> user)
          return (w1->uid() < w2->uid());
     });
     int index = m_loginWidgets.indexOf(widget);
-    m_folwLayout->insertWidget(index, widget);
+    m_flowLayout->insertWidget(index, widget);
 }
 
 //删除用户
@@ -221,13 +221,13 @@ void UserFrameList::initUI()
         m_frameDataBind->unRegisterFunction("UserFrameList", index);
     });
 
-    m_folwLayout = new DFlowLayout;
-    m_folwLayout->setFlow(QListView::LeftToRight);
-    m_folwLayout->setMargin(0);
-    m_folwLayout->setSpacing(UserFrameSpaceing);
+    m_flowLayout = new DFlowLayout;
+    m_flowLayout->setFlow(QListView::LeftToRight);
+    m_flowLayout->setMargin(0);
+    m_flowLayout->setSpacing(UserFrameSpaceing);
 
     m_centerWidget = new QWidget;
-    m_centerWidget->setLayout(m_folwLayout);
+    m_centerWidget->setLayout(m_flowLayout);
 
     m_scrollArea->setWidgetResizable(true);
     m_scrollArea->setSizePolicy(QSizePolicy::Expanding, QSizePolicy::Expanding);
