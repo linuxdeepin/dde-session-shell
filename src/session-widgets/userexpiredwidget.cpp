@@ -348,8 +348,8 @@ bool UserExpiredWidget::validatePassword(const QString &password)
 {
     // NOTE(justforlxz): 配置文件由安装器生成，后续改成PAM模块
     QSettings *setting = nullptr;
-    if (QFile("/etc/deepin/dde-control-center.conf").exists()) {
-        setting = new QSettings("/etc/deepin/dde-control-center.conf", QSettings::IniFormat);
+    if (QFile("/etc/deepin/dde.conf").exists()) {
+        setting = new QSettings("/etc/deepin/dde.conf", QSettings::IniFormat);
     } else {
         setting = new QSettings(":/skin/validate-policy.conf", QSettings::IniFormat);
     }
