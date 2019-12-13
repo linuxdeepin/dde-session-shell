@@ -106,6 +106,7 @@ signals:
     void canSleepChanged(bool canSleep);
     void allowShowUserSwitchButtonChanged(bool allowShowUserSwitchButton);
     void abortConfirmChanged(bool abortConfirm);
+    void lockChanged(bool lock);
 
 private:
     com::deepin::SessionManager *m_sessionManagerInter;

@@ -52,6 +52,14 @@ GreeterWorkek::GreeterWorkek(SessionBaseModel *const model, QObject *parent)
         }
     });
 
+    connect(model, &SessionBaseModel::lockChanged, this, [ = ](bool is_lock) {
+        if (is_lock) {
+            m_authFramework->Clear();
+        } else {
+            userAuthForLightdm(m_model->currentUser());
+        }
+    });
+
     if (!m_login1ManagerInterface->isValid()) {
         qWarning() << "m_login1ManagerInterface:"
                    << m_login1ManagerInterface->lastError().type();

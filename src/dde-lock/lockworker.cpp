@@ -44,6 +44,14 @@ LockWorker::LockWorker(SessionBaseModel *const model, QObject *parent)
         }
     });
 
+    connect(model, &SessionBaseModel::lockChanged, this, [ = ](bool is_lock) {
+        if (is_lock) {
+            m_authFramework->Clear();
+        } else {
+            userAuthForLock(m_model->currentUser());
+        }
+    });
+
     connect(model, &SessionBaseModel::onPowerActionChanged, this, [ = ](SessionBaseModel::PowerAction poweraction) {
         switch (poweraction) {
         case SessionBaseModel::PowerAction::RequireSuspend:
@@ -117,11 +125,11 @@ void LockWorker::switchToUser(std::shared_ptr<User> user)
     json["Type"] = user->type();
 
     m_lockInter->SwitchToUser(QString(QJsonDocument(json).toJson(QJsonDocument::Compact))).waitForFinished();
-    if (isDeepin()) {
-        m_authFramework->Clear();
-        m_authFramework->SetUser(user);
-        m_authFramework->Authenticate();
-    }
+//    if (isDeepin()) {
+//        m_authFramework->Clear();
+//        m_authFramework->SetUser(user);
+//        m_authFramework->Authenticate();
+//    }
 
     if (user->isLogin()) {
         QProcess::startDetached("dde-switchtogreeter", QStringList() << user->name());

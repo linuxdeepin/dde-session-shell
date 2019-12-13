@@ -101,7 +101,6 @@ void UserLoginWidget::setFaildMessage(const QString &message, SessionBaseModel::
         m_passwordEdit->hideAlertMessage();
     }
 
-    m_passwordEdit->hideLoadSlider();
     m_passwordEdit->lineEdit()->clear();
     m_passwordEdit->lineEdit()->setPlaceholderText(message);
     m_passwordEdit->lineEdit()->update();
