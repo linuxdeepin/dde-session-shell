@@ -14,10 +14,10 @@ class DeepinAuthFramework : public QObject
     Q_OBJECT
 public:
     enum AuthType {
-        KEYBOARD = 0x01,
-        FPRINT = 0x02,
-        ALL = KEYBOARD | FPRINT
-    } ;
+        UnknowAuthType,
+        LockType,
+        LightdmType
+    };
 
     explicit DeepinAuthFramework(DeepinAuthInterface *inter, QObject *parent = nullptr);
     ~DeepinAuthFramework();

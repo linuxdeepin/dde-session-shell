@@ -29,6 +29,7 @@ LockWorker::LockWorker(SessionBaseModel *const model, QObject *parent)
     , m_sessionManager(new SessionManager("com.deepin.SessionManager", "/com/deepin/SessionManager", QDBusConnection::sessionBus(), this))
 {
     m_authFramework = new DeepinAuthFramework(this, this);
+    m_authFramework->setAuthType(DeepinAuthFramework::AuthType::LockType);
 
     m_currentUserUid = getuid();
 
@@ -37,10 +38,10 @@ LockWorker::LockWorker(SessionBaseModel *const model, QObject *parent)
         m_authFramework->SetUser(user);
         if (SessionBaseModel::ModeStatus::PasswordMode == state) {
             //active fprinter auth
-            m_authFramework->setAuthType(DeepinAuthFramework::AuthType::ALL);
+            m_authFramework->Authenticate();
         } else {
             //close fprinter auth
-            m_authFramework->setAuthType(DeepinAuthFramework::AuthType::KEYBOARD);
+            m_authFramework->Clear();
         }
     });
 
@@ -199,10 +200,11 @@ void LockWorker::onPasswordResult(AuthAgent::Type type, const QString &msg)
 
     if (msg.isEmpty()) {
         //FIXME(lxz): 不知道为什么收不到错误
-        onUnlockFinished(false);
         if (type == AuthAgent::Fprint) {
             qDebug() << Q_FUNC_INFO << "Fprint Failed";
             emit m_model->authFaildMessage("", SessionBaseModel::Fprint);
+        } else {
+            onUnlockFinished(false);
         }
     } else {
         m_lockInter->AuthenticateUser(user->name());
@@ -321,8 +323,6 @@ void LockWorker::onUnlockFinished(bool unlocked)
 
 void LockWorker::userAuthForLock(std::shared_ptr<User> user)
 {
-    if (user->isNoPasswdGrp()) return;
-
     if (isDeepin()) {
         m_authFramework->SetUser(user);
         m_authFramework->Authenticate();

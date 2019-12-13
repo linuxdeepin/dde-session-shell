@@ -39,16 +39,17 @@ GreeterWorkek::GreeterWorkek(SessionBaseModel *const model, QObject *parent)
     , m_password(QString())
 {
     m_authFramework = new DeepinAuthFramework(this, this);
+    m_authFramework->setAuthType(DeepinAuthFramework::AuthType::LightdmType);
 
     QObject::connect(model, &SessionBaseModel::onStatusChanged, this, [ = ](SessionBaseModel::ModeStatus state) {
         std::shared_ptr<User> user = m_model->currentUser();
         m_authFramework->SetUser(user);
         if (SessionBaseModel::ModeStatus::PasswordMode == state) {
             //active fprinter auth
-            m_authFramework->setAuthType(DeepinAuthFramework::AuthType::ALL);
+            m_authFramework->Authenticate();
         } else {
             //close fprinter auth
-            m_authFramework->setAuthType(DeepinAuthFramework::AuthType::KEYBOARD);
+            m_authFramework->Clear();
         }
     });
 

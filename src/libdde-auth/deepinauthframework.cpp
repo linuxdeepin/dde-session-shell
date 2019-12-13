@@ -14,7 +14,7 @@ static QString PASSWORD;
 DeepinAuthFramework::DeepinAuthFramework(DeepinAuthInterface *inter, QObject *parent)
     : QObject(parent)
     , m_interface(inter)
-    , m_type(ALL)
+    , m_type(UnknowAuthType)
 {
 }
 
@@ -36,21 +36,17 @@ void DeepinAuthFramework::Authenticate()
 {
     if (USER->isLock()) return;
 
-    if (m_type & (ALL | KEYBOARD)) {
-        m_keyboard = new AuthAgent(AuthAgent::Keyboard, this);
-        m_keyboard->SetUser(USER->name());
+    m_fprint = new AuthAgent(AuthAgent::Fprint, this);
+    m_fprint->SetUser(USER->name());
+    // It takes time to auth again after cancel!
+    QTimer::singleShot(500, m_fprint, &AuthAgent::Authenticate);
 
-        if (USER->isNoPasswdGrp() || (!USER->isNoPasswdGrp() && !PASSWORD.isEmpty())) {
-            QTimer::singleShot(100, m_keyboard, &AuthAgent::Authenticate);
-        }
-    }
+    m_keyboard = new AuthAgent(AuthAgent::Keyboard, this);
+    m_keyboard->SetUser(USER->name());
 
-    if (m_type & (ALL | FPRINT)) {
-        //不在密码界面，不可以使用指纹验证
-        m_fprint = new AuthAgent(AuthAgent::Fprint, this);
-        m_fprint->SetUser(USER->name());
-        // It takes time to auth again after cancel!
-        QTimer::singleShot(500, m_fprint, &AuthAgent::Authenticate);
+    if (USER->isNoPasswdGrp() || (!USER->isNoPasswdGrp() && !PASSWORD.isEmpty())) {
+        if (m_type == AuthType::LockType && PASSWORD.isEmpty()) return;
+        QTimer::singleShot(100, m_keyboard, &AuthAgent::Authenticate);
     }
 }
 
@@ -75,20 +71,6 @@ void DeepinAuthFramework::setPassword(const QString &password)
 void DeepinAuthFramework::setAuthType(DeepinAuthFramework::AuthType type)
 {
     m_type = type;
-
-    if (type & FPRINT) {
-        if (!m_fprint && !USER->isLock()) {
-            //不在密码界面，不可以使用指纹验证，此处需进行确认
-            m_fprint = new AuthAgent(AuthAgent::Fprint, this);
-            m_fprint->SetUser(USER->name());
-            // It takes time to auth again after cancel!
-            QTimer::singleShot(500, m_fprint, &AuthAgent::Authenticate);
-        }
-    } else {
-        if (!m_fprint.isNull()) {
-            m_fprint->deleteLater();
-        }
-    }
 }
 
 const QString DeepinAuthFramework::RequestEchoOff(const QString &msg)
