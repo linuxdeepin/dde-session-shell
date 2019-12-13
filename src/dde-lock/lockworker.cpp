@@ -121,6 +121,7 @@ void LockWorker::switchToUser(std::shared_ptr<User> user)
 
     // clear old password
     m_password.clear();
+    m_authenticating = false;
 
     // if type is lock, switch to greeter
     QJsonObject json;

@@ -134,6 +134,7 @@ void GreeterWorkek::switchToUser(std::shared_ptr<User> user)
 
     // clear old password
     m_password.clear();
+    m_authenticating = false;
 
     // just switch user
     if (user->isLogin()) {
