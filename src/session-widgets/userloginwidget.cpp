@@ -187,6 +187,9 @@ void UserLoginWidget::updateUI()
         m_accountEdit->setFocus();
         m_nameLbl->setText(tr("Account Login"));
         m_lockButton->show();
+
+        setTabOrder(m_accountEdit, m_passwordEdit->lineEdit());
+        setTabOrder(m_passwordEdit->lineEdit(), m_lockButton);
         break;
     }
     case UserFrameType: {
@@ -203,8 +206,10 @@ void UserLoginWidget::updateUI()
         break;
     }
 
-    if (m_passwordEdit->isVisible())
-        m_userAvatar->setFocusProxy(m_passwordEdit->lineEdit());
+    if (m_accountEdit->isVisible()) {
+        setFocusProxy(m_accountEdit);
+    } else if (m_passwordEdit->isVisible())
+        setFocusProxy(m_passwordEdit->lineEdit());
 
     refreshBlurEffectPosition();
 }
@@ -367,6 +372,8 @@ void UserLoginWidget::hideEvent(QHideEvent *event)
 //初始化窗体控件
 void UserLoginWidget::initUI()
 {
+    setFocusPolicy(Qt::StrongFocus);
+
     m_userAvatar->setAvatarSize(UserAvatar::AvatarLargeSize);
     m_userAvatar->setFixedSize(100, 100);
     m_userAvatar->setFocusPolicy(Qt::NoFocus);
@@ -452,9 +459,6 @@ void UserLoginWidget::initUI()
     mainLayout->addStretch();
 
     setLayout(mainLayout);
-
-    setTabOrder(m_accountEdit, m_passwordEdit->lineEdit());
-    setTabOrder(m_passwordEdit->lineEdit(), m_lockButton);
 }
 
 //初始化槽函数连接
