@@ -34,30 +34,36 @@ void DeepinAuthFramework::SetUser(std::shared_ptr<User> user)
 
 void DeepinAuthFramework::Authenticate()
 {
-    if (USER->isLock()) return;
+    if (USER->isLock() || USER->uid() != m_currentUserUid) return;
 
-    m_fprint = new AuthAgent(AuthAgent::Fprint, this);
-    m_fprint->SetUser(USER->name());
-    // It takes time to auth again after cancel!
-    QTimer::singleShot(500, m_fprint, &AuthAgent::Authenticate);
+    if (m_fprint == nullptr) {
+        m_fprint = new AuthAgent(AuthAgent::Fprint, this);
+        m_fprint->SetUser(USER->name());
+        // It takes time to auth again after cancel!
+        QTimer::singleShot(500, m_fprint, &AuthAgent::Authenticate);
+    }
 
-    m_keyboard = new AuthAgent(AuthAgent::Keyboard, this);
-    m_keyboard->SetUser(USER->name());
+    if (m_keyboard == nullptr) {
+        m_keyboard = new AuthAgent(AuthAgent::Keyboard, this);
+        m_keyboard->SetUser(USER->name());
 
-    if (USER->isNoPasswdGrp() || (!USER->isNoPasswdGrp() && !PASSWORD.isEmpty())) {
-        if (m_type == AuthType::LockType && PASSWORD.isEmpty()) return;
-        QTimer::singleShot(100, m_keyboard, &AuthAgent::Authenticate);
+        if (USER->isNoPasswdGrp() || (!USER->isNoPasswdGrp() && !PASSWORD.isEmpty())) {
+            if (m_type == AuthType::LockType && PASSWORD.isEmpty()) return;
+            QTimer::singleShot(100, m_keyboard, &AuthAgent::Authenticate);
+        }
     }
 }
 
 void DeepinAuthFramework::Clear()
 {
     if (!m_keyboard.isNull()) {
-        m_keyboard->deleteLater();
+        delete m_keyboard;
+        m_keyboard = nullptr;
     }
 
     if (!m_fprint.isNull()) {
-        m_fprint->deleteLater();
+        delete m_fprint;
+        m_fprint = nullptr;
     }
 
     PASSWORD.clear();
@@ -71,6 +77,11 @@ void DeepinAuthFramework::setPassword(const QString &password)
 void DeepinAuthFramework::setAuthType(DeepinAuthFramework::AuthType type)
 {
     m_type = type;
+}
+
+void DeepinAuthFramework::setCurrentUid(uint uid)
+{
+    m_currentUserUid = uid;
 }
 
 const QString DeepinAuthFramework::RequestEchoOff(const QString &msg)

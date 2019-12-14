@@ -32,6 +32,7 @@ LockWorker::LockWorker(SessionBaseModel *const model, QObject *parent)
     m_authFramework->setAuthType(DeepinAuthFramework::AuthType::LockType);
 
     m_currentUserUid = getuid();
+    m_authFramework->setCurrentUid(m_currentUserUid);
 
     QObject::connect(model, &SessionBaseModel::onStatusChanged, this, [ = ](SessionBaseModel::ModeStatus state) {
         std::shared_ptr<User> user = m_model->currentUser();
@@ -129,11 +130,11 @@ void LockWorker::switchToUser(std::shared_ptr<User> user)
     json["Type"] = user->type();
 
     m_lockInter->SwitchToUser(QString(QJsonDocument(json).toJson(QJsonDocument::Compact))).waitForFinished();
-//    if (isDeepin()) {
-//        m_authFramework->Clear();
-//        m_authFramework->SetUser(user);
-//        m_authFramework->Authenticate();
-//    }
+    if (isDeepin()) {
+        m_authFramework->Clear();
+        m_authFramework->SetUser(user);
+        m_authFramework->Authenticate();
+    }
 
     if (user->isLogin()) {
         QProcess::startDetached("dde-switchtogreeter", QStringList() << user->name());

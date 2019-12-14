@@ -142,6 +142,12 @@ void GreeterWorkek::switchToUser(std::shared_ptr<User> user)
         QProcess::startDetached("dde-switchtogreeter", QStringList() << user->name());
     }
 
+    if (isDeepin()) {
+        m_authFramework->Clear();
+        m_authFramework->SetUser(user);
+        m_authFramework->Authenticate();
+    }
+
     QJsonObject json;
     json["Uid"] = static_cast<int>(user->uid());
     json["Type"] = user->type();
@@ -233,6 +239,7 @@ void GreeterWorkek::onCurrentUserChanged(const QString &user)
 {
     const QJsonObject obj = QJsonDocument::fromJson(user.toUtf8()).object();
     m_currentUserUid = static_cast<uint>(obj["Uid"].toInt());
+    m_authFramework->setCurrentUid(m_currentUserUid);
 
     for (std::shared_ptr<User> user : m_model->userList()) {
         if (!user->isLogin() && user->uid() == m_currentUserUid) {

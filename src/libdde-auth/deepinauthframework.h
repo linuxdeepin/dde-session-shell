@@ -32,6 +32,7 @@ public slots:
     void Clear();
     void setPassword(const QString &password);
     void setAuthType(AuthType type);
+    void setCurrentUid(uint uid);
 
 private:
     const QString RequestEchoOff(const QString &msg);
@@ -46,6 +47,7 @@ private:
     QPointer<AuthAgent> m_fprint;
 
     AuthType m_type;
+    uint m_currentUserUid;
 };
 
 #endif // DEEPINAUTHFRAMEWORK_H
