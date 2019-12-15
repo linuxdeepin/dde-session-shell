@@ -123,6 +123,8 @@ GreeterWorkek::GreeterWorkek(SessionBaseModel *const model, QObject *parent)
         static_cast<ADDomainUser *>(user.get())->setUserDisplayName(tr("Domain account"));
         m_model->userAdd(user);
         m_model->setCurrentUser(user);
+        m_currentUserUid = user->uid();
+        m_authFramework->setCurrentUid(m_currentUserUid);
         m_model->setIsServiceAccountLogin(loginPromptInputValue);
     }
 }
@@ -208,6 +210,8 @@ void GreeterWorkek::onUserAdded(const QString &user)
         if (m_model->userList().isEmpty() ||
                 m_model->userList().first()->type() == User::ADDomain) {
             m_model->setCurrentUser(user_ptr);
+            m_currentUserUid = user_ptr->uid();
+            m_authFramework->setCurrentUid(m_currentUserUid);
 
             if (m_model->currentType() == SessionBaseModel::AuthType::LightdmType) {
                 userAuthForLightdm(user_ptr);
@@ -239,11 +243,11 @@ void GreeterWorkek::onCurrentUserChanged(const QString &user)
 {
     const QJsonObject obj = QJsonDocument::fromJson(user.toUtf8()).object();
     m_currentUserUid = static_cast<uint>(obj["Uid"].toInt());
-    m_authFramework->setCurrentUid(m_currentUserUid);
 
     for (std::shared_ptr<User> user : m_model->userList()) {
         if (!user->isLogin() && user->uid() == m_currentUserUid) {
             m_model->setCurrentUser(user);
+            m_authFramework->setCurrentUid(m_currentUserUid);
             userAuthForLightdm(user);
             break;
         }
