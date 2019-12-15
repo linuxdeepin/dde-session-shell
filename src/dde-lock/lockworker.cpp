@@ -62,6 +62,12 @@ LockWorker::LockWorker(SessionBaseModel *const model, QObject *parent)
         case SessionBaseModel::PowerAction::RequireHibernate:
             m_sessionManager->RequestHibernate();
             break;
+        case SessionBaseModel::PowerAction::RequireRestart:
+            model->setPowerAction(SessionBaseModel::PowerAction::RequireRestart);
+            return;
+        case SessionBaseModel::PowerAction::RequireShutdown:
+            model->setPowerAction(SessionBaseModel::PowerAction::RequireShutdown);
+            return;
         default:
             break;
         }
