@@ -46,6 +46,9 @@ public:
     void hideKBLayout();
     void abortConfirm(bool abort = true);
 
+public:
+    bool eventFilter(QObject *watched, QEvent *event);
+
 signals:
     void requestAuthUser(const QString &password);
     void requestSwitchUser(std::shared_ptr<User> user);

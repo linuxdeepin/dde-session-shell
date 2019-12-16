@@ -26,6 +26,7 @@
 #include "sessionbasemodel.h"
 #include "userframelist.h"
 #include "src/global_util/constants.h"
+#include <QKeyEvent>
 
 UserLoginInfo::UserLoginInfo(SessionBaseModel *model, QObject *parent)
     : QObject(parent)
@@ -62,10 +63,12 @@ void UserLoginInfo::setUser(std::shared_ptr<User> user)
     m_userLoginWidget->disablePassword(user.get()->isLock(), user->lockNum());
     m_userLoginWidget->setKBLayoutList(user->kbLayoutList());
     m_userLoginWidget->setDefaultKBLayout(user->currentKBLayout());
+    m_userLoginWidget->installEventFilter(this);
 
     m_userExpiredWidget->setDisplayName(user->displayName());
     m_userExpiredWidget->setUserName(user->name());
     m_userExpiredWidget->updateAuthType(m_model->currentType());
+    m_userExpiredWidget->installEventFilter(this);
 
 
     if (m_model->isServiceAccountLogin()) {
@@ -158,4 +161,19 @@ void UserLoginInfo::receiveSwitchUser(std::shared_ptr<User> user)
     }
 
     emit requestSwitchUser(user);
+}
+
+bool UserLoginInfo::eventFilter(QObject *watched, QEvent *event)
+{
+    if (watched == m_userLoginWidget || watched == m_userExpiredWidget) {
+        if (event->type() == QEvent::KeyPress) {
+            QKeyEvent *key_event = static_cast<QKeyEvent *>(event);
+            if (key_event->modifiers() == Qt::ControlModifier ||
+                    key_event->modifiers() == Qt::AltModifier ||
+                    key_event->modifiers() == Qt::MetaModifier)
+                return true;
+        }
+    }
+
+    return false;
 }
