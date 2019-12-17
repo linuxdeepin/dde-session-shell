@@ -4,11 +4,13 @@
 #include "src/widgets/keyboardmonitor.h"
 
 #include <libintl.h>
+#include <DSysInfo>
 
 #define LOCKSERVICE_PATH "/com/deepin/dde/LockService"
 #define LOCKSERVICE_NAME "com.deepin.dde.LockService"
 
 using namespace Auth;
+DCORE_USE_NAMESPACE
 
 class UserNumlockSettings
 {
@@ -103,10 +105,15 @@ GreeterWorkek::GreeterWorkek(SessionBaseModel *const model, QObject *parent)
     connect(m_lockInter, &DBusLockService::UserChanged, this, &GreeterWorkek::onCurrentUserChanged);
 
     const QString &switchUserButtonValue { valueByQSettings<QString>("Lock", "showSwitchUserButton", "ondemand") };
-    m_model->setAlwaysShowUserSwitchButton(switchUserButtonValue == "always");
-    m_model->setAllowShowUserSwitchButton(switchUserButtonValue == "ondemand");
+    QString switch_button_value = switchUserButtonValue;
+    if (DSysInfo::deepinType() == DSysInfo::DeepinServer) {
+        switch_button_value = "disable";
+    }
+    m_model->setAlwaysShowUserSwitchButton(switch_button_value == "always");
+    m_model->setAllowShowUserSwitchButton(switch_button_value == "ondemand");
 
-    if (valueByQSettings<bool>("", "loginPromptAvatar", true)) {
+    if (DSysInfo::deepinType() == DSysInfo::DeepinDesktop ||
+            DSysInfo::deepinType() == DSysInfo::DeepinProfessional) {
         initDBus();
         initData();
 
@@ -117,15 +124,14 @@ GreeterWorkek::GreeterWorkek(SessionBaseModel *const model, QObject *parent)
         onCurrentUserChanged(m_lockInter->CurrentUser());
     }
 
-    bool loginPromptInputValue { valueByQSettings<bool>("", "loginPromptInput", false) };
-    if (loginPromptInputValue) {
+    if (DSysInfo::deepinType() == DSysInfo::DeepinServer) {
+        initData();
+
         std::shared_ptr<User> user = std::make_shared<ADDomainUser>(0);
         static_cast<ADDomainUser *>(user.get())->setUserDisplayName(tr("Domain account"));
         m_model->userAdd(user);
         m_model->setCurrentUser(user);
-        m_currentUserUid = user->uid();
-        m_authFramework->setCurrentUid(m_currentUserUid);
-        m_model->setIsServiceAccountLogin(loginPromptInputValue);
+        m_model->setIsServiceAccountLogin(true);
     }
 }
 
@@ -210,8 +216,6 @@ void GreeterWorkek::onUserAdded(const QString &user)
         if (m_model->userList().isEmpty() ||
                 m_model->userList().first()->type() == User::ADDomain) {
             m_model->setCurrentUser(user_ptr);
-            m_currentUserUid = user_ptr->uid();
-            m_authFramework->setCurrentUid(m_currentUserUid);
 
             if (m_model->currentType() == SessionBaseModel::AuthType::LightdmType) {
                 userAuthForLightdm(user_ptr);
@@ -247,7 +251,6 @@ void GreeterWorkek::onCurrentUserChanged(const QString &user)
     for (std::shared_ptr<User> user : m_model->userList()) {
         if (!user->isLogin() && user->uid() == m_currentUserUid) {
             m_model->setCurrentUser(user);
-            m_authFramework->setCurrentUid(m_currentUserUid);
             userAuthForLightdm(user);
             break;
         }
@@ -416,6 +419,9 @@ void GreeterWorkek::recoveryUserKBState(std::shared_ptr<User> user)
     KeyboardMonitor::instance()->setNumlockStatus(cur_numlock);
 
     KeyboardMonitor::instance()->setNumlockStatus(enabled);
+
+    m_currentUserUid = user->uid();
+    m_authFramework->setCurrentUid(m_currentUserUid);
 }
 
 void GreeterWorkek::onDisplayErrorMsg(AuthAgent::Type type, const QString &errtype, const QString &msg)

@@ -92,9 +92,9 @@ class NativeUser : public User
 
 public:
     NativeUser(const QString &path, QObject *parent = nullptr);
+    UserInter *getUserInter() { return m_userInter; }
 
     void setCurrentLayout(const QString &currentKBLayout) override;
-
     UserType type() const override { return Native; }
     QString displayName() const override;
     QString avatarPath() const override;
@@ -118,15 +118,19 @@ public:
 
     void setUserDisplayName(const QString &name);
     void setUserName(const QString &name);
+    void setUserInter(UserInter *user_inter);
+    void setUid(uint uid);
 
     QString displayName() const override;
     UserType type() const override { return ADDomain; }
     QString avatarPath() const override;
     QString greeterBackgroundPath() const override;
     QString desktopBackgroundPath() const override;
+    bool isPasswordExpired() const override;
 
 private:
     QString m_displayName;
+    UserInter *m_userInter = nullptr;
 };
 
 #endif // USERINFO_H

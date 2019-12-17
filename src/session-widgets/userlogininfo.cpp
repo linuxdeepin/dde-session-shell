@@ -87,7 +87,18 @@ void UserLoginInfo::initConnect()
     //UserLoginWidget
     connect(m_userLoginWidget, &UserLoginWidget::requestAuthUser, this, [ = ](const QString & account, const QString & password) {
         if (m_model->isServiceAccountLogin() && !account.isEmpty()) {
+            auto user = dynamic_cast<NativeUser *>(m_model->findUserByName(account).get());
+            auto current_user = m_model->currentUser();
+
             static_cast<ADDomainUser *>(m_model->currentUser().get())->setUserName(account);
+            static_cast<ADDomainUser *>(m_model->currentUser().get())->setUserInter(nullptr);
+            if (user != nullptr) {
+                if (m_model->currentType() == SessionBaseModel::LockType) {
+                    static_cast<ADDomainUser *>(m_model->currentUser().get())->setUid(user->uid());
+                }
+                static_cast<ADDomainUser *>(m_model->currentUser().get())->setUserInter(user->getUserInter());
+                m_userExpiredWidget->setUserName(account);
+            }
         }
 
         if (m_model->currentUser()->isPasswordExpired()) {

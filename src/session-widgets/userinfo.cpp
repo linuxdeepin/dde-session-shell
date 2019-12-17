@@ -275,6 +275,24 @@ void ADDomainUser::setUserName(const QString &name)
     m_userName = name;
 }
 
+void ADDomainUser::setUserInter(UserInter *user_inter)
+{
+    if (m_userInter == user_inter) {
+        return;
+    }
+
+    m_userInter = user_inter;
+}
+
+void ADDomainUser::setUid(uint uid)
+{
+    if (m_uid == uid) {
+        return;
+    }
+
+    m_uid = uid;
+}
+
 QString ADDomainUser::displayName() const
 {
     return m_displayName.isEmpty() ? m_userName : m_displayName;
@@ -293,4 +311,11 @@ QString ADDomainUser::greeterBackgroundPath() const
 QString ADDomainUser::desktopBackgroundPath() const
 {
     return QString("/usr/share/wallpapers/deepin/desktop.jpg");
+}
+
+bool ADDomainUser::isPasswordExpired() const
+{
+    if (m_userInter != nullptr) {
+        return m_userInter->IsPasswordExpired();
+    }
 }
