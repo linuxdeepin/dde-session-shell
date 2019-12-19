@@ -113,7 +113,8 @@ GreeterWorkek::GreeterWorkek(SessionBaseModel *const model, QObject *parent)
     m_model->setAllowShowUserSwitchButton(switch_button_value == "ondemand");
 
     if (DSysInfo::deepinType() == DSysInfo::DeepinDesktop ||
-            DSysInfo::deepinType() == DSysInfo::DeepinProfessional) {
+            DSysInfo::deepinType() == DSysInfo::DeepinProfessional ||
+            DSysInfo::deepinType() == DSysInfo::UnknownDeepin) {
         initDBus();
         initData();
 
