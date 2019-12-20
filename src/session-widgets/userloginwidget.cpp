@@ -79,6 +79,7 @@ void UserLoginWidget::resetAllState()
     m_passwordEdit->lineEdit()->setPlaceholderText(QString());
     m_accountEdit->clear();
     m_accountEdit->setEnabled(true);
+    m_accountEdit->setFocusPolicy(Qt::StrongFocus);
     if (m_authType == SessionBaseModel::LightdmType) {
         m_lockButton->setIcon(DStyle::SP_ArrowNext);
     } else {
@@ -91,6 +92,8 @@ void UserLoginWidget::setFaildMessage(const QString &message, SessionBaseModel::
 {
     if (m_isLock && !message.isEmpty()) {
         m_lockPasswordWidget->setMessage(message);
+        m_accountEdit->setEnabled(false);
+        m_accountEdit->setFocusPolicy(Qt::NoFocus);
         m_passwordEdit->hideAlertMessage();
         return;
     }
@@ -109,6 +112,7 @@ void UserLoginWidget::setFaildMessage(const QString &message, SessionBaseModel::
 //密码输入错误,设置错误信息
 void UserLoginWidget::setFaildTipMessage(const QString &message, SessionBaseModel::AuthFaildType type)
 {
+    m_accountEdit->setFocusPolicy(Qt::StrongFocus);
     m_accountEdit->setEnabled(true);
     m_passwordEdit->hideLoadSlider();
 
@@ -473,6 +477,7 @@ void UserLoginWidget::initConnect()
 
         if (passwd.isEmpty()) return;
         m_accountEdit->setEnabled(false);
+        m_accountEdit->setFocusPolicy(Qt::NoFocus);
         emit requestAuthUser(account, passwd);
     });
 
@@ -488,6 +493,7 @@ void UserLoginWidget::initConnect()
         if (password.isEmpty() && m_showType != NoPasswordType) return;
         m_passwordEdit->showLoadSlider();
         m_accountEdit->setEnabled(false);
+        m_accountEdit->setFocusPolicy(Qt::NoFocus);
         emit requestAuthUser(m_accountEdit->text(), password);
     });
     connect(m_userAvatar, &UserAvatar::clicked, this, &UserLoginWidget::clicked);
