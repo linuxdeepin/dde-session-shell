@@ -171,6 +171,14 @@ void LockWorker::authUser(const QString &password)
 
     qDebug() << "start authentication of user: " << user->name();
 
+    // 服务器登录输入用户与当前用户不同时给予提示
+    if (m_currentUserUid != user->uid()) {
+        QTimer::singleShot(800, this, [ = ] {
+            onUnlockFinished(false);
+        });
+        return;
+    }
+
     if (isDeepin()) {
         m_authFramework->Clear();
         m_authFramework->SetUser(user);
