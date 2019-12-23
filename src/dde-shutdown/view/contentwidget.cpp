@@ -121,12 +121,26 @@ void ContentWidget::showEvent(QShowEvent *event)
     m_currentSelectedBtn->updateState(RoundItemButton::Checked);
 }
 
-void ContentWidget::keyPressEvent(QKeyEvent *event)
+void ContentWidget::handleKeyPress(QKeyEvent *event)
 {
     switch (event->key()) {
     case Qt::Key_Escape: onCancel(); break;
     case Qt::Key_Return:
     case Qt::Key_Enter: enterKeyPushed(); break;
+    case Qt::Key_Tab: {
+        if (m_systemMonitor && m_currentSelectedBtn->isVisible() && m_systemMonitor->isVisible()) {
+            if (m_currentSelectedBtn && m_currentSelectedBtn->isChecked()) {
+                m_currentSelectedBtn->setChecked(false);
+                m_systemMonitor->setState(SystemMonitor::Enter);
+            }
+
+            if (m_systemMonitor->state() == SystemMonitor::Enter) {
+                m_systemMonitor->setState(SystemMonitor::Leave);
+                m_currentSelectedBtn->setChecked(true);
+            }
+        }
+        break;
+    }
     case Qt::Key_Left: {
         if (m_systemMonitor)
             m_systemMonitor->setState(SystemMonitor::Leave);
@@ -178,29 +192,7 @@ bool ContentWidget::event(QEvent *event)
 {
     if (event->type() == QEvent::KeyPress) {
         QKeyEvent *key_event = static_cast<QKeyEvent *>(event);
-
-        if (key_event->key() == Qt::Key_Tab) {
-            if (m_currentSelectedBtn->isVisible() && m_systemMonitor->isVisible()) {
-                if (m_currentSelectedBtn && m_currentSelectedBtn->isChecked()) {
-                    m_currentSelectedBtn->setChecked(false);
-
-                    if (m_systemMonitor) {
-                        m_systemMonitor->setState(SystemMonitor::Enter);
-                    }
-
-                    return true;
-                }
-
-                if (m_systemMonitor && m_systemMonitor->state() == SystemMonitor::Enter) {
-                    m_systemMonitor->setState(SystemMonitor::Leave);
-
-                    if (m_currentSelectedBtn) {
-                        m_currentSelectedBtn->setChecked(true);
-                    }
-                    return true;
-                }
-            }
-        }
+        handleKeyPress(key_event);
     }
 
     return QWidget::event(event);
