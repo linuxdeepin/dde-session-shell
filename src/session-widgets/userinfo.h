@@ -48,6 +48,7 @@ public:
 
     virtual bool isNoPasswdGrp() const;
     virtual bool isPasswordExpired() const { return false; }
+    virtual bool isUserIsvalid() const;
 
     void setisLogind(bool isLogind);
     virtual void setCurrentLayout(const QString &layout) { Q_UNUSED(layout); }
@@ -104,6 +105,7 @@ public:
     QString currentKBLayout() override;
     bool isNoPasswdGrp() const override;
     bool isPasswordExpired() const override;
+    bool isUserIsvalid() const override;
 
 private:
     UserInter *m_userInter;

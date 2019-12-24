@@ -240,6 +240,8 @@ void LockWorker::onPasswordResult(AuthAgent::Type type, const QString &msg)
 void LockWorker::onUserAdded(const QString &user)
 {
     std::shared_ptr<User> user_ptr(new NativeUser(user));
+    if (!user_ptr->isUserIsvalid())
+        return;
 
     user_ptr->setisLogind(isLogined(user_ptr->uid()));
 

@@ -105,6 +105,11 @@ bool User::isNoPasswdGrp() const
     return checkUserIsNoPWGrp(this);
 }
 
+bool User::isUserIsvalid() const
+{
+    return true;
+}
+
 void User::setisLogind(bool isLogind)
 {
     if (m_isLogind == isLogind) {
@@ -247,6 +252,11 @@ bool NativeUser::isNoPasswdGrp() const
 bool NativeUser::isPasswordExpired() const
 {
     return m_userInter->IsPasswordExpired();
+}
+
+bool NativeUser::isUserIsvalid() const
+{
+    return m_userInter->isValid();
 }
 
 ADDomainUser::ADDomainUser(uint uid, QObject *parent)
