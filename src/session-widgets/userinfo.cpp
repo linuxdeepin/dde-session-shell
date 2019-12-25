@@ -256,7 +256,8 @@ bool NativeUser::isPasswordExpired() const
 
 bool NativeUser::isUserIsvalid() const
 {
-    return m_userInter->isValid();
+    //无效用户的时候m_userInter是有效的
+    return m_userInter->isValid() && !m_userName.isEmpty();
 }
 
 ADDomainUser::ADDomainUser(uint uid, QObject *parent)
