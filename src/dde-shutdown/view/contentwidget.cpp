@@ -121,7 +121,7 @@ void ContentWidget::showEvent(QShowEvent *event)
     m_currentSelectedBtn->updateState(RoundItemButton::Checked);
 }
 
-void ContentWidget::handleKeyPress(QKeyEvent *event)
+bool ContentWidget::handleKeyPress(QKeyEvent *event)
 {
     switch (event->key()) {
     case Qt::Key_Escape: onCancel(); break;
@@ -132,11 +132,13 @@ void ContentWidget::handleKeyPress(QKeyEvent *event)
             if (m_currentSelectedBtn && m_currentSelectedBtn->isChecked()) {
                 m_currentSelectedBtn->setChecked(false);
                 m_systemMonitor->setState(SystemMonitor::Enter);
+                return true;
             }
 
             if (m_systemMonitor->state() == SystemMonitor::Enter) {
                 m_systemMonitor->setState(SystemMonitor::Leave);
                 m_currentSelectedBtn->setChecked(true);
+                return true;
             }
         }
         break;
@@ -179,6 +181,8 @@ void ContentWidget::handleKeyPress(QKeyEvent *event)
     }
     default:;
     }
+
+    return false;
 }
 
 void ContentWidget::resizeEvent(QResizeEvent *event)
@@ -192,7 +196,7 @@ bool ContentWidget::event(QEvent *event)
 {
     if (event->type() == QEvent::KeyPress) {
         QKeyEvent *key_event = static_cast<QKeyEvent *>(event);
-        handleKeyPress(key_event);
+        return handleKeyPress(key_event);
     }
 
     return QWidget::event(event);

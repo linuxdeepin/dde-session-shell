@@ -96,7 +96,7 @@ private:
     bool beforeInvokeAction(const Actions action);
     void hideToplevelWindow();
     void shutDownFrameActions(const Actions action);
-    void handleKeyPress(QKeyEvent *event);
+    bool handleKeyPress(QKeyEvent *event);
 
     void currentWorkspaceChanged();
     void updateWallpaper(const QString &path);
