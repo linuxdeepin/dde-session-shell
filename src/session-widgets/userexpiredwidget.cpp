@@ -123,6 +123,19 @@ void UserExpiredWidget::hideEvent(QHideEvent *event)
     m_confirmPasswordEdit->hideAlertMessage();
 }
 
+bool UserExpiredWidget::eventFilter(QObject *watched, QEvent *event)
+{
+    if (event->type() == QEvent::KeyPress) {
+        QKeyEvent *key_event = static_cast<QKeyEvent *>(event);
+        if (key_event->modifiers() & (Qt::ControlModifier | Qt::AltModifier | Qt::MetaModifier)) {
+            if ((key_event->modifiers() & Qt::ControlModifier) && key_event->key() == Qt::Key_A) return false;
+            return true;
+        }
+    }
+
+    return QObject::eventFilter(watched, event);
+}
+
 //初始化窗体控件
 void UserExpiredWidget::initUI()
 {
@@ -144,6 +157,7 @@ void UserExpiredWidget::initUI()
     m_passwordEdit->setFocusPolicy(Qt::StrongFocus);
     m_passwordEdit->setEchoMode(QLineEdit::Password);
     m_passwordEdit->setClearButtonEnabled(false);
+    m_passwordEdit->lineEdit()->installEventFilter(this);
 
     m_confirmPasswordEdit->lineEdit()->setPlaceholderText(tr("Repeat password"));
     m_confirmPasswordEdit->lineEdit()->setContextMenuPolicy(Qt::NoContextMenu);
@@ -152,6 +166,7 @@ void UserExpiredWidget::initUI()
     m_confirmPasswordEdit->setFocusPolicy(Qt::StrongFocus);
     m_confirmPasswordEdit->setEchoMode(QLineEdit::Password);
     m_confirmPasswordEdit->setClearButtonEnabled(false);
+    m_confirmPasswordEdit->lineEdit()->installEventFilter(this);
 
     m_userLayout = new QVBoxLayout;
     m_userLayout->setMargin(WidgetsSpacing);

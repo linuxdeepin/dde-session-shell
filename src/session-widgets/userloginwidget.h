@@ -102,6 +102,7 @@ protected:
     void mousePressEvent(QMouseEvent *event) override;
     void paintEvent(QPaintEvent *event) override;
     void hideEvent(QHideEvent *event) override;
+    bool eventFilter(QObject *watched, QEvent *event) override;
 
 private:
     void initUI();

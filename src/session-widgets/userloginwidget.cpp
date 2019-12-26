@@ -373,6 +373,19 @@ void UserLoginWidget::hideEvent(QHideEvent *event)
     m_kbLayoutBorder->hide();
 }
 
+bool UserLoginWidget::eventFilter(QObject *watched, QEvent *event)
+{
+    if (event->type() == QEvent::KeyPress) {
+        QKeyEvent *key_event = static_cast<QKeyEvent *>(event);
+        if (key_event->modifiers() & (Qt::ControlModifier | Qt::AltModifier | Qt::MetaModifier)) {
+            if ((key_event->modifiers() & Qt::ControlModifier) && key_event->key() == Qt::Key_A) return false;
+            return true;
+        }
+    }
+
+    return QObject::eventFilter(watched, event);
+}
+
 //初始化窗体控件
 void UserLoginWidget::initUI()
 {
@@ -396,6 +409,7 @@ void UserLoginWidget::initUI()
     m_passwordEdit->lineEdit()->setAlignment(Qt::AlignCenter);
     m_passwordEdit->capslockStatusChanged(m_capslockMonitor->isCapslockOn());
     m_passwordEdit->setFocusPolicy(Qt::StrongFocus);
+    m_passwordEdit->lineEdit()->installEventFilter(this);
 
     m_kbLayoutBorder->hide();
     m_kbLayoutBorder->setBackgroundColor(QColor(102, 102, 102));    //255*0.2
@@ -411,6 +425,7 @@ void UserLoginWidget::initUI()
     m_accountEdit->setSizePolicy(QSizePolicy::Expanding, QSizePolicy::Fixed);
     m_accountEdit->setAlignment(Qt::AlignCenter);
     m_accountEdit->setFocusPolicy(Qt::StrongFocus);
+    m_accountEdit->installEventFilter(this);
 
     m_passwordEdit->setVisible(true);
 
