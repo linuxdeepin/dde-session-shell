@@ -11,7 +11,6 @@
 #include <QApplication>
 #include <QProcess>
 #include <QRegularExpression>
-#include <DSysInfo>
 
 #include <com_deepin_daemon_power.h>
 
@@ -20,7 +19,6 @@
 
 using PowerInter = com::deepin::daemon::Power;
 using namespace Auth;
-DCORE_USE_NAMESPACE
 
 LockWorker::LockWorker(SessionBaseModel *const model, QObject *parent)
     : AuthInterface(model, parent)
@@ -105,29 +103,19 @@ LockWorker::LockWorker(SessionBaseModel *const model, QObject *parent)
     });
 
     const QString &switchUserButtonValue { valueByQSettings<QString>("Lock", "showSwitchUserButton", "ondemand") };
-    QString switch_button_value = switchUserButtonValue;
-    if (DSysInfo::deepinType() == DSysInfo::DeepinServer) {
-        switch_button_value = "disable";
-    }
-    m_model->setAlwaysShowUserSwitchButton(switch_button_value == "always");
-    m_model->setAllowShowUserSwitchButton(switch_button_value == "ondemand");
+    m_model->setAlwaysShowUserSwitchButton(switchUserButtonValue == "always");
+    m_model->setAllowShowUserSwitchButton(switchUserButtonValue == "ondemand");
 
-    if (DSysInfo::deepinType() == DSysInfo::DeepinDesktop ||
-            DSysInfo::deepinType() == DSysInfo::DeepinProfessional ||
-            DSysInfo::deepinType() == DSysInfo::UnknownDeepin) {
+    if (valueByQSettings<bool>("", "loginPromptAvatar", true)) {
         initDBus();
         initData();
     }
 
     // init ADDomain User
-    if (DSysInfo::deepinType() == DSysInfo::DeepinServer) {
-        initData();
-
+    if (valueByQSettings<bool>("", "loginPromptInput", false)) {
         std::shared_ptr<User> user = std::make_shared<ADDomainUser>(0);
         static_cast<ADDomainUser *>(user.get())->setUserDisplayName(tr("Domain account"));
         m_model->userAdd(user);
-        m_model->setCurrentUser(user);
-        m_model->setIsServiceAccountLogin(true);
     }
 }
 
