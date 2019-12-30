@@ -294,8 +294,13 @@ void LockContent::onUserListChanged(QList<std::shared_ptr<User> > list)
 {
     const bool allowShowUserSwitchButton = m_model->allowShowUserSwitchButton();
     const bool alwaysShowUserSwitchButton = m_model->alwaysShowUserSwitchButton();
+    bool haveLogindUser = true;
 
-    m_controlWidget->setUserSwitchEnable(alwaysShowUserSwitchButton || (allowShowUserSwitchButton && list.size() > 1));
+    if (m_model->isServerModel() && m_model->currentType() == SessionBaseModel::LightdmType) {
+        haveLogindUser = !m_model->logindUser().isEmpty();
+    }
+
+    m_controlWidget->setUserSwitchEnable((alwaysShowUserSwitchButton || (allowShowUserSwitchButton && list.size() > 1)) && haveLogindUser);
 }
 
 void LockContent::tryGrabKeyboard()

@@ -49,6 +49,7 @@ public:
     virtual bool isNoPasswdGrp() const;
     virtual bool isPasswordExpired() const { return false; }
     virtual bool isUserIsvalid() const;
+    virtual bool isServerUser() const { return m_isServer; }
 
     void setisLogind(bool isLogind);
     virtual void setCurrentLayout(const QString &layout) { Q_UNUSED(layout); }
@@ -76,6 +77,7 @@ protected:
 protected:
     bool m_isLogind;
     bool m_isLock;
+    bool m_isServer = false;
     uint m_uid;
     uint m_lockNum; // minute basis
     uint m_tryNum; // try number
@@ -122,6 +124,7 @@ public:
     void setUserName(const QString &name);
     void setUserInter(UserInter *user_inter);
     void setUid(uint uid);
+    void setIsServerUser(bool is_server);
 
     QString displayName() const override;
     UserType type() const override { return ADDomain; }

@@ -69,7 +69,7 @@ void UserLoginInfo::setUser(std::shared_ptr<User> user)
     m_userExpiredWidget->updateAuthType(m_model->currentType());
 
 
-    if (m_model->isServiceAccountLogin()) {
+    if (m_model->currentUser()->isServerUser()) {
         m_userLoginWidget->setWidgetShowType(UserLoginWidget::IDAndPasswordType);
     } else {
         if (m_user->isNoPasswdGrp()) {
@@ -84,7 +84,7 @@ void UserLoginInfo::initConnect()
 {
     //UserLoginWidget
     connect(m_userLoginWidget, &UserLoginWidget::requestAuthUser, this, [ = ](const QString & account, const QString & password) {
-        if (m_model->isServiceAccountLogin() && !account.isEmpty()) {
+        if (m_model->isServerModel() && !account.isEmpty()) {
             auto user = dynamic_cast<NativeUser *>(m_model->findUserByName(account).get());
             auto current_user = m_model->currentUser();
 

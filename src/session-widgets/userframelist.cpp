@@ -54,7 +54,13 @@ void UserFrameList::setModel(SessionBaseModel *model)
 
     QList<std::shared_ptr<User>> userList = m_model->userList();
     for (auto user : userList) {
-        addUser(user);
+        if (model->isServerModel()) {
+            if (user->isLogin() || user->isServerUser()) {
+                addUser(user);
+            }
+        } else {
+            addUser(user);
+        }
     }
 }
 

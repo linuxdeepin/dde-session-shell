@@ -304,6 +304,15 @@ void ADDomainUser::setUid(uint uid)
     m_uid = uid;
 }
 
+void ADDomainUser::setIsServerUser(bool is_server)
+{
+    if (m_isServer == is_server) {
+        return;
+    }
+
+    m_isServer = is_server;
+}
+
 QString ADDomainUser::displayName() const
 {
     return m_displayName.isEmpty() ? m_userName : m_displayName;
@@ -329,4 +338,5 @@ bool ADDomainUser::isPasswordExpired() const
     if (m_userInter != nullptr) {
         return m_userInter->IsPasswordExpired();
     }
+    return false;
 }

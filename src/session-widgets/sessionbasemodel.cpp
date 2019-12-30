@@ -1,11 +1,13 @@
 #include "sessionbasemodel.h"
 
 #include <QDebug>
+#include <DSysInfo>
 
 #define SessionManagerService "com.deepin.SessionManager"
 #define SessionManagerPath "/com/deepin/SessionManager"
 
 using namespace com::deepin;
+DCORE_USE_NAMESPACE
 
 SessionBaseModel::SessionBaseModel(AuthType type, QObject *parent)
     : QObject(parent)
@@ -208,9 +210,9 @@ void SessionBaseModel::setAlwaysShowUserSwitchButton(bool alwaysShowUserSwitchBu
     m_alwaysShowUserSwitchButton = alwaysShowUserSwitchButton;
 }
 
-void SessionBaseModel::setIsServiceAccountLogin(bool isServiceAccountLogin)
+bool SessionBaseModel::isServerModel() const
 {
-    m_isServiceAccountLogin = isServiceAccountLogin;
+    return DSysInfo::deepinType() == DSysInfo::DeepinServer;
 }
 
 void SessionBaseModel::setAbortConfirm(bool abortConfirm)

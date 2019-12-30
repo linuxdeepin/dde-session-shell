@@ -11,6 +11,7 @@
 #include <QApplication>
 #include <QProcess>
 #include <QRegularExpression>
+#include <DSysInfo>
 
 #include <com_deepin_daemon_power.h>
 
@@ -19,6 +20,7 @@
 
 using PowerInter = com::deepin::daemon::Power;
 using namespace Auth;
+DCORE_USE_NAMESPACE
 
 LockWorker::LockWorker(SessionBaseModel *const model, QObject *parent)
     : AuthInterface(model, parent)
@@ -112,9 +114,10 @@ LockWorker::LockWorker(SessionBaseModel *const model, QObject *parent)
     }
 
     // init ADDomain User
-    if (valueByQSettings<bool>("", "loginPromptInput", false)) {
+    if (DSysInfo::deepinType() == DSysInfo::DeepinServer) {
         std::shared_ptr<User> user = std::make_shared<ADDomainUser>(0);
         static_cast<ADDomainUser *>(user.get())->setUserDisplayName(tr("Domain account"));
+        static_cast<ADDomainUser *>(user.get())->setIsServerUser(true);
         m_model->userAdd(user);
     }
 }

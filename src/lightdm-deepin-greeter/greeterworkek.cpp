@@ -105,16 +105,10 @@ GreeterWorkek::GreeterWorkek(SessionBaseModel *const model, QObject *parent)
     connect(m_lockInter, &DBusLockService::UserChanged, this, &GreeterWorkek::onCurrentUserChanged);
 
     const QString &switchUserButtonValue { valueByQSettings<QString>("Lock", "showSwitchUserButton", "ondemand") };
-    QString switch_button_value = switchUserButtonValue;
-    if (DSysInfo::deepinType() == DSysInfo::DeepinServer) {
-        switch_button_value = "disable";
-    }
-    m_model->setAlwaysShowUserSwitchButton(switch_button_value == "always");
-    m_model->setAllowShowUserSwitchButton(switch_button_value == "ondemand");
+    m_model->setAlwaysShowUserSwitchButton(switchUserButtonValue == "always");
+    m_model->setAllowShowUserSwitchButton(switchUserButtonValue == "ondemand");
 
-    if (DSysInfo::deepinType() == DSysInfo::DeepinDesktop ||
-            DSysInfo::deepinType() == DSysInfo::DeepinProfessional ||
-            DSysInfo::deepinType() == DSysInfo::UnknownDeepin) {
+    if (valueByQSettings<bool>("", "loginPromptAvatar", true)) {
         initDBus();
         initData();
 
@@ -126,13 +120,11 @@ GreeterWorkek::GreeterWorkek(SessionBaseModel *const model, QObject *parent)
     }
 
     if (DSysInfo::deepinType() == DSysInfo::DeepinServer) {
-        initData();
-
         std::shared_ptr<User> user = std::make_shared<ADDomainUser>(0);
         static_cast<ADDomainUser *>(user.get())->setUserDisplayName(tr("Domain account"));
+        static_cast<ADDomainUser *>(user.get())->setIsServerUser(true);
         m_model->userAdd(user);
         m_model->setCurrentUser(user);
-        m_model->setIsServiceAccountLogin(true);
     }
 }
 
