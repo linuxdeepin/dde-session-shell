@@ -87,6 +87,7 @@ public:
     uint uid();
     void setPassWordEditFocus();
     void ShutdownPrompt(SessionBaseModel::PowerAction action);
+    bool inputInfoCheck(bool is_server = false);
 
 signals:
     void requestAuthUser(const QString &account, const QString &password);

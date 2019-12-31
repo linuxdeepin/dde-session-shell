@@ -232,6 +232,23 @@ void UserLoginWidget::ShutdownPrompt(SessionBaseModel::PowerAction action)
     }
 }
 
+bool UserLoginWidget::inputInfoCheck(bool is_server)
+{
+    if (is_server && m_accountEdit->isVisible() && m_accountEdit->text().isEmpty()) {
+        setFaildTipMessage(tr("Please enter the account"));
+        m_accountEdit->setFocus();
+        return false;
+    }
+
+    if (m_showType != NoPasswordType && m_passwordEdit->isVisible() && m_passwordEdit->lineEdit()->text().isEmpty()) {
+        m_passwordEdit->hideLoadSlider();
+        if (is_server) setFaildTipMessage(tr("Please enter the password"));
+        return false;
+    }
+
+    return true;
+}
+
 void UserLoginWidget::onOtherPageAccountChanged(const QVariant &value)
 {
     int cursorIndex =  m_accountEdit->cursorPosition();
@@ -490,7 +507,7 @@ void UserLoginWidget::initConnect()
         const QString account = m_accountEdit->text();
         const QString passwd = m_passwordEdit->text();
 
-        if (passwd.isEmpty()) return;
+//        if (passwd.isEmpty()) return;
         m_accountEdit->setEnabled(false);
         m_accountEdit->setFocusPolicy(Qt::NoFocus);
         emit requestAuthUser(account, passwd);
@@ -505,7 +522,7 @@ void UserLoginWidget::initConnect()
             m_passwordEdit->lineEdit()->setFocus();
         }
 
-        if (password.isEmpty() && m_showType != NoPasswordType) return;
+//        if (password.isEmpty() && m_showType != NoPasswordType) return;
         m_passwordEdit->showLoadSlider();
         m_accountEdit->setEnabled(false);
         m_accountEdit->setFocusPolicy(Qt::NoFocus);
