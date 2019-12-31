@@ -136,6 +136,11 @@
 <context>
     <name>LockContent</name>
     <message>
+            <location filename="../src/session-widgets/lockcontent.cpp" line="335"/>
+            <source>dde-lock</source>
+            <translation>锁屏</translation>
+    </message>
+    <message>
         <location filename="../src/session-widgets/lockcontent.cpp" line="320"/>
         <source>Failed to lock screen</source>
         <translation>锁屏失败</translation>
