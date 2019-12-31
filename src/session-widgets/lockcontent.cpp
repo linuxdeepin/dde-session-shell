@@ -13,6 +13,7 @@
 #include "userframelist.h"
 
 #include <QMouseEvent>
+#include <DDBusSender>
 
 LockContent::LockContent(SessionBaseModel *const model, QWidget *parent)
     : SessionBaseWindow(parent)
@@ -326,9 +327,20 @@ void LockContent::tryGrabKeyboard()
         qDebug() << "Trying grabkeyboard has exceeded the upper limit. dde-lock will quit.";
         m_sessionManager->SetLocked(false);
 
-        QSystemTrayIcon *notify = new QSystemTrayIcon(this);
-        notify->setVisible(true);
-        notify->showMessage("", tr("Failed to lock screen"));
+        DDBusSender()
+                .service("org.freedesktop.Notifications")
+                .path("/org/freedesktop/Notifications")
+                .interface("org.freedesktop.Notifications")
+                .method(QString("Notify"))
+                .arg(tr("dde-lock"))
+                .arg(static_cast<uint>(0))
+                .arg(QString(""))
+                .arg(QString(""))
+                .arg(tr("Failed to lock screen"))
+                .arg(QStringList())
+                .arg(QVariantMap())
+                .arg(5000)
+                .call();
 
         qApp->quit();
         return;
