@@ -14,7 +14,7 @@
 
 #include <QMouseEvent>
 
-LockContent::LockContent(SessionBaseModel *const model, QWidget *parent, bool islockapp)
+LockContent::LockContent(SessionBaseModel *const model, QWidget *parent)
     : SessionBaseWindow(parent)
     , m_model(model)
     , m_imageBlurInter(new ImageBlur("com.deepin.daemon.Accounts", "/com/deepin/daemon/ImageBlur", QDBusConnection::systemBus(), this))
@@ -36,7 +36,7 @@ LockContent::LockContent(SessionBaseModel *const model, QWidget *parent, bool is
     m_mediaWidget = nullptr;
 
     m_shutdownFrame->setModel(model);
-    model->setCurrentModeState(SessionBaseModel::ModeStatus::PasswordMode);
+    m_model->setCurrentModeState(SessionBaseModel::ModeStatus::PasswordMode);
 
     setCenterTopWidget(m_timeWidget);
     setLeftBottomWidget(m_logoWidget);
@@ -67,7 +67,7 @@ LockContent::LockContent(SessionBaseModel *const model, QWidget *parent, bool is
     connect(m_controlWidget, &ControlWidget::requestSwitchVirtualKB, this, &LockContent::toggleVirtualKB);
 
     //lixin
-    connect(m_userLoginInfo, &UserLoginInfo::requestAuthUser, this, &LockContent::restoreMode);
+    //connect(m_userLoginInfo, &UserLoginInfo::requestAuthUser, this, &LockContent::restoreMode);
     connect(m_userLoginInfo, &UserLoginInfo::requestAuthUser, this, &LockContent::requestAuthUser);
     connect(m_userLoginInfo, &UserLoginInfo::hideUserFrameList, this, &LockContent::restoreMode);
     connect(m_userLoginInfo, &UserLoginInfo::requestSwitchUser, this, &LockContent::requestSwitchToUser);
@@ -80,12 +80,13 @@ LockContent::LockContent(SessionBaseModel *const model, QWidget *parent, bool is
             restoreMode();
     });
 
-    if (islockapp) {
+    if (m_model->currentType() == SessionBaseModel::LockType) {
         // 锁屏，点击关机，需要提示“输入密码以关机”。登录不需要这个提示
         connect(m_shutdownFrame, &ShutdownWidget::abortOperation, m_userLoginInfo, [ = ] {
             m_model->setCurrentModeState(SessionBaseModel::ModeStatus::ConfirmPasswordMode);
         });
     }
+
     connect(model, &SessionBaseModel::onStatusChanged, this, &LockContent::onStatusChanged);
 
     auto initVirtualKB = [&](bool hasvirtualkb) {
@@ -239,13 +240,18 @@ void LockContent::resizeEvent(QResizeEvent *event)
 
 void LockContent::restoreCenterContent()
 {
-    restoreMode();
+    m_model->setCurrentModeState(SessionBaseModel::ModeStatus::PasswordMode);
     setCenterContent(m_userLoginInfo->getUserLoginWidget());
 }
 
 void LockContent::restoreMode()
 {
-    m_model->setCurrentModeState(SessionBaseModel::ModeStatus::PasswordMode);
+    if (m_model->isServerModel() && !m_model->logindUser().isEmpty() &&
+            m_model->currentType() == SessionBaseModel::LightdmType) {
+        m_model->setCurrentModeState(SessionBaseModel::ModeStatus::UserMode);
+    } else {
+        m_model->setCurrentModeState(SessionBaseModel::ModeStatus::PasswordMode);
+    }
 }
 
 void LockContent::updateBackground(const QString &path)

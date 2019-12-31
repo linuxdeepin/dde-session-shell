@@ -576,6 +576,16 @@ bool UserLoginWidget::getSelected()
     return  m_isSelected;
 }
 
+void UserLoginWidget::setIsServer(bool isServer)
+{
+    m_isServer = isServer;
+}
+
+bool UserLoginWidget::getIsServer()
+{
+    return m_isServer;
+}
+
 void UserLoginWidget::updateKBLayout(const QStringList &list)
 {
     m_kbLayoutWidget->updateButtonList(list);

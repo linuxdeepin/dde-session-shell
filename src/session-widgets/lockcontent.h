@@ -27,7 +27,7 @@ class LockContent : public SessionBaseWindow
 {
     Q_OBJECT
 public:
-    explicit LockContent(SessionBaseModel *const model, QWidget *parent = nullptr, bool islockapp = true);
+    explicit LockContent(SessionBaseModel *const model, QWidget *parent = nullptr);
 
     virtual void onCurrentUserChanged(std::shared_ptr<User> user);
     virtual void onStatusChanged(SessionBaseModel::ModeStatus status);

@@ -54,13 +54,7 @@ void UserFrameList::setModel(SessionBaseModel *model)
 
     QList<std::shared_ptr<User>> userList = m_model->userList();
     for (auto user : userList) {
-        if (model->isServerModel()) {
-            if (user->isLogin() || user->isServerUser()) {
-                addUser(user);
-            }
-        } else {
-            addUser(user);
-        }
+        addUser(user);
     }
 }
 
@@ -74,10 +68,22 @@ void UserFrameList::addUser(std::shared_ptr<User> user)
     widget->setAvatar(user->avatarPath());
     widget->setName(user->displayName());
     widget->setIsLogin(user->isLogin());
+    widget->setIsServer(user->isServerUser());
 
     connect(user.get(), &User::displayNameChanged, widget, &UserLoginWidget::setName);
     connect(user.get(), &User::avatarChanged, widget, &UserLoginWidget::setAvatar);
-    connect(user.get(), &User::logindChanged, widget, &UserLoginWidget::setIsLogin);
+    connect(user.get(), &User::logindChanged, this, [ = ](bool is_login) {
+        // 服务器用户列表只显示登录的用户
+        if (m_model->isServerModel()) {
+            widget->setVisible(user->isLogin() || user->isServerUser());
+        }
+
+        widget->setIsLogin(is_login);
+    });
+
+    if (m_model->isServerModel()) {
+        widget->setVisible(user->isLogin() || user->isServerUser());
+    }
 
     widget->setSelected(m_model->currentUser()->uid() == user->uid());
 
@@ -91,8 +97,8 @@ void UserFrameList::addUser(std::shared_ptr<User> user)
 
     //多用户的情况按照其uid排序，升序排列，符合账户先后创建顺序
     m_loginWidgets.push_back(widget);
-    qSort(m_loginWidgets.begin(), m_loginWidgets.end(), [=](UserLoginWidget *w1, UserLoginWidget *w2){
-         return (w1->uid() < w2->uid());
+    qSort(m_loginWidgets.begin(), m_loginWidgets.end(), [ = ](UserLoginWidget * w1, UserLoginWidget * w2) {
+        return (w1->uid() < w2->uid());
     });
     int index = m_loginWidgets.indexOf(widget);
     m_flowLayout->insertWidget(index, widget);
@@ -134,12 +140,13 @@ void UserFrameList::showEvent(QShowEvent *event)
     m_rowCount = m_rowCount > 2 ? 2 : m_rowCount;
 
     //fix BUG 3268
-    if (m_loginWidgets.size() <= m_colCount) {
+    int login_count = loginedUserCount();
+    if (login_count <= m_colCount) {
         m_rowCount = 1;
     }
 
     m_scrollArea->setFixedHeight((UserFrameHeight + UserFrameSpaceing) * m_rowCount);
-    int width = qMin((UserFrameWidth + UserFrameSpaceing) * m_colCount, m_loginWidgets.size() * (UserFrameWidth + UserFrameSpaceing));
+    int width = qMin((UserFrameWidth + UserFrameSpaceing) * m_colCount, login_count * (UserFrameWidth + UserFrameSpaceing));
     m_centerWidget->setFixedWidth(width);
     m_scrollArea->setFixedWidth(width + 10);
 
@@ -319,4 +326,17 @@ void UserFrameList::onOtherPageChanged(const QVariant &value)
     foreach (auto w, m_loginWidgets) {
         w->setSelected(w->uid() == value.toUInt());
     }
+}
+
+int UserFrameList::loginedUserCount()
+{
+    int result = m_loginWidgets.size();
+    if (m_model->isServerModel()) {
+        result = 0;
+        foreach (auto w, m_loginWidgets) {
+            if (w->getIsLogin() || w->getIsServer()) result++;
+        }
+    }
+
+    return result;
 }

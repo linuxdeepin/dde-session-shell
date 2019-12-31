@@ -25,7 +25,6 @@ public:
     void onDisplayTextInfo(AuthAgent::Type type, const QString &msg) override;
     void onPasswordResult(AuthAgent::Type type, const QString &msg) override;
 
-
 signals:
     void requestUpdateBackground(const QString &path);
 
