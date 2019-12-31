@@ -59,7 +59,7 @@ GreeterWorkek::GreeterWorkek(SessionBaseModel *const model, QObject *parent)
         if (is_lock) {
             m_authFramework->Clear();
         } else {
-            userAuthForLightdm(m_model->currentUser());
+            m_authFramework->Authenticate();
         }
     });
 
