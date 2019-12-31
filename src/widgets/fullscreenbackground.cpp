@@ -40,6 +40,7 @@
 FullscreenBackground::FullscreenBackground(QWidget *parent)
     : QWidget(parent)
     , m_fadeOutAni(new QVariantAnimation(this))
+    , m_imageEffectInter(new ImageEffectInter("com.deepin.daemon.ImageEffect", "/com/deepin/daemon/ImageEffect", QDBusConnection::systemBus(), this))
 {
 #ifndef QT_DEBUG
     setWindowFlags(Qt::WindowStaysOnTopHint | Qt::X11BypassWindowManagerHint);
@@ -103,7 +104,7 @@ void FullscreenBackground::updateBackground(const QString &file)
 
     Q_ASSERT(QFileInfo(m_bgPath).isFile());
 
-    updateBackground(QPixmap(m_bgPath));
+    updateBackground(QPixmap(m_imageEffectInter->Get("", m_bgPath)));
 }
 
 void FullscreenBackground::setScreen(QScreen *screen)

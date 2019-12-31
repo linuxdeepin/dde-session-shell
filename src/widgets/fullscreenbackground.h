@@ -33,6 +33,10 @@
 #include <QGraphicsOpacityEffect>
 #include <QVariantAnimation>
 
+#include <com_deepin_daemon_imageeffect.h>
+
+using ImageEffectInter = com::deepin::daemon::ImageEffect;
+
 class FullscreenBackground : public QWidget
 {
     Q_OBJECT
@@ -81,6 +85,7 @@ private:
     QPointer<QWidget> m_content;
     QVariantAnimation *m_fadeOutAni;
     QScreen *m_screen = nullptr;
+    ImageEffectInter *m_imageEffectInter = nullptr;
 };
 
 #endif // FULLSCREENBACKGROUND_H

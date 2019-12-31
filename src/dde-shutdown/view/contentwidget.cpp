@@ -533,9 +533,10 @@ void ContentWidget::updateWallpaper(const QString &path)
         wallpaper = url.path();
     }
 
-    const QString &w = m_blurImageInter->Get(wallpaper);
+//    const QString &w = m_blurImageInter->Get(wallpaper);
 
-    emit requestBackground(w.isEmpty() ? wallpaper : w);
+//    emit requestBackground(w.isEmpty() ? wallpaper : w);
+     emit requestBackground(wallpaper);
 }
 
 void ContentWidget::onBlurWallpaperFinished(const QString &source, const QString &blur, bool status)
