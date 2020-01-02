@@ -64,6 +64,7 @@ User::User(QObject *parent)
     , m_isLock(false)
     , m_lockNum(4)
     , m_tryNum(5)
+    , m_locale(getenv("LANG"))
     , m_lockTimer(new QTimer)
 {
     m_lockTimer->setInterval(1000 * 60);
