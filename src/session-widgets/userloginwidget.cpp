@@ -406,7 +406,7 @@ bool UserLoginWidget::eventFilter(QObject *watched, QEvent *event)
 //初始化窗体控件
 void UserLoginWidget::initUI()
 {
-    setFocusPolicy(Qt::StrongFocus);
+    setFocusPolicy(Qt::NoFocus);
 
     m_userAvatar->setAvatarSize(UserAvatar::AvatarLargeSize);
     m_userAvatar->setFixedSize(100, 100);
