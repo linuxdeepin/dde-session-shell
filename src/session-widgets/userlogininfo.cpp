@@ -69,7 +69,7 @@ void UserLoginInfo::setUser(std::shared_ptr<User> user)
     m_userExpiredWidget->updateAuthType(m_model->currentType());
 
 
-    if (m_model->currentUser()->isServerUser()) {
+    if (m_model->currentUser()->isDoMainUser()) {
         m_userLoginWidget->setWidgetShowType(UserLoginWidget::IDAndPasswordType);
     } else {
         if (m_user->isNoPasswdGrp()) {

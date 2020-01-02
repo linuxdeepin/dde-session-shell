@@ -49,23 +49,28 @@ void UserFrameList::setModel(SessionBaseModel *model)
 {
     m_model = model;
 
-    connect(model, &SessionBaseModel::onUserAdded, this, &UserFrameList::addUser);
+    connect(model, &SessionBaseModel::onUserAdded, this, &UserFrameList::handlerBeforeAddUser);
     connect(model, &SessionBaseModel::onUserRemoved, this, &UserFrameList::removeUser);
 
     QList<std::shared_ptr<User>> userList = m_model->userList();
     for (auto user : userList) {
-        if (m_model->isServerModel()) {
-            if (user->isLogin() || user->isServerUser()) addUser(user);
-            connect(user.get(), &User::logindChanged, this, [ = ](bool is_login) {
-                if (is_login) {
-                    addUser(user);
-                } else {
-                    removeUser(user->uid());
-                }
-            });
-        } else {
-            addUser(user);
-        }
+        handlerBeforeAddUser(user);
+    }
+}
+
+void UserFrameList::handlerBeforeAddUser(std::shared_ptr<User> user)
+{
+    if (m_model->isServerModel()) {
+        if (user->isLogin() || user->isDoMainUser()) addUser(user);
+        connect(user.get(), &User::logindChanged, this, [ = ](bool is_login) {
+            if (is_login) {
+                addUser(user);
+            } else {
+                removeUser(user->uid());
+            }
+        });
+    } else {
+        addUser(user);
     }
 }
 
@@ -79,7 +84,7 @@ void UserFrameList::addUser(std::shared_ptr<User> user)
     widget->setAvatar(user->avatarPath());
     widget->setName(user->displayName());
     widget->setIsLogin(user->isLogin());
-    widget->setIsServer(user->isServerUser());
+    widget->setIsServer(user->isDoMainUser());
 
     connect(user.get(), &User::displayNameChanged, widget, &UserLoginWidget::setName);
     connect(user.get(), &User::avatarChanged, widget, &UserLoginWidget::setAvatar);

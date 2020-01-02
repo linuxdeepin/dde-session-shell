@@ -49,7 +49,7 @@ public:
     virtual bool isNoPasswdGrp() const;
     virtual bool isPasswordExpired() const { return false; }
     virtual bool isUserIsvalid() const;
-    virtual bool isServerUser() const { return m_isServer; }
+    virtual bool isDoMainUser() const { return m_isServer; }
 
     void setisLogind(bool isLogind);
     virtual void setCurrentLayout(const QString &layout) { Q_UNUSED(layout); }
