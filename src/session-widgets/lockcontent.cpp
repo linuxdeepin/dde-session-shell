@@ -241,18 +241,13 @@ void LockContent::resizeEvent(QResizeEvent *event)
 
 void LockContent::restoreCenterContent()
 {
-    m_model->setCurrentModeState(SessionBaseModel::ModeStatus::PasswordMode);
+    restoreMode();
     setCenterContent(m_userLoginInfo->getUserLoginWidget());
 }
 
 void LockContent::restoreMode()
 {
-    if (m_model->isServerModel() && !m_model->logindUser().isEmpty() &&
-            m_model->currentType() == SessionBaseModel::LightdmType) {
-        m_model->setCurrentModeState(SessionBaseModel::ModeStatus::UserMode);
-    } else {
-        m_model->setCurrentModeState(SessionBaseModel::ModeStatus::PasswordMode);
-    }
+    m_model->setCurrentModeState(SessionBaseModel::ModeStatus::PasswordMode);
 }
 
 void LockContent::updateBackground(const QString &path)
