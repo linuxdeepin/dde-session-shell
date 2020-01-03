@@ -117,7 +117,6 @@
         <file>img/sessions/unknown_indicator_hover.svg</file>
         <file>img/sessions/unknown_indicator_normal.svg</file>
         <file>img/sessions/unknown_indicator_press.svg</file>
-        <file>img/default_avatar.png</file>
         <file>img/select.svg</file>
         <file>img/screen_keyboard_hover.svg</file>
         <file>img/screen_keyboard_press.svg</file>
@@ -132,5 +131,6 @@
         <file>fonts/NotoSansCJKsc-Thin.otf</file>
         <file>img/bottom_actions/reboot.svg</file>
         <file>img/bottom_actions/shutdown.svg</file>
+        <file>img/default_avatar.svg</file>
     </qresource>
 </RCC>

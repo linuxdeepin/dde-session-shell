@@ -160,6 +160,7 @@ void UserLoginWidget::updateUI()
 {
     m_lockPasswordWidget->hide();
     m_accountEdit->hide();
+    m_nameLbl->show();
     switch (m_showType) {
     case NoPasswordType: {
         bool isNopassword = true;
@@ -189,7 +190,7 @@ void UserLoginWidget::updateUI()
         m_accountEdit->show();
         m_accountEdit->setPlaceholderText(tr("Account"));
         m_accountEdit->setFocus();
-        m_nameLbl->setText(tr("Account Login"));
+        m_nameLbl->hide();
         m_lockButton->show();
 
         setTabOrder(m_accountEdit, m_passwordEdit->lineEdit());

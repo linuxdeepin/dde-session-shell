@@ -121,7 +121,7 @@ GreeterWorkek::GreeterWorkek(SessionBaseModel *const model, QObject *parent)
 
     if (DSysInfo::deepinType() == DSysInfo::DeepinServer) {
         std::shared_ptr<User> user = std::make_shared<ADDomainUser>(0);
-        static_cast<ADDomainUser *>(user.get())->setUserDisplayName(tr("Domain account"));
+        static_cast<ADDomainUser *>(user.get())->setUserDisplayName("...");
         static_cast<ADDomainUser *>(user.get())->setIsServerUser(true);
         m_model->userAdd(user);
         m_model->setCurrentUser(user);

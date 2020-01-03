@@ -321,7 +321,7 @@ QString ADDomainUser::displayName() const
 
 QString ADDomainUser::avatarPath() const
 {
-    return QString(":/img/default_avatar.png");
+    return QString(":/img/default_avatar.svg");
 }
 
 QString ADDomainUser::greeterBackgroundPath() const
