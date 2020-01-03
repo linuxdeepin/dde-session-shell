@@ -215,7 +215,7 @@ void LockContent::showEvent(QShowEvent *event)
 {
     onStatusChanged(m_model->currentModeState());
 
-    m_timeWidget->set24HourFormat(m_24HourFormatInter->property("Use24HourFormat").toBool());
+    m_timeWidget->set24HourFormat(m_user->isDoMainUser() ? true : m_24HourFormatInter->property("Use24HourFormat").toBool());
 
     tryGrabKeyboard();
 
