@@ -131,7 +131,7 @@
     <name>LockContent</name>
     <message>
         <location filename="../src/session-widgets/lockcontent.cpp" line="330"/>
-        <source>dde-lock</source>
+        <source>Lock Screen</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
