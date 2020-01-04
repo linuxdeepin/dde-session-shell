@@ -42,6 +42,7 @@ class QVBoxLayout;
 class KbLayoutWidget;
 class KeyboardMonitor;
 class DPasswordEditEx;
+class DLineEditEx;
 
 class UserLoginWidget : public QWidget
 {
@@ -126,7 +127,7 @@ private:
     DPasswordEditEx *m_passwordEdit;               //密码输入框
     LockPasswordWidget *m_lockPasswordWidget;      //密码锁定后,错误信息提示框
     SessionBaseModel::AuthType m_authType;         //认证类型
-    QLineEdit *m_accountEdit;
+    DLineEditEx *m_accountEdit;
     DFloatingButton *m_lockButton;                 //解锁按钮
     DArrowRectangle *m_kbLayoutBorder;             //键盘布局异性框类
     KbLayoutWidget *m_kbLayoutWidget;              //键盘布局窗体

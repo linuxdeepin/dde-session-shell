@@ -143,6 +143,7 @@ set(WIDGETS_SRCS
     ./src/widgets/virtualkbinstance.h
     ./src/widgets/logowidget.h
     ./src/widgets/timewidget.h
+    ./src/widgets/dlineeditex.h
     ./src/widgets/dpasswordeditex.h
     ./src/widgets/fullscreenbackground.cpp
     ./src/widgets/keyboardmonitor.cpp
@@ -164,6 +165,7 @@ set(WIDGETS_SRCS
     ./src/widgets/logowidget.cpp
     ./src/widgets/timewidget.cpp
     ./src/widgets/dpasswordeditex.cpp
+    ./src/widgets/dlineeditex.cpp
 )
 
 set(SESSION_WIDGETS_SRCS

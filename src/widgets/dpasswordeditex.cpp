@@ -54,7 +54,7 @@ void LoadSlider::paintEvent(QPaintEvent *event)
 }
 
 DPasswordEditEx::DPasswordEditEx(QWidget *parent)
-    : DLineEdit(parent)
+    : DLineEditEx(parent)
 {
     initUI();
     initAnimation();
@@ -228,25 +228,6 @@ void DPasswordEditEx::setShowKB(bool show)
 {
     m_KBButton->setVisible(show);
     m_showKB = show;
-}
-
-//重写QLineEdit paintEvent函数，实现当文本设置居中后，holderText仍然显示的需求
-void DPasswordEditEx::paintEvent(QPaintEvent *event)
-{
-    Q_UNUSED(event);
-
-    if (lineEdit()->hasFocus() && lineEdit()->alignment() == Qt::AlignCenter
-            && !lineEdit()->placeholderText().isEmpty() && lineEdit()->text().isEmpty()) {
-        QPainter pa(this);
-        QPalette pal = palette();
-        QColor col = pal.text().color();
-        col.setAlpha(128);
-        QPen oldpen = pa.pen();
-        pa.setPen(col);
-        QTextOption option;
-        option.setAlignment(Qt::AlignCenter);
-        pa.drawText(lineEdit()->rect(), lineEdit()->placeholderText(), option);
-    }
 }
 
 void DPasswordEditEx::resizeEvent(QResizeEvent *event)

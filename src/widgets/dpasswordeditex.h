@@ -22,10 +22,8 @@
 #ifndef DPASSWORDEDITEX_H
 #define DPASSWORDEDITEX_H
 
-#include <DLineEdit>
+#include "dlineeditex.h"
 #include <DClipEffectWidget>
-
-DWIDGET_USE_NAMESPACE
 
 class QPropertyAnimation;
 class LoadSlider : public QWidget
@@ -45,7 +43,7 @@ private:
 };
 
 class QPushButton;
-class DPasswordEditEx : public DLineEdit
+class DPasswordEditEx : public DLineEditEx
 {
     Q_OBJECT
 public:
@@ -65,7 +63,6 @@ public Q_SLOTS:
     void onTextChanged(const QString &text);
 
 protected:
-    void paintEvent(QPaintEvent *event) override;
     void resizeEvent(QResizeEvent *event) override;
 
 private:

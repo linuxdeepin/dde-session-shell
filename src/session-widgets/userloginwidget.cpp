@@ -51,7 +51,7 @@ UserLoginWidget::UserLoginWidget(QWidget *parent)
     , m_nameLbl(new QLabel(this))
     , m_passwordEdit(new DPasswordEditEx(this))
     , m_lockPasswordWidget(new LockPasswordWidget)
-    , m_accountEdit(new QLineEdit(this))
+    , m_accountEdit(new DLineEditEx(this))
     , m_lockButton(new DFloatingButton(DStyle::SP_UnlockElement))
     , m_kbLayoutBorder(new DArrowRectangle(DArrowRectangle::ArrowTop))
     , m_kbLayoutWidget(new KbLayoutWidget(QStringList()))
@@ -77,9 +77,8 @@ void UserLoginWidget::resetAllState()
     m_passwordEdit->hideLoadSlider();
     m_passwordEdit->lineEdit()->clear();
     m_passwordEdit->lineEdit()->setPlaceholderText(QString());
-    m_accountEdit->clear();
-    m_accountEdit->setEnabled(true);
-    m_accountEdit->setFocusPolicy(Qt::StrongFocus);
+    m_accountEdit->lineEdit()->clear();
+    m_accountEdit->lineEdit()->setEnabled(true);
     if (m_authType == SessionBaseModel::LightdmType) {
         m_lockButton->setIcon(DStyle::SP_ArrowNext);
     } else {
@@ -92,8 +91,7 @@ void UserLoginWidget::setFaildMessage(const QString &message, SessionBaseModel::
 {
     if (m_isLock && !message.isEmpty()) {
         m_lockPasswordWidget->setMessage(message);
-        m_accountEdit->setEnabled(false);
-        m_accountEdit->setFocusPolicy(Qt::NoFocus);
+        m_accountEdit->lineEdit()->setEnabled(false);
         m_passwordEdit->hideAlertMessage();
         return;
     }
@@ -112,8 +110,7 @@ void UserLoginWidget::setFaildMessage(const QString &message, SessionBaseModel::
 //密码输入错误,设置错误信息
 void UserLoginWidget::setFaildTipMessage(const QString &message, SessionBaseModel::AuthFaildType type)
 {
-    m_accountEdit->setFocusPolicy(Qt::StrongFocus);
-    m_accountEdit->setEnabled(true);
+    m_accountEdit->lineEdit()->setEnabled(true);
     m_passwordEdit->hideLoadSlider();
 
     if (message.isEmpty()) {
@@ -188,12 +185,12 @@ void UserLoginWidget::updateUI()
         m_passwordEdit->setShowKB(false);
         m_passwordEdit->lineEdit()->setPlaceholderText(tr("Password"));
         m_accountEdit->show();
-        m_accountEdit->setPlaceholderText(tr("Account"));
-        m_accountEdit->setFocus();
+        m_accountEdit->lineEdit()->setPlaceholderText(tr("Account"));
+        m_accountEdit->lineEdit()->setFocus();
         m_nameLbl->hide();
         m_lockButton->show();
 
-        setTabOrder(m_accountEdit, m_passwordEdit->lineEdit());
+        setTabOrder(m_accountEdit->lineEdit(), m_passwordEdit->lineEdit());
         setTabOrder(m_passwordEdit->lineEdit(), m_lockButton);
         break;
     }
@@ -212,7 +209,7 @@ void UserLoginWidget::updateUI()
     }
 
     if (m_accountEdit->isVisible()) {
-        setFocusProxy(m_accountEdit);
+        setFocusProxy(m_accountEdit->lineEdit());
     } else if (m_passwordEdit->isVisible())
         setFocusProxy(m_passwordEdit->lineEdit());
 
@@ -237,7 +234,7 @@ bool UserLoginWidget::inputInfoCheck(bool is_server)
 {
     if (is_server && m_accountEdit->isVisible() && m_accountEdit->text().isEmpty()) {
         setFaildTipMessage(tr("Please enter the account"));
-        m_accountEdit->setFocus();
+        m_accountEdit->lineEdit()->setFocus();
         return false;
     }
 
@@ -252,9 +249,9 @@ bool UserLoginWidget::inputInfoCheck(bool is_server)
 
 void UserLoginWidget::onOtherPageAccountChanged(const QVariant &value)
 {
-    int cursorIndex =  m_accountEdit->cursorPosition();
+    int cursorIndex =  m_accountEdit->lineEdit()->cursorPosition();
     m_accountEdit->setText(value.toString());
-    m_accountEdit->setCursorPosition(cursorIndex);
+    m_accountEdit->lineEdit()->setCursorPosition(cursorIndex);
 }
 
 void UserLoginWidget::onOtherPagePasswordChanged(const QVariant &value)
@@ -407,8 +404,6 @@ bool UserLoginWidget::eventFilter(QObject *watched, QEvent *event)
 //初始化窗体控件
 void UserLoginWidget::initUI()
 {
-    setFocusPolicy(Qt::NoFocus);
-
     m_userAvatar->setAvatarSize(UserAvatar::AvatarLargeSize);
     m_userAvatar->setFixedSize(100, 100);
     m_userAvatar->setFocusPolicy(Qt::NoFocus);
@@ -426,7 +421,7 @@ void UserLoginWidget::initUI()
     m_passwordEdit->setSizePolicy(QSizePolicy::Expanding, QSizePolicy::Fixed);
     m_passwordEdit->lineEdit()->setAlignment(Qt::AlignCenter);
     m_passwordEdit->capslockStatusChanged(m_capslockMonitor->isCapslockOn());
-    m_passwordEdit->setFocusPolicy(Qt::StrongFocus);
+    m_passwordEdit->lineEdit()->setFocusPolicy(Qt::StrongFocus);
     m_passwordEdit->lineEdit()->installEventFilter(this);
 
     m_kbLayoutBorder->hide();
@@ -441,9 +436,10 @@ void UserLoginWidget::initUI()
     m_lockPasswordWidget->setSizePolicy(QSizePolicy::Expanding, QSizePolicy::Fixed);
     m_lockPasswordWidget->setLockIconVisible(false);
     m_accountEdit->setSizePolicy(QSizePolicy::Expanding, QSizePolicy::Fixed);
-    m_accountEdit->setAlignment(Qt::AlignCenter);
-    m_accountEdit->setFocusPolicy(Qt::StrongFocus);
-    m_accountEdit->installEventFilter(this);
+    m_accountEdit->setClearButtonEnabled(false);
+    m_accountEdit->lineEdit()->setAlignment(Qt::AlignCenter);
+    m_passwordEdit->lineEdit()->setFocusPolicy(Qt::StrongFocus);
+    m_accountEdit->lineEdit()->installEventFilter(this);
 
     m_passwordEdit->setVisible(true);
 
@@ -508,9 +504,7 @@ void UserLoginWidget::initConnect()
         const QString account = m_accountEdit->text();
         const QString passwd = m_passwordEdit->text();
 
-//        if (passwd.isEmpty()) return;
         m_accountEdit->setEnabled(false);
-        m_accountEdit->setFocusPolicy(Qt::NoFocus);
         emit requestAuthUser(account, passwd);
     });
 
@@ -523,10 +517,8 @@ void UserLoginWidget::initConnect()
             m_passwordEdit->lineEdit()->setFocus();
         }
 
-//        if (password.isEmpty() && m_showType != NoPasswordType) return;
         m_passwordEdit->showLoadSlider();
         m_accountEdit->setEnabled(false);
-        m_accountEdit->setFocusPolicy(Qt::NoFocus);
         emit requestAuthUser(m_accountEdit->text(), password);
     });
     connect(m_userAvatar, &UserAvatar::clicked, this, &UserLoginWidget::clicked);
