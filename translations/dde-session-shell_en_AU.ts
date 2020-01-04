@@ -2,96 +2,96 @@
 <context>
     <name>ContentWidget</name>
     <message>
-        <location filename="../src/dde-shutdown/view/contentwidget.cpp" line="317"/>
+        <location filename="../src/dde-shutdown/view/contentwidget.cpp" line="345"/>
         <source>The programs are preventing the computer from shutting down, and forcing shut down may cause data loss.</source>
         <translation type="unfinished"/>
     </message>
     <message>
-        <location filename="../src/dde-shutdown/view/contentwidget.cpp" line="318"/>
-        <location filename="../src/dde-shutdown/view/contentwidget.cpp" line="322"/>
-        <location filename="../src/dde-shutdown/view/contentwidget.cpp" line="326"/>
-        <location filename="../src/dde-shutdown/view/contentwidget.cpp" line="330"/>
-        <location filename="../src/dde-shutdown/view/contentwidget.cpp" line="334"/>
+        <location filename="../src/dde-shutdown/view/contentwidget.cpp" line="346"/>
+        <location filename="../src/dde-shutdown/view/contentwidget.cpp" line="350"/>
+        <location filename="../src/dde-shutdown/view/contentwidget.cpp" line="354"/>
+        <location filename="../src/dde-shutdown/view/contentwidget.cpp" line="358"/>
+        <location filename="../src/dde-shutdown/view/contentwidget.cpp" line="362"/>
         <source>To close the program, click Cancel, and then close the program.</source>
         <translation type="unfinished"/>
     </message>
     <message>
-        <location filename="../src/dde-shutdown/view/contentwidget.cpp" line="321"/>
+        <location filename="../src/dde-shutdown/view/contentwidget.cpp" line="349"/>
         <source>The programs are preventing the computer from reboot, and forcing reboot may cause data loss.</source>
         <translation type="unfinished"/>
     </message>
     <message>
-        <location filename="../src/dde-shutdown/view/contentwidget.cpp" line="325"/>
+        <location filename="../src/dde-shutdown/view/contentwidget.cpp" line="353"/>
         <source>The programs are preventing the computer from suspend, and forcing suspend may cause data loss.</source>
         <translation type="unfinished"/>
     </message>
     <message>
-        <location filename="../src/dde-shutdown/view/contentwidget.cpp" line="329"/>
+        <location filename="../src/dde-shutdown/view/contentwidget.cpp" line="357"/>
         <source>The programs are preventing the computer from hibernate, and forcing hibernate may cause data loss.</source>
         <translation type="unfinished"/>
     </message>
     <message>
-        <location filename="../src/dde-shutdown/view/contentwidget.cpp" line="333"/>
+        <location filename="../src/dde-shutdown/view/contentwidget.cpp" line="361"/>
         <source>The programs are preventing the computer from log out, and forcing log out may cause data loss.</source>
         <translation type="unfinished"/>
     </message>
     <message>
-        <location filename="../src/dde-shutdown/view/contentwidget.cpp" line="351"/>
-        <location filename="../src/dde-shutdown/view/contentwidget.cpp" line="388"/>
-        <location filename="../src/dde-shutdown/view/contentwidget.cpp" line="410"/>
-        <location filename="../src/dde-shutdown/view/contentwidget.cpp" line="545"/>
+        <location filename="../src/dde-shutdown/view/contentwidget.cpp" line="379"/>
+        <location filename="../src/dde-shutdown/view/contentwidget.cpp" line="416"/>
+        <location filename="../src/dde-shutdown/view/contentwidget.cpp" line="438"/>
+        <location filename="../src/dde-shutdown/view/contentwidget.cpp" line="574"/>
         <source>Shut down</source>
         <translation>Shut down</translation>
     </message>
     <message>
-        <location filename="../src/dde-shutdown/view/contentwidget.cpp" line="353"/>
-        <location filename="../src/dde-shutdown/view/contentwidget.cpp" line="390"/>
-        <location filename="../src/dde-shutdown/view/contentwidget.cpp" line="413"/>
-        <location filename="../src/dde-shutdown/view/contentwidget.cpp" line="548"/>
+        <location filename="../src/dde-shutdown/view/contentwidget.cpp" line="381"/>
+        <location filename="../src/dde-shutdown/view/contentwidget.cpp" line="418"/>
+        <location filename="../src/dde-shutdown/view/contentwidget.cpp" line="441"/>
+        <location filename="../src/dde-shutdown/view/contentwidget.cpp" line="577"/>
         <source>Reboot</source>
         <translation>Reboot</translation>
     </message>
     <message>
-        <location filename="../src/dde-shutdown/view/contentwidget.cpp" line="355"/>
-        <location filename="../src/dde-shutdown/view/contentwidget.cpp" line="551"/>
+        <location filename="../src/dde-shutdown/view/contentwidget.cpp" line="383"/>
+        <location filename="../src/dde-shutdown/view/contentwidget.cpp" line="580"/>
         <source>Suspend</source>
         <translation>Suspend</translation>
     </message>
     <message>
-        <location filename="../src/dde-shutdown/view/contentwidget.cpp" line="357"/>
-        <location filename="../src/dde-shutdown/view/contentwidget.cpp" line="554"/>
+        <location filename="../src/dde-shutdown/view/contentwidget.cpp" line="385"/>
+        <location filename="../src/dde-shutdown/view/contentwidget.cpp" line="583"/>
         <source>Hibernate</source>
         <translation type="unfinished"/>
     </message>
     <message>
-        <location filename="../src/dde-shutdown/view/contentwidget.cpp" line="359"/>
-        <location filename="../src/dde-shutdown/view/contentwidget.cpp" line="416"/>
-        <location filename="../src/dde-shutdown/view/contentwidget.cpp" line="560"/>
+        <location filename="../src/dde-shutdown/view/contentwidget.cpp" line="387"/>
+        <location filename="../src/dde-shutdown/view/contentwidget.cpp" line="444"/>
+        <location filename="../src/dde-shutdown/view/contentwidget.cpp" line="589"/>
         <source>Log out</source>
         <translation>Log out</translation>
     </message>
     <message>
-        <location filename="../src/dde-shutdown/view/contentwidget.cpp" line="411"/>
+        <location filename="../src/dde-shutdown/view/contentwidget.cpp" line="439"/>
         <source>Are you sure you want to shut down?</source>
         <translation type="unfinished"/>
     </message>
     <message>
-        <location filename="../src/dde-shutdown/view/contentwidget.cpp" line="414"/>
+        <location filename="../src/dde-shutdown/view/contentwidget.cpp" line="442"/>
         <source>Are you sure you want to reboot?</source>
         <translation type="unfinished"/>
     </message>
     <message>
-        <location filename="../src/dde-shutdown/view/contentwidget.cpp" line="417"/>
+        <location filename="../src/dde-shutdown/view/contentwidget.cpp" line="445"/>
         <source>Are you sure you want to log out?</source>
         <translation type="unfinished"/>
     </message>
     <message>
-        <location filename="../src/dde-shutdown/view/contentwidget.cpp" line="557"/>
+        <location filename="../src/dde-shutdown/view/contentwidget.cpp" line="586"/>
         <source>Lock</source>
         <translation>Lock</translation>
     </message>
     <message>
-        <location filename="../src/dde-shutdown/view/contentwidget.cpp" line="564"/>
+        <location filename="../src/dde-shutdown/view/contentwidget.cpp" line="593"/>
         <source>Switch user</source>
         <translation>Switch user</translation>
     </message>
@@ -99,7 +99,7 @@
 <context>
     <name>DeepinAuthFramework</name>
     <message>
-        <location filename="../src/libdde-auth/deepinauthframework.cpp" line="115"/>
+        <location filename="../src/libdde-auth/deepinauthframework.cpp" line="109"/>
         <source>Verify your fingerprint or password</source>
         <translation type="unfinished"/>
     </message>
@@ -107,24 +107,13 @@
 <context>
     <name>GreeterWorkek</name>
     <message>
-        <location filename="../src/lightdm-deepin-greeter/greeterworkek.cpp" line="116"/>
-        <source>Domain account</source>
-        <translation type="unfinished"/>
-    </message>
-    <message>
-        <location filename="../src/lightdm-deepin-greeter/greeterworkek.cpp" line="332"/>
-        <location filename="../src/lightdm-deepin-greeter/greeterworkek.cpp" line="423"/>
+        <location filename="../src/lightdm-deepin-greeter/greeterworkek.cpp" line="347"/>
         <source>Wrong Password</source>
         <translation>Wrong Password</translation>
     </message>
     <message>
-        <location filename="../src/lightdm-deepin-greeter/greeterworkek.cpp" line="337"/>
+        <location filename="../src/lightdm-deepin-greeter/greeterworkek.cpp" line="352"/>
         <source>The domain account or password is not correct. Please enter again.</source>
-        <translation type="unfinished"/>
-    </message>
-    <message>
-        <location filename="../src/lightdm-deepin-greeter/greeterworkek.cpp" line="428"/>
-        <source>Password expired, please change</source>
         <translation type="unfinished"/>
     </message>
 </context>
@@ -139,7 +128,12 @@
 <context>
     <name>LockContent</name>
     <message>
-        <location filename="../src/session-widgets/lockcontent.cpp" line="324"/>
+        <location filename="../src/session-widgets/lockcontent.cpp" line="330"/>
+        <source>Lock Screen</source>
+        <translation type="unfinished"/>
+    </message>
+    <message>
+        <location filename="../src/session-widgets/lockcontent.cpp" line="334"/>
         <source>Failed to lock screen</source>
         <translation type="unfinished"/>
     </message>
@@ -147,22 +141,22 @@
 <context>
     <name>LockWorker</name>
     <message>
-        <location filename="../src/dde-lock/lockworker.cpp" line="100"/>
+        <location filename="../src/dde-lock/lockworker.cpp" line="119"/>
         <source>Domain account</source>
         <translation type="unfinished"/>
     </message>
     <message>
-        <location filename="../src/dde-lock/lockworker.cpp" line="227"/>
+        <location filename="../src/dde-lock/lockworker.cpp" line="269"/>
         <source>Fingerprint verification timed out, please enter your password manually</source>
         <translation type="unfinished"/>
     </message>
     <message>
-        <location filename="../src/dde-lock/lockworker.cpp" line="245"/>
+        <location filename="../src/dde-lock/lockworker.cpp" line="287"/>
         <source>Failed to match fingerprint</source>
         <translation type="unfinished"/>
     </message>
     <message>
-        <location filename="../src/dde-lock/lockworker.cpp" line="280"/>
+        <location filename="../src/dde-lock/lockworker.cpp" line="322"/>
         <source>Wrong Password</source>
         <translation>Wrong Password</translation>
     </message>
@@ -222,42 +216,42 @@
 <context>
     <name>UserExpiredWidget</name>
     <message>
-        <location filename="../src/session-widgets/userexpiredwidget.cpp" line="148"/>
-        <source>Old password</source>
+        <location filename="../src/session-widgets/userexpiredwidget.cpp" line="149"/>
+        <source>Password expired, please change</source>
         <translation type="unfinished"/>
     </message>
     <message>
-        <location filename="../src/session-widgets/userexpiredwidget.cpp" line="156"/>
+        <location filename="../src/session-widgets/userexpiredwidget.cpp" line="153"/>
         <source>New password</source>
         <translation type="unfinished"/>
     </message>
     <message>
-        <location filename="../src/session-widgets/userexpiredwidget.cpp" line="165"/>
+        <location filename="../src/session-widgets/userexpiredwidget.cpp" line="162"/>
         <source>Repeat password</source>
         <translation>Repeat password</translation>
     </message>
     <message>
-        <location filename="../src/session-widgets/userexpiredwidget.cpp" line="322"/>
+        <location filename="../src/session-widgets/userexpiredwidget.cpp" line="320"/>
         <source>Failed to change your password</source>
         <translation type="unfinished"/>
     </message>
     <message>
-        <location filename="../src/session-widgets/userexpiredwidget.cpp" line="339"/>
-        <source>Please enter the old password</source>
+        <location filename="../src/session-widgets/userexpiredwidget.cpp" line="334"/>
+        <source>Password too weak</source>
         <translation type="unfinished"/>
     </message>
     <message>
-        <location filename="../src/session-widgets/userexpiredwidget.cpp" line="345"/>
+        <location filename="../src/session-widgets/userexpiredwidget.cpp" line="342"/>
         <source>Please enter the new password</source>
         <translation type="unfinished"/>
     </message>
     <message>
-        <location filename="../src/session-widgets/userexpiredwidget.cpp" line="351"/>
+        <location filename="../src/session-widgets/userexpiredwidget.cpp" line="348"/>
         <source>Please repeat the new password</source>
         <translation type="unfinished"/>
     </message>
     <message>
-        <location filename="../src/session-widgets/userexpiredwidget.cpp" line="357"/>
+        <location filename="../src/session-widgets/userexpiredwidget.cpp" line="354"/>
         <source>Passwords do not match</source>
         <translation>Passwords do not match</translation>
     </message>
@@ -265,32 +259,37 @@
 <context>
     <name>UserLoginWidget</name>
     <message>
-        <location filename="../src/session-widgets/userloginwidget.cpp" line="177"/>
+        <location filename="../src/session-widgets/userloginwidget.cpp" line="189"/>
         <source>Password</source>
         <translation>Password</translation>
     </message>
     <message>
-        <location filename="../src/session-widgets/userloginwidget.cpp" line="179"/>
+        <location filename="../src/session-widgets/userloginwidget.cpp" line="191"/>
         <source>Account</source>
         <translation>Account</translation>
     </message>
     <message>
-        <location filename="../src/session-widgets/userloginwidget.cpp" line="181"/>
-        <source>Account Login</source>
-        <translation type="unfinished"/>
-    </message>
-    <message>
-        <location filename="../src/session-widgets/userloginwidget.cpp" line="209"/>
+        <location filename="../src/session-widgets/userloginwidget.cpp" line="226"/>
         <source>Enter your password to reboot</source>
         <translation type="unfinished"/>
     </message>
     <message>
-        <location filename="../src/session-widgets/userloginwidget.cpp" line="212"/>
+        <location filename="../src/session-widgets/userloginwidget.cpp" line="229"/>
         <source>Enter your password to shut down</source>
         <translation type="unfinished"/>
     </message>
+    <message>
+        <location filename="../src/session-widgets/userloginwidget.cpp" line="239"/>
+        <source>Please enter the account</source>
+        <translation type="unfinished"/>
+    </message>
+    <message>
+        <location filename="../src/session-widgets/userloginwidget.cpp" line="246"/>
+        <source>Please enter the password</source>
+        <translation type="unfinished"/>
+    </message>
     <message numerus="yes">
-        <location filename="../src/session-widgets/userloginwidget.cpp" line="285"/>
+        <location filename="../src/session-widgets/userloginwidget.cpp" line="319"/>
         <source>Please try again %n minute(s) later</source>
         <translation type="unfinished"><numerusform></numerusform><numerusform></numerusform></translation>
     </message>

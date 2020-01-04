@@ -1,4 +1,4 @@
-<?xml version="1.0" ?><!DOCTYPE TS><TS language="en_GB" version="2.1">
+<?xml version="1.0" ?><!DOCTYPE TS><TS language="ak" version="2.1">
 <context>
     <name>ContentWidget</name>
     <message>
@@ -41,7 +41,7 @@
         <location filename="../src/dde-shutdown/view/contentwidget.cpp" line="438"/>
         <location filename="../src/dde-shutdown/view/contentwidget.cpp" line="574"/>
         <source>Shut down</source>
-        <translation>Shut down</translation>
+        <translation type="unfinished"/>
     </message>
     <message>
         <location filename="../src/dde-shutdown/view/contentwidget.cpp" line="381"/>
@@ -55,7 +55,7 @@
         <location filename="../src/dde-shutdown/view/contentwidget.cpp" line="383"/>
         <location filename="../src/dde-shutdown/view/contentwidget.cpp" line="580"/>
         <source>Suspend</source>
-        <translation type="unfinished"/>
+        <translation>Suspend</translation>
     </message>
     <message>
         <location filename="../src/dde-shutdown/view/contentwidget.cpp" line="385"/>
@@ -88,7 +88,7 @@
     <message>
         <location filename="../src/dde-shutdown/view/contentwidget.cpp" line="586"/>
         <source>Lock</source>
-        <translation type="unfinished"/>
+        <translation>Lock</translation>
     </message>
     <message>
         <location filename="../src/dde-shutdown/view/contentwidget.cpp" line="593"/>
@@ -184,7 +184,7 @@
     <message>
         <location filename="../src/widgets/shutdownwidget.cpp" line="29"/>
         <source>Shut down</source>
-        <translation>Shut down</translation>
+        <translation type="unfinished"/>
     </message>
     <message>
         <location filename="../src/widgets/shutdownwidget.cpp" line="30"/>
@@ -196,7 +196,7 @@
         <location filename="../src/widgets/shutdownwidget.cpp" line="31"/>
         <location filename="../src/widgets/shutdownwidget.cpp" line="108"/>
         <source>Suspend</source>
-        <translation type="unfinished"/>
+        <translation>Suspend</translation>
     </message>
     <message>
         <location filename="../src/widgets/shutdownwidget.cpp" line="32"/>
@@ -228,7 +228,7 @@
     <message>
         <location filename="../src/session-widgets/userexpiredwidget.cpp" line="162"/>
         <source>Repeat password</source>
-        <translation>Repeat password</translation>
+        <translation type="unfinished"/>
     </message>
     <message>
         <location filename="../src/session-widgets/userexpiredwidget.cpp" line="320"/>
@@ -261,7 +261,7 @@
     <message>
         <location filename="../src/session-widgets/userloginwidget.cpp" line="189"/>
         <source>Password</source>
-        <translation>Password</translation>
+        <translation type="unfinished"/>
     </message>
     <message>
         <location filename="../src/session-widgets/userloginwidget.cpp" line="191"/>
