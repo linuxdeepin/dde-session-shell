@@ -109,11 +109,6 @@
 <context>
     <name>GreeterWorkek</name>
     <message>
-        <location filename="../src/lightdm-deepin-greeter/greeterworkek.cpp" line="124"/>
-        <source>Domain account</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
         <location filename="../src/lightdm-deepin-greeter/greeterworkek.cpp" line="347"/>
         <source>Wrong Password</source>
         <translation type="unfinished"></translation>
@@ -135,12 +130,12 @@
 <context>
     <name>LockContent</name>
     <message>
-        <location filename="../src/session-widgets/lockcontent.cpp" line="335"/>
+        <location filename="../src/session-widgets/lockcontent.cpp" line="330"/>
         <source>dde-lock</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../src/session-widgets/lockcontent.cpp" line="339"/>
+        <location filename="../src/session-widgets/lockcontent.cpp" line="334"/>
         <source>Failed to lock screen</source>
         <translation type="unfinished"></translation>
     </message>
@@ -266,32 +261,37 @@
 <context>
     <name>UserLoginWidget</name>
     <message>
-        <location filename="../src/session-widgets/userloginwidget.cpp" line="188"/>
+        <location filename="../src/session-widgets/userloginwidget.cpp" line="189"/>
         <source>Password</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../src/session-widgets/userloginwidget.cpp" line="190"/>
+        <location filename="../src/session-widgets/userloginwidget.cpp" line="191"/>
         <source>Account</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../src/session-widgets/userloginwidget.cpp" line="192"/>
-        <source>Account Login</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <location filename="../src/session-widgets/userloginwidget.cpp" line="225"/>
+        <location filename="../src/session-widgets/userloginwidget.cpp" line="226"/>
         <source>Enter your password to reboot</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../src/session-widgets/userloginwidget.cpp" line="228"/>
+        <location filename="../src/session-widgets/userloginwidget.cpp" line="229"/>
         <source>Enter your password to shut down</source>
         <translation type="unfinished"></translation>
     </message>
+    <message>
+        <location filename="../src/session-widgets/userloginwidget.cpp" line="239"/>
+        <source>Please enter the account</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../src/session-widgets/userloginwidget.cpp" line="246"/>
+        <source>Please enter the password</source>
+        <translation type="unfinished"></translation>
+    </message>
     <message numerus="yes">
-        <location filename="../src/session-widgets/userloginwidget.cpp" line="301"/>
+        <location filename="../src/session-widgets/userloginwidget.cpp" line="319"/>
         <source>Please try again %n minute(s) later</source>
         <translation type="unfinished">
             <numerusform></numerusform>
