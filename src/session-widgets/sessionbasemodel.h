@@ -106,6 +106,7 @@ signals:
     void allowShowUserSwitchButtonChanged(bool allowShowUserSwitchButton);
     void abortConfirmChanged(bool abortConfirm);
     void lockChanged(bool lock);
+    void onUserListLoginedChanged(QList<std::shared_ptr<User>> list);
 
 private:
     com::deepin::SessionManager *m_sessionManagerInter;

@@ -102,6 +102,7 @@ LockContent::LockContent(SessionBaseModel *const model, QWidget *parent)
 
     connect(model, &SessionBaseModel::hasVirtualKBChanged, this, initVirtualKB);
     connect(model, &SessionBaseModel::onUserListChanged, this, &LockContent::onUserListChanged);
+    connect(model, &SessionBaseModel::onUserListLoginedChanged, this, &LockContent::onUserListChanged);
     connect(m_imageBlurInter, &ImageBlur::BlurDone, this, &LockContent::onBlurDone);
 
     QTimer::singleShot(0, this, [ = ] {
@@ -301,8 +302,7 @@ void LockContent::onUserListChanged(QList<std::shared_ptr<User> > list)
     if (m_model->isServerModel() && m_model->currentType() == SessionBaseModel::LightdmType) {
         haveLogindUser = !m_model->logindUser().isEmpty();
     }
-
-    m_controlWidget->setUserSwitchEnable((alwaysShowUserSwitchButton || (allowShowUserSwitchButton && list.size() > 1)) && haveLogindUser);
+    m_controlWidget->setUserSwitchEnable((alwaysShowUserSwitchButton || (allowShowUserSwitchButton && m_model->logindUser().size() > 0)) && haveLogindUser);
 }
 
 void LockContent::tryGrabKeyboard()
@@ -323,19 +323,19 @@ void LockContent::tryGrabKeyboard()
         m_sessionManager->SetLocked(false);
 
         DDBusSender()
-                .service("org.freedesktop.Notifications")
-                .path("/org/freedesktop/Notifications")
-                .interface("org.freedesktop.Notifications")
-                .method(QString("Notify"))
-                .arg(tr("Lock Screen"))
-                .arg(static_cast<uint>(0))
-                .arg(QString(""))
-                .arg(QString(""))
-                .arg(tr("Failed to lock screen"))
-                .arg(QStringList())
-                .arg(QVariantMap())
-                .arg(5000)
-                .call();
+        .service("org.freedesktop.Notifications")
+        .path("/org/freedesktop/Notifications")
+        .interface("org.freedesktop.Notifications")
+        .method(QString("Notify"))
+        .arg(tr("Lock Screen"))
+        .arg(static_cast<uint>(0))
+        .arg(QString(""))
+        .arg(QString(""))
+        .arg(tr("Failed to lock screen"))
+        .arg(QStringList())
+        .arg(QVariantMap())
+        .arg(5000)
+        .call();
 
         qApp->quit();
         return;
