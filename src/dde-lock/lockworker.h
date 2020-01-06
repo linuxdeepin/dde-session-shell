@@ -38,9 +38,9 @@ public:
 
 private:
     void onUserAdded(const QString &user) override;
-
     void saveNumlockStatus(std::shared_ptr<User> user, const bool &on);
     void recoveryUserKBState(std::shared_ptr<User> user);
+    void authStatusChanged(bool status);
 
     // lock
     void lockServiceEvent(quint32 eventType, quint32 pid, const QString &username, const QString &message);

@@ -48,3 +48,8 @@ void DBusLockFrontService::ShowUserList()
 {
     parent()->ShowUserList();
 }
+
+void DBusLockFrontService::ActiveAuth(bool active)
+{
+    parent()->ActiveAuth(active);
+}

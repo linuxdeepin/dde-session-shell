@@ -39,23 +39,11 @@ LockWorker::LockWorker(SessionBaseModel *const model, QObject *parent)
     QObject::connect(model, &SessionBaseModel::onStatusChanged, this, [ = ](SessionBaseModel::ModeStatus state) {
         std::shared_ptr<User> user = m_model->currentUser();
         m_authFramework->SetUser(user);
-        if (SessionBaseModel::ModeStatus::PasswordMode == state) {
-            //active fprinter auth
-            m_authFramework->Authenticate();
-        } else {
-            //close fprinter auth
-            m_authFramework->Clear();
-        }
+        authStatusChanged(SessionBaseModel::ModeStatus::PasswordMode != state);
     });
 
-    connect(model, &SessionBaseModel::lockChanged, this, [ = ](bool is_lock) {
-        if (is_lock) {
-            m_authFramework->Clear();
-        } else {
-            userAuthForLock(m_model->currentUser());
-        }
-    });
-
+    connect(model, &SessionBaseModel::lockChanged, this, &LockWorker::authStatusChanged);
+    connect(model, &SessionBaseModel::activeAuthChanged, this, &LockWorker::authStatusChanged);
     connect(model, &SessionBaseModel::onPowerActionChanged, this, [ = ](SessionBaseModel::PowerAction poweraction) {
         switch (poweraction) {
         case SessionBaseModel::PowerAction::RequireSuspend:
@@ -247,6 +235,15 @@ void LockWorker::onUserAdded(const QString &user)
     }
 
     m_model->userAdd(user_ptr);
+}
+
+void LockWorker::authStatusChanged(bool status)
+{
+    if (status) {
+        m_authFramework->Clear();
+    } else {
+        m_authFramework->Authenticate();
+    }
 }
 
 void LockWorker::lockServiceEvent(quint32 eventType, quint32 pid, const QString &username, const QString &message)

@@ -107,6 +107,7 @@ signals:
     void abortConfirmChanged(bool abortConfirm);
     void lockChanged(bool lock);
     void onUserListLoginedChanged(QList<std::shared_ptr<User>> list);
+    void activeAuthChanged(bool active);
 
 private:
     com::deepin::SessionManager *m_sessionManagerInter;

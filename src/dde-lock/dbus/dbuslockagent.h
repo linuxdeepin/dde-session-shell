@@ -9,10 +9,11 @@ class DBusLockAgent : public QObject
     Q_OBJECT
 public:
     explicit DBusLockAgent(QObject *parent = nullptr);
-    void setModel(SessionBaseModel * const model);
+    void setModel(SessionBaseModel *const model);
 
     void Show();
     void ShowUserList();
+    void ActiveAuth(bool active);
 
 private:
     SessionBaseModel *m_model;

@@ -19,6 +19,11 @@ void DBusLockAgent::Show()
     emit m_model->visibleChanged(true);
 }
 
+void DBusLockAgent::ActiveAuth(bool active)
+{
+    emit m_model->activeAuthChanged(!active);
+}
+
 void DBusLockAgent::ShowUserList()
 {
     emit m_model->showUserList();
