@@ -252,7 +252,8 @@ bool NativeUser::isNoPasswdGrp() const
 
 bool NativeUser::isPasswordExpired() const
 {
-    return m_userInter->IsPasswordExpired();
+    QDBusPendingReply<bool> replay = m_userInter->IsPasswordExpired();
+    return !replay.isError() && m_userInter->IsPasswordExpired();
 }
 
 bool NativeUser::isUserIsvalid() const
@@ -337,7 +338,8 @@ QString ADDomainUser::desktopBackgroundPath() const
 bool ADDomainUser::isPasswordExpired() const
 {
     if (m_userInter != nullptr) {
-        return m_userInter->IsPasswordExpired();
+        QDBusPendingReply<bool> replay = m_userInter->IsPasswordExpired();
+        return !replay.isError() && m_userInter->IsPasswordExpired();
     }
     return false;
 }

@@ -94,6 +94,7 @@ void UserLoginInfo::initConnect()
             static_cast<ADDomainUser *>(m_model->currentUser().get())->setUserInter(nullptr);
             if (user != nullptr) {
                 static_cast<ADDomainUser *>(m_model->currentUser().get())->setUserInter(user->getUserInter());
+                m_userExpiredWidget->setDisplayName(user->displayName());
                 m_userExpiredWidget->setUserName(account);
             }
         }
