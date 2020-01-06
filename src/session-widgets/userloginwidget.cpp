@@ -509,7 +509,7 @@ void UserLoginWidget::initConnect()
         const QString account = m_accountEdit->text();
         const QString passwd = m_passwordEdit->text();
 
-        m_accountEdit->setEnabled(false);
+        m_accountEdit->lineEdit()->setEnabled(false);
         emit requestAuthUser(account, passwd);
     });
 
@@ -523,7 +523,7 @@ void UserLoginWidget::initConnect()
         }
 
         m_passwordEdit->showLoadSlider();
-        m_accountEdit->setEnabled(false);
+        m_accountEdit->lineEdit()->setEnabled(false);
         emit requestAuthUser(m_accountEdit->text(), password);
     });
     connect(m_userAvatar, &UserAvatar::clicked, this, &UserLoginWidget::clicked);
