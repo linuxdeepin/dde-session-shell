@@ -244,6 +244,11 @@ bool UserLoginWidget::inputInfoCheck(bool is_server)
         return false;
     }
 
+    if (m_lockPasswordWidget->isVisible()) {
+        m_passwordEdit->hideLoadSlider();
+        return false;
+    }
+
     return true;
 }
 
