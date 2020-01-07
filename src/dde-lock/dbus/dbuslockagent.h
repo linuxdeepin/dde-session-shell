@@ -13,7 +13,7 @@ public:
 
     void Show();
     void ShowUserList();
-    void ActiveAuth(bool active);
+    void ShowAuth(bool active);
 
 private:
     SessionBaseModel *m_model;

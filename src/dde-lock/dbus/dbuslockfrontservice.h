@@ -59,7 +59,7 @@ public:// PROPERTIES
 public Q_SLOTS:// METHODS
     void Show();
     void ShowUserList();
-    void ActiveAuth(bool active);
+    void ShowAuth(bool active);
 };
 
 #endif // DBUSLOCKFRONTSERVICE_H

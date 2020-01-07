@@ -7,7 +7,7 @@ DBusLockAgent::DBusLockAgent(QObject *parent) : QObject(parent)
 
 }
 
-void DBusLockAgent::setModel(SessionBaseModel * const model)
+void DBusLockAgent::setModel(SessionBaseModel *const model)
 {
     m_model = model;
 }
@@ -19,8 +19,9 @@ void DBusLockAgent::Show()
     emit m_model->visibleChanged(true);
 }
 
-void DBusLockAgent::ActiveAuth(bool active)
+void DBusLockAgent::ShowAuth(bool active)
 {
+    Show();
     emit m_model->activeAuthChanged(!active);
 }
 
