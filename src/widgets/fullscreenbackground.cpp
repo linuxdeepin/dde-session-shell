@@ -102,9 +102,15 @@ void FullscreenBackground::updateBackground(const QString &file)
         }
     }
 
-    Q_ASSERT(QFileInfo(m_bgPath).isFile());
+    QString imageEffect = m_imageEffectInter->Get("", m_bgPath);
 
-    updateBackground(QPixmap(m_imageEffectInter->Get("", m_bgPath)));
+    if (!QFile::exists(imageEffect)) {
+        imageEffect = m_bgPath;
+    }
+
+    updateBackground(QPixmap(imageEffect));
+
+    Q_ASSERT(QFileInfo(m_bgPath).isFile());
 }
 
 void FullscreenBackground::setScreen(QScreen *screen)
