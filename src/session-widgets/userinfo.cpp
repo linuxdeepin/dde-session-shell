@@ -253,6 +253,7 @@ bool NativeUser::isNoPasswdGrp() const
 bool NativeUser::isPasswordExpired() const
 {
     QDBusPendingReply<bool> replay = m_userInter->IsPasswordExpired();
+    replay.waitForFinished();
     return !replay.isError() && m_userInter->IsPasswordExpired();
 }
 
@@ -339,6 +340,7 @@ bool ADDomainUser::isPasswordExpired() const
 {
     if (m_userInter != nullptr) {
         QDBusPendingReply<bool> replay = m_userInter->IsPasswordExpired();
+        replay.waitForFinished();
         return !replay.isError() && m_userInter->IsPasswordExpired();
     }
     return false;
