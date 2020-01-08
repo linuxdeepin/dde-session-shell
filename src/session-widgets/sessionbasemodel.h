@@ -106,7 +106,7 @@ signals:
     void allowShowUserSwitchButtonChanged(bool allowShowUserSwitchButton);
     void abortConfirmChanged(bool abortConfirm);
     void lockChanged(bool lock);
-    void onUserListLoginedChanged(QList<std::shared_ptr<User>> list);
+    void userListLoginedChanged(QList<std::shared_ptr<User>> list);
     void activeAuthChanged(bool active);
 
 private:

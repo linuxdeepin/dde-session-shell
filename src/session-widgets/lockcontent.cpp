@@ -102,13 +102,13 @@ LockContent::LockContent(SessionBaseModel *const model, QWidget *parent)
 
     connect(model, &SessionBaseModel::hasVirtualKBChanged, this, initVirtualKB);
     connect(model, &SessionBaseModel::onUserListChanged, this, &LockContent::onUserListChanged);
-    connect(model, &SessionBaseModel::onUserListLoginedChanged, this, &LockContent::onUserListChanged);
+    connect(model, &SessionBaseModel::userListLoginedChanged, this, &LockContent::onUserListChanged);
     connect(m_imageBlurInter, &ImageBlur::BlurDone, this, &LockContent::onBlurDone);
 
     QTimer::singleShot(0, this, [ = ] {
         onCurrentUserChanged(model->currentUser());
         initVirtualKB(model->hasVirtualKB());
-        onUserListChanged(model->userList());
+        onUserListChanged(model->isServerModel() ? model->logindUser() : model->userList());
     });
 }
 
@@ -145,6 +145,8 @@ void LockContent::onCurrentUserChanged(std::shared_ptr<User> user)
 
 void LockContent::pushUserFrame()
 {
+    if(m_model->isServerModel())
+        m_controlWidget->setUserSwitchEnable(false);
     setCenterContent(m_userLoginInfo->getUserFrameList());
 }
 
@@ -177,6 +179,8 @@ void LockContent::setMPRISEnable(const bool state)
 
 void LockContent::onStatusChanged(SessionBaseModel::ModeStatus status)
 {
+    if(m_model->isServerModel())
+        onUserListChanged(m_model->logindUser());
     switch (status) {
     case SessionBaseModel::ModeStatus::PasswordMode:
         restoreCenterContent();
@@ -302,7 +306,10 @@ void LockContent::onUserListChanged(QList<std::shared_ptr<User> > list)
     if (m_model->isServerModel() && m_model->currentType() == SessionBaseModel::LightdmType) {
         haveLogindUser = !m_model->logindUser().isEmpty();
     }
-    m_controlWidget->setUserSwitchEnable((alwaysShowUserSwitchButton || (allowShowUserSwitchButton && list.size() > 1)) && haveLogindUser);
+    m_controlWidget->setUserSwitchEnable((alwaysShowUserSwitchButton ||
+                                          (allowShowUserSwitchButton &&
+                                          (list.size() > (m_model->isServerModel() ? 0 : 1)))) &&
+                                          haveLogindUser);
 }
 
 void LockContent::tryGrabKeyboard()

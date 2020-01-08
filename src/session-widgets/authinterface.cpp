@@ -191,8 +191,9 @@ void AuthInterface::onLoginUserListChanged(const QString &list)
             ++it;
         }
     }
-    QList<std::shared_ptr<User>> userLogined;
-    emit m_model->onUserListLoginedChanged(userLogined);
+
+    if(m_model->isServerModel())
+        emit m_model->userListLoginedChanged(m_model->logindUser());
 }
 
 bool AuthInterface::checkHaveDisplay(const QJsonArray &array)
