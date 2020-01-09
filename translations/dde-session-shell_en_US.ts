@@ -115,8 +115,8 @@
     </message>
     <message>
         <location filename="../src/lightdm-deepin-greeter/greeterworkek.cpp" line="352"/>
-        <source>The domain account or password is not correct. Please enter again.</source>
-        <translation type="unfinished"></translation>
+        <source>The account or password is not correct. Please enter again.</source>
+        <translation type="unfinished">The account or password is not correct. Please enter again.</translation>
     </message>
 </context>
 <context>
@@ -130,12 +130,12 @@
 <context>
     <name>LockContent</name>
     <message>
-        <location filename="../src/session-widgets/lockcontent.cpp" line="330"/>
+        <location filename="../src/session-widgets/lockcontent.cpp" line="337"/>
         <source>Lock Screen</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../src/session-widgets/lockcontent.cpp" line="334"/>
+        <location filename="../src/session-widgets/lockcontent.cpp" line="341"/>
         <source>Failed to lock screen</source>
         <translation type="unfinished"></translation>
     </message>
@@ -143,22 +143,17 @@
 <context>
     <name>LockWorker</name>
     <message>
-        <location filename="../src/dde-lock/lockworker.cpp" line="119"/>
-        <source>Domain account</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <location filename="../src/dde-lock/lockworker.cpp" line="269"/>
+        <location filename="../src/dde-lock/lockworker.cpp" line="266"/>
         <source>Fingerprint verification timed out, please enter your password manually</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../src/dde-lock/lockworker.cpp" line="287"/>
+        <location filename="../src/dde-lock/lockworker.cpp" line="284"/>
         <source>Failed to match fingerprint</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../src/dde-lock/lockworker.cpp" line="322"/>
+        <location filename="../src/dde-lock/lockworker.cpp" line="319"/>
         <source>Wrong Password</source>
         <translation type="unfinished"></translation>
     </message>
@@ -261,37 +256,37 @@
 <context>
     <name>UserLoginWidget</name>
     <message>
-        <location filename="../src/session-widgets/userloginwidget.cpp" line="189"/>
+        <location filename="../src/session-widgets/userloginwidget.cpp" line="186"/>
         <source>Password</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../src/session-widgets/userloginwidget.cpp" line="191"/>
+        <location filename="../src/session-widgets/userloginwidget.cpp" line="188"/>
         <source>Account</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../src/session-widgets/userloginwidget.cpp" line="226"/>
+        <location filename="../src/session-widgets/userloginwidget.cpp" line="223"/>
         <source>Enter your password to reboot</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../src/session-widgets/userloginwidget.cpp" line="229"/>
+        <location filename="../src/session-widgets/userloginwidget.cpp" line="226"/>
         <source>Enter your password to shut down</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../src/session-widgets/userloginwidget.cpp" line="239"/>
+        <location filename="../src/session-widgets/userloginwidget.cpp" line="236"/>
         <source>Please enter the account</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../src/session-widgets/userloginwidget.cpp" line="246"/>
+        <location filename="../src/session-widgets/userloginwidget.cpp" line="243"/>
         <source>Please enter the password</source>
         <translation type="unfinished"></translation>
     </message>
     <message numerus="yes">
-        <location filename="../src/session-widgets/userloginwidget.cpp" line="319"/>
+        <location filename="../src/session-widgets/userloginwidget.cpp" line="321"/>
         <source>Please try again %n minute(s) later</source>
         <translation type="unfinished">
             <numerusform></numerusform>

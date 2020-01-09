@@ -349,7 +349,7 @@ void GreeterWorkek::authenticationComplete()
 
         if (m_model->currentUser()->type() == User::ADDomain) {
             emit m_model->authFaildTipsMessage(
-                tr("The domain account or password is not correct. Please enter again."));
+                tr("The account or password is not correct. Please enter again."));
         }
 
         if (m_model->currentUser()->isLockForNum()) {

@@ -1,4 +1,6 @@
-<?xml version="1.0" ?><!DOCTYPE TS><TS language="zh_TW" version="2.1">
+<?xml version="1.0" encoding="utf-8"?>
+<!DOCTYPE TS>
+<TS version="2.1" language="zh_TW">
 <context>
     <name>ContentWidget</name>
     <message>
@@ -113,8 +115,12 @@
     </message>
     <message>
         <location filename="../src/lightdm-deepin-greeter/greeterworkek.cpp" line="352"/>
+        <source>The account or password is not correct. Please enter again.</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
         <source>The domain account or password is not correct. Please enter again.</source>
-        <translation>網域帳戶或密碼錯誤，請重新輸入。</translation>
+        <translation type="vanished">網域帳戶或密碼錯誤，請重新輸入。</translation>
     </message>
 </context>
 <context>
@@ -128,12 +134,12 @@
 <context>
     <name>LockContent</name>
     <message>
-        <location filename="../src/session-widgets/lockcontent.cpp" line="330"/>
+        <location filename="../src/session-widgets/lockcontent.cpp" line="337"/>
         <source>Lock Screen</source>
-        <translation type="unfinished"/>
+        <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../src/session-widgets/lockcontent.cpp" line="334"/>
+        <location filename="../src/session-widgets/lockcontent.cpp" line="341"/>
         <source>Failed to lock screen</source>
         <translation>無法鎖定螢幕</translation>
     </message>
@@ -141,22 +147,21 @@
 <context>
     <name>LockWorker</name>
     <message>
-        <location filename="../src/dde-lock/lockworker.cpp" line="119"/>
         <source>Domain account</source>
-        <translation>網域帳戶</translation>
+        <translation type="vanished">網域帳戶</translation>
     </message>
     <message>
-        <location filename="../src/dde-lock/lockworker.cpp" line="269"/>
+        <location filename="../src/dde-lock/lockworker.cpp" line="266"/>
         <source>Fingerprint verification timed out, please enter your password manually</source>
         <translation>指紋驗證逾時，請手動輸入密碼</translation>
     </message>
     <message>
-        <location filename="../src/dde-lock/lockworker.cpp" line="287"/>
+        <location filename="../src/dde-lock/lockworker.cpp" line="284"/>
         <source>Failed to match fingerprint</source>
         <translation>無法進行指紋配對</translation>
     </message>
     <message>
-        <location filename="../src/dde-lock/lockworker.cpp" line="322"/>
+        <location filename="../src/dde-lock/lockworker.cpp" line="319"/>
         <source>Wrong Password</source>
         <translation>密碼錯誤</translation>
     </message>
@@ -238,7 +243,7 @@
     <message>
         <location filename="../src/session-widgets/userexpiredwidget.cpp" line="334"/>
         <source>Password too weak</source>
-        <translation type="unfinished"/>
+        <translation type="unfinished"></translation>
     </message>
     <message>
         <location filename="../src/session-widgets/userexpiredwidget.cpp" line="342"/>
@@ -259,39 +264,41 @@
 <context>
     <name>UserLoginWidget</name>
     <message>
-        <location filename="../src/session-widgets/userloginwidget.cpp" line="189"/>
+        <location filename="../src/session-widgets/userloginwidget.cpp" line="186"/>
         <source>Password</source>
         <translation>密碼</translation>
     </message>
     <message>
-        <location filename="../src/session-widgets/userloginwidget.cpp" line="191"/>
+        <location filename="../src/session-widgets/userloginwidget.cpp" line="188"/>
         <source>Account</source>
         <translation>帳號</translation>
     </message>
     <message>
-        <location filename="../src/session-widgets/userloginwidget.cpp" line="226"/>
+        <location filename="../src/session-widgets/userloginwidget.cpp" line="223"/>
         <source>Enter your password to reboot</source>
         <translation>輸入密碼以重新開機</translation>
     </message>
     <message>
-        <location filename="../src/session-widgets/userloginwidget.cpp" line="229"/>
+        <location filename="../src/session-widgets/userloginwidget.cpp" line="226"/>
         <source>Enter your password to shut down</source>
         <translation>輸入密碼以關機</translation>
     </message>
     <message>
-        <location filename="../src/session-widgets/userloginwidget.cpp" line="239"/>
+        <location filename="../src/session-widgets/userloginwidget.cpp" line="236"/>
         <source>Please enter the account</source>
-        <translation type="unfinished"/>
+        <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../src/session-widgets/userloginwidget.cpp" line="246"/>
+        <location filename="../src/session-widgets/userloginwidget.cpp" line="243"/>
         <source>Please enter the password</source>
-        <translation type="unfinished"/>
+        <translation type="unfinished"></translation>
     </message>
     <message numerus="yes">
-        <location filename="../src/session-widgets/userloginwidget.cpp" line="319"/>
+        <location filename="../src/session-widgets/userloginwidget.cpp" line="321"/>
         <source>Please try again %n minute(s) later</source>
-        <translation><numerusform>請在%n分鐘後再試一次</numerusform></translation>
+        <translation>
+            <numerusform>請在%n分鐘後再試一次</numerusform>
+        </translation>
     </message>
 </context>
 </TS>
