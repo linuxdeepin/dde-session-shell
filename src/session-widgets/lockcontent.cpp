@@ -246,6 +246,11 @@ void LockContent::resizeEvent(QResizeEvent *event)
 
 void LockContent::restoreCenterContent()
 {
+    auto current_user = m_model->currentUser();
+    if (current_user != nullptr && current_user->isLock()) {
+        current_user->onLockTimeOut();
+    }
+
     restoreMode();
     setCenterContent(m_userLoginInfo->getUserLoginWidget());
 }

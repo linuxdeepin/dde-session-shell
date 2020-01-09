@@ -70,8 +70,6 @@ public:
     virtual QString desktopBackgroundPath() const = 0;
     virtual QStringList kbLayoutList() { return QStringList(); }
     virtual QString currentKBLayout() { return QString(); }
-
-protected:
     void onLockTimeOut();
 
 protected:
