@@ -50,7 +50,7 @@ void ControlWidget::setVirtualKBVisible(bool visible)
 
 void ControlWidget::initUI()
 {
-    setFocusPolicy(Qt::StrongFocus);
+    setFocusPolicy(Qt::TabFocus);
 
     m_mainLayout = new QHBoxLayout;
 
@@ -104,13 +104,6 @@ void ControlWidget::initConnect()
     connect(m_virtualKBBtn, &DFloatingButton::clicked, this, &ControlWidget::requestSwitchVirtualKB);
 }
 
-void ControlWidget::bindTabOrder()
-{
-    QWidget::setTabOrder(m_sessionBtn, m_virtualKBBtn);
-    QWidget::setTabOrder(m_virtualKBBtn, m_switchUserBtn);
-    QWidget::setTabOrder(m_switchUserBtn, m_powerBtn);
-}
-
 void ControlWidget::showTips()
 {
 #ifndef SHENWEI_PLATFORM
@@ -141,7 +134,7 @@ void ControlWidget::setUserSwitchEnable(const bool visible)
 
 void ControlWidget::setSessionSwitchEnable(const bool visible)
 {
-    if(!visible) return;
+    if (!visible) return;
 
     if (!m_sessionBtn) {
         m_sessionBtn = new DFloatingButton(this);
@@ -162,7 +155,6 @@ void ControlWidget::setSessionSwitchEnable(const bool visible)
         m_mainLayout->insertWidget(1, m_sessionBtn);
         m_mainLayout->setAlignment(m_sessionBtn, Qt::AlignBottom);
         m_btnList.push_front(m_sessionBtn);
-        bindTabOrder();
 
         connect(m_sessionBtn, &DFloatingButton::clicked, this, &ControlWidget::requestSwitchSession);
     }
@@ -298,6 +290,10 @@ bool ControlWidget::eventFilter(QObject *watched, QEvent *event)
         if (event->type() == QEvent::Enter) {
             m_index = m_btnList.indexOf(btn);
         }
+        if (event->type() == QFocusEvent::FocusOut) {
+            m_focusState = FocusNo;
+            setFocusPolicy(Qt::TabFocus);
+        }
     }
 #else
     Q_UNUSED(watched);
@@ -308,12 +304,41 @@ bool ControlWidget::eventFilter(QObject *watched, QEvent *event)
 
 void ControlWidget::focusInEvent(QFocusEvent *)
 {
-    m_btnList.at(m_index)->setFocus();
+    switch (m_focusState) {
+    case FocusNo: {
+        m_focusState = FocusHasIn;
+        clearFocus();
+    }
+    break;
+    case FocusHasIn: {
+        m_focusState = FocusReadyOut;
+        clearFocus();
+    }
+    break;
+    case FocusReadyOut: {
+
+    }
+    break;
+    }
+    setFocusPolicy(Qt::NoFocus);
 }
 
 void ControlWidget::focusOutEvent(QFocusEvent *)
 {
-    m_btnList.at(m_index)->setFocus();
+    switch (m_focusState) {
+    case FocusNo: {
+
+    }
+    break;
+    case FocusHasIn: {
+        m_btnList.at(m_index)->setFocus();
+    }
+    break;
+    case FocusReadyOut: {
+        m_focusState = FocusNo;
+    }
+    break;
+    }
 }
 
 void ControlWidget::keyReleaseEvent(QKeyEvent *event)

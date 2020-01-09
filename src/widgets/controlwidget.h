@@ -64,9 +64,16 @@ private:
     void initConnect();
     void showTips();
     void hideTips();
-    void bindTabOrder();
 
 private:
+    enum FocusState
+    {
+        FocusNo,
+        FocusHasIn,
+        FocusReadyOut
+    };
+    FocusState m_focusState = FocusNo;
+
     int m_index = 0;
     QList<DFloatingButton *> m_btnList;
 
