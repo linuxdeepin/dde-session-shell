@@ -130,6 +130,13 @@ void ControlWidget::hideTips()
 void ControlWidget::setUserSwitchEnable(const bool visible)
 {
     m_switchUserBtn->setVisible(visible);
+    if (!visible) {
+        m_focusState = FocusNo;
+        setFocusPolicy(Qt::TabFocus);
+    }
+    if (m_btnList.indexOf(m_switchUserBtn) == m_index) {
+        m_index = 0;
+    }
 }
 
 void ControlWidget::setSessionSwitchEnable(const bool visible)
@@ -290,12 +297,14 @@ bool ControlWidget::eventFilter(QObject *watched, QEvent *event)
         if (event->type() == QEvent::Enter) {
             m_index = m_btnList.indexOf(btn);
         }
-        if (event->type() == QFocusEvent::FocusOut) {
-            m_focusState = FocusNo;
-            setFocusPolicy(Qt::TabFocus);
-        } else if (event->type() == QFocusEvent::FocusIn) {
-            m_focusState = FocusHasIn;
-            setFocusPolicy(Qt::NoFocus);
+        if (btn->isVisible()) {
+            if (event->type() == QFocusEvent::FocusOut) {
+                m_focusState = FocusNo;
+                setFocusPolicy(Qt::TabFocus);
+            } else if (event->type() == QFocusEvent::FocusIn) {
+                m_focusState = FocusHasIn;
+                setFocusPolicy(Qt::NoFocus);
+            }
         }
     }
 #else
@@ -323,7 +332,6 @@ void ControlWidget::focusInEvent(QFocusEvent *)
     }
     break;
     }
-    setFocusPolicy(Qt::NoFocus);
 }
 
 void ControlWidget::focusOutEvent(QFocusEvent *)
