@@ -293,6 +293,9 @@ bool ControlWidget::eventFilter(QObject *watched, QEvent *event)
         if (event->type() == QFocusEvent::FocusOut) {
             m_focusState = FocusNo;
             setFocusPolicy(Qt::TabFocus);
+        } else if (event->type() == QFocusEvent::FocusIn) {
+            m_focusState = FocusHasIn;
+            setFocusPolicy(Qt::NoFocus);
         }
     }
 #else
