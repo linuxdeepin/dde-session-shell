@@ -84,6 +84,7 @@ void UserLoginWidget::resetAllState()
     } else {
         m_lockButton->setIcon(DStyle::SP_UnlockElement);
     }
+    updateUI();
 }
 
 //密码连续输入错误5次，设置提示信息
