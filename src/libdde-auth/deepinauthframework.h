@@ -29,6 +29,8 @@ public:
 public slots:
     void SetUser(std::shared_ptr<User> user);
     void Authenticate();
+    void keyBoardAuth();
+    void fprintAuth();
     void Clear();
     void setPassword(const QString &password);
     void setAuthType(AuthType type);

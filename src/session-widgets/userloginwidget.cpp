@@ -239,7 +239,7 @@ bool UserLoginWidget::inputInfoCheck(bool is_server)
         return false;
     }
 
-    if (m_showType != NoPasswordType && m_passwordEdit->isVisible() && m_passwordEdit->lineEdit()->text().isEmpty()) {
+    if (m_passwordEdit->isVisible() && m_passwordEdit->lineEdit()->text().isEmpty()) {
         m_passwordEdit->hideLoadSlider();
         if (is_server) setFaildTipMessage(tr("Please enter the password"));
         return false;

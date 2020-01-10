@@ -242,7 +242,7 @@ void LockWorker::authStatusChanged(bool status)
     if (status) {
         m_authFramework->Clear();
     } else {
-        m_authFramework->Authenticate();
+        m_authFramework->fprintAuth();
     }
 }
 
@@ -338,8 +338,14 @@ void LockWorker::onUnlockFinished(bool unlocked)
 
 void LockWorker::userAuthForLock(std::shared_ptr<User> user)
 {
+    m_authFramework->SetUser(user);
+    if (user->isNoPasswdGrp()) {
+        // 无密码登录激活指纹仪
+        m_authFramework->fprintAuth();
+        return;
+    }
+
     if (isDeepin()) {
-        m_authFramework->SetUser(user);
         m_authFramework->Authenticate();
     } else {
         m_lockInter->AuthenticateUser(user->name());

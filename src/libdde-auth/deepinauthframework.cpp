@@ -32,7 +32,22 @@ void DeepinAuthFramework::SetUser(std::shared_ptr<User> user)
     USER = user;
 }
 
-void DeepinAuthFramework::Authenticate()
+void DeepinAuthFramework::keyBoardAuth()
+{
+    if (USER->isLock() || USER->uid() != m_currentUserUid) return;
+
+    if (m_keyboard == nullptr) {
+        m_keyboard = new AuthAgent(AuthAgent::Keyboard, this);
+        m_keyboard->SetUser(USER->name());
+
+        if (USER->isNoPasswdGrp() || (!USER->isNoPasswdGrp() && !PASSWORD.isEmpty())) {
+            qDebug() << Q_FUNC_INFO << "keyboard auth start";
+            QTimer::singleShot(100, m_keyboard, &AuthAgent::Authenticate);
+        }
+    }
+}
+
+void DeepinAuthFramework::fprintAuth()
 {
     if (USER->isLock() || USER->uid() != m_currentUserUid) return;
 
@@ -40,18 +55,15 @@ void DeepinAuthFramework::Authenticate()
         m_fprint = new AuthAgent(AuthAgent::Fprint, this);
         m_fprint->SetUser(USER->name());
         // It takes time to auth again after cancel!
+        qDebug() << Q_FUNC_INFO << "fprint auth start";
         QTimer::singleShot(500, m_fprint, &AuthAgent::Authenticate);
     }
+}
 
-    if (m_keyboard == nullptr) {
-        m_keyboard = new AuthAgent(AuthAgent::Keyboard, this);
-        m_keyboard->SetUser(USER->name());
-
-        if (USER->isNoPasswdGrp() || (!USER->isNoPasswdGrp() && !PASSWORD.isEmpty())) {
-            if (m_type == AuthType::LockType && PASSWORD.isEmpty()) return;
-            QTimer::singleShot(100, m_keyboard, &AuthAgent::Authenticate);
-        }
-    }
+void DeepinAuthFramework::Authenticate()
+{
+    fprintAuth();
+    keyBoardAuth();
 }
 
 void DeepinAuthFramework::Clear()
