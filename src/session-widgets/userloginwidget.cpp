@@ -214,7 +214,8 @@ void UserLoginWidget::updateUI()
     } else if (m_passwordEdit->isVisible())
         setFocusProxy(m_passwordEdit->lineEdit());
 
-    refreshBlurEffectPosition();
+    //让窗口执行一次resizeEvent，以便正确更新背景阴影位置
+    resize(size());
 }
 
 void UserLoginWidget::ShutdownPrompt(SessionBaseModel::PowerAction action)
