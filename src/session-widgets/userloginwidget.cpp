@@ -215,7 +215,11 @@ void UserLoginWidget::updateUI()
         setFocusProxy(m_passwordEdit->lineEdit());
 
     //让窗口执行一次resizeEvent，以便正确更新背景阴影位置
-    resize(size());
+    if (m_isServerMode) {
+        resize(size());
+    } else {
+        refreshBlurEffectPosition();
+    }
 }
 
 void UserLoginWidget::ShutdownPrompt(SessionBaseModel::PowerAction action)
@@ -359,7 +363,6 @@ void UserLoginWidget::resizeEvent(QResizeEvent *event)
 void UserLoginWidget::showEvent(QShowEvent *event)
 {
     updateUI();
-    refreshBlurEffectPosition();
 
     m_lockPasswordWidget->setFixedSize(QSize(m_passwordEdit->width(), m_passwordEdit->height()));
 
@@ -595,12 +598,22 @@ bool UserLoginWidget::getSelected()
 
 void UserLoginWidget::setIsServer(bool isServer)
 {
-    m_isServer = isServer;
+    m_isServerUser = isServer;
 }
 
 bool UserLoginWidget::getIsServer()
 {
-    return m_isServer;
+    return m_isServerUser;
+}
+
+void UserLoginWidget::setIsServerMode(bool isServer)
+{
+    m_isServerMode = isServer;
+}
+
+bool UserLoginWidget::getIsServerMode()
+{
+    return m_isServerMode;
 }
 
 void UserLoginWidget::updateKBLayout(const QStringList &list)

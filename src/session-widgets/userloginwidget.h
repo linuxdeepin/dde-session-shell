@@ -79,6 +79,8 @@ public:
     bool getSelected();
     void setIsServer(bool isServer);
     bool getIsServer();
+    void setIsServerMode(bool isServer);
+    bool getIsServerMode();
     void updateKBLayout(const QStringList &list);
     void setDefaultKBLayout(const QString &layout);
     void hideKBLayout();
@@ -136,7 +138,8 @@ private:
     QVBoxLayout *m_lockLayout;                     //解锁按钮布局
     bool m_isLock;                                 //解锁功能是否被锁定(连续5次密码输入错误锁定)
     bool m_isLogin;                                //是否登录（UserFrame中使用）
-    bool m_isServer;                               //是否为服务器登录账户
+    bool m_isServerUser;                           //是否为服务器登录账户
+    bool m_isServerMode;                           //系统是否为服务器模式
     bool m_isSelected;
     QStringList m_KBLayoutList;
     QLabel *m_loginLabel;
