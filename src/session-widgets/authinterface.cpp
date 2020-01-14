@@ -235,6 +235,8 @@ void AuthInterface::checkPowerInfo()
 
     if (valueByQSettings<bool>("Power", "hibernate", false)) {
         checkSwap();
+    } else {
+        m_model->setHasSwap(false);
     }
 }
 
