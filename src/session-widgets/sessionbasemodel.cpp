@@ -62,24 +62,16 @@ const QList<std::shared_ptr<User> > SessionBaseModel::logindUser()
 
 void SessionBaseModel::userAdd(std::shared_ptr<User> user)
 {
+    // NOTE(zorowk): If there are duplicate uids, delete ADDomainUser first
+    auto user_exist = findUserByUid(user->uid());
+    if (user_exist != nullptr && user_exist->metaObject() == &ADDomainUser::staticMetaObject) {
+        userRemoved(user_exist);
+    };
+
     m_userList << user;
 
     emit onUserAdded(user);
     emit onUserListChanged(m_userList);
-
-    // NOTE(justforlxz): If all users are login and new users
-    // are added at this time, switch to the user
-    bool isNeed = true;
-    for (auto it = m_userList.cbegin(); it != m_userList.cend(); ++it) {
-        if (!(*it)->isLogin()) {
-            isNeed = false;
-            break;
-        }
-    }
-
-    if (isNeed) {
-        setCurrentUser(user);
-    }
 }
 
 void SessionBaseModel::userRemoved(std::shared_ptr<User> user)
