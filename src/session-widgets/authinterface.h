@@ -42,7 +42,7 @@ protected:
     void checkPowerInfo();
     void checkVirtualKB();
     void checkSwap();
-    Q_DECL_DEPRECATED bool isDeepin();
+    bool isDeepin();
 
     template <typename T>
     T valueByQSettings(const QString & group,

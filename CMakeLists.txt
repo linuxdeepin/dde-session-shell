@@ -105,6 +105,7 @@ set(GLOBAL_UTILS_SRCS
     ./src/global_util/xkbparser.h
     ./src/global_util/public_func.h
     ./src/global_util/constants.h
+    ./src/global_util/keyboardmonitor.h
     ./src/global_util/xkbparser.cpp
     ./src/global_util/dbus/dbusdisplaymanager.cpp
     ./src/global_util/dbus/dbuslogin1manager.cpp
@@ -121,6 +122,7 @@ set(GLOBAL_UTILS_SRCS
     ./src/global_util/util_updateui.cpp
     ./src/global_util/multiscreenmanager.cpp
     ./src/global_util/public_func.cpp
+    ./src/global_util/keyboardmonitor.cpp
 )
 
 set(WIDGETS_SRCS
@@ -128,10 +130,8 @@ set(WIDGETS_SRCS
     ./src/widgets/loginbutton.h
     ./src/widgets/fullscreenbackground.h
     ./src/widgets/userbutton.h
-    ./src/widgets/otheruserinput.h
     ./src/widgets/controlwidget.h
     ./src/widgets/errortooltip.h
-    ./src/widgets/keyboardmonitor.h
     ./src/widgets/shutdownwidget.h
     ./src/widgets/dbreathinglabel.h
     ./src/widgets/rounditembutton.h
@@ -146,7 +146,6 @@ set(WIDGETS_SRCS
     ./src/widgets/dlineeditex.h
     ./src/widgets/dpasswordeditex.h
     ./src/widgets/fullscreenbackground.cpp
-    ./src/widgets/keyboardmonitor.cpp
     ./src/widgets/loginbutton.cpp
     ./src/widgets/dbreathinglabel.cpp
     ./src/widgets/errortooltip.cpp
@@ -159,7 +158,6 @@ set(WIDGETS_SRCS
     ./src/widgets/useravatar.cpp
     ./src/widgets/userbutton.cpp
     ./src/widgets/shutdownwidget.cpp
-    ./src/widgets/otheruserinput.cpp
     ./src/widgets/userbreathinglabel.cpp
     ./src/widgets/kblayoutwidget.cpp
     ./src/widgets/logowidget.cpp

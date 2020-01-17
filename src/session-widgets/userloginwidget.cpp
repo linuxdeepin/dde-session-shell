@@ -26,10 +26,9 @@
 #include "src/widgets/useravatar.h"
 #include "src/widgets/loginbutton.h"
 #include "src/global_util/constants.h"
-#include "src/widgets/otheruserinput.h"
 #include "src/widgets/kblayoutwidget.h"
 #include "src/session-widgets/framedatabind.h"
-#include "src/widgets/keyboardmonitor.h"
+#include "src/global_util/keyboardmonitor.h"
 #include "src/widgets/dpasswordeditex.h"
 
 #include <DFontSizeManager>
