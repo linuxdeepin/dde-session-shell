@@ -1,15 +1,9 @@
 /*
  * Copyright (C) 2011 ~ 2018 Deepin Technology Co., Ltd.
  *
- * Author:     sbw <sbw@sbw.so>
- *             kirigaya <kirigaya@mkacg.com>
- *             Hualet <mr.asianwang@gmail.com>
- *             zorowk <near.kingzero@gmail.com>
+ * Author:     zorowk <near.kingzero@gmail.com>
  *
- * Maintainer: sbw <sbw@sbw.so>
- *             kirigaya <kirigaya@mkacg.com>
- *             Hualet <mr.asianwang@gmail.com>
- *             zorowk <near.kingzero@gmail.com>
+ * Maintainer: zorowk <near.kingzero@gmail.com>
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -25,22 +19,21 @@
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-#ifndef KEYBOARDMONITOR_H
-#define KEYBOARDMONITOR_H
+#ifndef KEYBOARDPLANTFORM_WAYLAND_H
+#define KEYBOARDPLANTFORM_WAYLAND_H
 
-#include <QThread>
-#include "keyboardplantform_x11.h"
-#include "keyboardplantform_wayland.h"
+#include "keyboardplatform.h"
 
-class KeyboardMonitor : public QThread
+class KeyboardPlantformWayland : public KeyBoardPlatform
 {
     Q_OBJECT
-public:
-    static KeyboardMonitor *instance();
 
-    bool isCapslockOn();
-    bool isNumlockOn();
-    bool setNumlockStatus(const bool &on);
+public:
+    KeyboardPlantformWayland(QObject *parent = nullptr);
+
+    bool isCapslockOn() override;
+    bool isNumlockOn() override;
+    bool setNumlockStatus(const bool &on) override;
 
 signals:
     void capslockStatusChanged(bool on);
@@ -48,10 +41,6 @@ signals:
 
 protected:
     void run() Q_DECL_OVERRIDE;
-
-private:
-    KeyboardMonitor();
-    KeyBoardPlatform* keyBoardPlatform = nullptr;
 };
 
-#endif // KEYBOARDMONITOR_H
+#endif // KEYBOARDPLANTFORM_WAYLAND_H

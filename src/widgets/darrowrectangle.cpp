@@ -24,7 +24,6 @@
  */
 
 #include "darrowrectangle.h"
-#include <X11/extensions/shape.h>
 #include <QApplication>
 #include <dgraphicsgloweffect.h>
 

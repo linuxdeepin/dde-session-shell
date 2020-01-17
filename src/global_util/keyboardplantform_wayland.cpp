@@ -4,12 +4,10 @@
  * Author:     sbw <sbw@sbw.so>
  *             kirigaya <kirigaya@mkacg.com>
  *             Hualet <mr.asianwang@gmail.com>
- *             zorowk <near.kingzero@gmail.com>
  *
  * Maintainer: sbw <sbw@sbw.so>
  *             kirigaya <kirigaya@mkacg.com>
  *             Hualet <mr.asianwang@gmail.com>
- *             zorowk <near.kingzero@gmail.com>
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -25,33 +23,33 @@
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-#ifndef KEYBOARDMONITOR_H
-#define KEYBOARDMONITOR_H
-
-#include <QThread>
-#include "keyboardplantform_x11.h"
 #include "keyboardplantform_wayland.h"
 
-class KeyboardMonitor : public QThread
+#include <stdio.h>
+#include <stdlib.h>
+
+KeyboardPlantformWayland::KeyboardPlantformWayland(QObject *parent)
+    : KeyBoardPlatform(parent)
 {
-    Q_OBJECT
-public:
-    static KeyboardMonitor *instance();
 
-    bool isCapslockOn();
-    bool isNumlockOn();
-    bool setNumlockStatus(const bool &on);
+}
 
-signals:
-    void capslockStatusChanged(bool on);
-    void numlockStatusChanged(bool on);
+bool KeyboardPlantformWayland::isCapslockOn()
+{
+    return false;
+}
 
-protected:
-    void run() Q_DECL_OVERRIDE;
+bool KeyboardPlantformWayland::isNumlockOn()
+{
+    return false;
+}
 
-private:
-    KeyboardMonitor();
-    KeyBoardPlatform* keyBoardPlatform = nullptr;
-};
+bool KeyboardPlantformWayland::setNumlockStatus(const bool &on)
+{
+    Q_UNUSED(on);
+    return false;
+}
 
-#endif // KEYBOARDMONITOR_H
+void KeyboardPlantformWayland::run()
+{
+}

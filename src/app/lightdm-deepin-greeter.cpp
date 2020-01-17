@@ -83,7 +83,7 @@ static unsigned long loadCursorHandle(Display *dpy, const char *name, int size)
     }
 
     // Load the cursor images
-    XcursorImages *images = NULL;
+    XcursorImages *images = nullptr;
     images = xcLoadImages(name, size);
 
     if (!images) {
@@ -93,15 +93,14 @@ static unsigned long loadCursorHandle(Display *dpy, const char *name, int size)
         }
     }
 
-    unsigned long handle = (unsigned long)XcursorImagesLoadCursor(dpy,
-                          images);
+    unsigned long handle = (unsigned long)XcursorImagesLoadCursor(dpy,images);
     XcursorImagesDestroy(images);
 
     return handle;
 }
 
 static int set_rootwindow_cursor() {
-    Display* display = XOpenDisplay(NULL);
+    Display* display = XOpenDisplay(nullptr);
     if (!display) {
         qDebug() << "Open display failed";
         return -1;
@@ -130,7 +129,7 @@ static int set_rootwindow_cursor() {
 // Load system cursor --end
 
 static double get_scale_ratio() {
-    Display *display = XOpenDisplay(NULL);
+    Display *display = XOpenDisplay(nullptr);
 
     XRRScreenResources *resources = XRRGetScreenResourcesCurrent(display, DefaultRootWindow(display));
     double scaleRatio = 0.0;
@@ -225,9 +224,11 @@ int main(int argc, char* argv[])
     SessionBaseModel *model = new SessionBaseModel(SessionBaseModel::AuthType::LightdmType);
     GreeterWorkek *worker = new GreeterWorkek(model); //
 
-    QObject::connect(model, &SessionBaseModel::authFinished, model, [=] {
-        set_rootwindow_cursor();
-    });
+    if(DGuiApplicationHelper::isXWindowPlatform()) {
+        QObject::connect(model, &SessionBaseModel::authFinished, model, [=] {
+            set_rootwindow_cursor();
+        });
+    }
 
     PropertyGroup *property_group = new PropertyGroup(worker);
 

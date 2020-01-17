@@ -25,33 +25,28 @@
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-#ifndef KEYBOARDMONITOR_H
-#define KEYBOARDMONITOR_H
+#ifndef KEYBOARDPLANTFORM_X11_H
+#define KEYBOARDPLANTFORM_X11_H
 
-#include <QThread>
-#include "keyboardplantform_x11.h"
-#include "keyboardplantform_wayland.h"
+#include "keyboardplatform.h"
 
-class KeyboardMonitor : public QThread
+typedef struct _XDisplay Display;
+
+class KeyboardPlantformX11 : public KeyBoardPlatform
 {
     Q_OBJECT
 public:
-    static KeyboardMonitor *instance();
+    KeyboardPlantformX11(QObject *parent = nullptr);
 
-    bool isCapslockOn();
-    bool isNumlockOn();
-    bool setNumlockStatus(const bool &on);
-
-signals:
-    void capslockStatusChanged(bool on);
-    void numlockStatusChanged(bool on);
-
-protected:
-    void run() Q_DECL_OVERRIDE;
+    bool isCapslockOn() override;
+    bool isNumlockOn() override;
+    bool setNumlockStatus(const bool &on) override;
+    void run() override;
 
 private:
-    KeyboardMonitor();
-    KeyBoardPlatform* keyBoardPlatform = nullptr;
+    int listen(Display *display);
+    static int xinput_version(Display *display);
+    static void select_events(Display* display);
 };
 
-#endif // KEYBOARDMONITOR_H
+#endif // KEYBOARDPLANTFORM_X11_H
