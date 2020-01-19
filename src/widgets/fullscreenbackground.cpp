@@ -41,6 +41,7 @@ FullscreenBackground::FullscreenBackground(QWidget *parent)
     : QWidget(parent)
     , m_fadeOutAni(new QVariantAnimation(this))
     , m_imageEffectInter(new ImageEffectInter("com.deepin.daemon.ImageEffect", "/com/deepin/daemon/ImageEffect", QDBusConnection::systemBus(), this))
+    , m_appearanceInter(new AppearanceInter("com.deepin.daemon.Appearance", "/com/deepin/daemon/Appearance", QDBusConnection::sessionBus(), this))
 {
 #ifndef QT_DEBUG
     setWindowFlags(Qt::WindowStaysOnTopHint | Qt::X11BypassWindowManagerHint);
@@ -51,7 +52,11 @@ FullscreenBackground::FullscreenBackground(QWidget *parent)
     m_fadeOutAni->setStartValue(1.0f);
     m_fadeOutAni->setEndValue(0.0f);
 
-    installEventFilter(this);
+    installEventFilter(this);    
+
+    connect(m_appearanceInter, &AppearanceInter::Changed, this, [=] (const QString &type, const QString &path) {
+        updateBackground(path);
+    });
 
     connect(m_fadeOutAni, &QVariantAnimation::valueChanged, this, static_cast<void (FullscreenBackground::*)()>(&FullscreenBackground::update));
 }

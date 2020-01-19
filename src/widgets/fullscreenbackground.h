@@ -34,8 +34,10 @@
 #include <QVariantAnimation>
 
 #include <com_deepin_daemon_imageeffect.h>
+#include <com_deepin_daemon_appearance.h>
 
 using ImageEffectInter = com::deepin::daemon::ImageEffect;
+using AppearanceInter = com::deepin::daemon::Appearance;
 
 class FullscreenBackground : public QWidget
 {
@@ -86,6 +88,8 @@ private:
     QVariantAnimation *m_fadeOutAni;
     QScreen *m_screen = nullptr;
     ImageEffectInter *m_imageEffectInter = nullptr;
+
+    AppearanceInter *m_appearanceInter;
 };
 
 #endif // FULLSCREENBACKGROUND_H
