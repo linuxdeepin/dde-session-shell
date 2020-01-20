@@ -83,7 +83,9 @@ public:
     inline bool alwaysShowUserSwitchButton() const { return m_alwaysShowUserSwitchButton; }
     void setAlwaysShowUserSwitchButton(bool alwaysShowUserSwitchButton);
 
-    bool isServerModel() const;
+    inline bool isServerModel() const { return m_isServerModel; }
+    void setIsServerModel(bool server_model);
+
     void setAbortConfirm(bool abortConfirm);
 
 signals:
@@ -115,6 +117,7 @@ private:
     bool m_hasVirtualKB;
     bool m_hasSwap;
     bool m_isShow;
+    bool m_isServerModel;
     bool m_canSleep;
     bool m_allowShowUserSwitchButton;
     bool m_alwaysShowUserSwitchButton;

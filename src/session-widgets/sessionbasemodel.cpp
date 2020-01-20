@@ -202,9 +202,11 @@ void SessionBaseModel::setAlwaysShowUserSwitchButton(bool alwaysShowUserSwitchBu
     m_alwaysShowUserSwitchButton = alwaysShowUserSwitchButton;
 }
 
-bool SessionBaseModel::isServerModel() const
+void SessionBaseModel::setIsServerModel(bool server_model)
 {
-    return DSysInfo::deepinType() == DSysInfo::DeepinServer;
+    if (m_isServerModel == server_model) return;
+
+    m_isServerModel = server_model;
 }
 
 void SessionBaseModel::setAbortConfirm(bool abortConfirm)

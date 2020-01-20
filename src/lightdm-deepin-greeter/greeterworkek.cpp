@@ -108,7 +108,7 @@ GreeterWorkek::GreeterWorkek(SessionBaseModel *const model, QObject *parent)
     m_model->setAlwaysShowUserSwitchButton(switchUserButtonValue == "always");
     m_model->setAllowShowUserSwitchButton(switchUserButtonValue == "ondemand");
 
-    if (valueByQSettings<bool>("", "loginPromptAvatar", true)) {
+    {
         initDBus();
         initData();
 
@@ -119,10 +119,11 @@ GreeterWorkek::GreeterWorkek(SessionBaseModel *const model, QObject *parent)
         onCurrentUserChanged(m_lockInter->CurrentUser());
     }
 
-    if (DSysInfo::deepinType() == DSysInfo::DeepinServer) {
+    if (DSysInfo::deepinType() == DSysInfo::DeepinServer || valueByQSettings<bool>("", "loginPromptInput", false)) {
         std::shared_ptr<User> user = std::make_shared<ADDomainUser>(0);
         static_cast<ADDomainUser *>(user.get())->setUserDisplayName("...");
         static_cast<ADDomainUser *>(user.get())->setIsServerUser(true);
+        m_model->setIsServerModel(true);
         m_model->userAdd(user);
         m_model->setCurrentUser(user);
     }
