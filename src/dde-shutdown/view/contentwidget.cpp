@@ -219,6 +219,7 @@ bool ContentWidget::powerAction(const Actions action)
     case Restart:
     case Suspend:
     case Hibernate:
+    case SwitchSystem:
     case Logout:
         return beforeInvokeAction(action);
     default:
@@ -242,6 +243,10 @@ void ContentWidget::initConnect()
 
     if (m_systemMonitor) {
         connect(m_systemMonitor, &SystemMonitor::clicked, this, &ContentWidget::runSystemMonitor);
+    }
+
+    if(m_switchSystemBtn) {
+        connect(m_switchSystemBtn, &RoundItemButton::clicked, [this] { emit buttonClicked(SwitchSystem); });
     }
 }
 
@@ -277,9 +282,11 @@ void ContentWidget::enterKeyPushed()
     else if (m_currentSelectedBtn == m_lockButton)
         shutDownFrameActions(Lock);
     else if (m_currentSelectedBtn == m_logoutButton)
-        emit beforeInvokeAction(Logout);
+        beforeInvokeAction(Logout);
     else if (m_currentSelectedBtn == m_switchUserBtn)
         shutDownFrameActions(SwitchUser);
+    else if (m_currentSelectedBtn == m_switchSystemBtn)
+        beforeInvokeAction(SwitchSystem);
     else if (m_currentSelectedBtn == m_hibernateButton)
         beforeInvokeAction(Hibernate);
 }
@@ -287,15 +294,15 @@ void ContentWidget::enterKeyPushed()
 void ContentWidget::hideBtn(const QString &btnName)
 {
     std::map<RoundItemButton *, QString> map{
-        { m_shutdownButton, "Shutdown" },  { m_restartButton, "Restart" },
-        { m_suspendButton, "Suspend" },    { m_lockButton, "Lock" },
-        { m_logoutButton, "Logout" },      { m_switchUserBtn, "SwitchUser" },
-        { m_hibernateButton, "Hibernate" }
+        { m_shutdownButton, "Shutdown" },    { m_restartButton, "Restart" },
+        { m_suspendButton, "Suspend" },      { m_lockButton, "Lock" },
+        { m_logoutButton, "Logout" },        { m_switchUserBtn, "SwitchUser" },
+        { m_hibernateButton, "Hibernate" },  { m_switchSystemBtn, "SwitchSystem" }
     };
 
     for (auto result : map) {
         if (!btnName.compare(result.second, Qt::CaseInsensitive)) {
-            return result.first->hide();
+            if(result.first) { result.first->hide(); return; }
         }
     }
 }
@@ -303,15 +310,15 @@ void ContentWidget::hideBtn(const QString &btnName)
 void ContentWidget::disableBtn(const QString &btnName)
 {
     std::map<RoundItemButton *, QString> map{
-        { m_shutdownButton, "Shutdown" },  { m_restartButton, "Restart" },
-        { m_suspendButton, "Suspend" },    { m_lockButton, "Lock" },
-        { m_logoutButton, "Logout" },      { m_switchUserBtn, "SwitchUser" },
-        { m_hibernateButton, "Hibernate" }
+        { m_shutdownButton, "Shutdown" },    { m_restartButton, "Restart" },
+        { m_suspendButton, "Suspend" },      { m_lockButton, "Lock" },
+        { m_logoutButton, "Logout" },        { m_switchUserBtn, "SwitchUser" },
+        { m_hibernateButton, "Hibernate" },  { m_switchSystemBtn, "SwitchSystem" }
     };
 
     for (auto result : map) {
         if (!btnName.compare(result.second, Qt::CaseInsensitive)) {
-            return result.first->setDisabled(true);
+            if(result.first) { result.first->hide(); return; }
         }
     }
 }
@@ -345,6 +352,7 @@ bool ContentWidget::beforeInvokeAction(const Actions action)
             view->setInhibitConfirmMessage(tr("The programs are preventing the computer from shutting down, and forcing shut down may cause data loss.") + "\n" +
                                            tr("To close the program, click Cancel, and then close the program."));
             break;
+        case Actions::SwitchSystem:
         case Actions::Restart:
             view->setInhibitConfirmMessage(tr("The programs are preventing the computer from reboot, and forcing reboot may cause data loss.") + "\n" +
                                            tr("To close the program, click Cancel, and then close the program."));
@@ -377,7 +385,7 @@ bool ContentWidget::beforeInvokeAction(const Actions action)
 
         if (action == Shutdown)
             view->setAcceptReason(tr("Shut down"));
-        else if (action == Restart)
+        else if (action == Restart || action == SwitchSystem)
             view->setAcceptReason(tr("Reboot"));
         else if (action == Suspend)
             view->setAcceptReason(tr("Suspend"));
@@ -489,6 +497,7 @@ void ContentWidget::shutDownFrameActions(const Actions action)
     case Hibernate:      m_sessionInterface->RequestHibernate();     break;
     case Lock:           m_sessionInterface->RequestLock();          break;
     case Logout:         m_sessionInterface->RequestLogout();        break;
+    case SwitchSystem:   break;
     case SwitchUser: {
         DDBusSender()
         .service("com.deepin.dde.lockFront")
@@ -594,6 +603,12 @@ void ContentWidget::initUI()
     m_switchUserBtn->setAutoExclusive(true);
     m_switchUserBtn->setObjectName("SwitchUserButton");
 
+    if (findValueByQSettings<bool>(DDESESSIONCC::SHUTDOWN_CONFIGS, "Shutdown", "enableSwitchSystem", false)) {
+        m_switchSystemBtn = new RoundItemButton(tr("Switch system"));
+        m_switchSystemBtn->setAutoExclusive(true);
+        m_switchSystemBtn->setObjectName("SwitchSystemButton");
+    }
+
     m_normalView = new QWidget(this);
 
     QHBoxLayout *buttonLayout = new QHBoxLayout;
@@ -607,6 +622,7 @@ void ContentWidget::initUI()
     buttonLayout->addWidget(m_hibernateButton);
     buttonLayout->addWidget(m_lockButton);
     buttonLayout->addWidget(m_switchUserBtn);
+    if(m_switchSystemBtn) buttonLayout->addWidget(m_switchSystemBtn);
     buttonLayout->addWidget(m_logoutButton);
     buttonLayout->addStretch(0);
 
@@ -650,6 +666,7 @@ void ContentWidget::initUI()
     m_btnsList->append(m_hibernateButton);
     m_btnsList->append(m_lockButton);
     m_btnsList->append(m_switchUserBtn);
+    if(m_switchSystemBtn) m_btnsList->append(m_switchSystemBtn);
     m_btnsList->append(m_logoutButton);
 
     //// Inhibit to shutdown
@@ -715,6 +732,7 @@ QList<InhibitWarnView::InhibitorData> ContentWidget::listInhibitors(const Action
             case Actions::Restart:
             case Actions::Suspend:
             case Actions::Hibernate:
+            case Actions::SwitchSystem:
             case Actions::Logout:
                 type = "shutdown";
                 break;

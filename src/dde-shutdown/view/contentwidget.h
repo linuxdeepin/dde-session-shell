@@ -114,6 +114,7 @@ private:
     RoundItemButton *m_lockButton;
     RoundItemButton *m_logoutButton;
     RoundItemButton *m_switchUserBtn;
+    RoundItemButton *m_switchSystemBtn = nullptr;
     QList<RoundItemButton *> *m_btnsList;
 
     QWidget *m_tipsWidget;

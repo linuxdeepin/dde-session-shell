@@ -35,6 +35,7 @@ enum Actions {
     Lock,
     Logout,
     SwitchUser,
+    SwitchSystem
 };
 
 #endif // COMMON_H
