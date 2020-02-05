@@ -153,6 +153,7 @@ void UserExpiredWidget::initUI()
     m_passwordEdit->lineEdit()->setPlaceholderText(tr("New password"));
     m_passwordEdit->lineEdit()->setContextMenuPolicy(Qt::NoContextMenu);
     m_passwordEdit->setSizePolicy(QSizePolicy::Expanding, QSizePolicy::Fixed);
+    m_passwordEdit->setFixedHeight(DDESESSIONCC::PASSWDLINEEDIT_HEIGHT);
     m_passwordEdit->lineEdit()->setAlignment(Qt::AlignCenter);
     m_passwordEdit->setFocusPolicy(Qt::StrongFocus);
     m_passwordEdit->setEchoMode(QLineEdit::Password);
@@ -162,6 +163,7 @@ void UserExpiredWidget::initUI()
     m_confirmPasswordEdit->lineEdit()->setPlaceholderText(tr("Repeat password"));
     m_confirmPasswordEdit->lineEdit()->setContextMenuPolicy(Qt::NoContextMenu);
     m_confirmPasswordEdit->setSizePolicy(QSizePolicy::Expanding, QSizePolicy::Fixed);
+    m_confirmPasswordEdit->setFixedHeight(DDESESSIONCC::PASSWDLINEEDIT_HEIGHT);
     m_confirmPasswordEdit->lineEdit()->setAlignment(Qt::AlignCenter);
     m_confirmPasswordEdit->setFocusPolicy(Qt::StrongFocus);
     m_confirmPasswordEdit->setEchoMode(QLineEdit::Password);

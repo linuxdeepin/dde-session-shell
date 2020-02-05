@@ -36,6 +36,9 @@
 #include <QCryptographicHash>
 #include <QWindow>
 #include <QDir>
+#include <DGuiApplicationHelper>
+
+DGUI_USE_NAMESPACE
 
 FullscreenBackground::FullscreenBackground(QWidget *parent)
     : QWidget(parent)
@@ -44,7 +47,9 @@ FullscreenBackground::FullscreenBackground(QWidget *parent)
     , m_appearanceInter(new AppearanceInter("com.deepin.daemon.Appearance", "/com/deepin/daemon/Appearance", QDBusConnection::sessionBus(), this))
 {
 #ifndef QT_DEBUG
-    setWindowFlags(Qt::WindowStaysOnTopHint | Qt::X11BypassWindowManagerHint);
+    if(DGuiApplicationHelper::isXWindowPlatform()) {
+        setWindowFlags(Qt::WindowStaysOnTopHint | Qt::X11BypassWindowManagerHint);
+    }
 #endif
 
     m_fadeOutAni->setEasingCurve(QEasingCurve::InOutCubic);
