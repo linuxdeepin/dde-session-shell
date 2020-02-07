@@ -2,8 +2,6 @@
 #define AUTHAGENT_H
 
 #include "authority_interface.h"
-#include "transaction_interface.h"
-
 #include <QObject>
 
 class DeepinAuthFramework;
@@ -17,8 +15,6 @@ public:
 
     explicit AuthAgent(Type type, QObject *parent = nullptr);
     ~AuthAgent();
-
-    friend class AuthDBusAdaptor;
 
     void SetUser(const QString &username);
     void Authenticate();
@@ -35,7 +31,6 @@ public slots:
 
 private:
     AuthorityInterface *m_authority;
-    TransactionInterface *m_transaction;
     Type m_type;
 };
 

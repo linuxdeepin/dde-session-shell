@@ -52,18 +52,18 @@ function(generation_dbus_interface xml class_name class_file option)
     WORKING_DIRECTORY ${CMAKE_CURRENT_BINARY_DIR})
 endfunction(generation_dbus_interface)
 
-set(dde_control_center_DBUS_SCRS xml/com.deepin.dde.ControlCenter.xml)
-qt5_add_dbus_interface(dde_control_center_DBUS_SCRS
-xml/com.deepin.dde.ControlCenter.xml
-ControlCenterAdaptor
-)
+#set(dde_control_center_DBUS_SCRS xml/com.deepin.dde.ControlCenter.xml)
+#qt5_add_dbus_interface(dde_control_center_DBUS_SCRS
+#xml/com.deepin.dde.ControlCenter.xml
+#ControlCenterAdaptor
+#)
 
-set(agent_adapter_DBUS_SRCS xml/com.deepin.daemon.authority.Agent.xml)
-qt5_add_dbus_adaptor(agent_adapter_DBUS_SRCS
-xml/com.deepin.daemon.authority.Agent.xml
-./src/libdde-auth/authagent.h
-AuthAgent
-)
+#set(agent_adapter_DBUS_SRCS xml/com.deepin.daemon.authority.Agent.xml)
+#qt5_add_dbus_adaptor(agent_adapter_DBUS_SRCS
+#xml/com.deepin.daemon.authority.Agent.xml
+#./src/libdde-auth/authagent.h
+#AuthAgent
+#)
 
 generation_dbus_interface(
     ${CMAKE_SOURCE_DIR}/xml/com.deepin.daemon.Authority.xml
@@ -76,16 +76,16 @@ set(authority_DBUS_SCRS
     ${CMAKE_CURRENT_BINARY_DIR}/authority_interface.cpp
 )
 
-generation_dbus_interface(
-    ${CMAKE_SOURCE_DIR}/xml/com.deepin.daemon.authority.Transaction.xml
-    TransactionInterface
-    ${CMAKE_CURRENT_BINARY_DIR}/transaction_interface
-    -N
-)
-set(transaction_DBUS_SCRS
-    ${CMAKE_CURRENT_BINARY_DIR}/transaction_interface.h
-    ${CMAKE_CURRENT_BINARY_DIR}/transaction_interface.cpp
-)
+#generation_dbus_interface(
+#    ${CMAKE_SOURCE_DIR}/xml/com.deepin.daemon.authority.Transaction.xml
+#    TransactionInterface
+#    ${CMAKE_CURRENT_BINARY_DIR}/transaction_interface
+#    -N
+#)
+#set(transaction_DBUS_SCRS
+#    ${CMAKE_CURRENT_BINARY_DIR}/transaction_interface.h
+#    ${CMAKE_CURRENT_BINARY_DIR}/transaction_interface.cpp
+#)
 
 generation_dbus_interface(
     ${CMAKE_SOURCE_DIR}/xml/com.huawei.switchos.xml
@@ -213,13 +213,12 @@ set(LOCK_SRCS
     ${authority_DBUS_SCRS}
     ${transaction_DBUS_SCRS}
     ${agent_adapter_DBUS_SRCS}
-    ${dde_control_center_DBUS_SCRS}
+#    ${dde_control_center_DBUS_SCRS}
     ${GLOBAL_UTILS_SRCS}
     ${WIDGETS_SRCS}
     ${SESSION_WIDGETS_SRCS}
     ./src/libdde-auth/deepinauthframework.cpp
     ./src/libdde-auth/authagent.cpp
-    ./src/libdde-auth/authdbusadapter.cpp
     ./src/dde-lock/lockframe.cpp
     ./src/dde-lock/dbus/dbuslockagent.cpp
     ./src/dde-lock/dbus/dbuslockfrontservice.cpp
@@ -235,7 +234,6 @@ set(GREETER_SRCS
     ${SESSION_WIDGETS_SRCS}
     ./src/libdde-auth/deepinauthframework.cpp
     ./src/libdde-auth/authagent.cpp
-    ./src/libdde-auth/authdbusadapter.cpp
     ./src/widgets/sessionwidget.h
     ./src/widgets/sessionwidget.cpp
     ./src/lightdm-deepin-greeter/loginwindow.h
@@ -247,7 +245,7 @@ set(GREETER_SRCS
 
 set(SHUTDOWN_SRCS
     ${haweiswitchos_DBUS_SCRS}
-    ${dde_control_center_DBUS_SCRS}
+#   ${dde_control_center_DBUS_SCRS}
     ${GLOBAL_UTILS_SRCS}
     ${WIDGETS_SRCS}
     ${SESSION_WIDGETS_SRCS}
