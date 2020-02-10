@@ -418,32 +418,28 @@ void GreeterWorkek::recoveryUserKBState(std::shared_ptr<User> user)
     m_authFramework->setCurrentUid(m_currentUserUid);
 }
 
-void GreeterWorkek::onDisplayErrorMsg(AuthAgent::Type type, const QString &errtype, const QString &msg)
+void GreeterWorkek::onDisplayErrorMsg(AuthAgent::AuthenticationFlag type, const QString &msg)
 {
-    if (type == AuthAgent::Fprint) {
-        if (errtype != "verify-timed-out") {
-            emit m_model->authFaildTipsMessage(msg, SessionBaseModel::Fprint);
-        } else {
-            emit m_model->authFaildMessage("", SessionBaseModel::Fprint);
-        }
+    if (type == AuthAgent::Fingerprint) {
+        emit m_model->authFaildTipsMessage(msg, SessionBaseModel::Fprint);
     } else {
         emit m_model->authFaildMessage(msg);
     }
 }
 
-void GreeterWorkek::onDisplayTextInfo(AuthAgent::Type type, const QString &msg)
+void GreeterWorkek::onDisplayTextInfo(AuthAgent::AuthenticationFlag type, const QString &msg)
 {
-    if (type == AuthAgent::Fprint) {
+    if (type == AuthAgent::Fingerprint) {
         emit m_model->authFaildMessage(msg, SessionBaseModel::Fprint);
     } else {
         emit m_model->authFaildMessage(msg);
     }
 }
 
-void GreeterWorkek::onPasswordResult(AuthAgent::Type type, const QString &msg)
+void GreeterWorkek::onPasswordResult(AuthAgent::AuthenticationFlag type, const QString &msg)
 {
     if (msg.isEmpty()) {
-        if (type == AuthAgent::Fprint) {
+        if (type == AuthAgent::Fingerprint) {
             qDebug() << Q_FUNC_INFO << "Fprint Failed";
             emit m_model->authFaildMessage("", SessionBaseModel::Fprint);
         } else {

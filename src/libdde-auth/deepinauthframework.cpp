@@ -37,8 +37,7 @@ void DeepinAuthFramework::keyBoardAuth()
     if (USER->isLock() || USER->uid() != m_currentUserUid) return;
 
     if (m_keyboard == nullptr) {
-        m_keyboard = new AuthAgent(AuthAgent::Keyboard, this);
-        m_keyboard->SetUser(USER->name());
+        m_keyboard = new AuthAgent(USER->name(), AuthAgent::Password, this);
 
         if (USER->isNoPasswdGrp() || (!USER->isNoPasswdGrp() && !PASSWORD.isEmpty())) {
             qDebug() << Q_FUNC_INFO << "keyboard auth start";
@@ -52,8 +51,7 @@ void DeepinAuthFramework::fprintAuth()
     if (USER->isLock() || USER->uid() != m_currentUserUid) return;
 
     if (m_fprint == nullptr) {
-        m_fprint = new AuthAgent(AuthAgent::Fprint, this);
-        m_fprint->SetUser(USER->name());
+        m_fprint = new AuthAgent(USER->name(), AuthAgent::Fingerprint, this);
         // It takes time to auth again after cancel!
         qDebug() << Q_FUNC_INFO << "fprint auth start";
         QTimer::singleShot(500, m_fprint, &AuthAgent::Authenticate);
@@ -108,23 +106,22 @@ const QString DeepinAuthFramework::RequestEchoOn(const QString &msg)
     return msg;
 }
 
-void DeepinAuthFramework::DisplayErrorMsg(AuthAgent::Type type, const QString &errtype, const QString &msg)
+void DeepinAuthFramework::DisplayErrorMsg(AuthAgent::AuthenticationFlag type, const QString &msg)
 {
     Q_UNUSED(type);
-
-    m_interface->onDisplayErrorMsg(type, errtype, msg);
+    m_interface->onDisplayErrorMsg(type, msg);
 }
 
-void DeepinAuthFramework::DisplayTextInfo(AuthAgent::Type type, const QString &msg)
+void DeepinAuthFramework::DisplayTextInfo(AuthAgent::AuthenticationFlag type, const QString &msg)
 {
-    if (type == AuthAgent::Type::Fprint && !msg.isEmpty()) {
+    if (type == AuthAgent::Fingerprint && !msg.isEmpty()) {
         m_interface->onDisplayTextInfo(type, tr("Verify your fingerprint or password"));
     } else {
         m_interface->onDisplayTextInfo(type, msg);
     }
 }
 
-void DeepinAuthFramework::RespondResult(AuthAgent::Type type, const QString &msg)
+void DeepinAuthFramework::RespondResult(AuthAgent::AuthenticationFlag type, const QString &msg)
 {
     m_interface->onPasswordResult(type, msg);
 }

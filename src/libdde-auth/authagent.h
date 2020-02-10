@@ -1,37 +1,42 @@
 #ifndef AUTHAGENT_H
 #define AUTHAGENT_H
 
-#include "authority_interface.h"
+#include "authenticate_interface.h"
 #include <QObject>
 
 class DeepinAuthFramework;
 class AuthAgent : public QObject {
     Q_OBJECT
 public:
-    enum Type {
-        Keyboard,
-        Fprint
+    enum AuthenticationFlag {
+        Password = 1 << 0,
+        Fingerprint = 1 << 1,
+        Face = 1 << 2,
+        ActiveDirectory = 1 << 3
     };
 
-    explicit AuthAgent(Type type, QObject *parent = nullptr);
+    enum Status {
+        SuccessCode = 0,
+        FailureCode,
+        CancelCode,
+    };
+
+    explicit AuthAgent(const QString& name, AuthenticationFlag type, QObject *parent = nullptr);
     ~AuthAgent();
 
-    void SetUser(const QString &username);
+    void SetPassword(const QString &password);
     void Authenticate();
     void Cancel();
 
 public slots:
-    const QString RequestEchoOff(const QString &msg);
-    const QString RequestEchoOn(const QString &msg);
-    void DisplayErrorMsg(const QString &errtype, const QString &msg);
-    void DisplayTextInfo(const QString &msg);
-    void RespondResult(const QString &msg);
-
+    void onStatus(const QString &id, int code, const QString &msg);
     DeepinAuthFramework *parent();
 
 private:
-    AuthorityInterface *m_authority;
-    Type m_type;
+    AuthenticateInterface *m_authenticate;
+    AuthenticationFlag m_type = Password;
+    QString m_name;
+    QString m_authId;
 };
 
 #endif // AUTHAGENT_H

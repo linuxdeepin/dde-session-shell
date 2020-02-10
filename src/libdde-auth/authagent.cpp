@@ -6,31 +6,16 @@
 #include <QDebug>
 #include <QDBusObjectPath>
 
-AuthAgent::AuthAgent(Type type, QObject *parent)
+AuthAgent::AuthAgent(const QString& name, AuthenticationFlag type, QObject *parent)
     : QObject(parent)
     , m_type(type)
+    , m_name(name)
 {
-    QString typeName;
-
-    switch (type) {
-    case Keyboard:
-        typeName = "keyboard";
-        break;
-    case Fprint:
-        typeName = "fprint";
-        break;
-    default:
-        break;
-    }
-
-    const QString &dbuspath = QString("/com/deepin/daemon/Authority/Agent/%1%2").arg(QDateTime::currentMSecsSinceEpoch()).arg(type);
-    QDBusObjectPath authDBusPath = QDBusObjectPath(dbuspath);
-
-    m_authority = new AuthorityInterface("com.deepin.daemon.Authority",
-                                "/com/deepin/daemon/Authority",
+    m_authenticate = new AuthenticateInterface("com.deepin.daemon.Authenticate",
+                                "/com/deepin/daemon/Authenticate",
                                 QDBusConnection::systemBus(), this);
 
-    QDBusObjectPath keyboard = m_authority->Start(typeName, "", authDBusPath).value();
+    connect(m_authenticate, &AuthenticateInterface::Status, this, &AuthAgent::onStatus);
 }
 
 AuthAgent::~AuthAgent()
@@ -38,44 +23,42 @@ AuthAgent::~AuthAgent()
     Cancel();
 }
 
-void AuthAgent::SetUser(const QString &username)
+void AuthAgent::SetPassword(const QString &password)
 {
-    //m_transaction->SetUser(username);
+    Q_ASSERT(!m_authId.isEmpty());
+    m_authenticate->SetPassword(m_authId, password);
 }
 
 void AuthAgent::Authenticate()
 {
-    //m_transaction->Authenticate();
+    qDebug() << Q_FUNC_INFO << " " << m_name << " " << m_type;
+    m_authId = m_authenticate->Authenticate(m_name, m_type, 0);
 }
 
 void AuthAgent::Cancel()
 {
-    //m_transaction->End();
+    Q_ASSERT(!m_authId.isEmpty());
+    m_authenticate->CancelAuthenticate(m_authId);
 }
 
-const QString AuthAgent::RequestEchoOff(const QString &msg)
+void AuthAgent::onStatus(const QString &id, int code, const QString &msg)
 {
-    return parent()->RequestEchoOff(msg);
-}
-
-const QString AuthAgent::RequestEchoOn(const QString &msg)
-{
-    return parent()->RequestEchoOn(msg);
-}
-
-void AuthAgent::DisplayErrorMsg(const QString &errtype, const QString &msg)
-{
-    parent()->DisplayErrorMsg(m_type, errtype, msg);
-}
-
-void AuthAgent::DisplayTextInfo(const QString &msg)
-{
-    parent()->DisplayTextInfo(m_type, msg);
-}
-
-void AuthAgent::RespondResult(const QString &msg)
-{
-    parent()->RespondResult(m_type, msg);
+    Q_ASSERT(!m_authId.isEmpty());
+    if(m_authId == id) {
+        switch(code) {
+        case Status::SuccessCode:
+            parent()->RespondResult(m_type, msg);
+            break;
+        case Status::FailureCode:
+            parent()->DisplayErrorMsg(m_type, msg);
+            break;
+        case Status::CancelCode:
+            parent()->DisplayTextInfo(m_type, msg);
+            break;
+        default:
+            break;
+        }
+    }
 }
 
 DeepinAuthFramework *AuthAgent::parent() {

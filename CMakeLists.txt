@@ -66,14 +66,14 @@ endfunction(generation_dbus_interface)
 #)
 
 generation_dbus_interface(
-    ${CMAKE_SOURCE_DIR}/xml/com.deepin.daemon.Authority.xml
-    AuthorityInterface
-    ${CMAKE_CURRENT_BINARY_DIR}/authority_interface
+    ${CMAKE_SOURCE_DIR}/xml/com.deepin.daemon.Authenticate.xml
+    AuthenticateInterface
+    ${CMAKE_CURRENT_BINARY_DIR}/authenticate_interface
     -N
 )
 set(authority_DBUS_SCRS
-    ${CMAKE_CURRENT_BINARY_DIR}/authority_interface.h
-    ${CMAKE_CURRENT_BINARY_DIR}/authority_interface.cpp
+    ${CMAKE_CURRENT_BINARY_DIR}/authenticate_interface.h
+    ${CMAKE_CURRENT_BINARY_DIR}/authenticate_interface.cpp
 )
 
 #generation_dbus_interface(

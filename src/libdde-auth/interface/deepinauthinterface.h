@@ -7,9 +7,9 @@
 class DeepinAuthInterface
 {
 public:
-    virtual void onDisplayErrorMsg(AuthAgent::Type type, const QString &error_type, const QString &msg) = 0;
-    virtual void onDisplayTextInfo(AuthAgent::Type type, const QString &msg) = 0;
-    virtual void onPasswordResult(AuthAgent::Type type, const QString &msg) = 0;
+    virtual void onDisplayErrorMsg(AuthAgent::AuthenticationFlag type, const QString &msg) = 0;
+    virtual void onDisplayTextInfo(AuthAgent::AuthenticationFlag type, const QString &msg) = 0;
+    virtual void onPasswordResult(AuthAgent::AuthenticationFlag type, const QString &msg) = 0;
 };
 
 #endif // DEEPINAUTHINTERFACE_H

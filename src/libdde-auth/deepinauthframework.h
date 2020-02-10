@@ -39,9 +39,9 @@ public slots:
 private:
     const QString RequestEchoOff(const QString &msg);
     const QString RequestEchoOn(const QString &msg);
-    void DisplayErrorMsg(AuthAgent::Type type, const QString &errtype, const QString &msg);
-    void DisplayTextInfo(AuthAgent::Type type, const QString &msg);
-    void RespondResult(AuthAgent::Type type, const QString &msg);
+    void DisplayErrorMsg(AuthAgent::AuthenticationFlag type, const QString &msg);
+    void DisplayTextInfo(AuthAgent::AuthenticationFlag type, const QString &msg);
+    void RespondResult(AuthAgent::AuthenticationFlag type, const QString &msg);
 
 private:
     DeepinAuthInterface *m_interface;
