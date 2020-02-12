@@ -418,7 +418,7 @@ void GreeterWorkek::recoveryUserKBState(std::shared_ptr<User> user)
     m_authFramework->setCurrentUid(m_currentUserUid);
 }
 
-void GreeterWorkek::onDisplayErrorMsg(AuthAgent::AuthenticationFlag type, const QString &msg)
+void GreeterWorkek::onDisplayErrorMsg(AuthAgent::AuthFlag type, const QString &msg)
 {
     if (type == AuthAgent::Fingerprint) {
         emit m_model->authFaildTipsMessage(msg, SessionBaseModel::Fprint);
@@ -427,7 +427,7 @@ void GreeterWorkek::onDisplayErrorMsg(AuthAgent::AuthenticationFlag type, const 
     }
 }
 
-void GreeterWorkek::onDisplayTextInfo(AuthAgent::AuthenticationFlag type, const QString &msg)
+void GreeterWorkek::onDisplayTextInfo(AuthAgent::AuthFlag type, const QString &msg)
 {
     if (type == AuthAgent::Fingerprint) {
         emit m_model->authFaildMessage(msg, SessionBaseModel::Fprint);
@@ -436,7 +436,7 @@ void GreeterWorkek::onDisplayTextInfo(AuthAgent::AuthenticationFlag type, const 
     }
 }
 
-void GreeterWorkek::onPasswordResult(AuthAgent::AuthenticationFlag type, const QString &msg)
+void GreeterWorkek::onPasswordResult(AuthAgent::AuthFlag type, const QString &msg)
 {
     if (msg.isEmpty()) {
         if (type == AuthAgent::Fingerprint) {

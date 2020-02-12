@@ -38,6 +38,7 @@ void DeepinAuthFramework::keyBoardAuth()
 
     if (m_keyboard == nullptr) {
         m_keyboard = new AuthAgent(USER->name(), AuthAgent::Password, this);
+        m_keyboard->SetPassword(PASSWORD);
 
         if (USER->isNoPasswdGrp() || (!USER->isNoPasswdGrp() && !PASSWORD.isEmpty())) {
             qDebug() << Q_FUNC_INFO << "keyboard auth start";
@@ -106,13 +107,13 @@ const QString DeepinAuthFramework::RequestEchoOn(const QString &msg)
     return msg;
 }
 
-void DeepinAuthFramework::DisplayErrorMsg(AuthAgent::AuthenticationFlag type, const QString &msg)
+void DeepinAuthFramework::DisplayErrorMsg(AuthAgent::AuthFlag type, const QString &msg)
 {
     Q_UNUSED(type);
     m_interface->onDisplayErrorMsg(type, msg);
 }
 
-void DeepinAuthFramework::DisplayTextInfo(AuthAgent::AuthenticationFlag type, const QString &msg)
+void DeepinAuthFramework::DisplayTextInfo(AuthAgent::AuthFlag type, const QString &msg)
 {
     if (type == AuthAgent::Fingerprint && !msg.isEmpty()) {
         m_interface->onDisplayTextInfo(type, tr("Verify your fingerprint or password"));
@@ -121,7 +122,7 @@ void DeepinAuthFramework::DisplayTextInfo(AuthAgent::AuthenticationFlag type, co
     }
 }
 
-void DeepinAuthFramework::RespondResult(AuthAgent::AuthenticationFlag type, const QString &msg)
+void DeepinAuthFramework::RespondResult(AuthAgent::AuthFlag type, const QString &msg)
 {
     m_interface->onPasswordResult(type, msg);
 }

@@ -32,9 +32,9 @@ public:
 
     void enableZoneDetected(bool disable);
 
-    void onDisplayErrorMsg(AuthAgent::AuthenticationFlag type, const QString &msg) override;
-    void onDisplayTextInfo(AuthAgent::AuthenticationFlag type, const QString &msg) override;
-    void onPasswordResult(AuthAgent::AuthenticationFlag type, const QString &msg) override;
+    void onDisplayErrorMsg(AuthAgent::AuthFlag type, const QString &msg) override;
+    void onDisplayTextInfo(AuthAgent::AuthFlag type, const QString &msg) override;
+    void onPasswordResult(AuthAgent::AuthFlag type, const QString &msg) override;
 
 private:
     void onUserAdded(const QString &user) override;

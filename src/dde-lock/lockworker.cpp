@@ -179,7 +179,7 @@ void LockWorker::enableZoneDetected(bool disable)
     m_hotZoneInter->EnableZoneDetected(disable);
 }
 
-void LockWorker::onDisplayErrorMsg(AuthAgent::AuthenticationFlag type, const QString &msg)
+void LockWorker::onDisplayErrorMsg(AuthAgent::AuthFlag type, const QString &msg)
 {
     if (type == AuthAgent::Fingerprint) {
         emit m_model->authFaildTipsMessage(msg, SessionBaseModel::Fprint);
@@ -188,7 +188,7 @@ void LockWorker::onDisplayErrorMsg(AuthAgent::AuthenticationFlag type, const QSt
     }
 }
 
-void LockWorker::onDisplayTextInfo(AuthAgent::AuthenticationFlag type, const QString &msg)
+void LockWorker::onDisplayTextInfo(AuthAgent::AuthFlag type, const QString &msg)
 {
     if (type == AuthAgent::Fingerprint) {
         emit m_model->authFaildMessage(msg, SessionBaseModel::Fprint);
@@ -197,7 +197,7 @@ void LockWorker::onDisplayTextInfo(AuthAgent::AuthenticationFlag type, const QSt
     }
 }
 
-void LockWorker::onPasswordResult(AuthAgent::AuthenticationFlag type, const QString &msg)
+void LockWorker::onPasswordResult(AuthAgent::AuthFlag type, const QString &msg)
 {
     m_password = msg;
     std::shared_ptr<User> user = m_model->currentUser();
