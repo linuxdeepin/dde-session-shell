@@ -6,6 +6,7 @@ set(CMAKE_INCLUDE_CURRENT_DIR ON)
 set(CMAKE_AUTOMOC ON)
 set(CMAKE_AUTORCC ON)
 set(CMAKE_CXX_FLAGS "-g -Wall")
+set(CMAKE_MODULE_PATH ${CMAKE_SOURCE_DIR}/cmake/modules)
 
 if (NOT (${CMAKE_BUILD_TYPE} MATCHES "Debug"))
     set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -Ofast")
@@ -17,6 +18,7 @@ endif ()
 
 
 # Find the library
+find_package(PAM REQUIRED)
 find_package(PkgConfig REQUIRED)
 find_package(DtkWidget REQUIRED)
 find_package(DtkCMake REQUIRED)
@@ -212,8 +214,6 @@ set(SESSION_WIDGETS_SRCS
 set(LOCK_SRCS
     ${authority_DBUS_SCRS}
     ${transaction_DBUS_SCRS}
-    ${agent_adapter_DBUS_SRCS}
-#    ${dde_control_center_DBUS_SCRS}
     ${GLOBAL_UTILS_SRCS}
     ${WIDGETS_SRCS}
     ${SESSION_WIDGETS_SRCS}
@@ -228,7 +228,6 @@ set(LOCK_SRCS
 set(GREETER_SRCS
     ${authority_DBUS_SCRS}
     ${transaction_DBUS_SCRS}
-    ${agent_adapter_DBUS_SRCS}
     ${GLOBAL_UTILS_SRCS}
     ${WIDGETS_SRCS}
     ${SESSION_WIDGETS_SRCS}
@@ -281,6 +280,7 @@ add_executable(
     ./src/dde-lock/logintheme.qrc
 )
 target_include_directories(dde-lock PUBLIC
+    ${PAM_INCLUDE_DIR}
     ${DtkWidget_INCLUDE_DIRS}
     ${XCB_EWMH_INCLUDE_DIRS}
     ${DFrameworkDBus_INCLUDE_DIRS}
@@ -291,6 +291,7 @@ target_include_directories(dde-lock PUBLIC
 )
 target_link_libraries(dde-lock PRIVATE
     ${Qt_LIBS}
+    ${PAM_LIBRARIES}
     ${XCB_EWMH_LIBRARIES}
     ${DFrameworkDBus_LIBRARIES}
     ${DtkWidget_LIBRARIES}
@@ -344,6 +345,7 @@ add_executable(
     ./src/lightdm-deepin-greeter/image.qrc
 )
 target_include_directories(lightdm-deepin-greeter PUBLIC
+    ${PAM_INCLUDE_DIR}
     ${DtkWidget_INCLUDE_DIRS}
     ${XCB_EWMH_INCLUDE_DIRS}
     ${DFrameworkDBus_INCLUDE_DIRS}
@@ -358,6 +360,7 @@ target_compile_definitions(lightdm-deepin-greeter
 )
 target_link_libraries(lightdm-deepin-greeter PRIVATE
     ${Qt_LIBS}
+    ${PAM_LIBRARIES}
     ${XCB_EWMH_LIBRARIES}
     ${DFrameworkDBus_LIBRARIES}
     ${DtkWidget_LIBRARIES}
