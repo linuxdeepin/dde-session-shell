@@ -99,6 +99,7 @@ signals:
 
 public slots:
     void updateAuthType(SessionBaseModel::AuthType type);
+    void updateIsLockNoPassword(const bool lockNoPassword);
     void refreshBlurEffectPosition();
     void hidePasswordEditMessage();
 
@@ -141,6 +142,7 @@ private:
     bool m_isServerUser;                           //是否为服务器登录账户
     bool m_isServerMode = false;                   //系统是否为服务器模式
     bool m_isSelected;
+    bool m_isLockNoPassword;
     QStringList m_KBLayoutList;
     QLabel *m_loginLabel;
     KeyboardMonitor *m_capslockMonitor;

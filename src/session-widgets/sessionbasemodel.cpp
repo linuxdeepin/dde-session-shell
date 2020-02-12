@@ -15,6 +15,7 @@ SessionBaseModel::SessionBaseModel(AuthType type, QObject *parent)
     , m_hasSwap(false)
     , m_isShow(false)
     , m_canSleep(false)
+    , m_isLockNoPassword(false)
     , m_currentType(type)
     , m_currentUser(nullptr)
     , m_powerAction(PowerAction::RequireNormal)
@@ -213,4 +214,11 @@ void SessionBaseModel::setAbortConfirm(bool abortConfirm)
 {
     m_abortConfirm = abortConfirm;
     emit abortConfirmChanged(abortConfirm);
+}
+
+void SessionBaseModel::setIsLockNoPassword(bool LockNoPassword)
+{
+   if (m_isLockNoPassword == LockNoPassword) return;
+
+    m_isLockNoPassword = LockNoPassword;
 }

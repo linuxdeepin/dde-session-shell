@@ -8,6 +8,7 @@ isDeepin=$$IS_DEEPIN
 [General]
 loginPromptAvatar=$$LOGIN_PROMPT_AVATAR
 loginPromptInput=$$LOGIN_PROMPT_INPUT
+lockNoPassword=false
 
 [Lock]
 #[always | ondemand | disabled]

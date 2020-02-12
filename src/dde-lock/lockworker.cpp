@@ -92,6 +92,9 @@ LockWorker::LockWorker(SessionBaseModel *const model, QObject *parent)
         emit m_model->authFinished(true);
     });
 
+    const bool &LockNoPasswordValue { valueByQSettings<bool>("", "lockNoPassword", false) };
+    m_model->setIsLockNoPassword(LockNoPasswordValue);
+
     const QString &switchUserButtonValue { valueByQSettings<QString>("Lock", "showSwitchUserButton", "ondemand") };
     m_model->setAlwaysShowUserSwitchButton(switchUserButtonValue == "always");
     m_model->setAllowShowUserSwitchButton(switchUserButtonValue == "ondemand");

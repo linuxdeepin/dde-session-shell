@@ -58,6 +58,7 @@ UserLoginWidget::UserLoginWidget(QWidget *parent)
     , m_isLock(false)
     , m_isLogin(false)
     , m_isSelected(false)
+    , m_isLockNoPassword(false)
     , m_capslockMonitor(KeyboardMonitor::instance())
     , m_isAlertMessageShow(false)
 {
@@ -161,13 +162,13 @@ void UserLoginWidget::updateUI()
     switch (m_showType) {
     case NoPasswordType: {
         bool isNopassword = true;
-        if (m_authType == SessionBaseModel::LockType) {
+        if (m_authType == SessionBaseModel::LockType && !m_isLockNoPassword) {
             isNopassword = false;
             m_passwordEdit->lineEdit()->setFocus();
         } else {
             m_lockButton->setFocus();
         }
-        m_passwordEdit->setVisible(!isNopassword && !m_isLock);
+        m_passwordEdit->setVisible(!isNopassword && !m_isLock&& !m_isLockNoPassword);
         m_lockPasswordWidget->setVisible(m_isLock);
 
         m_lockButton->show();
@@ -333,6 +334,11 @@ void UserLoginWidget::updateAuthType(SessionBaseModel::AuthType type)
     if (m_authType == SessionBaseModel::LightdmType) {
         m_lockButton->setIcon(DStyle::SP_ArrowNext);
     }
+}
+
+void UserLoginWidget::updateIsLockNoPassword(const bool lockNoPassword)
+{
+    m_isLockNoPassword = lockNoPassword;
 }
 
 void UserLoginWidget::receiveUserKBLayoutChanged(const QString &layout)

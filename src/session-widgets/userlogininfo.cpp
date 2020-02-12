@@ -61,6 +61,7 @@ void UserLoginInfo::setUser(std::shared_ptr<User> user)
     m_userLoginWidget->setAvatar(user->avatarPath());
     m_userLoginWidget->setUserAvatarSize(UserLoginWidget::AvatarLargeSize);
     m_userLoginWidget->updateAuthType(m_model->currentType());
+    m_userLoginWidget->updateIsLockNoPassword(m_model->isLockNoPassword());
     m_userLoginWidget->disablePassword(user.get()->isLock(), user->lockNum());
     m_userLoginWidget->setKBLayoutList(user->kbLayoutList());
     m_userLoginWidget->setDefaultKBLayout(user->currentKBLayout());
@@ -86,6 +87,12 @@ void UserLoginInfo::initConnect()
     //UserLoginWidget
     connect(m_userLoginWidget, &UserLoginWidget::requestAuthUser, this, [ = ](const QString & account, const QString & password) {
         if (!m_userLoginWidget->inputInfoCheck(m_model->isServerModel())) return;
+
+        //当前锁定不需要密码和当前用户不需要密码登录则直接进入系统
+        if(m_model->isLockNoPassword() && m_model->currentUser()->isNoPasswdGrp()) {
+            emit m_model->authFinished(true);
+            return;
+        }
 
         if (m_model->isServerModel() && m_model->currentType() == SessionBaseModel::LightdmType) {
             auto user = dynamic_cast<NativeUser *>(m_model->findUserByName(account).get());

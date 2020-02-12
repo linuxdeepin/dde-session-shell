@@ -88,6 +88,9 @@ public:
 
     void setAbortConfirm(bool abortConfirm);
 
+    inline bool isLockNoPassword() const { return m_isLockNoPassword; }
+    void setIsLockNoPassword(bool LockNoPassword);
+
 signals:
     void onUserAdded(std::shared_ptr<User> user);
     void onUserRemoved(const uint uid);
@@ -122,6 +125,7 @@ private:
     bool m_allowShowUserSwitchButton;
     bool m_alwaysShowUserSwitchButton;
     bool m_abortConfirm;
+    bool m_isLockNoPassword;
     AuthType m_currentType;
     QList<std::shared_ptr<User>> m_userList;
     std::shared_ptr<User> m_currentUser;
