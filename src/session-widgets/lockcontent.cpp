@@ -177,6 +177,11 @@ void LockContent::setMPRISEnable(const bool state)
     }
 }
 
+void LockContent::beforeUnlockAction()
+{
+    m_userLoginInfo->beforeUnlockAction();
+}
+
 void LockContent::onStatusChanged(SessionBaseModel::ModeStatus status)
 {
     if(m_model->isServerModel())

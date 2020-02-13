@@ -46,6 +46,7 @@ public slots:
     void pushChangeFrame();
     void pushShutdownFrame();
     void setMPRISEnable(const bool state);
+    void beforeUnlockAction();
 
 protected:
     void mouseReleaseEvent(QMouseEvent *event) Q_DECL_OVERRIDE;

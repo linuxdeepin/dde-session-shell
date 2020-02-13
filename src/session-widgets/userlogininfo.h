@@ -45,6 +45,7 @@ public:
     UserFrameList *getUserFrameList();
     void hideKBLayout();
     void abortConfirm(bool abort = true);
+    void beforeUnlockAction();
 
 signals:
     void requestAuthUser(const QString &password);

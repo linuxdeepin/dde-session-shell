@@ -51,7 +51,7 @@ UserLoginWidget::UserLoginWidget(QWidget *parent)
     , m_passwordEdit(new DPasswordEditEx(this))
     , m_lockPasswordWidget(new LockPasswordWidget)
     , m_accountEdit(new DLineEditEx(this))
-    , m_lockButton(new DFloatingButton(DStyle::SP_UnlockElement))
+    , m_lockButton(new DFloatingButton(DStyle::SP_LockElement))
     , m_kbLayoutBorder(new DArrowRectangle(DArrowRectangle::ArrowTop))
     , m_kbLayoutWidget(new KbLayoutWidget(QStringList()))
     , m_showType(NormalType)
@@ -82,7 +82,7 @@ void UserLoginWidget::resetAllState()
     if (m_authType == SessionBaseModel::LightdmType) {
         m_lockButton->setIcon(DStyle::SP_ArrowNext);
     } else {
-        m_lockButton->setIcon(DStyle::SP_UnlockElement);
+        m_lockButton->setIcon(DStyle::SP_LockElement);
     }
     updateUI();
 }
@@ -695,4 +695,9 @@ void UserLoginWidget::updateNameLabel()
         QString str = m_nameLbl->fontMetrics().elidedText(m_name, Qt::ElideRight, labelMaxWidth);
         m_nameLbl->setText(str);
     }
+}
+
+void UserLoginWidget::unlockSuccessAni()
+{
+    m_lockButton->setIcon(DStyle::SP_UnlockElement);
 }

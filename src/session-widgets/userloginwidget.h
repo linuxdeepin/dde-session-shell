@@ -102,6 +102,7 @@ public slots:
     void updateIsLockNoPassword(const bool lockNoPassword);
     void refreshBlurEffectPosition();
     void hidePasswordEditMessage();
+    void unlockSuccessAni();
 
 protected:
     void resizeEvent(QResizeEvent *event) override;

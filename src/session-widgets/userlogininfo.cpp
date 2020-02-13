@@ -141,6 +141,11 @@ void UserLoginInfo::abortConfirm(bool abort)
     m_userLoginWidget->ShutdownPrompt(m_model->powerAction());
 }
 
+void UserLoginInfo::beforeUnlockAction()
+{
+    m_userLoginWidget->unlockSuccessAni();
+}
+
 UserLoginWidget *UserLoginInfo::getUserLoginWidget()
 {
     m_userExpiredWidget->resetAllState();
