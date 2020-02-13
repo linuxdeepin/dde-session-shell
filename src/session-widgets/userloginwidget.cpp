@@ -38,6 +38,7 @@
 #include <QVBoxLayout>
 #include <QAction>
 #include <QImage>
+#include <QPropertyAnimation>
 
 static const int BlurRectRadius = 15;
 static const int WidgetsSpacing = 10;
@@ -707,5 +708,29 @@ void UserLoginWidget::updateNameLabel()
 
 void UserLoginWidget::unlockSuccessAni()
 {
-    m_lockButton->setIcon(DStyle::SP_UnlockElement);
+    QPropertyAnimation *success_ani = new QPropertyAnimation(m_lockButton, "icon", this);
+    success_ani->setEasingCurve(QEasingCurve::OutCubic);
+    success_ani->setDuration(1000);
+    success_ani->setStartValue(DStyle::SP_LockElement);
+    success_ani->setEndValue(DStyle::SP_UnlockElement);
+    success_ani->start(QAbstractAnimation::DeleteWhenStopped);
+}
+
+void UserLoginWidget::unlockFailedAni()
+{
+    QPropertyAnimation *failed_ani = new QPropertyAnimation(m_lockButton, "pos", this);
+    failed_ani->setEasingCurve(QEasingCurve::OutCubic);
+    failed_ani->setDuration(1000);
+    failed_ani->setKeyValueAt(0, QPoint(geometry().x() - 3, geometry().y() - 3));
+    failed_ani->setKeyValueAt(0.1, QPoint(geometry().x() + 6, geometry().y() + 6));
+    failed_ani->setKeyValueAt(0.2, QPoint(geometry().x() - 6, geometry().y() + 6));
+    failed_ani->setKeyValueAt(0.3, QPoint(geometry().x() + 6, geometry().y() - 6));
+    failed_ani->setKeyValueAt(0.4, QPoint(geometry().x() - 6, geometry().y() - 6));
+    failed_ani->setKeyValueAt(0.5, QPoint(geometry().x() + 6, geometry().y() + 6));
+    failed_ani->setKeyValueAt(0.6, QPoint(geometry().x() - 6, geometry().y() + 6));
+    failed_ani->setKeyValueAt(0.7, QPoint(geometry().x() + 6, geometry().y() - 6));
+    failed_ani->setKeyValueAt(0.8, QPoint(geometry().x() - 6, geometry().y() - 6));
+    failed_ani->setKeyValueAt(0.9, QPoint(geometry().x() + 6, geometry().y() + 6));
+    failed_ani->setKeyValueAt(1, QPoint(geometry().x() - 3, geometry().y() - 3));
+    failed_ani->start(QAbstractAnimation::DeleteWhenStopped);
 }

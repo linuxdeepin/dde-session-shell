@@ -103,6 +103,7 @@ public slots:
     void refreshBlurEffectPosition();
     void hidePasswordEditMessage();
     void unlockSuccessAni();
+    void unlockFailedAni();
 
 protected:
     void resizeEvent(QResizeEvent *event) override;
