@@ -38,7 +38,6 @@ void DeepinAuthFramework::keyBoardAuth()
 
     if (m_keyboard == nullptr) {
         m_keyboard = new AuthAgent(USER->name(), AuthAgent::Password, this);
-        m_keyboard->SetPassword(PASSWORD);
 
         if (USER->isNoPasswdGrp() || (!USER->isNoPasswdGrp() && !PASSWORD.isEmpty())) {
             qDebug() << Q_FUNC_INFO << "keyboard auth start";

@@ -2,18 +2,24 @@
 #include "deepinauthframework.h"
 
 #include <QDebug>
+#include <stdlib.h>
+
+#ifdef PAM_SUN_CODEBASE
+#define PAM_MSG_MEMBER(msg, n, member) ((*(msg))[(n)].member)
+#else
+#define PAM_MSG_MEMBER(msg, n, member) ((msg)[(n)]->member)
+#endif
 
 AuthAgent::AuthAgent(const QString& user_name, AuthFlag type, QObject *parent)
     : QObject(parent)
     , m_type(type)
+    , m_username(user_name)
 {
-    m_pamConversation = { funConversation, static_cast<void*>(this) };
+    pam_conv conv = { funConversation, static_cast<void*>(this) };
     QString pam_service = PamService(type);
-    if(pam_start(pam_service.toLocal8Bit().data(),
-                 user_name.toLocal8Bit().data(),
-                 &m_pamConversation,
-                 &m_pamHandle) != PAM_SUCCESS) {
-      qDebug() << Q_FUNC_INFO << "pam start failed";
+    int ret = pam_start(pam_service.toLocal8Bit().data(), user_name.toLocal8Bit().data(), &conv, &m_pamHandle);
+    if( ret != PAM_SUCCESS) {
+        qDebug() << Q_FUNC_INFO << pam_strerror(m_pamHandle, ret);
     }
 }
 
@@ -22,27 +28,28 @@ AuthAgent::~AuthAgent()
     Cancel();
 }
 
-void AuthAgent::SetPassword(const QString &password)
+QString AuthAgent::UserName() const
 {
-    m_password = password;
+    return m_username;
 }
 
 void AuthAgent::Authenticate()
 {
-    m_pamResponse = new pam_response;
-    m_pamResponse->resp = strdup(m_password.toLocal8Bit().data());
-    m_pamResponse->resp_retcode = 0;
-
     m_lastStatus = pam_authenticate(m_pamHandle, 0);
+    QString msg = QString();
+
+    if(m_lastStatus == PAM_SUCCESS) {
+        msg = parent()->RequestEchoOff("");
+    } else{
+        qDebug() << Q_FUNC_INFO << pam_strerror(m_pamHandle, m_lastStatus);
+    }
+
+    parent()->RespondResult(m_type, msg);
 }
 
 void AuthAgent::Cancel()
 {
     pam_end(m_pamHandle, m_lastStatus);
-    if(m_pamResponse) {
-        delete m_pamResponse;
-        m_pamResponse = nullptr;
-    }
 }
 
 QString AuthAgent::PamService(AuthAgent::AuthFlag type) const
@@ -59,46 +66,73 @@ QString AuthAgent::PamService(AuthAgent::AuthFlag type) const
 
     case AuthFlag::ActiveDirectory:
         return "ad-auth";
-
-    default:
-        return "common-auth";
-   }
+    }
+    return "common-auth";
 }
 
 int AuthAgent::funConversation(int num_msg, const struct pam_message **msg,
                                struct pam_response **resp, void *app_data)
 {
+    AuthAgent *app_ptr = static_cast<AuthAgent *>(app_data);
+    struct pam_response *aresp = nullptr;
     int idx = 0;
-    const pam_message *pm;
-    AuthAgent* app_ptr = static_cast<AuthAgent*>(app_data);
 
-    if (num_msg > 1) {
-        qDebug() << "pam conversation msg num more then 1, maybe error!" << endl;
+    if(app_ptr == nullptr) {
+        qDebug() << "pam: application is null";
+        return PAM_CONV_ERR;
     }
 
+    if(num_msg <= 0 || num_msg > PAM_MAX_NUM_MSG)
+        return PAM_CONV_ERR;
+
+    if((aresp = static_cast<struct pam_response*>(calloc(num_msg, sizeof(*aresp)))) == nullptr)
+        return PAM_BUF_ERR;
+
     for (idx = 0; idx < num_msg; ++idx) {
-        pm = *msg + idx;
-        switch(pm->msg_style) {
+        switch(PAM_MSG_MEMBER(msg, idx, msg_style)) {
         case PAM_PROMPT_ECHO_OFF: {
-            app_ptr->parent()->RequestEchoOff(pm->msg);
-            return PAM_SUCCESS;
+            QString password = app_ptr->parent()->RequestEchoOff(PAM_MSG_MEMBER(msg, idx, msg));
+
+            aresp[idx].resp = strdup(password.toLocal8Bit().data());
+            if(aresp[idx].resp == nullptr)
+              goto fail;
+
+            aresp[idx].resp_retcode = PAM_SUCCESS;
+            break;
         }
 
         case PAM_PROMPT_ECHO_ON: {
-            app_ptr->parent()->RequestEchoOn(pm->msg);
-            return PAM_SUCCESS;
+            QString user_name = app_ptr->UserName();
+            if((aresp[idx].resp = strdup(user_name.toLocal8Bit().data())) == nullptr)
+               goto fail;
+            aresp[idx].resp_retcode = PAM_SUCCESS;
+            break;
         }
 
-        case  PAM_ERROR_MSG:
-            app_ptr->parent()->DisplayErrorMsg(app_ptr->m_type, pm->msg);
+        case  PAM_ERROR_MSG: {
+            app_ptr->parent()->DisplayErrorMsg(app_ptr->m_type, PAM_MSG_MEMBER(msg, idx, msg));
+            aresp[idx].resp_retcode = PAM_SUCCESS;
             break;
+        }
 
-        case  PAM_TEXT_INFO:
-            app_ptr->parent()->DisplayTextInfo(app_ptr->m_type, pm->msg);
+        case  PAM_TEXT_INFO: {
+            app_ptr->parent()->DisplayTextInfo(app_ptr->m_type, PAM_MSG_MEMBER(msg, idx, msg));
+            aresp[idx].resp_retcode = PAM_SUCCESS;
             break;
+         }
+
+        default:
+            goto fail;
         }
     }
+    *resp = aresp;
+    return PAM_SUCCESS;
 
+fail:
+    for(idx = 0; idx < num_msg; idx++) {
+        free(aresp[idx].resp);
+    }
+    free(aresp);
     return PAM_CONV_ERR;
 }
 

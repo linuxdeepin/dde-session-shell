@@ -2,7 +2,6 @@
 #define AUTHAGENT_H
 
 #include <security/pam_appl.h>
-#include <security/pam_misc.h>
 #include <QObject>
 
 class DeepinAuthFramework;
@@ -25,7 +24,7 @@ public:
     explicit AuthAgent(const QString& user_name, AuthFlag type, QObject *parent = nullptr);
     ~AuthAgent();
 
-    void SetPassword(const QString &password);
+    QString UserName() const;
     void Authenticate();
     void Cancel();
     DeepinAuthFramework *parent();
@@ -39,11 +38,10 @@ private:
 
 private:
     pam_handle_t* m_pamHandle = nullptr;
-    pam_response* m_pamResponse = nullptr;
-    pam_conv m_pamConversation;
     bool m_lastStatus = false;
 
     AuthFlag m_type = Password;
+    QString m_username;
     QString m_password;
 };
 
