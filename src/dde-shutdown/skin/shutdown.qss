@@ -35,9 +35,9 @@ QWidget #SwitchUserButton {
 }
 
 QWidget #SwitchSystemButton {
-    qproperty-normalIcon:":/img/userswitch_normal.svg";
-    qproperty-hoverIcon:":/img/userswitch_hover.svg";
-    qproperty-pressedIcon:":/img/userswitch_press.svg";
+    qproperty-normalIcon:":/img/osswitch_normal.svg";
+    qproperty-hoverIcon:":/img/osswitch_hover.svg";
+    qproperty-pressedIcon:":/img/osswitch_press.svg";
 }
 
 QWidget#HibernateButton {

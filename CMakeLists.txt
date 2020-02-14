@@ -87,6 +87,17 @@ set(transaction_DBUS_SCRS
     ${CMAKE_CURRENT_BINARY_DIR}/transaction_interface.cpp
 )
 
+generation_dbus_interface(
+    ${CMAKE_SOURCE_DIR}/xml/com.huawei.switchos.xml
+    HuaWeiSwitchOSInterface
+    ${CMAKE_CURRENT_BINARY_DIR}/switchos_interface
+    -N
+)
+set(haweiswitchos_DBUS_SCRS
+    ${CMAKE_CURRENT_BINARY_DIR}/switchos_interface.h
+    ${CMAKE_CURRENT_BINARY_DIR}/switchos_interface.cpp
+)
+
 set(GLOBAL_UTILS_SRCS
     ./src/global_util/util_updateui.h
     ./src/global_util/dbus/dbuslockservice.h
@@ -235,6 +246,7 @@ set(GREETER_SRCS
 )
 
 set(SHUTDOWN_SRCS
+    ${haweiswitchos_DBUS_SCRS}
     ${dde_control_center_DBUS_SCRS}
     ${GLOBAL_UTILS_SRCS}
     ${WIDGETS_SRCS}

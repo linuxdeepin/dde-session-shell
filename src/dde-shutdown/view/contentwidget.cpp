@@ -44,6 +44,7 @@
 ContentWidget::ContentWidget(QWidget *parent)
     : QFrame(parent)
     , m_login1Inter(new DBusLogin1Manager("org.freedesktop.login1", "/org/freedesktop/login1", QDBusConnection::systemBus(), this))
+    , m_switchosInterface(new HuaWeiSwitchOSInterface("com.huawei", "/com/huawei/switchos", QDBusConnection::sessionBus(), this))
     , m_controlCenterInter(new DBusControlCenter(this))
     , m_systemMonitor(nullptr)
     , m_wmInter(new com::deepin::wm("com.deepin.wm", "/com/deepin/wm", QDBusConnection::sessionBus(), this))
@@ -497,7 +498,7 @@ void ContentWidget::shutDownFrameActions(const Actions action)
     case Hibernate:      m_sessionInterface->RequestHibernate();     break;
     case Lock:           m_sessionInterface->RequestLock();          break;
     case Logout:         m_sessionInterface->RequestLogout();        break;
-    case SwitchSystem:   break;
+    case SwitchSystem:   m_switchosInterface->setOsFlag(!m_switchosInterface->getOsFlag());    break;
     case SwitchUser: {
         DDBusSender()
         .service("com.deepin.dde.lockFront")
@@ -603,7 +604,7 @@ void ContentWidget::initUI()
     m_switchUserBtn->setAutoExclusive(true);
     m_switchUserBtn->setObjectName("SwitchUserButton");
 
-    if (findValueByQSettings<bool>(DDESESSIONCC::SHUTDOWN_CONFIGS, "Shutdown", "enableSwitchSystem", false)) {
+    if (m_switchosInterface->isDualOsSwitchAvail()) {
         m_switchSystemBtn = new RoundItemButton(tr("Switch system"));
         m_switchSystemBtn->setAutoExclusive(true);
         m_switchSystemBtn->setObjectName("SwitchSystemButton");

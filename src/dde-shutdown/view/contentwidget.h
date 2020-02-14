@@ -45,6 +45,7 @@
 #include "systemmonitor.h"
 #include "warningview.h"
 #include "inhibitwarnview.h"
+#include "switchos_interface.h"
 
 using Appearance = com::deepin::daemon::Appearance;
 using ImageBlur = com::deepin::daemon::ImageBlur;
@@ -120,6 +121,7 @@ private:
     QWidget *m_tipsWidget;
     QLabel *m_tipsLabel;
     DBusLogin1Manager *m_login1Inter;
+    HuaWeiSwitchOSInterface* m_switchosInterface = nullptr;
     DBusControlCenter *m_controlCenterInter;
 
     WarningView *m_warningView = nullptr;

@@ -50,5 +50,8 @@
         <file>img/cancel_hover.svg</file>
         <file>img/cancel_normal.svg</file>
         <file>img/cancel_press.svg</file>
+        <file>img/osswitch_hover.svg</file>
+        <file>img/osswitch_normal.svg</file>
+        <file>img/osswitch_press.svg</file>
     </qresource>
 </RCC>
