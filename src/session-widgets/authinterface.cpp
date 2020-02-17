@@ -6,6 +6,10 @@
 #include <libintl.h>
 #include <pwd.h>
 #include <unistd.h>
+#include <QProcessEnvironment>
+
+#define POWER_CAN_SLEEP "POWER_CAN_SLEEP"
+#define POWER_CAN_HIBERNATE "POWER_CAN_HIBERNATE"
 
 using namespace Auth;
 
@@ -231,9 +235,14 @@ bool AuthInterface::isDeepin()
 
 void AuthInterface::checkPowerInfo()
 {
-    m_model->setCanSleep(valueByQSettings<bool>("Power", "sleep", true));
+    QProcessEnvironment env = QProcessEnvironment::systemEnvironment();
+    bool can_sleep = env.contains(POWER_CAN_SLEEP) ? QVariant(env.value(POWER_CAN_SLEEP)).toBool()
+                                                   : valueByQSettings<bool>("Power", "sleep", true);
+    m_model->setCanSleep(can_sleep);
 
-    if (valueByQSettings<bool>("Power", "hibernate", false)) {
+    bool can_hibernate = env.contains(POWER_CAN_HIBERNATE) ? QVariant(env.value(POWER_CAN_HIBERNATE)).toBool()
+                                                           : valueByQSettings<bool>("Power", "hibernate", true);
+    if (can_hibernate) {
         checkSwap();
     } else {
         m_model->setHasSwap(false);
