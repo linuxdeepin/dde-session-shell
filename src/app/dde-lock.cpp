@@ -42,13 +42,14 @@
 #include <QDBusInterface>
 #include <QDesktopWidget>
 #include <DGuiApplicationHelper>
+#include <QMovie>
 
 DCORE_USE_NAMESPACE
 DWIDGET_USE_NAMESPACE
 
 int main(int argc, char *argv[])
 {
-    DApplication::loadDXcbPlugin();
+    if(DGuiApplicationHelper::isXWindowPlatform()) DApplication::loadDXcbPlugin();
     DApplication app(argc, argv);
     //解决Qt在Retina屏幕上图片模糊问题
     QApplication::setAttribute(Qt::AA_UseHighDpiPixmaps);
@@ -97,6 +98,7 @@ int main(int argc, char *argv[])
     SessionBaseModel *model = new SessionBaseModel(SessionBaseModel::AuthType::LockType);
     LockWorker *worker = new LockWorker(model); //
     PropertyGroup *property_group = new PropertyGroup(worker);
+    qDebug() << "Supported animated file formats:" << QMovie::supportedFormats();
 
     property_group->addProperty("contentVisible");
 

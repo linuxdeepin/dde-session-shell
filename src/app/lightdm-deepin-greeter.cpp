@@ -189,7 +189,7 @@ int main(int argc, char* argv[])
         DApplication::customQtThemeConfigPath("/etc/lightdm/");
     }
 
-    DApplication::loadDXcbPlugin();
+    if(DGuiApplicationHelper::isXWindowPlatform()) DApplication::loadDXcbPlugin();
     DApplication a(argc, argv);
     QApplication::setAttribute(Qt::AA_UseHighDpiPixmaps);
     qApp->setOrganizationName("deepin");
