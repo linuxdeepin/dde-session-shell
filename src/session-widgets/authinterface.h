@@ -3,6 +3,7 @@
 
 #include "src/global_util/public_func.h"
 #include "src/global_util/constants.h"
+#include "src/global_util/dbus/dbuslogin1manager.h"
 
 #include <com_deepin_daemon_accounts.h>
 #include <com_deepin_daemon_logined.h>
@@ -55,12 +56,13 @@ protected:
     }
 
 protected:
-    SessionBaseModel* m_model;
-    AccountsInter *   m_accountsInter;
-    LoginedInter*     m_loginedInter;
-    uint              m_lastLogoutUid;
-    uint              m_currentUserUid;
-    std::list<uint>   m_loginUserList;
+    SessionBaseModel*  m_model;
+    AccountsInter *    m_accountsInter;
+    LoginedInter*      m_loginedInter;
+    DBusLogin1Manager* m_login1Inter;
+    uint               m_lastLogoutUid;
+    uint               m_currentUserUid;
+    std::list<uint>    m_loginUserList;
 };
 }  // namespace Auth
 

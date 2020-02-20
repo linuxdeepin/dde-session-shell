@@ -48,6 +48,7 @@ AuthInterface::AuthInterface(SessionBaseModel *const model, QObject *parent)
     , m_model(model)
     , m_accountsInter(new AccountsInter(ACCOUNT_DBUS_SERVICE, ACCOUNT_DBUS_PATH, QDBusConnection::systemBus(), this))
     , m_loginedInter(new LoginedInter(ACCOUNT_DBUS_SERVICE, "/com/deepin/daemon/Logined", QDBusConnection::systemBus(), this))
+    , m_login1Inter(new DBusLogin1Manager("org.freedesktop.login1", "/org/freedesktop/login1", QDBusConnection::systemBus(), this))
     , m_lastLogoutUid(0)
     , m_loginUserList(0)
 {
@@ -237,11 +238,13 @@ void AuthInterface::checkPowerInfo()
 {
     QProcessEnvironment env = QProcessEnvironment::systemEnvironment();
     bool can_sleep = env.contains(POWER_CAN_SLEEP) ? QVariant(env.value(POWER_CAN_SLEEP)).toBool()
-                                                   : valueByQSettings<bool>("Power", "sleep", true);
+                                                   : valueByQSettings<bool>("Power", "sleep", true) &&
+                                                     m_login1Inter->CanSuspend().value().contains("yes");
     m_model->setCanSleep(can_sleep);
 
     bool can_hibernate = env.contains(POWER_CAN_HIBERNATE) ? QVariant(env.value(POWER_CAN_HIBERNATE)).toBool()
-                                                           : valueByQSettings<bool>("Power", "hibernate", true);
+                                                           : valueByQSettings<bool>("Power", "hibernate", true) &&
+                                                             m_login1Inter->CanHibernate().value().contains("yes");
     if (can_hibernate) {
         checkSwap();
     } else {
