@@ -34,7 +34,6 @@
 
 #include <com_deepin_wm.h>
 #include <com_deepin_daemon_appearance.h>
-#include <com_deepin_daemon_imageblur.h>
 
 #include "src/widgets/rounditembutton.h"
 #include "src/global_util/util_updateui.h"
@@ -48,7 +47,6 @@
 #include "switchos_interface.h"
 
 using Appearance = com::deepin::daemon::Appearance;
-using ImageBlur = com::deepin::daemon::ImageBlur;
 
 class MultiUsersWarningView;
 class SessionBaseModel;
@@ -60,6 +58,7 @@ class ContentWidget: public QFrame
 public:
     ContentWidget(QWidget *parent = nullptr);
     void setModel(SessionBaseModel *const model);
+    void initBackground();
     ~ContentWidget() override;
 
 signals:
@@ -89,7 +88,6 @@ public slots:
 private:
     void initUI();
     void initConnect();
-    void initBackground();
     void initData();
     void enterKeyPushed();
     void hideBtn(const QString &btnName);
@@ -101,7 +99,6 @@ private:
 
     void currentWorkspaceChanged();
     void updateWallpaper(const QString &path);
-    void onBlurWallpaperFinished(const QString &source, const QString &blur, bool status);
     void onUserListChanged(QList<std::shared_ptr<User>> list);
     void enableHibernateBtn(bool enable);
     void enableSleepBtn(bool enable);
@@ -135,7 +132,6 @@ private:
     SystemMonitor *m_systemMonitor;
     com::deepin::wm *m_wmInter;
     Appearance *m_dbusAppearance = nullptr;
-    ImageBlur *m_blurImageInter;
     SessionBaseModel *m_model;
     QStringList m_inhibitorBlacklists;
     int m_failures = 0;

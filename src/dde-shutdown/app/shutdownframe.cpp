@@ -51,6 +51,8 @@ ShutdownFrame::ShutdownFrame(SessionBaseModel *const model, QWidget *parent)
             emit model->onStatusChanged(SessionBaseModel::PowerMode);
         }
     });
+
+    m_shutdownFrame->initBackground();
 }
 
 bool ShutdownFrame::powerAction(const Actions action)

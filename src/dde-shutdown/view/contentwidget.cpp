@@ -52,15 +52,11 @@ ContentWidget::ContentWidget(QWidget *parent)
                                       "/com/deepin/daemon/Appearance",
                                       QDBusConnection::sessionBus(),
                                       this))
-    , m_blurImageInter(new ImageBlur("com.deepin.daemon.Accounts",
-                                     "/com/deepin/daemon/ImageBlur",
-                                     QDBusConnection::systemBus(), this))
 
 {
     initUI();
     initData();
     initConnect();
-    initBackground();
 }
 
 void ContentWidget::setModel(SessionBaseModel *const model)
@@ -240,7 +236,6 @@ void ContentWidget::initConnect()
     connect(m_logoutButton, &RoundItemButton::clicked, [this] {emit buttonClicked(Logout);});
     connect(m_switchUserBtn, &RoundItemButton::clicked, [this] { shutDownFrameActions(SwitchUser);});
     connect(m_wmInter, &__wm::WorkspaceSwitched, this, &ContentWidget::currentWorkspaceChanged);
-    connect(m_blurImageInter, &ImageBlur::BlurDone, this, &ContentWidget::onBlurWallpaperFinished);
 
     if (m_systemMonitor) {
         connect(m_systemMonitor, &SystemMonitor::clicked, this, &ContentWidget::runSystemMonitor);
@@ -521,7 +516,7 @@ void ContentWidget::currentWorkspaceChanged()
     QDBusPendingCall call = m_wmInter->GetCurrentWorkspaceBackground();
     QDBusPendingCallWatcher *watcher = new QDBusPendingCallWatcher(call, this);
     connect(watcher, &QDBusPendingCallWatcher::finished, [ = ] {
-        if (!call. isError())
+        if (!call.isError())
         {
             QDBusReply<QString> reply = call.reply();
             updateWallpaper(reply.value());
@@ -543,18 +538,7 @@ void ContentWidget::updateWallpaper(const QString &path)
         wallpaper = url.path();
     }
 
-//    const QString &w = m_blurImageInter->Get(wallpaper);
-
-//    emit requestBackground(w.isEmpty() ? wallpaper : w);
-     emit requestBackground(wallpaper);
-}
-
-void ContentWidget::onBlurWallpaperFinished(const QString &source, const QString &blur, bool status)
-{
-    const QString &sourcePath = QUrl(source).isLocalFile() ? QUrl(source).toLocalFile() : source;
-
-    if (status && m_model->currentUser()->desktopBackgroundPath() == sourcePath)
-        emit requestBackground(blur);
+    emit requestBackground(wallpaper);
 }
 
 void ContentWidget::onUserListChanged(QList<std::shared_ptr<User> > list)
@@ -697,6 +681,10 @@ void ContentWidget::initUI()
 
 void ContentWidget::initBackground()
 {
+    //init default background
+    auto current_user = m_model->currentUser();
+    if(current_user != nullptr) updateWallpaper(current_user->greeterBackgroundPath());
+
     if (m_wmInter->isValid()) {
         currentWorkspaceChanged();
     } else {
@@ -704,12 +692,6 @@ void ContentWidget::initBackground()
             updateWallpaper(m_dbusAppearance->background());
         });
     }
-
-    connect(m_dbusAppearance, &Appearance::Changed, this, [ = ](const QString & type, const QString & path) {
-        if (type == "background") {
-            updateWallpaper(path.split(";").first());
-        }
-    });
 }
 
 QList<InhibitWarnView::InhibitorData> ContentWidget::listInhibitors(const Actions action)
