@@ -46,21 +46,8 @@ void DeepinAuthFramework::keyBoardAuth()
     }
 }
 
-void DeepinAuthFramework::fprintAuth()
-{
-    if (USER->isLock() || USER->uid() != m_currentUserUid) return;
-
-    if (m_fprint == nullptr) {
-        m_fprint = new AuthAgent(USER->name(), AuthAgent::Fingerprint, this);
-        // It takes time to auth again after cancel!
-        qDebug() << Q_FUNC_INFO << "fprint auth start";
-        QTimer::singleShot(500, m_fprint, &AuthAgent::Authenticate);
-    }
-}
-
 void DeepinAuthFramework::Authenticate()
 {
-    fprintAuth();
     keyBoardAuth();
 }
 

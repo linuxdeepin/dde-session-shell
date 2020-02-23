@@ -56,19 +56,7 @@ void AuthAgent::Cancel()
 
 QString AuthAgent::PamService(AuthAgent::AuthFlag type) const
 {
-    switch (type) {
-    case AuthFlag::Password:
-        return "common-auth";
- 
-    case AuthFlag::Fingerprint:
-        return "fprint-auth";
-
-    case AuthFlag::Face:
-        return "face-auth";
-
-    case AuthFlag::ActiveDirectory:
-        return "ad-auth";
-    }
+    Q_UNUSED(type);
     return "common-auth";
 }
 

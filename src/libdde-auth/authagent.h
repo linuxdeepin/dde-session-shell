@@ -49,7 +49,7 @@ private:
 
 private:
     pam_handle_t* m_pamHandle = nullptr;
-    bool m_lastStatus = false;
+    int  m_lastStatus = 255;
     int  m_verifyFailed = MAX_VERIFY_FAILED;
 
     AuthFlag m_type = Password;

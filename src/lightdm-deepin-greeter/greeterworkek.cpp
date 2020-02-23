@@ -43,26 +43,6 @@ GreeterWorkek::GreeterWorkek(SessionBaseModel *const model, QObject *parent)
     m_authFramework = new DeepinAuthFramework(this, this);
     m_authFramework->setAuthType(DeepinAuthFramework::AuthType::LightdmType);
 
-    QObject::connect(model, &SessionBaseModel::onStatusChanged, this, [ = ](SessionBaseModel::ModeStatus state) {
-        std::shared_ptr<User> user = m_model->currentUser();
-        m_authFramework->SetUser(user);
-        if (SessionBaseModel::ModeStatus::PasswordMode == state) {
-            //active fprinter auth
-            m_authFramework->Authenticate();
-        } else {
-            //close fprinter auth
-            m_authFramework->Clear();
-        }
-    });
-
-    connect(model, &SessionBaseModel::lockChanged, this, [ = ](bool is_lock) {
-        if (is_lock) {
-            m_authFramework->Clear();
-        } else {
-            m_authFramework->Authenticate();
-        }
-    });
-
     if (!m_login1ManagerInterface->isValid()) {
         qWarning() << "m_login1ManagerInterface:"
                    << m_login1ManagerInterface->lastError().type();
@@ -142,12 +122,6 @@ void GreeterWorkek::switchToUser(std::shared_ptr<User> user)
     if (user->isLogin()) {
         // switch to user Xorg
         QProcess::startDetached("dde-switchtogreeter", QStringList() << user->name());
-    }
-
-    if (isDeepin()) {
-        m_authFramework->Clear();
-        m_authFramework->SetUser(user);
-        m_authFramework->Authenticate();
     }
 
     QJsonObject json;

@@ -39,11 +39,8 @@ LockWorker::LockWorker(SessionBaseModel *const model, QObject *parent)
     QObject::connect(model, &SessionBaseModel::onStatusChanged, this, [ = ](SessionBaseModel::ModeStatus state) {
         std::shared_ptr<User> user = m_model->currentUser();
         m_authFramework->SetUser(user);
-        authStatusChanged(SessionBaseModel::ModeStatus::PasswordMode != state);
     });
 
-    connect(model, &SessionBaseModel::lockChanged, this, &LockWorker::authStatusChanged);
-    connect(model, &SessionBaseModel::activeAuthChanged, this, &LockWorker::authStatusChanged);
     connect(model, &SessionBaseModel::onPowerActionChanged, this, [ = ](SessionBaseModel::PowerAction poweraction) {
         switch (poweraction) {
         case SessionBaseModel::PowerAction::RequireSuspend:
@@ -66,14 +63,14 @@ LockWorker::LockWorker(SessionBaseModel *const model, QObject *parent)
     });
 
     connect(model, &SessionBaseModel::visibleChanged, this, [ = ](bool isVisible) {
-        if (!isVisible || model->currentType() != SessionBaseModel::AuthType::LockType || m_authFramework->isAuthenticate()) return;
+        if (!isVisible || model->currentType() != SessionBaseModel::AuthType::LockType) return;
 
         std::shared_ptr<User> user_ptr = model->currentUser();
         if (!user_ptr.get()) return;
 
         if (user_ptr->type() == User::ADDomain && user_ptr->uid() == 0) return;
 
-        userAuthForLock(user_ptr);
+        //userAuthForLock(user_ptr);
     });
 
     connect(m_lockInter, &DBusLockService::Event, this, &LockWorker::lockServiceEvent);
@@ -128,11 +125,6 @@ void LockWorker::switchToUser(std::shared_ptr<User> user)
     json["Type"] = user->type();
 
     m_lockInter->SwitchToUser(QString(QJsonDocument(json).toJson(QJsonDocument::Compact))).waitForFinished();
-    if (isDeepin()) {
-        m_authFramework->Clear();
-        m_authFramework->SetUser(user);
-        m_authFramework->Authenticate();
-    }
 
     if (user->isLogin()) {
         QProcess::startDetached("dde-switchtogreeter", QStringList() << user->name());
@@ -211,8 +203,7 @@ void LockWorker::onPasswordResult(AuthAgent::AuthFlag type, const QString &msg)
             onUnlockFinished(false);
         }
     } else {
-        m_lockInter->AuthenticateUser(user->name());
-        m_lockInter->UnlockCheck(user->name(), m_password);
+        onUnlockFinished(true);
     }
 }
 
@@ -227,7 +218,7 @@ void LockWorker::onUserAdded(const QString &user)
     if (user_ptr->uid() == m_currentUserUid) {
         m_model->setCurrentUser(user_ptr);
 
-        userAuthForLock(user_ptr);
+        //userAuthForLock(user_ptr);
     }
 
     if (user_ptr->uid() == m_lastLogoutUid) {
@@ -235,15 +226,6 @@ void LockWorker::onUserAdded(const QString &user)
     }
 
     m_model->userAdd(user_ptr);
-}
-
-void LockWorker::authStatusChanged(bool status)
-{
-    if (status) {
-        m_authFramework->Clear();
-    } else {
-        m_authFramework->fprintAuth();
-    }
 }
 
 void LockWorker::lockServiceEvent(quint32 eventType, quint32 pid, const QString &username, const QString &message)
@@ -339,12 +321,6 @@ void LockWorker::onUnlockFinished(bool unlocked)
 void LockWorker::userAuthForLock(std::shared_ptr<User> user)
 {
     m_authFramework->SetUser(user);
-    if (user->isNoPasswdGrp()) {
-        // 无密码登录激活指纹仪
-        m_authFramework->fprintAuth();
-        return;
-    }
-
     if (isDeepin()) {
         m_authFramework->Authenticate();
     } else {
