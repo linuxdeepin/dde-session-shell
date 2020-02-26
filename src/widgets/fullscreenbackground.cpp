@@ -60,7 +60,9 @@ FullscreenBackground::FullscreenBackground(QWidget *parent)
     installEventFilter(this);    
 
     connect(m_appearanceInter, &AppearanceInter::Changed, this, [=] (const QString &type, const QString &path) {
-        updateBackground(path);
+        if(type != "bakcground") {
+            updateBackground(path);
+        }
     });
 
     connect(m_fadeOutAni, &QVariantAnimation::valueChanged, this, static_cast<void (FullscreenBackground::*)()>(&FullscreenBackground::update));
