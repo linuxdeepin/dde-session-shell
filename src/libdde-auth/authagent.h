@@ -31,16 +31,20 @@ public:
         REMOVE_AND_RETRY
     };
 
-    explicit AuthAgent(const QString& user_name, AuthFlag type, QObject *parent = nullptr);
+    explicit AuthAgent(DeepinAuthFramework *deepin);
     ~AuthAgent();
 
-    QString UserName() const;
-    void Authenticate();
+    void SetPassword(const QString& password);
+    void Authenticate(const QString& username);
     void Cancel();
-    DeepinAuthFramework *parent();
+    DeepinAuthFramework *deepinAuth() { return m_deepinauth; }
+
+signals:
+    void displayErrorMsg(const QString &msg);
+    void displayTextInfo(const QString &msg);
+    void respondResult(const QString &msg);
 
 private:
-    QString PamService(AuthFlag type) const;
     void pamFingerprintMessage(const QString& message);
     static int funConversation(int num,
                                const struct pam_message** msg,
@@ -48,12 +52,11 @@ private:
                                void* app_data);
 
 private:
+    DeepinAuthFramework* m_deepinauth = nullptr;
     pam_handle_t* m_pamHandle = nullptr;
     int  m_lastStatus = 255;
     int  m_verifyFailed = MAX_VERIFY_FAILED;
 
-    AuthFlag m_type = Password;
-    QString m_username;
     QString m_password;
 };
 

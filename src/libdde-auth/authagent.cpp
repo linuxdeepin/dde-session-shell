@@ -12,17 +12,14 @@
 #define PAM_MSG_MEMBER(msg, n, member) ((msg)[(n)]->member)
 #endif
 
-AuthAgent::AuthAgent(const QString& user_name, AuthFlag type, QObject *parent)
-    : QObject(parent)
-    , m_type(type)
-    , m_username(user_name)
+#define PAM_SERVICE_NAME "common-auth"
+
+AuthAgent::AuthAgent(DeepinAuthFramework *deepin)
+    : m_deepinauth(deepin)
 {
-    pam_conv conv = { funConversation, static_cast<void*>(this) };
-    QString pam_service = PamService(type);
-    int ret = pam_start(pam_service.toLocal8Bit().data(), user_name.toLocal8Bit().data(), &conv, &m_pamHandle);
-    if( ret != PAM_SUCCESS) {
-        qDebug() << Q_FUNC_INFO << pam_strerror(m_pamHandle, ret);
-    }
+    connect(this, &AuthAgent::displayErrorMsg, deepin, &DeepinAuthFramework::DisplayErrorMsg, Qt::QueuedConnection);
+    connect(this, &AuthAgent::displayTextInfo, deepin, &DeepinAuthFramework::DisplayErrorMsg, Qt::QueuedConnection);
+    connect(this, &AuthAgent::respondResult, deepin, &DeepinAuthFramework::RespondResult, Qt::QueuedConnection);
 }
 
 AuthAgent::~AuthAgent()
@@ -30,34 +27,34 @@ AuthAgent::~AuthAgent()
     Cancel();
 }
 
-QString AuthAgent::UserName() const
+void AuthAgent::SetPassword(const QString &password)
 {
-    return m_username;
+    m_password = password;
 }
 
-void AuthAgent::Authenticate()
+void AuthAgent::Authenticate(const QString& username)
 {
+    pam_conv conv = { funConversation, static_cast<void*>(this) };
+    int ret = pam_start(PAM_SERVICE_NAME, username.toLocal8Bit().data(), &conv, &m_pamHandle);
+    if( ret != PAM_SUCCESS) {
+        qDebug() << Q_FUNC_INFO << pam_strerror(m_pamHandle, ret);
+    }
+
     m_lastStatus = pam_authenticate(m_pamHandle, 0);
     QString msg = QString();
 
     if(m_lastStatus == PAM_SUCCESS) {
-        msg = parent()->RequestEchoOff("");
+        msg = deepinAuth()->RequestEchoOff("");
     } else{
         qDebug() << Q_FUNC_INFO << pam_strerror(m_pamHandle, m_lastStatus);
     }
 
-    parent()->RespondResult(m_type, msg);
+    emit respondResult(msg);
 }
 
 void AuthAgent::Cancel()
 {
     pam_end(m_pamHandle, m_lastStatus);
-}
-
-QString AuthAgent::PamService(AuthAgent::AuthFlag type) const
-{
-    Q_UNUSED(type);
-    return "common-auth";
 }
 
 int AuthAgent::funConversation(int num_msg, const struct pam_message **msg,
@@ -81,7 +78,7 @@ int AuthAgent::funConversation(int num_msg, const struct pam_message **msg,
     for (idx = 0; idx < num_msg; ++idx) {
         switch(PAM_MSG_MEMBER(msg, idx, msg_style)) {
         case PAM_PROMPT_ECHO_OFF: {
-            QString password = app_ptr->parent()->RequestEchoOff(PAM_MSG_MEMBER(msg, idx, msg));
+            QString password = app_ptr->deepinAuth()->RequestEchoOff(PAM_MSG_MEMBER(msg, idx, msg));
 
             aresp[idx].resp = strdup(password.toLocal8Bit().data());
             if(aresp[idx].resp == nullptr)
@@ -92,14 +89,8 @@ int AuthAgent::funConversation(int num_msg, const struct pam_message **msg,
         }
 
         case PAM_PROMPT_ECHO_ON: {
-            QString user_name = app_ptr->UserName();
-            if((aresp[idx].resp = strdup(user_name.toLocal8Bit().data())) == nullptr)
-               goto fail;
             aresp[idx].resp_retcode = PAM_SUCCESS;
-
-            if(app_ptr->m_type == AuthFlag::Fingerprint) {
-                app_ptr->pamFingerprintMessage(QString::fromLocal8Bit(PAM_MSG_MEMBER(msg, idx, msg)));
-            }
+            app_ptr->pamFingerprintMessage(QString::fromLocal8Bit(PAM_MSG_MEMBER(msg, idx, msg)));
             break;
         }
 
@@ -133,14 +124,14 @@ void AuthAgent::pamFingerprintMessage(const QString& message)
 
     switch (code) {
     case FingerprintStatus::MATCH:
-        parent()->DisplayTextInfo(AuthAgent::Fingerprint, tr("Verification succeeded"));
+        emit displayTextInfo(tr("Verification succeeded"));
         break;
     case FingerprintStatus::NO_MATCH: {
         --m_verifyFailed;
         if(m_verifyFailed > 0) {
-            parent()->DisplayTextInfo(AuthAgent::Fingerprint, tr("Verification failed you can try %d times").arg(m_verifyFailed));
+            emit displayTextInfo(tr("Verification failed you can try %d times").arg(m_verifyFailed));
         } else {
-            parent()->DisplayErrorMsg(AuthAgent::Fingerprint, tr("Authentication failed, fingerprint recognition is locked, please login with password"));
+            emit displayErrorMsg(tr("Authentication failed, fingerprint recognition is locked, please login with password"));
         }
         break;
     }
@@ -148,9 +139,9 @@ void AuthAgent::pamFingerprintMessage(const QString& message)
         QJsonObject sub_object = json_object["msg"].toObject();
         int sub_code = sub_object["subcode"].toInt();
         if(sub_code == FpRetryStatus::REMOVE_AND_RETRY) {
-            parent()->DisplayTextInfo(AuthAgent::Fingerprint, tr("Please cover the fingerprint reader completely after cleaning your fingers"));
+            emit displayTextInfo(tr("Please cover the fingerprint reader completely after cleaning your fingers"));
         } else if(sub_code == FpRetryStatus::SWIPE_TOO_SHORT) {
-            parent()->DisplayTextInfo(AuthAgent::Fingerprint, tr("Fingerprint contact time is too short"));
+            emit displayTextInfo(tr("Fingerprint contact time is too short"));
         }
         break;
     }
@@ -161,8 +152,4 @@ void AuthAgent::pamFingerprintMessage(const QString& message)
         break;
     }
     }
-}
-
-DeepinAuthFramework *AuthAgent::parent() {
-    return qobject_cast<DeepinAuthFramework*>(QObject::parent());
 }

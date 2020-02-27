@@ -8,17 +8,12 @@
 #include <memory>
 
 class DeepinAuthInterface;
+class QThread;
 class User;
 class DeepinAuthFramework : public QObject
 {
     Q_OBJECT
 public:
-    enum AuthType {
-        UnknowAuthType,
-        LockType,
-        LightdmType
-    };
-
     explicit DeepinAuthFramework(DeepinAuthInterface *inter, QObject *parent = nullptr);
     ~DeepinAuthFramework();
 
@@ -27,28 +22,21 @@ public:
     bool isAuthenticate() const;
 
 public slots:
-    void SetUser(std::shared_ptr<User> user);
-    void Authenticate();
-    void keyBoardAuth();
+    void Authenticate(std::shared_ptr<User> user);
     void Clear();
-    void setPassword(const QString &password);
-    void setAuthType(AuthType type);
-    void setCurrentUid(uint uid);
+    void inputPassword(const QString &password);
 
 private:
     const QString RequestEchoOff(const QString &msg);
     const QString RequestEchoOn(const QString &msg);
-    void DisplayErrorMsg(AuthAgent::AuthFlag type, const QString &msg);
-    void DisplayTextInfo(AuthAgent::AuthFlag type, const QString &msg);
-    void RespondResult(AuthAgent::AuthFlag type, const QString &msg);
+    void DisplayErrorMsg(const QString &msg);
+    void DisplayTextInfo(const QString &msg);
+    void RespondResult(const QString &msg);
 
 private:
     DeepinAuthInterface *m_interface;
-    QPointer<AuthAgent> m_keyboard;
-    QPointer<AuthAgent> m_fprint;
-
-    AuthType m_type;
-    uint m_currentUserUid;
+    QPointer<AuthAgent> m_authagent;
+    QThread* m_authThread = nullptr;
 };
 
 #endif // DEEPINAUTHFRAMEWORK_H

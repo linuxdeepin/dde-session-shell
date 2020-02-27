@@ -30,15 +30,11 @@ LockWorker::LockWorker(SessionBaseModel *const model, QObject *parent)
     , m_hotZoneInter(new DBusHotzone("com.deepin.daemon.Zone", "/com/deepin/daemon/Zone", QDBusConnection::sessionBus(), this))
     , m_sessionManager(new SessionManager("com.deepin.SessionManager", "/com/deepin/SessionManager", QDBusConnection::sessionBus(), this))
 {
-    m_authFramework = new DeepinAuthFramework(this, this);
-    m_authFramework->setAuthType(DeepinAuthFramework::AuthType::LockType);
-
     m_currentUserUid = getuid();
-    m_authFramework->setCurrentUid(m_currentUserUid);
+    m_authFramework = new DeepinAuthFramework(this, this);
 
-    QObject::connect(model, &SessionBaseModel::onStatusChanged, this, [ = ](SessionBaseModel::ModeStatus state) {
-        std::shared_ptr<User> user = m_model->currentUser();
-        m_authFramework->SetUser(user);
+    QObject::connect(model, &SessionBaseModel::currentUserChanged, this, [ = ](std::shared_ptr<User> user) {
+        m_authFramework->Authenticate(user);
     });
 
     connect(model, &SessionBaseModel::onPowerActionChanged, this, [ = ](SessionBaseModel::PowerAction poweraction) {
@@ -154,16 +150,8 @@ void LockWorker::authUser(const QString &password)
         return;
     }
 
-    if (isDeepin()) {
-        m_authFramework->Clear();
-        m_authFramework->SetUser(user);
-        m_authFramework->setPassword(password);
-        m_authFramework->Authenticate();
-        return;
-    }
-
-    m_lockInter->AuthenticateUser(user->name());
-    m_lockInter->UnlockCheck(user->name(), password);
+    m_authFramework->Clear();
+    m_authFramework->Authenticate(user);
 }
 
 void LockWorker::enableZoneDetected(bool disable)
@@ -171,40 +159,22 @@ void LockWorker::enableZoneDetected(bool disable)
     m_hotZoneInter->EnableZoneDetected(disable);
 }
 
-void LockWorker::onDisplayErrorMsg(AuthAgent::AuthFlag type, const QString &msg)
+void LockWorker::onDisplayErrorMsg(const QString &msg)
 {
-    if (type == AuthAgent::Fingerprint) {
-        emit m_model->authFaildTipsMessage(msg, SessionBaseModel::Fprint);
-    } else {
-        emit m_model->authFaildMessage(msg);
-    }
+    emit m_model->authFaildMessage(msg);
 }
 
-void LockWorker::onDisplayTextInfo(AuthAgent::AuthFlag type, const QString &msg)
+void LockWorker::onDisplayTextInfo(const QString &msg)
 {
-    if (type == AuthAgent::Fingerprint) {
-        emit m_model->authFaildMessage(msg, SessionBaseModel::Fprint);
-    } else {
-        emit m_model->authFaildMessage(msg);
-    }
+    emit m_model->authFaildMessage(msg);
 }
 
-void LockWorker::onPasswordResult(AuthAgent::AuthFlag type, const QString &msg)
+void LockWorker::onPasswordResult(const QString &msg)
 {
     m_password = msg;
     std::shared_ptr<User> user = m_model->currentUser();
 
-    if (msg.isEmpty()) {
-        //FIXME(lxz): 不知道为什么收不到错误
-        if (type == AuthAgent::Fingerprint) {
-            qDebug() << Q_FUNC_INFO << "Fprint Failed";
-            emit m_model->authFaildMessage("", SessionBaseModel::Fprint);
-        } else {
-            onUnlockFinished(false);
-        }
-    } else {
-        onUnlockFinished(true);
-    }
+    onUnlockFinished(!msg.isEmpty());
 }
 
 void LockWorker::onUserAdded(const QString &user)
@@ -217,8 +187,6 @@ void LockWorker::onUserAdded(const QString &user)
 
     if (user_ptr->uid() == m_currentUserUid) {
         m_model->setCurrentUser(user_ptr);
-
-        //userAuthForLock(user_ptr);
     }
 
     if (user_ptr->uid() == m_lastLogoutUid) {
@@ -315,15 +283,5 @@ void LockWorker::onUnlockFinished(bool unlocked)
         return;
     default:
         break;
-    }
-}
-
-void LockWorker::userAuthForLock(std::shared_ptr<User> user)
-{
-    m_authFramework->SetUser(user);
-    if (isDeepin()) {
-        m_authFramework->Authenticate();
-    } else {
-        m_lockInter->AuthenticateUser(user->name());
     }
 }

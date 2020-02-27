@@ -2,83 +2,65 @@
 #include "interface/deepinauthinterface.h"
 #include "src/session-widgets/userinfo.h"
 
+#include <QThread>
 #include <QTimer>
 #include <QVariant>
 #include <unistd.h>
 #include <pwd.h>
 #include <grp.h>
 
-static std::shared_ptr<User> USER;
 static QString PASSWORD;
 
 DeepinAuthFramework::DeepinAuthFramework(DeepinAuthInterface *inter, QObject *parent)
     : QObject(parent)
     , m_interface(inter)
-    , m_type(UnknowAuthType)
 {
+    m_authThread = new QThread;
+    m_authagent = new AuthAgent(this);
+    m_authagent->moveToThread(m_authThread);
+    m_authThread->start();
 }
 
 DeepinAuthFramework::~DeepinAuthFramework()
 {
+    if(m_authThread != nullptr) {
+        if(m_authThread->isRunning()) m_authThread->quit();
+        m_authThread->deleteLater();
+    }
 }
 
 bool DeepinAuthFramework::isAuthenticate() const
 {
-    return !m_keyboard.isNull() || !m_fprint.isNull();
+    return !m_authagent.isNull();
 }
 
-void DeepinAuthFramework::SetUser(std::shared_ptr<User> user)
+void DeepinAuthFramework::Authenticate(std::shared_ptr<User> user)
 {
-    USER = user;
-}
+    if (user->isLock()) return;
 
-void DeepinAuthFramework::keyBoardAuth()
-{
-    if (USER->isLock() || USER->uid() != m_currentUserUid) return;
-
-    if (m_keyboard == nullptr) {
-        m_keyboard = new AuthAgent(USER->name(), AuthAgent::Password, this);
-
-        if (USER->isNoPasswdGrp() || (!USER->isNoPasswdGrp() && !PASSWORD.isEmpty())) {
+    if (m_authagent == nullptr) {
+        if (user->isNoPasswdGrp() || (!user->isNoPasswdGrp() && !PASSWORD.isEmpty())) {
             qDebug() << Q_FUNC_INFO << "keyboard auth start";
-            QTimer::singleShot(100, m_keyboard, &AuthAgent::Authenticate);
+            QTimer::singleShot(0, m_authagent, [ = ]() {
+                m_authagent->Authenticate(user->name());
+            });
         }
     }
 }
 
-void DeepinAuthFramework::Authenticate()
-{
-    keyBoardAuth();
-}
-
 void DeepinAuthFramework::Clear()
 {
-    if (!m_keyboard.isNull()) {
-        delete m_keyboard;
-        m_keyboard = nullptr;
-    }
-
-    if (!m_fprint.isNull()) {
-        delete m_fprint;
-        m_fprint = nullptr;
+    if (!m_authagent.isNull()) {
+        delete m_authagent;
+        m_authagent = nullptr;
     }
 
     PASSWORD.clear();
 }
 
-void DeepinAuthFramework::setPassword(const QString &password)
+void DeepinAuthFramework::inputPassword(const QString &password)
 {
     PASSWORD = password;
-}
-
-void DeepinAuthFramework::setAuthType(DeepinAuthFramework::AuthType type)
-{
-    m_type = type;
-}
-
-void DeepinAuthFramework::setCurrentUid(uint uid)
-{
-    m_currentUserUid = uid;
 }
 
 const QString DeepinAuthFramework::RequestEchoOff(const QString &msg)
@@ -93,22 +75,17 @@ const QString DeepinAuthFramework::RequestEchoOn(const QString &msg)
     return msg;
 }
 
-void DeepinAuthFramework::DisplayErrorMsg(AuthAgent::AuthFlag type, const QString &msg)
+void DeepinAuthFramework::DisplayErrorMsg(const QString &msg)
 {
-    Q_UNUSED(type);
-    m_interface->onDisplayErrorMsg(type, msg);
+    m_interface->onDisplayErrorMsg(msg);
 }
 
-void DeepinAuthFramework::DisplayTextInfo(AuthAgent::AuthFlag type, const QString &msg)
+void DeepinAuthFramework::DisplayTextInfo(const QString &msg)
 {
-    if (type == AuthAgent::Fingerprint && !msg.isEmpty()) {
-        m_interface->onDisplayTextInfo(type, tr("Verify your fingerprint or password"));
-    } else {
-        m_interface->onDisplayTextInfo(type, msg);
-    }
+    m_interface->onDisplayTextInfo(msg);
 }
 
-void DeepinAuthFramework::RespondResult(AuthAgent::AuthFlag type, const QString &msg)
+void DeepinAuthFramework::RespondResult(const QString &msg)
 {
-    m_interface->onPasswordResult(type, msg);
+    m_interface->onPasswordResult(msg);
 }

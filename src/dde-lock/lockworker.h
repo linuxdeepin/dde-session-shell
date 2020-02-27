@@ -32,9 +32,9 @@ public:
 
     void enableZoneDetected(bool disable);
 
-    void onDisplayErrorMsg(AuthAgent::AuthFlag type, const QString &msg) override;
-    void onDisplayTextInfo(AuthAgent::AuthFlag type, const QString &msg) override;
-    void onPasswordResult(AuthAgent::AuthFlag type, const QString &msg) override;
+    void onDisplayErrorMsg(const QString &msg) override;
+    void onDisplayTextInfo(const QString &msg) override;
+    void onPasswordResult(const QString &msg) override;
 
 private:
     void onUserAdded(const QString &user) override;
@@ -45,7 +45,6 @@ private:
     void lockServiceEvent(quint32 eventType, quint32 pid, const QString &username, const QString &message);
     void onUnlockFinished(bool unlocked);
 
-    void userAuthForLock(std::shared_ptr<User> user);
 private:
     bool m_authenticating;
     bool m_isThumbAuth;
