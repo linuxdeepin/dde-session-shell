@@ -40,9 +40,6 @@ GreeterWorkek::GreeterWorkek(SessionBaseModel *const model, QObject *parent)
     , m_authenticating(false)
     , m_password(QString())
 {
-    m_authFramework = new DeepinAuthFramework(this, this);
-    m_authFramework->setAuthType(DeepinAuthFramework::AuthType::LightdmType);
-
     if (!m_login1ManagerInterface->isValid()) {
         qWarning() << "m_login1ManagerInterface:"
                    << m_login1ManagerInterface->lastError().type();
@@ -147,30 +144,17 @@ void GreeterWorkek::authUser(const QString &password)
 
     qDebug() << "start authentication of user: " << user->name();
 
-    if (isDeepin() && !user->isNoPasswdGrp()) {
-        m_authFramework->Clear();
-        m_authFramework->SetUser(user);
-        m_authFramework->setPassword(m_password);
-        m_authFramework->Authenticate();
-        return;
-    }
-
-    greeterAuthUser(password);
-}
-
-void GreeterWorkek::greeterAuthUser(const QString &password)
-{
-    std::shared_ptr<User> user = m_model->currentUser();
-    m_password = password;
-
     if (m_greeter->authenticationUser() != user->name()) {
         m_greeter->cancelAuthentication();
-        QTimer::singleShot(100, this, [ = ] { m_greeter->authenticate(user->name()); });
-    } else {
+        QTimer::singleShot(100, this, [=] { m_greeter->authenticate(user->name()); });
+    }
+    else {
         if (m_greeter->inAuthentication()) {
-            m_greeter->cancelAuthentication();
+            m_greeter->respond(password);
         }
-        m_greeter->authenticate(user->name());
+        else {
+            m_greeter->authenticate(user->name());
+        }
     }
 }
 
@@ -227,14 +211,6 @@ void GreeterWorkek::onCurrentUserChanged(const QString &user)
 
 void GreeterWorkek::userAuthForLightdm(std::shared_ptr<User> user)
 {
-    if (isDeepin() && !user->isNoPasswdGrp()) {
-        m_authFramework->Clear();
-        m_authFramework->SetUser(user);
-        m_authFramework->setPassword(m_password);
-        m_authFramework->Authenticate();
-        return;
-    }
-
     if (!user->isNoPasswdGrp()) {
         if (m_greeter->inAuthentication()) {
             m_greeter->cancelAuthentication();
@@ -387,54 +363,4 @@ void GreeterWorkek::recoveryUserKBState(std::shared_ptr<User> user)
     KeyboardMonitor::instance()->setNumlockStatus(cur_numlock);
 
     KeyboardMonitor::instance()->setNumlockStatus(enabled);
-
-    m_currentUserUid = user->uid();
-    m_authFramework->setCurrentUid(m_currentUserUid);
 }
-
-void GreeterWorkek::onDisplayErrorMsg(AuthAgent::AuthFlag type, const QString &msg)
-{
-    if (type == AuthAgent::Fingerprint) {
-        emit m_model->authFaildTipsMessage(msg, SessionBaseModel::Fprint);
-    } else {
-        emit m_model->authFaildMessage(msg);
-    }
-}
-
-void GreeterWorkek::onDisplayTextInfo(AuthAgent::AuthFlag type, const QString &msg)
-{
-    if (type == AuthAgent::Fingerprint) {
-        emit m_model->authFaildMessage(msg, SessionBaseModel::Fprint);
-    } else {
-        emit m_model->authFaildMessage(msg);
-    }
-}
-
-void GreeterWorkek::onPasswordResult(AuthAgent::AuthFlag type, const QString &msg)
-{
-    if (msg.isEmpty()) {
-        if (type == AuthAgent::Fingerprint) {
-            qDebug() << Q_FUNC_INFO << "Fprint Failed";
-            emit m_model->authFaildMessage("", SessionBaseModel::Fprint);
-        } else {
-            qDebug() << Q_FUNC_INFO << "Password Failed";
-            authenticationComplete();
-        }
-    } else {
-        m_password = msg;
-
-        if (m_model->currentUser()->isPasswordExpired()) {
-            m_authenticating = false;
-            m_model->setCurrentModeState(SessionBaseModel::ModeStatus::ChangePasswordMode);
-        } else {
-            qDebug() << Q_FUNC_INFO << msg;
-            greeterAuthUser(m_password);
-
-            QTimer::singleShot(5000, this, [ = ](){
-                qDebug() << "not receive auth complete signal force start session";
-                if(m_greeter->isAuthenticated()) authenticationComplete();
-            });
-        }
-    }
-}
-

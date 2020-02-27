@@ -8,10 +8,8 @@
 #include "src/global_util/dbus/dbuslockservice.h"
 #include "src/session-widgets/authinterface.h"
 #include "src/global_util/dbus/dbuslogin1manager.h"
-#include "../libdde-auth/deepinauthframework.h"
-#include "../libdde-auth/interface/deepinauthinterface.h"
 
-class GreeterWorkek : public Auth::AuthInterface, public DeepinAuthInterface
+class GreeterWorkek : public Auth::AuthInterface
 {
     Q_OBJECT
 public:
@@ -20,10 +18,6 @@ public:
     void switchToUser(std::shared_ptr<User> user) override;
     void authUser(const QString &password) override;
     void onUserAdded(const QString &user) override;
-
-    void onDisplayErrorMsg(AuthAgent::AuthFlag type, const QString &msg) override;
-    void onDisplayTextInfo(AuthAgent::AuthFlag type, const QString &msg) override;
-    void onPasswordResult(AuthAgent::AuthFlag type, const QString &msg) override;
 
 signals:
     void requestUpdateBackground(const QString &path);
@@ -37,13 +31,11 @@ private:
     void authenticationComplete();
     void saveNumlockStatus(std::shared_ptr<User> user, const bool &on);
     void recoveryUserKBState(std::shared_ptr<User> user);
-    void greeterAuthUser(const QString &password);
 
 private:
     QLightDM::Greeter *m_greeter;
     DBusLogin1Manager *m_login1ManagerInterface;
     DBusLockService   *m_lockInter;
-    DeepinAuthFramework *m_authFramework;
     bool               m_isThumbAuth;
     bool               m_authenticating;
     QString            m_password;
