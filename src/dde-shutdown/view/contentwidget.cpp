@@ -681,10 +681,6 @@ void ContentWidget::initUI()
 
 void ContentWidget::initBackground()
 {
-    //init default background
-    auto current_user = m_model->currentUser();
-    if(current_user != nullptr) updateWallpaper(current_user->greeterBackgroundPath());
-
     if (m_wmInter->isValid()) {
         currentWorkspaceChanged();
     } else {
@@ -692,6 +688,12 @@ void ContentWidget::initBackground()
             updateWallpaper(m_dbusAppearance->background());
         });
     }
+
+    connect(m_dbusAppearance, &Appearance::Changed, this, [ = ](const QString & type, const QString & path) {
+        if (type == "background") {
+            updateWallpaper(path.split(";").first());
+        }
+    });
 }
 
 QList<InhibitWarnView::InhibitorData> ContentWidget::listInhibitors(const Actions action)
