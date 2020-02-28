@@ -715,11 +715,13 @@ QList<InhibitWarnView::InhibitorData> ContentWidget::listInhibitors(const Action
             switch (action) {
             case Actions::Shutdown:
             case Actions::Restart:
-            case Actions::Suspend:
-            case Actions::Hibernate:
             case Actions::SwitchSystem:
             case Actions::Logout:
                 type = "shutdown";
+                break;
+            case Actions::Suspend:
+            case Actions::Hibernate:
+                type = "sleep";
                 break;
             default:
                 return {};
@@ -730,6 +732,10 @@ QList<InhibitWarnView::InhibitorData> ContentWidget::listInhibitors(const Action
                 const Inhibit &inhibitor = inhibitList.at(i);
                 if (inhibitor.what.split(':', QString::SkipEmptyParts).contains(type)
                         && !m_inhibitorBlacklists.contains(inhibitor.who)) {
+
+                    // 待机时，非block暂不处理，因为目前没有倒计时待机功能
+                    if (type == "sleep" && inhibitor.mode != "block")
+                        continue;
 
                     InhibitWarnView::InhibitorData inhibitData;
                     inhibitData.who = inhibitor.who;
