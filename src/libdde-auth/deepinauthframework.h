@@ -22,9 +22,9 @@ public:
     bool isAuthenticate() const;
 
 public slots:
-    void Authenticate(std::shared_ptr<User> user);
     void Clear();
-    void inputPassword(const QString &password);
+    void Authenticate(std::shared_ptr<User> user);
+    void Responsed(const QString &password);
 
 private:
     const QString RequestEchoOff(const QString &msg);
@@ -37,6 +37,9 @@ private:
     DeepinAuthInterface *m_interface;
     QPointer<AuthAgent> m_authagent;
     QThread* m_authThread = nullptr;
+    std::shared_ptr<User> m_currentUser = nullptr;
+
+    QString m_password;
 };
 
 #endif // DEEPINAUTHFRAMEWORK_H

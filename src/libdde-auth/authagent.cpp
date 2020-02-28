@@ -1,6 +1,7 @@
 #include "authagent.h"
 #include "deepinauthframework.h"
 
+#include <QThread>
 #include <QDebug>
 #include <QJsonDocument>
 #include <QJsonObject>
@@ -16,6 +17,7 @@
 
 AuthAgent::AuthAgent(DeepinAuthFramework *deepin)
     : m_deepinauth(deepin)
+    , m_mutex(new QMutex)
 {
     connect(this, &AuthAgent::displayErrorMsg, deepin, &DeepinAuthFramework::DisplayErrorMsg, Qt::QueuedConnection);
     connect(this, &AuthAgent::displayTextInfo, deepin, &DeepinAuthFramework::DisplayErrorMsg, Qt::QueuedConnection);
@@ -24,12 +26,19 @@ AuthAgent::AuthAgent(DeepinAuthFramework *deepin)
 
 AuthAgent::~AuthAgent()
 {
+    if(m_mutex != nullptr) {
+        delete m_mutex;
+        m_mutex = nullptr;
+    }
+
     Cancel();
 }
 
-void AuthAgent::SetPassword(const QString &password)
+void AuthAgent::Responsed(const QString &password)
 {
     m_password = password;
+    if(!m_mutex->tryLock())
+        m_mutex->unlock();
 }
 
 void AuthAgent::Authenticate(const QString& username)
@@ -78,9 +87,11 @@ int AuthAgent::funConversation(int num_msg, const struct pam_message **msg,
     for (idx = 0; idx < num_msg; ++idx) {
         switch(PAM_MSG_MEMBER(msg, idx, msg_style)) {
         case PAM_PROMPT_ECHO_OFF: {
-            QString password = app_ptr->deepinAuth()->RequestEchoOff(PAM_MSG_MEMBER(msg, idx, msg));
+            if(app_ptr->m_mutex->tryLock()) app_ptr->m_mutex->lock();
 
+            QString password = app_ptr->deepinAuth()->RequestEchoOff(PAM_MSG_MEMBER(msg, idx, msg));
             aresp[idx].resp = strdup(password.toLocal8Bit().data());
+
             if(aresp[idx].resp == nullptr)
               goto fail;
 

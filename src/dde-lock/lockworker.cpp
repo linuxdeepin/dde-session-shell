@@ -34,6 +34,7 @@ LockWorker::LockWorker(SessionBaseModel *const model, QObject *parent)
     m_authFramework = new DeepinAuthFramework(this, this);
 
     QObject::connect(model, &SessionBaseModel::currentUserChanged, this, [ = ](std::shared_ptr<User> user) {
+        m_authFramework->Clear();
         m_authFramework->Authenticate(user);
     });
 
@@ -150,8 +151,7 @@ void LockWorker::authUser(const QString &password)
         return;
     }
 
-    m_authFramework->Clear();
-    m_authFramework->Authenticate(user);
+    m_authFramework->Responsed(password);
 }
 
 void LockWorker::enableZoneDetected(bool disable)
@@ -171,10 +171,11 @@ void LockWorker::onDisplayTextInfo(const QString &msg)
 
 void LockWorker::onPasswordResult(const QString &msg)
 {
-    m_password = msg;
-    std::shared_ptr<User> user = m_model->currentUser();
-
     onUnlockFinished(!msg.isEmpty());
+
+    // 重新打开一个认证期待
+    m_authFramework->Clear();
+    m_authFramework->Authenticate(m_model->currentUser());
 }
 
 void LockWorker::onUserAdded(const QString &user)

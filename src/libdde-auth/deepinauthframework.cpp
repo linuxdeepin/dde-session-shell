@@ -9,15 +9,11 @@
 #include <pwd.h>
 #include <grp.h>
 
-static QString PASSWORD;
-
 DeepinAuthFramework::DeepinAuthFramework(DeepinAuthInterface *inter, QObject *parent)
     : QObject(parent)
     , m_interface(inter)
 {
     m_authThread = new QThread;
-    m_authagent = new AuthAgent(this);
-    m_authagent->moveToThread(m_authThread);
     m_authThread->start();
 }
 
@@ -36,16 +32,16 @@ bool DeepinAuthFramework::isAuthenticate() const
 
 void DeepinAuthFramework::Authenticate(std::shared_ptr<User> user)
 {
+    m_currentUser = user;
     if (user->isLock()) return;
 
-    if (m_authagent == nullptr) {
-        if (user->isNoPasswdGrp() || (!user->isNoPasswdGrp() && !PASSWORD.isEmpty())) {
-            qDebug() << Q_FUNC_INFO << "keyboard auth start";
-            QTimer::singleShot(0, m_authagent, [ = ]() {
-                m_authagent->Authenticate(user->name());
-            });
-        }
-    }
+    qDebug() << Q_FUNC_INFO << "pam auth start";
+    m_authagent = new AuthAgent(this);
+    m_authagent->moveToThread(m_authThread);
+
+    QTimer::singleShot(0, m_authagent, [ = ]() {
+        m_authagent->Authenticate(user->name());
+    });
 }
 
 void DeepinAuthFramework::Clear()
@@ -55,19 +51,29 @@ void DeepinAuthFramework::Clear()
         m_authagent = nullptr;
     }
 
-    PASSWORD.clear();
+    m_password.clear();
 }
 
-void DeepinAuthFramework::inputPassword(const QString &password)
+void DeepinAuthFramework::Responsed(const QString &password)
 {
-    PASSWORD = password;
+    if(m_authagent.isNull() || !m_authThread->isRunning()) {
+        qDebug() << "pam auth agent is not start";
+        return;
+    }
+
+    m_password = password;
+    if (m_currentUser->isNoPasswdGrp() || (!m_currentUser->isNoPasswdGrp() && !m_password.isEmpty())) {
+        qDebug() << "pam responsed password";
+
+        m_authagent->Responsed(password);
+    }
 }
 
 const QString DeepinAuthFramework::RequestEchoOff(const QString &msg)
 {
     Q_UNUSED(msg);
 
-    return PASSWORD;
+    return m_password;
 }
 
 const QString DeepinAuthFramework::RequestEchoOn(const QString &msg)
