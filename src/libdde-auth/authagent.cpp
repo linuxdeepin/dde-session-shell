@@ -100,8 +100,8 @@ int AuthAgent::funConversation(int num_msg, const struct pam_message **msg,
         }
 
         case PAM_PROMPT_ECHO_ON: {
+            app_ptr->displayTextInfo(QString::fromLocal8Bit(PAM_MSG_MEMBER(msg, idx, msg)));
             aresp[idx].resp_retcode = PAM_SUCCESS;
-            app_ptr->pamFingerprintMessage(QString::fromLocal8Bit(PAM_MSG_MEMBER(msg, idx, msg)));
             break;
         }
 
@@ -125,42 +125,4 @@ fail:
     }
     free(aresp);
     return PAM_CONV_ERR;
-}
-
-void AuthAgent::pamFingerprintMessage(const QString& message)
-{
-    QJsonObject json_object = QJsonDocument::fromJson(message.toUtf8()).object();
-    QString id = json_object["id"].toString();
-    int code = json_object["code"].toInt();
-
-    switch (code) {
-    case FingerprintStatus::MATCH:
-        emit displayTextInfo(tr("Verification succeeded"));
-        break;
-    case FingerprintStatus::NO_MATCH: {
-        --m_verifyFailed;
-        if(m_verifyFailed > 0) {
-            emit displayTextInfo(tr("Verification failed you can try %d times").arg(m_verifyFailed));
-        } else {
-            emit displayErrorMsg(tr("Authentication failed, fingerprint recognition is locked, please login with password"));
-        }
-        break;
-    }
-    case FingerprintStatus::RETRY: {
-        QJsonObject sub_object = json_object["msg"].toObject();
-        int sub_code = sub_object["subcode"].toInt();
-        if(sub_code == FpRetryStatus::REMOVE_AND_RETRY) {
-            emit displayTextInfo(tr("Please cover the fingerprint reader completely after cleaning your fingers"));
-        } else if(sub_code == FpRetryStatus::SWIPE_TOO_SHORT) {
-            emit displayTextInfo(tr("Fingerprint contact time is too short"));
-        }
-        break;
-    }
-    case FingerprintStatus::DISCONNECTED:
-    case FingerprintStatus::ERROR: {
-        QString msg = json_object["msg"].toString();
-        if(msg.isEmpty()) qDebug() << "Pam Fingerprint: " << msg;
-        break;
-    }
-    }
 }

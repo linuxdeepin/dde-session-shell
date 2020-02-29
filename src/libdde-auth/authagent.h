@@ -46,7 +46,6 @@ signals:
     void respondResult(const QString &msg);
 
 private:
-    void pamFingerprintMessage(const QString& message);
     static int funConversation(int num,
                                const struct pam_message** msg,
                                struct pam_response** resp,
