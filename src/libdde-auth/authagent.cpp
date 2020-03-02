@@ -37,8 +37,7 @@ AuthAgent::~AuthAgent()
 void AuthAgent::Responsed(const QString &password)
 {
     m_password = password;
-    if(!m_mutex->tryLock())
-        m_mutex->unlock();
+    if(!m_mutex->tryLock()) m_mutex->unlock();
 }
 
 void AuthAgent::Authenticate(const QString& username)
@@ -99,15 +98,15 @@ int AuthAgent::funConversation(int num_msg, const struct pam_message **msg,
             break;
         }
 
-        case PAM_PROMPT_ECHO_ON: {
-            app_ptr->displayTextInfo(QString::fromLocal8Bit(PAM_MSG_MEMBER(msg, idx, msg)));
+        case PAM_PROMPT_ECHO_ON:
+        case PAM_ERROR_MSG:{
+            qDebug() << "pam authagent: " << PAM_MSG_MEMBER(msg, idx, msg);
             aresp[idx].resp_retcode = PAM_SUCCESS;
             break;
         }
 
-        case  PAM_ERROR_MSG:
-        case  PAM_TEXT_INFO: {
-            qDebug() << "pam authagent: " << PAM_MSG_MEMBER(msg, idx, msg);
+        case PAM_TEXT_INFO: {
+            app_ptr->displayTextInfo(QString::fromLocal8Bit(PAM_MSG_MEMBER(msg, idx, msg)));
             aresp[idx].resp_retcode = PAM_SUCCESS;
             break;
          }

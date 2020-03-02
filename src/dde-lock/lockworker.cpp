@@ -38,6 +38,16 @@ LockWorker::LockWorker(SessionBaseModel *const model, QObject *parent)
         m_authFramework->Authenticate(user);
     });
 
+    QObject::connect(model, &SessionBaseModel::visibleChanged, this, [ = ](bool visible){
+        auto user = m_model->currentUser();
+        if(visible && user != nullptr) {
+            if(!m_authFramework->isAuthenticate()) {
+                m_authFramework->Clear();
+                m_authFramework->Authenticate(user);
+            }
+        }
+    });
+
     connect(model, &SessionBaseModel::onPowerActionChanged, this, [ = ](SessionBaseModel::PowerAction poweraction) {
         switch (poweraction) {
         case SessionBaseModel::PowerAction::RequireSuspend:
@@ -173,9 +183,7 @@ void LockWorker::onPasswordResult(const QString &msg)
 {
     onUnlockFinished(!msg.isEmpty());
 
-    // 重新打开一个认证期待
     m_authFramework->Clear();
-    m_authFramework->Authenticate(m_model->currentUser());
 }
 
 void LockWorker::onUserAdded(const QString &user)
