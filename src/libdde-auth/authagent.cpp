@@ -5,7 +5,7 @@
 #include <QDebug>
 #include <QJsonDocument>
 #include <QJsonObject>
-#include <stdlib.h>
+#include <unistd.h>
 
 #ifdef PAM_SUN_CODEBASE
 #define PAM_MSG_MEMBER(msg, n, member) ((*(msg))[(n)].member)
@@ -17,7 +17,6 @@
 
 AuthAgent::AuthAgent(DeepinAuthFramework *deepin)
     : m_deepinauth(deepin)
-    , m_mutex(new QMutex)
 {
     connect(this, &AuthAgent::displayErrorMsg, deepin, &DeepinAuthFramework::DisplayErrorMsg, Qt::QueuedConnection);
     connect(this, &AuthAgent::displayTextInfo, deepin, &DeepinAuthFramework::DisplayErrorMsg, Qt::QueuedConnection);
@@ -26,24 +25,20 @@ AuthAgent::AuthAgent(DeepinAuthFramework *deepin)
 
 AuthAgent::~AuthAgent()
 {
-    if(m_mutex != nullptr) {
-        delete m_mutex;
-        m_mutex = nullptr;
-    }
-
     Cancel();
 }
 
 void AuthAgent::Responsed(const QString &password)
 {
     m_password = password;
-    if(!m_mutex->tryLock()) m_mutex->unlock();
+    m_hasPw = true;
 }
 
 void AuthAgent::Authenticate(const QString& username)
 {
     pam_conv conv = { funConversation, static_cast<void*>(this) };
     int ret = pam_start(PAM_SERVICE_NAME, username.toLocal8Bit().data(), &conv, &m_pamHandle);
+
     if( ret != PAM_SUCCESS) {
         qDebug() << Q_FUNC_INFO << pam_strerror(m_pamHandle, ret);
     }
@@ -52,7 +47,7 @@ void AuthAgent::Authenticate(const QString& username)
     QString msg = QString();
 
     if(m_lastStatus == PAM_SUCCESS) {
-        msg = deepinAuth()->RequestEchoOff("");
+        msg = "succes";
     } else{
         qDebug() << Q_FUNC_INFO << pam_strerror(m_pamHandle, m_lastStatus);
     }
@@ -86,7 +81,9 @@ int AuthAgent::funConversation(int num_msg, const struct pam_message **msg,
     for (idx = 0; idx < num_msg; ++idx) {
         switch(PAM_MSG_MEMBER(msg, idx, msg_style)) {
         case PAM_PROMPT_ECHO_OFF: {
-            if(app_ptr->m_mutex->tryLock()) app_ptr->m_mutex->lock();
+            while (!app_ptr->m_hasPw) {
+                sleep(1);
+            }
 
             QString password = app_ptr->deepinAuth()->RequestEchoOff(PAM_MSG_MEMBER(msg, idx, msg));
             aresp[idx].resp = strdup(password.toLocal8Bit().data());
@@ -106,6 +103,7 @@ int AuthAgent::funConversation(int num_msg, const struct pam_message **msg,
         }
 
         case PAM_TEXT_INFO: {
+            qDebug() << "pam authagent: " << PAM_MSG_MEMBER(msg, idx, msg);
             app_ptr->displayTextInfo(QString::fromLocal8Bit(PAM_MSG_MEMBER(msg, idx, msg)));
             aresp[idx].resp_retcode = PAM_SUCCESS;
             break;

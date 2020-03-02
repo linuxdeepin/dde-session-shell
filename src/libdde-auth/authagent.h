@@ -54,11 +54,11 @@ private:
 private:
     DeepinAuthFramework* m_deepinauth = nullptr;
     pam_handle_t* m_pamHandle = nullptr;
-    QMutex* m_mutex = nullptr;
 
     int  m_lastStatus = 255;
     int  m_verifyFailed = MAX_VERIFY_FAILED;
     QString m_password;
+    bool m_hasPw{false};
 };
 
 #endif // AUTHAGENT_H
