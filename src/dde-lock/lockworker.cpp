@@ -183,7 +183,10 @@ void LockWorker::onPasswordResult(const QString &msg)
 {
     onUnlockFinished(!msg.isEmpty());
 
-    m_authFramework->Clear();
+    if(msg.isEmpty()) {
+        m_authFramework->Clear();
+        m_authFramework->Authenticate(m_model->currentUser());
+    }
 }
 
 void LockWorker::onUserAdded(const QString &user)
