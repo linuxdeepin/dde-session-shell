@@ -493,7 +493,11 @@ void ContentWidget::shutDownFrameActions(const Actions action)
     case Hibernate:      m_sessionInterface->RequestHibernate();     break;
     case Lock:           m_sessionInterface->RequestLock();          break;
     case Logout:         m_sessionInterface->RequestLogout();        break;
-    case SwitchSystem:   m_switchosInterface->setOsFlag(!m_switchosInterface->getOsFlag());    break;
+    case SwitchSystem: {
+        m_switchosInterface->setOsFlag(!m_switchosInterface->getOsFlag());
+        QTimer::singleShot(200, this, [ = ] { m_sessionInterface->RequestReboot(); });
+        break;
+    }
     case SwitchUser: {
         DDBusSender()
         .service("com.deepin.dde.lockFront")
