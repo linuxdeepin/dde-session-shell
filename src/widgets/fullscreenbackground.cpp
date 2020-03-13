@@ -80,6 +80,12 @@ void FullscreenBackground::updateBackground(const QPixmap &background)
 
 void FullscreenBackground::updateBackground(const QString &file)
 {
+    qDebug() << "input background: " << file;
+
+    auto isPicture = [](const QString &filePath){
+        return QFile::exists(filePath) && QFile(filePath).size() && !QPixmap(filePath).isNull() ;
+    };
+
     const QUrl url(file);
     if (url.isLocalFile())
         return updateBackground(url.path());
@@ -87,8 +93,9 @@ void FullscreenBackground::updateBackground(const QString &file)
     if (m_bgPath == file)
         return;
 
-    if (QFile::exists(file)) {
+    if (isPicture(file)) {
         m_bgPath = file;
+
     } else {
         QDir dir("/usr/share/wallpapers/deepin");
         if (dir.exists()) {
@@ -109,9 +116,7 @@ void FullscreenBackground::updateBackground(const QString &file)
 
     QString imageEffect = m_imageEffectInter->Get("", m_bgPath);
 
-    if (!QFile::exists(imageEffect)) {
-        imageEffect = m_bgPath;
-    }
+    if (!isPicture(imageEffect)) imageEffect = m_bgPath;
 
     updateBackground(QPixmap(imageEffect));
 
