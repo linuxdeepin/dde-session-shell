@@ -182,9 +182,13 @@ void UserLoginWidget::updateUI()
         break;
     }
     case IDAndPasswordType: {
+        // 解决右键菜单弹出问题
+        m_passwordEdit->setContextMenuPolicy(Qt::NoContextMenu);
         m_passwordEdit->show();
         m_passwordEdit->setShowKB(false);
         m_passwordEdit->lineEdit()->setPlaceholderText(tr("Password"));
+        // 解决右键菜单弹出问题
+        m_accountEdit->setContextMenuPolicy(Qt::NoContextMenu);
         m_accountEdit->show();
         m_accountEdit->lineEdit()->setPlaceholderText(tr("Account"));
         m_accountEdit->lineEdit()->setFocus();
