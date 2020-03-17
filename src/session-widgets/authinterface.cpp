@@ -11,6 +11,8 @@
 #define POWER_CAN_SLEEP "POWER_CAN_SLEEP"
 #define POWER_CAN_HIBERNATE "POWER_CAN_HIBERNATE"
 
+#define USE_DEEPIN_AUTH "useDeepinAuth"
+
 using namespace Auth;
 
 static std::pair<bool, qint64> checkIsPartitionType(const QStringList &list)
@@ -54,6 +56,9 @@ AuthInterface::AuthInterface(SessionBaseModel *const model, QObject *parent)
 {
     if (!m_login1Inter->isValid()) {
         qWarning() << "m_login1Inter:" << m_login1Inter->lastError().type();
+
+    if (QGSettings::isSchemaInstalled("com.deepin.dde.auth.control")) {
+        m_gsettings = new QGSettings("com.deepin.dde.auth.control", "/com/deepin/dde/auth/control/", this);
     }
 }
 
@@ -232,7 +237,11 @@ bool AuthInterface::isDeepin()
 #ifdef QT_DEBUG
     return true;
 #else
-    return valueByQSettings<bool>("OS", "isDeepin", false);
+    bool is_deepin = true;
+    if (m_gsettings != nullptr && m_gsettings->keys().contains(USE_DEEPIN_AUTH)) {
+        is_deepin = m_gsettings->get(USE_DEEPIN_AUTH).toBool();
+    }
+    return is_deepin;
 #endif
 }
 

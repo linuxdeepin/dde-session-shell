@@ -10,6 +10,7 @@
 
 #include <QJsonArray>
 #include <QObject>
+#include <QGSettings>
 #include <memory>
 
 using AccountsInter = com::deepin::daemon::Accounts;
@@ -60,6 +61,7 @@ protected:
     AccountsInter *    m_accountsInter;
     LoginedInter*      m_loginedInter;
     DBusLogin1Manager* m_login1Inter;
+    QGSettings*        m_gsettings = nullptr;
     uint               m_lastLogoutUid;
     uint               m_currentUserUid;
     std::list<uint>    m_loginUserList;
