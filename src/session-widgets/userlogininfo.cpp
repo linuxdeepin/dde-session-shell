@@ -53,6 +53,7 @@ void UserLoginInfo::setUser(std::shared_ptr<User> user)
     m_currentUserConnects << connect(user.get(), &User::displayNameChanged, m_userLoginWidget, &UserLoginWidget::setName);
     m_currentUserConnects << connect(user.get(), &User::kbLayoutListChanged, m_userLoginWidget, &UserLoginWidget::updateKBLayout, Qt::UniqueConnection);
     m_currentUserConnects << connect(user.get(), &User::currentKBLayoutChanged, m_userLoginWidget, &UserLoginWidget::setDefaultKBLayout, Qt::UniqueConnection);
+    m_currentUserConnects << connect(user.get(), &User::noPasswdLoginChanged, this, &UserLoginInfo::updateLoginContent);
 
     m_user = user;
 
@@ -70,16 +71,7 @@ void UserLoginInfo::setUser(std::shared_ptr<User> user)
     m_userExpiredWidget->setUserName(user->name());
     m_userExpiredWidget->updateAuthType(m_model->currentType());
 
-
-    if (m_model->currentUser()->isDoMainUser()) {
-        m_userLoginWidget->setWidgetShowType(UserLoginWidget::IDAndPasswordType);
-    } else {
-        if (m_user->isNoPasswdGrp()) {
-            m_userLoginWidget->setWidgetShowType(UserLoginWidget::NoPasswordType);
-        } else {
-            m_userLoginWidget->setWidgetShowType(UserLoginWidget::NormalType);
-        }
-    }
+    updateLoginContent();
 }
 
 void UserLoginInfo::initConnect()
@@ -183,4 +175,17 @@ void UserLoginInfo::receiveSwitchUser(std::shared_ptr<User> user)
     }
 
     emit requestSwitchUser(user);
+}
+
+void UserLoginInfo::updateLoginContent()
+{
+    if (m_model->currentUser()->isDoMainUser()) {
+        m_userLoginWidget->setWidgetShowType(UserLoginWidget::IDAndPasswordType);
+    } else {
+        if (m_user->isNoPasswdGrp()) {
+            m_userLoginWidget->setWidgetShowType(UserLoginWidget::NoPasswordType);
+        } else {
+            m_userLoginWidget->setWidgetShowType(UserLoginWidget::NormalType);
+        }
+    }
 }

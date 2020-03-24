@@ -46,6 +46,7 @@ public:
     void hideKBLayout();
     void abortConfirm(bool abort = true);
     void beforeUnlockAction();
+    void updateLoginContent();
 
 signals:
     void requestAuthUser(const QString &password);
