@@ -459,6 +459,11 @@ void GreeterWorkek::onPasswordResult(AuthAgent::Type type, const QString &msg)
         } else {
             qDebug() << Q_FUNC_INFO << msg;
             greeterAuthUser(m_password);
+
+            QTimer::singleShot(5000, this, [ = ](){
+                qDebug() << "not receive auth complete signal force start session";
+                if(m_greeter->isAuthenticated()) authenticationComplete();
+            });
         }
     }
 }
