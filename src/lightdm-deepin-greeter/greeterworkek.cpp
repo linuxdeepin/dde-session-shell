@@ -307,6 +307,10 @@ void GreeterWorkek::authenticationComplete()
             m_model->currentUser()->startLock();
         }
 
+        QTimer::singleShot(100, this, [ = ] {
+            m_greeter->authenticate(m_model->currentUser()->name());
+        });
+
         return;
     }
 
