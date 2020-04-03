@@ -217,7 +217,7 @@ void GreeterWorkek::userAuthForLightdm(std::shared_ptr<User> user)
         }
         QTimer::singleShot(100, this, [ = ] {
             m_greeter->authenticate(user->name());
-            m_greeter->respond(m_password);
+            //m_greeter->respond(m_password);
         });
     }
 }
