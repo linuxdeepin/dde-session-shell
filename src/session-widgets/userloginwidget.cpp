@@ -330,6 +330,10 @@ void UserLoginWidget::disablePassword(bool disable, uint lockNum)
     if (disable) {
         setFaildMessage(tr("Please try again %n minute(s) later", "", lockNum));
     }
+
+    if ( false == disable && true == m_isServerMode){
+            m_accountEdit->lineEdit()->setEnabled(true);
+        }
 }
 
 void UserLoginWidget::updateAuthType(SessionBaseModel::AuthType type)
