@@ -212,13 +212,7 @@ void GreeterWorkek::onCurrentUserChanged(const QString &user)
 void GreeterWorkek::userAuthForLightdm(std::shared_ptr<User> user)
 {
     if (!user->isNoPasswdGrp()) {
-        if (m_greeter->inAuthentication()) {
-            m_greeter->cancelAuthentication();
-        }
-        QTimer::singleShot(100, this, [ = ] {
-            m_greeter->authenticate(user->name());
-            //m_greeter->respond(m_password);
-        });
+        reopenFingerAuth(user);
     }
 }
 
@@ -291,8 +285,11 @@ void GreeterWorkek::authenticationComplete()
 
     if (!m_greeter->isAuthenticated()) {
         if (m_password.isEmpty()) {
+            reopenFingerAuth(m_model->currentUser());
             return;
         }
+
+        m_password = "";
 
         if (m_model->currentUser()->type() == User::Native) {
             emit m_model->authFaildTipsMessage(tr("Wrong Password"));
@@ -307,9 +304,7 @@ void GreeterWorkek::authenticationComplete()
             m_model->currentUser()->startLock();
         }
 
-        QTimer::singleShot(100, this, [ = ] {
-            m_greeter->authenticate(m_model->currentUser()->name());
-        });
+        reopenFingerAuth(m_model->currentUser());
 
         return;
     }
@@ -367,4 +362,14 @@ void GreeterWorkek::recoveryUserKBState(std::shared_ptr<User> user)
     KeyboardMonitor::instance()->setNumlockStatus(cur_numlock);
 
     KeyboardMonitor::instance()->setNumlockStatus(enabled);
+}
+
+void GreeterWorkek::reopenFingerAuth(std::shared_ptr<User> user)
+{
+    if (m_greeter->inAuthentication()) {
+        m_greeter->cancelAuthentication();
+    }
+    QTimer::singleShot(100, this, [ = ] {
+        m_greeter->authenticate(user->name());
+    });
 }

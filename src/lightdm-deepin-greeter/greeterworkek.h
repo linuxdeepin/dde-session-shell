@@ -31,6 +31,7 @@ private:
     void authenticationComplete();
     void saveNumlockStatus(std::shared_ptr<User> user, const bool &on);
     void recoveryUserKBState(std::shared_ptr<User> user);
+    void reopenFingerAuth(std::shared_ptr<User> user);
 
 private:
     QLightDM::Greeter *m_greeter;
