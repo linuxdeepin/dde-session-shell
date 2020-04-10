@@ -49,9 +49,10 @@ FullscreenBackground::FullscreenBackground(QWidget *parent)
     , m_displayInter(new DisplayInter("com.deepin.daemon.Display", "/com/deepin/daemon/Display", QDBusConnection::sessionBus(), this))
 {
 #ifndef QT_DEBUG
-    if(DGuiApplicationHelper::isXWindowPlatform()) {
-        setWindowFlags(Qt::WindowStaysOnTopHint | Qt::X11BypassWindowManagerHint);
-    }
+//    if(DGuiApplicationHelper::isXWindowPlatform()) {
+//        setWindowFlags(Qt::WindowStaysOnTopHint | Qt::X11BypassWindowManagerHint);
+//    }
+    setWindowFlags(Qt::WindowStaysOnTopHint | Qt::X11BypassWindowManagerHint);
 #endif
 
     m_fadeOutAni->setEasingCurve(QEasingCurve::InOutCubic);
