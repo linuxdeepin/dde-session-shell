@@ -93,7 +93,7 @@ GreeterWorkek::GreeterWorkek(SessionBaseModel *const model, QObject *parent)
             m_model->setCanSleep(false);
 
         checkDBusServer(m_accountsInter->isValid());
-        onCurrentUserChanged(m_lockInter->CurrentUser());
+        //onCurrentUserChanged(m_lockInter->CurrentUser());
     }
 
     if (DSysInfo::deepinType() == DSysInfo::DeepinServer || valueByQSettings<bool>("", "loginPromptInput", false)) {
