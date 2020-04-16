@@ -25,7 +25,6 @@ AuthAgent::AuthAgent(DeepinAuthFramework *deepin)
 
 AuthAgent::~AuthAgent()
 {
-    Cancel();
 }
 
 void AuthAgent::Responsed(const QString &password)
