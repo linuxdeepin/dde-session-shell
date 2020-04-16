@@ -216,10 +216,7 @@ void FullscreenBackground::paintEvent(QPaintEvent *e)
             painter.setOpacity(1);
         }
     } else {
-        painter.save();
-        painter.setBrush(Qt::black);
-        painter.drawRect(trueRect);
-        painter.restore();
+        painter.fillRect(trueRect, Qt::black);
     }
 }
 
