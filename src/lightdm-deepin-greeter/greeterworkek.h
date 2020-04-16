@@ -31,13 +31,14 @@ private:
     void authenticationComplete();
     void saveNumlockStatus(std::shared_ptr<User> user, const bool &on);
     void recoveryUserKBState(std::shared_ptr<User> user);
-    void reopenFingerAuth(std::shared_ptr<User> user);
+    void resetLightdmAuth(std::shared_ptr<User> user,int delay_time, bool is_respond);
 
 private:
     QLightDM::Greeter *m_greeter;
     DBusLogin1Manager *m_login1ManagerInterface;
     DBusLockService   *m_lockInter;
     bool               m_isThumbAuth;
+    bool               m_islock;
     bool               m_authenticating;
     QString            m_password;
 };

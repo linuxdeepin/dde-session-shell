@@ -37,6 +37,7 @@ GreeterWorkek::GreeterWorkek(SessionBaseModel *const model, QObject *parent)
                                                      QDBusConnection::systemBus(), this))
     , m_lockInter(new DBusLockService(LOCKSERVICE_NAME, LOCKSERVICE_PATH, QDBusConnection::systemBus(), this))
     , m_isThumbAuth(false)
+    , m_islock(false)
     , m_authenticating(false)
     , m_password(QString())
 {
@@ -74,6 +75,16 @@ GreeterWorkek::GreeterWorkek(SessionBaseModel *const model, QObject *parent)
         model->setPowerAction(SessionBaseModel::PowerAction::None);
     });
 
+    connect(model, &SessionBaseModel::lockChanged, this, [ = ](bool lock) {
+        if (lock) {
+            m_islock = true;
+        } else {
+            m_islock = false;
+            m_password.clear();
+            resetLightdmAuth(m_model->currentUser(), 100, false);
+        }
+    });
+
     connect(KeyboardMonitor::instance(), &KeyboardMonitor::numlockStatusChanged, this, [ = ](bool on) {
         saveNumlockStatus(model->currentUser(), on);
     });
@@ -93,7 +104,7 @@ GreeterWorkek::GreeterWorkek(SessionBaseModel *const model, QObject *parent)
             m_model->setCanSleep(false);
 
         checkDBusServer(m_accountsInter->isValid());
-        //onCurrentUserChanged(m_lockInter->CurrentUser());
+        onCurrentUserChanged(m_lockInter->CurrentUser());
     }
 
     if (DSysInfo::deepinType() == DSysInfo::DeepinServer || valueByQSettings<bool>("", "loginPromptInput", false)) {
@@ -212,7 +223,7 @@ void GreeterWorkek::onCurrentUserChanged(const QString &user)
 void GreeterWorkek::userAuthForLightdm(std::shared_ptr<User> user)
 {
     if (!user->isNoPasswdGrp()) {
-        reopenFingerAuth(user);
+        resetLightdmAuth(m_model->currentUser(), 200, true);
     }
 }
 
@@ -262,9 +273,9 @@ void GreeterWorkek::message(QString text, QLightDM::Greeter::MessageType type)
 
     switch (type) {
     case QLightDM::Greeter::MessageTypeInfo:
-        if (m_isThumbAuth) break;
+        if (m_isThumbAuth || m_islock) break;
 
-        emit m_model->authFaildMessage(QString(dgettext("fprintd", text.toLatin1())));
+        emit m_model->authFaildMessage(QString(dgettext("fprintd", text.toUtf8())));
         break;
     case QLightDM::Greeter::MessageTypeError:
         qWarning() << "error message from lightdm: " << text;
@@ -285,11 +296,11 @@ void GreeterWorkek::authenticationComplete()
 
     if (!m_greeter->isAuthenticated()) {
         if (m_password.isEmpty()) {
-            reopenFingerAuth(m_model->currentUser());
+            resetLightdmAuth(m_model->currentUser(), 100, false);
             return;
         }
 
-        m_password = "";
+        m_password.clear();
 
         if (m_model->currentUser()->type() == User::Native) {
             emit m_model->authFaildTipsMessage(tr("Wrong Password"));
@@ -304,7 +315,7 @@ void GreeterWorkek::authenticationComplete()
             m_model->currentUser()->startLock();
         }
 
-        reopenFingerAuth(m_model->currentUser());
+        resetLightdmAuth(m_model->currentUser(), 100, false);
 
         return;
     }
@@ -364,12 +375,15 @@ void GreeterWorkek::recoveryUserKBState(std::shared_ptr<User> user)
     KeyboardMonitor::instance()->setNumlockStatus(enabled);
 }
 
-void GreeterWorkek::reopenFingerAuth(std::shared_ptr<User> user)
+void GreeterWorkek::resetLightdmAuth(std::shared_ptr<User> user,int delay_time , bool is_respond)
 {
     if (m_greeter->inAuthentication()) {
         m_greeter->cancelAuthentication();
     }
-    QTimer::singleShot(100, this, [ = ] {
+    QTimer::singleShot(delay_time, this, [ = ] {
         m_greeter->authenticate(user->name());
+        if (is_respond) {
+            m_greeter->respond(m_password);
+        }
     });
 }

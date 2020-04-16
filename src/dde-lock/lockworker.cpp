@@ -69,6 +69,13 @@ LockWorker::LockWorker(SessionBaseModel *const model, QObject *parent)
         model->setPowerAction(SessionBaseModel::PowerAction::None);
     });
 
+    connect(model, &SessionBaseModel::lockChanged, this, [ = ](bool lock) {
+        if (!lock) {
+            m_authFramework->Clear();
+            m_authFramework->Authenticate(m_model->currentUser());
+        }
+    });
+
     connect(model, &SessionBaseModel::visibleChanged, this, [ = ](bool isVisible) {
         if (!isVisible || model->currentType() != SessionBaseModel::AuthType::LockType) return;
 
