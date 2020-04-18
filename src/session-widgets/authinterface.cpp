@@ -187,7 +187,7 @@ void AuthInterface::onLoginUserListChanged(const QString &list)
                          [=](const uint find_uid) { return find_uid == user->uid(); });
 
         if (find_it == m_loginUserList.end() &&
-            (user->type() == User::ADDomain && user->uid() != 0)) {
+            (user->type() == User::ADDomain && user->uid() != -1)) {
             m_model->userRemoved(user);
             it = uList.erase(it);
         }
