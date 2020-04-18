@@ -14,7 +14,8 @@ public:
     void Show();
     void ShowUserList();
     void ShowAuth(bool active);
-    void ShowBlack();
+    void Suspend(bool enable);
+    void Hibernate(bool enable);
 
 private:
     void showFrame();

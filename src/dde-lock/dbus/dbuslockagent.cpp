@@ -24,15 +24,39 @@ void DBusLockAgent::ShowAuth(bool active)
     emit m_model->activeAuthChanged(!active);
 }
 
+// 待机，enable=true：进入待机；enable=false：待机恢复
+void DBusLockAgent::Suspend(bool enable)
+{
+    if (enable) {
+        m_model->setIsBlackModel(true);
+        showFrame();
+    } else {
+        QDBusInterface infc("com.deepin.daemon.Power","/com/deepin/daemon/Power","com.deepin.daemon.Power");
+        // 待机恢复需要密码
+        bool bSuspendLock = infc.property("SleepLock").toBool();
+
+        if (bSuspendLock) {
+            m_model->setIsBlackModel(false);
+            showFrame();
+        } else {
+            m_model->setIsShow(false);
+            emit m_model->visibleChanged(false);
+        }
+    }
+}
+
+void DBusLockAgent::Hibernate(bool enable)
+{
+    if (enable) {
+
+    } else {
+
+    }
+}
+
 void DBusLockAgent::ShowUserList()
 {
     emit m_model->showUserList();
-}
-
-void DBusLockAgent::ShowBlack()
-{
-    m_model->setIsBlackModel(true);
-    showFrame();
 }
 
 void DBusLockAgent::showFrame()

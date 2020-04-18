@@ -54,7 +54,12 @@ void DBusLockFrontService::ShowAuth(bool active)
     parent()->ShowAuth(active);
 }
 
-void DBusLockFrontService::ShowBlack()
+void DBusLockFrontService::Suspend(bool enable)
 {
-    parent()->ShowBlack();
+    parent()->Suspend(enable);
+}
+
+void DBusLockFrontService::Hibernate(bool enable)
+{
+    parent()->Hibernate(enable);
 }
