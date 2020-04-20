@@ -60,6 +60,7 @@ public slots:
     void setScreen(QScreen *screen);
     void setContentVisible(bool contentVisible);
     void setIsBlackMode(bool is_black);
+    void setIsHibernateMode();
 
 signals:
     void contentVisibleChanged(bool contentVisible);
@@ -98,6 +99,7 @@ private:
     DisplayInter *m_displayInter = nullptr;
     bool m_primaryShowFinished = false;
     bool m_isBlackMode = false;
+    bool m_isHibernateMode = false;
     int m_dataBindIndex;
 };
 

@@ -94,6 +94,9 @@ public:
     inline bool isBlackMode() const { return m_isBlackMode; }
     void setIsBlackModel(bool is_black);
 
+    inline bool isHibernateMode() const {return m_isHibernateMode; }
+    void setIsHibernateModel(bool is_Hibernate);
+
 signals:
     void onUserAdded(std::shared_ptr<User> user);
     void onUserRemoved(const uint uid);
@@ -117,6 +120,7 @@ signals:
     void userListLoginedChanged(QList<std::shared_ptr<User>> list);
     void activeAuthChanged(bool active);
     void blackModeChanged(bool is_black);
+    void HibernateModeChanged(bool is_hibernate);//休眠信号改变
 
 private:
     com::deepin::SessionManager *m_sessionManagerInter;
@@ -131,6 +135,7 @@ private:
     bool m_abortConfirm;
     bool m_isLockNoPassword;
     bool m_isBlackMode;
+    bool m_isHibernateMode;
     AuthType m_currentType;
     QList<std::shared_ptr<User>> m_userList;
     std::shared_ptr<User> m_currentUser;

@@ -163,7 +163,7 @@ void FullscreenBackground::setContentVisible(bool contentVisible)
 
 void FullscreenBackground::setContent(QWidget *const w)
 {
-    Q_ASSERT(m_content.isNull());
+    //Q_ASSERT(m_content.isNull());
 
     m_content = w;
     m_content->setParent(this);
@@ -181,6 +181,12 @@ void FullscreenBackground::setIsBlackMode(bool is_black)
     emit contentVisibleChanged(!is_black);
 
     update();
+}
+
+void FullscreenBackground::setIsHibernateMode(){
+    updateGeometry();
+    m_content->show();
+    emit contentVisibleChanged(true);
 }
 
 void FullscreenBackground::paintEvent(QPaintEvent *e)

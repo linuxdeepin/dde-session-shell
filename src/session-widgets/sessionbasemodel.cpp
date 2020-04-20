@@ -230,3 +230,9 @@ void SessionBaseModel::setIsBlackModel(bool is_black)
     m_isBlackMode = is_black;
     emit blackModeChanged(is_black);
 }
+
+void SessionBaseModel::setIsHibernateModel(bool is_Hibernate){
+    if(m_isHibernateMode == is_Hibernate) return;
+    m_isHibernateMode = is_Hibernate;
+    emit HibernateModeChanged(is_Hibernate);
+}

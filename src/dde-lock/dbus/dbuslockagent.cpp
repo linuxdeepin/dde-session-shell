@@ -15,6 +15,7 @@ void DBusLockAgent::setModel(SessionBaseModel *const model)
 void DBusLockAgent::Show()
 {
     m_model->setIsBlackModel(false);
+    m_model->setIsHibernateModel(false);
     showFrame();
 }
 
@@ -59,9 +60,21 @@ void DBusLockAgent::ShowUserList()
     emit m_model->showUserList();
 }
 
+void DBusLockAgent::ShowBlack()
+{
+    m_model->setIsBlackModel(true);
+    showFrame();
+}
+
 void DBusLockAgent::showFrame()
 {
     m_model->setIsShow(true);
 
     emit m_model->visibleChanged(true);
 }
+
+void DBusLockAgent::ShowHibernate(){
+    m_model->setIsHibernateModel(true);
+    showFrame();
+}
+

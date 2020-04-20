@@ -27,9 +27,12 @@
 #include "src/session-widgets/lockcontent.h"
 #include "src/session-widgets/sessionbasemodel.h"
 #include "src/session-widgets/userinfo.h"
+#include "src/session-widgets/hibernatewidget.h"
 
 #include <QApplication>
 #include <QWindow>
+
+
 
 LockFrame::LockFrame(SessionBaseModel *const model, QWidget *parent)
     : FullscreenBackground(parent)
@@ -51,6 +54,12 @@ LockFrame::LockFrame(SessionBaseModel *const model, QWidget *parent)
     connect(m_content, &LockContent::requestSetLayout, this, &LockFrame::requestSetLayout);
     connect(m_content, &LockContent::requestBackground, this, static_cast<void (LockFrame::*)(const QString &)>(&LockFrame::updateBackground));
     connect(model, &SessionBaseModel::blackModeChanged, this, &FullscreenBackground::setIsBlackMode);
+    connect(model, &SessionBaseModel::HibernateModeChanged, this, [&](){
+           m_content->hide();
+           HibernateWidget *Hibernate = new  HibernateWidget(this);
+           setContent(Hibernate);
+           setIsHibernateMode();                            //更新大小 现示动画
+    });
     connect(model, &SessionBaseModel::showUserList, this, &LockFrame::showUserList);
     connect(m_content, &LockContent::unlockActionFinish,this, [ = ]() {
         Q_EMIT requestEnableHotzone(true);

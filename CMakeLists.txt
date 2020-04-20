@@ -197,6 +197,7 @@ set(SESSION_WIDGETS_SRCS
     ./src/session-widgets/userexpiredwidget.h
     ./src/session-widgets/userframelist.h
     ./src/session-widgets/userlogininfo.h
+    ./src/session-widgets/hibernatewidget.h
     ./src/session-widgets/lockpasswordwidget.cpp
     ./src/session-widgets/authinterface.cpp
     ./src/session-widgets/userinfo.cpp
@@ -209,6 +210,7 @@ set(SESSION_WIDGETS_SRCS
     ./src/session-widgets/userexpiredwidget.cpp
     ./src/session-widgets/userframelist.cpp
     ./src/session-widgets/userlogininfo.cpp
+    ./src/session-widgets/hibernatewidget.cpp
 )
 
 set(LOCK_SRCS

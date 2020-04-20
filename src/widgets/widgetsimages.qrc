@@ -158,5 +158,6 @@
         <file>img/unlockFalse/unlock_error_13.svg</file>
         <file>img/unlockFalse/unlock_error_14.svg</file>
         <file>img/unlockFalse/unlock_error_15.svg</file>
+        <file>img/spinner_white.svg</file>
     </qresource>
 </RCC>
