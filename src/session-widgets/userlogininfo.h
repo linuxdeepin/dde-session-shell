@@ -45,7 +45,7 @@ public:
     UserFrameList *getUserFrameList();
     void hideKBLayout();
     void abortConfirm(bool abort = true);
-    void beforeUnlockAction();
+    void beforeUnlockAction(bool is_finish);
     void updateLoginContent();
 
 signals:
@@ -54,6 +54,7 @@ signals:
     void hideUserFrameList();
     void requestSetLayout(std::shared_ptr<User> user, const QString &value);
     void changePasswordFinished();
+    void unlockActionFinish();
 
 private:
     void userLockChanged(bool disable);

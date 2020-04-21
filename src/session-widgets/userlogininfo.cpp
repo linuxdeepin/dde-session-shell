@@ -114,6 +114,9 @@ void UserLoginInfo::initConnect()
     connect(m_userLoginWidget, &UserLoginWidget::requestUserKBLayoutChanged, this, [ = ](const QString & value) {
         emit requestSetLayout(m_user, value);
     });
+    connect(m_userLoginWidget, &UserLoginWidget::unlockActionFinish, this, [&]{
+        emit unlockActionFinish();
+    });
     connect(m_userExpiredWidget, &UserExpiredWidget::changePasswordFinished, this, &UserLoginInfo::changePasswordFinished);
 
     //UserFrameList
@@ -133,9 +136,13 @@ void UserLoginInfo::abortConfirm(bool abort)
     m_userLoginWidget->ShutdownPrompt(m_model->powerAction());
 }
 
-void UserLoginInfo::beforeUnlockAction()
+void UserLoginInfo::beforeUnlockAction(bool is_finish)
 {
-    m_userLoginWidget->unlockSuccessAni();
+    if(is_finish){
+        m_userLoginWidget->unlockSuccessAni();
+    }else {
+        m_userLoginWidget->unlockFailedAni();
+    }
 }
 
 UserLoginWidget *UserLoginInfo::getUserLoginWidget()

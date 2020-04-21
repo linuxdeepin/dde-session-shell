@@ -132,5 +132,31 @@
         <file>img/bottom_actions/reboot.svg</file>
         <file>img/bottom_actions/shutdown.svg</file>
         <file>img/default_avatar.svg</file>
+        <file>img/unlockTrue/unlock_1.svg</file>
+        <file>img/unlockTrue/unlock_2.svg</file>
+        <file>img/unlockTrue/unlock_3.svg</file>
+        <file>img/unlockTrue/unlock_4.svg</file>
+        <file>img/unlockTrue/unlock_5.svg</file>
+        <file>img/unlockTrue/unlock_6.svg</file>
+        <file>img/unlockTrue/unlock_7.svg</file>
+        <file>img/unlockTrue/unlock_8.svg</file>
+        <file>img/unlockTrue/unlock_9.svg</file>
+        <file>img/unlockTrue/unlock_10.svg</file>
+        <file>img/unlockTrue/unlock_11.svg</file>
+        <file>img/unlockFalse/unlock_error_1.svg</file>
+        <file>img/unlockFalse/unlock_error_2.svg</file>
+        <file>img/unlockFalse/unlock_error_3.svg</file>
+        <file>img/unlockFalse/unlock_error_4.svg</file>
+        <file>img/unlockFalse/unlock_error_5.svg</file>
+        <file>img/unlockFalse/unlock_error_6.svg</file>
+        <file>img/unlockFalse/unlock_error_7.svg</file>
+        <file>img/unlockFalse/unlock_error_8.svg</file>
+        <file>img/unlockFalse/unlock_error_9.svg</file>
+        <file>img/unlockFalse/unlock_error_10.svg</file>
+        <file>img/unlockFalse/unlock_error_11.svg</file>
+        <file>img/unlockFalse/unlock_error_12.svg</file>
+        <file>img/unlockFalse/unlock_error_13.svg</file>
+        <file>img/unlockFalse/unlock_error_14.svg</file>
+        <file>img/unlockFalse/unlock_error_15.svg</file>
     </qresource>
 </RCC>

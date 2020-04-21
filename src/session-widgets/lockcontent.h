@@ -39,6 +39,7 @@ signals:
     void requestAuthUser(const QString &password);
     void requestSwitchToUser(std::shared_ptr<User> user);
     void requestSetLayout(std::shared_ptr<User> user, const QString &value);
+    void unlockActionFinish();
 
 public slots:
     void pushUserFrame();
@@ -46,7 +47,7 @@ public slots:
     void pushChangeFrame();
     void pushShutdownFrame();
     void setMPRISEnable(const bool state);
-    void beforeUnlockAction();
+    void beforeUnlockAction(bool is_finish);
 
 protected:
     void mouseReleaseEvent(QMouseEvent *event) Q_DECL_OVERRIDE;

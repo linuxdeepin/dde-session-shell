@@ -77,6 +77,9 @@ LockContent::LockContent(SessionBaseModel *const model, QWidget *parent)
     });
     connect(m_userLoginInfo, &UserLoginInfo::requestSetLayout, this, &LockContent::requestSetLayout);
     connect(m_userLoginInfo, &UserLoginInfo::changePasswordFinished, this, &LockContent::restoreMode);
+    connect(m_userLoginInfo, &UserLoginInfo::unlockActionFinish, this, [&]{
+        emit unlockActionFinish();
+    });
     connect(m_shutdownFrame, &ShutdownWidget::abortOperation, this, [ = ] {
         if (m_model->powerAction() != SessionBaseModel::RequireShutdown &&
                 m_model->powerAction() != SessionBaseModel::RequireRestart)
@@ -179,9 +182,9 @@ void LockContent::setMPRISEnable(const bool state)
     }
 }
 
-void LockContent::beforeUnlockAction()
+void LockContent::beforeUnlockAction(bool is_finish)
 {
-    m_userLoginInfo->beforeUnlockAction();
+    m_userLoginInfo->beforeUnlockAction(is_finish);
 }
 
 void LockContent::onStatusChanged(SessionBaseModel::ModeStatus status)

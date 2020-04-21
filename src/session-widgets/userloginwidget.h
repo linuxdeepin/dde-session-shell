@@ -96,6 +96,7 @@ signals:
     void requestAuthUser(const QString &account, const QString &password);
     void clicked();
     void requestUserKBLayoutChanged(const QString &layout);
+    void unlockActionFinish();
 
 public slots:
     void updateAuthType(SessionBaseModel::AuthType type);
@@ -153,6 +154,8 @@ private:
     uint m_uid;
     bool m_isAlertMessageShow;                             //判断密码错误提示是否显示
     QString m_name;
+    QTimer *timer;                                     //切换图标计时器
+    int index = 0;
 };
 
 #endif // USERLOGINWIDGET_H
