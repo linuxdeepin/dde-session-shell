@@ -255,7 +255,9 @@ void ContentWidget::initData()
 void ContentWidget::enterKeyPushed()
 {
     if (m_warningView) {
-        m_warningView->buttonClickHandle();
+        if (!isBlocking) {
+            m_warningView->buttonClickHandle();
+        }
         return;
     }
 
@@ -321,6 +323,8 @@ void ContentWidget::disableBtn(const QString &btnName)
 
 bool ContentWidget::beforeInvokeAction(const Actions action)
 {
+    isBlocking = false;
+
     const QList<InhibitWarnView::InhibitorData> inhibitors = listInhibitors(action);
 
     const QList<std::shared_ptr<User>> &loginUsers = m_model->logindUser();
@@ -339,6 +343,7 @@ bool ContentWidget::beforeInvokeAction(const Actions action)
     }
 
     if (!inhibitors.isEmpty()) {
+        isBlocking = true;
         InhibitWarnView *view = new InhibitWarnView(action, this);
         view->setAction(action);
         view->setInhibitorList(inhibitors);
