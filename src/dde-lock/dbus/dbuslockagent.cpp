@@ -49,9 +49,11 @@ void DBusLockAgent::Suspend(bool enable)
 void DBusLockAgent::Hibernate(bool enable)
 {
     if (enable) {
-
+        m_model->setIsHibernateModel(true);
+        showFrame();
     } else {
-
+        m_model->setIsBlackModel(false);
+        showFrame();
     }
 }
 
@@ -71,10 +73,5 @@ void DBusLockAgent::showFrame()
     m_model->setIsShow(true);
 
     emit m_model->visibleChanged(true);
-}
-
-void DBusLockAgent::ShowHibernate(){
-    m_model->setIsHibernateModel(true);
-    showFrame();
 }
 

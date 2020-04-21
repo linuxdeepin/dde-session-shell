@@ -45,6 +45,7 @@ LockFrame::LockFrame(SessionBaseModel *const model, QWidget *parent)
         if (user != nullptr) updateBackground(user->greeterBackgroundPath());
     });
 
+    Hibernate = new HibernateWidget(this);
     m_content = new LockContent(model);
     m_content->hide();
     setContent(m_content);
@@ -54,11 +55,15 @@ LockFrame::LockFrame(SessionBaseModel *const model, QWidget *parent)
     connect(m_content, &LockContent::requestSetLayout, this, &LockFrame::requestSetLayout);
     connect(m_content, &LockContent::requestBackground, this, static_cast<void (LockFrame::*)(const QString &)>(&LockFrame::updateBackground));
     connect(model, &SessionBaseModel::blackModeChanged, this, &FullscreenBackground::setIsBlackMode);
-    connect(model, &SessionBaseModel::HibernateModeChanged, this, [&](){
-           m_content->hide();
-           HibernateWidget *Hibernate = new  HibernateWidget(this);
-           setContent(Hibernate);
-           setIsHibernateMode();                            //更新大小 现示动画
+    connect(model, &SessionBaseModel::HibernateModeChanged, this, [&](bool is_hibernate){
+        if(is_hibernate){
+            m_content->hide();
+            setContent(Hibernate);
+            setIsHibernateMode();     //更新大小 现示动画
+        }else{
+            Hibernate->hide();
+            setContent(m_content);
+        }                                    
     });
     connect(model, &SessionBaseModel::showUserList, this, &LockFrame::showUserList);
     connect(m_content, &LockContent::unlockActionFinish,this, [ = ]() {

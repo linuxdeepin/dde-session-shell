@@ -17,7 +17,6 @@ public:
     void Suspend(bool enable);
     void Hibernate(bool enable);
     void ShowBlack();
-    void ShowHibernate();
 
 private:
     void showFrame();

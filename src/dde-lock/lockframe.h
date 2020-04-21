@@ -27,6 +27,7 @@
 #define LOCKFRAME
 
 #include "src/widgets/fullscreenbackground.h"
+#include "src/session-widgets/hibernatewidget.h"
 
 #include <QKeyEvent>
 #include <QDBusConnection>
@@ -64,6 +65,7 @@ protected:
 private:
     LockContent *m_content;
     SessionBaseModel *m_model;
+    HibernateWidget *Hibernate;
 };
 
 #endif // LOCKFRAME
