@@ -52,7 +52,7 @@ void DBusLockAgent::Hibernate(bool enable)
         m_model->setIsHibernateModel(true);
         showFrame();
     } else {
-        m_model->setIsBlackModel(false);
+        m_model->setIsHibernateModel(false);
         showFrame();
     }
 }
@@ -60,12 +60,6 @@ void DBusLockAgent::Hibernate(bool enable)
 void DBusLockAgent::ShowUserList()
 {
     emit m_model->showUserList();
-}
-
-void DBusLockAgent::ShowBlack()
-{
-    m_model->setIsBlackModel(true);
-    showFrame();
 }
 
 void DBusLockAgent::showFrame()

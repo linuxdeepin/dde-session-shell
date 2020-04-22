@@ -64,8 +64,4 @@ void DBusLockFrontService::Hibernate(bool enable)
     parent()->Hibernate(enable);
 }
 
-void DBusLockFrontService::ShowBlack()
-{
-    parent()->ShowBlack();
-}
 

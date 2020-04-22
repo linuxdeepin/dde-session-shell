@@ -46,6 +46,7 @@ LockFrame::LockFrame(SessionBaseModel *const model, QWidget *parent)
     });
 
     Hibernate = new HibernateWidget(this);
+    Hibernate->hide();
     m_content = new LockContent(model);
     m_content->hide();
     setContent(m_content);

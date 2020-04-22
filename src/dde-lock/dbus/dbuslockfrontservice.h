@@ -62,7 +62,6 @@ public Q_SLOTS:// METHODS
     void ShowAuth(bool active);
     void Suspend(bool enable);
     void Hibernate(bool enable);
-    void ShowBlack();
 };
 
 #endif // DBUSLOCKFRONTSERVICE_H
