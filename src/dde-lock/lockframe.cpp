@@ -53,8 +53,8 @@ LockFrame::LockFrame(SessionBaseModel *const model, QWidget *parent)
     connect(model, &SessionBaseModel::blackModeChanged, this, &FullscreenBackground::setIsBlackMode);
     connect(model, &SessionBaseModel::showUserList, this, &LockFrame::showUserList);
     connect(m_content, &LockContent::unlockActionFinish,this, [ = ]() {
-            Q_EMIT requestEnableHotzone(true);
-            hide();
+        Q_EMIT requestEnableHotzone(true);
+        hide();
     });
     connect(model, &SessionBaseModel::authFinished, this, [ = ](bool success){
         m_content->beforeUnlockAction(success);

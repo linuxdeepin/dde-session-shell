@@ -709,64 +709,43 @@ void UserLoginWidget::updateNameLabel()
 
 void UserLoginWidget::unlockSuccessAni()
 {
-//    QPropertyAnimation *success_ani = new QPropertyAnimation(m_lockButton, "icon", this);
-//    success_ani->setEasingCurve(QEasingCurve::OutCubic);
-//    success_ani->setDuration(1000);
-//    success_ani->setStartValue(DStyle::SP_LockElement);
-//    success_ani->setEndValue(DStyle::SP_UnlockElement);
-//    success_ani->start(QAbstractAnimation::DeleteWhenStopped);
-      if(timer == nullptr)
-      timer = new QTimer(this);
-      connect(timer, &QTimer::timeout, [&](){
-      if((index % 12) <= 11){
-           QString s = QString(":/img/unlockTrue/unlock_%1.svg").arg(index % 12);
-           m_lockButton->setIcon(QIcon(s));
-       }
-       index++;
-       if(index == 15){
-          timer->stop();
-          delete timer;
-          timer = nullptr;
-          index = 0;
-          emit unlockActionFinish();
-          m_lockButton->setIcon(DStyle::SP_LockElement);
-       }
-   });
-       timer->start(60);
+    if(timer == nullptr)
+        timer = new QTimer(this);
+    connect(timer, &QTimer::timeout, [&](){
+        if((index % 12) <= 11){
+            QString s = QString(":/img/unlockTrue/unlock_%1.svg").arg(index % 12);
+            m_lockButton->setIcon(QIcon(s));
+        }
+        index++;
+        if(index == 15){
+            timer->stop();
+            delete timer;
+            timer = nullptr;
+            index = 0;
+            emit unlockActionFinish();
+            m_lockButton->setIcon(DStyle::SP_LockElement);
+        }
+    });
+    timer->start(60);
 }
 
 void UserLoginWidget::unlockFailedAni()
 {
-//    QPropertyAnimation *failed_ani = new QPropertyAnimation(m_lockButton, "pos", this);
-//    failed_ani->setEasingCurve(QEasingCurve::OutCubic);
-//    failed_ani->setDuration(1000);
-//    failed_ani->setKeyValueAt(0, QPoint(geometry().x() - 3, geometry().y() - 3));
-//    failed_ani->setKeyValueAt(0.1, QPoint(geometry().x() + 6, geometry().y() + 6));
-//    failed_ani->setKeyValueAt(0.2, QPoint(geometry().x() - 6, geometry().y() + 6));
-//    failed_ani->setKeyValueAt(0.3, QPoint(geometry().x() + 6, geometry().y() - 6));
-//    failed_ani->setKeyValueAt(0.4, QPoint(geometry().x() - 6, geometry().y() - 6));
-//    failed_ani->setKeyValueAt(0.5, QPoint(geometry().x() + 6, geometry().y() + 6));
-//    failed_ani->setKeyValueAt(0.6, QPoint(geometry().x() - 6, geometry().y() + 6));
-//    failed_ani->setKeyValueAt(0.7, QPoint(geometry().x() + 6, geometry().y() - 6));
-//    failed_ani->setKeyValueAt(0.8, QPoint(geometry().x() - 6, geometry().y() - 6));
-//    failed_ani->setKeyValueAt(0.9, QPoint(geometry().x() + 6, geometry().y() + 6));
-//    failed_ani->setKeyValueAt(1, QPoint(geometry().x() - 3, geometry().y() - 3));
-//    failed_ani->start(QAbstractAnimation::DeleteWhenStopped);
     if(timer == nullptr)
-    timer = new QTimer(this);
+        timer = new QTimer(this);
     connect(timer, &QTimer::timeout, [&](){
-    if((index%16) <= 15){
-         QString s = QString(":/img/unlockFalse/unlock_error_%1.svg").arg(index % 16);
-         m_lockButton->setIcon(QIcon(s));
-     }
-     index++;
-     if(index == 20){
-        timer->stop();
-        delete timer;
-        timer = nullptr;
-        index = 0;
-        m_lockButton->setIcon(DStyle::SP_LockElement);
-     }
- });
-     timer->start(20);
+        if((index%16) <= 15){
+            QString s = QString(":/img/unlockFalse/unlock_error_%1.svg").arg(index % 16);
+            m_lockButton->setIcon(QIcon(s));
+        }
+        index++;
+        if(index == 20){
+            timer->stop();
+            delete timer;
+            timer = nullptr;
+            index = 0;
+            m_lockButton->setIcon(DStyle::SP_LockElement);
+        }
+    });
+    timer->start(20);
 }

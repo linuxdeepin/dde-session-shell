@@ -106,11 +106,6 @@ void UserLoginInfo::initConnect()
     });
     connect(m_model, &SessionBaseModel::authFaildMessage, m_userLoginWidget, &UserLoginWidget::setFaildMessage);
     connect(m_model, &SessionBaseModel::authFaildTipsMessage, m_userLoginWidget, &UserLoginWidget::setFaildTipMessage);
-    connect(m_model, &SessionBaseModel::authFinished, this, [ = ](bool success) {
-        if (success && !m_userLoginWidget.isNull()) {
-            m_userLoginWidget->resetAllState();
-        }
-    });
     connect(m_userLoginWidget, &UserLoginWidget::requestUserKBLayoutChanged, this, [ = ](const QString & value) {
         emit requestSetLayout(m_user, value);
     });
@@ -140,6 +135,12 @@ void UserLoginInfo::beforeUnlockAction(bool is_finish)
 {
     if(is_finish){
         m_userLoginWidget->unlockSuccessAni();
+        if (!m_userLoginWidget.isNull()) {
+            //由于添加锁跳动会冲掉"验证完成"。这里只能临时关闭清理输入框
+            QTimer::singleShot(1000, this, [ = ] {
+                m_userLoginWidget->resetAllState();
+            });
+        }
     }else {
         m_userLoginWidget->unlockFailedAni();
     }
