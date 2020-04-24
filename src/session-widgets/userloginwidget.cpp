@@ -232,10 +232,10 @@ void UserLoginWidget::ShutdownPrompt(SessionBaseModel::PowerAction action)
 {
     if (action == SessionBaseModel::PowerAction::RequireRestart) {
         m_lockButton->setIcon(QIcon(":/img/bottom_actions/reboot.svg"));
-        setFaildMessage(tr("Enter your password to reboot"));
+        setFaildMessage(tr("Verify your fingerprint or password"));
     } else if (action == SessionBaseModel::PowerAction::RequireShutdown) {
         m_lockButton->setIcon(QIcon(":/img/bottom_actions/shutdown.svg"));
-        setFaildMessage(tr("Enter your password to shut down"));
+        setFaildMessage(tr("Verify your fingerprint or password"));
     } else {
         setFaildMessage("");
         resetAllState();
