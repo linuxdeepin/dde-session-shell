@@ -191,7 +191,7 @@ void ContentWidget::resizeEvent(QResizeEvent *event)
 
 bool ContentWidget::event(QEvent *event)
 {
-    if (event->type() == QEvent::KeyRelease) {
+    if (event->type() == QEvent::KeyPress) {
         QKeyEvent *key_event = static_cast<QKeyEvent *>(event);
         return handleKeyPress(key_event);
     }
