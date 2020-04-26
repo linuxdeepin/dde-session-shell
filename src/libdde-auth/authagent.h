@@ -38,6 +38,7 @@ public:
     void Responsed(const QString& password);
     void Authenticate(const QString& username);
     void Cancel();
+    int GetAuthType();
     DeepinAuthFramework *deepinAuth() { return m_deepinauth; }
 
 signals:
@@ -59,6 +60,7 @@ private:
     int  m_verifyFailed = MAX_VERIFY_FAILED;
     QString m_password;
     bool m_hasPw{false};
+    AuthFlag m_authType;
 };
 
 #endif // AUTHAGENT_H

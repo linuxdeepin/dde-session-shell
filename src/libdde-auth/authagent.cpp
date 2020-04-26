@@ -59,12 +59,18 @@ void AuthAgent::Cancel()
     pam_end(m_pamHandle, m_lastStatus);
 }
 
+int AuthAgent::GetAuthType()
+{
+    return m_authType;
+}
+
 int AuthAgent::funConversation(int num_msg, const struct pam_message **msg,
                                struct pam_response **resp, void *app_data)
 {
     AuthAgent *app_ptr = static_cast<AuthAgent *>(app_data);
     struct pam_response *aresp = nullptr;
     int idx = 0;
+    AuthFlag auth_type = AuthFlag::Fingerprint;
 
     if(app_ptr == nullptr) {
         qDebug() << "pam: application is null";
@@ -90,19 +96,22 @@ int AuthAgent::funConversation(int num_msg, const struct pam_message **msg,
             if(aresp[idx].resp == nullptr)
               goto fail;
 
+            auth_type = AuthFlag::Password;
+
             aresp[idx].resp_retcode = PAM_SUCCESS;
             break;
         }
 
         case PAM_PROMPT_ECHO_ON:
         case PAM_ERROR_MSG:{
-            qDebug() << "pam authagent: " << PAM_MSG_MEMBER(msg, idx, msg);
+            qDebug() << "pam authagent error: " << PAM_MSG_MEMBER(msg, idx, msg);
+            app_ptr->displayErrorMsg(QString::fromLocal8Bit(PAM_MSG_MEMBER(msg, idx, msg)));
             aresp[idx].resp_retcode = PAM_SUCCESS;
             break;
         }
 
         case PAM_TEXT_INFO: {
-            qDebug() << "pam authagent: " << PAM_MSG_MEMBER(msg, idx, msg);
+            qDebug() << "pam authagent info: " << PAM_MSG_MEMBER(msg, idx, msg);
             app_ptr->displayTextInfo(QString::fromLocal8Bit(PAM_MSG_MEMBER(msg, idx, msg)));
             aresp[idx].resp_retcode = PAM_SUCCESS;
             break;
@@ -113,6 +122,11 @@ int AuthAgent::funConversation(int num_msg, const struct pam_message **msg,
         }
     }
     *resp = aresp;
+    if (auth_type == AuthFlag::Password) {
+        app_ptr->m_authType = AuthFlag::Password;
+    } else {
+        app_ptr->m_authType = AuthFlag::Fingerprint;
+    }
     return PAM_SUCCESS;
 
 fail:

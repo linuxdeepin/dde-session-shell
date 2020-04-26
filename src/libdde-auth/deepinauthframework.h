@@ -20,6 +20,7 @@ public:
     friend class AuthAgent;
 
     bool isAuthenticate() const;
+    int GetAuthType();
 
 public slots:
     void Clear();

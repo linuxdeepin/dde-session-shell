@@ -30,6 +30,11 @@ bool DeepinAuthFramework::isAuthenticate() const
     return !m_authagent.isNull();
 }
 
+int DeepinAuthFramework::GetAuthType()
+{
+    return m_authagent->GetAuthType();
+}
+
 void DeepinAuthFramework::Authenticate(std::shared_ptr<User> user)
 {
     m_currentUser = user;
