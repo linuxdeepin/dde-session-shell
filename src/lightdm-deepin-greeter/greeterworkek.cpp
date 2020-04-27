@@ -136,6 +136,7 @@ void GreeterWorkek::switchToUser(std::shared_ptr<User> user)
     json["Uid"] = static_cast<int>(user->uid());
     json["Type"] = user->type();
     m_lockInter->SwitchToUser(QString(QJsonDocument(json).toJson(QJsonDocument::Compact))).waitForFinished();
+    //由于后端开启了抢占模式，因此关闭此处的取消认证请求
     m_greeter->cancelAuthentication();
 
     //防止切换后用户后dbus没有发送UserChanged
@@ -156,7 +157,8 @@ void GreeterWorkek::authUser(const QString &password)
     qDebug() << "start authentication of user: " << user->name();
 
     if (m_greeter->authenticationUser() != user->name()) {
-        m_greeter->cancelAuthentication();
+        //由于后端开启了抢占模式，因此关闭此处的取消认证请求
+        //m_greeter->cancelAuthentication();
         QTimer::singleShot(100, this, [=] { m_greeter->authenticate(user->name()); });
     }
     else {
@@ -374,9 +376,10 @@ void GreeterWorkek::recoveryUserKBState(std::shared_ptr<User> user)
 
 void GreeterWorkek::resetLightdmAuth(std::shared_ptr<User> user,int delay_time , bool is_respond)
 {
-    if (m_greeter->inAuthentication()) {
-        m_greeter->cancelAuthentication();
-    }
+    //由于后端开启了抢占模式，因此关闭此处的取消认证请求
+    //if (m_greeter->inAuthentication()) {
+    //    m_greeter->cancelAuthentication();
+    //}
     QTimer::singleShot(delay_time, this, [ = ] {
         m_greeter->authenticate(user->name());
         if (is_respond) {

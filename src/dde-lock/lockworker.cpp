@@ -285,6 +285,7 @@ void LockWorker::onUnlockFinished(bool unlocked)
 
     if (!unlocked && m_authFramework->GetAuthType() == AuthFlag::Password) {
         qDebug() << "Authorization password failed!";
+        emit m_model->authFaildTipsMessage(tr("Wrong Password"));
 
         if (m_model->currentUser()->isLockForNum()) {
             m_model->currentUser()->startLock();
