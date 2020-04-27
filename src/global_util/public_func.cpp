@@ -24,9 +24,16 @@
  */
 
 #include "public_func.h"
+#include <QFile>
+#include "constants.h"
 
 QPixmap loadPixmap(const QString &file)
 {
+
+    if(!QFile::exists(file)){
+        return QPixmap(DDESESSIONCC::LAYOUTBUTTON_HEIGHT,DDESESSIONCC::LAYOUTBUTTON_HEIGHT);
+    }
+
     qreal ratio = 1.0;
     qreal devicePixel = qApp->devicePixelRatio();
 
