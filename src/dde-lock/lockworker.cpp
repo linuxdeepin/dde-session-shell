@@ -178,7 +178,7 @@ void LockWorker::enableZoneDetected(bool disable)
 
 void LockWorker::onDisplayErrorMsg(const QString &msg)
 {
-    emit m_model->authFaildMessage(msg);
+    emit m_model->authFaildTipsMessage(msg);
 }
 
 void LockWorker::onDisplayTextInfo(const QString &msg)
@@ -284,11 +284,17 @@ void LockWorker::onUnlockFinished(bool unlocked)
     m_authenticating = false;
 
     if (!unlocked && m_authFramework->GetAuthType() == AuthFlag::Password) {
-        qDebug() << "Authorization failed!";
+        qDebug() << "Authorization password failed!";
 
         if (m_model->currentUser()->isLockForNum()) {
             m_model->currentUser()->startLock();
         }
+        return;
+    } else if(!unlocked && m_authFramework->GetAuthType() != AuthFlag::Password) {
+        qDebug() << "Authorization finger failed!";
+
+        m_authFramework->Clear();
+        m_authFramework->Authenticate(m_model->currentUser());
         return;
     }
 

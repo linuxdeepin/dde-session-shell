@@ -113,18 +113,12 @@ void UserLoginWidget::setFaildMessage(const QString &message, SessionBaseModel::
 //密码输入错误,设置错误信息
 void UserLoginWidget::setFaildTipMessage(const QString &message, SessionBaseModel::AuthFaildType type)
 {
-    m_accountEdit->lineEdit()->setEnabled(true);
-    m_passwordEdit->hideLoadSlider();
-
-    if (message.isEmpty()) {
+    if (m_isLock && !message.isEmpty()) {
         m_passwordEdit->hideAlertMessage();
-    } else if (m_passwordEdit->isVisible()) {
-        m_passwordEdit->showAlertMessage(message, -1);
-        if (type == SessionBaseModel::KEYBOARD) {
-            m_passwordEdit->lineEdit()->selectAll();
-            m_isAlertMessageShow = true;
-        }
+        return;
     }
+
+    m_passwordEdit->showAlertMessage(message, 1000);
 }
 
 //设置窗体显示模式

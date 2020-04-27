@@ -275,15 +275,12 @@ void GreeterWorkek::message(QString text, QLightDM::Greeter::MessageType type)
     case QLightDM::Greeter::MessageTypeInfo:
         if (m_isThumbAuth || m_islock) break;
 
+        qDebug() << "message about INFO" << text.toUtf8();
         emit m_model->authFaildMessage(QString(dgettext("fprintd", text.toUtf8())));
         break;
     case QLightDM::Greeter::MessageTypeError:
-        qWarning() << "error message from lightdm: " << text;
-        if (text == "Failed to match fingerprint") {
-            emit m_model->authFaildMessage("");
-            //V20版本新需求，在指纹解锁失败和超时情况下，不提示任何信息
-            //emit m_model->authFaildTipsMessage(tr("Failed to match fingerprint"));
-        }
+        qDebug() << "message about ERROR" << text.toUtf8();
+        emit m_model->authFaildTipsMessage(QString(dgettext("fprintd", text.toUtf8())));
         break;
     }
 }
