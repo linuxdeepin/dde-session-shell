@@ -137,10 +137,10 @@ void GreeterWorkek::switchToUser(std::shared_ptr<User> user)
     json["Type"] = user->type();
     m_lockInter->SwitchToUser(QString(QJsonDocument(json).toJson(QJsonDocument::Compact))).waitForFinished();
     //由于后端开启了抢占模式，因此关闭此处的取消认证请求
-    m_greeter->cancelAuthentication();
+//    m_greeter->cancelAuthentication();
 
     //防止切换后用户后dbus没有发送UserChanged
-    onCurrentUserChanged(QJsonDocument(json).toJson());
+//    onCurrentUserChanged(QJsonDocument(json).toJson());
 }
 
 void GreeterWorkek::authUser(const QString &password)
@@ -160,6 +160,7 @@ void GreeterWorkek::authUser(const QString &password)
         //由于后端开启了抢占模式，因此关闭此处的取消认证请求
         //m_greeter->cancelAuthentication();
         QTimer::singleShot(100, this, [=] { m_greeter->authenticate(user->name()); });
+        resetLightdmAuth(user, 100, false);
     }
     else {
         if (m_greeter->inAuthentication()) {
@@ -225,7 +226,8 @@ void GreeterWorkek::onCurrentUserChanged(const QString &user)
 void GreeterWorkek::userAuthForLightdm(std::shared_ptr<User> user)
 {
     if (!user->isNoPasswdGrp()) {
-        resetLightdmAuth(m_model->currentUser(), 200, true);
+        //后端需要大约600ms时间去释放指纹设备
+        resetLightdmAuth(user, 600, true);
     }
 }
 

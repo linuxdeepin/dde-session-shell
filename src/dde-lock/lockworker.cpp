@@ -87,6 +87,8 @@ LockWorker::LockWorker(SessionBaseModel *const model, QObject *parent)
         //userAuthForLock(user_ptr);
     });
 
+    connect(m_lockInter, &DBusLockService::UserChanged, this, &LockWorker::onCurrentUserChanged);
+
     connect(m_lockInter, &DBusLockService::Event, this, &LockWorker::lockServiceEvent);
     connect(model, &SessionBaseModel::onStatusChanged, this, [ = ](SessionBaseModel::ModeStatus status) {
         if (status == SessionBaseModel::ModeStatus::PowerMode) {
@@ -268,6 +270,28 @@ void LockWorker::lockServiceEvent(quint32 eventType, quint32 pid, const QString 
     }
 }
 
+void LockWorker::onCurrentUserChanged(const QString &user)
+{
+    const QJsonObject obj = QJsonDocument::fromJson(user.toUtf8()).object();
+    m_currentUserUid = static_cast<uint>(obj["Uid"].toInt());
+
+    for (std::shared_ptr<User> user : m_model->userList()) {
+        if (user->uid() == m_currentUserUid) {
+            m_model->setCurrentUser(user);
+            userAuthForLightdm(user);
+            break;
+        }
+    }
+}
+
+void LockWorker::userAuthForLightdm(std::shared_ptr<User> user)
+{
+    if (!user->isNoPasswdGrp()) {
+        //后端需要大约600ms时间去释放指纹设备
+        resetLightdmAuth(user, 600);
+    }
+}
+
 void LockWorker::onUnlockFinished(bool unlocked)
 {
     // only unlock succeed will close fprint device
@@ -309,4 +333,12 @@ void LockWorker::onUnlockFinished(bool unlocked)
     default:
         break;
     }
+}
+
+void LockWorker::resetLightdmAuth(std::shared_ptr<User> user,int delay_time)
+{
+    m_authFramework->Clear();
+    QTimer::singleShot(delay_time, this, [ = ] {
+        m_authFramework->Authenticate(user);
+    });
 }

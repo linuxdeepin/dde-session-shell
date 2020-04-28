@@ -42,7 +42,10 @@ void AuthAgent::Authenticate(const QString& username)
         qDebug() << Q_FUNC_INFO << pam_strerror(m_pamHandle, ret);
     }
 
+    QPointer<AuthAgent> isThreadAlive(this);
     m_lastStatus = pam_authenticate(m_pamHandle, 0);
+    if (!isThreadAlive)
+        return;
     QString msg = QString();
 
     if(m_lastStatus == PAM_SUCCESS) {
@@ -86,9 +89,12 @@ int AuthAgent::funConversation(int num_msg, const struct pam_message **msg,
     for (idx = 0; idx < num_msg; ++idx) {
         switch(PAM_MSG_MEMBER(msg, idx, msg_style)) {
         case PAM_PROMPT_ECHO_OFF: {
+            QPointer<AuthAgent> isThreadAlive(app_ptr);
             while (!app_ptr->m_hasPw) {
                 sleep(1);
             }
+            if (!isThreadAlive)
+                return PAM_CONV_ERR;
 
             QString password = app_ptr->deepinAuth()->RequestEchoOff(PAM_MSG_MEMBER(msg, idx, msg));
             aresp[idx].resp = strdup(password.toLocal8Bit().data());

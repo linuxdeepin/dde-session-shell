@@ -19,8 +19,11 @@ DeepinAuthFramework::DeepinAuthFramework(DeepinAuthInterface *inter, QObject *pa
 
 DeepinAuthFramework::~DeepinAuthFramework()
 {
-    if(m_authThread != nullptr) {
-        if(m_authThread->isRunning()) m_authThread->quit();
+    if (m_authThread != nullptr) {
+        if (m_authThread->isRunning()) {
+            m_authThread->terminate();
+            m_authThread->wait(1000);
+        }
         m_authThread->deleteLater();
     }
 }
