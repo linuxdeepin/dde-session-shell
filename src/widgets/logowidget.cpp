@@ -98,8 +98,9 @@ QString LogoWidget::getVersion() {
 
     qDebug() << "Deepin Version:" << version << type;
 
+    return version.split(" ")[0];
 //    return QString("%1 %2 %3").arg(version).arg(type).arg(milestone);
-    return QString("%1 %2").arg(type).arg(version);
+//    return QString("%1 %2").arg(type).arg(version);
 }
 
 LogoWidget::~LogoWidget()
