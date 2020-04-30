@@ -259,6 +259,9 @@ void GreeterWorkek::prompt(QString text, QLightDM::Greeter::PromptType type)
 // TODO(justforlxz): 错误信息应该存放在User类中, 切换用户后其他控件读取错误信息，而不是在这里分发。
 void GreeterWorkek::message(QString text, QLightDM::Greeter::MessageType type)
 {
+    //息屏状态下亮屏，由于后端没有亮屏信号，只能用此临时办法
+    system("xset dpms force on");
+
     qDebug() << "pam message: " << text << type;
 
     if (text == "Verification timed out") {

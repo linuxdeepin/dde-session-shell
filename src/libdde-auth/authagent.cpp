@@ -46,6 +46,9 @@ void AuthAgent::Authenticate(const QString& username)
     m_lastStatus = pam_authenticate(m_pamHandle, 0);
     if (!isThreadAlive)
         return;
+
+    //息屏状态下亮屏，由于后端没有亮屏信号，只能用此临时办法
+    system("xset dpms force on");
     QString msg = QString();
 
     if(m_lastStatus == PAM_SUCCESS) {
@@ -88,6 +91,7 @@ int AuthAgent::funConversation(int num_msg, const struct pam_message **msg,
 
     for (idx = 0; idx < num_msg; ++idx) {
         switch(PAM_MSG_MEMBER(msg, idx, msg_style)) {
+
         case PAM_PROMPT_ECHO_OFF: {
             QPointer<AuthAgent> isThreadAlive(app_ptr);
             while (!app_ptr->m_hasPw) {
