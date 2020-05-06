@@ -41,7 +41,7 @@ int DeepinAuthFramework::GetAuthType()
 void DeepinAuthFramework::Authenticate(std::shared_ptr<User> user)
 {
     m_currentUser = user;
-    if (user->isLock()) return;
+    if (user->isLock() || !m_authagent.isNull()) return;
 
     qDebug() << Q_FUNC_INFO << "pam auth start";
     m_authagent = new AuthAgent(this);

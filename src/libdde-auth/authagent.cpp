@@ -76,7 +76,7 @@ int AuthAgent::funConversation(int num_msg, const struct pam_message **msg,
     AuthAgent *app_ptr = static_cast<AuthAgent *>(app_data);
     struct pam_response *aresp = nullptr;
     int idx = 0;
-    AuthFlag auth_type = AuthFlag::Fingerprint;
+    AuthFlag auth_type = AuthFlag::Password;
 
     if(app_ptr == nullptr) {
         qDebug() << "pam: application is null";
@@ -116,6 +116,7 @@ int AuthAgent::funConversation(int num_msg, const struct pam_message **msg,
         case PAM_ERROR_MSG:{
             qDebug() << "pam authagent error: " << PAM_MSG_MEMBER(msg, idx, msg);
             app_ptr->displayErrorMsg(QString::fromLocal8Bit(PAM_MSG_MEMBER(msg, idx, msg)));
+            auth_type = AuthFlag::Fingerprint;
             aresp[idx].resp_retcode = PAM_SUCCESS;
             break;
         }
@@ -134,7 +135,7 @@ int AuthAgent::funConversation(int num_msg, const struct pam_message **msg,
     *resp = aresp;
     if (auth_type == AuthFlag::Password) {
         app_ptr->m_authType = AuthFlag::Password;
-    } else {
+    } else if (auth_type == AuthFlag::Fingerprint) {
         app_ptr->m_authType = AuthFlag::Fingerprint;
     }
     return PAM_SUCCESS;
