@@ -143,11 +143,13 @@ int main(int argc, char *argv[])
             model->setIsShow(true);
         }
 
-        ShutdownFrontDBus adaptor(dbusAgent); Q_UNUSED(adaptor);
+        ShutdownFrontDBus adaptor(dbusAgent,model); Q_UNUSED(adaptor);
         QDBusConnection::sessionBus().registerObject(DBUS_PATH, dbusAgent);
 
         return app.exec();
     }
+
+
 
     qWarning() << "have unknow error!";
     return -1;
