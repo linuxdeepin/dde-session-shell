@@ -34,7 +34,6 @@ KeyboardMonitor::KeyboardMonitor() : QThread()
 {
     if(DGuiApplicationHelper::isXWindowPlatform()) {
         keyBoardPlatform = new KeyboardPlantformX11();
-        keyBoardPlatform->setNumlockStatus(true);
     } else {
         keyBoardPlatform = new KeyboardPlantformWayland();
     }
