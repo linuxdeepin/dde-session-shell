@@ -14,12 +14,16 @@ DeepinAuthFramework::DeepinAuthFramework(DeepinAuthInterface *inter, QObject *pa
     , m_interface(inter)
 {
     m_authThread = new QThread;
-    m_authThread->start();
+    m_authagent = new AuthAgent(this);
+    m_authagent->moveToThread(m_authThread);
 }
 
 DeepinAuthFramework::~DeepinAuthFramework()
 {
-    if (m_authThread != nullptr) {
+    if (!m_authagent.isNull()) {
+        delete m_authagent;
+        m_authagent = nullptr;
+
         if (m_authThread->isRunning()) {
             m_authThread->terminate();
             m_authThread->wait(1000);
@@ -30,7 +34,7 @@ DeepinAuthFramework::~DeepinAuthFramework()
 
 bool DeepinAuthFramework::isAuthenticate() const
 {
-    return !m_authagent.isNull();
+    return !m_authagent.isNull() && m_authThread->isRunning();
 }
 
 int DeepinAuthFramework::GetAuthType()
@@ -40,26 +44,26 @@ int DeepinAuthFramework::GetAuthType()
 
 void DeepinAuthFramework::Authenticate(std::shared_ptr<User> user)
 {
-    m_currentUser = user;
-    if (user->isLock() || !m_authagent.isNull()) return;
+    if (user->isLock()) return;
 
-    qDebug() << Q_FUNC_INFO << "pam auth start";
-    m_authagent = new AuthAgent(this);
-    m_authagent->moveToThread(m_authThread);
+    m_password.clear();
+
+    if (m_authThread->isRunning()) {
+        m_authThread->terminate();
+        m_authThread->wait();
+    }
+
+    qDebug() << Q_FUNC_INFO << "pam auth start" << m_authagent->thread()->loopLevel();
+
+    m_currentUser = user;
+
+    if (!m_authThread->isRunning()) {
+        m_authThread->start();
+    }
 
     QTimer::singleShot(100, m_authagent, [ = ]() {
         m_authagent->Authenticate(user->name());
     });
-}
-
-void DeepinAuthFramework::Clear()
-{
-    if (!m_authagent.isNull()) {
-        delete m_authagent;
-        m_authagent = nullptr;
-    }
-
-    m_password.clear();
 }
 
 void DeepinAuthFramework::Responsed(const QString &password)

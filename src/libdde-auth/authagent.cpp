@@ -17,6 +17,7 @@
 
 AuthAgent::AuthAgent(DeepinAuthFramework *deepin)
     : m_deepinauth(deepin)
+    , m_pamHandle(nullptr)
 {
     connect(this, &AuthAgent::displayErrorMsg, deepin, &DeepinAuthFramework::DisplayErrorMsg, Qt::QueuedConnection);
     connect(this, &AuthAgent::displayTextInfo, deepin, &DeepinAuthFramework::DisplayTextInfo, Qt::QueuedConnection);
@@ -57,12 +58,17 @@ void AuthAgent::Authenticate(const QString& username)
         qDebug() << Q_FUNC_INFO << pam_strerror(m_pamHandle, m_lastStatus);
     }
 
+    m_hasPw = false;
+
     emit respondResult(msg);
 }
 
 void AuthAgent::Cancel()
 {
-    pam_end(m_pamHandle, m_lastStatus);
+    if (m_pamHandle != nullptr) {
+        pam_end(m_pamHandle, m_lastStatus);
+        m_pamHandle = nullptr;
+    }
 }
 
 int AuthAgent::GetAuthType()
@@ -78,7 +84,8 @@ int AuthAgent::funConversation(int num_msg, const struct pam_message **msg,
     int idx = 0;
     AuthFlag auth_type = AuthFlag::Password;
 
-    if(app_ptr == nullptr) {
+    QPointer<AuthAgent> isThreadAlive(app_ptr);
+    if (!isThreadAlive) {
         qDebug() << "pam: application is null";
         return PAM_CONV_ERR;
     }
@@ -93,12 +100,15 @@ int AuthAgent::funConversation(int num_msg, const struct pam_message **msg,
         switch(PAM_MSG_MEMBER(msg, idx, msg_style)) {
 
         case PAM_PROMPT_ECHO_OFF: {
-            QPointer<AuthAgent> isThreadAlive(app_ptr);
             while (!app_ptr->m_hasPw) {
                 sleep(1);
             }
-            if (!isThreadAlive)
+
+            QPointer<DeepinAuthFramework> isDeepinAlive(app_ptr->deepinAuth());
+            if(!isDeepinAlive) {
+                qDebug() << "pam: deepin auth framework is null";
                 return PAM_CONV_ERR;
+            }
 
             QString password = app_ptr->deepinAuth()->RequestEchoOff(PAM_MSG_MEMBER(msg, idx, msg));
             aresp[idx].resp = strdup(password.toLocal8Bit().data());

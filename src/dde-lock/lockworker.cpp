@@ -33,18 +33,10 @@ LockWorker::LockWorker(SessionBaseModel *const model, QObject *parent)
     m_currentUserUid = getuid();
     m_authFramework = new DeepinAuthFramework(this, this);
 
-    QObject::connect(model, &SessionBaseModel::currentUserChanged, this, [ = ](std::shared_ptr<User> user) {
-        m_authFramework->Clear();
-        m_authFramework->Authenticate(user);
-    });
-
     QObject::connect(model, &SessionBaseModel::visibleChanged, this, [ = ](bool visible){
         auto user = m_model->currentUser();
-        if(visible && user != nullptr) {
-            if(!m_authFramework->isAuthenticate()) {
-                m_authFramework->Clear();
-                m_authFramework->Authenticate(user);
-            }
+        if(visible && user->uid() == m_currentUserUid) {
+            m_authFramework->Authenticate(user);
         }
     });
 
@@ -71,7 +63,6 @@ LockWorker::LockWorker(SessionBaseModel *const model, QObject *parent)
 
     connect(model, &SessionBaseModel::lockChanged, this, [ = ](bool lock) {
         if (!lock) {
-            m_authFramework->Clear();
             m_authFramework->Authenticate(m_model->currentUser());
         }
     });
@@ -86,8 +77,6 @@ LockWorker::LockWorker(SessionBaseModel *const model, QObject *parent)
 
         //userAuthForLock(user_ptr);
     });
-
-    connect(m_lockInter, &DBusLockService::UserChanged, this, &LockWorker::onCurrentUserChanged);
 
     connect(m_lockInter, &DBusLockService::Event, this, &LockWorker::lockServiceEvent);
     connect(model, &SessionBaseModel::onStatusChanged, this, [ = ](SessionBaseModel::ModeStatus status) {
@@ -193,7 +182,6 @@ void LockWorker::onPasswordResult(const QString &msg)
     onUnlockFinished(!msg.isEmpty());
 
     if(msg.isEmpty()) {
-        m_authFramework->Clear();
         m_authFramework->Authenticate(m_model->currentUser());
     }
 }
@@ -270,35 +258,8 @@ void LockWorker::lockServiceEvent(quint32 eventType, quint32 pid, const QString 
     }
 }
 
-void LockWorker::onCurrentUserChanged(const QString &user)
-{
-    const QJsonObject obj = QJsonDocument::fromJson(user.toUtf8()).object();
-    m_currentUserUid = static_cast<uint>(obj["Uid"].toInt());
-
-    for (std::shared_ptr<User> user : m_model->userList()) {
-        if (user->uid() == m_currentUserUid) {
-            m_model->setCurrentUser(user);
-            userAuthForLightdm(user);
-            break;
-        }
-    }
-}
-
-void LockWorker::userAuthForLightdm(std::shared_ptr<User> user)
-{
-    if (!user->isNoPasswdGrp()) {
-        //后端需要大约600ms时间去释放指纹设备
-        resetLightdmAuth(user, 600);
-    }
-}
-
 void LockWorker::onUnlockFinished(bool unlocked)
 {
-    // only unlock succeed will close fprint device
-    if (unlocked && isDeepin()) {
-        m_authFramework->Clear();
-    }
-
     emit m_model->authFinished(unlocked);
 
     if (unlocked) {
@@ -315,12 +276,6 @@ void LockWorker::onUnlockFinished(bool unlocked)
             m_model->currentUser()->startLock();
         }
         return;
-    } else if(!unlocked && m_authFramework->GetAuthType() != AuthFlag::Password) {
-        qDebug() << "Authorization finger failed!";
-
-        m_authFramework->Clear();
-        m_authFramework->Authenticate(m_model->currentUser());
-        return;
     }
 
     switch (m_model->powerAction()) {
@@ -333,12 +288,4 @@ void LockWorker::onUnlockFinished(bool unlocked)
     default:
         break;
     }
-}
-
-void LockWorker::resetLightdmAuth(std::shared_ptr<User> user,int delay_time)
-{
-    m_authFramework->Clear();
-    QTimer::singleShot(delay_time, this, [ = ] {
-        m_authFramework->Authenticate(user);
-    });
 }

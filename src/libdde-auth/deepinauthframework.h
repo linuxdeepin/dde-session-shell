@@ -23,7 +23,6 @@ public:
     int GetAuthType();
 
 public slots:
-    void Clear();
     void Authenticate(std::shared_ptr<User> user);
     void Responsed(const QString &password);
 
