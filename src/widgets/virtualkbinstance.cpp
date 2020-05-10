@@ -6,7 +6,6 @@
 #include <QTimer>
 #include <QDebug>
 #include <QResizeEvent>
-#include <QBoxLayout>
 
 VirtualKBInstance &VirtualKBInstance::Instance()
 {
@@ -18,7 +17,7 @@ QWidget *VirtualKBInstance::virtualKBWidget() {
     return m_virtualKBWidget;
 }
 
-void VirtualKBInstance::init(QWidget *parent)
+void VirtualKBInstance::init()
 {
     if (m_virtualKBWidget) {
         emit initFinished();
@@ -26,39 +25,29 @@ void VirtualKBInstance::init(QWidget *parent)
     }
 
     QProcess * p = new QProcess(this);
-    connect(p, &QProcess::readyReadStandardOutput, [this, p, parent] {
-        QByteArray output = p->readAllStandardOutput();
-        if (output.isEmpty()) return;
-        int xid = atoi(output.trimmed().toStdString().c_str());
-        debug("init", "xid: " + QString::number(xid));
-        QWindow * w = QWindow::fromWinId(xid);
-        m_virtualKBWidget = QWidget::createWindowContainer(w, nullptr, Qt::FramelessWindowHint);
-        m_virtualKBWidget->installEventFilter(this);
-        m_virtualKBWidget->setFixedSize(600, 200);
-        m_virtualKBWidget->setParent(parent);
-        m_virtualKBWidget->raise();
 
-        QTimer::singleShot(1000, [=] {
-//            m_virtualKBWidget->setVisible(false);
+    connect(p, &QProcess::readyReadStandardOutput, [this, p] {
+        QByteArray output = p->readAllStandardOutput();
+
+        if (output.isEmpty()) return;
+
+        int xid = atoi(output.trimmed().toStdString().c_str());
+
+        QWindow * w = QWindow::fromWinId(xid);
+        m_virtualKBWidget = QWidget::createWindowContainer(w);
+        m_virtualKBWidget->setFixedSize(600, 200);
+
+        QTimer::singleShot(300, [=] {
+            m_virtualKBWidget->hide();
             emit initFinished();
-            this->debug("inti", "create virtual kb end!");
         });
     });
 
-    debug("inti", "start onboard...");
-
-    p->start("onboard", QStringList() << "-e" << "--layout" << "Small" << "--size" << "60x5" << "-a");
-}
-
-void VirtualKBInstance::debug(const QString &type, const QString &info)
-{
-    qDebug() << QString("[VirtualKB-%1]").arg(type) << info << endl;
+    p->start("onboard", QStringList() << "-e" << "--layout" << "Small");
 }
 
 bool VirtualKBInstance::eventFilter(QObject *watched, QEvent *event)
 {
-//    this->debug("init", QString("event type: %1").arg(QString::number(event->type())));
-
     if (watched == m_virtualKBWidget && event->type() == QEvent::Resize) {
         QResizeEvent *e = static_cast<QResizeEvent*>(event);
         return e->size() != QSize(600, 200);
@@ -71,5 +60,4 @@ VirtualKBInstance::VirtualKBInstance(QObject *parent)
     : QObject(parent)
     , m_virtualKBWidget(nullptr)
 {
-
 }

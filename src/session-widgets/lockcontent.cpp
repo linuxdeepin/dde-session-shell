@@ -94,11 +94,10 @@ LockContent::LockContent(SessionBaseModel *const model, QWidget *parent)
         if (hasvirtualkb && !m_virtualKB) {
             connect(&VirtualKBInstance::Instance(), &VirtualKBInstance::initFinished, this, [&] {
                 m_virtualKB = VirtualKBInstance::Instance().virtualKBWidget();
-                this->updateVirtualKBPosition();
                 m_controlWidget->setVirtualKBVisible(true);
             }, Qt::QueuedConnection);
-            VirtualKBInstance::Instance().debug("inti", "init VirtualKB");
-            VirtualKBInstance::Instance().init(this);}
+            VirtualKBInstance::Instance().init();
+        }
     };
 
     connect(model, &SessionBaseModel::hasVirtualKBChanged, this, initVirtualKB);
@@ -285,9 +284,7 @@ void LockContent::onBlurDone(const QString &source, const QString &blur, bool st
 
 void LockContent::toggleVirtualKB()
 {
-    VirtualKBInstance::Instance().debug("toggle", "toggle VirtualKB");
     if (!m_virtualKB) {
-        VirtualKBInstance::Instance().debug("toggle", "init VirtaulKB");
         VirtualKBInstance::Instance();
         QTimer::singleShot(500, this, [ = ] {
             m_virtualKB = VirtualKBInstance::Instance().virtualKBWidget();
@@ -296,8 +293,13 @@ void LockContent::toggleVirtualKB()
         });
         return;
     }
+
+    m_virtualKB->setParent(this);
     m_virtualKB->setVisible(!m_virtualKB->isVisible());
+    m_virtualKB->raise();
     m_userLoginInfo->getUserLoginWidget()->setPassWordEditFocus();
+
+    updateVirtualKBPosition();
 }
 
 void LockContent::updateVirtualKBPosition()
@@ -323,8 +325,6 @@ void LockContent::onUserListChanged(QList<std::shared_ptr<User> > list)
 
 void LockContent::tryGrabKeyboard()
 {
-    VirtualKBInstance::Instance().debug("try Keyboard", " m_faiures = " + QString::number(m_failures));
-
 #ifdef QT_DEBUG
     return;
 #endif
