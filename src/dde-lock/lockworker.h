@@ -53,8 +53,6 @@ private:
     void onUnlockFinished(bool unlocked);
 
     void onCurrentUserChanged(const QString &user);
-    void userAuthForLightdm(std::shared_ptr<User> user);
-    void resetLightdmAuth(std::shared_ptr<User> user,int delay_time);
 
 private:
     bool m_authenticating;

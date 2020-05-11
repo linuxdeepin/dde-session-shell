@@ -33,12 +33,15 @@ LockWorker::LockWorker(SessionBaseModel *const model, QObject *parent)
     m_currentUserUid = getuid();
     m_authFramework = new DeepinAuthFramework(this, this);
 
+    //该信号用来处理初始化lock、锁屏或者切换用户(锁屏+登陆)三种场景的指纹认证
     QObject::connect(model, &SessionBaseModel::visibleChanged, this, [ = ](bool visible){
         auto user = m_model->currentUser();
         if(visible && user->uid() == m_currentUserUid) {
             m_authFramework->Authenticate(user);
         }
     });
+    //该信号用来处理初始化切换用户(锁屏+锁屏)或者切换用户(锁屏+登陆)两种种场景的指纹认证
+    connect(m_lockInter, &DBusLockService::UserChanged, this, &LockWorker::onCurrentUserChanged);
 
     connect(model, &SessionBaseModel::onPowerActionChanged, this, [ = ](SessionBaseModel::PowerAction poweraction) {
         switch (poweraction) {
@@ -287,5 +290,17 @@ void LockWorker::onUnlockFinished(bool unlocked)
         return;
     default:
         break;
+    }
+}
+
+void LockWorker::onCurrentUserChanged(const QString &user)
+{
+    const QJsonObject obj = QJsonDocument::fromJson(user.toUtf8()).object();
+
+    for (std::shared_ptr<User> user_ptr : m_model->userList()) {
+        if (static_cast<uint>(obj["Uid"].toInt()) == m_currentUserUid) {
+            m_authFramework->Authenticate(user_ptr);
+            break;
+        }
     }
 }
