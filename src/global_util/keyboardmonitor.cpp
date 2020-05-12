@@ -32,11 +32,12 @@ DGUI_USE_NAMESPACE
 
 KeyboardMonitor::KeyboardMonitor() : QThread()
 {
-    if(DGuiApplicationHelper::isXWindowPlatform()) {
-        keyBoardPlatform = new KeyboardPlantformX11();
-    } else {
-        keyBoardPlatform = new KeyboardPlantformWayland();
-    }
+//    if(DGuiApplicationHelper::isXWindowPlatform()) {
+//        keyBoardPlatform = new KeyboardPlantformX11();
+//    } else {
+//        keyBoardPlatform = new KeyboardPlantformWayland();
+//    }
+    keyBoardPlatform = new KeyboardPlantformX11();
 
     connect(keyBoardPlatform, &KeyBoardPlatform::capslockStatusChanged, this, &KeyboardMonitor::capslockStatusChanged);
     connect(keyBoardPlatform, &KeyBoardPlatform::numlockStatusChanged, this, &KeyboardMonitor::numlockStatusChanged);
