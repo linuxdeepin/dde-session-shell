@@ -296,11 +296,15 @@ void LockWorker::onUnlockFinished(bool unlocked)
 void LockWorker::onCurrentUserChanged(const QString &user)
 {
     const QJsonObject obj = QJsonDocument::fromJson(user.toUtf8()).object();
-
-    for (std::shared_ptr<User> user_ptr : m_model->userList()) {
-        if (static_cast<uint>(obj["Uid"].toInt()) == m_currentUserUid) {
-            m_authFramework->Authenticate(user_ptr);
-            break;
+    auto user_cur = static_cast<uint>(obj["Uid"].toInt());
+    if (user_cur == m_currentUserUid) {
+        for (std::shared_ptr<User> user_ptr : m_model->userList()) {
+            if (user_ptr->uid() == m_currentUserUid) {
+                m_authFramework->Authenticate(user_ptr);
+                return;
+            }
         }
+    } else {
+        return;
     }
 }
