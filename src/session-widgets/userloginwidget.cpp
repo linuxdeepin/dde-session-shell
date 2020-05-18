@@ -230,9 +230,6 @@ void UserLoginWidget::ShutdownPrompt(SessionBaseModel::PowerAction action)
     } else if (action == SessionBaseModel::PowerAction::RequireShutdown) {
         m_lockButton->setIcon(QIcon(":/img/bottom_actions/shutdown.svg"));
         setFaildMessage(tr("Verify your fingerprint or password"));
-    } else {
-        setFaildMessage("");
-        resetAllState();
     }
 }
 
