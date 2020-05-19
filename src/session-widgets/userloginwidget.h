@@ -28,6 +28,9 @@
 #include <DBlurEffectWidget>
 #include <DFloatingButton>
 
+#include <com_deepin_daemon_appearance.h>
+using Appearance = com::deepin::daemon::Appearance;
+
 DWIDGET_USE_NAMESPACE
 
 class QLabel;
@@ -159,6 +162,7 @@ private:
     int m_indexSuc = 0;
     int m_indexFail = 0;
     int m_action;                                   //重启或关机行为记录
+    Appearance *m_dbusAppearance;
 };
 
 #endif // USERLOGINWIDGET_H
