@@ -94,7 +94,6 @@ LockWorker::LockWorker(SessionBaseModel *const model, QObject *parent)
     connect(m_sessionManager, &SessionManager::Unlock, this, [ = ] {
         m_authenticating = false;
         m_password.clear();
-        emit m_model->authFinished(true);
     });
 
     const bool &LockNoPasswordValue { valueByQSettings<bool>("", "lockNoPassword", false) };
