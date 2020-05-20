@@ -700,19 +700,26 @@ void UserLoginWidget::updateNameLabel()
 
 void UserLoginWidget::unlockSuccessAni()
 {
-    if(timer == nullptr)
-        timer = new QTimer(this);
+    if(timer != nullptr) {
+        timer->stop();
+        delete timer;
+        timer = nullptr;
+        m_indexFail = 0;
+        m_lockButton->setIcon(DStyle::SP_LockElement);
+    }
+    timer = new QTimer(this);
+
     connect(timer, &QTimer::timeout, [&](){
-        if((index % 12) <= 11){
-            QString s = QString(":/img/unlockTrue/unlock_%1.svg").arg(index % 12);
+        if((m_indexSuc % 12) <= 11){
+            QString s = QString(":/img/unlockTrue/unlock_%1.svg").arg(m_indexSuc % 12);
             m_lockButton->setIcon(QIcon(s));
         }
-        index++;
-        if(index == 15){
+        m_indexSuc++;
+        if(m_indexSuc >= 15){
             timer->stop();
             delete timer;
             timer = nullptr;
-            index = 0;
+            m_indexSuc = 0;
             emit unlockActionFinish();
             m_lockButton->setIcon(DStyle::SP_LockElement);
         }
@@ -722,19 +729,26 @@ void UserLoginWidget::unlockSuccessAni()
 
 void UserLoginWidget::unlockFailedAni()
 {
-    if(timer == nullptr)
-        timer = new QTimer(this);
+    if(timer != nullptr) {
+        timer->stop();
+        delete timer;
+        timer = nullptr;
+        m_indexSuc = 0;
+        m_lockButton->setIcon(DStyle::SP_LockElement);
+    }
+    timer = new QTimer(this);
+
     connect(timer, &QTimer::timeout, [&](){
-        if((index%16) <= 15){
-            QString s = QString(":/img/unlockFalse/unlock_error_%1.svg").arg(index % 16);
+        if((m_indexFail%16) <= 15){
+            QString s = QString(":/img/unlockFalse/unlock_error_%1.svg").arg(m_indexFail % 16);
             m_lockButton->setIcon(QIcon(s));
         }
-        index++;
-        if(index == 20){
+        m_indexFail++;
+        if(m_indexFail >= 20){
             timer->stop();
             delete timer;
             timer = nullptr;
-            index = 0;
+            m_indexFail = 0;
             m_lockButton->setIcon(DStyle::SP_LockElement);
         }
     });

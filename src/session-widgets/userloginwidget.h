@@ -155,7 +155,8 @@ private:
     bool m_isAlertMessageShow;                             //判断密码错误提示是否显示
     QString m_name;
     QTimer *timer;                                     //切换图标计时器
-    int index = 0;
+    int m_indexSuc = 0;
+    int m_indexFail = 0;
 };
 
 #endif // USERLOGINWIDGET_H

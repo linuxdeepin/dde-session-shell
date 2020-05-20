@@ -35,6 +35,7 @@ LockWorker::LockWorker(SessionBaseModel *const model, QObject *parent)
 
     //该信号用来处理初始化lock、锁屏或者切换用户(锁屏+登陆)三种场景的指纹认证
     QObject::connect(model, &SessionBaseModel::visibleChanged, this, [ = ](bool visible){
+        qDebug() << "SessionBaseModel::visibleChanged -- visible status :" << visible;
         auto user = m_model->currentUser();
         if(visible && user->uid() == m_currentUserUid) {
             m_authFramework->Authenticate(user);
@@ -262,6 +263,7 @@ void LockWorker::lockServiceEvent(quint32 eventType, quint32 pid, const QString 
 
 void LockWorker::onUnlockFinished(bool unlocked)
 {
+    qDebug() << "LockWorker::onUnlockFinished -- unlocked status : " << unlocked;
     emit m_model->authFinished(unlocked);
 
     if (unlocked) {
@@ -294,6 +296,7 @@ void LockWorker::onUnlockFinished(bool unlocked)
 
 void LockWorker::onCurrentUserChanged(const QString &user)
 {
+    qDebug() << "LockWorker::onCurrentUserChanged -- change to :" << user;
     const QJsonObject obj = QJsonDocument::fromJson(user.toUtf8()).object();
     auto user_cur = static_cast<uint>(obj["Uid"].toInt());
     if (user_cur == m_currentUserUid) {
