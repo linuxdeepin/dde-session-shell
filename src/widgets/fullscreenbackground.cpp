@@ -136,17 +136,10 @@ void FullscreenBackground::updateBackground(const QString &file)
 
 void FullscreenBackground::setScreen(QScreen *screen)
 {
-    if(m_displayInter->displayMode() == FullscreenBackground::ExpandMode) {
-        if(m_displayInter->primary() == screen->name()) {
-            m_content->show();
-            emit contentVisibleChanged(true);
-            QTimer::singleShot(100, this, []{ FrameDataBind::Instance()->updateValue("PrimaryShowFinished", true); });
-        }
-    } else if(m_displayInter->displayMode() == FullscreenBackground::CopyMode) {
+    if(m_displayInter->primary() == screen->name()) {
         m_content->show();
         emit contentVisibleChanged(true);
-    } else {
-        FrameDataBind::Instance()->updateValue("PrimaryShowFinished", true);
+        QTimer::singleShot(1000, this, []{ FrameDataBind::Instance()->updateValue("PrimaryShowFinished", true); });
     }
 
     updateScreen(screen);
