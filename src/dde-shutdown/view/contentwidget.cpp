@@ -494,8 +494,16 @@ void ContentWidget::shutDownFrameActions(const Actions action)
     switch (action) {
     case Shutdown:       m_sessionInterface->RequestShutdown();      break;
     case Restart:        m_sessionInterface->RequestReboot();        break;
-    case Suspend:        m_sessionInterface->RequestSuspend();       break;
-    case Hibernate:      m_sessionInterface->RequestHibernate();     break;
+    case Suspend: {
+        m_model->setIsShow(false);
+        QTimer::singleShot(200, this, [ = ] {m_sessionInterface->RequestSuspend();});
+        break;
+    }
+    case Hibernate: {
+        m_model->setIsShow(false);
+        QTimer::singleShot(200, this, [ = ] {m_sessionInterface->RequestHibernate();});
+        break;
+    }
     case Lock:           m_sessionInterface->RequestLock();          break;
     case Logout:         m_sessionInterface->RequestLogout();        break;
     case SwitchSystem: {
