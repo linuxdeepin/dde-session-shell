@@ -46,12 +46,8 @@ FullscreenBackground::FullscreenBackground(QWidget *parent)
     : QWidget(parent)
     , m_fadeOutAni(new QVariantAnimation(this))
     , m_imageEffectInter(new ImageEffectInter("com.deepin.daemon.ImageEffect", "/com/deepin/daemon/ImageEffect", QDBusConnection::systemBus(), this))
-    , m_displayInter(new DisplayInter("com.deepin.daemon.Display", "/com/deepin/daemon/Display", QDBusConnection::sessionBus(), this))
 {
 #ifndef QT_DEBUG
-//    if(DGuiApplicationHelper::isXWindowPlatform()) {
-//        setWindowFlags(Qt::WindowStaysOnTopHint | Qt::X11BypassWindowManagerHint);
-//    }
     setWindowFlags(Qt::WindowStaysOnTopHint | Qt::X11BypassWindowManagerHint);
 #endif
 
@@ -136,7 +132,8 @@ void FullscreenBackground::updateBackground(const QString &file)
 
 void FullscreenBackground::setScreen(QScreen *screen)
 {
-    if(m_displayInter->primary() == screen->name()) {
+    QScreen *primary_screen = QGuiApplication::primaryScreen();
+    if(primary_screen == screen) {
         m_content->show();
         emit contentVisibleChanged(true);
         QTimer::singleShot(1000, this, []{ FrameDataBind::Instance()->updateValue("PrimaryShowFinished", true); });

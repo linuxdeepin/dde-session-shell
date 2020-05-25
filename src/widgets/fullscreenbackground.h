@@ -34,10 +34,8 @@
 #include <QVariantAnimation>
 
 #include <com_deepin_daemon_imageeffect.h>
-#include <com_deepin_daemon_display.h>
 
 using ImageEffectInter = com::deepin::daemon::ImageEffect;
-using DisplayInter = com::deepin::daemon::Display;
 
 class FullscreenBackground : public QWidget
 {
@@ -96,7 +94,6 @@ private:
     QVariantAnimation *m_fadeOutAni;
     QScreen *m_screen = nullptr;
     ImageEffectInter *m_imageEffectInter = nullptr;
-    DisplayInter *m_displayInter = nullptr;
     bool m_primaryShowFinished = false;
     bool m_isBlackMode = false;
     bool m_isHibernateMode = false;
