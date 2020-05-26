@@ -552,7 +552,17 @@ void ContentWidget::updateWallpaper(const QString &path)
 
 void ContentWidget::onUserListChanged(QList<std::shared_ptr<User> > list)
 {
-    m_switchUserBtn->setVisible(list.size() > 1);
+    const bool allowShowUserSwitchButton = m_model->allowShowUserSwitchButton();
+    const bool alwaysShowUserSwitchButton = m_model->alwaysShowUserSwitchButton();
+    bool haveLogindUser = true;
+
+    if (m_model->isServerModel() && m_model->currentType() == SessionBaseModel::LightdmType) {
+        haveLogindUser = !m_model->logindUser().isEmpty();
+    }
+    m_switchUserBtn->setVisible((alwaysShowUserSwitchButton ||
+                                          (allowShowUserSwitchButton &&
+                                          (list.size() > (m_model->isServerModel() ? 0 : 1)))) &&
+                                          haveLogindUser);
 }
 
 void ContentWidget::enableHibernateBtn(bool enable)

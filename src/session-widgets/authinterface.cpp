@@ -11,8 +11,6 @@
 #define POWER_CAN_SLEEP "POWER_CAN_SLEEP"
 #define POWER_CAN_HIBERNATE "POWER_CAN_HIBERNATE"
 
-#define USE_DEEPIN_AUTH "useDeepinAuth"
-
 using namespace Auth;
 
 static std::pair<bool, qint64> checkIsPartitionType(const QStringList &list)
@@ -56,13 +54,15 @@ AuthInterface::AuthInterface(SessionBaseModel *const model, QObject *parent)
 {
     if (!m_login1Inter->isValid()) {
         qWarning() << "m_login1Inter:" << m_login1Inter->lastError().type();
+    }
 
-    if (QGSettings::isSchemaInstalled("com.deepin.dde.auth.control")) {
-        m_gsettings = new QGSettings("com.deepin.dde.auth.control", "/com/deepin/dde/auth/control/", this);
+    if (QGSettings::isSchemaInstalled("com.deepin.dde.sessionshell.control")) {
+        m_gsettings = new QGSettings("com.deepin.dde.sessionshell.control", "/com/deepin/dde/sessionshell/control/", this);
     }
 }
 
-void AuthInterface::setLayout(std::shared_ptr<User> user, const QString &layout) {
+void AuthInterface::setLayout(std::shared_ptr<User> user, const QString &layout)
+{
     user->setCurrentLayout(layout);
 }
 
@@ -111,6 +111,7 @@ void AuthInterface::initData()
     onUserListChanged(m_accountsInter->userList());
     onLoginUserListChanged(m_loginedInter->userList());
     onLastLogoutUserChanged(m_loginedInter->lastLogoutUser());
+    checkConfig();
     checkPowerInfo();
     checkVirtualKB();
 }
@@ -223,6 +224,15 @@ bool AuthInterface::checkHaveDisplay(const QJsonArray &array)
     return false;
 }
 
+QVariant AuthInterface::getGSettings(const QString& key)
+{
+    QVariant value = true;
+    if (m_gsettings != nullptr && m_gsettings->keys().contains(key)) {
+        value = m_gsettings->get(key);
+    }
+    return value;
+}
+
 bool AuthInterface::isLogined(uint uid)
 {
     auto isLogind = std::find_if(m_loginUserList.begin(), m_loginUserList.end(),
@@ -237,25 +247,27 @@ bool AuthInterface::isDeepin()
 #ifdef QT_DEBUG
     return true;
 #else
-    bool is_deepin = true;
-    if (m_gsettings != nullptr && m_gsettings->keys().contains(USE_DEEPIN_AUTH)) {
-        is_deepin = m_gsettings->get(USE_DEEPIN_AUTH).toBool();
-    }
-    return is_deepin;
+    return getGSettings("useDeepinAuth").toBool();
 #endif
+}
+
+void AuthInterface::checkConfig()
+{
+    m_model->setAlwaysShowUserSwitchButton(getGSettings("switchuser").toInt() == AuthInterface::Always);
+    m_model->setAllowShowUserSwitchButton(getGSettings("switchuser").toInt() == AuthInterface::Ondemand);
 }
 
 void AuthInterface::checkPowerInfo()
 {
     QProcessEnvironment env = QProcessEnvironment::systemEnvironment();
+    bool config_sleep = m_gsettings->keys().contains("sleep") ? getGSettings("sleep").toBool() : valueByQSettings<bool>("Power", "sleep", true);
     bool can_sleep = env.contains(POWER_CAN_SLEEP) ? QVariant(env.value(POWER_CAN_SLEEP)).toBool()
-                                                   : valueByQSettings<bool>("Power", "sleep", true) &&
-                                                     m_login1Inter->CanSuspend().value().contains("yes");
+                                                   : config_sleep && m_login1Inter->CanSuspend().value().contains("yes");
     m_model->setCanSleep(can_sleep);
 
+    bool config_hibernate = m_gsettings->keys().contains("hibernate") ? getGSettings("hibernate").toBool() : valueByQSettings<bool>("Power", "hibernate", true);
     bool can_hibernate = env.contains(POWER_CAN_HIBERNATE) ? QVariant(env.value(POWER_CAN_HIBERNATE)).toBool()
-                                                           : valueByQSettings<bool>("Power", "hibernate", true) &&
-                                                             m_login1Inter->CanHibernate().value().contains("yes");
+                                                           : config_hibernate && m_login1Inter->CanHibernate().value().contains("yes");
     if (can_hibernate) {
         checkSwap();
     } else {
