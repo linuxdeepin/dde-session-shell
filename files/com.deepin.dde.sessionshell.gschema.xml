@@ -10,7 +10,7 @@
       </description>
     </key>
     <key name='sleep' type='b'>
-      <default>true</default>
+      <default>false</default>
       <summary>sleep</summary>
       <description>
         If enabled, suspend operation display
@@ -18,7 +18,7 @@
       </description>
     </key>
     <key name='hibernate' type='b'>
-      <default>true</default>
+      <default>false</default>
       <summary>hibernate</summary>
       <description>
         If enabled, hibernate operation display
