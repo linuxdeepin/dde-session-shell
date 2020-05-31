@@ -53,6 +53,7 @@ signals:
     void requestSwitchToUser(std::shared_ptr<User> user);
     void requestSetLayout(std::shared_ptr<User> user, const QString &layout);
     void requestEnableHotzone(bool disable);
+    void sendKeyValue(QString keyValue);
 
 public slots:
     void showUserList();
@@ -61,6 +62,7 @@ protected:
     void keyPressEvent(QKeyEvent *e) Q_DECL_OVERRIDE;
     void showEvent(QShowEvent *event) Q_DECL_OVERRIDE;
     void hideEvent(QHideEvent *event) Q_DECL_OVERRIDE;
+    bool eventFilter(QObject *watched, QEvent *event) Q_DECL_OVERRIDE;
 
 private:
     LockContent *m_content;

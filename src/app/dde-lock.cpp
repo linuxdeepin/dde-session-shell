@@ -102,6 +102,10 @@ int main(int argc, char *argv[])
 
     property_group->addProperty("contentVisible");
 
+    DBusLockAgent agent;
+    agent.setModel(model);
+    DBusLockFrontService service(&agent);
+
     auto createFrame = [&] (QScreen *screen) -> QWidget* {
         LockFrame *lockFrame = new LockFrame(model);
         lockFrame->setScreen(screen);
@@ -113,6 +117,9 @@ int main(int argc, char *argv[])
         QObject::connect(lockFrame, &LockFrame::requestSetLayout, worker, &LockWorker::setLayout);
         QObject::connect(lockFrame, &LockFrame::requestEnableHotzone, worker, &LockWorker::enableZoneDetected, Qt::UniqueConnection);
         QObject::connect(lockFrame, &LockFrame::destroyed, property_group, &PropertyGroup::removeObject);
+        QObject::connect(lockFrame, &LockFrame::sendKeyValue, [&](QString key){
+             emit service.ChangKey(key);
+        });
         lockFrame->setVisible(model->isShow());
         return lockFrame;
     };
@@ -122,10 +129,7 @@ int main(int argc, char *argv[])
 
     QObject::connect(model, &SessionBaseModel::visibleChanged, &multi_screen_manager, &MultiScreenManager::startRaiseContentFrame);
 
-    DBusLockAgent agent;
-    agent.setModel(model);
-    DBusLockFrontService service(&agent);
-    Q_UNUSED(service);
+
 
     QDBusConnection conn = QDBusConnection::sessionBus();
     if (!conn.registerService(DBUS_NAME) ||

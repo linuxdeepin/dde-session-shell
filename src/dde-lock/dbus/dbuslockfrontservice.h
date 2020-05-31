@@ -62,6 +62,9 @@ public Q_SLOTS:// METHODS
     void ShowAuth(bool active);
     void Suspend(bool enable);
     void Hibernate(bool enable);
+
+Q_SIGNALS:
+    void ChangKey(QString key);
 };
 
 #endif // DBUSLOCKFRONTSERVICE_H

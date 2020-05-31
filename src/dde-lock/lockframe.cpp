@@ -76,6 +76,60 @@ LockFrame::LockFrame(SessionBaseModel *const model, QWidget *parent)
     });
 }
 
+bool LockFrame::eventFilter(QObject *watched, QEvent *event)
+{
+    if (event->type() == QEvent::KeyRelease) {
+        QString  keyValue = "";
+        switch (static_cast<QKeyEvent *>(event)->key()) {
+        case Qt::Key_NumLock: {
+            keyValue = "capslock";
+            break;
+        }
+        case Qt::Key_TouchpadOn: {
+            keyValue = "touchpad-on";
+            break;
+        }
+        case Qt::Key_TouchpadOff: {
+            keyValue = "touchpad-off";
+            break;
+        }
+        case Qt::Key_TouchpadToggle: {
+            keyValue = "touchpad-toggle";
+            break;
+        }
+        case Qt::Key_CapsLock: {
+            keyValue = "capslock";
+            break;
+        }
+        case Qt::Key_VolumeDown: {
+            keyValue = "audio-lower-volume";
+            break;
+        }
+        case Qt::Key_VolumeUp: {
+            keyValue = "audio-raise-volume";
+            break;
+        }
+        case Qt::Key_VolumeMute: {
+            keyValue = "audio-mute";
+            break;
+        }
+        case Qt::Key_MonBrightnessUp: {
+            keyValue = "mon-brightness-up";
+            break;
+        }
+        case Qt::Key_MonBrightnessDown: {
+            keyValue = "mon-brightness-down";
+            break;
+        }
+        }
+
+        if (keyValue != "") {
+            emit sendKeyValue(keyValue);
+        }
+    }
+    return QObject::eventFilter(watched, event);
+}
+
 void LockFrame::showUserList()
 {
     show();
