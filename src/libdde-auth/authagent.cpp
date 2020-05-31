@@ -34,17 +34,18 @@ void AuthAgent::Responsed(const QString &password)
     m_hasPw = true;
 }
 
-void AuthAgent::Authenticate(const QString& username)
+void AuthAgent::Authenticate(void *data)
 {
-    pam_conv conv = { funConversation, static_cast<void*>(this) };
-    int ret = pam_start(PAM_SERVICE_NAME, username.toLocal8Bit().data(), &conv, &m_pamHandle);
+    AuthAgent *app_ptr = static_cast<AuthAgent *>(data);
+    pam_conv conv = { funConversation, static_cast<void*>(data) };
+    int ret = pam_start(PAM_SERVICE_NAME, app_ptr->m_userName.toLocal8Bit().data(), &conv, &app_ptr->m_pamHandle);
 
     if( ret != PAM_SUCCESS) {
-        qDebug() << Q_FUNC_INFO << pam_strerror(m_pamHandle, ret);
+        qDebug() << Q_FUNC_INFO << pam_strerror(app_ptr->m_pamHandle, ret);
     }
 
-    QPointer<AuthAgent> isThreadAlive(this);
-    m_lastStatus = pam_authenticate(m_pamHandle, 0);
+    QPointer<AuthAgent> isThreadAlive(app_ptr);
+    app_ptr->m_lastStatus = pam_authenticate(app_ptr->m_pamHandle, 0);
     if (!isThreadAlive)
         return;
 
@@ -52,15 +53,15 @@ void AuthAgent::Authenticate(const QString& username)
     system("xset dpms force on");
     QString msg = QString();
 
-    if(m_lastStatus == PAM_SUCCESS) {
+    if(app_ptr->m_lastStatus == PAM_SUCCESS) {
         msg = "succes";
     } else{
-        qDebug() << Q_FUNC_INFO << pam_strerror(m_pamHandle, m_lastStatus);
+        qDebug() << Q_FUNC_INFO << pam_strerror(app_ptr->m_pamHandle, app_ptr->m_lastStatus);
     }
 
-    m_hasPw = false;
+    app_ptr->m_hasPw = false;
 
-    emit respondResult(msg);
+    emit app_ptr->respondResult(msg);
 }
 
 void AuthAgent::Cancel()

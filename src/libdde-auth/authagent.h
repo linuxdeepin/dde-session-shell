@@ -36,17 +36,20 @@ public:
     ~AuthAgent();
 
     void Responsed(const QString& password);
-    void Authenticate(const QString& username);
+    static void Authenticate(void *data);
     void Cancel();
     int GetAuthType();
     DeepinAuthFramework *deepinAuth() { return m_deepinauth; }
+
+    QString userName() const { return m_userName; }
+    void setUserName(const QString &name) { m_userName = name; }
 
 signals:
     void displayErrorMsg(const QString &msg);
     void displayTextInfo(const QString &msg);
     void respondResult(const QString &msg);
 
-private:
+public:
     static int funConversation(int num,
                                const struct pam_message** msg,
                                struct pam_response** resp,
@@ -61,6 +64,7 @@ private:
     QString m_password;
     bool m_hasPw{false};
     AuthFlag m_authType;
+    QString m_userName;
 };
 
 #endif // AUTHAGENT_H

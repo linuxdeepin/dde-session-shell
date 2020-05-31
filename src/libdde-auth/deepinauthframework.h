@@ -36,8 +36,8 @@ private:
 private:
     DeepinAuthInterface *m_interface;
     QPointer<AuthAgent> m_authagent;
-    QThread* m_authThread = nullptr;
     std::shared_ptr<User> m_currentUser = nullptr;
+    pthread_t m_authPId{0};
 
     QString m_password;
 };

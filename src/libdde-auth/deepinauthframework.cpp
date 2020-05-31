@@ -8,14 +8,13 @@
 #include <unistd.h>
 #include <pwd.h>
 #include <grp.h>
+#include <signal.h>
 
 DeepinAuthFramework::DeepinAuthFramework(DeepinAuthInterface *inter, QObject *parent)
     : QObject(parent)
     , m_interface(inter)
 {
-    m_authThread = new QThread;
     m_authagent = new AuthAgent(this);
-    m_authagent->moveToThread(m_authThread);
 }
 
 DeepinAuthFramework::~DeepinAuthFramework()
@@ -24,17 +23,17 @@ DeepinAuthFramework::~DeepinAuthFramework()
         delete m_authagent;
         m_authagent = nullptr;
 
-        if (m_authThread->isRunning()) {
-            m_authThread->terminate();
-            m_authThread->wait(1000);
+        if (m_authPId != 0) {
+            pthread_kill(m_authPId, SIGQUIT);
+            pthread_join(m_authPId, nullptr);
+            m_authPId = 0;
         }
-        m_authThread->deleteLater();
     }
 }
 
 bool DeepinAuthFramework::isAuthenticate() const
 {
-    return !m_authagent.isNull() && m_authThread->isRunning();
+    return m_authPId != 0;
 }
 
 int DeepinAuthFramework::GetAuthType()
@@ -48,27 +47,34 @@ void DeepinAuthFramework::Authenticate(std::shared_ptr<User> user)
 
     m_password.clear();
 
-    if (m_authThread->isRunning()) {
-        m_authThread->terminate();
-        m_authThread->wait();
+    m_authagent->setUserName(user->name());
+
+    if (m_authPId != 0) {
+        pthread_kill(m_authPId, SIGQUIT);
+        pthread_join(m_authPId, nullptr);
+        m_authPId = 0;
     }
 
     qDebug() << Q_FUNC_INFO << "pam auth start" << m_authagent->thread()->loopLevel();
 
     m_currentUser = user;
 
-    if (!m_authThread->isRunning()) {
-        m_authThread->start();
+    if (m_authPId != 0) {
+        qDebug() << "stop authAgent thread error !";
     }
 
     QTimer::singleShot(100, m_authagent, [ = ]() {
-        m_authagent->Authenticate(user->name());
+        auto ret = pthread_create(&m_authPId, nullptr, (void* (*)(void *))(void *)(AuthAgent::Authenticate), (void *)m_authagent);
+        if (ret < 0) {
+
+        }
+        pthread_detach(m_authPId);
     });
 }
 
 void DeepinAuthFramework::Responsed(const QString &password)
 {
-    if(m_authagent.isNull() || !m_authThread->isRunning()) {
+    if(m_authagent.isNull() || m_authPId == 0) {
         qDebug() << "pam auth agent is not start";
         return;
     }
