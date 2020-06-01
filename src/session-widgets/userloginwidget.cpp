@@ -118,7 +118,7 @@ void UserLoginWidget::setFaildTipMessage(const QString &message, SessionBaseMode
         return;
     }
 
-    m_passwordEdit->showAlertMessage(message, 1000);
+    m_passwordEdit->showAlertMessage(message, 3000);
 }
 
 //设置窗体显示模式
