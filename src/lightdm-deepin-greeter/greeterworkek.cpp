@@ -12,6 +12,8 @@
 using namespace Auth;
 DCORE_USE_NAMESPACE
 
+const QString AuthenticateService("com.deepin.daemon.Authenticate");
+
 class UserNumlockSettings
 {
 public:
@@ -36,9 +38,13 @@ GreeterWorkek::GreeterWorkek(SessionBaseModel *const model, QObject *parent)
                                                      "/org/freedesktop/login1",
                                                      QDBusConnection::systemBus(), this))
     , m_lockInter(new DBusLockService(LOCKSERVICE_NAME, LOCKSERVICE_PATH, QDBusConnection::systemBus(), this))
+    , m_AuthenticateInter(new Authenticate(AuthenticateService,
+                                         "/com/deepin/daemon/Authenticate",
+                                         QDBusConnection::systemBus(), this))
     , m_isThumbAuth(false)
     , m_islock(false)
     , m_authenticating(false)
+    , m_firstTimeLogin(true)
     , m_password(QString())
 {
     if (!m_login1ManagerInterface->isValid()) {
@@ -81,6 +87,7 @@ GreeterWorkek::GreeterWorkek(SessionBaseModel *const model, QObject *parent)
         } else {
             m_islock = false;
             m_password.clear();
+            qDebug() << "Request Auth_SessionBaseModel::lockChanged --  3min lock finish" << m_model->currentUser()->name();
             resetLightdmAuth(m_model->currentUser(), 100, false);
         }
     });
@@ -104,7 +111,7 @@ GreeterWorkek::GreeterWorkek(SessionBaseModel *const model, QObject *parent)
             m_model->setCanSleep(false);
 
         checkDBusServer(m_accountsInter->isValid());
-        onCurrentUserChanged(m_lockInter->CurrentUser());
+        oneKeyLogin();
     }
 
     if (DSysInfo::deepinType() == DSysInfo::DeepinServer || valueByQSettings<bool>("", "loginPromptInput", false)) {
@@ -136,11 +143,6 @@ void GreeterWorkek::switchToUser(std::shared_ptr<User> user)
     json["Uid"] = static_cast<int>(user->uid());
     json["Type"] = user->type();
     m_lockInter->SwitchToUser(QString(QJsonDocument(json).toJson(QJsonDocument::Compact))).waitForFinished();
-    //由于后端开启了抢占模式，因此关闭此处的取消认证请求
-//    m_greeter->cancelAuthentication();
-
-    //防止切换后用户后dbus没有发送UserChanged
-//    onCurrentUserChanged(QJsonDocument(json).toJson());
 }
 
 void GreeterWorkek::authUser(const QString &password)
@@ -154,12 +156,8 @@ void GreeterWorkek::authUser(const QString &password)
 
     m_password = password;
 
-    qDebug() << "start authentication of user: " << user->name();
-
     if (m_greeter->authenticationUser() != user->name()) {
-        //由于后端开启了抢占模式，因此关闭此处的取消认证请求
-        //m_greeter->cancelAuthentication();
-        QTimer::singleShot(100, this, [=] { m_greeter->authenticate(user->name()); });
+        qDebug() << "Request Auth_GreeterWorkek::authUser --  if authUser not currentUser" << user->name();
         resetLightdmAuth(user, 100, false);
     }
     else {
@@ -167,6 +165,7 @@ void GreeterWorkek::authUser(const QString &password)
             m_greeter->respond(password);
         }
         else {
+            qDebug() << "Request Auth_GreeterWorkek::authUser -- auth finish once" << user->name();
             m_greeter->authenticate(user->name());
         }
     }
@@ -184,6 +183,7 @@ void GreeterWorkek::onUserAdded(const QString &user)
             m_model->setCurrentUser(user_ptr);
 
             if (m_model->currentType() == SessionBaseModel::AuthType::LightdmType) {
+                qDebug() << "Request Auth_GreeterWorkek::onUserAdded -- User added" << user_ptr->name();
                 userAuthForLightdm(user_ptr);
             }
         }
@@ -209,15 +209,43 @@ void GreeterWorkek::checkDBusServer(bool isvalid)
     }
 }
 
+void GreeterWorkek::oneKeyLogin()
+{
+    if (!m_firstTimeLogin) {
+        onCurrentUserChanged(m_lockInter->CurrentUser());
+        return;
+    }
+    // 多用户一键登陆
+    auto user_firstlogin = m_AuthenticateInter->PreOneKeyLogin(AuthFlag::Fingerprint);
+    user_firstlogin.waitForFinished();
+    qDebug() << "GreeterWorkek::onFirstTimeLogin -- FirstTime Login User Name is : " << user_firstlogin;
+
+    if (user_firstlogin != "") {
+        auto user_ptr = m_model->findUserByName(user_firstlogin);
+        switchToUser(user_ptr);
+        m_model->setCurrentUser(user_ptr);
+        userAuthForLightdm(user_ptr);
+    } else {
+        m_firstTimeLogin = false;
+        onCurrentUserChanged(m_lockInter->CurrentUser());
+    }
+}
+
 void GreeterWorkek::onCurrentUserChanged(const QString &user)
 {
     const QJsonObject obj = QJsonDocument::fromJson(user.toUtf8()).object();
     m_currentUserUid = static_cast<uint>(obj["Uid"].toInt());
 
-    for (std::shared_ptr<User> user : m_model->userList()) {
-        if (!user->isLogin() && user->uid() == m_currentUserUid) {
-            m_model->setCurrentUser(user);
-            userAuthForLightdm(user);
+    if (m_firstTimeLogin) {
+        qDebug() << "Request Auth_GreeterWorkek::onCurrentUserChanged -- first time login and return";
+        return;
+    }
+
+    for (std::shared_ptr<User> user_ptr : m_model->userList()) {
+        if (!user_ptr->isLogin() && user_ptr->uid() == m_currentUserUid) {
+            m_model->setCurrentUser(user_ptr);
+            qDebug() << "Request Auth_GreeterWorkek::onCurrentUserChanged -- currentUser changed to" << user_ptr->name();
+            userAuthForLightdm(user_ptr);
             break;
         }
     }
@@ -227,7 +255,7 @@ void GreeterWorkek::userAuthForLightdm(std::shared_ptr<User> user)
 {
     if (!user->isNoPasswdGrp()) {
         //后端需要大约600ms时间去释放指纹设备
-        resetLightdmAuth(user, 600, true);
+        resetLightdmAuth(user, 100, true);
     }
 }
 
@@ -259,9 +287,6 @@ void GreeterWorkek::prompt(QString text, QLightDM::Greeter::PromptType type)
 // TODO(justforlxz): 错误信息应该存放在User类中, 切换用户后其他控件读取错误信息，而不是在这里分发。
 void GreeterWorkek::message(QString text, QLightDM::Greeter::MessageType type)
 {
-    //息屏状态下亮屏，由于后端没有亮屏信号，只能用此临时办法
-    system("xset dpms force on");
-
     qDebug() << "pam message: " << text << type;
 
     if (text == "Verification timed out") {
@@ -280,13 +305,11 @@ void GreeterWorkek::message(QString text, QLightDM::Greeter::MessageType type)
 
     switch (type) {
     case QLightDM::Greeter::MessageTypeInfo:
-        if (m_isThumbAuth || m_islock) break;
+        if (m_isThumbAuth) break;
 
-        qDebug() << "message about INFO" << text.toUtf8();
         emit m_model->authFaildMessage(QString(dgettext("fprintd", text.toUtf8())));
         break;
     case QLightDM::Greeter::MessageTypeError:
-        qDebug() << "message about ERROR" << text.toUtf8();
         emit m_model->authFaildTipsMessage(QString(dgettext("fprintd", text.toUtf8())));
         break;
     }
@@ -300,6 +323,7 @@ void GreeterWorkek::authenticationComplete()
 
     if (!m_greeter->isAuthenticated()) {
         if (m_password.isEmpty()) {
+            qDebug() << "Request GreeterWorkek::authenticationComplete -- fingerprint auth fail" << m_model->currentUser()->name();
             resetLightdmAuth(m_model->currentUser(), 100, false);
             return;
         }
@@ -317,8 +341,10 @@ void GreeterWorkek::authenticationComplete()
 
         if (m_model->currentUser()->isLockForNum()) {
             m_model->currentUser()->startLock();
+            return;
         }
 
+        qDebug() << "Request GreeterWorkek::authenticationComplete -- password auth fail" << m_model->currentUser()->name();
         resetLightdmAuth(m_model->currentUser(), 100, false);
 
         return;
@@ -348,6 +374,7 @@ void GreeterWorkek::authenticationComplete()
     // NOTE(kirigaya): It is not necessary to display the login animation.
     emit requestUpdateBackground(m_model->currentUser()->desktopBackgroundPath());
     emit m_model->authFinished(true);
+    if (m_firstTimeLogin) {m_firstTimeLogin = false;}
 
 #ifndef DISABLE_LOGIN_ANI
     QTimer::singleShot(1000, this, startSessionSync);
@@ -381,10 +408,6 @@ void GreeterWorkek::recoveryUserKBState(std::shared_ptr<User> user)
 
 void GreeterWorkek::resetLightdmAuth(std::shared_ptr<User> user,int delay_time , bool is_respond)
 {
-    //由于后端开启了抢占模式，因此关闭此处的取消认证请求
-    //if (m_greeter->inAuthentication()) {
-    //    m_greeter->cancelAuthentication();
-    //}
     QTimer::singleShot(delay_time, this, [ = ] {
         m_greeter->authenticate(user->name());
         if (is_respond) {

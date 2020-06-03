@@ -8,11 +8,21 @@
 #include "src/global_util/dbus/dbuslockservice.h"
 #include "src/session-widgets/authinterface.h"
 #include "src/global_util/dbus/dbuslogin1manager.h"
+#include <com_deepin_daemon_authenticate.h>
+
+using com::deepin::daemon::Authenticate;
 
 class GreeterWorkek : public Auth::AuthInterface
 {
     Q_OBJECT
 public:
+    enum AuthFlag {
+        Password = 1 << 0,
+        Fingerprint = 1 << 1,
+        Face = 1 << 2,
+        ActiveDirectory = 1 << 3
+    };
+
     explicit GreeterWorkek(SessionBaseModel *const model, QObject *parent = nullptr);
 
     void switchToUser(std::shared_ptr<User> user) override;
@@ -24,6 +34,7 @@ signals:
 
 private:
     void checkDBusServer(bool isvalid);
+    void oneKeyLogin();
     void onCurrentUserChanged(const QString &user);
     void userAuthForLightdm(std::shared_ptr<User> user);
     void prompt(QString text, QLightDM::Greeter::PromptType type);
@@ -37,9 +48,11 @@ private:
     QLightDM::Greeter *m_greeter;
     DBusLogin1Manager *m_login1ManagerInterface;
     DBusLockService   *m_lockInter;
+    Authenticate      *m_AuthenticateInter;
     bool               m_isThumbAuth;
     bool               m_islock;
     bool               m_authenticating;
+    bool               m_firstTimeLogin;
     QString            m_password;
 };
 
