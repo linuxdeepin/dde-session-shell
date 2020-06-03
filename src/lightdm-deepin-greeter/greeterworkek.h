@@ -50,7 +50,6 @@ private:
     DBusLockService   *m_lockInter;
     Authenticate      *m_AuthenticateInter;
     bool               m_isThumbAuth;
-    bool               m_islock;
     bool               m_authenticating;
     bool               m_firstTimeLogin;
     QString            m_password;

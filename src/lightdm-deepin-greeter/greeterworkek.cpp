@@ -42,7 +42,6 @@ GreeterWorkek::GreeterWorkek(SessionBaseModel *const model, QObject *parent)
                                          "/com/deepin/daemon/Authenticate",
                                          QDBusConnection::systemBus(), this))
     , m_isThumbAuth(false)
-    , m_islock(false)
     , m_authenticating(false)
     , m_firstTimeLogin(true)
     , m_password(QString())
@@ -82,10 +81,7 @@ GreeterWorkek::GreeterWorkek(SessionBaseModel *const model, QObject *parent)
     });
 
     connect(model, &SessionBaseModel::lockChanged, this, [ = ](bool lock) {
-        if (lock) {
-            m_islock = true;
-        } else {
-            m_islock = false;
+        if (!lock) {
             m_password.clear();
             qDebug() << "Request Auth_SessionBaseModel::lockChanged --  3min lock finish" << m_model->currentUser()->name();
             resetLightdmAuth(m_model->currentUser(), 100, false);
@@ -408,6 +404,8 @@ void GreeterWorkek::recoveryUserKBState(std::shared_ptr<User> user)
 
 void GreeterWorkek::resetLightdmAuth(std::shared_ptr<User> user,int delay_time , bool is_respond)
 {
+    if (user->isLock()) {return;}
+
     QTimer::singleShot(delay_time, this, [ = ] {
         m_greeter->authenticate(user->name());
         if (is_respond) {
