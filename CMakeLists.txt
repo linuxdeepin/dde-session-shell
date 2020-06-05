@@ -398,7 +398,3 @@ install(FILES files/lightdm-deepin-greeter.desktop DESTINATION share/xgreeters/)
 # services
 file(GLOB SERVICES files/*.service)
 install(FILES ${SERVICES} DESTINATION share/dbus-1/services)
-
-# gsettings xml
-file (GLOB GXML files/*.xml)
-install(FILES ${GXML} DESTINATION share/glib-2.0/schemas/)
