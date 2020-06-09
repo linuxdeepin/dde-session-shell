@@ -317,6 +317,8 @@ void GreeterWorkek::authenticationComplete()
 
     m_authenticating = false;
 
+    emit m_model->authFinished(m_greeter->isAuthenticated());
+
     if (!m_greeter->isAuthenticated()) {
         if (m_password.isEmpty()) {
             qDebug() << "Request GreeterWorkek::authenticationComplete -- fingerprint auth fail" << m_model->currentUser()->name();
@@ -369,7 +371,6 @@ void GreeterWorkek::authenticationComplete()
 
     // NOTE(kirigaya): It is not necessary to display the login animation.
     emit requestUpdateBackground(m_model->currentUser()->desktopBackgroundPath());
-    emit m_model->authFinished(true);
     if (m_firstTimeLogin) {m_firstTimeLogin = false;}
 
 #ifndef DISABLE_LOGIN_ANI

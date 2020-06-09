@@ -108,6 +108,7 @@ LockContent::LockContent(SessionBaseModel *const model, QWidget *parent)
     connect(model, &SessionBaseModel::hasVirtualKBChanged, this, initVirtualKB);
     connect(model, &SessionBaseModel::onUserListChanged, this, &LockContent::onUserListChanged);
     connect(model, &SessionBaseModel::userListLoginedChanged, this, &LockContent::onUserListChanged);
+    connect(model, &SessionBaseModel::authFinished, this, &LockContent::restoreMode);
     connect(m_imageBlurInter, &ImageBlur::BlurDone, this, &LockContent::onBlurDone);
 
     QTimer::singleShot(0, this, [ = ] {
