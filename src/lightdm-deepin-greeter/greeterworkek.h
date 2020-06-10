@@ -46,7 +46,6 @@ private:
 
 private:
     QLightDM::Greeter *m_greeter;
-    DBusLogin1Manager *m_login1ManagerInterface;
     DBusLockService   *m_lockInter;
     Authenticate      *m_AuthenticateInter;
     bool               m_isThumbAuth;

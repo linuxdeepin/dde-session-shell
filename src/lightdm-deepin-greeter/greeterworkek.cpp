@@ -34,9 +34,6 @@ private:
 GreeterWorkek::GreeterWorkek(SessionBaseModel *const model, QObject *parent)
     : AuthInterface(model, parent)
     , m_greeter(new QLightDM::Greeter(this))
-    , m_login1ManagerInterface(new DBusLogin1Manager("org.freedesktop.login1",
-                                                     "/org/freedesktop/login1",
-                                                     QDBusConnection::systemBus(), this))
     , m_lockInter(new DBusLockService(LOCKSERVICE_NAME, LOCKSERVICE_PATH, QDBusConnection::systemBus(), this))
     , m_AuthenticateInter(new Authenticate(AuthenticateService,
                                          "/com/deepin/daemon/Authenticate",
@@ -46,9 +43,8 @@ GreeterWorkek::GreeterWorkek(SessionBaseModel *const model, QObject *parent)
     , m_firstTimeLogin(true)
     , m_password(QString())
 {
-    if (!m_login1ManagerInterface->isValid()) {
-        qWarning() << "m_login1ManagerInterface:"
-                   << m_login1ManagerInterface->lastError().type();
+    if (!m_login1Inter->isValid()) {
+        qWarning() << "m_login1Inter:" << m_login1Inter->lastError().type();
     }
 
     if (!m_greeter->connectSync()) {
@@ -62,16 +58,16 @@ GreeterWorkek::GreeterWorkek(SessionBaseModel *const model, QObject *parent)
     connect(model, &SessionBaseModel::onPowerActionChanged, this, [ = ](SessionBaseModel::PowerAction poweraction) {
         switch (poweraction) {
         case SessionBaseModel::PowerAction::RequireShutdown:
-            m_login1ManagerInterface->PowerOff(true);
+            m_login1Inter->PowerOff(true);
             break;
         case SessionBaseModel::PowerAction::RequireRestart:
-            m_login1ManagerInterface->Reboot(true);
+            m_login1Inter->Reboot(true);
             break;
         case SessionBaseModel::PowerAction::RequireSuspend:
-            m_login1ManagerInterface->Suspend(true);
+            m_login1Inter->Suspend(true);
             break;
         case SessionBaseModel::PowerAction::RequireHibernate:
-            m_login1ManagerInterface->Hibernate(true);
+            m_login1Inter->Hibernate(true);
             break;
         default:
             break;
@@ -350,10 +346,10 @@ void GreeterWorkek::authenticationComplete()
 
     switch (m_model->powerAction()) {
     case SessionBaseModel::PowerAction::RequireRestart:
-        m_login1ManagerInterface->Reboot(true);
+        m_login1Inter->Reboot(true);
         return;
     case SessionBaseModel::PowerAction::RequireShutdown:
-        m_login1ManagerInterface->PowerOff(true);
+        m_login1Inter->PowerOff(true);
         return;
     default: break;
     }
