@@ -52,7 +52,9 @@ AuthInterface::AuthInterface(SessionBaseModel *const model, QObject *parent)
     , m_lastLogoutUid(0)
     , m_loginUserList(0)
 {
-
+    if (!m_login1Inter->isValid()) {
+        qWarning() << "m_login1Inter:" << m_login1Inter->lastError().type();
+    }
 }
 
 void AuthInterface::setLayout(std::shared_ptr<User> user, const QString &layout) {

@@ -47,6 +47,8 @@ std::shared_ptr<User> SessionBaseModel::findUserByUid(const uint uid) const
 
 std::shared_ptr<User> SessionBaseModel::findUserByName(const QString &name) const
 {
+    if (name.isEmpty()) return std::shared_ptr<User>(nullptr);
+
     for (auto user : m_userList) {
         if (user->name() == name) {
             return user;

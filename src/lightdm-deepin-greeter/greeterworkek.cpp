@@ -43,8 +43,8 @@ GreeterWorkek::GreeterWorkek(SessionBaseModel *const model, QObject *parent)
     , m_firstTimeLogin(true)
     , m_password(QString())
 {
-    if (!m_login1Inter->isValid()) {
-        qWarning() << "m_login1Inter:" << m_login1Inter->lastError().type();
+    if (m_AuthenticateInter->isValid()) {
+        m_AuthenticateInter->setTimeout(300);
     }
 
     if (!m_greeter->connectSync()) {
@@ -212,8 +212,8 @@ void GreeterWorkek::oneKeyLogin()
     user_firstlogin.waitForFinished();
     qDebug() << "GreeterWorkek::onFirstTimeLogin -- FirstTime Login User Name is : " << user_firstlogin;
 
-    if (user_firstlogin != "") {
-        auto user_ptr = m_model->findUserByName(user_firstlogin);
+    auto user_ptr = m_model->findUserByName(user_firstlogin);
+    if (user_ptr.get() != nullptr && !user_firstlogin.isError()) {
         switchToUser(user_ptr);
         m_model->setCurrentUser(user_ptr);
         userAuthForLightdm(user_ptr);
