@@ -1,7 +1,6 @@
 #ifndef AUTHAGENT_H
 #define AUTHAGENT_H
 
-#include <security/pam_appl.h>
 #include <QObject>
 #include <QMutex>
 
@@ -36,33 +35,27 @@ public:
     ~AuthAgent();
 
     void Responsed(const QString& password);
-    static void Authenticate(void *data);
-    void Cancel();
+    void Authenticate(const QString& username);
     int GetAuthType();
     DeepinAuthFramework *deepinAuth() { return m_deepinauth; }
-
-    QString userName() const { return m_userName; }
-    void setUserName(const QString &name) { m_userName = name; }
 
 signals:
     void displayErrorMsg(const QString &msg);
     void displayTextInfo(const QString &msg);
     void respondResult(const QString &msg);
 
-public:
-    static int funConversation(int num,
+private:
+    static int pamConversation(int num,
                                const struct pam_message** msg,
                                struct pam_response** resp,
                                void* app_data);
 
 private:
     DeepinAuthFramework* m_deepinauth = nullptr;
-    pam_handle_t* m_pamHandle = nullptr;
 
-    int  m_lastStatus = 255;
     int  m_verifyFailed = MAX_VERIFY_FAILED;
     QString m_password;
-    bool m_hasPw{false};
+    bool m_hasPw = false;
     AuthFlag m_authType;
     QString m_userName;
 };
