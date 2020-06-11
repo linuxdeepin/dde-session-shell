@@ -434,6 +434,7 @@ void UserLoginWidget::initUI()
     m_nameLbl->setSizePolicy(QSizePolicy::Expanding, QSizePolicy::Fixed);
     DFontSizeManager::instance()->bind(m_nameLbl, DFontSizeManager::T2);
     m_nameLbl->setAlignment(Qt::AlignCenter);
+    m_nameLbl->setTextFormat(Qt::TextFormat::PlainText);
 
     m_passwordEdit->lineEdit()->setContextMenuPolicy(Qt::NoContextMenu);
     m_passwordEdit->setSizePolicy(QSizePolicy::Expanding, QSizePolicy::Fixed);
