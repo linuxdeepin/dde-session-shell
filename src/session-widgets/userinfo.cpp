@@ -264,7 +264,7 @@ bool NativeUser::isUserIsvalid() const
     return m_userInter->isValid() && !m_userName.isEmpty();
 }
 
-ADDomainUser::ADDomainUser(int uid, QObject *parent)
+ADDomainUser::ADDomainUser(uid_t uid, QObject *parent)
     : User(parent)
 {
     m_uid = uid;
@@ -299,7 +299,7 @@ void ADDomainUser::setUserInter(UserInter *user_inter)
     m_userInter = user_inter;
 }
 
-void ADDomainUser::setUid(int uid)
+void ADDomainUser::setUid(uid_t uid)
 {
     if (m_uid == uid) {
         return;

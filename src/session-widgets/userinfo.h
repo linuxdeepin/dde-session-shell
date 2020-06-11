@@ -42,7 +42,7 @@ public:
     const QString name() const { return m_userName; }
 
     bool isLogin() const { return m_isLogind; }
-    int uid() const { return m_uid; }
+    uid_t uid() const { return m_uid; }
 
     const QString locale() const { return m_locale; }
     void setLocale(const QString &locale);
@@ -77,7 +77,7 @@ protected:
     bool m_isLogind;
     bool m_isLock;
     bool m_isServer = false;
-    int m_uid = -1;
+    uid_t m_uid = INT_MAX;
     uint m_lockNum; // minute basis
     uint m_tryNum; // try number
     QString m_userName;
@@ -117,12 +117,12 @@ class ADDomainUser : public User
     Q_OBJECT
 
 public:
-    ADDomainUser(int uid, QObject *parent = nullptr);
+    ADDomainUser(uid_t uid, QObject *parent = nullptr);
 
     void setUserDisplayName(const QString &name);
     void setUserName(const QString &name);
     void setUserInter(UserInter *user_inter);
-    void setUid(int uid);
+    void setUid(uid_t uid);
     void setIsServerUser(bool is_server);
 
     QString displayName() const override;
