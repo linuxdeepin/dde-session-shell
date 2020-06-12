@@ -290,9 +290,9 @@ void FullscreenBackground::showEvent(QShowEvent *event)
 const QPixmap FullscreenBackground::pixmapHandle(const QPixmap &pixmap)
 {
     const QSize trueSize { size() *devicePixelRatioF() };
-    QPixmap pix = pixmap.scaled(trueSize,
-                                Qt::KeepAspectRatioByExpanding,
-                                Qt::SmoothTransformation);
+    QPixmap pix;
+    if (!pixmap.isNull())
+        pix = pixmap.scaled(trueSize, Qt::KeepAspectRatioByExpanding, Qt::SmoothTransformation);
 
     pix = pix.copy(QRect((pix.width() - trueSize.width()) / 2,
                          (pix.height() - trueSize.height()) / 2,
