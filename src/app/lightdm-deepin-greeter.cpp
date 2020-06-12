@@ -224,11 +224,9 @@ int main(int argc, char* argv[])
     SessionBaseModel *model = new SessionBaseModel(SessionBaseModel::AuthType::LightdmType);
     GreeterWorkek *worker = new GreeterWorkek(model); //
 
-    if(DGuiApplicationHelper::isXWindowPlatform()) {
-        QObject::connect(model, &SessionBaseModel::authFinished, model, [=] {
-            set_rootwindow_cursor();
-        });
-    }
+    QObject::connect(model, &SessionBaseModel::authFinished, model, [=] {
+        set_rootwindow_cursor();
+    });
 
     PropertyGroup *property_group = new PropertyGroup(worker);
 
