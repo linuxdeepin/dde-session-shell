@@ -133,8 +133,6 @@ int main(int argc, char *argv[])
 
     QObject::connect(model, &SessionBaseModel::visibleChanged, &multi_screen_manager, &MultiScreenManager::startRaiseContentFrame);
 
-
-
     QDBusConnection conn = QDBusConnection::sessionBus();
     if (!conn.registerService(DBUS_NAME) ||
             !conn.registerObject("/com/deepin/dde/lockFront", &agent) ||

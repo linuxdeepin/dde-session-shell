@@ -80,7 +80,6 @@ GreeterWorkek::GreeterWorkek(SessionBaseModel *const model, QObject *parent)
     connect(model, &SessionBaseModel::lockChanged, this, [ = ](bool lock) {
         if (!lock) {
             m_password.clear();
-            qDebug() << "Request Auth_SessionBaseModel::lockChanged --  3min lock finish" << m_model->currentUser()->name();
             resetLightdmAuth(m_model->currentUser(), 100, false);
         }
     });
@@ -156,11 +155,10 @@ void GreeterWorkek::authUser(const QString &password)
     set_rootwindow_cursor();
     // auth interface
     std::shared_ptr<User> user = m_model->currentUser();
-
     m_password = password;
 
+    qDebug() << "greeter authenticate user: " << m_greeter->authenticationUser() << " current user: " << user->name();
     if (m_greeter->authenticationUser() != user->name()) {
-        qDebug() << "Request Auth_GreeterWorkek::authUser --  if authUser not currentUser" << user->name();
         resetLightdmAuth(user, 100, false);
     }
     else {
@@ -168,7 +166,6 @@ void GreeterWorkek::authUser(const QString &password)
             m_greeter->respond(password);
         }
         else {
-            qDebug() << "Request Auth_GreeterWorkek::authUser -- auth finish once" << user->name();
             m_greeter->authenticate(user->name());
         }
     }
@@ -181,12 +178,10 @@ void GreeterWorkek::onUserAdded(const QString &user)
     user_ptr->setisLogind(isLogined(user_ptr->uid()));
 
     if (m_model->currentUser().get() == nullptr) {
-        if (m_model->userList().isEmpty() ||
-                m_model->userList().first()->type() == User::ADDomain) {
+        if (m_model->userList().isEmpty() || m_model->userList().first()->type() == User::ADDomain) {
             m_model->setCurrentUser(user_ptr);
 
             if (m_model->currentType() == SessionBaseModel::AuthType::LightdmType) {
-                qDebug() << "Request Auth_GreeterWorkek::onUserAdded -- User added" << user_ptr->name();
                 userAuthForLightdm(user_ptr);
             }
         }
@@ -240,14 +235,12 @@ void GreeterWorkek::onCurrentUserChanged(const QString &user)
     m_currentUserUid = static_cast<uint>(obj["Uid"].toInt());
 
     if (m_firstTimeLogin) {
-        qDebug() << "Request Auth_GreeterWorkek::onCurrentUserChanged -- first time login and return";
         return;
     }
 
     for (std::shared_ptr<User> user_ptr : m_model->userList()) {
         if (!user_ptr->isLogin() && user_ptr->uid() == m_currentUserUid) {
             m_model->setCurrentUser(user_ptr);
-            qDebug() << "Request Auth_GreeterWorkek::onCurrentUserChanged -- currentUser changed to" << user_ptr->name();
             userAuthForLightdm(user_ptr);
             break;
         }
@@ -299,8 +292,7 @@ void GreeterWorkek::message(QString text, QLightDM::Greeter::MessageType type)
                 m_greeter->respond(m_password);
             });
         }
-//        emit m_model->authFaildMessage(tr(
-//            "Fingerprint verification timed out, please enter your password manually"));
+
         return;
     }
 
@@ -310,6 +302,7 @@ void GreeterWorkek::message(QString text, QLightDM::Greeter::MessageType type)
 
         emit m_model->authFaildMessage(QString(dgettext("fprintd", text.toUtf8())));
         break;
+
     case QLightDM::Greeter::MessageTypeError:
         emit m_model->authFaildTipsMessage(QString(dgettext("fprintd", text.toUtf8())));
         break;
@@ -326,7 +319,6 @@ void GreeterWorkek::authenticationComplete()
 
     if (!m_greeter->isAuthenticated()) {
         if (m_password.isEmpty()) {
-            qDebug() << "Request GreeterWorkek::authenticationComplete -- fingerprint auth fail" << m_model->currentUser()->name();
             resetLightdmAuth(m_model->currentUser(), 100, false);
             return;
         }
@@ -338,8 +330,7 @@ void GreeterWorkek::authenticationComplete()
         }
 
         if (m_model->currentUser()->type() == User::ADDomain) {
-            emit m_model->authFaildTipsMessage(
-                tr("The account or password is not correct. Please enter again."));
+            emit m_model->authFaildTipsMessage(tr("The account or password is not correct. Please enter again."));
         }
 
         if (m_model->currentUser()->isLockForNum()) {
@@ -347,7 +338,6 @@ void GreeterWorkek::authenticationComplete()
             return;
         }
 
-        qDebug() << "Request GreeterWorkek::authenticationComplete -- password auth fail" << m_model->currentUser()->name();
         resetLightdmAuth(m_model->currentUser(), 100, false);
 
         return;

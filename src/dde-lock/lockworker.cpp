@@ -41,6 +41,7 @@ LockWorker::LockWorker(SessionBaseModel *const model, QObject *parent)
             m_authFramework->Authenticate(user);
         }
     });
+
     //该信号用来处理初始化切换用户(锁屏+锁屏)或者切换用户(锁屏+登陆)两种种场景的指纹认证
     connect(m_lockInter, &DBusLockService::UserChanged, this, &LockWorker::onCurrentUserChanged);
 

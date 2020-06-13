@@ -37,7 +37,7 @@
 #include <QWindow>
 #include <QDir>
 #include <DGuiApplicationHelper>
-
+#include <unistd.h>
 #include "src/session-widgets/framedatabind.h"
 
 DGUI_USE_NAMESPACE
@@ -86,7 +86,7 @@ void FullscreenBackground::updateBackground(const QPixmap &background)
     m_fadeOutAni->start();
 }
 
-void FullscreenBackground::updateBackground (const QString &file) 
+void FullscreenBackground::updateBackground (const QString &file)
 {
     QPixmap image;
     QSharedMemory memory (file);
@@ -98,13 +98,16 @@ void FullscreenBackground::updateBackground (const QString &file)
         }
         memory.detach();
     } else {
-        qWarning() << "cannot attach: " << file << " image file.";
-        findSystemDefaultImage (image);
+        if (QFile::exists (file)) {
+            image.load (file);
+        } else {
+            findSystemDefaultImage (image);
+        }
     }
     updateBackground (image);
 }
 
-void FullscreenBackground::findSystemDefaultImage (QPixmap& image) 
+void FullscreenBackground::findSystemDefaultImage (QPixmap& image)
 {
     auto isPicture = [] (const QString & filePath) {
         return QFile::exists (filePath) && QFile (filePath).size() && !QPixmap (filePath).isNull() ;

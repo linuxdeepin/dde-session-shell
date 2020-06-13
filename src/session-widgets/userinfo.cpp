@@ -229,7 +229,11 @@ QString NativeUser::avatarPath() const
 
 QString NativeUser::greeterBackgroundPath() const
 {
-    return readSharedImage(m_uid,1);
+    const QString& shareKey = readSharedImage (m_uid, 1);
+    if (shareKey.isEmpty()) {
+        return "/home/" + m_userName + "/.cache/dde-preload/blur-images/1.jpg";
+    }
+    return shareKey;
 }
 
 QString NativeUser::desktopBackgroundPath() const
