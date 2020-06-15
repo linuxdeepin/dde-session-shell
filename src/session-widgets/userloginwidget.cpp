@@ -648,6 +648,7 @@ void UserLoginWidget::updateKBLayout(const QStringList &list)
 {
     m_kbLayoutWidget->updateButtonList(list);
     m_kbLayoutBorder->setContent(m_kbLayoutWidget);
+    m_passwordEdit->setKBLayoutList(list);
     updateClipPath();
 }
 
@@ -658,18 +659,12 @@ void UserLoginWidget::hideKBLayout()
 
 void UserLoginWidget::setKBLayoutList(QStringList kbLayoutList)
 {
-    qDebug() << "keyboardlayout---UserLoginWidget---setKBLayoutList:" << kbLayoutList;
-
     m_KBLayoutList = kbLayoutList;
     updateKBLayout(m_KBLayoutList);
-    m_passwordEdit->setKBLayoutList(kbLayoutList);
-    updateClipPath();
 }
 
 void UserLoginWidget::setDefaultKBLayout(const QString &layout)
 {
-    qDebug() << "keyboardlayout---UserLoginWidget---setDefaultKBLayout:" << layout;
-
     m_kbLayoutWidget->setDefault(layout);
     updateClipPath();
 }

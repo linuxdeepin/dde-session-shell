@@ -114,9 +114,11 @@ void DPasswordEditEx::setKBLayoutList(QStringList kbLayoutList)
     if (kbLayoutList.size() > 1) {
         //连接点击键盘布局Action槽函数
         connect(m_KBButton, &QPushButton::clicked, this, &DPasswordEditEx::toggleKBLayoutWidget);
+        receiveUserKBLayoutChanged(kbLayoutList[0]);
     } else {
         //解除点击键盘布局Action槽函数
         disconnect(m_KBButton, &QPushButton::clicked, this, &DPasswordEditEx::toggleKBLayoutWidget);
+        m_KBButton->hide();
     }
 }
 
