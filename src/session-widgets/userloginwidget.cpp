@@ -780,6 +780,8 @@ void UserLoginWidget::unlockSuccessAni()
 
 void UserLoginWidget::unlockFailedAni()
 {
+    m_passwordEdit->hideLoadSlider();
+    m_passwordEdit->lineEdit()->selectAll();
     if(timer != nullptr) {
         timer->stop();
         delete timer;
