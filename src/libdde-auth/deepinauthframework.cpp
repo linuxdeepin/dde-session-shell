@@ -24,7 +24,7 @@ DeepinAuthFramework::~DeepinAuthFramework()
         m_authagent = nullptr;
 
         if (m_pamAuth != 0) {
-            pthread_kill(m_pamAuth, SIGQUIT);
+            pthread_cancel(m_pamAuth);
             pthread_join(m_pamAuth, nullptr);
             m_pamAuth = 0;
         }
@@ -60,7 +60,7 @@ void DeepinAuthFramework::Authenticate(std::shared_ptr<User> user)
     m_password.clear();
 
     if (m_pamAuth != 0) {
-        pthread_kill(m_pamAuth, SIGQUIT);
+        pthread_cancel(m_pamAuth);
         pthread_join(m_pamAuth, nullptr);
         m_pamAuth = 0;
     }

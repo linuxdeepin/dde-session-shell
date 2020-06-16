@@ -2,9 +2,6 @@
 #define AUTHAGENT_H
 
 #include <QObject>
-#include <QMutex>
-
-#define MAX_VERIFY_FAILED 5
 
 class DeepinAuthFramework;
 class AuthAgent : public QObject {
@@ -52,10 +49,9 @@ private:
 
 private:
     DeepinAuthFramework* m_deepinauth = nullptr;
+    bool m_isCondition = true;
 
-    int  m_verifyFailed = MAX_VERIFY_FAILED;
     QString m_password;
-    bool m_hasPw = false;
     AuthFlag m_authType;
     QString m_userName;
 };

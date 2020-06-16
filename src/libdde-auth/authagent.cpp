@@ -30,7 +30,7 @@ AuthAgent::~AuthAgent()
 void AuthAgent::Responsed(const QString &password)
 {
     m_password = password;
-    m_hasPw = true;
+    m_isCondition = false;
 }
 
 void AuthAgent::Authenticate(const QString& username)
@@ -53,7 +53,6 @@ void AuthAgent::Authenticate(const QString& username)
         msg = "succes";
     } else {
         qDebug() << Q_FUNC_INFO << pam_strerror(m_pamHandle, rc);
-        pam_end(m_pamHandle, rc);
     }
 
     rc = pam_end(m_pamHandle, rc);
@@ -61,7 +60,7 @@ void AuthAgent::Authenticate(const QString& username)
          qDebug() << "pam_end() failed: %s" << pam_strerror(m_pamHandle, rc);
     }
 
-    m_hasPw = false;
+    m_isCondition = true;
     emit respondResult(msg);
 }
 
@@ -94,9 +93,7 @@ int AuthAgent::pamConversation(int num_msg, const struct pam_message **msg,
         switch(PAM_MSG_MEMBER(msg, idx, msg_style)) {
 
         case PAM_PROMPT_ECHO_OFF: {
-            while (!app_ptr->m_hasPw) {
-                sleep(1);
-            }
+            while(app_ptr->m_isCondition) sleep(1);
 
             if (!QPointer<DeepinAuthFramework>(app_ptr->deepinAuth())) {
                 qDebug() << "pam: deepin auth framework is null";
