@@ -91,6 +91,15 @@ GreeterWorkek::GreeterWorkek(SessionBaseModel *const model, QObject *parent)
     connect(model, &SessionBaseModel::currentUserChanged, this, &GreeterWorkek::recoveryUserKBState);
     connect(m_lockInter, &DBusLockService::UserChanged, this, &GreeterWorkek::onCurrentUserChanged);
 
+    connect(m_login1Inter, &DBusLogin1Manager::SessionRemoved, this, [ = ] {
+        const QString& user = m_lockInter->CurrentUser();
+        const QJsonObject obj = QJsonDocument::fromJson(user.toUtf8()).object();
+        auto user_ptr = m_model->findUserByUid(static_cast<uint>(obj["Uid"].toInt()));
+
+        m_model->setCurrentUser(user_ptr);
+        userAuthForLightdm(user_ptr);
+    });
+
     const QString &switchUserButtonValue { valueByQSettings<QString>("Lock", "showSwitchUserButton", "ondemand") };
     m_model->setAlwaysShowUserSwitchButton(switchUserButtonValue == "always");
     m_model->setAllowShowUserSwitchButton(switchUserButtonValue == "ondemand");
