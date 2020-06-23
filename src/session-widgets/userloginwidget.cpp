@@ -121,7 +121,8 @@ void UserLoginWidget::setFaildTipMessage(const QString &message, SessionBaseMode
         m_passwordEdit->hideAlertMessage();
         return;
     }
-
+    m_passwordEdit->lineEdit()->clear();
+    m_passwordEdit->hideLoadSlider();
     m_passwordEdit->showAlertMessage(message, 3000);
 }
 
@@ -780,8 +781,8 @@ void UserLoginWidget::unlockSuccessAni()
 
 void UserLoginWidget::unlockFailedAni()
 {
+    m_passwordEdit->lineEdit()->clear();
     m_passwordEdit->hideLoadSlider();
-    m_passwordEdit->lineEdit()->selectAll();
     if(timer != nullptr) {
         timer->stop();
         delete timer;

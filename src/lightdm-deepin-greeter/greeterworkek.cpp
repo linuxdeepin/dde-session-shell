@@ -262,8 +262,6 @@ void GreeterWorkek::userAuthForLightdm(std::shared_ptr<User> user)
 
 void GreeterWorkek::prompt(QString text, QLightDM::Greeter::PromptType type)
 {
-    qDebug() << "pam prompt: " << text << type;
-
     // Don't show password prompt from standard pam modules since
     // we'll provide our own prompt or just not.
     const QString msg = text.simplified() == "Password:" ? "" : text;

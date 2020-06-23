@@ -217,8 +217,6 @@ void LockWorker::lockServiceEvent(quint32 eventType, quint32 pid, const QString 
     if (username != m_model->currentUser()->name())
         return;
 
-    qDebug() << eventType << pid << username << message;
-
     // Don't show password prompt from standard pam modules since
     // we'll provide our own prompt or just not.
     const QString msg = message.simplified() == "Password:" ? "" : message;
