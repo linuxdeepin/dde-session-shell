@@ -65,6 +65,7 @@ public Q_SLOTS:// METHODS
 
 Q_SIGNALS:
     void ChangKey(QString key);
+    void Visible(bool visible);
 };
 
 #endif // DBUSLOCKFRONTSERVICE_H

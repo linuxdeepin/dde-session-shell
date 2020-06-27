@@ -113,14 +113,18 @@ int main(int argc, char *argv[])
         QObject::connect(lockFrame, &LockFrame::requestSwitchToUser, worker, &LockWorker::switchToUser);
         QObject::connect(lockFrame, &LockFrame::requestAuthUser, worker, &LockWorker::authUser);
         QObject::connect(model, &SessionBaseModel::visibleChanged, lockFrame, &LockFrame::setVisible);
+        QObject::connect(model, &SessionBaseModel::visibleChanged, lockFrame,[&](bool visible) {
+            emit service.Visible(visible);
+        });
         QObject::connect(model, &SessionBaseModel::showUserList, lockFrame, &LockFrame::showUserList);
         QObject::connect(lockFrame, &LockFrame::requestSetLayout, worker, &LockWorker::setLayout);
         QObject::connect(lockFrame, &LockFrame::requestEnableHotzone, worker, &LockWorker::enableZoneDetected, Qt::UniqueConnection);
         QObject::connect(lockFrame, &LockFrame::destroyed, property_group, &PropertyGroup::removeObject);
-        QObject::connect(lockFrame, &LockFrame::sendKeyValue, [&](QString key){
+        QObject::connect(lockFrame, &LockFrame::sendKeyValue, [&](QString key) {
              emit service.ChangKey(key);
         });
         lockFrame->setVisible(model->isShow());
+        emit service.Visible(true);
         return lockFrame;
     };
 
