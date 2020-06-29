@@ -117,6 +117,7 @@ void UserLoginWidget::setFaildMessage(const QString &message, SessionBaseModel::
 //密码输入错误,设置错误信息
 void UserLoginWidget::setFaildTipMessage(const QString &message, SessionBaseModel::AuthFaildType type)
 {
+    m_accountEdit->lineEdit()->setEnabled(true);
     if (m_isLock && !message.isEmpty()) {
         m_passwordEdit->hideAlertMessage();
         return;
@@ -328,8 +329,8 @@ void UserLoginWidget::disablePassword(bool disable, uint lockNum)
     }
 
     if ( false == disable && true == m_isServerMode){
-            m_accountEdit->lineEdit()->setEnabled(true);
-        }
+        m_accountEdit->lineEdit()->setEnabled(true);
+    }
 }
 
 void UserLoginWidget::updateAuthType(SessionBaseModel::AuthType type)

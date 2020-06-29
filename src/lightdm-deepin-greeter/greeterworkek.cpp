@@ -116,7 +116,7 @@ GreeterWorkek::GreeterWorkek(SessionBaseModel *const model, QObject *parent)
     }
 
     if (DSysInfo::deepinType() == DSysInfo::DeepinServer || valueByQSettings<bool>("", "loginPromptInput", false)) {
-        std::shared_ptr<User> user = std::make_shared<ADDomainUser>(-1);
+        std::shared_ptr<User> user = std::make_shared<ADDomainUser>(INT_MAX);
         static_cast<ADDomainUser *>(user.get())->setUserDisplayName("...");
         static_cast<ADDomainUser *>(user.get())->setIsServerUser(true);
         m_model->setIsServerModel(true);
