@@ -99,7 +99,7 @@ static unsigned long loadCursorHandle(Display *dpy, const char *name, int size)
     return handle;
 }
 
-static int set_rootwindow_cursor() {
+int set_rootwindow_cursor() {
     Display* display = XOpenDisplay(nullptr);
     if (!display) {
         qDebug() << "Open display failed";
