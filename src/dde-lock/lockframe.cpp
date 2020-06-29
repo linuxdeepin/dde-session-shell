@@ -83,7 +83,7 @@ bool LockFrame::eventFilter(QObject *watched, QEvent *event)
         QString  keyValue = "";
         switch (static_cast<QKeyEvent *>(event)->key()) {
         case Qt::Key_NumLock: {
-            keyValue = "capslock";
+            keyValue = "numlock";
             break;
         }
         case Qt::Key_TouchpadOn: {
