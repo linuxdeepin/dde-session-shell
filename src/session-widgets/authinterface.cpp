@@ -260,12 +260,12 @@ void AuthInterface::checkConfig()
 void AuthInterface::checkPowerInfo()
 {
     QProcessEnvironment env = QProcessEnvironment::systemEnvironment();
-    bool config_sleep = m_gsettings->keys().contains("sleep") ? getGSettings("sleep").toBool() : valueByQSettings<bool>("Power", "sleep", true);
+    bool config_sleep = QFile::exists(DDESESSIONCC::session_ui_configs.last()) ? valueByQSettings<bool>("Power", "sleep", true) : getGSettings("sleep").toBool();
     bool can_sleep = env.contains(POWER_CAN_SLEEP) ? QVariant(env.value(POWER_CAN_SLEEP)).toBool()
                                                    : config_sleep && m_login1Inter->CanSuspend().value().contains("yes");
     m_model->setCanSleep(can_sleep);
 
-    bool config_hibernate = m_gsettings->keys().contains("hibernate") ? getGSettings("hibernate").toBool() : valueByQSettings<bool>("Power", "hibernate", true);
+    bool config_hibernate = QFile::exists(DDESESSIONCC::session_ui_configs.last()) ? valueByQSettings<bool>("Power", "hibernate", true) : getGSettings("hibernate").toBool();
     bool can_hibernate = env.contains(POWER_CAN_HIBERNATE) ? QVariant(env.value(POWER_CAN_HIBERNATE)).toBool()
                                                            : config_hibernate && m_login1Inter->CanHibernate().value().contains("yes");
     if (can_hibernate) {
