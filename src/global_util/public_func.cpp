@@ -26,6 +26,10 @@
 #include "public_func.h"
 #include <QFile>
 #include "constants.h"
+#include <QDBusMessage>
+#include <QDBusConnection>
+#include <QDBusReply>
+#include <QDebug>
 
 QPixmap loadPixmap(const QString &file)
 {
@@ -52,4 +56,32 @@ QPixmap loadPixmap(const QString &file)
     }
 
     return pixmap;
+}
+
+/**
+ * @brief 获取图像共享内存
+ * 
+ * @param uid 当前用户ID
+ * @param purpose 图像用途，1是锁屏、关机、登录，2是启动器，3-19是工作区
+ * @return QString Qt的共享内存key
+ */
+QString readSharedImage(uid_t uid, int purpose)
+{
+    QDBusMessage msg = QDBusMessage::createMethodCall("com.deepin.dde.preload", "/com/deepin/dde/preload", "com.deepin.dde.preload", "requestSource");
+    QList<QVariant> args;
+    args.append(int(uid));
+    args.append(purpose);
+    msg.setArguments(args);
+    QString shareKey;
+    QDBusMessage ret = QDBusConnection::sessionBus().call(msg);
+    if (ret.type() == QDBusMessage::ErrorMessage) {
+        qDebug() << "readSharedImage fail. user: " << uid << ", purpose: " << purpose << ", detail: " << ret;
+    } else {
+        QDBusReply<QString> reply(ret);
+        shareKey = reply.value();
+    }
+#ifdef QT_DEBUG
+    qInfo() << __FILE__ << ", " << Q_FUNC_INFO << " user: " << uid << ", purpose: " << purpose << " share memory key: " << shareKey;
+#endif
+    return shareKey;
 }

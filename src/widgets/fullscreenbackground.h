@@ -80,13 +80,12 @@ private:
 
 private:
     void updateScreen(QScreen *screen);
-    void updateIfIsPicture (const QString& file);
+    void findSystemDefaultImage (QPixmap& image);
     void updateGeometry();
     using QWidget::setGeometry;
     using QWidget::resize;
     using QWidget::move;
 
-    QString m_bgPath;
     QPixmap m_background;
     QPixmap m_fakeBackground;
     QPixmap m_backgroundCache;

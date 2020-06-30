@@ -35,6 +35,15 @@
 
 QPixmap loadPixmap(const QString &file);
 
+/**
+ * @brief 获取图像共享内存
+ * 
+ * @param uid 当前用户ID
+ * @param purpose 图像用途，1是锁屏、关机、登录，2是启动器，3-19是工作区
+ * @return QString Qt的共享内存key
+ */
+QString readSharedImage(uid_t uid, int purpose);
+
 template <typename T>
 T findValueByQSettings(const QStringList &configFiles,
                        const QString &group,
@@ -56,5 +65,6 @@ T findValueByQSettings(const QStringList &configFiles,
 
     return failback.value<T>();
 }
+
 
 #endif // PUBLIC_FUNC_H

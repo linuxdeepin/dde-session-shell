@@ -3,6 +3,7 @@
 #include <unistd.h>
 #include <pwd.h>
 #include <grp.h>
+#include "src/global_util/public_func.h"
 
 #define LOCK_AUTH_NUM 5
 
@@ -228,7 +229,7 @@ QString NativeUser::avatarPath() const
 
 QString NativeUser::greeterBackgroundPath() const
 {
-    return toLocalFile(m_userInter->greeterBackground());
+    return readSharedImage(m_uid,1);
 }
 
 QString NativeUser::desktopBackgroundPath() const

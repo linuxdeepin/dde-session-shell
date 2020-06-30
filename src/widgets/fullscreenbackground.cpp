@@ -88,58 +88,48 @@ void FullscreenBackground::updateBackground(const QPixmap &background)
 
 void FullscreenBackground::updateBackground (const QString &file) 
 {
-
-    const QUrl url (file);
-    if (url.isLocalFile())
-        return updateBackground (url.path());
-
-    if (file.isEmpty()) {
-        if (m_bgPath.isEmpty()) {
-            updateIfIsPicture (DEFAULT_BACKGROUND);
-        } else {
-            qWarning() << "update image path is empty, m_bgPath is not empty.";
+    QPixmap image;
+    QSharedMemory memory (file);
+    if (memory.attach()) {
+        image.loadFromData ( (const unsigned char *) memory.data(), memory.size());
+        if (image.isNull()) {
+            qWarning() << "input background: " << file << " is invalid image file.";
+            findSystemDefaultImage (image);
         }
+        memory.detach();
     } else {
-        if (m_bgPath != file) {
-            updateIfIsPicture (file);
-        }
+        qWarning() << "cannot attach: " << file << " image file.";
+        findSystemDefaultImage (image);
     }
+    updateBackground (image);
 }
 
-void FullscreenBackground::updateIfIsPicture (const QString& file) 
+void FullscreenBackground::findSystemDefaultImage (QPixmap& image) 
 {
     auto isPicture = [] (const QString & filePath) {
         return QFile::exists (filePath) && QFile (filePath).size() && !QPixmap (filePath).isNull() ;
     };
 
-    if (isPicture (file)) {
-        m_bgPath = file;
-    } else {
-        qWarning() << "input background: " << file << " is invalid image file.";
-        QDir dir ("/usr/share/wallpapers/deepin");
-        if (dir.exists()) {
-            dir.setFilter (QDir::Files);
-            QFileInfoList list = dir.entryInfoList();
-            foreach (QFileInfo f, list) {
-                if (f.baseName() == "desktop") {
-                    m_bgPath = f.filePath();
-                    break;
-                }
+    QString bgPath;
+    QDir dir ("/usr/share/wallpapers/deepin");
+    if (dir.exists()) {
+        dir.setFilter (QDir::Files);
+        QFileInfoList list = dir.entryInfoList();
+        foreach (QFileInfo f, list) {
+            if (f.baseName() == "desktop") {
+                bgPath = f.filePath();
+                break;
             }
         }
-
-        if (!QFile::exists (m_bgPath)) {
-            m_bgPath = DEFAULT_BACKGROUND;
-        }
     }
-
-    QString imageEffect = m_imageEffectInter->Get ("", m_bgPath);
-
-    if (!isPicture (imageEffect)) imageEffect = m_bgPath;
-
-    updateBackground (QPixmap (imageEffect));
-
-    Q_ASSERT (QFileInfo (m_bgPath).isFile());
+    if (!QFile::exists (bgPath)) {
+        bgPath = DEFAULT_BACKGROUND;
+    }
+    QString imageEffect = m_imageEffectInter->Get ("", bgPath);
+    if (!isPicture (imageEffect)) {
+        imageEffect = bgPath;
+    }
+    image.load (imageEffect);
 }
 
 
