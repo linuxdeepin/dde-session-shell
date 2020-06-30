@@ -18,9 +18,6 @@ public:
     void Hibernate(bool enable);
 
 private:
-    void showFrame();
-
-private:
     SessionBaseModel *m_model;
 };
 
