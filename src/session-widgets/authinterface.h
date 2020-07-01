@@ -52,6 +52,7 @@ protected:
     void checkVirtualKB();
     void checkSwap();
     bool isDeepin();
+    bool gsettingsExist(const QString& key);
     QVariant getGSettings(const QString& key);
 
     template <typename T>
