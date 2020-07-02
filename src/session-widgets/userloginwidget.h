@@ -130,7 +130,7 @@ private:
     void refreshKBLayoutWidgetPosition();
     void receiveUserKBLayoutChanged(const QString &layout);
     void updateNameLabel();
-    void resetPowerIcon(bool requirePrompt);
+    void resetPowerIcon();
     void updateClipPath();
 
 private:
