@@ -160,7 +160,7 @@ void UserLoginWidget::updateUI()
 {
     m_lockPasswordWidget->hide();
     m_accountEdit->hide();
-    m_nameLbl->show();
+    m_nameLbl->hide();
     switch (m_showType) {
     case NoPasswordType: {
         bool isNopassword = true;
@@ -174,11 +174,13 @@ void UserLoginWidget::updateUI()
         m_lockPasswordWidget->setVisible(m_isLock);
 
         m_lockButton->show();
+        m_nameLbl->show();
         break;
     }
     case NormalType: {
         m_passwordEdit->setVisible(!m_isLock);
         m_lockButton->show();
+        m_nameLbl->show();
         m_lockPasswordWidget->setVisible(m_isLock);
         m_passwordEdit->lineEdit()->setFocus();
         break;
@@ -202,11 +204,13 @@ void UserLoginWidget::updateUI()
         break;
     }
     case UserFrameType: {
+        m_nameLbl->show();
         m_passwordEdit->hide();
         m_lockButton->hide();
         break;
     }
     case UserFrameLoginType: {
+        m_nameLbl->show();
         m_passwordEdit->hide();
         m_lockButton->hide();
         break;
