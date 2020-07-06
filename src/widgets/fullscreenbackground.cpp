@@ -60,13 +60,10 @@ FullscreenBackground::FullscreenBackground(QWidget *parent)
     installEventFilter(this);
 
     connect(m_fadeOutAni, &QVariantAnimation::valueChanged, this, static_cast<void (FullscreenBackground::*)()>(&FullscreenBackground::update));
-    std::function<void (QVariant)> primary_show_finish = std::bind(&FullscreenBackground::onOtherPagePrimaryShowChanged, this, std::placeholders::_1);
-    m_dataBindIndex = FrameDataBind::Instance()->registerFunction("PrimaryShowFinished", primary_show_finish);
 }
 
 FullscreenBackground::~FullscreenBackground()
 {
-    FrameDataBind::Instance()->unRegisterFunction("PrimaryShowFinished", m_dataBindIndex);
 }
 
 bool FullscreenBackground::contentVisible() const
@@ -141,8 +138,13 @@ void FullscreenBackground::setScreen(QScreen *screen)
     QScreen *primary_screen = QGuiApplication::primaryScreen();
     if(primary_screen == screen) {
         m_content->show();
+        m_primaryShowFinished = true;
         emit contentVisibleChanged(true);
-        QTimer::singleShot(1000, this, []{ FrameDataBind::Instance()->updateValue("PrimaryShowFinished", true); });
+    } else {
+        QTimer::singleShot(1000, this, [ = ] {
+            m_primaryShowFinished = true;
+            setMouseTracking(true);
+        });
     }
 
     updateScreen(screen);
@@ -248,6 +250,14 @@ void FullscreenBackground::resizeEvent(QResizeEvent *event)
     return QWidget::resizeEvent(event);
 }
 
+void FullscreenBackground::mouseMoveEvent(QMouseEvent *event)
+{
+    m_content->show();
+    emit contentVisibleChanged(true);
+
+    return QWidget::mouseMoveEvent(event);
+}
+
 void FullscreenBackground::keyPressEvent(QKeyEvent *e)
 {
     QWidget::keyPressEvent(e);
@@ -296,11 +306,6 @@ const QPixmap FullscreenBackground::pixmapHandle(const QPixmap &pixmap)
     pix.setDevicePixelRatio(devicePixelRatioF());
 
     return pix;
-}
-
-void FullscreenBackground::onOtherPagePrimaryShowChanged(const QVariant &value)
-{
-    m_primaryShowFinished = value.toBool();
 }
 
 void FullscreenBackground::updateScreen(QScreen *screen)

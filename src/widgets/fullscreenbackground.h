@@ -74,9 +74,9 @@ private:
     void enterEvent(QEvent *event) Q_DECL_OVERRIDE;
     void leaveEvent(QEvent *event) Q_DECL_OVERRIDE;
     void resizeEvent(QResizeEvent *event) Q_DECL_OVERRIDE;
+    void mouseMoveEvent(QMouseEvent *event) Q_DECL_OVERRIDE;
 
     const QPixmap pixmapHandle(const QPixmap &pixmap);
-    void onOtherPagePrimaryShowChanged(const QVariant &value);
 
 private:
     void updateScreen(QScreen *screen);
@@ -97,7 +97,6 @@ private:
     bool m_primaryShowFinished = false;
     bool m_isBlackMode = false;
     bool m_isHibernateMode = false;
-    int m_dataBindIndex;
 };
 
 #endif // FULLSCREENBACKGROUND_H
