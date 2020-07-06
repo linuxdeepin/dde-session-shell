@@ -28,7 +28,7 @@ Package: dde-session-shell
 Architecture: any
 Depends: ${shlibs:Depends}, ${misc:Depends}, ${dist:Depends},
          deepin-desktop-schemas (>= 2.91.2), dde-daemon, x11-xserver-utils,
-         dbus-x11, deepin-authenticate(>=1.0.0.2)
+         dbus-x11, deepin-authenticate(>=1.0.0.2) , dde-preload(>=5.1.0.0)
 Provides: lightdm-greeter
 Recommends: onboard
 Conflicts: dde-workspace,
