@@ -90,7 +90,7 @@ void FullscreenBackground::updateBackground (const QString &file)
     if (memory.attach()) {
         image.loadFromData ( (const unsigned char *) memory.data(), memory.size());
         if (image.isNull()) {
-            qWarning() << "input background: " << file << " is invalid image file.";
+            qDebug() << "input background: " << file << " is invalid image file.";
             findSystemDefaultImage (image);
         }
         memory.detach();
