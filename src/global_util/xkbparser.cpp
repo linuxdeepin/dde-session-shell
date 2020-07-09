@@ -61,16 +61,12 @@ QStringList XkbParser::lookUpKeyboardList(QStringList keyboardList_key) {
                         for (int j = 0; j < KeyboardLayoutList[i].variantItemList.length(); j++) {
                             if (KeyboardLayoutList[i].variantItemList[j].name == tail_key) {
                                 result << dgettext(xkbDomain, KeyboardLayoutList[i].variantItemList[j].description.toLatin1());
-
-
                             }
                         }
                         break;
                     }
                 }
             }
-
-
         } else {
             continue;
         }
@@ -148,10 +144,6 @@ bool XkbParser::parse() {
         tmpLayoutItem.description = descriptionElement.text();
 
         QDomElement variantListElement = layoutNode.firstChildElement("variantList");
-        if (variantListElement.isNull()) {
-//            qDebug() << "has no variant list.";
-            continue;
-        }
         QDomNodeList variantNodes = variantListElement.elementsByTagName("variant");
 //        qDebug() << "size of variant list: " << variantNodes.size();
         QDomNode variantNode;

@@ -127,6 +127,11 @@ void DPasswordEditEx::receiveUserKBLayoutChanged(const QString &layout)
     QString layoutName = layout;
     layoutName = layoutName.split(";").first();
 
+    // special mark in Japanese
+    if(layoutName.contains("/")) {
+        layoutName = layoutName.split("/").last();
+    }
+
     if (m_KBLayoutList.size() == 1) {
         layoutName = "";
         m_KBButton->hide();
