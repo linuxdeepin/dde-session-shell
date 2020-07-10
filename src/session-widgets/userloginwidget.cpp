@@ -125,6 +125,7 @@ void UserLoginWidget::setFaildTipMessage(const QString &message, SessionBaseMode
     m_passwordEdit->lineEdit()->clear();
     m_passwordEdit->hideLoadSlider();
     m_passwordEdit->showAlertMessage(message, 3000);
+    m_passwordEdit->raise();
 }
 
 //设置窗体显示模式
