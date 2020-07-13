@@ -84,11 +84,16 @@ InhibitWarnView::InhibitWarnView(Actions inhibitType, QWidget *parent)
     m_acceptBtn->setObjectName("AcceptButton");
     m_acceptBtn->setIconSize(QSize(ButtonIconSize, ButtonIconSize));
     m_acceptBtn->setFixedSize(ButtonWidth, ButtonHeight);
+    m_acceptBtn->setCheckable(true);
+    m_acceptBtn->setAutoExclusive(true);
 
     m_cancelBtn = new QPushButton(tr("Cancel"), this);
     m_cancelBtn->setObjectName("CancelButton");
     m_cancelBtn->setIconSize(QSize(ButtonIconSize, ButtonIconSize));
     m_cancelBtn->setFixedSize(ButtonWidth, ButtonHeight);
+    m_cancelBtn->setCheckable(true);
+    m_cancelBtn->setAutoExclusive(true);
+
     const auto ratio = devicePixelRatioF();
     QIcon icon_pix = QIcon::fromTheme(":/img/cancel_normal.svg").pixmap(m_cancelBtn->iconSize() * ratio);
     m_cancelBtn->setIcon(icon_pix);
@@ -123,8 +128,8 @@ InhibitWarnView::InhibitWarnView(Actions inhibitType, QWidget *parent)
 
     setLayout(centralLayout);
 
-    m_acceptBtn->setChecked(true);
-    m_currentBtn = m_acceptBtn;
+    m_cancelBtn->setChecked(true);
+    m_currentBtn = m_cancelBtn;
 
     connect(m_cancelBtn, &QPushButton::clicked, this, &InhibitWarnView::cancelled);
     connect(m_acceptBtn, &QPushButton::clicked, [this] {emit actionInvoked(m_action);});
