@@ -43,6 +43,7 @@
 #include <QDesktopWidget>
 #include <DGuiApplicationHelper>
 #include <QMovie>
+#include <unistd.h>
 
 DCORE_USE_NAMESPACE
 DWIDGET_USE_NAMESPACE
@@ -136,7 +137,7 @@ int main(int argc, char *argv[])
     QDBusConnection conn = QDBusConnection::sessionBus();
     if (!conn.registerService(DBUS_NAME) ||
             !conn.registerObject("/com/deepin/dde/lockFront", &agent) ||
-            !app.setSingleInstance(QString("dde-lock"), DApplication::UserScope)) {
+            !app.setSingleInstance(QString("dde-lock%1").arg(getuid()), DApplication::UserScope)) {
         qDebug() << "register dbus failed"<< "maybe lockFront is running..." << conn.lastError();
 
         if (!runDaemon) {
