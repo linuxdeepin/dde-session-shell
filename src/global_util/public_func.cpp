@@ -30,6 +30,7 @@
 #include <QDBusConnection>
 #include <QDBusReply>
 #include <QDebug>
+#include <QGSettings>
 
 QPixmap loadPixmap(const QString &file)
 {
@@ -84,4 +85,26 @@ QString readSharedImage(uid_t uid, int purpose)
     qInfo() << __FILE__ << ", " << Q_FUNC_INFO << " user: " << uid << ", purpose: " << purpose << " share memory key: " << shareKey;
 #endif
     return shareKey;
+}
+
+
+/**
+ * @brief 是否使用域管认证。
+ *
+ * @return true 使用域管认证
+ * @return false 使用系统认证
+ */
+bool isDeepinAuth()
+{
+    const char* controlId = "com.deepin.dde.auth.control";
+    const char* controlPath = "/com/deepin/dde/auth/control/";
+    if (QGSettings::isSchemaInstalled (controlId)) {
+        QGSettings controlObj (controlId, controlPath);
+        bool bUseDeepinAuth =  controlObj.get ("use-deepin-auth").toBool();
+    #ifdef QT_DEBUG
+        qDebug() << "----------use deepin auth: " << bUseDeepinAuth;
+    #endif
+        return bUseDeepinAuth;
+    }
+    return true;
 }

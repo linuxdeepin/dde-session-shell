@@ -124,8 +124,15 @@ int main(int argc, char *argv[])
         QObject::connect(lockFrame, &LockFrame::sendKeyValue, [&](QString key) {
              emit service.ChangKey(key);
         });
-        lockFrame->setVisible(model->isShow());
-        emit service.Visible(true);
+
+        if (isDeepinAuth()) {
+            lockFrame->setVisible(model->isShow());
+            emit service.Visible(true);
+        } else {
+            model->setIsShow(false);
+            lockFrame->setVisible(false);
+        }
+        
         return lockFrame;
     };
 
@@ -150,7 +157,7 @@ int main(int argc, char *argv[])
             }
         }
     } else {
-        if (!runDaemon) {
+        if (isDeepinAuth() && !runDaemon) {
             if (showUserList) {
                 emit model->showUserList();
             } else {

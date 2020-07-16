@@ -66,5 +66,12 @@ T findValueByQSettings(const QStringList &configFiles,
     return failback.value<T>();
 }
 
+/**
+ * @brief 是否使用深度认证，不使用域管认证。
+ * 
+ * @return true 使用深度认证
+ * @return false 使用域管认证
+ */
+bool isDeepinAuth();
 
 #endif // PUBLIC_FUNC_H
