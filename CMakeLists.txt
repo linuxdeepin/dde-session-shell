@@ -18,6 +18,7 @@ if (NOT (${CMAKE_BUILD_TYPE} MATCHES "Debug"))
                     WORKING_DIRECTORY ${CMAKE_SOURCE_DIR})
 endif ()
 
+add_subdirectory(unittest)
 
 # Find the library
 find_package(PAM REQUIRED)
