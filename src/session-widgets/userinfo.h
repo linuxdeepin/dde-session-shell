@@ -36,6 +36,7 @@ signals:
     void currentKBLayoutChanged(const QString &layout);
     void lockChanged(bool lock);
     void noPasswdLoginChanged(bool no_passw);
+    void use24HourFormatChanged(bool use24);
 
 public:
     bool operator==(const User &user) const;
@@ -51,6 +52,7 @@ public:
     virtual bool isPasswordExpired() const { return false; }
     virtual bool isUserIsvalid() const;
     virtual bool isDoMainUser() const { return m_isServer; }
+    virtual bool is24HourFormat() const { return true; }
 
     void setisLogind(bool isLogind);
     virtual void setCurrentLayout(const QString &layout) { Q_UNUSED(layout); }
@@ -107,6 +109,7 @@ public:
     bool isNoPasswdGrp() const override;
     bool isPasswordExpired() const override;
     bool isUserIsvalid() const override;
+    bool is24HourFormat() const override;
 
 private:
     UserInter *m_userInter;

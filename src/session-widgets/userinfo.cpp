@@ -178,7 +178,6 @@ void User::onLockTimeOut()
 
 NativeUser::NativeUser(const QString &path, QObject *parent)
     : User(parent)
-
     , m_userInter(new UserInter(ACCOUNT_DBUS_SERVICE, path, QDBusConnection::systemBus(), this))
 {
     connect(m_userInter, &UserInter::IconFileChanged, this, &NativeUser::avatarChanged);
@@ -203,6 +202,7 @@ NativeUser::NativeUser(const QString &path, QObject *parent)
     connect(m_userInter, &UserInter::HistoryLayoutChanged, this, &NativeUser::kbLayoutListChanged);
     connect(m_userInter, &UserInter::LayoutChanged, this, &NativeUser::currentKBLayoutChanged);
     connect(m_userInter, &UserInter::NoPasswdLoginChanged, this, &NativeUser::noPasswdLoginChanged);
+    connect(m_userInter, &UserInter::Use24HourFormatChanged, this, &NativeUser::use24HourFormatChanged);
 
     m_userName = m_userInter->userName();
     m_uid = m_userInter->uid().toInt();
@@ -267,6 +267,13 @@ bool NativeUser::isUserIsvalid() const
 {
     //无效用户的时候m_userInter是有效的
     return m_userInter->isValid() && !m_userName.isEmpty();
+}
+
+bool NativeUser::is24HourFormat() const
+{
+    if(!isUserIsvalid()) m_userInter->use24HourFormat();
+
+    return true;
 }
 
 ADDomainUser::ADDomainUser(uid_t uid, QObject *parent)
