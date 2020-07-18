@@ -28,11 +28,6 @@ LockContent::LockContent(SessionBaseModel *const model, QWidget *parent)
     m_shutdownFrame = new ShutdownWidget;
     m_logoWidget = new LogoWidget;
 
-    uint userID = m_model->currentUser()->uid();
-    const QString lockDBusPath = QString("/com/deepin/daemon/Accounts/User%1").arg(userID);
-    m_24HourFormatInter = new QDBusInterface("com.deepin.daemon.Accounts", lockDBusPath, "com.deepin.daemon.Accounts.User",
-                                             QDBusConnection::systemBus(), this);
-
     m_timeWidget = new TimeWidget();
     m_mediaWidget = nullptr;
 
@@ -128,8 +123,6 @@ void LockContent::onCurrentUserChanged(std::shared_ptr<User> user)
     m_translator->load("/usr/share/dde-session-shell/translations/dde-session-shell_" + QLocale(locale.isEmpty() ? "en_US" : locale).name());
     qApp->installTranslator(m_translator);
 
-    m_timeWidget->updateLocale(user->locale());
-
     for (auto connect : m_currentUserConnects) {
         m_user.get()->disconnect(connect);
     }
@@ -138,7 +131,8 @@ void LockContent::onCurrentUserChanged(std::shared_ptr<User> user)
 
     m_user = user;
 
-    m_currentUserConnects << connect(user.get(), &User::greeterBackgroundPathChanged, this, &LockContent::updateBackground, Qt::UniqueConnection);
+    m_currentUserConnects << connect(user.get(), &User::greeterBackgroundPathChanged, this, &LockContent::updateBackground, Qt::UniqueConnection)
+                          << connect(user.get(), &User::use24HourFormatChanged, this, &LockContent::updateTimeFormat, Qt::UniqueConnection);
 
     //lixin
     m_userLoginInfo->setUser(user);
@@ -146,6 +140,7 @@ void LockContent::onCurrentUserChanged(std::shared_ptr<User> user)
     //TODO: refresh blur image
     QTimer::singleShot(0, this, [ = ] {
         updateBackground(user->greeterBackgroundPath());
+        updateTimeFormat(user->is24HourFormat());
     });
 }
 
@@ -231,11 +226,7 @@ void LockContent::showEvent(QShowEvent *event)
 {
     onStatusChanged(m_model->currentModeState());
 
-    if(m_user != nullptr) {
-        m_timeWidget->set24HourFormat(m_user->isDoMainUser() ? true : m_24HourFormatInter->property("Use24HourFormat").toBool());
-    }
     tryGrabKeyboard();
-
     return QFrame::showEvent(event);
 }
 
@@ -278,6 +269,14 @@ void LockContent::updateBackground(const QString &path)
 
     //    emit requestBackground(wallpaper.isEmpty() ? path : wallpaper);
     emit requestBackground(path);
+}
+
+void LockContent::updateTimeFormat(bool use24)
+{
+    if (m_user != nullptr) {
+        m_timeWidget->updateLocale(m_user->locale());
+        m_timeWidget->set24HourFormat(use24);
+    }
 }
 
 void LockContent::onBlurDone(const QString &source, const QString &blur, bool status)
