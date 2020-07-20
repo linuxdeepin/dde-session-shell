@@ -127,10 +127,9 @@ private:
     QStackedLayout *m_mainLayout;
 
     bool m_confirm = false;
-    bool isBlocking = false;
 
     DBusSessionManagerInterface *m_sessionInterface = nullptr;
-    SystemMonitor * m_systemMonitor;
+    SystemMonitor *m_systemMonitor;
     com::deepin::wm *m_wmInter;
     Appearance *m_dbusAppearance = nullptr;
     SessionBaseModel *m_model;

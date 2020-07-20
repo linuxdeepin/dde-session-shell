@@ -5,8 +5,9 @@ set(CMAKE_CXX_STANDARD 14)
 set(CMAKE_INCLUDE_CURRENT_DIR ON)
 set(CMAKE_AUTOMOC ON)
 set(CMAKE_AUTORCC ON)
-set(CMAKE_CXX_FLAGS "-g -Wall")
 SET(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -pthread")
+SET(CMAKE_CXX_FLAGS_DEBUG "$ENV{CXXFLAGS} -O0 -Wall -g -ggdb")
+SET(CMAKE_CXX_FLAGS_RELEASE "$ENV{CXXFLAGS} -O3 -Wall")
 set(CMAKE_MODULE_PATH ${CMAKE_SOURCE_DIR}/cmake/modules)
 
 if (NOT (${CMAKE_BUILD_TYPE} MATCHES "Debug"))
@@ -150,15 +151,12 @@ set(WIDGETS_SRCS
     ./src/widgets/fullscreenbackground.h
     ./src/widgets/userbutton.h
     ./src/widgets/controlwidget.h
-    ./src/widgets/errortooltip.h
     ./src/widgets/shutdownwidget.h
-    ./src/widgets/dbreathinglabel.h
     ./src/widgets/rounditembutton.h
     ./src/widgets/kblayoutwidget.h
     ./src/widgets/mediawidget.h
     ./src/widgets/propertygroup.h
     ./src/widgets/darrowrectangle.h
-    ./src/widgets/userbreathinglabel.h
     ./src/widgets/virtualkbinstance.h
     ./src/widgets/logowidget.h
     ./src/widgets/timewidget.h
@@ -166,8 +164,6 @@ set(WIDGETS_SRCS
     ./src/widgets/dpasswordeditex.h
     ./src/widgets/fullscreenbackground.cpp
     ./src/widgets/loginbutton.cpp
-    ./src/widgets/dbreathinglabel.cpp
-    ./src/widgets/errortooltip.cpp
     ./src/widgets/darrowrectangle.cpp
     ./src/widgets/mediawidget.cpp
     ./src/widgets/controlwidget.cpp
@@ -177,7 +173,6 @@ set(WIDGETS_SRCS
     ./src/widgets/useravatar.cpp
     ./src/widgets/userbutton.cpp
     ./src/widgets/shutdownwidget.cpp
-    ./src/widgets/userbreathinglabel.cpp
     ./src/widgets/kblayoutwidget.cpp
     ./src/widgets/logowidget.cpp
     ./src/widgets/timewidget.cpp

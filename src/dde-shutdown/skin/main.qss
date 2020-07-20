@@ -13,12 +13,6 @@ QLabel#LogoVersion {
    color: white;
    font-size: 11px;
 }
-QPushButton#PowerMenu  {
-   background-image: url(:img/powermenu.png);
-   background-repeat: none;
-   background-color: transparent;
-   margin:0px 0px 0px 0px;
-}
 QFrame#LeftFrame {
     background-color: green;
 }

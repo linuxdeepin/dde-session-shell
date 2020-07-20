@@ -33,9 +33,8 @@
 TimeWidget::TimeWidget(QWidget *parent)
     : QWidget(parent)
 {
-    int id = QFontDatabase::addApplicationFont("://fonts/NotoSansCJKsc-Thin.otf");
-    const QString fontFamily = QFontDatabase::applicationFontFamilies(id).first();
-    QFont timeFont(fontFamily);
+    QFont timeFont;
+    timeFont.setFamily("Noto Sans CJK SC-Thin");
 
     m_timeLabel = new QLabel;
     timeFont.setWeight(QFont::ExtraLight);

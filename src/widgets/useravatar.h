@@ -32,10 +32,9 @@
 #include <QVBoxLayout>
 #include <QPainter>
 #include <QDebug>
+#include <QPropertyAnimation>
 
 #include <dimagebutton.h>
-
-#include "userbreathinglabel.h"
 
 //class AvatarDeleteButton : public DImageButton
 //{

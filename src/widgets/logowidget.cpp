@@ -85,24 +85,16 @@ void LogoWidget::initUI() {
 }
 
 QString LogoWidget::getVersion() {
-    QSettings settings("/etc/deepin-version", QSettings::IniFormat);
-    settings.setIniCodec(QTextCodec::codecForName("utf8"));
-    QString item = "Release";
-    ///////////system version
-    QString version = settings.value(item + "/Version").toString();
-    //////////system type
-    QString localKey =QString("%1/Type[%2]").arg(item).arg(m_locale);
-    QString finalKey =QString("%1/Type").arg(item);
+    QString version;
+    if (DSysInfo::isDeepin()) {
+        version = QString("%1 %2").arg(DSysInfo::deepinVersion())
+                                  .arg(DSysInfo::deepinTypeDisplayName());
+    } else {
+        version = QString("%1 %2").arg(DSysInfo::productVersion())
+                                  .arg(DSysInfo::productTypeString());
+    }
 
-    QString type = settings.value(localKey, settings.value(finalKey)).toString();
-    //////////system release version
-    QString milestone = settings.value("Addition/Milestone").toString();
-
-    qDebug() << "Deepin Version:" << version << type;
-
-    return version.split(" ")[0];
-//    return QString("%1 %2 %3").arg(version).arg(type).arg(milestone);
-//    return QString("%1 %2").arg(type).arg(version);
+    return version;
 }
 
 LogoWidget::~LogoWidget()
