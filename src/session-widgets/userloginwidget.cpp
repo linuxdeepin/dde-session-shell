@@ -43,6 +43,7 @@
 static const int BlurRectRadius = 15;
 static const int WidgetsSpacing = 10;
 static const int Margins = 16;
+static const QColor shutdownColor(QColor(247, 68, 68));
 
 UserLoginWidget::UserLoginWidget(QWidget *parent)
     : QWidget(parent)
@@ -565,15 +566,10 @@ void UserLoginWidget::initConnect()
     //窗体活动颜色改变
     connect(m_dbusAppearance, &Appearance::QtActiveColorChanged , [this](const QString& Color) {
         QPalette passwdPalatte = m_passwordEdit->palette();
-        QPalette lockPalatte = m_lockButton->palette();
-
-        if (passwdPalatte.color(QPalette::Highlight).name() == Color || lockPalatte.color(QPalette::Highlight).name() == Color )
+        if (passwdPalatte.color(QPalette::Highlight).name() == Color)
             return;
-
-        lockPalatte.setColor(QPalette::Highlight,Color);
-        passwdPalatte.setColor(QPalette::Highlight,Color);
+        passwdPalatte.setColor(QPalette::Highlight, Color);
         m_passwordEdit->setPalette(passwdPalatte);
-        m_lockButton->setPalette(lockPalatte);
     });
 }
 
@@ -745,13 +741,18 @@ void UserLoginWidget::updateNameLabel()
 
 void UserLoginWidget::resetPowerIcon()
 {
+    QPalette lockPalatte;
     if (m_action == SessionBaseModel::PowerAction::RequireRestart) {
         m_lockButton->setIcon(QIcon(":/img/bottom_actions/reboot.svg"));
+        lockPalatte.setColor(QPalette::Highlight, shutdownColor);
     } else if (m_action == SessionBaseModel::PowerAction::RequireShutdown) {
         m_lockButton->setIcon(QIcon(":/img/bottom_actions/shutdown.svg"));
+        lockPalatte.setColor(QPalette::Highlight, shutdownColor);
     } else {
         m_lockButton->setIcon(DStyle::SP_LockElement);
+        lockPalatte.setColor(QPalette::Highlight, m_dbusAppearance->property("QtActiveColor").toString());
     }
+    m_lockButton->setPalette(lockPalatte);
 }
 
 void UserLoginWidget::unlockSuccessAni()
