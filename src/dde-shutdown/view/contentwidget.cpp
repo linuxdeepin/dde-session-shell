@@ -377,18 +377,21 @@ bool ContentWidget::beforeInvokeAction(const Actions action)
                 break;
             }
         }
-        view->setAcceptVisible(isAccept);
 
-        if (action == Shutdown)
+        if (action == Shutdown) {
             view->setAcceptReason(tr("Shut down"));
-        else if (action == Restart || action == SwitchSystem)
+            view->setAcceptVisible(isAccept);
+        } else if (action == Restart || action == SwitchSystem) {
             view->setAcceptReason(tr("Reboot"));
-        else if (action == Suspend)
+            view->setAcceptVisible(isAccept);
+        } else if (action == Suspend)
             view->setAcceptReason(tr("Suspend"));
         else if (action == Hibernate)
             view->setAcceptReason(tr("Hibernate"));
-        else if (action == Logout)
+        else if (action == Logout) {
             view->setAcceptReason(tr("Log out"));
+            view->setAcceptVisible(isAccept);
+        }
 
         m_warningView = view;
         m_mainLayout->addWidget(m_warningView);
