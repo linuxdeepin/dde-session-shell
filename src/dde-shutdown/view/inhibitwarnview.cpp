@@ -211,14 +211,14 @@ void InhibitWarnView::setAcceptVisible(const bool acceptable)
 
 void InhibitWarnView::toggleButtonState()
 {
-    if (m_acceptBtn->isChecked()) {
-        m_acceptBtn->setChecked(false);
-        m_cancelBtn->setChecked(true);
-        m_currentBtn = m_cancelBtn;
-    } else {
+    if (m_cancelBtn->isChecked() && m_acceptBtn->isVisible()) {
         m_cancelBtn->setChecked(false);
         m_acceptBtn->setChecked(true);
         m_currentBtn = m_acceptBtn;
+    } else {
+        m_acceptBtn->setChecked(false);
+        m_cancelBtn->setChecked(true);
+        m_currentBtn = m_cancelBtn;
     }
 
     FrameDataBind::Instance()->updateValue("InhibitWarnView", m_currentBtn->objectName());
