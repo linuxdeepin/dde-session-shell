@@ -272,8 +272,7 @@ void GreeterWorkek::prompt(QString text, QLightDM::Greeter::PromptType type)
         }
         break;
     case QLightDM::Greeter::PromptTypeQuestion:
-        // trim the right : in the message if exists.
-        emit m_model->authFaildMessage(text.replace(":", ""));
+        emit m_model->authTipsMessage(text);
         break;
     }
 }

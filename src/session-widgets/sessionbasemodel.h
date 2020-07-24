@@ -102,6 +102,7 @@ signals:
     void onUserAdded(std::shared_ptr<User> user);
     void onUserRemoved(const uint uid);
     void currentUserChanged(std::shared_ptr<User> user);
+    void authTipsMessage(const QString &message, AuthFaildType type = KEYBOARD);
     void authFaildMessage(const QString &message, AuthFaildType type = KEYBOARD);
     void authFaildTipsMessage(const QString &message, AuthFaildType type = KEYBOARD);
     void authFinished(bool success);
