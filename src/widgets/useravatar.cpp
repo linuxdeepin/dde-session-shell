@@ -27,6 +27,7 @@
 #include "dthememanager.h"
 #include <QUrl>
 #include <QFile>
+#include <QPainterPath>
 
 UserAvatar::UserAvatar(QWidget *parent, bool deleteable) :
     QPushButton(parent), m_deleteable(deleteable)
@@ -248,4 +249,3 @@ void UserAvatar::setColor(QColor color) {
     m_palette.setColor(QPalette::WindowText, color);
     this->setPalette(m_palette);
 }
-

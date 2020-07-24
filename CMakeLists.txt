@@ -157,7 +157,6 @@ set(WIDGETS_SRCS
     ./src/widgets/kblayoutwidget.h
     ./src/widgets/mediawidget.h
     ./src/widgets/propertygroup.h
-    ./src/widgets/darrowrectangle.h
     ./src/widgets/virtualkbinstance.h
     ./src/widgets/logowidget.h
     ./src/widgets/timewidget.h
@@ -165,7 +164,6 @@ set(WIDGETS_SRCS
     ./src/widgets/dpasswordeditex.h
     ./src/widgets/fullscreenbackground.cpp
     ./src/widgets/loginbutton.cpp
-    ./src/widgets/darrowrectangle.cpp
     ./src/widgets/mediawidget.cpp
     ./src/widgets/controlwidget.cpp
     ./src/widgets/virtualkbinstance.cpp
