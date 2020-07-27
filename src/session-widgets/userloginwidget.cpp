@@ -295,8 +295,8 @@ void UserLoginWidget::toggleKBLayoutWidget()
         // 必须要将它作为主窗口的子控件
         m_kbLayoutBorder->setParent(window());
         m_kbLayoutBorder->setVisible(true);
-        m_kbLayoutBorder->raise();
         refreshKBLayoutWidgetPosition();
+        m_kbLayoutBorder->raise();
     }
     FrameDataBind::Instance()->updateValue("UserLoginKBLayout", m_kbLayoutBorder->isVisible());
     updateClipPath();
