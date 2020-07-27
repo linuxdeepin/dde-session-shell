@@ -315,12 +315,14 @@ int main(int argc, char* argv[])
 
     DLogManager::registerConsoleAppender();
 
-    QTranslator translator;
-    translator.load("/usr/share/dde-session-shell/translations/dde-session-shell_" + QLocale::system().name());
-    a.installTranslator(&translator);
-
     SessionBaseModel *model = new SessionBaseModel(SessionBaseModel::AuthType::LightdmType);
     GreeterWorkek *worker = new GreeterWorkek(model); //
+
+    if(model->currentUser()) {
+        QTranslator translator;
+        translator.load("/usr/share/dde-session-shell/translations/dde-session-shell_" + model->currentUser()->locale().split(".").first());
+        a.installTranslator(&translator);
+    }
 
     QObject::connect(model, &SessionBaseModel::authFinished, model, [=] {
         set_rootwindow_cursor();
