@@ -1,10 +1,12 @@
 #ifndef AUTHAGENT_H
 #define AUTHAGENT_H
 
-#include <QObject>
+#include <QThread>
+#include <QMutex>
+#include <QWaitCondition>
 
 class DeepinAuthFramework;
-class AuthAgent : public QObject {
+class AuthAgent : public QThread {
     Q_OBJECT
 public:
     enum AuthFlag {
@@ -36,6 +38,10 @@ public:
     int GetAuthType();
     DeepinAuthFramework *deepinAuth() { return m_deepinauth; }
 
+    void run() override;
+
+    bool isAuthenticate() const;
+
 signals:
     void displayErrorMsg(const QString &msg);
     void displayTextInfo(const QString &msg);
@@ -49,8 +55,9 @@ private:
 
 private:
     DeepinAuthFramework* m_deepinauth = nullptr;
-    bool m_isCondition = true;
-
+    bool m_isCondition = false;
+    QMutex m_pamMutex;
+    QWaitCondition m_pauseCond;
     QString m_password;
     AuthFlag m_authType;
     QString m_userName;

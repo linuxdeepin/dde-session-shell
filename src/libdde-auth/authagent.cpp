@@ -30,14 +30,27 @@ AuthAgent::~AuthAgent()
 void AuthAgent::Responsed(const QString &password)
 {
     m_password = password;
-    m_isCondition = false;
+
+    m_pamMutex.lock();
+    m_pauseCond.wakeAll();
+    m_pamMutex.unlock();
 }
 
 void AuthAgent::Authenticate(const QString& username)
 {
+    m_userName = username;
+}
+
+int AuthAgent::GetAuthType()
+{
+    return m_authType;
+}
+
+void AuthAgent::run()
+{
     pam_handle_t* m_pamHandle = nullptr;
-    pam_conv conv = { pamConversation, static_cast<void*>(this) };
-    int ret = pam_start(PAM_SERVICE_NAME, username.toLocal8Bit().data(), &conv, &m_pamHandle);
+    pam_conv conv = { pamConversation, reinterpret_cast<void*>(this) };
+    const int ret = pam_start(PAM_SERVICE_NAME, m_userName.toLocal8Bit().data(), &conv, &m_pamHandle);
 
     if (ret != PAM_SUCCESS) {
         qDebug() << Q_FUNC_INFO << pam_strerror(m_pamHandle, ret);
@@ -47,32 +60,27 @@ void AuthAgent::Authenticate(const QString& username)
 
     //息屏状态下亮屏，由于后端没有亮屏信号，只能用此临时办法
     system("xset dpms force on");
-    QString msg = QString();
-
-    if (rc == PAM_SUCCESS) {
-        msg = "succes";
-    } else {
-        qDebug() << Q_FUNC_INFO << pam_strerror(m_pamHandle, rc);
-    }
 
     rc = pam_end(m_pamHandle, rc);
     if (rc != PAM_SUCCESS) {
-         qDebug() << "pam_end() failed: %s" << pam_strerror(m_pamHandle, rc);
+        qDebug() << "pam_end() failed: %s" << pam_strerror(m_pamHandle, rc);
     }
 
-    m_isCondition = true;
-    emit respondResult(msg);
+    m_isCondition = false;
+
+    emit respondResult(rc == PAM_SUCCESS ? "success" : QString());
+
+    quit();
 }
 
-int AuthAgent::GetAuthType()
-{
-    return m_authType;
+bool AuthAgent::isAuthenticate() const {
+    return m_isCondition;
 }
 
 int AuthAgent::pamConversation(int num_msg, const struct pam_message **msg,
                                struct pam_response **resp, void *app_data)
 {
-    AuthAgent *app_ptr = static_cast<AuthAgent *>(app_data);
+    AuthAgent *app_ptr = reinterpret_cast<AuthAgent *>(app_data);
     struct pam_response *aresp = nullptr;
     int idx = 0;
     AuthFlag auth_type = AuthFlag::Password;
@@ -93,14 +101,17 @@ int AuthAgent::pamConversation(int num_msg, const struct pam_message **msg,
         switch(PAM_MSG_MEMBER(msg, idx, msg_style)) {
 
         case PAM_PROMPT_ECHO_OFF: {
-            while(app_ptr->m_isCondition) sleep(1);
+            app_ptr->m_isCondition = true;
+            app_ptr->m_pamMutex.lock();
+            app_ptr->m_pauseCond.wait(&app_ptr->m_pamMutex);
+            app_ptr->m_pamMutex.unlock();
 
             if (!QPointer<DeepinAuthFramework>(app_ptr->deepinAuth())) {
                 qDebug() << "pam: deepin auth framework is null";
                 return PAM_CONV_ERR;
             }
 
-            QString password = app_ptr->deepinAuth()->RequestEchoOff(PAM_MSG_MEMBER(msg, idx, msg));
+            const QString& password = app_ptr->deepinAuth()->RequestEchoOff(PAM_MSG_MEMBER(msg, idx, msg));
             aresp[idx].resp = strdup(password.toLocal8Bit().data());
 
             if (aresp[idx].resp == nullptr)
