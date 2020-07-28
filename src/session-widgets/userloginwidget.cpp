@@ -226,12 +226,6 @@ void UserLoginWidget::updateUI()
     } else if (m_passwordEdit->isVisible())
         setFocusProxy(m_passwordEdit->lineEdit());
 
-    //让窗口执行一次resizeEvent，以便正确更新背景阴影位置
-    if (m_isServerMode) {
-        resize(size());
-    } else {
-        refreshBlurEffectPosition();
-    }
 }
 
 void UserLoginWidget::ShutdownPrompt(SessionBaseModel::PowerAction action)
@@ -370,7 +364,7 @@ void UserLoginWidget::refreshBlurEffectPosition()
 //窗体resize事件,更新阴影窗体的位置
 void UserLoginWidget::resizeEvent(QResizeEvent *event)
 {
-    QTimer::singleShot(0, this, &UserLoginWidget::refreshBlurEffectPosition);
+    refreshBlurEffectPosition();
     QTimer::singleShot(0, this, &UserLoginWidget::refreshKBLayoutWidgetPosition);
 
     return QWidget::resizeEvent(event);
@@ -383,6 +377,7 @@ void UserLoginWidget::showEvent(QShowEvent *event)
     m_lockPasswordWidget->setFixedSize(QSize(m_passwordEdit->width(), m_passwordEdit->height()));
 
     updateNameLabel();
+    adjustSize();
     return QWidget::showEvent(event);
 }
 
