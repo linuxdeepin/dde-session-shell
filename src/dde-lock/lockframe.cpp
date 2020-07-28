@@ -82,6 +82,10 @@ bool LockFrame::eventFilter(QObject *watched, QEvent *event)
     if (event->type() == QEvent::KeyRelease) {
         QString  keyValue = "";
         switch (static_cast<QKeyEvent *>(event)->key()) {
+        case Qt::Key_PowerOff: {
+            keyValue = "power-off";
+            break;
+        }
         case Qt::Key_NumLock: {
             keyValue = "numlock";
             break;

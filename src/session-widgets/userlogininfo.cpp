@@ -122,7 +122,10 @@ void UserLoginInfo::initConnect()
     connect(m_userFrameList, &UserFrameList::clicked, this, &UserLoginInfo::hideUserFrameList);
     connect(m_userFrameList, &UserFrameList::requestSwitchUser, this, &UserLoginInfo::receiveSwitchUser);
     connect(m_model, &SessionBaseModel::abortConfirmChanged, this, &UserLoginInfo::abortConfirm);
-
+    connect(m_userLoginWidget, &UserLoginWidget::clicked, this, [=] {
+        if (m_model->currentModeState() == SessionBaseModel::ModeStatus::ConfirmPasswordMode)
+            m_model->setAbortConfirm(false);
+    });
 }
 
 void UserLoginInfo::abortConfirm(bool abort)
