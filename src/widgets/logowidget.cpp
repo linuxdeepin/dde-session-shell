@@ -53,9 +53,10 @@ void LogoWidget::initUI() {
 //    setFixedSize(240, 40);
 
     m_logoLabel = new QLabel();
-    m_logoLabel->setPixmap(systemLogo());
+    QPixmap logo = systemLogo();
+    m_logoLabel->setPixmap(logo);
     m_logoLabel->setObjectName("Logo");
-    m_logoLabel->setFixedSize(128, 48);
+    m_logoLabel->setFixedSize(logo.size().rwidth(), logo.size().rheight());
     //修复社区版deepin的显示不全的问题 2020/04/11
     m_logoLabel->setScaledContents(true);
 
