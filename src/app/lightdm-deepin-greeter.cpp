@@ -189,7 +189,7 @@ static unsigned long loadCursorHandle(Display *dpy, const char *name, int size)
     return handle;
 }
 
-int set_rootwindow_cursor() {
+static int set_rootwindow_cursor() {
     Display* display = XOpenDisplay(nullptr);
     if (!display) {
         qDebug() << "Open display failed";
@@ -197,8 +197,8 @@ int set_rootwindow_cursor() {
     }
 
     const char *cursorPath = qApp->devicePixelRatio() > 1.7
-        ? "/usr/share/icons/deepin/cursors/loginspinner@2x"
-        : "/usr/share/icons/deepin/cursors/loginspinner";
+        ? "/usr/share/icons/bloom/cursors/loginspinner@2x"
+        : "/usr/share/icons/bloom/cursors/loginspinner";
 
     Cursor cursor = (Cursor)XcursorFilenameLoadCursor(display, cursorPath);
     if (cursor == 0) {

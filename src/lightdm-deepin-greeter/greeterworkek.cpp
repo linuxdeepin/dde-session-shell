@@ -13,7 +13,6 @@ using namespace Auth;
 DCORE_USE_NAMESPACE
 
 const QString AuthenticateService("com.deepin.daemon.Authenticate");
-extern int set_rootwindow_cursor();
 
 class UserNumlockSettings
 {
@@ -152,7 +151,6 @@ void GreeterWorkek::authUser(const QString &password)
 
     m_authenticating = true;
 
-    set_rootwindow_cursor();
     // auth interface
     std::shared_ptr<User> user = m_model->currentUser();
     m_password = password;
