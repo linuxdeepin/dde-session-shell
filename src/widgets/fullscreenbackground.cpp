@@ -47,6 +47,7 @@ FullscreenBackground::FullscreenBackground(QWidget *parent)
     : QWidget(parent)
     , m_fadeOutAni(new QVariantAnimation(this))
     , m_imageEffectInter(new ImageEffectInter("com.deepin.daemon.ImageEffect", "/com/deepin/daemon/ImageEffect", QDBusConnection::systemBus(), this))
+    , m_wmImageInter(new wmImageInter("com.deepin.wm", "/com/deepin/wm", QDBusConnection::sessionBus(), this))
 {
 #ifndef QT_DEBUG
     setWindowFlags(Qt::WindowStaysOnTopHint | Qt::X11BypassWindowManagerHint);
@@ -83,7 +84,7 @@ void FullscreenBackground::updateBackground(const QPixmap &background)
     m_fadeOutAni->start();
 }
 
-void FullscreenBackground::updateBackground (const QString &file)
+void FullscreenBackground::updateBackground(const QString &file)
 {
     QPixmap image;
     QSharedMemory memory (file);
@@ -95,36 +96,36 @@ void FullscreenBackground::updateBackground (const QString &file)
         }
         memory.detach();
     } else {
-        if (QFile::exists (file)) {
-            image.load (file);
-        } else {
-            findSystemDefaultImage (image);
-        }
+        findSystemDefaultImage(image);
     }
     updateBackground (image);
 }
 
-void FullscreenBackground::findSystemDefaultImage (QPixmap& image)
+void FullscreenBackground::findSystemDefaultImage(QPixmap& image)
 {
     auto isPicture = [] (const QString & filePath) {
         return QFile::exists (filePath) && QFile (filePath).size() && !QPixmap (filePath).isNull() ;
     };
 
-    QString bgPath;
-    QDir dir ("/usr/share/wallpapers/deepin");
-    if (dir.exists()) {
-        dir.setFilter (QDir::Files);
-        QFileInfoList list = dir.entryInfoList();
-        foreach (QFileInfo f, list) {
-            if (f.baseName() == "desktop") {
-                bgPath = f.filePath();
-                break;
+    QString imgFile = m_wmImageInter->GetCurrentWorkspaceBackground();
+    QString bgPath = imgFile.section("file://", 1, 1);
+    if (!QFile::exists(bgPath)) {
+        QDir dir ("/usr/share/wallpapers/deepin");
+        if (dir.exists()) {
+            dir.setFilter(QDir::Files);
+            QFileInfoList list = dir.entryInfoList();
+            foreach (QFileInfo f, list) {
+                if (f.baseName() == "desktop") {
+                    bgPath = f.filePath();
+                    break;
+                }
             }
         }
     }
     if (!QFile::exists (bgPath)) {
         bgPath = DEFAULT_BACKGROUND;
     }
+
     QString imageEffect = m_imageEffectInter->Get ("", bgPath);
     if (!isPicture (imageEffect)) {
         imageEffect = bgPath;
