@@ -7,7 +7,7 @@ HibernateWidget::HibernateWidget(QWidget *parent)
     , widget (new QWidget (this))
     , vlayout( new QVBoxLayout (this))
 {
-    label->setText(tr("Is dormant, Please wait a moment···"));
+    label->setText("Waking up from hibernation, please wait...");
     label->adjustSize();
 
     rotateIcon->smooth();
