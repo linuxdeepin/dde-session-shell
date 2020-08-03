@@ -644,10 +644,12 @@ bool UserLoginWidget::getIsServerMode()
 
 void UserLoginWidget::updateKBLayout(const QStringList &list)
 {
-    m_kbLayoutWidget->updateButtonList(list);
-    m_kbLayoutBorder->setContent(m_kbLayoutWidget);
-    m_passwordEdit->setKBLayoutList(list);
-    updateClipPath();
+    QTimer::singleShot(0, this, [this, list] {
+        m_kbLayoutWidget->updateButtonList(list);
+        m_kbLayoutBorder->setContent(m_kbLayoutWidget);
+        m_passwordEdit->setKBLayoutList(list);
+        updateClipPath();
+    });
 }
 
 void UserLoginWidget::hideKBLayout()

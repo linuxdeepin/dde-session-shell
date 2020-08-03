@@ -34,12 +34,13 @@
 XkbParser::XkbParser(QObject *parent)
     : QObject(parent)
 {
-    if (!parse()) {
-        qDebug() << "Parse xml failed!";
-    }
 }
 
 QStringList XkbParser::lookUpKeyboardList(QStringList keyboardList_key) {
+    if (KeyboardLayoutList.isEmpty()) {
+        parse();
+    }
+
     QStringList result;
     setlocale(LC_ALL, "");
     const char xkbDomain[] = "xkeyboard-config";
@@ -75,6 +76,10 @@ QStringList XkbParser::lookUpKeyboardList(QStringList keyboardList_key) {
     return result;
 }
 QString XkbParser::lookUpKeyboardKey(QString keyboard_value) {
+    if (KeyboardLayoutList.isEmpty()) {
+        parse();
+    }
+
     QString keyboard_key = "";
     for (int i = 0; i < KeyboardLayoutList.length(); i++) {
         if (KeyboardLayoutList[i].description == keyboard_value) {
