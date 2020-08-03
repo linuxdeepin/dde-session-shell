@@ -2,125 +2,122 @@
 <context>
     <name>ContentWidget</name>
     <message>
-        <location filename="../src/dde-shutdown/view/contentwidget.cpp" line="345"/>
+        <location filename="../src/dde-shutdown/view/contentwidget.cpp" line="348"/>
         <source>The programs are preventing the computer from shutting down, and forcing shut down may cause data loss.</source>
         <translation type="unfinished"/>
     </message>
     <message>
-        <location filename="../src/dde-shutdown/view/contentwidget.cpp" line="346"/>
-        <location filename="../src/dde-shutdown/view/contentwidget.cpp" line="350"/>
+        <location filename="../src/dde-shutdown/view/contentwidget.cpp" line="349"/>
         <location filename="../src/dde-shutdown/view/contentwidget.cpp" line="354"/>
         <location filename="../src/dde-shutdown/view/contentwidget.cpp" line="358"/>
         <location filename="../src/dde-shutdown/view/contentwidget.cpp" line="362"/>
+        <location filename="../src/dde-shutdown/view/contentwidget.cpp" line="366"/>
         <source>To close the program, click Cancel, and then close the program.</source>
-        <translation type="unfinished"/>
+        <translation>Για κλείσιμο του προγράμματος, Πάτα Άκυρο και μετά κλείσε το πρόγραμμα.</translation>
     </message>
     <message>
-        <location filename="../src/dde-shutdown/view/contentwidget.cpp" line="349"/>
+        <location filename="../src/dde-shutdown/view/contentwidget.cpp" line="353"/>
         <source>The programs are preventing the computer from reboot, and forcing reboot may cause data loss.</source>
         <translation type="unfinished"/>
     </message>
     <message>
-        <location filename="../src/dde-shutdown/view/contentwidget.cpp" line="353"/>
+        <location filename="../src/dde-shutdown/view/contentwidget.cpp" line="357"/>
         <source>The programs are preventing the computer from suspend, and forcing suspend may cause data loss.</source>
         <translation type="unfinished"/>
     </message>
     <message>
-        <location filename="../src/dde-shutdown/view/contentwidget.cpp" line="357"/>
+        <location filename="../src/dde-shutdown/view/contentwidget.cpp" line="361"/>
         <source>The programs are preventing the computer from hibernate, and forcing hibernate may cause data loss.</source>
         <translation type="unfinished"/>
     </message>
     <message>
-        <location filename="../src/dde-shutdown/view/contentwidget.cpp" line="361"/>
+        <location filename="../src/dde-shutdown/view/contentwidget.cpp" line="365"/>
         <source>The programs are preventing the computer from log out, and forcing log out may cause data loss.</source>
         <translation type="unfinished"/>
     </message>
     <message>
-        <location filename="../src/dde-shutdown/view/contentwidget.cpp" line="379"/>
-        <location filename="../src/dde-shutdown/view/contentwidget.cpp" line="416"/>
-        <location filename="../src/dde-shutdown/view/contentwidget.cpp" line="438"/>
-        <location filename="../src/dde-shutdown/view/contentwidget.cpp" line="574"/>
+        <location filename="../src/dde-shutdown/view/contentwidget.cpp" line="382"/>
+        <location filename="../src/dde-shutdown/view/contentwidget.cpp" line="423"/>
+        <location filename="../src/dde-shutdown/view/contentwidget.cpp" line="445"/>
+        <location filename="../src/dde-shutdown/view/contentwidget.cpp" line="593"/>
         <source>Shut down</source>
         <translation>Τερματισμός λειτουργίας</translation>
     </message>
     <message>
-        <location filename="../src/dde-shutdown/view/contentwidget.cpp" line="381"/>
-        <location filename="../src/dde-shutdown/view/contentwidget.cpp" line="418"/>
-        <location filename="../src/dde-shutdown/view/contentwidget.cpp" line="441"/>
-        <location filename="../src/dde-shutdown/view/contentwidget.cpp" line="577"/>
+        <location filename="../src/dde-shutdown/view/contentwidget.cpp" line="385"/>
+        <location filename="../src/dde-shutdown/view/contentwidget.cpp" line="425"/>
+        <location filename="../src/dde-shutdown/view/contentwidget.cpp" line="448"/>
+        <location filename="../src/dde-shutdown/view/contentwidget.cpp" line="596"/>
         <source>Reboot</source>
         <translation>Επανεκκίνηση</translation>
     </message>
     <message>
-        <location filename="../src/dde-shutdown/view/contentwidget.cpp" line="383"/>
-        <location filename="../src/dde-shutdown/view/contentwidget.cpp" line="580"/>
+        <location filename="../src/dde-shutdown/view/contentwidget.cpp" line="388"/>
+        <location filename="../src/dde-shutdown/view/contentwidget.cpp" line="599"/>
         <source>Suspend</source>
         <translation>Αναστολή</translation>
     </message>
     <message>
-        <location filename="../src/dde-shutdown/view/contentwidget.cpp" line="385"/>
-        <location filename="../src/dde-shutdown/view/contentwidget.cpp" line="583"/>
+        <location filename="../src/dde-shutdown/view/contentwidget.cpp" line="390"/>
+        <location filename="../src/dde-shutdown/view/contentwidget.cpp" line="602"/>
         <source>Hibernate</source>
         <translation>Αδρανοποίηση</translation>
     </message>
     <message>
-        <location filename="../src/dde-shutdown/view/contentwidget.cpp" line="387"/>
-        <location filename="../src/dde-shutdown/view/contentwidget.cpp" line="444"/>
-        <location filename="../src/dde-shutdown/view/contentwidget.cpp" line="589"/>
+        <location filename="../src/dde-shutdown/view/contentwidget.cpp" line="392"/>
+        <location filename="../src/dde-shutdown/view/contentwidget.cpp" line="451"/>
+        <location filename="../src/dde-shutdown/view/contentwidget.cpp" line="608"/>
         <source>Log out</source>
         <translation>Αποσύνδεση</translation>
     </message>
     <message>
-        <location filename="../src/dde-shutdown/view/contentwidget.cpp" line="439"/>
+        <location filename="../src/dde-shutdown/view/contentwidget.cpp" line="446"/>
         <source>Are you sure you want to shut down?</source>
         <translation>Σίγουρα θέλετε να πραγματοποιήσετε απενεργοποίηση;</translation>
     </message>
     <message>
-        <location filename="../src/dde-shutdown/view/contentwidget.cpp" line="442"/>
+        <location filename="../src/dde-shutdown/view/contentwidget.cpp" line="449"/>
         <source>Are you sure you want to reboot?</source>
         <translation>Σίγουρα θέλετε επανεκίνηση;</translation>
     </message>
     <message>
-        <location filename="../src/dde-shutdown/view/contentwidget.cpp" line="445"/>
+        <location filename="../src/dde-shutdown/view/contentwidget.cpp" line="452"/>
         <source>Are you sure you want to log out?</source>
         <translation>Σίγουρα θέλετε αποσύνδεση;</translation>
     </message>
     <message>
-        <location filename="../src/dde-shutdown/view/contentwidget.cpp" line="586"/>
+        <location filename="../src/dde-shutdown/view/contentwidget.cpp" line="605"/>
         <source>Lock</source>
         <translation>Κλείδωμα</translation>
     </message>
     <message>
-        <location filename="../src/dde-shutdown/view/contentwidget.cpp" line="593"/>
+        <location filename="../src/dde-shutdown/view/contentwidget.cpp" line="612"/>
         <source>Switch user</source>
         <translation>Εναλλαγή χρήστη</translation>
     </message>
-</context>
-<context>
-    <name>DeepinAuthFramework</name>
     <message>
-        <location filename="../src/libdde-auth/deepinauthframework.cpp" line="109"/>
-        <source>Verify your fingerprint or password</source>
-        <translation>Επαλήθευση του δακτυλικού σας αποτυπώματος ή κωδικού πρόσβασης</translation>
+        <location filename="../src/dde-shutdown/view/contentwidget.cpp" line="617"/>
+        <source>Switch system</source>
+        <translation type="unfinished"/>
     </message>
 </context>
 <context>
     <name>GreeterWorkek</name>
     <message>
-        <location filename="../src/lightdm-deepin-greeter/greeterworkek.cpp" line="347"/>
+        <location filename="../src/lightdm-deepin-greeter/greeterworkek.cpp" line="327"/>
         <source>Wrong Password</source>
         <translation>Λάθος Κωδικός Πρόσβασης</translation>
     </message>
     <message>
-        <location filename="../src/lightdm-deepin-greeter/greeterworkek.cpp" line="352"/>
-        <source>The domain account or password is not correct. Please enter again.</source>
-        <translation>Ο λογαρισμός τομέα (domain) ή ο κωδικός είναι εσφαλμένος. Παρακαλώ εισάγετε ξανά.</translation>
+        <location filename="../src/lightdm-deepin-greeter/greeterworkek.cpp" line="331"/>
+        <source>The account or password is not correct. Please enter again.</source>
+        <translation>Λάθος λογαριασμός ή κωδικός πρόσβασης. Εισάγετε ξανά!</translation>
     </message>
 </context>
 <context>
     <name>InhibitWarnView</name>
     <message>
-        <location filename="../src/dde-shutdown/view/inhibitwarnview.cpp" line="88"/>
+        <location filename="../src/dde-shutdown/view/inhibitwarnview.cpp" line="90"/>
         <source>Cancel</source>
         <translation>Ακύρωση</translation>
     </message>
@@ -128,35 +125,30 @@
 <context>
     <name>LockContent</name>
     <message>
-        <location filename="../src/session-widgets/lockcontent.cpp" line="330"/>
+        <location filename="../src/session-widgets/lockcontent.cpp" line="353"/>
         <source>Lock Screen</source>
-        <translation type="unfinished"/>
+        <translation>Κλείδωμα Οθόνης</translation>
     </message>
     <message>
-        <location filename="../src/session-widgets/lockcontent.cpp" line="334"/>
+        <location filename="../src/session-widgets/lockcontent.cpp" line="357"/>
         <source>Failed to lock screen</source>
-        <translation type="unfinished"/>
+        <translation>Αποτυχία κλειδώματος οθόνης</translation>
     </message>
 </context>
 <context>
     <name>LockWorker</name>
     <message>
-        <location filename="../src/dde-lock/lockworker.cpp" line="119"/>
-        <source>Domain account</source>
-        <translation>Λογαριασμός Domain</translation>
-    </message>
-    <message>
-        <location filename="../src/dde-lock/lockworker.cpp" line="269"/>
+        <location filename="../src/dde-lock/lockworker.cpp" line="229"/>
         <source>Fingerprint verification timed out, please enter your password manually</source>
-        <translation>Τέλος χρόνου επαλήθευσης δακτυλικού αποτυπώματος, παρακαλώ εισάγετε τον κωδικό πρόσβασης, χειροκίνητα.</translation>
+        <translation>Τέλος χρόνου επαλήθευσης δακτυλικού αποτυπώματος, παρακαλώ εισάγετε τον κωδικό πρόσβασης χειροκίνητα</translation>
     </message>
     <message>
-        <location filename="../src/dde-lock/lockworker.cpp" line="287"/>
+        <location filename="../src/dde-lock/lockworker.cpp" line="247"/>
         <source>Failed to match fingerprint</source>
-        <translation>Αποτυχία αντιστοίχισης δακτυλικού αποτυπώματος.</translation>
+        <translation>Αποτυχία αντιστοίχισης δακτυλικού αποτυπώματος</translation>
     </message>
     <message>
-        <location filename="../src/dde-lock/lockworker.cpp" line="322"/>
+        <location filename="../src/dde-lock/lockworker.cpp" line="278"/>
         <source>Wrong Password</source>
         <translation>Λάθος Κωδικός Πρόσβασης</translation>
     </message>
@@ -218,78 +210,68 @@
     <message>
         <location filename="../src/session-widgets/userexpiredwidget.cpp" line="149"/>
         <source>Password expired, please change</source>
-        <translation type="unfinished"/>
+        <translation>Ο κωδικός πρόσβασης έληξε, παρακαλούμε αλλάξτε τον</translation>
     </message>
     <message>
         <location filename="../src/session-widgets/userexpiredwidget.cpp" line="153"/>
         <source>New password</source>
-        <translation type="unfinished"/>
+        <translation>Νέος κωδικός πρόσβασης</translation>
     </message>
     <message>
-        <location filename="../src/session-widgets/userexpiredwidget.cpp" line="162"/>
+        <location filename="../src/session-widgets/userexpiredwidget.cpp" line="163"/>
         <source>Repeat password</source>
         <translation>Επανάλληψη κωδικού πρόσβασης</translation>
     </message>
     <message>
-        <location filename="../src/session-widgets/userexpiredwidget.cpp" line="320"/>
+        <location filename="../src/session-widgets/userexpiredwidget.cpp" line="322"/>
         <source>Failed to change your password</source>
-        <translation type="unfinished"/>
+        <translation>Αποτυχία αλλαγής του κωδικού πρόσβασής σου</translation>
     </message>
     <message>
-        <location filename="../src/session-widgets/userexpiredwidget.cpp" line="334"/>
+        <location filename="../src/session-widgets/userexpiredwidget.cpp" line="336"/>
         <source>Password too weak</source>
-        <translation type="unfinished"/>
+        <translation>Κωδικός πολύ αδύναμος</translation>
     </message>
     <message>
-        <location filename="../src/session-widgets/userexpiredwidget.cpp" line="342"/>
+        <location filename="../src/session-widgets/userexpiredwidget.cpp" line="344"/>
         <source>Please enter the new password</source>
         <translation>Παρακαλούμε εισάγετε το νέο κωδικό πρόσβασης</translation>
     </message>
     <message>
-        <location filename="../src/session-widgets/userexpiredwidget.cpp" line="348"/>
+        <location filename="../src/session-widgets/userexpiredwidget.cpp" line="350"/>
         <source>Please repeat the new password</source>
-        <translation type="unfinished"/>
+        <translation>Παρακαλούμε επαναλάβετε τον νέο κωδικό</translation>
     </message>
     <message>
-        <location filename="../src/session-widgets/userexpiredwidget.cpp" line="354"/>
+        <location filename="../src/session-widgets/userexpiredwidget.cpp" line="356"/>
         <source>Passwords do not match</source>
-        <translation type="unfinished"/>
+        <translation>Οι κωδικοί δεν ταιριάζουν</translation>
     </message>
 </context>
 <context>
     <name>UserLoginWidget</name>
     <message>
-        <location filename="../src/session-widgets/userloginwidget.cpp" line="189"/>
+        <location filename="../src/session-widgets/userloginwidget.cpp" line="195"/>
         <source>Password</source>
         <translation>Κωδικός πρόσβασης</translation>
     </message>
     <message>
-        <location filename="../src/session-widgets/userloginwidget.cpp" line="191"/>
+        <location filename="../src/session-widgets/userloginwidget.cpp" line="199"/>
         <source>Account</source>
-        <translation type="unfinished"/>
+        <translation>Λογαριασμός</translation>
     </message>
     <message>
-        <location filename="../src/session-widgets/userloginwidget.cpp" line="226"/>
-        <source>Enter your password to reboot</source>
-        <translation>Εισάγετε τον κωδικό πρόσβασης για επανεκκίνηση</translation>
-    </message>
-    <message>
-        <location filename="../src/session-widgets/userloginwidget.cpp" line="229"/>
-        <source>Enter your password to shut down</source>
-        <translation>Eισαγάγετε τον κωδικό πρόσβασης για τερματισμό λειτουργίας</translation>
-    </message>
-    <message>
-        <location filename="../src/session-widgets/userloginwidget.cpp" line="239"/>
+        <location filename="../src/session-widgets/userloginwidget.cpp" line="241"/>
         <source>Please enter the account</source>
-        <translation type="unfinished"/>
+        <translation>Παρακαλούμε εισάγετε τον λογαριασμό</translation>
     </message>
     <message>
-        <location filename="../src/session-widgets/userloginwidget.cpp" line="246"/>
+        <location filename="../src/session-widgets/userloginwidget.cpp" line="248"/>
         <source>Please enter the password</source>
-        <translation type="unfinished"/>
+        <translation>Παρακαλούμε εισάγετε τον κωδικό πρόσβασης</translation>
     </message>
     <message numerus="yes">
-        <location filename="../src/session-widgets/userloginwidget.cpp" line="319"/>
+        <location filename="../src/session-widgets/userloginwidget.cpp" line="328"/>
         <source>Please try again %n minute(s) later</source>
         <translation type="unfinished"><numerusform></numerusform><numerusform></numerusform></translation>
     </message>

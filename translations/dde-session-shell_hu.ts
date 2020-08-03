@@ -36,88 +36,88 @@
         <translation>A futó programok megakadályozzák a kijelentkezést, a kényszerített kijelentkezés pedig adatvesztést okozhat.</translation>
     </message>
     <message>
-        <location filename="../src/dde-shutdown/view/contentwidget.cpp" line="383"/>
-        <location filename="../src/dde-shutdown/view/contentwidget.cpp" line="420"/>
-        <location filename="../src/dde-shutdown/view/contentwidget.cpp" line="442"/>
-        <location filename="../src/dde-shutdown/view/contentwidget.cpp" line="572"/>
+        <location filename="../src/dde-shutdown/view/contentwidget.cpp" line="382"/>
+        <location filename="../src/dde-shutdown/view/contentwidget.cpp" line="423"/>
+        <location filename="../src/dde-shutdown/view/contentwidget.cpp" line="445"/>
+        <location filename="../src/dde-shutdown/view/contentwidget.cpp" line="593"/>
         <source>Shut down</source>
         <translation>Leállítás</translation>
     </message>
     <message>
         <location filename="../src/dde-shutdown/view/contentwidget.cpp" line="385"/>
-        <location filename="../src/dde-shutdown/view/contentwidget.cpp" line="422"/>
-        <location filename="../src/dde-shutdown/view/contentwidget.cpp" line="445"/>
-        <location filename="../src/dde-shutdown/view/contentwidget.cpp" line="575"/>
+        <location filename="../src/dde-shutdown/view/contentwidget.cpp" line="425"/>
+        <location filename="../src/dde-shutdown/view/contentwidget.cpp" line="448"/>
+        <location filename="../src/dde-shutdown/view/contentwidget.cpp" line="596"/>
         <source>Reboot</source>
         <translation>Újraindítás</translation>
     </message>
     <message>
-        <location filename="../src/dde-shutdown/view/contentwidget.cpp" line="387"/>
-        <location filename="../src/dde-shutdown/view/contentwidget.cpp" line="578"/>
+        <location filename="../src/dde-shutdown/view/contentwidget.cpp" line="388"/>
+        <location filename="../src/dde-shutdown/view/contentwidget.cpp" line="599"/>
         <source>Suspend</source>
         <translation>Felfüggesztés</translation>
     </message>
     <message>
-        <location filename="../src/dde-shutdown/view/contentwidget.cpp" line="389"/>
-        <location filename="../src/dde-shutdown/view/contentwidget.cpp" line="581"/>
+        <location filename="../src/dde-shutdown/view/contentwidget.cpp" line="390"/>
+        <location filename="../src/dde-shutdown/view/contentwidget.cpp" line="602"/>
         <source>Hibernate</source>
         <translation>Hibernálás</translation>
     </message>
     <message>
-        <location filename="../src/dde-shutdown/view/contentwidget.cpp" line="391"/>
-        <location filename="../src/dde-shutdown/view/contentwidget.cpp" line="448"/>
-        <location filename="../src/dde-shutdown/view/contentwidget.cpp" line="587"/>
+        <location filename="../src/dde-shutdown/view/contentwidget.cpp" line="392"/>
+        <location filename="../src/dde-shutdown/view/contentwidget.cpp" line="451"/>
+        <location filename="../src/dde-shutdown/view/contentwidget.cpp" line="608"/>
         <source>Log out</source>
         <translation>Kijelentkezés</translation>
     </message>
     <message>
-        <location filename="../src/dde-shutdown/view/contentwidget.cpp" line="443"/>
+        <location filename="../src/dde-shutdown/view/contentwidget.cpp" line="446"/>
         <source>Are you sure you want to shut down?</source>
         <translation>Biztosan le akarod állítani?</translation>
     </message>
     <message>
-        <location filename="../src/dde-shutdown/view/contentwidget.cpp" line="446"/>
+        <location filename="../src/dde-shutdown/view/contentwidget.cpp" line="449"/>
         <source>Are you sure you want to reboot?</source>
         <translation>Biztosan újra akarod indítani?</translation>
     </message>
     <message>
-        <location filename="../src/dde-shutdown/view/contentwidget.cpp" line="449"/>
+        <location filename="../src/dde-shutdown/view/contentwidget.cpp" line="452"/>
         <source>Are you sure you want to log out?</source>
         <translation>Biztosan ki akarsz jelentkezni?</translation>
     </message>
     <message>
-        <location filename="../src/dde-shutdown/view/contentwidget.cpp" line="584"/>
+        <location filename="../src/dde-shutdown/view/contentwidget.cpp" line="605"/>
         <source>Lock</source>
         <translation>Zárolás</translation>
     </message>
     <message>
-        <location filename="../src/dde-shutdown/view/contentwidget.cpp" line="591"/>
+        <location filename="../src/dde-shutdown/view/contentwidget.cpp" line="612"/>
         <source>Switch user</source>
         <translation>Felhasználóváltás</translation>
     </message>
     <message>
-        <location filename="../src/dde-shutdown/view/contentwidget.cpp" line="596"/>
+        <location filename="../src/dde-shutdown/view/contentwidget.cpp" line="617"/>
         <source>Switch system</source>
-        <translation type="unfinished"/>
+        <translation>Rendszer váltása</translation>
     </message>
 </context>
 <context>
     <name>GreeterWorkek</name>
     <message>
-        <location filename="../src/lightdm-deepin-greeter/greeterworkek.cpp" line="306"/>
+        <location filename="../src/lightdm-deepin-greeter/greeterworkek.cpp" line="327"/>
         <source>Wrong Password</source>
         <translation>Helytelen jelszó</translation>
     </message>
     <message>
-        <location filename="../src/lightdm-deepin-greeter/greeterworkek.cpp" line="311"/>
+        <location filename="../src/lightdm-deepin-greeter/greeterworkek.cpp" line="331"/>
         <source>The account or password is not correct. Please enter again.</source>
-        <translation type="unfinished"/>
+        <translation>A fióknév vagy a jelszó helytelen. Kérem, próbálja újra.</translation>
     </message>
 </context>
 <context>
     <name>InhibitWarnView</name>
     <message>
-        <location filename="../src/dde-shutdown/view/inhibitwarnview.cpp" line="88"/>
+        <location filename="../src/dde-shutdown/view/inhibitwarnview.cpp" line="90"/>
         <source>Cancel</source>
         <translation>Mégsem</translation>
     </message>
@@ -125,12 +125,12 @@
 <context>
     <name>LockContent</name>
     <message>
-        <location filename="../src/session-widgets/lockcontent.cpp" line="352"/>
+        <location filename="../src/session-widgets/lockcontent.cpp" line="353"/>
         <source>Lock Screen</source>
-        <translation type="unfinished"/>
+        <translation>Képernyő zárolása</translation>
     </message>
     <message>
-        <location filename="../src/session-widgets/lockcontent.cpp" line="356"/>
+        <location filename="../src/session-widgets/lockcontent.cpp" line="357"/>
         <source>Failed to lock screen</source>
         <translation>Képernyő lezárása sikertelen</translation>
     </message>
@@ -138,17 +138,17 @@
 <context>
     <name>LockWorker</name>
     <message>
-        <location filename="../src/dde-lock/lockworker.cpp" line="235"/>
+        <location filename="../src/dde-lock/lockworker.cpp" line="229"/>
         <source>Fingerprint verification timed out, please enter your password manually</source>
         <translation>Ujjlenyomat azonosítás időtúllépése! Kérem, adja meg a jelszót</translation>
     </message>
     <message>
-        <location filename="../src/dde-lock/lockworker.cpp" line="253"/>
+        <location filename="../src/dde-lock/lockworker.cpp" line="247"/>
         <source>Failed to match fingerprint</source>
         <translation>Ujjlenyomat nem egyezik</translation>
     </message>
     <message>
-        <location filename="../src/dde-lock/lockworker.cpp" line="288"/>
+        <location filename="../src/dde-lock/lockworker.cpp" line="278"/>
         <source>Wrong Password</source>
         <translation>Helytelen jelszó</translation>
     </message>
@@ -230,7 +230,7 @@
     <message>
         <location filename="../src/session-widgets/userexpiredwidget.cpp" line="336"/>
         <source>Password too weak</source>
-        <translation type="unfinished"/>
+        <translation>Jelszó túl gyenge</translation>
     </message>
     <message>
         <location filename="../src/session-widgets/userexpiredwidget.cpp" line="344"/>
@@ -251,35 +251,29 @@
 <context>
     <name>UserLoginWidget</name>
     <message>
-        <location filename="../src/session-widgets/userloginwidget.cpp" line="191"/>
+        <location filename="../src/session-widgets/userloginwidget.cpp" line="195"/>
         <source>Password</source>
         <translation>Jelszó</translation>
     </message>
     <message>
-        <location filename="../src/session-widgets/userloginwidget.cpp" line="195"/>
+        <location filename="../src/session-widgets/userloginwidget.cpp" line="199"/>
         <source>Account</source>
         <translation>Fiók</translation>
     </message>
     <message>
-        <location filename="../src/session-widgets/userloginwidget.cpp" line="235"/>
-        <location filename="../src/session-widgets/userloginwidget.cpp" line="238"/>
-        <source>Verify your fingerprint or password</source>
-        <translation>Ujjlenyomat vagy jelszó ellenőrzése</translation>
+        <location filename="../src/session-widgets/userloginwidget.cpp" line="241"/>
+        <source>Please enter the account</source>
+        <translation>Kérem, írja be a fióknevet</translation>
     </message>
     <message>
         <location filename="../src/session-widgets/userloginwidget.cpp" line="248"/>
-        <source>Please enter the account</source>
-        <translation type="unfinished"/>
-    </message>
-    <message>
-        <location filename="../src/session-widgets/userloginwidget.cpp" line="255"/>
         <source>Please enter the password</source>
-        <translation type="unfinished"/>
+        <translation>Kérem, adja meg a jelszót</translation>
     </message>
     <message numerus="yes">
-        <location filename="../src/session-widgets/userloginwidget.cpp" line="333"/>
+        <location filename="../src/session-widgets/userloginwidget.cpp" line="328"/>
         <source>Please try again %n minute(s) later</source>
-        <translation><numerusform>Kérem, próbálja újra %n perc múlva</numerusform><numerusform>Kérem, próbálja újra %n perc múlva</numerusform></translation>
+        <translation type="unfinished"><numerusform></numerusform><numerusform></numerusform></translation>
     </message>
 </context>
 </TS>

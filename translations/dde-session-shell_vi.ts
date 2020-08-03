@@ -36,88 +36,88 @@
         <translation>Các chương trình đang ngăn máy tính đăng xuất và buộc đăng xuất có thể gây mất dữ liệu.</translation>
     </message>
     <message>
-        <location filename="../src/dde-shutdown/view/contentwidget.cpp" line="383"/>
-        <location filename="../src/dde-shutdown/view/contentwidget.cpp" line="420"/>
-        <location filename="../src/dde-shutdown/view/contentwidget.cpp" line="442"/>
-        <location filename="../src/dde-shutdown/view/contentwidget.cpp" line="572"/>
+        <location filename="../src/dde-shutdown/view/contentwidget.cpp" line="382"/>
+        <location filename="../src/dde-shutdown/view/contentwidget.cpp" line="423"/>
+        <location filename="../src/dde-shutdown/view/contentwidget.cpp" line="445"/>
+        <location filename="../src/dde-shutdown/view/contentwidget.cpp" line="593"/>
         <source>Shut down</source>
         <translation>Tắt máy</translation>
     </message>
     <message>
         <location filename="../src/dde-shutdown/view/contentwidget.cpp" line="385"/>
-        <location filename="../src/dde-shutdown/view/contentwidget.cpp" line="422"/>
-        <location filename="../src/dde-shutdown/view/contentwidget.cpp" line="445"/>
-        <location filename="../src/dde-shutdown/view/contentwidget.cpp" line="575"/>
+        <location filename="../src/dde-shutdown/view/contentwidget.cpp" line="425"/>
+        <location filename="../src/dde-shutdown/view/contentwidget.cpp" line="448"/>
+        <location filename="../src/dde-shutdown/view/contentwidget.cpp" line="596"/>
         <source>Reboot</source>
         <translation>Khởi động lại</translation>
     </message>
     <message>
-        <location filename="../src/dde-shutdown/view/contentwidget.cpp" line="387"/>
-        <location filename="../src/dde-shutdown/view/contentwidget.cpp" line="578"/>
+        <location filename="../src/dde-shutdown/view/contentwidget.cpp" line="388"/>
+        <location filename="../src/dde-shutdown/view/contentwidget.cpp" line="599"/>
         <source>Suspend</source>
         <translation>Dừng</translation>
     </message>
     <message>
-        <location filename="../src/dde-shutdown/view/contentwidget.cpp" line="389"/>
-        <location filename="../src/dde-shutdown/view/contentwidget.cpp" line="581"/>
+        <location filename="../src/dde-shutdown/view/contentwidget.cpp" line="390"/>
+        <location filename="../src/dde-shutdown/view/contentwidget.cpp" line="602"/>
         <source>Hibernate</source>
         <translation>Ngủ đông</translation>
     </message>
     <message>
-        <location filename="../src/dde-shutdown/view/contentwidget.cpp" line="391"/>
-        <location filename="../src/dde-shutdown/view/contentwidget.cpp" line="448"/>
-        <location filename="../src/dde-shutdown/view/contentwidget.cpp" line="587"/>
+        <location filename="../src/dde-shutdown/view/contentwidget.cpp" line="392"/>
+        <location filename="../src/dde-shutdown/view/contentwidget.cpp" line="451"/>
+        <location filename="../src/dde-shutdown/view/contentwidget.cpp" line="608"/>
         <source>Log out</source>
         <translation>Thoát ra</translation>
     </message>
     <message>
-        <location filename="../src/dde-shutdown/view/contentwidget.cpp" line="443"/>
+        <location filename="../src/dde-shutdown/view/contentwidget.cpp" line="446"/>
         <source>Are you sure you want to shut down?</source>
         <translation>Bạn có chắc chắn muốn tắt máy?</translation>
     </message>
     <message>
-        <location filename="../src/dde-shutdown/view/contentwidget.cpp" line="446"/>
+        <location filename="../src/dde-shutdown/view/contentwidget.cpp" line="449"/>
         <source>Are you sure you want to reboot?</source>
         <translation>Bạn có chắc chắn muốn khởi động lại?</translation>
     </message>
     <message>
-        <location filename="../src/dde-shutdown/view/contentwidget.cpp" line="449"/>
+        <location filename="../src/dde-shutdown/view/contentwidget.cpp" line="452"/>
         <source>Are you sure you want to log out?</source>
         <translation>Bạn có chắc chắn bạn muốn thoát?</translation>
     </message>
     <message>
-        <location filename="../src/dde-shutdown/view/contentwidget.cpp" line="584"/>
+        <location filename="../src/dde-shutdown/view/contentwidget.cpp" line="605"/>
         <source>Lock</source>
         <translation>Khóa</translation>
     </message>
     <message>
-        <location filename="../src/dde-shutdown/view/contentwidget.cpp" line="591"/>
+        <location filename="../src/dde-shutdown/view/contentwidget.cpp" line="612"/>
         <source>Switch user</source>
         <translation>Đổi người dùng</translation>
     </message>
     <message>
-        <location filename="../src/dde-shutdown/view/contentwidget.cpp" line="596"/>
+        <location filename="../src/dde-shutdown/view/contentwidget.cpp" line="617"/>
         <source>Switch system</source>
-        <translation type="unfinished"/>
+        <translation>Chuyển đổi hệ thống</translation>
     </message>
 </context>
 <context>
     <name>GreeterWorkek</name>
     <message>
-        <location filename="../src/lightdm-deepin-greeter/greeterworkek.cpp" line="306"/>
+        <location filename="../src/lightdm-deepin-greeter/greeterworkek.cpp" line="327"/>
         <source>Wrong Password</source>
         <translation>Sai Mật mã</translation>
     </message>
     <message>
-        <location filename="../src/lightdm-deepin-greeter/greeterworkek.cpp" line="311"/>
+        <location filename="../src/lightdm-deepin-greeter/greeterworkek.cpp" line="331"/>
         <source>The account or password is not correct. Please enter again.</source>
-        <translation type="unfinished"/>
+        <translation>Tài khoản hoặc mật khẩu không đúng, vui lòng thử lại.</translation>
     </message>
 </context>
 <context>
     <name>InhibitWarnView</name>
     <message>
-        <location filename="../src/dde-shutdown/view/inhibitwarnview.cpp" line="88"/>
+        <location filename="../src/dde-shutdown/view/inhibitwarnview.cpp" line="90"/>
         <source>Cancel</source>
         <translation>Hủy</translation>
     </message>
@@ -125,12 +125,12 @@
 <context>
     <name>LockContent</name>
     <message>
-        <location filename="../src/session-widgets/lockcontent.cpp" line="352"/>
+        <location filename="../src/session-widgets/lockcontent.cpp" line="353"/>
         <source>Lock Screen</source>
         <translation>Khóa màn hình</translation>
     </message>
     <message>
-        <location filename="../src/session-widgets/lockcontent.cpp" line="356"/>
+        <location filename="../src/session-widgets/lockcontent.cpp" line="357"/>
         <source>Failed to lock screen</source>
         <translation>Lỗi khi khóa màn hình</translation>
     </message>
@@ -138,17 +138,17 @@
 <context>
     <name>LockWorker</name>
     <message>
-        <location filename="../src/dde-lock/lockworker.cpp" line="235"/>
+        <location filename="../src/dde-lock/lockworker.cpp" line="229"/>
         <source>Fingerprint verification timed out, please enter your password manually</source>
         <translation>Đã hết thời gian xác minh vân tay, vui lòng nhập mật khẩu của bạn theo cách thủ công</translation>
     </message>
     <message>
-        <location filename="../src/dde-lock/lockworker.cpp" line="253"/>
+        <location filename="../src/dde-lock/lockworker.cpp" line="247"/>
         <source>Failed to match fingerprint</source>
         <translation>Dấu vân tay không khớp</translation>
     </message>
     <message>
-        <location filename="../src/dde-lock/lockworker.cpp" line="288"/>
+        <location filename="../src/dde-lock/lockworker.cpp" line="278"/>
         <source>Wrong Password</source>
         <translation>Sai Mật mã</translation>
     </message>
@@ -251,35 +251,29 @@
 <context>
     <name>UserLoginWidget</name>
     <message>
-        <location filename="../src/session-widgets/userloginwidget.cpp" line="191"/>
+        <location filename="../src/session-widgets/userloginwidget.cpp" line="195"/>
         <source>Password</source>
         <translation>Mật mã</translation>
     </message>
     <message>
-        <location filename="../src/session-widgets/userloginwidget.cpp" line="195"/>
+        <location filename="../src/session-widgets/userloginwidget.cpp" line="199"/>
         <source>Account</source>
         <translation>Tài khoản </translation>
     </message>
     <message>
-        <location filename="../src/session-widgets/userloginwidget.cpp" line="235"/>
-        <location filename="../src/session-widgets/userloginwidget.cpp" line="238"/>
-        <source>Verify your fingerprint or password</source>
-        <translation>Xác nhận dấu vân tay hoặc mật khẩu của bạn</translation>
-    </message>
-    <message>
-        <location filename="../src/session-widgets/userloginwidget.cpp" line="248"/>
+        <location filename="../src/session-widgets/userloginwidget.cpp" line="241"/>
         <source>Please enter the account</source>
         <translation>Vui lòng nhập tài khoản</translation>
     </message>
     <message>
-        <location filename="../src/session-widgets/userloginwidget.cpp" line="255"/>
+        <location filename="../src/session-widgets/userloginwidget.cpp" line="248"/>
         <source>Please enter the password</source>
         <translation>Vui lòng nhập mật khẩu</translation>
     </message>
     <message numerus="yes">
-        <location filename="../src/session-widgets/userloginwidget.cpp" line="333"/>
+        <location filename="../src/session-widgets/userloginwidget.cpp" line="328"/>
         <source>Please try again %n minute(s) later</source>
-        <translation><numerusform>Vui lòng thử lại trong %n phút nữa</numerusform></translation>
+        <translation type="unfinished"><numerusform></numerusform></translation>
     </message>
 </context>
 </TS>

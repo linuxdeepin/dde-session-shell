@@ -36,67 +36,67 @@
         <translation>این برنامه‌ها مانع از خروج کامپیوتر می‌شوند و اجبار به خروج ممکن است باعث از دست رفتن داده‌ها شود .</translation>
     </message>
     <message>
-        <location filename="../src/dde-shutdown/view/contentwidget.cpp" line="383"/>
-        <location filename="../src/dde-shutdown/view/contentwidget.cpp" line="420"/>
-        <location filename="../src/dde-shutdown/view/contentwidget.cpp" line="442"/>
-        <location filename="../src/dde-shutdown/view/contentwidget.cpp" line="572"/>
+        <location filename="../src/dde-shutdown/view/contentwidget.cpp" line="382"/>
+        <location filename="../src/dde-shutdown/view/contentwidget.cpp" line="423"/>
+        <location filename="../src/dde-shutdown/view/contentwidget.cpp" line="445"/>
+        <location filename="../src/dde-shutdown/view/contentwidget.cpp" line="593"/>
         <source>Shut down</source>
         <translation>خاموش شدن</translation>
     </message>
     <message>
         <location filename="../src/dde-shutdown/view/contentwidget.cpp" line="385"/>
-        <location filename="../src/dde-shutdown/view/contentwidget.cpp" line="422"/>
-        <location filename="../src/dde-shutdown/view/contentwidget.cpp" line="445"/>
-        <location filename="../src/dde-shutdown/view/contentwidget.cpp" line="575"/>
+        <location filename="../src/dde-shutdown/view/contentwidget.cpp" line="425"/>
+        <location filename="../src/dde-shutdown/view/contentwidget.cpp" line="448"/>
+        <location filename="../src/dde-shutdown/view/contentwidget.cpp" line="596"/>
         <source>Reboot</source>
         <translation>راه اندازی مجدد</translation>
     </message>
     <message>
-        <location filename="../src/dde-shutdown/view/contentwidget.cpp" line="387"/>
-        <location filename="../src/dde-shutdown/view/contentwidget.cpp" line="578"/>
+        <location filename="../src/dde-shutdown/view/contentwidget.cpp" line="388"/>
+        <location filename="../src/dde-shutdown/view/contentwidget.cpp" line="599"/>
         <source>Suspend</source>
         <translation>معلق کردن</translation>
     </message>
     <message>
-        <location filename="../src/dde-shutdown/view/contentwidget.cpp" line="389"/>
-        <location filename="../src/dde-shutdown/view/contentwidget.cpp" line="581"/>
+        <location filename="../src/dde-shutdown/view/contentwidget.cpp" line="390"/>
+        <location filename="../src/dde-shutdown/view/contentwidget.cpp" line="602"/>
         <source>Hibernate</source>
         <translation>هایبرنت</translation>
     </message>
     <message>
-        <location filename="../src/dde-shutdown/view/contentwidget.cpp" line="391"/>
-        <location filename="../src/dde-shutdown/view/contentwidget.cpp" line="448"/>
-        <location filename="../src/dde-shutdown/view/contentwidget.cpp" line="587"/>
+        <location filename="../src/dde-shutdown/view/contentwidget.cpp" line="392"/>
+        <location filename="../src/dde-shutdown/view/contentwidget.cpp" line="451"/>
+        <location filename="../src/dde-shutdown/view/contentwidget.cpp" line="608"/>
         <source>Log out</source>
         <translation>خارج شدن از حساب کاربری</translation>
     </message>
     <message>
-        <location filename="../src/dde-shutdown/view/contentwidget.cpp" line="443"/>
+        <location filename="../src/dde-shutdown/view/contentwidget.cpp" line="446"/>
         <source>Are you sure you want to shut down?</source>
         <translation>آیا از خاموشی مطمئن هستید ؟</translation>
     </message>
     <message>
-        <location filename="../src/dde-shutdown/view/contentwidget.cpp" line="446"/>
+        <location filename="../src/dde-shutdown/view/contentwidget.cpp" line="449"/>
         <source>Are you sure you want to reboot?</source>
         <translation>آیا از  راه اندازی مجدد مطمئن هستید ؟</translation>
     </message>
     <message>
-        <location filename="../src/dde-shutdown/view/contentwidget.cpp" line="449"/>
+        <location filename="../src/dde-shutdown/view/contentwidget.cpp" line="452"/>
         <source>Are you sure you want to log out?</source>
         <translation>آیا از خارج شدن مطمئن هستید ؟</translation>
     </message>
     <message>
-        <location filename="../src/dde-shutdown/view/contentwidget.cpp" line="584"/>
+        <location filename="../src/dde-shutdown/view/contentwidget.cpp" line="605"/>
         <source>Lock</source>
         <translation>قفل</translation>
     </message>
     <message>
-        <location filename="../src/dde-shutdown/view/contentwidget.cpp" line="591"/>
+        <location filename="../src/dde-shutdown/view/contentwidget.cpp" line="612"/>
         <source>Switch user</source>
         <translation>تغییر حساب کاربری</translation>
     </message>
     <message>
-        <location filename="../src/dde-shutdown/view/contentwidget.cpp" line="596"/>
+        <location filename="../src/dde-shutdown/view/contentwidget.cpp" line="617"/>
         <source>Switch system</source>
         <translation type="unfinished"/>
     </message>
@@ -104,12 +104,12 @@
 <context>
     <name>GreeterWorkek</name>
     <message>
-        <location filename="../src/lightdm-deepin-greeter/greeterworkek.cpp" line="306"/>
+        <location filename="../src/lightdm-deepin-greeter/greeterworkek.cpp" line="327"/>
         <source>Wrong Password</source>
-        <translation>رمزعبور اشتباه</translation>
+        <translation>رمزعبور اشتباه است</translation>
     </message>
     <message>
-        <location filename="../src/lightdm-deepin-greeter/greeterworkek.cpp" line="311"/>
+        <location filename="../src/lightdm-deepin-greeter/greeterworkek.cpp" line="331"/>
         <source>The account or password is not correct. Please enter again.</source>
         <translation type="unfinished"/>
     </message>
@@ -117,7 +117,7 @@
 <context>
     <name>InhibitWarnView</name>
     <message>
-        <location filename="../src/dde-shutdown/view/inhibitwarnview.cpp" line="88"/>
+        <location filename="../src/dde-shutdown/view/inhibitwarnview.cpp" line="90"/>
         <source>Cancel</source>
         <translation>انصراف</translation>
     </message>
@@ -125,12 +125,12 @@
 <context>
     <name>LockContent</name>
     <message>
-        <location filename="../src/session-widgets/lockcontent.cpp" line="352"/>
+        <location filename="../src/session-widgets/lockcontent.cpp" line="353"/>
         <source>Lock Screen</source>
         <translation type="unfinished"/>
     </message>
     <message>
-        <location filename="../src/session-widgets/lockcontent.cpp" line="356"/>
+        <location filename="../src/session-widgets/lockcontent.cpp" line="357"/>
         <source>Failed to lock screen</source>
         <translation>قفل صفحه انجام نشد</translation>
     </message>
@@ -138,17 +138,17 @@
 <context>
     <name>LockWorker</name>
     <message>
-        <location filename="../src/dde-lock/lockworker.cpp" line="235"/>
+        <location filename="../src/dde-lock/lockworker.cpp" line="229"/>
         <source>Fingerprint verification timed out, please enter your password manually</source>
         <translation>تایید اثر انگشت منقضی شد , لطفا ً رمزعبور خود را دستی وارد کنید</translation>
     </message>
     <message>
-        <location filename="../src/dde-lock/lockworker.cpp" line="253"/>
+        <location filename="../src/dde-lock/lockworker.cpp" line="247"/>
         <source>Failed to match fingerprint</source>
-        <translation>تطابق اثر انگشت ناموفق بود.</translation>
+        <translation>تطابق اثر انگشت ناموفق بود</translation>
     </message>
     <message>
-        <location filename="../src/dde-lock/lockworker.cpp" line="288"/>
+        <location filename="../src/dde-lock/lockworker.cpp" line="278"/>
         <source>Wrong Password</source>
         <translation>رمزعبور اشتباه است</translation>
     </message>
@@ -245,41 +245,35 @@
     <message>
         <location filename="../src/session-widgets/userexpiredwidget.cpp" line="356"/>
         <source>Passwords do not match</source>
-        <translation>رمزعبور یکسان نیست.</translation>
+        <translation>گذرواژه ها یکسان نیستند.</translation>
     </message>
 </context>
 <context>
     <name>UserLoginWidget</name>
     <message>
-        <location filename="../src/session-widgets/userloginwidget.cpp" line="191"/>
+        <location filename="../src/session-widgets/userloginwidget.cpp" line="195"/>
         <source>Password</source>
         <translation>رمزعبور</translation>
     </message>
     <message>
-        <location filename="../src/session-widgets/userloginwidget.cpp" line="195"/>
+        <location filename="../src/session-widgets/userloginwidget.cpp" line="199"/>
         <source>Account</source>
         <translation>حساب کاربری</translation>
     </message>
     <message>
-        <location filename="../src/session-widgets/userloginwidget.cpp" line="235"/>
-        <location filename="../src/session-widgets/userloginwidget.cpp" line="238"/>
-        <source>Verify your fingerprint or password</source>
-        <translation>اثر انگشت یا رمز عبور خود را تأیید کنید</translation>
-    </message>
-    <message>
-        <location filename="../src/session-widgets/userloginwidget.cpp" line="248"/>
+        <location filename="../src/session-widgets/userloginwidget.cpp" line="241"/>
         <source>Please enter the account</source>
         <translation type="unfinished"/>
     </message>
     <message>
-        <location filename="../src/session-widgets/userloginwidget.cpp" line="255"/>
+        <location filename="../src/session-widgets/userloginwidget.cpp" line="248"/>
         <source>Please enter the password</source>
         <translation type="unfinished"/>
     </message>
     <message numerus="yes">
-        <location filename="../src/session-widgets/userloginwidget.cpp" line="333"/>
+        <location filename="../src/session-widgets/userloginwidget.cpp" line="328"/>
         <source>Please try again %n minute(s) later</source>
-        <translation><numerusform>لطفاً٪ n دقیقه بعد دوباره امتحان کنید</numerusform><numerusform>لطفاً ٪n دقیقه بعد دوباره امتحان کنید</numerusform></translation>
+        <translation type="unfinished"><numerusform></numerusform><numerusform></numerusform></translation>
     </message>
 </context>
 </TS>
