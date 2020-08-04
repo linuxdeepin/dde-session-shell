@@ -153,10 +153,8 @@ void TimeWidget::setShortDateFormat(int type)
 void TimeWidget::setShortTimeFormat(int type)
 {
     switch (type) {
-    case 0: m_shortTimeFormat = "h:m"; break;
+    case 0: m_shortTimeFormat = "h:mm"; break;
     case 1: m_shortTimeFormat = "hh:mm";  break;
-    case 2: m_shortTimeFormat = "h:m"; break;
-    case 3: m_shortTimeFormat = "hh:mm";  break;
     default: m_shortTimeFormat = "hh:mm"; break;
     }
     refreshTime();
