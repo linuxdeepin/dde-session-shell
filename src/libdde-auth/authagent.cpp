@@ -59,7 +59,12 @@ void AuthAgent::run()
     int rc = pam_authenticate(m_pamHandle, 0);
 
     //息屏状态下亮屏，由于后端没有亮屏信号，只能用此临时办法
-    system("xset dpms force on");
+    int result = system("xset dpms force on");
+    if(result < 0) qDebug() << "system run command 'xset dpms force on'  error";
+
+    if (rc != PAM_SUCCESS) {
+        qDebug() << Q_FUNC_INFO << pam_strerror(m_pamHandle, rc);
+    }
 
     rc = pam_end(m_pamHandle, rc);
     if (rc != PAM_SUCCESS) {

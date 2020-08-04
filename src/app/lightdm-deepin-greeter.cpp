@@ -74,8 +74,7 @@ void sig_crash(int sig)
     char path[100];
     memset(path, 0, 100);
     //崩溃日志路径
-    QString strPath = QStandardPaths::standardLocations(QStandardPaths::ConfigLocation)[0] + "/dde-collapse.log";
-    memcpy(path, strPath.toStdString().data(), strPath.length());
+    QString strPath = QStandardPaths::standardLocations(QStandardPaths::ConfigLocation)[0] + "/dde-collapse.log";    memcpy(path, strPath.toStdString().data(), static_cast<size_t>(strPath.length()));
 
     stat(path, &buf);
     if (buf.st_size > 10 * 1024 * 1024) {
@@ -94,7 +93,7 @@ void sig_crash(int sig)
         time_t t = time(nullptr);
         tm *now = localtime(&t);
         QString log = "#####" + qApp->applicationName() + "#####\n[%04d-%02d-%02d %02d:%02d:%02d][crash signal number:%d]\n";
-        int nLen1 = sprintf(szLine, log.toStdString().c_str(),
+        sprintf(szLine, log.toStdString().c_str(),
                             now->tm_year + 1900,
                             now->tm_mon + 1,
                             now->tm_mday,
@@ -106,13 +105,12 @@ void sig_crash(int sig)
 
 #ifdef __linux
         void *array[MAX_STACK_FRAMES];
-        size_t size = 0;
+        int size = 0;
         char **strings = nullptr;
-        size_t i, j;
         signal(sig, SIG_DFL);
         size = backtrace(array, MAX_STACK_FRAMES);
-        strings = (char **)backtrace_symbols(array, size);
-        for (i = 0; i < size; ++i) {
+        strings = static_cast<char **>(backtrace_symbols(array, size));
+        for (int i = 0; i < size; ++i) {
             char szLine[512] = {0};
             sprintf(szLine, "%d %s\n", i, strings[i]);
             fwrite(szLine, 1, strlen(szLine), fd);
@@ -183,7 +181,7 @@ static unsigned long loadCursorHandle(Display *dpy, const char *name, int size)
         }
     }
 
-    unsigned long handle = (unsigned long)XcursorImagesLoadCursor(dpy,images);
+    unsigned long handle = static_cast<unsigned long>(XcursorImagesLoadCursor(dpy,images));
     XcursorImagesDestroy(images);
 
     return handle;
@@ -200,9 +198,9 @@ static int set_rootwindow_cursor() {
         ? "/usr/share/icons/bloom/cursors/loginspinner@2x"
         : "/usr/share/icons/bloom/cursors/loginspinner";
 
-    Cursor cursor = (Cursor)XcursorFilenameLoadCursor(display, cursorPath);
+    Cursor cursor = static_cast<Cursor>(XcursorFilenameLoadCursor(display, cursorPath));
     if (cursor == 0) {
-        cursor = (Cursor)loadCursorHandle(display, "watch", 24);
+        cursor = static_cast<Cursor>(loadCursorHandle(display, "watch", 24));
     }
     XDefineCursor(display, XDefaultRootWindow(display),cursor);
 
@@ -237,7 +235,7 @@ static double get_scale_ratio() {
             XRRCrtcInfo *crtInfo = XRRGetCrtcInfo(display, resources, outputInfo->crtc);
             if (crtInfo == nullptr) continue;
 
-            scaleRatio = (double)crtInfo->width / (double)outputInfo->mm_width / (1366.0 / 310.0);
+            scaleRatio = static_cast<double>(crtInfo->width) / static_cast<double>(outputInfo->mm_width / (1366.0 / 310.0));
 
             if (scaleRatio > 1 + 2.0 / 3.0) {
                 scaleRatio = 2;

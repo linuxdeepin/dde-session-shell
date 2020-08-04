@@ -88,7 +88,7 @@ void sig_crash(int sig)
         time_t t = time(nullptr);
         tm *now = localtime(&t);
         QString log = "#####" + qApp->applicationName() + "#####\n[%04d-%02d-%02d %02d:%02d:%02d][crash signal number:%d]\n";
-        int nLen1 = sprintf(szLine, log.toStdString().c_str(),
+        sprintf(szLine, log.toStdString().c_str(),
                             now->tm_year + 1900,
                             now->tm_mon + 1,
                             now->tm_mday,
@@ -100,13 +100,12 @@ void sig_crash(int sig)
 
 #ifdef __linux
         void *array[MAX_STACK_FRAMES];
-        size_t size = 0;
+        int  size = 0;
         char **strings = nullptr;
-        size_t i, j;
         signal(sig, SIG_DFL);
         size = backtrace(array, MAX_STACK_FRAMES);
-        strings = (char **)backtrace_symbols(array, size);
-        for (i = 0; i < size; ++i) {
+        strings =static_cast<char **>(backtrace_symbols(array, size));
+        for (int i = 0; i < size; ++i) {
             char szLine[512] = {0};
             sprintf(szLine, "%d %s\n", i, strings[i]);
             fwrite(szLine, 1, strlen(szLine), fd);
@@ -246,7 +245,7 @@ int main(int argc, char *argv[])
 
         if (!runDaemon) {
             const char *interface = "com.deepin.dde.lockFront";
-            QDBusInterface ifc(DBUS_NAME, DBUS_PATH, interface, QDBusConnection::sessionBus(), NULL);
+            QDBusInterface ifc(DBUS_NAME, DBUS_PATH, interface, QDBusConnection::sessionBus(), nullptr);
             if (showUserList) {
                 ifc.asyncCall("ShowUserList");
             } else {
