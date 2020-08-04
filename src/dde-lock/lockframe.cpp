@@ -31,7 +31,7 @@
 
 #include <QApplication>
 #include <QWindow>
-
+#include <QDBusInterface>
 
 
 LockFrame::LockFrame(SessionBaseModel *const model, QWidget *parent)
@@ -64,7 +64,7 @@ LockFrame::LockFrame(SessionBaseModel *const model, QWidget *parent)
         }else{
             Hibernate->hide();
             setContent(m_content);
-        }                                    
+        }
     });
     connect(model, &SessionBaseModel::showUserList, this, &LockFrame::showUserList);
     connect(m_content, &LockContent::unlockActionFinish,this, [ = ]() {
@@ -83,7 +83,9 @@ bool LockFrame::eventFilter(QObject *watched, QEvent *event)
         QString  keyValue = "";
         switch (static_cast<QKeyEvent *>(event)->key()) {
         case Qt::Key_PowerOff: {
-            keyValue = "power-off";
+            if (!handlePoweroffKey()) {
+                keyValue = "power-off";
+            }
             break;
         }
         case Qt::Key_NumLock: {
@@ -133,6 +135,26 @@ bool LockFrame::eventFilter(QObject *watched, QEvent *event)
         }
     }
     return QObject::eventFilter(watched, event);
+}
+
+bool LockFrame::handlePoweroffKey()
+{
+    QDBusInterface powerInter("com.deepin.daemon.Power","/com/deepin/daemon/Power","com.deepin.daemon.Power");
+    if (!powerInter.isValid()) {
+        return false;
+    }
+    int action = powerInter.property("LinePowerPressPowerBtnAction").toInt();
+    // 需要特殊处理：关机(0)和无任何操作(4)
+    if (action == 0) {
+        m_model->setPowerAction(SessionBaseModel::PowerAction::RequireShutdown);
+        m_model->setCurrentModeState(SessionBaseModel::ModeStatus::ConfirmPasswordMode);
+        m_content->pushConfirmFrame();
+        return true;
+    } else if (action == 4) {
+        m_model->setCurrentModeState(SessionBaseModel::ModeStatus::PowerMode);
+        return true;
+    }
+    return false;
 }
 
 void LockFrame::showUserList()

@@ -63,6 +63,8 @@ protected:
     void showEvent(QShowEvent *event) Q_DECL_OVERRIDE;
     void hideEvent(QHideEvent *event) Q_DECL_OVERRIDE;
     bool eventFilter(QObject *watched, QEvent *event) Q_DECL_OVERRIDE;
+private:
+    bool handlePoweroffKey();
 
 private:
     LockContent *m_content;
