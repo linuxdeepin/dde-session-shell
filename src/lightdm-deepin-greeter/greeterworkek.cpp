@@ -40,7 +40,6 @@ GreeterWorkek::GreeterWorkek(SessionBaseModel *const model, QObject *parent)
                                          QDBusConnection::systemBus(), this))
     , m_isThumbAuth(false)
     , m_authenticating(false)
-    , m_firstTimeLogin(true)
     , m_password(QString())
 {
     if (m_AuthenticateInter->isValid()) {
@@ -178,10 +177,6 @@ void GreeterWorkek::onUserAdded(const QString &user)
     if (m_model->currentUser().get() == nullptr) {
         if (m_model->userList().isEmpty() || m_model->userList().first()->type() == User::ADDomain) {
             m_model->setCurrentUser(user_ptr);
-
-            if (m_model->currentType() == SessionBaseModel::AuthType::LightdmType) {
-                userAuthForLightdm(user_ptr);
-            }
         }
     }
 
@@ -207,10 +202,6 @@ void GreeterWorkek::checkDBusServer(bool isvalid)
 
 void GreeterWorkek::oneKeyLogin()
 {
-    if (!m_firstTimeLogin) {
-        onCurrentUserChanged(m_lockInter->CurrentUser());
-        return;
-    }
     // 多用户一键登陆
     auto user_firstlogin = m_AuthenticateInter->PreOneKeyLogin(AuthFlag::Fingerprint);
     user_firstlogin.waitForFinished();
@@ -218,11 +209,9 @@ void GreeterWorkek::oneKeyLogin()
 
     auto user_ptr = m_model->findUserByName(user_firstlogin);
     if (user_ptr.get() != nullptr && !user_firstlogin.isError()) {
-        switchToUser(user_ptr);
         m_model->setCurrentUser(user_ptr);
         userAuthForLightdm(user_ptr);
     } else {
-        m_firstTimeLogin = false;
         onCurrentUserChanged(m_lockInter->CurrentUser());
     }
 }
@@ -231,10 +220,6 @@ void GreeterWorkek::onCurrentUserChanged(const QString &user)
 {
     const QJsonObject obj = QJsonDocument::fromJson(user.toUtf8()).object();
     m_currentUserUid = static_cast<uint>(obj["Uid"].toInt());
-
-    if (m_firstTimeLogin) {
-        return;
-    }
 
     for (std::shared_ptr<User> user_ptr : m_model->userList()) {
         if (!user_ptr->isLogin() && user_ptr->uid() == m_currentUserUid) {
@@ -363,7 +348,6 @@ void GreeterWorkek::authenticationComplete()
 
     // NOTE(kirigaya): It is not necessary to display the login animation.
     emit requestUpdateBackground(m_model->currentUser()->desktopBackgroundPath());
-    if (m_firstTimeLogin) {m_firstTimeLogin = false;}
 
 #ifndef DISABLE_LOGIN_ANI
     QTimer::singleShot(1000, this, startSessionSync);
