@@ -100,7 +100,7 @@ QString LogoWidget::getVersion() {
     QString version;
     if (DSysInfo::isDeepin()) {
         version = QString("%1 %2").arg(DSysInfo::deepinVersion())
-                                  .arg(DSysInfo::deepinTypeDisplayName(m_locale));
+                                  .arg(DSysInfo::uosEditionName(m_locale));
     } else {
         version = QString("%1 %2").arg(DSysInfo::productVersion())
                                   .arg(DSysInfo::productTypeString());
