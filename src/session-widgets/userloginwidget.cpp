@@ -574,7 +574,7 @@ void UserLoginWidget::setName(const QString &name)
     if (m_showType != IDAndPasswordType) {
         m_name = name;
     }
-    m_nameLbl->setText(name);
+    updateNameLabel();
 }
 
 //设置用户头像
@@ -733,6 +733,8 @@ void UserLoginWidget::updateNameLabel()
     if (width > labelMaxWidth) {
         QString str = m_nameLbl->fontMetrics().elidedText(m_name, Qt::ElideRight, labelMaxWidth);
         m_nameLbl->setText(str);
+    }else{
+        m_nameLbl->setText(m_name);
     }
 }
 
