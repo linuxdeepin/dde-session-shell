@@ -300,11 +300,10 @@ void GreeterWorkek::authenticationComplete()
 {
     qDebug() << "authentication complete, authenticated " << m_greeter->isAuthenticated();
 
-    m_authenticating = false;
-
     emit m_model->authFinished(m_greeter->isAuthenticated());
 
     if (!m_greeter->isAuthenticated()) {
+        m_authenticating = false;
         if (m_password.isEmpty()) {
             resetLightdmAuth(m_model->currentUser(), 100, false);
             return;
@@ -349,6 +348,7 @@ void GreeterWorkek::authenticationComplete()
         m_lockInter->SwitchToUser(QString(QJsonDocument(json).toJson(QJsonDocument::Compact))).waitForFinished();
 
         m_greeter->startSessionSync(m_model->sessionKey());
+        m_authenticating = false;
     };
 
     // NOTE(kirigaya): It is not necessary to display the login animation.
