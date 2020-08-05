@@ -36,9 +36,9 @@ void VirtualKBInstance::init()
         QWindow * w = QWindow::fromWinId(xid);
         m_virtualKBWidget = QWidget::createWindowContainer(w);
         m_virtualKBWidget->setFixedSize(600, 200);
+        m_virtualKBWidget->hide();
 
         QTimer::singleShot(300, [=] {
-            m_virtualKBWidget->hide();
             emit initFinished();
         });
     });
