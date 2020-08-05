@@ -111,6 +111,8 @@ LockContent::LockContent(SessionBaseModel *const model, QWidget *parent)
         initVirtualKB(model->hasVirtualKB());
         onUserListChanged(model->isServerModel() ? model->logindUser() : model->userList());
     });
+
+    m_logoWidget->updateLocale(model->currentUser()->locale());
 }
 
 void LockContent::onCurrentUserChanged(std::shared_ptr<User> user)
