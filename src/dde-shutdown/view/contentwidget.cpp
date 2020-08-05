@@ -528,7 +528,7 @@ void ContentWidget::shutDownFrameActions(const Actions action)
 
 void ContentWidget::currentWorkspaceChanged()
 {
-    QDBusPendingCall call = m_wmInter->GetCurrentWorkspaceBackground();
+    QDBusPendingCall call = m_wmInter->GetCurrentWorkspaceBackgroundForMonitor(QGuiApplication::primaryScreen()->name());
     QDBusPendingCallWatcher *watcher = new QDBusPendingCallWatcher(call, this);
     connect(watcher, &QDBusPendingCallWatcher::finished, [ = ] {
         if (!call.isError())

@@ -34,10 +34,8 @@
 #include <QVariantAnimation>
 
 #include <com_deepin_daemon_imageeffect.h>
-#include <com_deepin_wm.h>
 
 using ImageEffectInter = com::deepin::daemon::ImageEffect;
-using wmImageInter = com::deepin::wm;
 
 class FullscreenBackground : public QWidget
 {
@@ -82,7 +80,7 @@ private:
 
 private:
     void updateScreen(QScreen *screen);
-    void findSystemDefaultImage (QPixmap& image);
+    QString getBlurBackground(const QString &file);
     void updateGeometry();
     using QWidget::setGeometry;
     using QWidget::resize;
@@ -96,7 +94,6 @@ private:
     QVariantAnimation *m_fadeOutAni;
     QScreen *m_screen = nullptr;
     ImageEffectInter *m_imageEffectInter = nullptr;
-    wmImageInter *m_wmImageInter = nullptr;
     bool m_primaryShowFinished = false;
     bool m_isBlackMode = false;
     bool m_isHibernateMode = false;
