@@ -20,6 +20,8 @@ SessionBaseModel::SessionBaseModel(AuthType type, QObject *parent)
     , m_currentType(type)
     , m_currentUser(nullptr)
     , m_powerAction(PowerAction::RequireNormal)
+    , m_currentModeState(ModeStatus::NoStatus)
+    , m_preModeState(ModeStatus::NoStatus)
 {
     if (m_currentType == LockType || m_currentType == UnknowAuthType) {
         m_sessionManagerInter = new SessionManager(SessionManagerService, SessionManagerPath, QDBusConnection::sessionBus(), this);
@@ -152,6 +154,8 @@ void SessionBaseModel::setPowerAction(const PowerAction &powerAction)
 void SessionBaseModel::setCurrentModeState(const ModeStatus &currentModeState)
 {
     if (m_currentModeState == currentModeState) return;
+
+    m_preModeState = m_currentModeState;
 
     m_currentModeState = currentModeState;
 

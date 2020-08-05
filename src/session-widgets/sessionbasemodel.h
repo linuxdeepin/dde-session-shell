@@ -32,6 +32,7 @@ public:
     };
 
     enum ModeStatus {
+        NoStatus,
         PasswordMode,
         ChangePasswordMode,
         ConfirmPasswordMode,
@@ -63,6 +64,7 @@ public:
     void setPowerAction(const PowerAction &powerAction);
 
     ModeStatus currentModeState() const { return m_currentModeState; }
+    inline ModeStatus preModeState() const { return m_preModeState; }
     void setCurrentModeState(const ModeStatus &currentModeState);
 
     inline bool hasVirtualKB() { return m_hasVirtualKB; }
@@ -145,6 +147,7 @@ private:
     QString m_sessionKey;
     PowerAction m_powerAction;
     ModeStatus m_currentModeState;
+    ModeStatus m_preModeState;
 };
 
 #endif // SESSIONBASEMODEL_H

@@ -260,7 +260,8 @@ void LockContent::restoreCenterContent()
 
 void LockContent::restoreMode()
 {
-    m_model->setCurrentModeState(SessionBaseModel::ModeStatus::PasswordMode);
+    // 还原到之前的状态
+    m_model->setCurrentModeState(m_model->preModeState());
 }
 
 void LockContent::updateBackground(const QString &path)
