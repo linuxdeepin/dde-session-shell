@@ -74,4 +74,17 @@ T findValueByQSettings(const QStringList &configFiles,
  */
 bool isDeepinAuth();
 
+/**
+ * @brief 捕获程序异常退出
+ *
+ * @param sig 异常退出信号
+ */
+void sig_crash(int sig);
+
+/**
+ * @brief 初始化需要捕获的异常信号
+ */
+
+void init_sig_crash();
+
 #endif // PUBLIC_FUNC_H
