@@ -255,15 +255,18 @@ void LockContent::restoreCenterContent()
     if (current_user != nullptr && current_user->isLock()) {
         current_user->onLockTimeOut();
     }
-
-    restoreMode();
+    if ((m_model->powerAction() == SessionBaseModel::RequireShutdown)
+            || (m_model->powerAction() == SessionBaseModel::RequireRestart)) {
+        m_model->setCurrentModeState(SessionBaseModel::ModeStatus::ConfirmPasswordMode);
+    } else {
+        restoreMode();
+    }
     setCenterContent(m_userLoginInfo->getUserLoginWidget());
 }
 
 void LockContent::restoreMode()
 {
-    // 还原到之前的状态
-    m_model->setCurrentModeState(m_model->preModeState());
+    m_model->setCurrentModeState(SessionBaseModel::ModeStatus::PasswordMode);
 }
 
 void LockContent::updateBackground(const QString &path)
