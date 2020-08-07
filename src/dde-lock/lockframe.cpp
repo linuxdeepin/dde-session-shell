@@ -134,7 +134,7 @@ bool LockFrame::eventFilter(QObject *watched, QEvent *event)
             emit sendKeyValue(keyValue);
         }
     }
-    return QObject::eventFilter(watched, event);
+    return FullscreenBackground::eventFilter(watched, event);
 }
 
 bool LockFrame::handlePoweroffKey()
