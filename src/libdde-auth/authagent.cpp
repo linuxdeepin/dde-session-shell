@@ -66,14 +66,14 @@ void AuthAgent::run()
         qDebug() << Q_FUNC_INFO << pam_strerror(m_pamHandle, rc);
     }
 
-    rc = pam_end(m_pamHandle, rc);
-    if (rc != PAM_SUCCESS) {
-        qDebug() << "pam_end() failed: %s" << pam_strerror(m_pamHandle, rc);
+    int re = pam_end(m_pamHandle, rc);
+    if (re != PAM_SUCCESS) {
+        qDebug() << "pam_end() failed: %s" << pam_strerror(m_pamHandle, re);
     }
 
     m_isCondition = false;
 
-    emit respondResult(rc == PAM_SUCCESS ? "success" : QString());
+    emit respondResult(((rc == PAM_SUCCESS) && (re == PAM_SUCCESS)) ? "success" : QString());
 
     quit();
 }
