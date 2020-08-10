@@ -142,7 +142,7 @@ static double get_scale_ratio() {
             XRRCrtcInfo *crtInfo = XRRGetCrtcInfo(display, resources, outputInfo->crtc);
             if (crtInfo == nullptr) continue;
 
-            scaleRatio = static_cast<double>(crtInfo->width) / static_cast<double>(outputInfo->mm_width / (1366.0 / 310.0));
+            scaleRatio = static_cast<double>(crtInfo->width) / static_cast<double>(outputInfo->mm_width) / (1366.0 / 310.0);
 
             if (scaleRatio > 1 + 2.0 / 3.0) {
                 scaleRatio = 2;
