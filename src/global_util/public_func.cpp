@@ -42,7 +42,7 @@
 
 using namespace std;
 
-QPixmap loadPixmap(const QString &file)
+QPixmap loadPixmap(const QString &file, const QSize& size)
 {
 
     if(!QFile::exists(file)){
@@ -54,11 +54,11 @@ QPixmap loadPixmap(const QString &file)
 
     QPixmap pixmap;
 
-    if (!qFuzzyCompare(ratio, devicePixel)) {
+    if (!qFuzzyCompare(ratio, devicePixel) || size.isValid()) {
         QImageReader reader;
         reader.setFileName(qt_findAtNxFile(file, devicePixel, &ratio));
         if (reader.canRead()) {
-            reader.setScaledSize(reader.size() * (devicePixel / ratio));
+            reader.setScaledSize((size.isNull() ? reader.size() : reader.size().scaled(size, Qt::KeepAspectRatio)) * (devicePixel / ratio));
             pixmap = QPixmap::fromImage(reader.read());
             pixmap.setDevicePixelRatio(devicePixel);
         }

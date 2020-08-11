@@ -37,9 +37,12 @@
 
 DCORE_USE_NAMESPACE
 
-const QPixmap systemLogo()
+#define PIXMAP_WIDTH 128
+#define PIXMAP_HEIGHT 132 /* SessionBaseWindow */
+
+const QPixmap systemLogo(const QSize& size)
 {
-    return loadPixmap(DSysInfo::distributionOrgLogo(DSysInfo::Distribution, DSysInfo::Transparent, ":img/logo.svg"));
+    return loadPixmap(DSysInfo::distributionOrgLogo(DSysInfo::Distribution, DSysInfo::Transparent, ":img/logo.svg"), size);
 }
 
 LogoWidget::LogoWidget(QWidget* parent)
@@ -53,10 +56,17 @@ void LogoWidget::initUI() {
 //    setFixedSize(240, 40);
 
     m_logoLabel = new QLabel();
-    QPixmap logo = systemLogo();
-    m_logoLabel->setPixmap(logo);
+
+    m_logoLabel->setPixmap(
+                []() -> QPixmap {
+                    const QPixmap& p = systemLogo(QSize());
+                    const bool result = p.width() < PIXMAP_WIDTH && p.height() < PIXMAP_HEIGHT;
+                    return result
+                    ? p
+                    : systemLogo(QSize(PIXMAP_WIDTH, PIXMAP_HEIGHT));
+                }());
+
     m_logoLabel->setObjectName("Logo");
-    m_logoLabel->setFixedSize(logo.size().rwidth(), logo.size().rheight());
     //修复社区版deepin的显示不全的问题 2020/04/11
     m_logoLabel->setScaledContents(true);
 
@@ -75,6 +85,7 @@ void LogoWidget::initUI() {
     m_logoLayout->addSpacing(48);
     m_logoLayout->addWidget(m_logoLabel);
     m_logoLayout->addWidget(m_logoVersionLabel, 0, Qt::AlignTop);
+    m_logoLayout->addStretch();
 
     setLayout(m_logoLayout);
 

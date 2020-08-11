@@ -33,7 +33,7 @@
 #include <QSettings>
 #include <QString>
 
-QPixmap loadPixmap(const QString &file);
+QPixmap loadPixmap(const QString &file, const QSize& size = QSize());
 
 /**
  * @brief 获取图像共享内存
