@@ -77,7 +77,7 @@ LockFrame::LockFrame(SessionBaseModel *const model, QWidget *parent)
     });
 }
 
-bool LockFrame::eventFilter(QObject *watched, QEvent *event)
+bool LockFrame::event(QEvent *event)
 {
     if (event->type() == QEvent::KeyRelease) {
         QString  keyValue = "";
@@ -134,7 +134,7 @@ bool LockFrame::eventFilter(QObject *watched, QEvent *event)
             emit sendKeyValue(keyValue);
         }
     }
-    return FullscreenBackground::eventFilter(watched, event);
+    return FullscreenBackground::event(event);
 }
 
 bool LockFrame::handlePoweroffKey()
