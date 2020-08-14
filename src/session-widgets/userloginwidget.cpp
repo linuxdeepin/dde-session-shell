@@ -756,7 +756,7 @@ void UserLoginWidget::resetPowerIcon()
 
 void UserLoginWidget::unlockSuccessAni()
 {
-    if(timer != nullptr) {
+    if (timer != nullptr) {
         timer->stop();
         delete timer;
         timer = nullptr;
@@ -765,13 +765,13 @@ void UserLoginWidget::unlockSuccessAni()
     }
     timer = new QTimer(this);
 
-    connect(timer, &QTimer::timeout, [&](){
-        if((m_indexSuc % 12) <= 11){
+    connect(timer, &QTimer::timeout, [&]() {
+        if ((m_indexSuc % 12) <= 11) {
             QString s = QString(":/img/unlockTrue/unlock_%1.svg").arg(m_indexSuc % 12);
             m_lockButton->setIcon(QIcon(s));
         }
         m_indexSuc++;
-        if(m_indexSuc >= 15){
+        if (m_indexSuc >= 12) {
             timer->stop();
             delete timer;
             timer = nullptr;
@@ -780,7 +780,7 @@ void UserLoginWidget::unlockSuccessAni()
             m_lockButton->setIcon(DStyle::SP_LockElement);
         }
     });
-    timer->start(60);
+    timer->start(40);
 }
 
 void UserLoginWidget::unlockFailedAni()
