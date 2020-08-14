@@ -54,8 +54,11 @@ void AuthAgent::Authenticate(const QString& username)
         qDebug() << "pam_end() failed: " << pam_strerror(m_pamHandle, re);
     }
 
+    bool is_success = (rc == PAM_SUCCESS) && (re == PAM_SUCCESS);
+    if (is_success) system("xset dpms force on");
+
     m_isCondition = true;
-    emit respondResult(((rc == PAM_SUCCESS) && (re == PAM_SUCCESS)) ? "success" : QString());
+    emit respondResult(is_success ? "success" : QString());
 }
 
 int AuthAgent::GetAuthType()
