@@ -748,8 +748,13 @@ void UserLoginWidget::resetPowerIcon()
         m_lockButton->setIcon(QIcon(":/img/bottom_actions/shutdown.svg"));
         lockPalatte.setColor(QPalette::Highlight, shutdownColor);
     } else {
-        m_lockButton->setIcon(DStyle::SP_LockElement);
-        lockPalatte.setColor(QPalette::Highlight, m_dbusAppearance->property("QtActiveColor").toString());
+        if (m_authType == SessionBaseModel::LightdmType) {
+            m_lockButton->setIcon(DStyle::SP_ArrowNext);
+            return;
+        } else {
+            m_lockButton->setIcon(DStyle::SP_LockElement);
+            lockPalatte.setColor(QPalette::Highlight, m_dbusAppearance->property("QtActiveColor").toString());
+        }
     }
     m_lockButton->setPalette(lockPalatte);
 }
