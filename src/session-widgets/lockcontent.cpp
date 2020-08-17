@@ -22,7 +22,6 @@ LockContent::LockContent(SessionBaseModel *const model, QWidget *parent)
     , m_virtualKB(nullptr)
     , m_translator(new QTranslator)
     , m_userLoginInfo(new UserLoginInfo(model))
-    , m_sessionManager(new SessionManager("com.deepin.SessionManager", "/com/deepin/SessionManager", QDBusConnection::sessionBus(), this))
 {
     m_controlWidget = new ControlWidget;
     m_shutdownFrame = new ShutdownWidget;
@@ -349,7 +348,7 @@ void LockContent::tryGrabKeyboard()
 
     if (m_failures == 15) {
         qDebug() << "Trying grabkeyboard has exceeded the upper limit. dde-lock will quit.";
-        m_sessionManager->SetLocked(false);
+        m_model->setLocked(false);
 
         DDBusSender()
                 .service("org.freedesktop.Notifications")

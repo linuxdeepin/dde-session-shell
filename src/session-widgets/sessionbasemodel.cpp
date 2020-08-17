@@ -232,6 +232,11 @@ void SessionBaseModel::setAbortConfirm(bool abortConfirm)
     emit abortConfirmChanged(abortConfirm);
 }
 
+void SessionBaseModel::setLocked(bool lock)
+{
+    if (m_sessionManagerInter) m_sessionManagerInter->SetLocked(lock);
+}
+
 bool SessionBaseModel::isLocked()
 {
     return m_sessionManagerInter && m_sessionManagerInter->locked();
@@ -243,8 +248,6 @@ void SessionBaseModel::setIsLockNoPassword(bool LockNoPassword)
 
     m_isLockNoPassword = LockNoPassword;
 }
-
-
 
 void SessionBaseModel::setIsBlackModel(bool is_black)
 {

@@ -88,6 +88,7 @@ public:
     void setIsServerModel(bool server_model);
 
     void setAbortConfirm(bool abortConfirm);
+    void setLocked(bool lock);
     bool isLocked();
 
     inline bool isLockNoPassword() const { return m_isLockNoPassword; }
