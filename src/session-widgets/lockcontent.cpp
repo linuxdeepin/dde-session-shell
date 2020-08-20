@@ -66,9 +66,6 @@ LockContent::LockContent(SessionBaseModel *const model, QWidget *parent)
     connect(m_userLoginInfo, &UserLoginInfo::requestAuthUser, this, &LockContent::requestAuthUser);
     connect(m_userLoginInfo, &UserLoginInfo::hideUserFrameList, this, &LockContent::restoreMode);
     connect(m_userLoginInfo, &UserLoginInfo::requestSwitchUser, this, &LockContent::requestSwitchToUser);
-    connect(m_userLoginInfo, &UserLoginInfo::requestSwitchUser, this, [=]{
-        QTimer::singleShot(100,this,[=]{restoreMode();});
-    });
     connect(m_userLoginInfo, &UserLoginInfo::requestSetLayout, this, &LockContent::requestSetLayout);
     connect(m_userLoginInfo, &UserLoginInfo::changePasswordFinished, this, &LockContent::restoreMode);
     connect(m_userLoginInfo, &UserLoginInfo::unlockActionFinish, this, [&]{
@@ -103,6 +100,7 @@ LockContent::LockContent(SessionBaseModel *const model, QWidget *parent)
     connect(model, &SessionBaseModel::onUserListChanged, this, &LockContent::onUserListChanged);
     connect(model, &SessionBaseModel::userListLoginedChanged, this, &LockContent::onUserListChanged);
     connect(model, &SessionBaseModel::authFinished, this, &LockContent::restoreMode);
+    connect(model, &SessionBaseModel::switchUserFinished, this, &LockContent::restoreMode);
     connect(m_imageBlurInter, &ImageBlur::BlurDone, this, &LockContent::onBlurDone);
 
     QTimer::singleShot(0, this, [ = ] {

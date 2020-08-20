@@ -45,6 +45,7 @@ public:
     UserFrameList *getUserFrameList();
     void hideKBLayout();
     void abortConfirm(bool abort = true);
+    void onAbortConfirmChanged(bool abort = true);
     void beforeUnlockAction(bool is_finish);
     void updateLoginContent();
 
