@@ -99,7 +99,7 @@ void LogoWidget::initUI() {
 QString LogoWidget::getVersion() {
     QString version;
     if (DSysInfo::isDeepin()) {
-        version = QString("%1 %2").arg(DSysInfo::deepinVersion())
+        version = QString("%1 %2").arg(DSysInfo::majorVersion())
                                   .arg(DSysInfo::uosEditionName(m_locale));
     } else {
         version = QString("%1 %2").arg(DSysInfo::productVersion())
