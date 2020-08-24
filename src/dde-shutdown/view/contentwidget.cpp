@@ -782,6 +782,7 @@ QList<InhibitWarnView::InhibitorData> ContentWidget::listInhibitors(const Action
                             InhibitHint inhibitHint = qdbus_cast<InhibitHint>(msg.arguments().at(0).value<QDBusArgument>());
 
                             if (!inhibitHint.why.isEmpty()) {
+                                inhibitData.who = inhibitHint.name;
                                 inhibitData.why = inhibitHint.why;
                                 inhibitData.icon = inhibitHint.icon;
                             }
