@@ -63,7 +63,7 @@ UserLoginWidget::UserLoginWidget(QWidget *parent)
     , m_isLockNoPassword(false)
     , m_capslockMonitor(KeyboardMonitor::instance())
     , m_isAlertMessageShow(false)
-    , timer(new QTimer(this))
+    , m_aniTimer(new QTimer(this))
     , m_dbusAppearance(new Appearance("com.deepin.daemon.Appearance",
                                        "/com/deepin/daemon/Appearance",
                                        QDBusConnection::sessionBus(),
@@ -118,6 +118,8 @@ void UserLoginWidget::setFaildMessage(const QString &message, SessionBaseModel::
 //密码输入错误,设置错误信息
 void UserLoginWidget::setFaildTipMessage(const QString &message, SessionBaseModel::AuthFaildType type)
 {
+    Q_UNUSED(type);
+
     m_accountEdit->lineEdit()->setEnabled(true);
     if (m_isLock && !message.isEmpty()) {
         m_passwordEdit->hideAlertMessage();
@@ -761,59 +763,44 @@ void UserLoginWidget::resetPowerIcon()
 
 void UserLoginWidget::unlockSuccessAni()
 {
-    if (timer != nullptr) {
-        timer->stop();
-        delete timer;
-        timer = nullptr;
-        m_indexFail = 0;
-        m_lockButton->setIcon(DStyle::SP_LockElement);
-    }
-    timer = new QTimer(this);
+    m_timerIndex = 0;
+    m_lockButton->setIcon(DStyle::SP_LockElement);
 
-    connect(timer, &QTimer::timeout, [&]() {
-        if ((m_indexSuc % 12) <= 11) {
-            QString s = QString(":/img/unlockTrue/unlock_%1.svg").arg(m_indexSuc % 12);
-            m_lockButton->setIcon(QIcon(s));
-        }
-        m_indexSuc++;
-        if (m_indexSuc >= 12) {
-            timer->stop();
-            delete timer;
-            timer = nullptr;
-            m_indexSuc = 0;
+    disconnect(m_connection);
+    m_connection = connect(m_aniTimer, &QTimer::timeout, [ & ]() {
+        if (m_timerIndex <= 11) {
+            m_lockButton->setIcon(QIcon(QString(":/img/unlockTrue/unlock_%1.svg").arg(m_timerIndex)));
+        } else {
+            m_aniTimer->stop();
             emit unlockActionFinish();
             m_lockButton->setIcon(DStyle::SP_LockElement);
         }
+
+        m_timerIndex++;
     });
-    timer->start(40);
+
+    m_aniTimer->start(15);
 }
 
 void UserLoginWidget::unlockFailedAni()
 {
     m_passwordEdit->lineEdit()->clear();
     m_passwordEdit->hideLoadSlider();
-    if(timer != nullptr) {
-        timer->stop();
-        delete timer;
-        timer = nullptr;
-        m_indexSuc = 0;
-        m_lockButton->setIcon(DStyle::SP_LockElement);
-    }
-    timer = new QTimer(this);
 
-    connect(timer, &QTimer::timeout, [&](){
-        if((m_indexFail%16) <= 15){
-            QString s = QString(":/img/unlockFalse/unlock_error_%1.svg").arg(m_indexFail % 16);
-            m_lockButton->setIcon(QIcon(s));
-        }
-        m_indexFail++;
-        if(m_indexFail >= 20){
-            timer->stop();
-            delete timer;
-            timer = nullptr;
-            m_indexFail = 0;
+    m_timerIndex = 0;
+    m_lockButton->setIcon(DStyle::SP_LockElement);
+
+    disconnect(m_connection);
+    m_connection = connect(m_aniTimer, &QTimer::timeout, [ & ](){
+        if(m_timerIndex <= 15){
+            m_lockButton->setIcon(QIcon(QString(":/img/unlockFalse/unlock_error_%1.svg").arg(m_timerIndex)));
+        }  else {
+            m_aniTimer->stop();
             resetPowerIcon();
         }
+
+        m_timerIndex++;
     });
-    timer->start(20);
+
+    m_aniTimer->start(15);
 }
