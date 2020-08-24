@@ -26,15 +26,11 @@
 #ifndef TIMEWIDGET_H
 #define TIMEWIDGET_H
 
-#include <com_deepin_daemon_timedate.h>
-
 #include <DFontSizeManager>
 
 #include <QWidget>
 #include <QLabel>
 #include <QTimer>
-
-using Timedate = com::deepin::daemon::Timedate;
 
 DWIDGET_USE_NAMESPACE
 
@@ -46,13 +42,13 @@ public:
     void set24HourFormat(bool use24HourFormat);
     void updateLocale(const QLocale &locale);
 
-private:
-    void refreshTime();
-
-private Q_SLOTS:
+public Q_SLOTS:
     void setWeekdayFormatType(int type);
     void setShortDateFormat(int type);
     void setShortTimeFormat(int type);
+
+private:
+    void refreshTime();
 
 private:
     QLabel *m_timeLabel;
@@ -62,11 +58,9 @@ private:
     bool m_use24HourFormat;
     QLocale m_locale;
 
-    Timedate *m_timedateInter;
-    QString m_weekdayFormat;
-    QString m_shortDateFormat;
-    QString m_shortTimeFormat;
-    QString m_timeFormat;
+    int m_weekdayIndex = 0;
+    int m_shortDateIndex = 0;
+    int m_shortTimeIndex = 0;
 };
 
 #endif // TIMEWIDGET_H

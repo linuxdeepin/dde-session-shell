@@ -30,13 +30,14 @@
 #include <QFontDatabase>
 #include <QSettings>
 
+const QStringList weekdayFormat = {"dddd", "ddd"};
+const QStringList shortDateFormat = { "yyyy/M/d", "yyyy-M-d", "yyyy.M.d",
+                                      "yyyy/MM/dd", "yyyy-MM-dd", "yyyy.MM.dd",
+                                      "yy/M/d", "yy-M-d", "yy.M.d" };
+const QStringList shortTimeFormat = { "h:mm", "hh:mm"};
+
 TimeWidget::TimeWidget(QWidget *parent)
     : QWidget(parent)
-    , m_timedateInter(new Timedate("com.deepin.daemon.Timedate", "/com/deepin/daemon/Timedate", QDBusConnection::sessionBus(), this))
-    , m_weekdayFormat("dddd")
-    , m_shortDateFormat("yyyy-MM-dd")
-    , m_shortTimeFormat("hh:mm")
-    , m_timeFormat("yyyy-MM-dd dddd")
 {
     QFont timeFont;
     timeFont.setFamily("Noto Sans CJK SC-Thin");
@@ -72,14 +73,6 @@ TimeWidget::TimeWidget(QWidget *parent)
     setLayout(vLayout);
 
     connect(m_refreshTimer, &QTimer::timeout, this, &TimeWidget::refreshTime);
-
-    connect(m_timedateInter, &Timedate::WeekdayFormatChanged, this, &TimeWidget::setWeekdayFormatType);
-    connect(m_timedateInter, &Timedate::ShortDateFormatChanged, this, &TimeWidget::setShortDateFormat);
-    connect(m_timedateInter, &Timedate::ShortTimeFormatChanged, this, &TimeWidget::setShortTimeFormat);
-
-    setWeekdayFormatType(m_timedateInter->weekdayFormat());
-    setShortDateFormat(m_timedateInter->shortDateFormat());
-    setShortTimeFormat(m_timedateInter->shortTimeFormat());
 }
 
 void TimeWidget::set24HourFormat(bool use24HourFormat)
@@ -97,14 +90,13 @@ void TimeWidget::updateLocale(const QLocale &locale)
 void TimeWidget::refreshTime()
 {
     if (m_use24HourFormat) {
-        m_timeLabel->setText(QDateTime::currentDateTime().toString(m_shortTimeFormat));
+        m_timeLabel->setText(QDateTime::currentDateTime().toString(shortTimeFormat.at(m_shortTimeIndex)));
     } else {
-        QString format = m_shortTimeFormat;
-        format.append(" AP");
-        m_timeLabel->setText(QDateTime::currentDateTime().toString(format));
+        m_timeLabel->setText(QDateTime::currentDateTime().toString(shortTimeFormat.at(m_shortTimeIndex) + " AP"));
     }
 
-    m_dateLabel->setText(m_locale.toString(QDateTime::currentDateTime(), m_timeFormat));
+    QString date_format = shortDateFormat.at(m_shortDateIndex) + " " + weekdayFormat.at(m_weekdayIndex);
+    m_dateLabel->setText(m_locale.toString(QDateTime::currentDateTime(), date_format));
 }
 
 /**
@@ -113,13 +105,9 @@ void TimeWidget::refreshTime()
  */
 void TimeWidget::setWeekdayFormatType(int type)
 {
-    switch (type) {
-    case 0: m_weekdayFormat = "dddd";  break;
-    case 1: m_weekdayFormat = "ddd"; break;
-    default: m_weekdayFormat = "dddd"; break;
-    }
-    m_timeFormat = m_shortDateFormat.append(" ");
-    m_timeFormat.append(m_weekdayFormat);
+    if(type >= weekdayFormat.size() || type < 0) return;
+
+    m_weekdayIndex = type;
     refreshTime();
 }
 
@@ -129,20 +117,9 @@ void TimeWidget::setWeekdayFormatType(int type)
  */
 void TimeWidget::setShortDateFormat(int type)
 {
-    switch (type) {
-    case 0: m_shortDateFormat = "yyyy/M/d";  break;
-    case 1: m_shortDateFormat = "yyyy-M-d"; break;
-    case 2: m_shortDateFormat = "yyyy.M.d"; break;
-    case 3: m_shortDateFormat = "yyyy/MM/dd"; break;
-    case 4: m_shortDateFormat = "yyyy-MM-dd"; break;
-    case 5: m_shortDateFormat = "yyyy.MM.dd"; break;
-    case 6: m_shortDateFormat = "yy/M/d"; break;
-    case 7: m_shortDateFormat = "yy-M-d"; break;
-    case 8: m_shortDateFormat = "yy.M.d"; break;
-    default: m_shortDateFormat = "yyyy-MM-dd"; break;
-    }
-    m_timeFormat = m_shortDateFormat.append(" ");
-    m_timeFormat.append(m_weekdayFormat);
+    if(type >= shortDateFormat.size() || type < 0) return;
+
+    m_shortDateIndex = type;
     refreshTime();
 }
 
@@ -152,10 +129,8 @@ void TimeWidget::setShortDateFormat(int type)
  */
 void TimeWidget::setShortTimeFormat(int type)
 {
-    switch (type) {
-    case 0: m_shortTimeFormat = "h:mm"; break;
-    case 1: m_shortTimeFormat = "hh:mm";  break;
-    default: m_shortTimeFormat = "hh:mm"; break;
-    }
+    if(type >= shortTimeFormat.size() || type < 0) return;
+
+    m_shortTimeIndex = type;
     refreshTime();
 }

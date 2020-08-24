@@ -110,8 +110,6 @@ LockContent::LockContent(SessionBaseModel *const model, QWidget *parent)
         initVirtualKB(model->hasVirtualKB());
         onUserListChanged(model->isServerModel() ? model->logindUser() : model->userList());
     });
-
-    m_logoWidget->updateLocale(model->currentUser()->locale());
 }
 
 void LockContent::onCurrentUserChanged(std::shared_ptr<User> user)
@@ -132,8 +130,12 @@ void LockContent::onCurrentUserChanged(std::shared_ptr<User> user)
 
     m_user = user;
 
-    m_currentUserConnects << connect(user.get(), &User::greeterBackgroundPathChanged, this, &LockContent::updateBackground, Qt::UniqueConnection)
-                          << connect(user.get(), &User::use24HourFormatChanged, this, &LockContent::updateTimeFormat, Qt::UniqueConnection);
+    std::shared_ptr<NativeUser> native_user = std::static_pointer_cast<NativeUser>(user);
+    m_currentUserConnects << connect(native_user->getUserInter(), &UserInter::GreeterBackgroundChanged, this, &LockContent::updateBackground, Qt::UniqueConnection)
+                          << connect(native_user->getUserInter(), &UserInter::Use24HourFormatChanged, this, &LockContent::updateTimeFormat, Qt::UniqueConnection)
+                          << connect(native_user->getUserInter(), &UserInter::WeekdayFormatChanged, m_timeWidget, &TimeWidget::setWeekdayFormatType)
+                          << connect(native_user->getUserInter(), &UserInter::ShortDateFormatChanged, m_timeWidget, &TimeWidget::setShortDateFormat)
+                          << connect(native_user->getUserInter(), &UserInter::ShortTimeFormatChanged, m_timeWidget, &TimeWidget::setShortTimeFormat);
 
     //lixin
     m_userLoginInfo->setUser(user);
@@ -141,8 +143,13 @@ void LockContent::onCurrentUserChanged(std::shared_ptr<User> user)
     //TODO: refresh blur image
     QTimer::singleShot(0, this, [ = ] {
         updateBackground(user->greeterBackgroundPath());
+        m_timeWidget->setWeekdayFormatType(native_user->getUserInter()->weekdayFormat());
+        m_timeWidget->setShortDateFormat(native_user->getUserInter()->shortDateFormat());
+        m_timeWidget->setShortTimeFormat(native_user->getUserInter()->shortTimeFormat());
         updateTimeFormat(user->is24HourFormat());
     });
+
+    m_logoWidget->updateLocale(m_user->locale());
 }
 
 void LockContent::pushUserFrame()
