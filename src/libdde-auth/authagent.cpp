@@ -55,7 +55,9 @@ void AuthAgent::Authenticate(const QString& username)
     }
 
     bool is_success = (rc == PAM_SUCCESS) && (re == PAM_SUCCESS);
-    if (is_success) system("xset dpms force on");
+
+    // 认证成功与否，均点亮屏幕
+    system("xset dpms force on");
 
     m_isCondition = true;
     emit respondResult(is_success ? "success" : QString());
