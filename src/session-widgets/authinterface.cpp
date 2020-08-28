@@ -52,7 +52,10 @@ AuthInterface::AuthInterface(SessionBaseModel *const model, QObject *parent)
     , m_lastLogoutUid(0)
     , m_loginUserList(0)
 {
-    if (!m_login1Inter->isValid()) {
+    if (m_login1Inter->isValid()) {
+       QString session_self = m_login1Inter->GetSessionByPID(0).value().path();
+       m_login1SessionSelf = new Login1SessionSelf("org.freedesktop.login1", session_self, QDBusConnection::systemBus(), this);
+    } else {
         qWarning() << "m_login1Inter:" << m_login1Inter->lastError().type();
     }
 

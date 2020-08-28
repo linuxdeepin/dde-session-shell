@@ -100,6 +100,13 @@ LockWorker::LockWorker(SessionBaseModel *const model, QObject *parent)
         m_password.clear();
     });
 
+    connect(m_login1SessionSelf, &Login1SessionSelf::ActiveChanged, this, [ = ](bool active) {
+        if(active) {
+            m_authenticating = false;
+            m_authFramework->Authenticate(m_model->currentUser());
+        }
+    });
+
     const bool &LockNoPasswordValue { valueByQSettings<bool>("", "lockNoPassword", false) };
     m_model->setIsLockNoPassword(LockNoPasswordValue);
 

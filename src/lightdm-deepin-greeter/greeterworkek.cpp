@@ -82,6 +82,13 @@ GreeterWorkek::GreeterWorkek(SessionBaseModel *const model, QObject *parent)
         }
     });
 
+    connect(m_login1SessionSelf, &Login1SessionSelf::ActiveChanged, this, [ = ](bool active) {
+        if(active) {
+            m_authenticating = false;
+            resetLightdmAuth(m_model->currentUser(), 100, false);
+        }
+    });
+
     connect(KeyboardMonitor::instance(), &KeyboardMonitor::numlockStatusChanged, this, [ = ](bool on) {
         saveNumlockStatus(model->currentUser(), on);
     });
