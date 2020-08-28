@@ -1,6 +1,6 @@
-%if 0%{?with_debug}
-%global debug_package   %{nil}
-%endif
+%global debug_package %{nil}
+%debug_package %{nil}
+
 
 Name:           dde-session-shell
 Version:        5.0.0.8
@@ -11,11 +11,8 @@ URL:            http://shuttle.corp.deepin.com/cache/repos/eagle/release-candida
 Source0:        %{name}_%{version}.orig.tar.xz
 
 BuildRequires:  cmake
-BuildRequires:  dde-daemon
 BuildRequires:  dtkcore >= 5.1
 BuildRequires:  gsettings-qt
-#BuildRequires:  liblightdm-qt5-3-devel
-BuildRequires:  startdde
 BuildRequires:  qt5-linguist
 BuildRequires:  dtkwidget-devel >= 5.1
 BuildRequires:  qt5-qtx11extras-devel
@@ -28,7 +25,12 @@ BuildRequires:  libXi-devel
 BuildRequires:  xcb-util-wm xcb-util-wm-devel
 BuildRequires:  dde-qt-dbus-factory-devel
 BuildRequires:  gsettings-qt-devel
-BuildRequires:  lightdm-qt5-devel lightdm-gtk-greeter
+BuildRequires:  lightdm-qt5-devel
+BuildRequires:  pam-devel
+Requires:       lightdm
+Requires(post): sed
+Provides:       lightdm-deepin-greeter = %{version}-%{release}
+Provides:       lightdm-greeter = 1.2
 
 %description
 deepin-session-shell - Deepin desktop-environment - session-shell module.
