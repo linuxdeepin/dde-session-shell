@@ -166,6 +166,7 @@ private:
     int m_indexSuc = 0;
     int m_indexFail = 0;
     int m_action;                                   //重启或关机行为记录
+    Appearance *m_dbusAppearance;
 };
 
 #endif // USERLOGINWIDGET_H

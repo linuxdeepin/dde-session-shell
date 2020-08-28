@@ -64,6 +64,10 @@ UserLoginWidget::UserLoginWidget(QWidget *parent)
     , m_capslockMonitor(KeyboardMonitor::instance())
     , m_isAlertMessageShow(false)
     , timer(new QTimer(this))
+    , m_dbusAppearance(new Appearance("com.deepin.daemon.Appearance",
+                                       "/com/deepin/daemon/Appearance",
+                                       QDBusConnection::sessionBus(),
+                                       this))
 {
     initUI();
     initConnect();
@@ -553,6 +557,15 @@ void UserLoginWidget::initConnect()
     connect(m_capslockMonitor, &KeyboardMonitor::capslockStatusChanged, m_passwordEdit, &DPasswordEditEx::capslockStatusChanged);
     connect(m_passwordEdit, &DPasswordEditEx::toggleKBLayoutWidget, this, &UserLoginWidget::toggleKBLayoutWidget);
     connect(m_passwordEdit, &DPasswordEditEx::selectionChanged, this, &UserLoginWidget::hidePasswordEditMessage);
+
+    //窗体活动颜色改变
+    connect(m_dbusAppearance, &Appearance::QtActiveColorChanged , [this](const QString& Color) {
+        QPalette passwdPalatte = m_passwordEdit->palette();
+        if (passwdPalatte.color(QPalette::Highlight).name() == Color)
+            return;
+        passwdPalatte.setColor(QPalette::Highlight, Color);
+        m_passwordEdit->setPalette(passwdPalatte);
+    });
 }
 
 //设置用户名
@@ -727,18 +740,23 @@ void UserLoginWidget::updateNameLabel()
 
 void UserLoginWidget::resetPowerIcon()
 {
+    QPalette lockPalatte;
     if (m_action == SessionBaseModel::PowerAction::RequireRestart) {
         m_lockButton->setIcon(QIcon(":/img/bottom_actions/reboot.svg"));
+        lockPalatte.setColor(QPalette::Highlight, shutdownColor);
     } else if (m_action == SessionBaseModel::PowerAction::RequireShutdown) {
         m_lockButton->setIcon(QIcon(":/img/bottom_actions/shutdown.svg"));
+        lockPalatte.setColor(QPalette::Highlight, shutdownColor);
     } else {
         if (m_authType == SessionBaseModel::LightdmType) {
             m_lockButton->setIcon(DStyle::SP_ArrowNext);
             return;
         } else {
             m_lockButton->setIcon(DStyle::SP_LockElement);
+            lockPalatte.setColor(QPalette::Highlight, m_dbusAppearance->property("QtActiveColor").toString());
         }
     }
+    m_lockButton->setPalette(lockPalatte);
 }
 
 void UserLoginWidget::unlockSuccessAni()
