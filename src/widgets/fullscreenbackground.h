@@ -53,7 +53,7 @@ public:
     bool contentVisible() const;
 
 public slots:
-    void updateBackground(const QPixmap &background);
+    void updateBackground();
     void updateBackground(const QString &file);
     void setScreen(QScreen *screen);
     void setContentVisible(bool contentVisible);
@@ -77,6 +77,8 @@ private:
     void mouseMoveEvent(QMouseEvent *event) Q_DECL_OVERRIDE;
 
     const QPixmap pixmapHandle(const QPixmap &pixmap);
+    // 通过指定文件路径获取背景图片，默认共享内存获取，失败则从文件或取
+    const QPixmap getPixmapByPath(const QString &path);
 
 private:
     void updateScreen(QScreen *screen);
@@ -86,10 +88,8 @@ private:
     using QWidget::resize;
     using QWidget::move;
 
-    QPixmap m_background;
-    QPixmap m_fakeBackground;
-    QPixmap m_backgroundCache;
-    QPixmap m_fakeBackgroundCache;
+    QString m_backgroundPath;
+    QString m_fakePath;
     QPointer<QWidget> m_content;
     QVariantAnimation *m_fadeOutAni;
     QScreen *m_screen = nullptr;

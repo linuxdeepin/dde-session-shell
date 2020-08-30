@@ -54,8 +54,8 @@ FullscreenBackground::FullscreenBackground(QWidget *parent)
 
     m_fadeOutAni->setEasingCurve(QEasingCurve::InOutCubic);
     m_fadeOutAni->setDuration(1000);
-    m_fadeOutAni->setStartValue(1.0f);
-    m_fadeOutAni->setEndValue(0.0f);
+    m_fadeOutAni->setStartValue(1.0);
+    m_fadeOutAni->setEndValue(0.0);
 
     installEventFilter(this);
 
@@ -71,34 +71,18 @@ bool FullscreenBackground::contentVisible() const
     return m_content && m_content->isVisible();
 }
 
-void FullscreenBackground::updateBackground(const QPixmap &background)
+void FullscreenBackground::updateBackground()
 {
     // show old background fade out
-    m_fakeBackground = m_background;
-    m_background = background;
-
-    m_backgroundCache = pixmapHandle(m_background);
-    m_fakeBackgroundCache = pixmapHandle(m_fakeBackground);
-
     m_fadeOutAni->start();
 }
 
 void FullscreenBackground::updateBackground(const QString &file)
 {
-    QPixmap image;
-    QSharedMemory memory (file);
-    if (memory.attach()) {
-        image.loadFromData ( (const unsigned char *) memory.data(), memory.size());
-        if (image.isNull()) {
-            qDebug() << "input background: " << file << " is invalid image file.";
-            image.load(getBlurBackground(file));
-        }
-        memory.detach();
-    } else {
-        image.load(getBlurBackground(file));
-    }
+    m_fakePath = m_backgroundPath;
+    m_backgroundPath = file;
 
-    updateBackground (image);
+    updateBackground();
 }
 
 QString FullscreenBackground::getBlurBackground (const QString &file)
@@ -202,24 +186,34 @@ void FullscreenBackground::paintEvent(QPaintEvent *e)
 
     QPainter painter(this);
     painter.setRenderHint(QPainter::SmoothPixmapTransform);
-    const float current_ani_value = m_fadeOutAni->currentValue().toFloat();
+    const double currentAniValue = m_fadeOutAni->currentValue().toDouble();
 
     const QRect trueRect(QPoint(0, 0), QSize(size() * devicePixelRatioF()));
 
-    if(!m_isBlackMode) {
-        if (!m_background.isNull()) {
+    // 获取背景图片
+    QPixmap fakeBackground;
+    QPixmap fakeBackgroundCache;
+    QPixmap background = getPixmapByPath(m_backgroundPath);
+    QPixmap backgroundCache = pixmapHandle(background);
+    if (!m_fakePath.isEmpty()) {
+        fakeBackground = getPixmapByPath(m_fakePath);
+        fakeBackgroundCache = pixmapHandle(fakeBackground);
+    }
+
+    if (!m_isBlackMode) {
+        if (!background.isNull()) {
             // tr is need redraw rect, sourceRect need correct upper left corner
             painter.drawPixmap(trueRect,
-                               m_backgroundCache,
-                               QRect(trueRect.topLeft(), trueRect.size() * m_backgroundCache.devicePixelRatioF()));
+                               backgroundCache,
+                               QRect(trueRect.topLeft(), trueRect.size() * backgroundCache.devicePixelRatioF()));
         }
 
-        if (!m_fakeBackground.isNull()) {
+        if (!fakeBackground.isNull()) {
             // draw background
-            painter.setOpacity(current_ani_value);
+            painter.setOpacity(currentAniValue);
             painter.drawPixmap(trueRect,
-                               m_fakeBackgroundCache,
-                               QRect(trueRect.topLeft(), trueRect.size() * m_fakeBackgroundCache.devicePixelRatioF()));
+                               fakeBackgroundCache,
+                               QRect(trueRect.topLeft(), trueRect.size() * fakeBackgroundCache.devicePixelRatioF()));
             painter.setOpacity(1);
         }
     } else {
@@ -245,9 +239,6 @@ void FullscreenBackground::leaveEvent(QEvent *event)
 void FullscreenBackground::resizeEvent(QResizeEvent *event)
 {
     m_content->resize(size());
-
-    m_backgroundCache = pixmapHandle(m_background);
-    m_fakeBackgroundCache = pixmapHandle(m_fakeBackground);
 
     return QWidget::resizeEvent(event);
 }
@@ -348,4 +339,21 @@ bool FullscreenBackground::eventFilter(QObject *watched, QEvent *e)
     }
 #endif
     return QWidget::eventFilter(watched, e);
+}
+
+const QPixmap FullscreenBackground::getPixmapByPath(const QString &path)
+{
+    QPixmap image;
+    QSharedMemory memory(path);
+    if (memory.attach()) {
+        image.loadFromData (static_cast<const unsigned char *>(memory.data()), static_cast<unsigned>(memory.size()));
+        if (image.isNull()) {
+            qDebug() << "input background: " << path << " is invalid image file.";
+            image.load(getBlurBackground(path));
+        }
+        memory.detach();
+    } else {
+        image.load(getBlurBackground(path));
+    }
+    return image;
 }
