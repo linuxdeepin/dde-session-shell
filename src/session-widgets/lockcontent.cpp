@@ -131,7 +131,7 @@ void LockContent::onCurrentUserChanged(std::shared_ptr<User> user)
     m_user = user;
 
     std::shared_ptr<NativeUser> native_user = std::static_pointer_cast<NativeUser>(user);
-    m_currentUserConnects << connect(native_user->getUserInter(), &UserInter::GreeterBackgroundChanged, this, &LockContent::updateBackground, Qt::UniqueConnection)
+    m_currentUserConnects << connect(user.get(), &User::greeterBackgroundPathChanged, this, &LockContent::updateBackground, Qt::UniqueConnection)
                           << connect(native_user->getUserInter(), &UserInter::Use24HourFormatChanged, this, &LockContent::updateTimeFormat, Qt::UniqueConnection)
                           << connect(native_user->getUserInter(), &UserInter::WeekdayFormatChanged, m_timeWidget, &TimeWidget::setWeekdayFormatType)
                           << connect(native_user->getUserInter(), &UserInter::ShortDateFormatChanged, m_timeWidget, &TimeWidget::setShortDateFormat)
