@@ -3,7 +3,6 @@
 #include <unistd.h>
 #include <pwd.h>
 #include <grp.h>
-#include "src/global_util/public_func.h"
 
 static const std::vector<uint> DEFAULT_WAIT_TIME = {3, 5, 15, 60, 1440};
 
@@ -263,11 +262,7 @@ QString NativeUser::avatarPath() const
 
 QString NativeUser::greeterBackgroundPath() const
 {
-    const QString& shareKey = readSharedImage (m_uid, 1);
-    if (shareKey.isEmpty()) {
-        return "/home/" + m_userName + "/.cache/dde-preload/blur-images/1.jpg";
-    }
-    return shareKey;
+    return toLocalFile(m_userInter->greeterBackground());
 }
 
 QString NativeUser::desktopBackgroundPath() const
