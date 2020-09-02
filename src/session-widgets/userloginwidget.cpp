@@ -312,7 +312,7 @@ void UserLoginWidget::refreshKBLayoutWidgetPosition()
 }
 
 //设置密码输入框不可用
-void UserLoginWidget::disablePassword(bool disable, uint lockNum)
+void UserLoginWidget::disablePassword(bool disable, uint lockTime)
 {
     m_isLock = disable;
     m_passwordEdit->setDisabled(disable);
@@ -325,7 +325,7 @@ void UserLoginWidget::disablePassword(bool disable, uint lockNum)
     m_passwordEdit->lineEdit()->setFocus();
 
     if (disable) {
-        setFaildMessage(tr("Please try again %n minute(s) later", "", lockNum));
+        setFaildMessage(tr("Please try again %n minute(s) later", "", lockTime));
     }
 
     if ( false == disable && true == m_isServerMode){

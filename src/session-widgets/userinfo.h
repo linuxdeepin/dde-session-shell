@@ -3,8 +3,9 @@
 
 #include <QObject>
 #include <com_deepin_daemon_accounts_user.h>
-
 #include <memory>
+#include "../global_util/public_func.h"
+#include "../global_util/constants.h"
 
 #define ACCOUNT_DBUS_SERVICE "com.deepin.daemon.Accounts"
 #define ACCOUNT_DBUS_PATH "/com/deepin/daemon/Accounts"
@@ -60,7 +61,7 @@ public:
     void setPath(const QString &path);
     const QString path() const { return m_path; }
 
-    uint lockNum() const { return m_lockNum; }
+    uint lockTime() const { return m_lockData.lockTime; }
     bool isLock() const { return m_isLock; }
     bool isLockForNum();
     void startLock();
@@ -76,12 +77,17 @@ public:
     void onLockTimeOut();
 
 protected:
+    struct lockData {
+        std::vector<uint> waitTime; //可设置的等待时间限制数组
+        uint limitTryNum; //可设置的锁定次数
+        uint lockTime; //当前的锁定时间
+        uint tryNum; //尝试的次数记录
+    }m_lockData;
+
     bool m_isLogind;
     bool m_isLock;
     bool m_isServer = false;
     uid_t m_uid = INT_MAX;
-    uint m_lockNum; // minute basis
-    uint m_tryNum; // try number
     QString m_userName;
     QString m_fullName;
     QString m_locale;

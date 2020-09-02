@@ -63,7 +63,7 @@ void UserLoginInfo::setUser(std::shared_ptr<User> user)
     m_userLoginWidget->setUserAvatarSize(UserLoginWidget::AvatarLargeSize);
     m_userLoginWidget->updateAuthType(m_model->currentType());
     m_userLoginWidget->updateIsLockNoPassword(m_model->isLockNoPassword());
-    m_userLoginWidget->disablePassword(user.get()->isLock(), user->lockNum());
+    m_userLoginWidget->disablePassword(user.get()->isLock(), user->lockTime());
     m_userLoginWidget->setKBLayoutList(user->kbLayoutList());
     m_userLoginWidget->setDefaultKBLayout(user->currentKBLayout());
 
@@ -172,7 +172,7 @@ void UserLoginInfo::hideKBLayout()
 
 void UserLoginInfo::userLockChanged(bool disable)
 {
-    m_userLoginWidget->disablePassword(disable, m_user->lockNum());
+    m_userLoginWidget->disablePassword(disable, m_user->lockTime());
     emit m_model->lockChanged(disable);
 }
 

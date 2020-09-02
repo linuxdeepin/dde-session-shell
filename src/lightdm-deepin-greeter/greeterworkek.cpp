@@ -329,6 +329,8 @@ void GreeterWorkek::authenticationComplete()
         return;
     }
 
+    m_model->currentUser()->resetLock();
+
     switch (m_model->powerAction()) {
     case SessionBaseModel::PowerAction::RequireRestart:
         m_login1Inter->Reboot(true);
