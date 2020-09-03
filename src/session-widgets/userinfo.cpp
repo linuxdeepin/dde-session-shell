@@ -85,7 +85,7 @@ User::User(QObject *parent)
     };
 
     // 可配置认证密码失败,且超过失败次数后的间隔限制时间
-    QString lockWaitTime = findValueByQSettings<QString>(DDESESSIONCC::session_ui_configs, "Lock", "lockWaitTime", "Default");
+    QString lockWaitTime = findValueByQSettings<QString>(DDESESSIONCC::session_ui_configs, "LockTime", "lockWaitTime", "Default");
     if(lockWaitTime == "Default")
         m_lockData.waitTime = DEFAULT_WAIT_TIME;
     else {
@@ -98,7 +98,7 @@ User::User(QObject *parent)
     }
 
     // 可配置进入等待前的失败次数
-    uint lockLimitTryNum = findValueByQSettings<uint>(DDESESSIONCC::session_ui_configs, "Lock", "lockLimitTryNum", 0);
+    uint lockLimitTryNum = findValueByQSettings<uint>(DDESESSIONCC::session_ui_configs, "LockTime", "lockLimitTryNum", 0);
     if(lockLimitTryNum == 0 || lockLimitTryNum > 10) m_lockData.limitTryNum = 5;
     else m_lockData.limitTryNum = lockLimitTryNum;
 

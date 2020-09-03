@@ -45,6 +45,7 @@ static const int CapslockWarningRightMargin = 8;
 const QStringList session_ui_configs {
     "/etc/lightdm/lightdm-deepin-greeter.conf",
     "/etc/deepin/dde-session-ui.conf",
+    "/usr/share/dde-session-shell/dde-session-shell.conf",
     "/usr/share/dde-session-ui/dde-session-ui.conf"
 };
 

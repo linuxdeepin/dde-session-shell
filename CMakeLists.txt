@@ -388,6 +388,7 @@ install(FILES ${QM_FILES}
         DESTINATION share/dde-session-shell/translations)
 
 install(FILES files/lightdm-deepin-greeter.desktop DESTINATION share/xgreeters/)
+install(FILES files/dde-session-shell.conf DESTINATION share/dde-session-shell/)
 
 # services
 file(GLOB SERVICES files/*.service)
