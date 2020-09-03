@@ -113,12 +113,17 @@ GreeterWorkek::GreeterWorkek(SessionBaseModel *const model, QObject *parent)
         m_model->setCurrentUser(user);
     } else {
         connect(m_login1Inter, &DBusLogin1Manager::SessionRemoved, this, [ = ] {
-            const QString& user = m_lockInter->CurrentUser();
-            const QJsonObject obj = QJsonDocument::fromJson(user.toUtf8()).object();
-            auto user_ptr = m_model->findUserByUid(static_cast<uint>(obj["Uid"].toInt()));
+            // lockservice sometimes fails to call on olar server
+            QDBusPendingReply<QString> replay = m_lockInter->CurrentUser();
+            replay.waitForFinished();
 
-            m_model->setCurrentUser(user_ptr);
-            userAuthForLightdm(user_ptr);
+            if (!replay.isError()) {
+                const QJsonObject obj = QJsonDocument::fromJson(replay.value().toUtf8()).object();
+                auto user_ptr = m_model->findUserByUid(static_cast<uint>(obj["Uid"].toInt()));
+
+                m_model->setCurrentUser(user_ptr);
+                userAuthForLightdm(user_ptr);
+            }
         });
     }
 }
@@ -232,7 +237,7 @@ void GreeterWorkek::onCurrentUserChanged(const QString &user)
 
 void GreeterWorkek::userAuthForLightdm(std::shared_ptr<User> user)
 {
-    if (!user->isNoPasswdGrp()) {
+    if (user.get() != nullptr && !user->isNoPasswdGrp()) {
         //后端需要大约600ms时间去释放指纹设备
         resetLightdmAuth(user, 100, true);
     }
