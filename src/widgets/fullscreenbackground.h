@@ -67,6 +67,7 @@ protected:
     void setContent(QWidget * const w);
     void keyPressEvent(QKeyEvent *e) Q_DECL_OVERRIDE;
     void showEvent(QShowEvent *event) override;
+    void hideEvent(QHideEvent *event) override;
     bool eventFilter(QObject *watched, QEvent *e) override;
 
 private:
@@ -79,6 +80,8 @@ private:
     const QPixmap pixmapHandle(const QPixmap &pixmap);
     // 通过指定文件路径获取背景图片，默认共享内存获取，失败则从文件或取
     const QPixmap getPixmapByPath(const QString &path);
+    void loadPixmap();
+    void releasePixmap();
 
 private:
     void updateScreen(QScreen *screen);
@@ -88,6 +91,11 @@ private:
     using QWidget::resize;
     using QWidget::move;
 
+    bool m_pixmapLoaded;
+    QPixmap m_background;
+    QPixmap m_fakeBackground;
+    QPixmap m_backgroundCache;
+    QPixmap m_fakeBackgroundCache;
     QString m_backgroundPath;
     QString m_fakePath;
     QPointer<QWidget> m_content;

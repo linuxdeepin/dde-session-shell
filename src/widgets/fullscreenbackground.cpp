@@ -45,6 +45,7 @@ DGUI_USE_NAMESPACE
 
 FullscreenBackground::FullscreenBackground(QWidget *parent)
     : QWidget(parent)
+    , m_pixmapLoaded(false)
     , m_fadeOutAni(new QVariantAnimation(this))
     , m_imageEffectInter(new ImageEffectInter("com.deepin.daemon.ImageEffect", "/com/deepin/daemon/ImageEffect", QDBusConnection::systemBus(), this))
 {
@@ -81,6 +82,9 @@ void FullscreenBackground::updateBackground(const QString &file)
 {
     m_fakePath = m_backgroundPath;
     m_backgroundPath = file;
+    if (isVisible()) {
+        loadPixmap();
+    }
 
     updateBackground();
 }
@@ -190,30 +194,24 @@ void FullscreenBackground::paintEvent(QPaintEvent *e)
 
     const QRect trueRect(QPoint(0, 0), QSize(size() * devicePixelRatioF()));
 
-    // 获取背景图片
-    QPixmap fakeBackground;
-    QPixmap fakeBackgroundCache;
-    QPixmap background = getPixmapByPath(m_backgroundPath);
-    QPixmap backgroundCache = pixmapHandle(background);
-    if (!m_fakePath.isEmpty()) {
-        fakeBackground = getPixmapByPath(m_fakePath);
-        fakeBackgroundCache = pixmapHandle(fakeBackground);
+    if (!m_pixmapLoaded) {
+        loadPixmap();
     }
 
     if (!m_isBlackMode) {
-        if (!background.isNull()) {
+        if (!m_background.isNull()) {
             // tr is need redraw rect, sourceRect need correct upper left corner
             painter.drawPixmap(trueRect,
-                               backgroundCache,
-                               QRect(trueRect.topLeft(), trueRect.size() * backgroundCache.devicePixelRatioF()));
+                               m_backgroundCache,
+                               QRect(trueRect.topLeft(), trueRect.size() * m_backgroundCache.devicePixelRatioF()));
         }
 
-        if (!fakeBackground.isNull()) {
+        if (!m_fakeBackground.isNull()) {
             // draw background
             painter.setOpacity(currentAniValue);
             painter.drawPixmap(trueRect,
-                               fakeBackgroundCache,
-                               QRect(trueRect.topLeft(), trueRect.size() * fakeBackgroundCache.devicePixelRatioF()));
+                               m_fakeBackgroundCache,
+                               QRect(trueRect.topLeft(), trueRect.size() * m_fakeBackgroundCache.devicePixelRatioF()));
             painter.setOpacity(1);
         }
     } else {
@@ -265,6 +263,9 @@ void FullscreenBackground::keyPressEvent(QKeyEvent *e)
 
 void FullscreenBackground::showEvent(QShowEvent *event)
 {
+    m_pixmapLoaded = true;
+    loadPixmap();
+
     if (QWindow *w = windowHandle()) {
         if (m_screen) {
             if (w->screen() != m_screen) {
@@ -281,6 +282,14 @@ void FullscreenBackground::showEvent(QShowEvent *event)
     }
 
     return QWidget::showEvent(event);
+}
+
+void FullscreenBackground::hideEvent(QHideEvent *event)
+{
+    // 解锁后，释放大量的图片内存占用
+    m_pixmapLoaded = false;
+    releasePixmap();
+    return QWidget::hideEvent(event);
 }
 
 const QPixmap FullscreenBackground::pixmapHandle(const QPixmap &pixmap)
@@ -356,4 +365,22 @@ const QPixmap FullscreenBackground::getPixmapByPath(const QString &path)
         image.load(getBlurBackground(path));
     }
     return image;
+}
+
+void FullscreenBackground::loadPixmap()
+{
+    m_background = getPixmapByPath(m_backgroundPath);
+    m_backgroundCache = pixmapHandle(m_background);
+    if (!m_fakePath.isEmpty()) {
+        m_fakeBackground = getPixmapByPath(m_fakePath);
+        m_fakeBackgroundCache = pixmapHandle(m_fakeBackground);
+    }
+}
+
+void FullscreenBackground::releasePixmap()
+{
+    m_background = QPixmap();
+    m_backgroundCache = QPixmap();
+    m_fakeBackground = QPixmap();
+    m_fakeBackgroundCache = QPixmap();
 }
