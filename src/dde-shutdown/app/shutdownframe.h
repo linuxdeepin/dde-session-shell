@@ -44,6 +44,7 @@ public:
 Q_SIGNALS:
     void requestEnableHotzone(bool enable);
     void buttonClicked(const Actions action);
+    void sendKeyValue(QString key);
 
 public slots:
     bool powerAction(const Actions action);
@@ -52,7 +53,9 @@ public slots:
 protected:
     void showEvent(QShowEvent *event) Q_DECL_OVERRIDE;
     void hideEvent(QHideEvent *event) Q_DECL_OVERRIDE;
-
+    bool eventFilter(QObject *watched, QEvent *event) Q_DECL_OVERRIDE;
+private:
+    bool handlePoweroffKey();
 private:
     SessionBaseModel *m_model;
     ContentWidget *m_shutdownFrame;
@@ -73,6 +76,9 @@ public:
     Q_SLOT void Hibernate();
     Q_SLOT void SwitchUser();
     Q_SLOT void Show();
+
+Q_SIGNALS:
+    void ChangKey(QString key);
 
 private:
     DBusShutdownAgent* m_parent;

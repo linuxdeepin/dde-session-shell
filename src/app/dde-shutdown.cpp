@@ -117,6 +117,8 @@ int main(int argc, char *argv[])
 
         property_group->addProperty("contentVisible");
 
+        ShutdownFrontDBus adaptor(dbusAgent, model);
+
         auto createFrame = [&](QScreen * screen) -> QWidget* {
             ShutdownFrame *frame = new ShutdownFrame(model);
             dbusAgent->addFrame(frame);
@@ -128,11 +130,12 @@ int main(int argc, char *argv[])
             QObject::connect(frame, &ShutdownFrame::destroyed, frame, [ = ] {
                 dbusAgent->removeFrame(frame);
             });
-            QObject::connect(frame, &ShutdownFrame::buttonClicked, frame, [ = ](const Actions action)
-            {
+            QObject::connect(frame, &ShutdownFrame::buttonClicked, frame, [ = ](const Actions action) {
                 dbusAgent->sync(action);
             });
-
+            QObject::connect(frame, &ShutdownFrame::sendKeyValue, frame, [&](QString key) {
+                emit adaptor.ChangKey(key);
+            });
             frame->setVisible(model->isShow());
             return frame;
         };
@@ -146,7 +149,7 @@ int main(int argc, char *argv[])
             model->setIsShow(true);
         }
 
-        ShutdownFrontDBus adaptor(dbusAgent,model); Q_UNUSED(adaptor);
+        Q_UNUSED(adaptor);
         QDBusConnection::sessionBus().registerObject(DBUS_PATH, dbusAgent);
 
         return app.exec();

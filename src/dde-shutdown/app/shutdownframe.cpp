@@ -85,6 +85,45 @@ void ShutdownFrame::hideEvent(QHideEvent *event)
     return FullscreenBackground::hideEvent(event);
 }
 
+bool ShutdownFrame::eventFilter(QObject *watched, QEvent *event)
+{
+    if (event->type() == QEvent::KeyRelease) {
+        QString  keyValue = "";
+        switch (static_cast<QKeyEvent *>(event)->key()) {
+        // 需要捕捉poweroff键进行处理
+        case Qt::Key_PowerOff: {
+            if (!handlePoweroffKey()) {
+                keyValue = "power-off";
+            }
+            break;
+        }
+        }
+        if (keyValue != "") {
+            emit sendKeyValue(keyValue);
+        }
+    }
+    return QObject::eventFilter(watched, event);
+}
+
+/**
+ * @brief ShutdownFrame::handlePoweroffKey
+ * 根据Power键的行为对捕捉到Power键后做特殊处理
+ * @return
+ */
+bool ShutdownFrame::handlePoweroffKey()
+{
+    QDBusInterface powerInter("com.deepin.daemon.Power","/com/deepin/daemon/Power","com.deepin.daemon.Power");
+    if (!powerInter.isValid()) {
+        return false;
+    }
+    int action = powerInter.property("LinePowerPressPowerBtnAction").toInt();
+    // 需要特殊处理：无任何操作(4)
+    if (action == 4) {
+       return true;
+    }
+    return false;
+}
+
 ShutdownFrame::~ShutdownFrame()
 {
 }
