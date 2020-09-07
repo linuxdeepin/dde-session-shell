@@ -38,7 +38,6 @@ GreeterWorkek::GreeterWorkek(SessionBaseModel *const model, QObject *parent)
     , m_AuthenticateInter(new Authenticate(AuthenticateService,
                                          "/com/deepin/daemon/Authenticate",
                                          QDBusConnection::systemBus(), this))
-    , m_isThumbAuth(false)
     , m_authenticating(false)
     , m_password(QString())
 {
@@ -260,13 +259,13 @@ void GreeterWorkek::prompt(QString text, QLightDM::Greeter::PromptType type)
 
     switch (type) {
     case QLightDM::Greeter::PromptTypeSecret:
-        if (m_isThumbAuth || m_password.isEmpty()) break;
+        if(msg.isEmpty()) break;
 
-        if (msg.isEmpty()) {
+        if (!m_password.isEmpty()) {
             m_greeter->respond(m_password);
-            m_password.clear();
         } else {
             emit m_model->authFaildMessage(msg);
+            m_authenticating = false;
         }
         break;
     case QLightDM::Greeter::PromptTypeQuestion:
@@ -280,23 +279,9 @@ void GreeterWorkek::message(QString text, QLightDM::Greeter::MessageType type)
 {
     qDebug() << "pam message: " << text << type;
 
-    if (text == "Verification timed out") {
-        m_isThumbAuth = true;
-
-        //V20版本新需求：若用户输入了密码，当指纹解锁超时，自动校验一次密码登录
-        if (!m_password.isEmpty()) {
-            QTimer::singleShot(300, this, [ = ] {
-                m_greeter->respond(m_password);
-            });
-        }
-
-        return;
-    }
-
     switch (type) {
     case QLightDM::Greeter::MessageTypeInfo:
-        if (m_isThumbAuth) break;
-
+        qDebug() << Q_FUNC_INFO << "lightdm greeter message type info: " << text.toUtf8() << QString(dgettext("fprintd", text.toUtf8()));
         emit m_model->authFaildMessage(QString(dgettext("fprintd", text.toUtf8())));
         break;
 
