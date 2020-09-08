@@ -33,7 +33,7 @@ AuthAgent::~AuthAgent()
 void AuthAgent::Responsed(const QString &password)
 {
     m_password = password;
-    m_isCondition = false;
+    m_isCondition--;
 }
 
 void AuthAgent::Authenticate(const QString& username)
@@ -125,6 +125,7 @@ int AuthAgent::pamConversation(int num_msg, const struct pam_message **msg,
         case PAM_TEXT_INFO: {
             qDebug() << "pam authagent info: " << PAM_MSG_MEMBER(msg, idx, msg);
             app_ptr->displayTextInfo(QString::fromLocal8Bit(PAM_MSG_MEMBER(msg, idx, msg)));
+            app_ptr->m_isCondition++;
             aresp[idx].resp_retcode = PAM_SUCCESS;
             break;
          }

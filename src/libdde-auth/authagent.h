@@ -50,7 +50,7 @@ private:
 
 private:
     DeepinAuthFramework* m_deepinauth = nullptr;
-    std::atomic<bool> m_isCondition;
+    int m_isCondition = 0;
 
     QString m_password;
     AuthFlag m_authType;
