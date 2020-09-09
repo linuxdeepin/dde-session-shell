@@ -31,6 +31,7 @@
 #include <QScrollArea>
 #include <QMouseEvent>
 #include <QScrollBar>
+#include <QScroller>
 
 const int UserFrameHeight = 174;
 const int UserFrameWidth = 226;
@@ -172,6 +173,11 @@ void UserFrameList::showEvent(QShowEvent *event)
 
 void UserFrameList::mouseReleaseEvent(QMouseEvent *event)
 {
+    // 触屏点击空白处不退出用户列表界面
+    if (event->source() == Qt::MouseEventSynthesizedByQt) {
+        return;
+    }
+
     emit clicked();
     hide();
 
@@ -260,6 +266,9 @@ void UserFrameList::initUI()
     mainLayout = new QVBoxLayout;
     mainLayout->addWidget(m_scrollArea, 0, Qt::AlignCenter);
     setLayout(mainLayout);
+
+    // 设置用户列表支持触屏滑动并且有回弹效果
+    QScroller::grabGesture(m_scrollArea->viewport());
 }
 
 //切换下一个用户
