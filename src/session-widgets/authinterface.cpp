@@ -59,7 +59,7 @@ AuthInterface::AuthInterface(SessionBaseModel *const model, QObject *parent)
         qWarning() << "m_login1Inter:" << m_login1Inter->lastError().type();
     }
 
-    if (QGSettings::isSchemaInstalled("com.deepin.dde.sessionshell.control")) {
+    if (m_model->currentType() != SessionBaseModel::LightdmType && QGSettings::isSchemaInstalled("com.deepin.dde.sessionshell.control")) {
         m_gsettings = new QGSettings("com.deepin.dde.sessionshell.control", "/com/deepin/dde/sessionshell/control/", this);
     }
 }
@@ -227,14 +227,9 @@ bool AuthInterface::checkHaveDisplay(const QJsonArray &array)
     return false;
 }
 
-bool AuthInterface::gsettingsExist(const QString& key)
+QVariant AuthInterface::getGSettings(const QString& node, const QString& key)
 {
-    return m_gsettings != nullptr && m_gsettings->keys().contains(key);
-}
-
-QVariant AuthInterface::getGSettings(const QString& key)
-{
-    QVariant value = true;
+    QVariant value = valueByQSettings<QVariant>(node, key, true);
     if (m_gsettings != nullptr && m_gsettings->keys().contains(key)) {
         value = m_gsettings->get(key);
     }
@@ -255,27 +250,25 @@ bool AuthInterface::isDeepin()
 #ifdef QT_DEBUG
     return true;
 #else
-    return getGSettings("useDeepinAuth").toBool();
+    return getGSettings("","useDeepinAuth").toBool();
 #endif
 }
 
 void AuthInterface::checkConfig()
 {
-    m_model->setAlwaysShowUserSwitchButton(getGSettings("switchuser").toInt() == AuthInterface::Always);
-    m_model->setAllowShowUserSwitchButton(getGSettings("switchuser").toInt() == AuthInterface::Ondemand);
+    m_model->setAlwaysShowUserSwitchButton(getGSettings("","switchuser").toInt() == AuthInterface::Always);
+    m_model->setAllowShowUserSwitchButton(getGSettings("","switchuser").toInt() == AuthInterface::Ondemand);
 }
 
 void AuthInterface::checkPowerInfo()
 {
     QProcessEnvironment env = QProcessEnvironment::systemEnvironment();
-    bool config_sleep = gsettingsExist("sleep") ? getGSettings("sleep").toBool() : valueByQSettings<bool>("Power", "sleep", true);
     bool can_sleep = env.contains(POWER_CAN_SLEEP) ? QVariant(env.value(POWER_CAN_SLEEP)).toBool()
-                                                   : config_sleep && m_login1Inter->CanSuspend().value().contains("yes");
+                                                   : getGSettings("Power","sleep").toBool() && m_login1Inter->CanSuspend().value().contains("yes");
     m_model->setCanSleep(can_sleep);
 
-    bool config_hibernate = gsettingsExist("hibernate") ? getGSettings("hibernate").toBool() : valueByQSettings<bool>("Power", "hibernate", true);
     bool can_hibernate = env.contains(POWER_CAN_HIBERNATE) ? QVariant(env.value(POWER_CAN_HIBERNATE)).toBool()
-                                                           : config_hibernate && m_login1Inter->CanHibernate().value().contains("yes");
+                                                           : getGSettings("Power","hibernate").toBool() && m_login1Inter->CanHibernate().value().contains("yes");
     if (can_hibernate) {
         checkSwap();
     } else {
