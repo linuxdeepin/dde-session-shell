@@ -31,7 +31,7 @@ LockContent::LockContent(SessionBaseModel *const model, QWidget *parent)
     m_mediaWidget = nullptr;
 
     m_shutdownFrame->setModel(model);
-    m_model->setCurrentModeState(SessionBaseModel::ModeStatus::PasswordMode);
+    restoreCenterContent();
 
     setCenterTopWidget(m_timeWidget);
     setLeftBottomWidget(m_logoWidget);
@@ -64,7 +64,7 @@ LockContent::LockContent(SessionBaseModel *const model, QWidget *parent)
     //lixin
     //connect(m_userLoginInfo, &UserLoginInfo::requestAuthUser, this, &LockContent::restoreMode);
     connect(m_userLoginInfo, &UserLoginInfo::requestAuthUser, this, &LockContent::requestAuthUser);
-    connect(m_userLoginInfo, &UserLoginInfo::hideUserFrameList, this, &LockContent::restoreMode);
+    connect(m_userLoginInfo, &UserLoginInfo::hideUserFrameList, this, &LockContent::restoreCenterContent);
     connect(m_userLoginInfo, &UserLoginInfo::requestSwitchUser, this, &LockContent::requestSwitchToUser);
     connect(m_userLoginInfo, &UserLoginInfo::requestSetLayout, this, &LockContent::requestSetLayout);
     connect(m_userLoginInfo, &UserLoginInfo::changePasswordFinished, this, &LockContent::restoreMode);
@@ -100,7 +100,6 @@ LockContent::LockContent(SessionBaseModel *const model, QWidget *parent)
     connect(model, &SessionBaseModel::onUserListChanged, this, &LockContent::onUserListChanged);
     connect(model, &SessionBaseModel::userListLoginedChanged, this, &LockContent::onUserListChanged);
     connect(model, &SessionBaseModel::authFinished, this, &LockContent::restoreMode);
-    connect(model, &SessionBaseModel::switchUserFinished, this, &LockContent::restoreMode);
     connect(m_imageBlurInter, &ImageBlur::BlurDone, this, &LockContent::onBlurDone);
 
     QTimer::singleShot(0, this, [ = ] {
@@ -221,9 +220,6 @@ void LockContent::mouseReleaseEvent(QMouseEvent *event)
 {
     if (m_model->currentModeState() == SessionBaseModel::ModeStatus::ConfirmPasswordMode)
         m_model->setAbortConfirm(false);
-    else {
-        restoreCenterContent();
-    }
 
     // hide keyboardlayout widget
     m_userLoginInfo->hideKBLayout();
