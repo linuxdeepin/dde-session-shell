@@ -53,7 +53,6 @@ protected:
     void keyPressEvent(QKeyEvent *event) override;
 
 protected:
-    void updateBackground(const QString &path);
     void updateTimeFormat(bool use24);
     void onBlurDone(const QString &source, const QString &blur, bool status);
     void toggleVirtualKB();

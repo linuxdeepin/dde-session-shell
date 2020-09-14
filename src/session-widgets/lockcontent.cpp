@@ -131,7 +131,7 @@ void LockContent::onCurrentUserChanged(std::shared_ptr<User> user)
     m_user = user;
 
     std::shared_ptr<NativeUser> native_user = std::static_pointer_cast<NativeUser>(user);
-    m_currentUserConnects << connect(user.get(), &User::greeterBackgroundPathChanged, this, &LockContent::updateBackground, Qt::UniqueConnection)
+    m_currentUserConnects << connect(user.get(), &User::greeterBackgroundPathChanged, this, &LockContent::requestBackground, Qt::UniqueConnection)
                           << connect(native_user->getUserInter(), &UserInter::Use24HourFormatChanged, this, &LockContent::updateTimeFormat, Qt::UniqueConnection)
                           << connect(native_user->getUserInter(), &UserInter::WeekdayFormatChanged, m_timeWidget, &TimeWidget::setWeekdayFormatType)
                           << connect(native_user->getUserInter(), &UserInter::ShortDateFormatChanged, m_timeWidget, &TimeWidget::setShortDateFormat)
@@ -142,7 +142,6 @@ void LockContent::onCurrentUserChanged(std::shared_ptr<User> user)
 
     //TODO: refresh blur image
     QTimer::singleShot(0, this, [ = ] {
-        updateBackground(user->greeterBackgroundPath());
         m_timeWidget->setWeekdayFormatType(native_user->getUserInter()->weekdayFormat());
         m_timeWidget->setShortDateFormat(native_user->getUserInter()->shortDateFormat());
         m_timeWidget->setShortTimeFormat(native_user->getUserInter()->shortTimeFormat());
@@ -270,14 +269,6 @@ void LockContent::restoreCenterContent()
 void LockContent::restoreMode()
 {
     m_model->setCurrentModeState(SessionBaseModel::ModeStatus::PasswordMode);
-}
-
-void LockContent::updateBackground(const QString &path)
-{
-    //    const QString &wallpaper = m_imageBlurInter->Get(path);
-
-    //    emit requestBackground(wallpaper.isEmpty() ? path : wallpaper);
-    emit requestBackground(path);
 }
 
 void LockContent::updateTimeFormat(bool use24)

@@ -42,7 +42,7 @@ LockFrame::LockFrame(SessionBaseModel *const model, QWidget *parent)
 
     QTimer::singleShot(0, this, [ = ] {
         auto user = model->currentUser();
-        if (user != nullptr) updateBackground(readSharedImage(user->uid(), 1));
+        if (user != nullptr) updateBackground(user->greeterBackgroundPath());
     });
 
     Hibernate = new HibernateWidget(this);
