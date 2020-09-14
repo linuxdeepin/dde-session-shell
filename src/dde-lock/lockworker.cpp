@@ -98,6 +98,7 @@ LockWorker::LockWorker(SessionBaseModel *const model, QObject *parent)
     connect(m_sessionManager, &SessionManager::Unlock, this, [ = ] {
         m_authenticating = false;
         m_password.clear();
+        emit m_model->authFinished(true);
     });
 
     connect(m_login1SessionSelf, &Login1SessionSelf::ActiveChanged, this, [ = ](bool active) {
