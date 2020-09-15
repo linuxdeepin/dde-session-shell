@@ -300,9 +300,10 @@ bool NativeUser::isUserIsvalid() const
 
 bool NativeUser::is24HourFormat() const
 {
-    if(!isUserIsvalid()) m_userInter->use24HourFormat();
+    if(!isUserIsvalid() || m_isServer)
+        return true;
 
-    return true;
+    return m_userInter->use24HourFormat();
 }
 
 ADDomainUser::ADDomainUser(uid_t uid, QObject *parent)
