@@ -65,12 +65,6 @@ LockWorker::LockWorker(SessionBaseModel *const model, QObject *parent)
         }
     });
 
-    connect(model, &SessionBaseModel::currentUserChanged, this, [ = ](std::shared_ptr<User> user) {
-        if (user.get()) {
-            m_authFramework->Authenticate(user);
-        }
-    });
-
     connect(model, &SessionBaseModel::visibleChanged, this, [ = ](bool isVisible) {
         if (!isVisible || model->currentType() != SessionBaseModel::AuthType::LockType) return;
 
@@ -197,7 +191,7 @@ void LockWorker::onPasswordResult(const QString &msg)
 
 void LockWorker::onUserAdded(const QString &user)
 {
-    std::shared_ptr<User> user_ptr(new NativeUser(user));
+    std::shared_ptr<NativeUser> user_ptr(new NativeUser(user));
     if (!user_ptr->isUserIsvalid())
         return;
 
@@ -205,6 +199,13 @@ void LockWorker::onUserAdded(const QString &user)
 
     if (user_ptr->uid() == m_currentUserUid) {
         m_model->setCurrentUser(user_ptr);
+
+        // AD domain account auth will not be activated for the first time
+        connect(user_ptr->getUserInter(), &UserInter::UserNameChanged, this, [ = ] {
+            if (user_ptr.get()) {
+                m_authFramework->Authenticate(user_ptr);
+            }
+        });
     }
 
     if (user_ptr->uid() == m_lastLogoutUid) {
