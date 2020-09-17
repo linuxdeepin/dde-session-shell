@@ -63,6 +63,7 @@ void UserButton::initConnect()
     connect(m_user.get(), &User::logindChanged, m_checkedMark, &QLabel::setVisible);
 
     m_checkedMark->setVisible(m_user.get()->isLogin());
+    m_user->avatarPath();
 }
 
 void UserButton::initUI()
@@ -90,7 +91,7 @@ void UserButton::initUI()
                                    "color: #ffffff;"
                                    "}");
 
-    m_userAvatar->setIcon(m_user->avatarPath());
+    m_user->avatarPath();
 
     m_checkedMark = new QLabel;
 

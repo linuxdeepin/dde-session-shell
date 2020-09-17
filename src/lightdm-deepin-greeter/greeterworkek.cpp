@@ -358,7 +358,8 @@ void GreeterWorkek::authenticationComplete()
     };
 
     // NOTE(kirigaya): It is not necessary to display the login animation.
-    emit requestUpdateBackground(m_model->currentUser()->desktopBackgroundPath());
+    connect(m_model->currentUser().get(), &User::desktopBackgroundPathChanged, this, &GreeterWorkek::requestUpdateBackground);
+    m_model->currentUser()->desktopBackgroundPath();
 
 #ifndef DISABLE_LOGIN_ANI
     QTimer::singleShot(1000, this, startSessionSync);

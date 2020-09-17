@@ -154,13 +154,12 @@ void LockContent::onCurrentUserChanged(std::shared_ptr<User> user)
     //TODO: refresh blur image
     QTimer::singleShot(0, this, [ = ] {
         if (userInter) {
-            m_timeWidget->setWeekdayFormatType(userInter->weekdayFormat());
-            m_timeWidget->setShortDateFormat(userInter->shortDateFormat());
-            m_timeWidget->setShortTimeFormat(userInter->shortTimeFormat());
+            userInter->weekdayFormat();
+            userInter->shortDateFormat();
+            userInter->shortTimeFormat();
         }
-        updateTimeFormat(user->is24HourFormat());
+        user->is24HourFormat();
 
-        // toggle greeterbackground dbus signal
         m_user->greeterBackgroundPath();
     });
 

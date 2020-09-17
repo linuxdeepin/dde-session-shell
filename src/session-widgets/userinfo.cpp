@@ -233,12 +233,16 @@ NativeUser::NativeUser(const QString &path, QObject *parent)
         m_locale = locale;
     });
 
-    connect(m_userInter, &UserInter::DesktopBackgroundsChanged, this, [ = ] {
-        emit desktopBackgroundPathChanged(desktopBackgroundPath());
+    connect(m_userInter, &UserInter::DesktopBackgroundsChanged, this, [ = ] (const QStringList & paths) {
+        emit desktopBackgroundPathChanged(toLocalFile(paths.first()));
     });
 
     connect(m_userInter, &UserInter::GreeterBackgroundChanged, this, [ = ](const QString & path) {
         emit greeterBackgroundPathChanged(toLocalFile(path));
+    });
+
+    connect(m_userInter, &UserInter::PasswordStatusChanged, this, [ = ](const QString& status){
+        m_noPasswdGrp = (status == "NP" || checkUserIsNoPWGrp(this));
     });
 
     connect(m_userInter, &UserInter::LocaleChanged, this, &NativeUser::setLocale);
@@ -249,9 +253,20 @@ NativeUser::NativeUser(const QString &path, QObject *parent)
 
     m_userInter->userName();
     m_userInter->locale();
+    m_userInter->passwordStatus();
 
     // intercept account dbus path uid
     m_uid = path.mid(QString(ACCOUNTS_DBUS_PREFIX).size()).toUInt();
+
+    QDBusPendingCall pass_expired = m_userInter->IsPasswordExpired();
+    QDBusPendingCallWatcher *watcher = new QDBusPendingCallWatcher(pass_expired, this);
+    connect(watcher, &QDBusPendingCallWatcher::finished, [ = ] {
+         QDBusReply<bool> reply = pass_expired.reply();
+        if (!pass_expired.isError() && reply.isValid()) {
+            m_isPasswdExpired = reply.value();
+        }
+        watcher->deleteLater();
+    });
 
     setPath(path);
 }
@@ -273,12 +288,12 @@ QString NativeUser::avatarPath() const
 
 QString NativeUser::greeterBackgroundPath() const
 {
-    return toLocalFile(m_userInter->greeterBackground());
+    return m_userInter->greeterBackground();
 }
 
 QString NativeUser::desktopBackgroundPath() const
 {
-    return toLocalFile(m_userInter->desktopBackgrounds().first());
+    return m_userInter->desktopBackgrounds().first();
 }
 
 QStringList NativeUser::kbLayoutList()
@@ -293,14 +308,12 @@ QString NativeUser::currentKBLayout()
 
 bool NativeUser::isNoPasswdGrp() const
 {
-    return (m_userInter->passwordStatus() == "NP" || checkUserIsNoPWGrp(this));
+    return m_noPasswdGrp;
 }
 
 bool NativeUser::isPasswordExpired() const
 {
-    QDBusPendingReply<bool> replay = m_userInter->IsPasswordExpired();
-    replay.waitForFinished();
-    return !replay.isError() && m_userInter->IsPasswordExpired();
+    return m_isPasswdExpired;
 }
 
 bool NativeUser::isUserIsvalid() const
