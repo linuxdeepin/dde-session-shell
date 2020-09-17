@@ -33,15 +33,6 @@ LockWorker::LockWorker(SessionBaseModel *const model, QObject *parent)
     m_currentUserUid = getuid();
     m_authFramework = new DeepinAuthFramework(this, this);
 
-    //该信号用来处理初始化lock、锁屏或者切换用户(锁屏+登陆)三种场景的指纹认证
-    QObject::connect(model, &SessionBaseModel::visibleChanged, this, [ = ](bool visible){
-        qDebug() << "SessionBaseModel::visibleChanged -- visible status :" << visible;
-        auto user = m_model->currentUser();
-        if(visible && user->uid() == m_currentUserUid) {
-            m_authFramework->Authenticate(user);
-        }
-    });
-
     //该信号用来处理初始化切换用户(锁屏+锁屏)或者切换用户(锁屏+登陆)两种种场景的指纹认证
     connect(m_lockInter, &DBusLockService::UserChanged, this, &LockWorker::onCurrentUserChanged);
 
@@ -74,6 +65,12 @@ LockWorker::LockWorker(SessionBaseModel *const model, QObject *parent)
         }
     });
 
+    connect(model, &SessionBaseModel::currentUserChanged, this, [ = ](std::shared_ptr<User> user) {
+        if (user.get()) {
+            m_authFramework->Authenticate(user);
+        }
+    });
+
     connect(model, &SessionBaseModel::visibleChanged, this, [ = ](bool isVisible) {
         if (!isVisible || model->currentType() != SessionBaseModel::AuthType::LockType) return;
 
@@ -82,7 +79,7 @@ LockWorker::LockWorker(SessionBaseModel *const model, QObject *parent)
 
         if (user_ptr->type() == User::ADDomain && user_ptr->uid() == 0) return;
 
-        //userAuthForLock(user_ptr);
+        m_authFramework->Authenticate(user_ptr);
     });
 
     connect(m_lockInter, &DBusLockService::Event, this, &LockWorker::lockServiceEvent);
@@ -91,9 +88,6 @@ LockWorker::LockWorker(SessionBaseModel *const model, QObject *parent)
             checkPowerInfo();
         }
     });
-
-    connect(m_loginedInter, &LoginedInter::LastLogoutUserChanged, this, &LockWorker::onLastLogoutUserChanged);
-    connect(m_loginedInter, &LoginedInter::UserListChanged, this, &LockWorker::onLoginUserListChanged);
 
     connect(m_sessionManager, &SessionManager::Unlock, this, [ = ] {
         m_authenticating = false;

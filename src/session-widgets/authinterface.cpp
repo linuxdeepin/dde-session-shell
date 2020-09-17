@@ -55,6 +55,7 @@ AuthInterface::AuthInterface(SessionBaseModel *const model, QObject *parent)
     if (m_login1Inter->isValid()) {
        QString session_self = m_login1Inter->GetSessionByPID(0).value().path();
        m_login1SessionSelf = new Login1SessionSelf("org.freedesktop.login1", session_self, QDBusConnection::systemBus(), this);
+       m_login1SessionSelf->setSync(false);
     } else {
         qWarning() << "m_login1Inter:" << m_login1Inter->lastError().type();
     }
@@ -88,6 +89,8 @@ void AuthInterface::onUserListChanged(const QStringList &list)
             onUserRemove(u);
         }
     }
+
+    m_loginedInter->userList();
 }
 
 void AuthInterface::onUserAdded(const QString &user)
@@ -111,17 +114,17 @@ void AuthInterface::onUserRemove(const QString &user)
 
 void AuthInterface::initData()
 {
-    onUserListChanged(m_accountsInter->userList());
-    onLoginUserListChanged(m_loginedInter->userList());
-    onLastLogoutUserChanged(m_loginedInter->lastLogoutUser());
+    m_accountsInter->userList();
+    m_loginedInter->lastLogoutUser();
+
     checkConfig();
     checkPowerInfo();
 }
 
 void AuthInterface::initDBus()
 {
-    m_accountsInter->setSync(true);
-    m_loginedInter->setSync(true);
+    m_accountsInter->setSync(false);
+    m_loginedInter->setSync(false);
 
     connect(m_accountsInter, &AccountsInter::UserListChanged, this, &AuthInterface::onUserListChanged, Qt::QueuedConnection);
     connect(m_accountsInter, &AccountsInter::UserAdded, this, &AuthInterface::onUserAdded, Qt::QueuedConnection);
