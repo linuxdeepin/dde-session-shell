@@ -53,8 +53,8 @@ public:
     bool contentVisible() const;
 
 public slots:
-    void updateBackground();
-    void updateBackground(const QString &file);
+    void updateBackground(const QPixmap &background);
+    void updateBackground(const QString &file = QString());
     void setScreen(QScreen *screen);
     void setContentVisible(bool contentVisible);
     void setIsBlackMode(bool is_black);
@@ -67,7 +67,6 @@ protected:
     void setContent(QWidget * const w);
     void keyPressEvent(QKeyEvent *e) Q_DECL_OVERRIDE;
     void showEvent(QShowEvent *event) override;
-    void hideEvent(QHideEvent *event) override;
     bool eventFilter(QObject *watched, QEvent *e) override;
 
 private:
@@ -78,26 +77,20 @@ private:
     void mouseMoveEvent(QMouseEvent *event) Q_DECL_OVERRIDE;
 
     const QPixmap pixmapHandle(const QPixmap &pixmap);
-    // 通过指定文件路径获取背景图片，默认共享内存获取，失败则从文件或取
-    const QPixmap getPixmapByPath(const QString &path);
-    void loadPixmap();
-    void releasePixmap();
 
 private:
     void updateScreen(QScreen *screen);
-    QString getBlurBackground(const QString &file);
     void updateGeometry();
+    void updateBlurBackground(const QString &file);
+    bool isPicture(const QString &file);
     using QWidget::setGeometry;
     using QWidget::resize;
     using QWidget::move;
 
-    bool m_pixmapLoaded;
     QPixmap m_background;
     QPixmap m_fakeBackground;
     QPixmap m_backgroundCache;
     QPixmap m_fakeBackgroundCache;
-    QString m_backgroundPath;
-    QString m_fakePath;
     QPointer<QWidget> m_content;
     QVariantAnimation *m_fadeOutAni;
     QScreen *m_screen = nullptr;

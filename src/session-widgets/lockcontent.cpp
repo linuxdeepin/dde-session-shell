@@ -159,6 +159,9 @@ void LockContent::onCurrentUserChanged(std::shared_ptr<User> user)
             m_timeWidget->setShortTimeFormat(userInter->shortTimeFormat());
         }
         updateTimeFormat(user->is24HourFormat());
+
+        // toggle greeterbackground dbus signal
+        m_user->greeterBackgroundPath();
     });
 
     m_logoWidget->updateLocale(m_user->locale());

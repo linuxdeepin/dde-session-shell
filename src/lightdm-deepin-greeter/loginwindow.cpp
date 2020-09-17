@@ -33,11 +33,6 @@ LoginWindow::LoginWindow(SessionBaseModel *const model, QWidget *parent)
     : FullscreenBackground(parent)
     , m_loginContent(new LoginContent(model, this))
 {
-    QTimer::singleShot(0, this, [ = ] {
-        auto user = model->currentUser();
-        if (user != nullptr) updateBackground(user->greeterBackgroundPath());
-    });
-
     setContent(m_loginContent);
     m_loginContent->hide();
 
@@ -62,4 +57,6 @@ LoginWindow::LoginWindow(SessionBaseModel *const model, QWidget *parent)
     connect(m_loginContent, &LockContent::requestAuthUser, this, &LoginWindow::requestAuthUser);
     connect(m_loginContent, &LockContent::requestSwitchToUser, this, &LoginWindow::requestSwitchToUser);
     connect(m_loginContent, &LockContent::requestSetLayout, this, &LoginWindow::requestSetLayout);
+
+    updateBackground();
 }

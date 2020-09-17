@@ -43,11 +43,6 @@ LockFrame::LockFrame(SessionBaseModel *const model, QWidget *parent)
 {
     qDebug() << "LockFrame geometry:" << geometry();
 
-    QTimer::singleShot(0, this, [ = ] {
-        auto user = model->currentUser();
-        if (user != nullptr) updateBackground(user->greeterBackgroundPath());
-    });
-
     Hibernate = new HibernateWidget(this);
     Hibernate->hide();
     m_content = new LockContent(model);
@@ -78,10 +73,13 @@ LockFrame::LockFrame(SessionBaseModel *const model, QWidget *parent)
         qDebug() << "SessionBaseModel::authFinished -- success status : " << success;
         m_content->beforeUnlockAction(success);
     });
+
     connect(m_login1Inter, &DBusLogin1Manager::PrepareForSleep, this, [this](bool isSleep){
         m_prePreparingSleep = m_preparingSleep;
         m_preparingSleep = isSleep;
     });
+
+    updateBackground();
 }
 
 bool LockFrame::event(QEvent *event)
