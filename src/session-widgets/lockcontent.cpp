@@ -226,8 +226,12 @@ void LockContent::onStatusChanged(SessionBaseModel::ModeStatus status)
 
 void LockContent::mouseReleaseEvent(QMouseEvent *event)
 {
-    if (m_model->currentModeState() == SessionBaseModel::ModeStatus::ConfirmPasswordMode)
+    if (m_model->currentModeState() == SessionBaseModel::ModeStatus::ConfirmPasswordMode) {
         m_model->setAbortConfirm(false);
+    } else {
+        restoreMode();
+        setCenterContent(m_userLoginInfo->getUserLoginWidget());
+    }
 
     // hide keyboardlayout widget
     m_userLoginInfo->hideKBLayout();
