@@ -1,5 +1,6 @@
 #include "authagent.h"
 #include "deepinauthframework.h"
+#include "src/global_util/public_func.h"
 
 #include <QDebug>
 #include <QJsonDocument>
@@ -13,7 +14,8 @@
 #define PAM_MSG_MEMBER(msg, n, member) ((msg)[(n)]->member)
 #endif
 
-#define PAM_SERVICE_NAME "common-auth"
+#define PAM_SERVICE_SYSTEM_NAME "password-auth"
+#define PAM_SERVICE_DEEPIN_NAME "common-auth"
 
 AuthAgent::AuthAgent(DeepinAuthFramework *deepin)
     : m_deepinauth(deepin)
@@ -38,7 +40,8 @@ void AuthAgent::Authenticate(const QString& username)
 {
     pam_handle_t* m_pamHandle = nullptr;
     pam_conv conv = { pamConversation, static_cast<void*>(this) };
-    int ret = pam_start(PAM_SERVICE_NAME, username.toLocal8Bit().data(), &conv, &m_pamHandle);
+    const char* serviceName = isDeepinAuth() ? PAM_SERVICE_DEEPIN_NAME : PAM_SERVICE_SYSTEM_NAME;
+    int ret = pam_start(serviceName, username.toLocal8Bit().data(), &conv, &m_pamHandle);
 
     if (ret != PAM_SUCCESS) {
         qDebug() << "pam_start() failed: " << pam_strerror(m_pamHandle, ret);
