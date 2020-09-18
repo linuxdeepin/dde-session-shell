@@ -24,13 +24,7 @@ SessionBaseModel::SessionBaseModel(AuthType type, QObject *parent)
 {
     if (m_currentType == LockType || m_currentType == UnknowAuthType) {
         m_sessionManagerInter = new SessionManager(SessionManagerService, SessionManagerPath, QDBusConnection::sessionBus(), this);
-    }
-
-    if ( m_currentType == UnknowAuthType ) {
-        connect(m_sessionManagerInter,&SessionManager::LockedChanged,this,[this](bool locked) {
-            if ( !locked )
-                this->setIsShow(false);
-        });
+        m_sessionManagerInter->setSync(false);
     }
 }
 
@@ -183,9 +177,13 @@ void SessionBaseModel::setIsShow(bool isShow)
     m_isShow = isShow;
 
 #ifndef QT_DEBUG
-
+    // shutdown screen
     if ( m_sessionManagerInter && m_currentType == UnknowAuthType ) {
-        m_isShow = m_sessionManagerInter->locked() ? false : isShow ;
+        connect(m_sessionManagerInter, &SessionManager::LockedChanged, this, [ this ] (bool locked) {
+            m_isLock = locked;
+            if ( !locked ) this->setIsShow(false);
+        });
+        m_sessionManagerInter->locked();
     }
 
     if (m_sessionManagerInter && m_currentType == LockType) {
@@ -246,7 +244,7 @@ void SessionBaseModel::setLocked(bool lock)
 
 bool SessionBaseModel::isLocked()
 {
-    return m_sessionManagerInter && m_sessionManagerInter->locked();
+    return m_isLock;
 }
 
 void SessionBaseModel::setIsLockNoPassword(bool LockNoPassword)

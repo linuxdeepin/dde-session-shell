@@ -62,38 +62,50 @@ void MediaWidget::initMediaPlayer()
 {
     QDBusInterface dbusInter("org.freedesktop.DBus", "/", "org.freedesktop.DBus", QDBusConnection::sessionBus(), this);
 
-    QDBusReply<QStringList> response = dbusInter.call("ListNames");
-    const QStringList &serviceList = response.value();
-    QString service = QString();
-    for (const QString &serv : serviceList) {
-        if (!serv.startsWith("org.mpris.MediaPlayer2.")) {
-            continue;
-        }
-        service = serv;
-        break;
-    }
-    if (service.isEmpty()) {
-        qDebug() << "media player dbus has not started, waiting for signal...";
-        QDBusConnectionInterface *dbusDaemonInterface = QDBusConnection::sessionBus().interface();
-        connect(dbusDaemonInterface, &QDBusConnectionInterface::serviceOwnerChanged, this,
-        [ = ](const QString & name, const QString & oldOwner, const QString & newOwner) {
-            Q_UNUSED(oldOwner);
-            if (name.startsWith("org.mpris.MediaPlayer2.") && !newOwner.isEmpty()) {
-                initMediaPlayer();
-                disconnect(dbusDaemonInterface);
+    QDBusPendingCall call = dbusInter.asyncCall("ListNames");
+    QDBusPendingCallWatcher *watcher = new QDBusPendingCallWatcher(call, this);
+    connect(watcher, &QDBusPendingCallWatcher::finished, [ = ] {
+        if (!call.isError()) {
+            QDBusReply<QStringList> reply = call.reply();
+            qDebug() << "one key Login User Name is : " << reply.value();
+
+            const QStringList &serviceList = reply.value();
+            QString service = QString();
+            for (const QString &serv : serviceList) {
+                if (!serv.startsWith("org.mpris.MediaPlayer2.")) {
+                    continue;
+                }
+                service = serv;
+                break;
             }
+            if (service.isEmpty()) {
+                qDebug() << "media player dbus has not started, waiting for signal...";
+                QDBusConnectionInterface *dbusDaemonInterface = QDBusConnection::sessionBus().interface();
+                connect(dbusDaemonInterface, &QDBusConnectionInterface::serviceOwnerChanged, this,
+                [ = ](const QString & name, const QString & oldOwner, const QString & newOwner) {
+                    Q_UNUSED(oldOwner);
+                    if (name.startsWith("org.mpris.MediaPlayer2.") && !newOwner.isEmpty()) {
+                        initMediaPlayer();
+                        disconnect(dbusDaemonInterface);
+                    }
+                }
+                       );
+                return;
+            }
+
+            qDebug() << "got media player dbus service: " << service;
+
+            m_dbusInter = new DBusMediaPlayer2(service, "/org/mpris/MediaPlayer2", QDBusConnection::sessionBus(), this);
+
+            m_dbusInter->MetadataChanged();
+            m_dbusInter->PlaybackStatusChanged();
+            m_dbusInter->VolumeChanged();
+        } else {
+            qWarning() << "init media player error: " << call.error().message();
         }
-               );
-        return;
-    }
 
-    qDebug() << "got media player dbus service: " << service;
-
-    m_dbusInter = new DBusMediaPlayer2(service, "/org/mpris/MediaPlayer2", QDBusConnection::sessionBus(), this);
-
-    m_dbusInter->MetadataChanged();
-    m_dbusInter->PlaybackStatusChanged();
-    m_dbusInter->VolumeChanged();
+        watcher->deleteLater();
+    });
 }
 
 void MediaWidget::changeVisible()
