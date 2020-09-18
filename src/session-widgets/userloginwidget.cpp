@@ -64,10 +64,6 @@ UserLoginWidget::UserLoginWidget(QWidget *parent)
     , m_capslockMonitor(KeyboardMonitor::instance())
     , m_isAlertMessageShow(false)
     , m_aniTimer(new QTimer(this))
-    , m_dbusAppearance(new Appearance("com.deepin.daemon.Appearance",
-                                       "/com/deepin/daemon/Appearance",
-                                       QDBusConnection::sessionBus(),
-                                       this))
 {
     initUI();
     initConnect();
@@ -559,15 +555,6 @@ void UserLoginWidget::initConnect()
     connect(m_capslockMonitor, &KeyboardMonitor::capslockStatusChanged, m_passwordEdit, &DPasswordEditEx::capslockStatusChanged);
     connect(m_passwordEdit, &DPasswordEditEx::toggleKBLayoutWidget, this, &UserLoginWidget::toggleKBLayoutWidget);
     connect(m_passwordEdit, &DPasswordEditEx::selectionChanged, this, &UserLoginWidget::hidePasswordEditMessage);
-
-    //窗体活动颜色改变
-    connect(m_dbusAppearance, &Appearance::QtActiveColorChanged , [this](const QString& Color) {
-        QPalette passwdPalatte = m_passwordEdit->palette();
-        if (passwdPalatte.color(QPalette::Highlight).name() == Color)
-            return;
-        passwdPalatte.setColor(QPalette::Highlight, Color);
-        m_passwordEdit->setPalette(passwdPalatte);
-    });
 }
 
 //设置用户名
@@ -755,7 +742,6 @@ void UserLoginWidget::resetPowerIcon()
             return;
         } else {
             m_lockButton->setIcon(DStyle::SP_LockElement);
-            lockPalatte.setColor(QPalette::Highlight, m_dbusAppearance->property("QtActiveColor").toString());
         }
     }
     m_lockButton->setPalette(lockPalatte);

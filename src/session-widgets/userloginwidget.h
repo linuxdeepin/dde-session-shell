@@ -29,8 +29,6 @@
 #include <DClipEffectWidget>
 #include <DFloatingButton>
 
-#include <com_deepin_daemon_appearance.h>
-using Appearance = com::deepin::daemon::Appearance;
 using DClipEffectWidget = Dtk::Widget::DClipEffectWidget;
 
 DWIDGET_USE_NAMESPACE
@@ -166,7 +164,6 @@ private:
     QMetaObject::Connection m_connection;           //定時器connection
     int m_timerIndex = 0;
     int m_action;                                   //重启或关机行为记录
-    Appearance *m_dbusAppearance;
 };
 
 #endif // USERLOGINWIDGET_H

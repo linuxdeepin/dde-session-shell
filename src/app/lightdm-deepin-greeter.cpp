@@ -36,6 +36,7 @@
 
 #include <DLog>
 #include <DGuiApplicationHelper>
+#include <DPlatformTheme>
 
 #include <cstdlib>
 
@@ -212,6 +213,13 @@ int main(int argc, char* argv[])
     DGuiApplicationHelper::generatePaletteColor(pa, DPalette::Dark, DGuiApplicationHelper::LightType);
     DGuiApplicationHelper::generatePaletteColor(pa, DPalette::ButtonText, DGuiApplicationHelper::LightType);
     DGuiApplicationHelper::instance()->setApplicationPalette(pa);
+
+    // follow system active color
+    QObject::connect(DGuiApplicationHelper::instance()->systemTheme(), &DPlatformTheme::activeColorChanged, [] (const QColor &color) {
+        auto palette = DGuiApplicationHelper::instance()->applicationPalette();
+        palette.setColor(QPalette::Highlight, color);
+        DGuiApplicationHelper::instance()->setApplicationPalette(palette);
+    });
 
     DLogManager::registerConsoleAppender();
 
