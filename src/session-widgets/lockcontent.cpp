@@ -130,21 +130,30 @@ void LockContent::onCurrentUserChanged(std::shared_ptr<User> user)
 
     m_user = user;
 
-    std::shared_ptr<NativeUser> native_user = std::static_pointer_cast<NativeUser>(user);
+    std::shared_ptr<NativeUser> nativeUser = std::dynamic_pointer_cast<NativeUser>(user);
+    UserInter *userInter = nullptr;
+    if (!nativeUser) {
+        qDebug() << "trans to NativeUser user failed, user:" << user->metaObject()->className();
+    } else {
+        userInter = nativeUser->getUserInter();
+    }
+
     m_currentUserConnects << connect(user.get(), &User::greeterBackgroundPathChanged, this, &LockContent::requestBackground, Qt::UniqueConnection)
-                          << connect(native_user->getUserInter(), &UserInter::Use24HourFormatChanged, this, &LockContent::updateTimeFormat, Qt::UniqueConnection)
-                          << connect(native_user->getUserInter(), &UserInter::WeekdayFormatChanged, m_timeWidget, &TimeWidget::setWeekdayFormatType)
-                          << connect(native_user->getUserInter(), &UserInter::ShortDateFormatChanged, m_timeWidget, &TimeWidget::setShortDateFormat)
-                          << connect(native_user->getUserInter(), &UserInter::ShortTimeFormatChanged, m_timeWidget, &TimeWidget::setShortTimeFormat);
+                          << connect(userInter, &UserInter::Use24HourFormatChanged, this, &LockContent::updateTimeFormat, Qt::UniqueConnection)
+                          << connect(userInter, &UserInter::WeekdayFormatChanged, m_timeWidget, &TimeWidget::setWeekdayFormatType)
+                          << connect(userInter, &UserInter::ShortDateFormatChanged, m_timeWidget, &TimeWidget::setShortDateFormat)
+                          << connect(userInter, &UserInter::ShortTimeFormatChanged, m_timeWidget, &TimeWidget::setShortTimeFormat);
 
     //lixin
     m_userLoginInfo->setUser(user);
 
     //TODO: refresh blur image
     QTimer::singleShot(0, this, [ = ] {
-        m_timeWidget->setWeekdayFormatType(native_user->getUserInter()->weekdayFormat());
-        m_timeWidget->setShortDateFormat(native_user->getUserInter()->shortDateFormat());
-        m_timeWidget->setShortTimeFormat(native_user->getUserInter()->shortTimeFormat());
+        if (userInter) {
+            m_timeWidget->setWeekdayFormatType(userInter->weekdayFormat());
+            m_timeWidget->setShortDateFormat(userInter->shortDateFormat());
+            m_timeWidget->setShortTimeFormat(userInter->shortTimeFormat());
+        }
         updateTimeFormat(user->is24HourFormat());
     });
 
