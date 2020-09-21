@@ -50,7 +50,7 @@ private:
 
 private:
     DeepinAuthFramework* m_deepinauth = nullptr;
-    int m_isCondition = 0;
+    bool m_isCondition = true;
 
     QString m_password;
     AuthFlag m_authType;

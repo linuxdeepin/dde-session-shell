@@ -33,7 +33,7 @@ AuthAgent::~AuthAgent()
 void AuthAgent::Responsed(const QString &password)
 {
     m_password = password;
-    m_isCondition--;
+    m_isCondition = false;
 }
 
 void AuthAgent::Authenticate(const QString& username)
@@ -62,7 +62,7 @@ void AuthAgent::Authenticate(const QString& username)
     // 认证成功与否，均点亮屏幕
     system("xset dpms force on");
 
-    m_isCondition = 0;
+    m_isCondition = true;
     emit respondResult(is_success ? "success" : QString());
 }
 
@@ -96,6 +96,7 @@ int AuthAgent::pamConversation(int num_msg, const struct pam_message **msg,
 
         case PAM_PROMPT_ECHO_OFF: {
             while(app_ptr->m_isCondition) sleep(1);
+            app_ptr->m_isCondition = true;
 
             if (!QPointer<DeepinAuthFramework>(app_ptr->deepinAuth())) {
                 qDebug() << "pam: deepin auth framework is null";
@@ -125,7 +126,6 @@ int AuthAgent::pamConversation(int num_msg, const struct pam_message **msg,
         case PAM_TEXT_INFO: {
             qDebug() << "pam authagent info: " << PAM_MSG_MEMBER(msg, idx, msg);
             app_ptr->displayTextInfo(QString::fromLocal8Bit(PAM_MSG_MEMBER(msg, idx, msg)));
-            app_ptr->m_isCondition++;
             aresp[idx].resp_retcode = PAM_SUCCESS;
             break;
          }
