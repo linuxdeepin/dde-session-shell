@@ -80,7 +80,10 @@ void FullscreenBackground::updateBackground(const QPixmap &background)
     m_backgroundCache = pixmapHandle(m_background);
     m_fakeBackgroundCache = pixmapHandle(m_fakeBackground);
 
-    m_fadeOutAni->start();
+    if (!m_fakeBackground.isNull()) {
+        m_fadeOutAni->start();
+    } else
+        update();
 }
 
 bool FullscreenBackground::isPicture(const QString &file)
@@ -94,8 +97,9 @@ void FullscreenBackground::updateBackground(const QString &file)
     if (!isPicture(file)) {
         QSharedMemory memory(file);
         if (memory.attach()) {
-            m_background.loadFromData (static_cast<const unsigned char *>(memory.data()), static_cast<unsigned>(memory.size()));
-            updateBackground(m_background);
+            QPixmap image;
+            image.loadFromData (static_cast<const unsigned char *>(memory.data()), static_cast<unsigned>(memory.size()));
+            updateBackground(image);
             memory.detach();
 
             return;
@@ -125,8 +129,7 @@ void FullscreenBackground::updateBlurBackground(const QString &file)
                  blur_image = DEFAULT_BACKGROUND;
             }
 
-            m_background.load(blur_image);
-            updateBackground(m_background);
+            updateBackground(QPixmap(blur_image));
         } else {
             qWarning() << "get blur background image error: " << call.error().message();
         }

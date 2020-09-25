@@ -294,7 +294,8 @@ QString NativeUser::greeterBackgroundPath() const
 
 QString NativeUser::desktopBackgroundPath() const
 {
-    return m_userInter->desktopBackgrounds().first();
+    QStringList backgrounds = m_userInter->desktopBackgrounds();
+    return backgrounds.isEmpty() ? QString() : backgrounds.first();
 }
 
 QStringList NativeUser::kbLayoutList()
