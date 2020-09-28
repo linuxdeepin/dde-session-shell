@@ -83,8 +83,6 @@ LockFrame::LockFrame(SessionBaseModel *const model, QWidget *parent)
         m_prePreparingSleep = m_preparingSleep;
         m_preparingSleep = isSleep;
     });
-
-    updateBackground();
 }
 
 bool LockFrame::event(QEvent *event)
