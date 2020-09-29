@@ -213,14 +213,24 @@ NativeUser::NativeUser(const QString &path, QObject *parent)
     : User(parent)
     , m_userInter(new UserInter(ACCOUNT_DBUS_SERVICE, path, QDBusConnection::systemBus(), this))
 {
+    m_userInter->setSync(false);
     connect(m_userInter, &UserInter::IconFileChanged, this, &NativeUser::avatarChanged);
     connect(m_userInter, &UserInter::FullNameChanged, this, [ = ](const QString & fullname) {
         m_fullName = fullname;
         emit displayNameChanged(fullname.isEmpty() ? m_userName : fullname);
     });
+
     connect(m_userInter, &UserInter::UserNameChanged, this, [ = ](const QString & user_name) {
         m_userName = user_name;
         emit displayNameChanged(m_fullName.isEmpty() ? m_userName : m_fullName);
+    });
+
+    connect(m_userInter, &UserInter::UidChanged, this, [ = ](const QString & uid) {
+        m_uid = uid.toUInt();
+    });
+
+    connect(m_userInter, &UserInter::LocaleChanged, this, [ = ](const QString & locale) {
+        m_locale = locale;
     });
 
     connect(m_userInter, &UserInter::DesktopBackgroundsChanged, this, [ = ] {
@@ -237,9 +247,11 @@ NativeUser::NativeUser(const QString &path, QObject *parent)
     connect(m_userInter, &UserInter::NoPasswdLoginChanged, this, &NativeUser::noPasswdLoginChanged);
     connect(m_userInter, &UserInter::Use24HourFormatChanged, this, &NativeUser::use24HourFormatChanged);
 
-    m_userName = m_userInter->userName();
-    m_uid = m_userInter->uid().toInt();
-    m_locale = m_userInter->locale();
+    m_userInter->userName();
+    m_userInter->locale();
+
+    // intercept account dbus path uid
+    m_uid = path.mid(QString(ACCOUNTS_DBUS_PREFIX).size()).toUInt();
 
     setPath(path);
 }
@@ -251,8 +263,7 @@ void NativeUser::setCurrentLayout(const QString &layout)
 
 QString NativeUser::displayName() const
 {
-    const QString &fullname = m_userInter->fullName();
-    return fullname.isEmpty() ? name() : fullname;
+    return m_fullName.isEmpty() ? m_userName : m_fullName;
 }
 
 QString NativeUser::avatarPath() const
@@ -295,7 +306,7 @@ bool NativeUser::isPasswordExpired() const
 bool NativeUser::isUserIsvalid() const
 {
     //无效用户的时候m_userInter是有效的
-    return m_userInter->isValid() && !m_userName.isEmpty();
+    return m_userInter->isValid();
 }
 
 bool NativeUser::is24HourFormat() const

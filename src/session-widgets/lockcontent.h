@@ -4,12 +4,9 @@
 #include <QWidget>
 #include <memory>
 
-#include <com_deepin_daemon_imageblur.h>
 #include "sessionbasewindow.h"
 #include "sessionbasemodel.h"
 #include "src/widgets/mediawidget.h"
-
-using ImageBlur = com::deepin::daemon::ImageBlur;
 
 class ControlWidget;
 class UserInputWidget;
@@ -54,7 +51,6 @@ protected:
 
 protected:
     void updateTimeFormat(bool use24);
-    void onBlurDone(const QString &source, const QString &blur, bool status);
     void toggleVirtualKB();
     void updateVirtualKBPosition();
     void onUserListChanged(QList<std::shared_ptr<User>> list);
@@ -64,7 +60,6 @@ protected:
     SessionBaseModel *m_model;
     ControlWidget *m_controlWidget;
     ShutdownWidget *m_shutdownFrame;
-    ImageBlur *m_imageBlurInter;
     QWidget *m_virtualKB;
     std::shared_ptr<User> m_user;
     QList<QMetaObject::Connection> m_currentUserConnects;

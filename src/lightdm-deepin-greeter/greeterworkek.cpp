@@ -35,16 +35,10 @@ GreeterWorkek::GreeterWorkek(SessionBaseModel *const model, QObject *parent)
     : AuthInterface(model, parent)
     , m_greeter(new QLightDM::Greeter(this))
     , m_lockInter(new DBusLockService(LOCKSERVICE_NAME, LOCKSERVICE_PATH, QDBusConnection::systemBus(), this))
-    , m_AuthenticateInter(new Authenticate(AuthenticateService,
-                                         "/com/deepin/daemon/Authenticate",
-                                         QDBusConnection::systemBus(), this))
+    , m_AuthenticateInter(new Authenticate(AuthenticateService, "/com/deepin/daemon/Authenticate", QDBusConnection::systemBus(), this))
     , m_authenticating(false)
     , m_password(QString())
 {
-    if (m_AuthenticateInter->isValid()) {
-        m_AuthenticateInter->setTimeout(300);
-    }
-
     if (!m_greeter->connectSync()) {
         qWarning() << "greeter connect fail !!!";
     }
@@ -218,17 +212,26 @@ void GreeterWorkek::checkDBusServer(bool isvalid)
 void GreeterWorkek::oneKeyLogin()
 {
     // 多用户一键登陆
-    auto user_firstlogin = m_AuthenticateInter->PreOneKeyLogin(AuthFlag::Fingerprint);
-    user_firstlogin.waitForFinished();
-    qDebug() << "GreeterWorkek::onFirstTimeLogin -- FirstTime Login User Name is : " << user_firstlogin;
+    QDBusPendingCall call = m_AuthenticateInter->PreOneKeyLogin(AuthFlag::Fingerprint);
+    QDBusPendingCallWatcher *watcher = new QDBusPendingCallWatcher(call, this);
+    connect(watcher, &QDBusPendingCallWatcher::finished, [ = ] {
+        if (!call.isError())
+        {
+            QDBusReply<QString> reply = call.reply();
+            qDebug() << "one key Login User Name is : " << reply.value();
 
-    auto user_ptr = m_model->findUserByName(user_firstlogin);
-    if (user_ptr.get() != nullptr && !user_firstlogin.isError()) {
-        m_model->setCurrentUser(user_ptr);
-        userAuthForLightdm(user_ptr);
-    } else {
+            auto user_ptr = m_model->findUserByName(reply.value());
+            if (user_ptr.get() != nullptr && reply.isValid()) {
+                m_model->setCurrentUser(user_ptr);
+                userAuthForLightdm(user_ptr);
+            }
+        } else {
+            qWarning() << "get current workspace background error: " << call.error().message();
+        }
+
         onCurrentUserChanged(m_lockInter->CurrentUser());
-    }
+        watcher->deleteLater();
+    });
 }
 
 void GreeterWorkek::onCurrentUserChanged(const QString &user)

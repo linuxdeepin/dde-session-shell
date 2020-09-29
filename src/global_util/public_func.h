@@ -33,6 +33,8 @@
 #include <QSettings>
 #include <QString>
 
+#define ACCOUNTS_DBUS_PREFIX "/com/deepin/daemon/Accounts/User"
+
 QPixmap loadPixmap(const QString &file, const QSize& size = QSize());
 
 /**

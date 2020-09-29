@@ -18,7 +18,6 @@
 LockContent::LockContent(SessionBaseModel *const model, QWidget *parent)
     : SessionBaseWindow(parent)
     , m_model(model)
-    , m_imageBlurInter(new ImageBlur("com.deepin.daemon.Accounts", "/com/deepin/daemon/ImageBlur", QDBusConnection::systemBus(), this))
     , m_virtualKB(nullptr)
     , m_translator(new QTranslator)
     , m_userLoginInfo(new UserLoginInfo(model))
@@ -106,7 +105,6 @@ LockContent::LockContent(SessionBaseModel *const model, QWidget *parent)
     connect(model, &SessionBaseModel::userListLoginedChanged, this, &LockContent::onUserListChanged);
     connect(model, &SessionBaseModel::authFinished, this, &LockContent::restoreMode);
     connect(model, &SessionBaseModel::switchUserFinished, this, &LockContent::restoreMode);
-    connect(m_imageBlurInter, &ImageBlur::BlurDone, this, &LockContent::onBlurDone);
 
     QTimer::singleShot(0, this, [ = ] {
         onCurrentUserChanged(model->currentUser());
@@ -296,14 +294,6 @@ void LockContent::updateTimeFormat(bool use24)
         m_timeWidget->updateLocale(m_user->locale());
         m_timeWidget->set24HourFormat(use24);
     }
-}
-
-void LockContent::onBlurDone(const QString &source, const QString &blur, bool status)
-{
-    const QString &sourcePath = QUrl(source).isLocalFile() ? QUrl(source).toLocalFile() : source;
-
-    if (status && m_model->currentUser()->greeterBackgroundPath() == sourcePath)
-        emit requestBackground(blur);
 }
 
 void LockContent::toggleVirtualKB()

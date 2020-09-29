@@ -74,7 +74,7 @@ void AuthInterface::onUserListChanged(const QStringList &list)
 {
     QStringList tmpList;
     for (std::shared_ptr<User> u : m_model->userList()) {
-        tmpList << QString("/com/deepin/daemon/Accounts/User%1").arg(u->uid());
+        tmpList << ACCOUNTS_DBUS_PREFIX + QString::number(u->uid());
     }
 
     for (const QString &u : list) {
