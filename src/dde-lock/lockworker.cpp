@@ -34,6 +34,8 @@ LockWorker::LockWorker(SessionBaseModel *const model, QObject *parent)
     m_authFramework = new DeepinAuthFramework(this, this);
     m_sessionManager->setSync(false);
 
+    onUserAdded(ACCOUNTS_DBUS_PREFIX + QString::number(m_currentUserUid));
+
     //该信号用来处理初始化切换用户(锁屏+锁屏)或者切换用户(锁屏+登陆)两种种场景的指纹认证
     connect(m_lockInter, &DBusLockService::UserChanged, this, &LockWorker::onCurrentUserChanged);
 

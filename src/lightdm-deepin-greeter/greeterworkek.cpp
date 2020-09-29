@@ -213,6 +213,7 @@ void GreeterWorkek::oneKeyLogin()
 {
     // 多用户一键登陆
     QDBusPendingCall call = m_AuthenticateInter->PreOneKeyLogin(AuthFlag::Fingerprint);
+    m_AuthenticateInter->setSync(false);
     QDBusPendingCallWatcher *watcher = new QDBusPendingCallWatcher(call, this);
     connect(watcher, &QDBusPendingCallWatcher::finished, [ = ] {
         if (!call.isError())

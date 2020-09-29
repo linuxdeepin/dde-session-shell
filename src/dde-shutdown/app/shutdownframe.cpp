@@ -35,6 +35,11 @@ ShutdownFrame::ShutdownFrame(SessionBaseModel *const model, QWidget *parent)
     : FullscreenBackground(parent)
     , m_model(model)
 {
+    QTimer::singleShot(100, this, [ = ] {
+        auto user = model->currentUser();
+        if (user != nullptr) updateBackground(QPixmap(user->desktopBackgroundPath()));
+    });
+
     m_shutdownFrame = new ContentWidget(this);
     m_shutdownFrame->setModel(model);
     setContent(m_shutdownFrame);

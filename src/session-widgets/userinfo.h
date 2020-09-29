@@ -121,7 +121,14 @@ public:
     bool is24HourFormat() const override;
 
 private:
+    void configAccountInfo(const QString& account_config);
+
+private:
     UserInter *m_userInter;
+
+    QString m_avatar;
+    QString m_greeterBackground;
+    QString m_desktopBackground;
 };
 
 class ADDomainUser : public User

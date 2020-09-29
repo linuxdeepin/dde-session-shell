@@ -1,10 +1,22 @@
 #include "userinfo.h"
+#include "src/global_util/constants.h"
 
 #include <unistd.h>
 #include <pwd.h>
 #include <grp.h>
 
 static const std::vector<uint> DEFAULT_WAIT_TIME = {3, 5, 15, 60, 1440};
+
+static QString userPwdName(__uid_t uid)
+{
+    if (uid < 1000) return QString();
+
+    struct passwd *pw = nullptr;
+    /* Fetch passwd structure (contains first group ID for user) */
+    pw = getpwuid(uid);
+
+    return QString().fromLocal8Bit(pw->pw_name);
+}
 
 static bool checkUserIsNoPWGrp(User const *user)
 {
@@ -214,7 +226,11 @@ NativeUser::NativeUser(const QString &path, QObject *parent)
     , m_userInter(new UserInter(ACCOUNT_DBUS_SERVICE, path, QDBusConnection::systemBus(), this))
 {
     m_userInter->setSync(false);
-    connect(m_userInter, &UserInter::IconFileChanged, this, &NativeUser::avatarChanged);
+    connect(m_userInter, &UserInter::IconFileChanged, this, [ = ](const QString & avatar) {
+        m_avatar = avatar;
+        emit avatarChanged(avatar);
+    });
+    
     connect(m_userInter, &UserInter::FullNameChanged, this, [ = ](const QString & fullname) {
         m_fullName = fullname;
         emit displayNameChanged(fullname.isEmpty() ? m_userName : fullname);
@@ -234,11 +250,13 @@ NativeUser::NativeUser(const QString &path, QObject *parent)
     });
 
     connect(m_userInter, &UserInter::DesktopBackgroundsChanged, this, [ = ] (const QStringList & paths) {
-        emit desktopBackgroundPathChanged(toLocalFile(paths.first()));
+        m_desktopBackground = toLocalFile(paths.first());
+        emit desktopBackgroundPathChanged(m_desktopBackground);
     });
 
     connect(m_userInter, &UserInter::GreeterBackgroundChanged, this, [ = ](const QString & path) {
-        emit greeterBackgroundPathChanged(toLocalFile(path));
+        m_greeterBackground = toLocalFile(path);
+        emit greeterBackgroundPathChanged(m_greeterBackground);
     });
 
     connect(m_userInter, &UserInter::PasswordStatusChanged, this, [ = ](const QString& status){
@@ -257,7 +275,10 @@ NativeUser::NativeUser(const QString &path, QObject *parent)
 
     // intercept account dbus path uid
     m_uid = path.mid(QString(ACCOUNTS_DBUS_PREFIX).size()).toUInt();
+    m_userName = userPwdName(m_uid);
     m_noPasswdGrp = checkUserIsNoPWGrp(this);
+
+    configAccountInfo(DDESESSIONCC::CONFIG_FILE + m_userName);
 
     QDBusPendingCall pass_expired = m_userInter->IsPasswordExpired();
     QDBusPendingCallWatcher *watcher = new QDBusPendingCallWatcher(pass_expired, this);
@@ -272,6 +293,18 @@ NativeUser::NativeUser(const QString &path, QObject *parent)
     setPath(path);
 }
 
+void NativeUser::configAccountInfo(const QString &account_config)
+{
+    QSettings settings(account_config, QSettings::IniFormat);
+    settings.beginGroup("User");
+
+    m_avatar = settings.value("Icon").toString();
+    m_greeterBackground = toLocalFile(settings.value("GreeterBackground").toString());
+
+    QStringList desktop_backgrounds = settings.value("DesktopBackgrounds").toString().split(";");
+    if(!desktop_backgrounds.isEmpty()) m_desktopBackground = toLocalFile(desktop_backgrounds.first());
+}
+
 void NativeUser::setCurrentLayout(const QString &layout)
 {
     m_userInter->SetLayout(layout);
@@ -284,18 +317,20 @@ QString NativeUser::displayName() const
 
 QString NativeUser::avatarPath() const
 {
-    return m_userInter->iconFile();
+    m_userInter->iconFile();
+    return m_avatar;
 }
 
 QString NativeUser::greeterBackgroundPath() const
 {
-    return m_userInter->greeterBackground();
+    m_userInter->greeterBackground();
+    return m_greeterBackground;
 }
 
 QString NativeUser::desktopBackgroundPath() const
 {
-    QStringList backgrounds = m_userInter->desktopBackgrounds();
-    return backgrounds.isEmpty() ? QString() : backgrounds.first();
+    m_userInter->desktopBackgrounds();
+    return m_desktopBackground;
 }
 
 QStringList NativeUser::kbLayoutList()

@@ -43,6 +43,11 @@ LockFrame::LockFrame(SessionBaseModel *const model, QWidget *parent)
 {
     qDebug() << "LockFrame geometry:" << geometry();
 
+    QTimer::singleShot(0, this, [ = ] {
+        auto user = model->currentUser();
+        if (user != nullptr) updateBackground(QPixmap(user->greeterBackgroundPath()));
+    });
+
     Hibernate = new HibernateWidget(this);
     Hibernate->hide();
     m_content = new LockContent(model);
