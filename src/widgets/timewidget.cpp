@@ -90,9 +90,9 @@ void TimeWidget::updateLocale(const QLocale &locale)
 void TimeWidget::refreshTime()
 {
     if (m_use24HourFormat) {
-        m_timeLabel->setText(QDateTime::currentDateTime().toString(shortTimeFormat.at(m_shortTimeIndex)));
+        m_timeLabel->setText(m_locale.toString(QDateTime::currentDateTime(), shortTimeFormat.at(m_shortTimeIndex)));
     } else {
-        m_timeLabel->setText(QDateTime::currentDateTime().toString(shortTimeFormat.at(m_shortTimeIndex) + " AP"));
+        m_timeLabel->setText(m_locale.toString(QDateTime::currentDateTime(), shortTimeFormat.at(m_shortTimeIndex) + " AP"));
     }
 
     QString date_format = shortDateFormat.at(m_shortDateIndex) + " " + weekdayFormat.at(m_weekdayIndex);
