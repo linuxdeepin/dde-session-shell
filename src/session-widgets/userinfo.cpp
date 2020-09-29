@@ -257,6 +257,7 @@ NativeUser::NativeUser(const QString &path, QObject *parent)
 
     // intercept account dbus path uid
     m_uid = path.mid(QString(ACCOUNTS_DBUS_PREFIX).size()).toUInt();
+    m_noPasswdGrp = checkUserIsNoPWGrp(this);
 
     QDBusPendingCall pass_expired = m_userInter->IsPasswordExpired();
     QDBusPendingCallWatcher *watcher = new QDBusPendingCallWatcher(pass_expired, this);

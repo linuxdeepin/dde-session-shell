@@ -100,7 +100,6 @@ GreeterWorkek::GreeterWorkek(SessionBaseModel *const model, QObject *parent)
         if (QFile::exists("/etc/deepin/no_suspend"))
             m_model->setCanSleep(false);
 
-        checkDBusServer(m_accountsInter->isValid());
         oneKeyLogin();
     }
 
@@ -184,8 +183,9 @@ void GreeterWorkek::onUserAdded(const QString &user)
         if (m_model->userList().isEmpty() || m_model->userList().first()->type() == User::ADDomain) {
             m_model->setCurrentUser(user_ptr);
 
-            if (m_model->currentType() == SessionBaseModel::AuthType::LightdmType)
+            if (m_model->currentType() == SessionBaseModel::AuthType::LightdmType) {
                 userAuthForLightdm(user_ptr);
+            }
         }
     }
 
