@@ -1,7 +1,7 @@
 #include "dbuslockagent.h"
 #include "src/session-widgets/sessionbasemodel.h"
 
-DBusLockAgent::DBusLockAgent(QObject *parent) : QObject(parent)
+DBusLockAgent::DBusLockAgent(QObject *parent) : QObject(parent), m_model(nullptr)
 {
 
 }
