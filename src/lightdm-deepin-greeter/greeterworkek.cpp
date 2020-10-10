@@ -172,7 +172,6 @@ void GreeterWorkek::authUser(const QString &password)
     else {
         if (m_greeter->inAuthentication()) {
             m_greeter->respond(password);
-            m_password.clear();
         }
         else {
             m_greeter->authenticate(user->name());
@@ -266,9 +265,9 @@ void GreeterWorkek::prompt(QString text, QLightDM::Greeter::PromptType type)
     case QLightDM::Greeter::PromptTypeSecret:
         m_authenticating = false;
 
-        if (msg.isEmpty()) break;
+        if (m_password.isEmpty()) break;
 
-        if (!m_password.isEmpty()) {
+        if (msg.isEmpty()) {
             m_greeter->respond(m_password);
         } else {
             emit m_model->authFaildMessage(msg);
@@ -330,6 +329,7 @@ void GreeterWorkek::authenticationComplete()
         return;
     }
 
+    m_password.clear();
     m_model->currentUser()->resetLock();
 
     switch (m_model->powerAction()) {
