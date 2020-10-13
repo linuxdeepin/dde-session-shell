@@ -12,6 +12,9 @@ ShutdownWorker::ShutdownWorker(SessionBaseModel * const model, QObject *parent)
     if (valueByQSettings<bool>("", "loginPromptAvatar", true)) {
         initDBus();
         initData();
+
+        m_currentUserUid = getuid();
+        onUserAdded(ACCOUNTS_DBUS_PREFIX + QString::number(m_currentUserUid));
         model->setCurrentUser(model->findUserByUid(getuid()));
     }
 

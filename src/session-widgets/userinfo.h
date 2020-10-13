@@ -23,6 +23,13 @@ public:
         ADDomain,
     };
 
+    struct lockData {
+        std::vector<uint> waitTime; //可设置的等待时间限制数组
+        uint limitTryNum; //可设置的锁定次数
+        uint lockTime; //当前的锁定时间
+        uint tryNum; //尝试的次数记录
+    } m_lockData;
+
     User(QObject *parent);
     User(const User &user);
 
@@ -77,16 +84,12 @@ public:
     void onLockTimeOut();
 
 protected:
-    struct lockData {
-        std::vector<uint> waitTime; //可设置的等待时间限制数组
-        uint limitTryNum; //可设置的锁定次数
-        uint lockTime; //当前的锁定时间
-        uint tryNum; //尝试的次数记录
-    }m_lockData;
-
     bool m_isLogind;
     bool m_isLock;
     bool m_isServer = false;
+    bool m_noPasswdGrp = true;
+    bool m_isPasswdExpired = false;
+
     uid_t m_uid = INT_MAX;
     QString m_userName;
     QString m_fullName;
@@ -118,7 +121,14 @@ public:
     bool is24HourFormat() const override;
 
 private:
+    void configAccountInfo(const QString& account_config);
+
+private:
     UserInter *m_userInter;
+
+    QString m_avatar;
+    QString m_greeterBackground;
+    QString m_desktopBackground;
 };
 
 class ADDomainUser : public User

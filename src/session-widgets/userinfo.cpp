@@ -1,10 +1,22 @@
 #include "userinfo.h"
+#include "src/global_util/constants.h"
 
 #include <unistd.h>
 #include <pwd.h>
 #include <grp.h>
 
 static const std::vector<uint> DEFAULT_WAIT_TIME = {3, 5, 15, 60, 1440};
+
+static QString userPwdName(__uid_t uid)
+{
+    if (uid < 1000) return QString();
+
+    struct passwd *pw = nullptr;
+    /* Fetch passwd structure (contains first group ID for user) */
+    pw = getpwuid(uid);
+
+    return QString().fromLocal8Bit(pw->pw_name);
+}
 
 static bool checkUserIsNoPWGrp(User const *user)
 {
@@ -213,22 +225,42 @@ NativeUser::NativeUser(const QString &path, QObject *parent)
     : User(parent)
     , m_userInter(new UserInter(ACCOUNT_DBUS_SERVICE, path, QDBusConnection::systemBus(), this))
 {
-    connect(m_userInter, &UserInter::IconFileChanged, this, &NativeUser::avatarChanged);
+    m_userInter->setSync(false);
+    connect(m_userInter, &UserInter::IconFileChanged, this, [ = ](const QString & avatar) {
+        m_avatar = avatar;
+        emit avatarChanged(avatar);
+    });
+    
     connect(m_userInter, &UserInter::FullNameChanged, this, [ = ](const QString & fullname) {
         m_fullName = fullname;
         emit displayNameChanged(fullname.isEmpty() ? m_userName : fullname);
     });
+
     connect(m_userInter, &UserInter::UserNameChanged, this, [ = ](const QString & user_name) {
         m_userName = user_name;
         emit displayNameChanged(m_fullName.isEmpty() ? m_userName : m_fullName);
     });
 
-    connect(m_userInter, &UserInter::DesktopBackgroundsChanged, this, [ = ] {
-        emit desktopBackgroundPathChanged(desktopBackgroundPath());
+    connect(m_userInter, &UserInter::UidChanged, this, [ = ](const QString & uid) {
+        m_uid = uid.toUInt();
+    });
+
+    connect(m_userInter, &UserInter::LocaleChanged, this, [ = ](const QString & locale) {
+        m_locale = locale;
+    });
+
+    connect(m_userInter, &UserInter::DesktopBackgroundsChanged, this, [ = ] (const QStringList & paths) {
+        m_desktopBackground = toLocalFile(paths.first());
+        emit desktopBackgroundPathChanged(m_desktopBackground);
     });
 
     connect(m_userInter, &UserInter::GreeterBackgroundChanged, this, [ = ](const QString & path) {
-        emit greeterBackgroundPathChanged(toLocalFile(path));
+        m_greeterBackground = toLocalFile(path);
+        emit greeterBackgroundPathChanged(m_greeterBackground);
+    });
+
+    connect(m_userInter, &UserInter::PasswordStatusChanged, this, [ = ](const QString& status){
+        m_noPasswdGrp = (status == "NP" || checkUserIsNoPWGrp(this));
     });
 
     connect(m_userInter, &UserInter::LocaleChanged, this, &NativeUser::setLocale);
@@ -237,11 +269,40 @@ NativeUser::NativeUser(const QString &path, QObject *parent)
     connect(m_userInter, &UserInter::NoPasswdLoginChanged, this, &NativeUser::noPasswdLoginChanged);
     connect(m_userInter, &UserInter::Use24HourFormatChanged, this, &NativeUser::use24HourFormatChanged);
 
-    m_userName = m_userInter->userName();
-    m_uid = m_userInter->uid().toInt();
-    m_locale = m_userInter->locale();
+    m_userInter->userName();
+    m_userInter->locale();
+    m_userInter->passwordStatus();
+
+    // intercept account dbus path uid
+    m_uid = path.mid(QString(ACCOUNTS_DBUS_PREFIX).size()).toUInt();
+    m_userName = userPwdName(m_uid);
+    m_noPasswdGrp = checkUserIsNoPWGrp(this);
+
+    configAccountInfo(DDESESSIONCC::CONFIG_FILE + m_userName);
+
+    QDBusPendingCall pass_expired = m_userInter->IsPasswordExpired();
+    QDBusPendingCallWatcher *watcher = new QDBusPendingCallWatcher(pass_expired, this);
+    connect(watcher, &QDBusPendingCallWatcher::finished, [ = ] {
+         QDBusReply<bool> reply = pass_expired.reply();
+        if (!pass_expired.isError() && reply.isValid()) {
+            m_isPasswdExpired = reply.value();
+        }
+        watcher->deleteLater();
+    });
 
     setPath(path);
+}
+
+void NativeUser::configAccountInfo(const QString &account_config)
+{
+    QSettings settings(account_config, QSettings::IniFormat);
+    settings.beginGroup("User");
+
+    m_avatar = settings.value("Icon").toString();
+    m_greeterBackground = toLocalFile(settings.value("GreeterBackground").toString());
+
+    QStringList desktop_backgrounds = settings.value("DesktopBackgrounds").toString().split(";");
+    if(!desktop_backgrounds.isEmpty()) m_desktopBackground = toLocalFile(desktop_backgrounds.first());
 }
 
 void NativeUser::setCurrentLayout(const QString &layout)
@@ -251,23 +312,25 @@ void NativeUser::setCurrentLayout(const QString &layout)
 
 QString NativeUser::displayName() const
 {
-    const QString &fullname = m_userInter->fullName();
-    return fullname.isEmpty() ? name() : fullname;
+    return m_fullName.isEmpty() ? m_userName : m_fullName;
 }
 
 QString NativeUser::avatarPath() const
 {
-    return m_userInter->iconFile();
+    m_userInter->iconFile();
+    return m_avatar;
 }
 
 QString NativeUser::greeterBackgroundPath() const
 {
-    return toLocalFile(m_userInter->greeterBackground());
+    m_userInter->greeterBackground();
+    return m_greeterBackground;
 }
 
 QString NativeUser::desktopBackgroundPath() const
 {
-    return toLocalFile(m_userInter->desktopBackgrounds().first());
+    m_userInter->desktopBackgrounds();
+    return m_desktopBackground;
 }
 
 QStringList NativeUser::kbLayoutList()
@@ -282,20 +345,18 @@ QString NativeUser::currentKBLayout()
 
 bool NativeUser::isNoPasswdGrp() const
 {
-    return (m_userInter->passwordStatus() == "NP" || checkUserIsNoPWGrp(this));
+    return m_noPasswdGrp;
 }
 
 bool NativeUser::isPasswordExpired() const
 {
-    QDBusPendingReply<bool> replay = m_userInter->IsPasswordExpired();
-    replay.waitForFinished();
-    return !replay.isError() && m_userInter->IsPasswordExpired();
+    return m_isPasswdExpired;
 }
 
 bool NativeUser::isUserIsvalid() const
 {
     //无效用户的时候m_userInter是有效的
-    return m_userInter->isValid() && !m_userName.isEmpty();
+    return m_userInter->isValid();
 }
 
 bool NativeUser::is24HourFormat() const

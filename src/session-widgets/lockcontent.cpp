@@ -18,7 +18,6 @@
 LockContent::LockContent(SessionBaseModel *const model, QWidget *parent)
     : SessionBaseWindow(parent)
     , m_model(model)
-    , m_imageBlurInter(new ImageBlur("com.deepin.daemon.Accounts", "/com/deepin/daemon/ImageBlur", QDBusConnection::systemBus(), this))
     , m_virtualKB(nullptr)
     , m_translator(new QTranslator)
     , m_userLoginInfo(new UserLoginInfo(model))
@@ -111,7 +110,6 @@ LockContent::LockContent(SessionBaseModel *const model, QWidget *parent)
             emit LockContent::restoreMode();
         });
     });
-    connect(m_imageBlurInter, &ImageBlur::BlurDone, this, &LockContent::onBlurDone);
 
     QTimer::singleShot(0, this, [ = ] {
         onCurrentUserChanged(model->currentUser());
@@ -161,11 +159,13 @@ void LockContent::onCurrentUserChanged(std::shared_ptr<User> user)
     //TODO: refresh blur image
     QTimer::singleShot(0, this, [ = ] {
         if (userInter) {
-            m_timeWidget->setWeekdayFormatType(userInter->weekdayFormat());
-            m_timeWidget->setShortDateFormat(userInter->shortDateFormat());
-            m_timeWidget->setShortTimeFormat(userInter->shortTimeFormat());
+            userInter->weekdayFormat();
+            userInter->shortDateFormat();
+            userInter->shortTimeFormat();
         }
-        updateTimeFormat(user->is24HourFormat());
+        user->is24HourFormat();
+
+        m_user->greeterBackgroundPath();
     });
 
     m_logoWidget->updateLocale(m_user->locale());
@@ -301,14 +301,6 @@ void LockContent::updateTimeFormat(bool use24)
         m_timeWidget->updateLocale(m_user->locale());
         m_timeWidget->set24HourFormat(use24);
     }
-}
-
-void LockContent::onBlurDone(const QString &source, const QString &blur, bool status)
-{
-    const QString &sourcePath = QUrl(source).isLocalFile() ? QUrl(source).toLocalFile() : source;
-
-    if (status && m_model->currentUser()->greeterBackgroundPath() == sourcePath)
-        emit requestBackground(blur);
 }
 
 void LockContent::toggleVirtualKB()

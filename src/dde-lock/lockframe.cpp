@@ -45,7 +45,7 @@ LockFrame::LockFrame(SessionBaseModel *const model, QWidget *parent)
 
     QTimer::singleShot(0, this, [ = ] {
         auto user = model->currentUser();
-        if (user != nullptr) updateBackground(user->greeterBackgroundPath());
+        if (user != nullptr) updateBackground(QPixmap(user->greeterBackgroundPath()));
     });
 
     Hibernate = new HibernateWidget(this);
@@ -78,6 +78,7 @@ LockFrame::LockFrame(SessionBaseModel *const model, QWidget *parent)
         qDebug() << "SessionBaseModel::authFinished -- success status : " << success;
         m_content->beforeUnlockAction(success);
     });
+
     connect(m_login1Inter, &DBusLogin1Manager::PrepareForSleep, this, [this](bool isSleep){
         m_prePreparingSleep = m_preparingSleep;
         m_preparingSleep = isSleep;

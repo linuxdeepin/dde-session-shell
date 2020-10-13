@@ -176,7 +176,7 @@ void sig_crash(int sig)
             size_t pos2 = symbol.find_last_of("]");
             std::string address = symbol.substr(pos1 + 1, pos2 - pos1 - 1);
             char cmd[128] = {0};
-            sprintf(cmd, "addr2line -C -f -e dde-lock %s", address.c_str()); // 打印当前进程的id和地址
+            sprintf(cmd, "addr2line -C -f -e %s", address.c_str()); // 打印当前进程的id和地址
             FILE *fPipe = popen(cmd, "r");
             if (fPipe != nullptr) {
                 char buff[1024];

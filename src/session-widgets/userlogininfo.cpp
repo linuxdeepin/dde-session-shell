@@ -64,8 +64,8 @@ void UserLoginInfo::setUser(std::shared_ptr<User> user)
     m_userLoginWidget->updateAuthType(m_model->currentType());
     m_userLoginWidget->updateIsLockNoPassword(m_model->isLockNoPassword());
     m_userLoginWidget->disablePassword(user.get()->isLock(), user->lockTime());
-    m_userLoginWidget->setKBLayoutList(user->kbLayoutList());
-    m_userLoginWidget->setDefaultKBLayout(user->currentKBLayout());
+    user->kbLayoutList();
+    user->currentKBLayout();
 
     m_userExpiredWidget->setDisplayName(user->displayName());
     m_userExpiredWidget->setUserName(user->name());
