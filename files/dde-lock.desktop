@@ -1,0 +1,8 @@
+[Desktop Entry]
+Name=Deepin Lock
+Comment=Deepin Lock
+Encoding=UTF-8
+Exec=/usr/bin/dde-lock
+OnlyShowIn=''
+Type=Application
+
