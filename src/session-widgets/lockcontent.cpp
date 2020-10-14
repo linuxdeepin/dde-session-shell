@@ -171,6 +171,19 @@ void LockContent::onCurrentUserChanged(std::shared_ptr<User> user)
     m_logoWidget->updateLocale(m_user->locale());
 }
 
+void LockContent::pushPasswordFrame()
+{
+    if (m_model->currentModeState() == SessionBaseModel::ModeStatus::ConfirmPasswordMode) {
+        m_model->setAbortConfirm(false);
+    } else {
+        restoreMode();
+        setCenterContent(m_userLoginInfo->getUserLoginWidget());
+    }
+
+    // hide keyboardlayout widget
+    m_userLoginInfo->hideKBLayout();
+}
+
 void LockContent::pushUserFrame()
 {
     if(m_model->isServerModel())
@@ -237,15 +250,7 @@ void LockContent::onStatusChanged(SessionBaseModel::ModeStatus status)
 
 void LockContent::mouseReleaseEvent(QMouseEvent *event)
 {
-    if (m_model->currentModeState() == SessionBaseModel::ModeStatus::ConfirmPasswordMode) {
-        m_model->setAbortConfirm(false);
-    } else {
-        restoreMode();
-        setCenterContent(m_userLoginInfo->getUserLoginWidget());
-    }
-
-    // hide keyboardlayout widget
-    m_userLoginInfo->hideKBLayout();
+    pushPasswordFrame();
 
     return SessionBaseWindow::mouseReleaseEvent(event);
 }

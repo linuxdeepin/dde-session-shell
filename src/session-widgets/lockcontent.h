@@ -35,6 +35,7 @@ signals:
     void unlockActionFinish();
 
 public slots:
+    void pushPasswordFrame();
     void pushUserFrame();
     void pushConfirmFrame();
     void pushChangeFrame();

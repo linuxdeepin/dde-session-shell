@@ -80,6 +80,9 @@ LockFrame::LockFrame(SessionBaseModel *const model, QWidget *parent)
     });
 
     connect(m_login1Inter, &DBusLogin1Manager::PrepareForSleep, this, [this](bool isSleep){
+        if (isSleep) {
+            m_content->pushPasswordFrame();
+        }
         m_prePreparingSleep = m_preparingSleep;
         m_preparingSleep = isSleep;
     });
