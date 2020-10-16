@@ -188,6 +188,11 @@ void GreeterWorkek::onUserAdded(const QString &user)
         }
     }
 
+    if (!user_ptr->isLogin() && user_ptr->uid() == m_currentUserUid) {
+        m_model->setCurrentUser(user_ptr);
+        userAuthForLightdm(user_ptr);
+    }
+
     if (user_ptr->uid() == m_lastLogoutUid) {
         m_model->setLastLogoutUser(user_ptr);
     }
@@ -215,8 +220,7 @@ void GreeterWorkek::oneKeyLogin()
     m_AuthenticateInter->setSync(false);
     QDBusPendingCallWatcher *watcher = new QDBusPendingCallWatcher(call, this);
     connect(watcher, &QDBusPendingCallWatcher::finished, [ = ] {
-        if (!call.isError())
-        {
+        if (!call.isError()) {
             QDBusReply<QString> reply = call.reply();
             qDebug() << "one key Login User Name is : " << reply.value();
 
@@ -229,9 +233,10 @@ void GreeterWorkek::oneKeyLogin()
             qWarning() << "get current workspace background error: " << call.error().message();
         }
 
-        onCurrentUserChanged(m_lockInter->CurrentUser());
         watcher->deleteLater();
     });
+
+    onCurrentUserChanged(m_lockInter->CurrentUser());
 }
 
 void GreeterWorkek::onCurrentUserChanged(const QString &user)
@@ -239,13 +244,6 @@ void GreeterWorkek::onCurrentUserChanged(const QString &user)
     const QJsonObject obj = QJsonDocument::fromJson(user.toUtf8()).object();
     m_currentUserUid = static_cast<uint>(obj["Uid"].toInt());
 
-    for (std::shared_ptr<User> user_ptr : m_model->userList()) {
-        if (!user_ptr->isLogin() && user_ptr->uid() == m_currentUserUid) {
-            m_model->setCurrentUser(user_ptr);
-            userAuthForLightdm(user_ptr);
-            break;
-        }
-    }
     emit m_model->switchUserFinished();
 }
 
