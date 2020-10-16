@@ -100,6 +100,8 @@ GreeterWorkek::GreeterWorkek(SessionBaseModel *const model, QObject *parent)
         if (QFile::exists("/etc/deepin/no_suspend"))
             m_model->setCanSleep(false);
 
+        // 确保Accounts服务有效
+        checkDBusServer(m_accountsInter->isValid());
         oneKeyLogin();
     }
 
