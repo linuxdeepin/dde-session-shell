@@ -70,7 +70,7 @@ void LogoWidget::initUI() {
     //修复社区版deepin的显示不全的问题 2020/04/11
     m_logoLabel->setScaledContents(true);
 
-    m_logoVersionLabel = new QLabel;
+    m_logoVersionLabel = new DLabel;
     m_logoVersionLabel->setObjectName("LogoVersion");
 #ifdef SHENWEI_PLATFORM
     QPalette pe;

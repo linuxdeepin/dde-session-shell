@@ -29,6 +29,9 @@
 #include <QLabel>
 #include <QHBoxLayout>
 #include <QVBoxLayout>
+#include <DLabel>
+
+DWIDGET_USE_NAMESPACE
 
 class LogoWidget: public QFrame
 {
@@ -43,7 +46,7 @@ private:
     void initUI();
     QString getVersion();
     QLabel* m_logoLabel;
-    QLabel* m_logoVersionLabel;
+    DLabel* m_logoVersionLabel;
     QVBoxLayout* m_logoLeftSideLayout;
     QVBoxLayout* m_logoRightSideLayout;
     QHBoxLayout* m_logoLayout;
