@@ -244,6 +244,13 @@ void GreeterWorkek::onCurrentUserChanged(const QString &user)
     const QJsonObject obj = QJsonDocument::fromJson(user.toUtf8()).object();
     m_currentUserUid = static_cast<uint>(obj["Uid"].toInt());
 
+    for (std::shared_ptr<User> user_ptr : m_model->userList()) {
+        if (!user_ptr->isLogin() && user_ptr->uid() == m_currentUserUid) {
+            m_model->setCurrentUser(user_ptr);
+            userAuthForLightdm(user_ptr);
+            break;
+        }
+    }
     emit m_model->switchUserFinished();
 }
 
