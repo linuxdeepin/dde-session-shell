@@ -36,7 +36,6 @@ find_package(Qt5 COMPONENTS
     Concurrent
     X11Extras
     DBus
-    Multimedia
     Xml
     Svg
 REQUIRED)
@@ -52,7 +51,6 @@ set(Qt_LIBS
     Qt5::DBus
     Qt5::Widgets
     Qt5::X11Extras
-    Qt5::Multimedia
     Qt5::Xml
     Qt5::Svg
 )
@@ -118,7 +116,6 @@ set(GLOBAL_UTILS_SRCS
     ./src/global_util/dbus/dbusmediaplayer2.h
     ./src/global_util/dbus/dbusvariant.h
     ./src/global_util/dbus/dbuslogin1manager.h
-    ./src/global_util/dbus/dbussessionmanager.h
     ./src/global_util/dbus/dbuscontrolcenter.h
     ./src/global_util/dbus/dbusinputdevices.h
     ./src/global_util/dbus/dbushotzone.h
@@ -133,7 +130,6 @@ set(GLOBAL_UTILS_SRCS
     ./src/global_util/xkbparser.cpp
     ./src/global_util/dbus/dbusdisplaymanager.cpp
     ./src/global_util/dbus/dbuslogin1manager.cpp
-    ./src/global_util/dbus/dbussessionmanager.cpp
     ./src/global_util/dbus/dbuscontrolcenter.cpp
     ./src/global_util/dbus/displayinterface.cpp
     ./src/global_util/dbus/dbusvariant.cpp
@@ -302,7 +298,6 @@ target_link_libraries(dde-lock PRIVATE
     ${Qt5X11Extras_LIBRARIES}
     ${Qt5DBus_LIBRARIES}
     ${Qt5Network_LIBRARIES}
-    ${Qt5Multimedia_LIBRARIES}
     ${QGSettings_LIBRARIES}
 )
 
@@ -334,7 +329,6 @@ target_link_libraries(dde-shutdown PRIVATE
     ${Qt5X11Extras_LIBRARIES}
     ${Qt5DBus_LIBRARIES}
     ${Qt5Network_LIBRARIES}
-    ${Qt5Multimedia_LIBRARIES}
     ${QGSettings_LIBRARIES}
 )
 
@@ -371,7 +365,6 @@ target_link_libraries(lightdm-deepin-greeter PRIVATE
     ${Qt5X11Extras_LIBRARIES}
     ${Qt5DBus_LIBRARIES}
     ${Qt5Network_LIBRARIES}
-    ${Qt5Multimedia_LIBRARIES}
     ${QGSettings_LIBRARIES}
     ${Greeter_LIBRARIES}
 )

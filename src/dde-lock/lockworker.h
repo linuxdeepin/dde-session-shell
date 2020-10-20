@@ -14,11 +14,9 @@
 
 #include <com_deepin_daemon_logined.h>
 #include <com_deepin_daemon_accounts.h>
-#include <com_deepin_sessionmanager.h>
 
 using LoginedInter = com::deepin::daemon::Logined;
 using AccountsInter = com::deepin::daemon::Accounts;
-using SessionManager = com::deepin::SessionManager;
 
 class SessionBaseModel;
 class LockWorker : public Auth::AuthInterface, public DeepinAuthInterface
@@ -62,7 +60,6 @@ private:
     DeepinAuthFramework *m_authFramework;
     QString m_password;
     QMap<std::shared_ptr<User>, bool> m_lockUser;
-    SessionManager *m_sessionManager;
 };
 
 #endif // LOCKWORKER_H

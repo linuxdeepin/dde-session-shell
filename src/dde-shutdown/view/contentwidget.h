@@ -40,13 +40,17 @@
 #include "src/global_util/dbus/dbusvariant.h"
 #include "src/global_util/dbus/dbuslogin1manager.h"
 #include "src/dde-shutdown/common.h"
-#include "src/global_util/dbus/dbussessionmanager.h"
+
 #include "systemmonitor.h"
 #include "warningview.h"
 #include "inhibitwarnview.h"
 #include "switchos_interface.h"
 
+#include <com_deepin_sessionmanager.h>
+
+//com.deepin.SessionManager接口统一使用frameworkdbus中的声明
 using Appearance = com::deepin::daemon::Appearance;
+using SessionManager = com::deepin::SessionManager;
 
 class MultiUsersWarningView;
 class SessionBaseModel;
@@ -128,7 +132,7 @@ private:
 
     bool m_confirm = false;
 
-    DBusSessionManagerInterface *m_sessionInterface = nullptr;
+    SessionManager *m_sessionInterface = nullptr;
     SystemMonitor *m_systemMonitor;
     com::deepin::wm *m_wmInter;
     Appearance *m_dbusAppearance = nullptr;

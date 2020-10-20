@@ -260,7 +260,7 @@ void ContentWidget::initConnect()
 
 void ContentWidget::initData()
 {
-    m_sessionInterface = new DBusSessionManagerInterface("com.deepin.SessionManager", "/com/deepin/SessionManager",
+    m_sessionInterface = new SessionManager("com.deepin.SessionManager", "/com/deepin/SessionManager",
                                                          QDBusConnection::sessionBus(), this);
 }
 

@@ -5,6 +5,7 @@
 
 #include <QObject>
 #include <memory>
+//com.deepin.SessionManager接口统一使用frameworkdbus中的声明
 #include <com_deepin_sessionmanager.h>
 
 class SessionBaseModel : public QObject

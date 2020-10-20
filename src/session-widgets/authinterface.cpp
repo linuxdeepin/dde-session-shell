@@ -49,6 +49,7 @@ AuthInterface::AuthInterface(SessionBaseModel *const model, QObject *parent)
     , m_accountsInter(new AccountsInter(ACCOUNT_DBUS_SERVICE, ACCOUNT_DBUS_PATH, QDBusConnection::systemBus(), this))
     , m_loginedInter(new LoginedInter(ACCOUNT_DBUS_SERVICE, "/com/deepin/daemon/Logined", QDBusConnection::systemBus(), this))
     , m_login1Inter(new DBusLogin1Manager("org.freedesktop.login1", "/org/freedesktop/login1", QDBusConnection::systemBus(), this))
+    , m_sessionManager(new SessionManager("com.deepin.SessionManager", "/com/deepin/SessionManager", QDBusConnection::systemBus(), this))
     , m_lastLogoutUid(0)
     , m_loginUserList(0)
 {
@@ -59,6 +60,9 @@ AuthInterface::AuthInterface(SessionBaseModel *const model, QObject *parent)
     } else {
         qWarning() << "m_login1Inter:" << m_login1Inter->lastError().type();
     }
+
+    //将继承子类lockworker中的m_sessionManager对象移动到本父类中
+    m_sessionManager->setSync(false);
 
     if (m_model->currentType() != SessionBaseModel::LightdmType && QGSettings::isSchemaInstalled("com.deepin.dde.sessionshell.control")) {
         m_gsettings = new QGSettings("com.deepin.dde.sessionshell.control", "/com/deepin/dde/sessionshell/control/", this);
@@ -264,13 +268,14 @@ void AuthInterface::checkConfig()
 
 void AuthInterface::checkPowerInfo()
 {
+    //替换接口org.freedesktop.login1 为com.deepin.sessionManager,原接口的是否支持待机和休眠的信息不准确
     QProcessEnvironment env = QProcessEnvironment::systemEnvironment();
     bool can_sleep = env.contains(POWER_CAN_SLEEP) ? QVariant(env.value(POWER_CAN_SLEEP)).toBool()
-                                                   : getGSettings("Power","sleep").toBool() && m_login1Inter->CanSuspend().value().contains("yes");
+                                                   : getGSettings("Power","sleep").toBool() && m_sessionManager->CanSuspend();
     m_model->setCanSleep(can_sleep);
 
     bool can_hibernate = env.contains(POWER_CAN_HIBERNATE) ? QVariant(env.value(POWER_CAN_HIBERNATE)).toBool()
-                                                           : getGSettings("Power","hibernate").toBool() && m_login1Inter->CanHibernate().value().contains("yes");
+                                                           : getGSettings("Power","hibernate").toBool() && m_sessionManager->CanHibernate();
     if (can_hibernate) {
         checkSwap();
     } else {
