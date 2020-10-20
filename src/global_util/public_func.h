@@ -81,7 +81,7 @@ bool isDeepinAuth();
  *
  * @param sig 异常退出信号
  */
-void sig_crash(int sig);
+[[noreturn]] void sig_crash(int sig);
 
 /**
  * @brief 初始化需要捕获的异常信号
