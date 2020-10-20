@@ -245,10 +245,6 @@ NativeUser::NativeUser(const QString &path, QObject *parent)
         m_uid = uid.toUInt();
     });
 
-    connect(m_userInter, &UserInter::LocaleChanged, this, [ = ](const QString & locale) {
-        m_locale = locale;
-    });
-
     connect(m_userInter, &UserInter::DesktopBackgroundsChanged, this, [ = ] (const QStringList & paths) {
         m_desktopBackground = toLocalFile(paths.first());
         emit desktopBackgroundPathChanged(m_desktopBackground);
@@ -300,6 +296,7 @@ void NativeUser::configAccountInfo(const QString &account_config)
 
     m_avatar = settings.value("Icon").toString();
     m_greeterBackground = toLocalFile(settings.value("GreeterBackground").toString());
+    m_locale = settings.value("Locale").toString();
 
     QStringList desktop_backgrounds = settings.value("DesktopBackgrounds").toString().split(";");
     if(!desktop_backgrounds.isEmpty()) m_desktopBackground = toLocalFile(desktop_backgrounds.first());
