@@ -100,6 +100,8 @@ GreeterWorkek::GreeterWorkek(SessionBaseModel *const model, QObject *parent)
         if (QFile::exists("/etc/deepin/no_suspend"))
             m_model->setCanSleep(false);
 
+        checkDBusServer(m_accountsInter->isValid());
+
         oneKeyLogin();
     }
 
@@ -176,6 +178,9 @@ void GreeterWorkek::onUserAdded(const QString &user)
 {
     std::shared_ptr<User> user_ptr(new NativeUser(user));
 
+    if (!user_ptr->isUserIsvalid())
+        return;
+
     user_ptr->setisLogind(isLogined(user_ptr->uid()));
 
     if (m_model->currentUser().get() == nullptr) {
@@ -203,7 +208,7 @@ void GreeterWorkek::onUserAdded(const QString &user)
 void GreeterWorkek::checkDBusServer(bool isvalid)
 {
     if (isvalid) {
-        onUserListChanged(m_accountsInter->userList());
+        m_accountsInter->userList();
     } else {
         // FIXME: 我不希望这样做，但是QThread::msleep会导致无限递归
         QTimer::singleShot(300, this, [ = ] {
