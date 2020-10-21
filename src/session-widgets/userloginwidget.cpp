@@ -593,6 +593,7 @@ void UserLoginWidget::setIsLogin(bool isLogin)
 {
     m_isLogin = isLogin;
     m_loginLabel->setVisible(isLogin);
+    updateNameLabel();
     if (m_isLogin) {
         m_nameFrame->setContentsMargins(0, 0, Margins, 0);
     } else {
@@ -714,7 +715,7 @@ void UserLoginWidget::hidePasswordEditMessage()
 void UserLoginWidget::updateNameLabel()
 {
     int width = m_nameLbl->fontMetrics().width(m_name);
-    int labelMaxWidth = this->width() - 3 * m_nameLayout->spacing();
+    int labelMaxWidth = m_loginLabel->isVisible() ? (this->width() - 11 * m_nameLayout->spacing()) : (this->width() - 3 * m_nameLayout->spacing());
     if (m_loginLabel->isVisible())
         labelMaxWidth -= (m_loginLabel->pixmap()->width() + Margins);
 
