@@ -103,7 +103,7 @@ private:
 
     void currentWorkspaceChanged();
     void updateWallpaper(const QString &path);
-    void onUserListChanged(QList<std::shared_ptr<User>> list);
+    void onUserListChanged(int users_size);
     void enableHibernateBtn(bool enable);
     void enableSleepBtn(bool enable);
     void tryGrabKeyboard();

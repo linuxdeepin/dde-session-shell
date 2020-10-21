@@ -76,6 +76,8 @@ void AuthInterface::setLayout(std::shared_ptr<User> user, const QString &layout)
 
 void AuthInterface::onUserListChanged(const QStringList &list)
 {
+    m_model->setUserListSize(list.size());
+
     QStringList tmpList;
     for (std::shared_ptr<User> u : m_model->userList()) {
         tmpList << ACCOUNTS_DBUS_PREFIX + QString::number(u->uid());

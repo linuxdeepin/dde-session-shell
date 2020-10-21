@@ -63,8 +63,8 @@ void ContentWidget::setModel(SessionBaseModel *const model)
 {
     m_model = model;
 
-    connect(model, &SessionBaseModel::onUserListChanged, this, &ContentWidget::onUserListChanged);
-    onUserListChanged(model->userList());
+    connect(model, &SessionBaseModel::onUserListSizeChanged, this, &ContentWidget::onUserListChanged);
+    onUserListChanged(model->userListSize());
 
     connect(model, &SessionBaseModel::onHasSwapChanged, this, &ContentWidget::enableHibernateBtn);
     enableHibernateBtn(model->hasSwap());
@@ -568,8 +568,10 @@ void ContentWidget::updateWallpaper(const QString &path)
     emit requestBackground(wallpaper);
 }
 
-void ContentWidget::onUserListChanged(QList<std::shared_ptr<User> > list)
+void ContentWidget::onUserListChanged(int users_size)
 {
+    if(users_size == 0) return;   // At least one user
+
     const bool allowShowUserSwitchButton = m_model->allowShowUserSwitchButton();
     const bool alwaysShowUserSwitchButton = m_model->alwaysShowUserSwitchButton();
     bool haveLogindUser = true;
@@ -579,7 +581,7 @@ void ContentWidget::onUserListChanged(QList<std::shared_ptr<User> > list)
     }
     m_switchUserBtn->setVisible((alwaysShowUserSwitchButton ||
                                           (allowShowUserSwitchButton &&
-                                          (list.size() > (m_model->isServerModel() ? 0 : 1)))) &&
+                                          (users_size > (m_model->isServerModel() ? 0 : 1)))) &&
                                           haveLogindUser);
 }
 
@@ -837,7 +839,7 @@ void ContentWidget::recoveryLayout()
     enableSleepBtn(m_model->canSleep());
 
     // check user switch button
-    onUserListChanged(m_model->userList());
+    onUserListChanged(m_model->userListSize());
 
     if (m_warningView != nullptr) {
         m_mainLayout->removeWidget(m_warningView);

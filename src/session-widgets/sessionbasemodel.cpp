@@ -153,6 +153,15 @@ void SessionBaseModel::setCurrentModeState(const ModeStatus &currentModeState)
     emit onStatusChanged(currentModeState);
 }
 
+void SessionBaseModel::setUserListSize(int users_size)
+{
+    if(m_userListSize == users_size) return;
+
+    m_userListSize = users_size;
+
+    emit onUserListSizeChanged(users_size);
+}
+
 void SessionBaseModel::setHasVirtualKB(bool hasVirtualKB)
 {
     if (m_hasVirtualKB == hasVirtualKB) return;

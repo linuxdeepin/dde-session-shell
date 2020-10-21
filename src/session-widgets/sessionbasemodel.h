@@ -67,6 +67,9 @@ public:
     ModeStatus currentModeState() const { return m_currentModeState; }
     void setCurrentModeState(const ModeStatus &currentModeState);
 
+    inline int userListSize() { return m_userListSize; }
+    void setUserListSize(int users_size);
+
     inline bool hasVirtualKB() { return m_hasVirtualKB; }
     void setHasVirtualKB(bool hasVirtualKB);
 
@@ -118,6 +121,7 @@ signals:
     void onStatusChanged(ModeStatus status);
     void onUserListChanged(QList<std::shared_ptr<User>> list);
     void hasVirtualKBChanged(bool hasVirtualKB);
+    void onUserListSizeChanged(int users_size);
     void onHasSwapChanged(bool hasSwap);
     void canSleepChanged(bool canSleep);
     void allowShowUserSwitchButtonChanged(bool allowShowUserSwitchButton);
@@ -143,6 +147,7 @@ private:
     bool m_isBlackMode;
     bool m_isHibernateMode;
     bool m_isLock;
+    int m_userListSize = 0;
     AuthType m_currentType;
     QList<std::shared_ptr<User>> m_userList;
     std::shared_ptr<User> m_currentUser;
