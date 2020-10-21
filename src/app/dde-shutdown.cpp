@@ -90,13 +90,10 @@ int main(int argc, char *argv[])
     translator.load("/usr/share/dde-session-shell/translations/dde-session-shell_" + QLocale::system().name());
     app.installTranslator(&translator);
 
-    // NOTE: it's better to be -h/--show, but some apps may have used the binary to show
-    // the shutdown frame directly, we need to keep the default behavier to that.
-    QCommandLineOption daemon(QStringList() << "d" << "daemon",
-                              "start the program, but do not show the window.");
+    QCommandLineOption showOption(QStringList() << "s" << "show", "show dde-shutdown(hide for default).");
     QCommandLineParser parser;
     parser.addHelpOption();
-    parser.addOption(daemon);
+    parser.addOption(showOption);
     parser.process(app);
 
     QDBusConnection session = QDBusConnection::sessionBus();
@@ -104,7 +101,7 @@ int main(int argc, char *argv[])
             !app.setSingleInstance(QString("dde-shutdown%1").arg(getuid()), DApplication::UserScope)) {
         qWarning() << "dde-shutdown is running...";
 
-        if (!parser.isSet(daemon)) {
+        if (parser.isSet(showOption)) {
             DDBusSender()
             .service(DBUS_NAME)
             .interface(DBUS_NAME)
@@ -153,7 +150,7 @@ int main(int argc, char *argv[])
 
         QObject::connect(model, &SessionBaseModel::visibleChanged, &multi_screen_manager, &MultiScreenManager::startRaiseContentFrame);
 
-        if (!parser.isSet(daemon)) {
+        if (parser.isSet(showOption)) {
             model->setIsShow(true);
         }
 
