@@ -154,6 +154,10 @@ int main(int argc, char *argv[])
             model->setIsShow(true);
         }
 
+        #ifdef QT_DEBUG
+            model->setIsShow(true);
+        #endif
+
         Q_UNUSED(adaptor);
         QDBusConnection::sessionBus().registerObject(DBUS_PATH, dbusAgent);
 
