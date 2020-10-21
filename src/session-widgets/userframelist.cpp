@@ -266,8 +266,12 @@ void UserFrameList::initUI()
     mainLayout->addWidget(m_scrollArea, 0, Qt::AlignCenter);
     setLayout(mainLayout);
 
-    // 设置用户列表支持触屏滑动并且有回弹效果
-    QScroller::grabGesture(m_scrollArea->viewport());
+    // 设置用户列表支持触屏滑动,TouchGesture存在bug,滑动过程中会响应其他事件,打断滑动事件,改为LeftMouseButtonGesture
+    QScroller::grabGesture(m_scrollArea->viewport(), QScroller::LeftMouseButtonGesture);
+    QScroller *scroller = QScroller::scroller(m_scrollArea->viewport());
+    QScrollerProperties sp;
+    sp.setScrollMetric(QScrollerProperties::VerticalOvershootPolicy, QScrollerProperties::OvershootAlwaysOff);
+    scroller->setScrollerProperties(sp);
 }
 
 //切换下一个用户
