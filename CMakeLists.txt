@@ -387,6 +387,9 @@ install(FILES ${QM_FILES}
 
 install(FILES files/lightdm-deepin-greeter.desktop DESTINATION share/xgreeters/)
 install(FILES files/dde-lock.desktop DESTINATION share/applications/)
+install(FILES files/dde-shutdown.desktop DESTINATION share/applications)
+install(FILES files/dde-lock-wapper DESTINATION bin)
+install(FILES files/dde-shutdown-wapper DESTINATION bin)
 install(FILES files/dde-session-shell.conf DESTINATION share/dde-session-shell/)
 
 # services
