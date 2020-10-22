@@ -40,7 +40,6 @@ void VirtualKBInstance::init()
             if (output.isEmpty()) return;
 
             int xid = atoi(output.trimmed().toStdString().c_str());
-
             QWindow * w = QWindow::fromWinId(xid);
             m_virtualKBWidget = QWidget::createWindowContainer(w);
             m_virtualKBWidget->setFixedSize(600, 200);
@@ -52,7 +51,7 @@ void VirtualKBInstance::init()
         });
         connect(m_virtualKBProcess, SIGNAL(finished(int)), this, SLOT(onVirtualKBProcessFinished(int)));
 
-        m_virtualKBProcess->start("onboard", QStringList() << "-e" << "--layout" << "Small");
+        m_virtualKBProcess->start("onboard", QStringList() << "-e" << "--layout" << "Small" << "--size" << "60x5" << "-a");
     }
 }
 
