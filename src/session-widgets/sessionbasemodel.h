@@ -134,7 +134,7 @@ signals:
 private:
     com::deepin::SessionManager *m_sessionManagerInter;
     bool m_hasSwap;
-    bool m_isShow;
+    bool m_isShow = false;
     bool m_isServerModel;
     bool m_canSleep;
     bool m_allowShowUserSwitchButton;
@@ -143,7 +143,7 @@ private:
     bool m_isLockNoPassword;
     bool m_isBlackMode;
     bool m_isHibernateMode;
-    bool m_isLock;
+    bool m_isLock = false;
     int m_userListSize = 0;
     AuthType m_currentType;
     QList<std::shared_ptr<User>> m_userList;
