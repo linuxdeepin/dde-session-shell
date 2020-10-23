@@ -32,6 +32,7 @@
 LoginWindow::LoginWindow(SessionBaseModel *const model, QWidget *parent)
     : FullscreenBackground(parent)
     , m_loginContent(new LoginContent(model, this))
+    , m_model(model)
 {
     QTimer::singleShot(0, this, [ = ] {
         auto user = model->currentUser();
@@ -71,4 +72,20 @@ void LoginWindow::resizeEvent(QResizeEvent *event)
 
     updateBackground(image);
     return FullscreenBackground::resizeEvent(event);
+}
+
+void LoginWindow::showEvent(QShowEvent *event)
+{
+    //greeter界面显示时，需要调用虚拟键盘
+    FullscreenBackground::showEvent(event);
+
+    m_model->setHasVirtualKB(true);
+}
+
+void LoginWindow::hideEvent(QHideEvent *event)
+{
+    //greeter界面隐藏时，需要结束虚拟键盘
+    FullscreenBackground::hideEvent(event);
+
+    m_model->setHasVirtualKB(false);
 }
