@@ -1,7 +1,7 @@
 [Desktop Entry]
 Comment=Deepin Shutdown
 Encoding=UTF-8
-Exec=/usr/bin/dde-shutdown
+Exec=/usr/bin/dde-shutdown -s
 Name=Deepin Shutdown
 OnlyShowIn=''
 Type=Application
