@@ -259,11 +259,16 @@ NativeUser::NativeUser(const QString &path, QObject *parent)
         m_noPasswdGrp = (status == "NP" || checkUserIsNoPWGrp(this));
     });
 
+    //监听用户时制改变信号,并发送信号让界面刷新
+    connect(m_userInter, &UserInter::Use24HourFormatChanged, this, [ = ](bool is24HourFormat) {
+        m_is24HourFormat = is24HourFormat;
+        emit use24HourFormatChanged(m_is24HourFormat);
+    });
+
     connect(m_userInter, &UserInter::LocaleChanged, this, &NativeUser::setLocale);
     connect(m_userInter, &UserInter::HistoryLayoutChanged, this, &NativeUser::kbLayoutListChanged);
     connect(m_userInter, &UserInter::LayoutChanged, this, &NativeUser::currentKBLayoutChanged);
     connect(m_userInter, &UserInter::NoPasswdLoginChanged, this, &NativeUser::noPasswdLoginChanged);
-    connect(m_userInter, &UserInter::Use24HourFormatChanged, this, &NativeUser::use24HourFormatChanged);
 
     m_userInter->userName();
     m_userInter->locale();
@@ -297,6 +302,8 @@ void NativeUser::configAccountInfo(const QString &account_config)
     m_avatar = settings.value("Icon").toString();
     m_greeterBackground = toLocalFile(settings.value("GreeterBackground").toString());
     m_locale = settings.value("Locale").toString();
+    //初始化时读取用户的配置文件中设置的时制格式
+    m_is24HourFormat = settings.value("Use24HourFormat").toBool();
 
     QStringList desktop_backgrounds = settings.value("DesktopBackgrounds").toString().split(";");
     if(!desktop_backgrounds.isEmpty()) m_desktopBackground = toLocalFile(desktop_backgrounds.first());
@@ -361,7 +368,9 @@ bool NativeUser::is24HourFormat() const
     if(!isUserIsvalid() || m_isServer)
         return true;
 
-    return m_userInter->use24HourFormat();
+    //先触发后端刷新取用户时制信号,并返回当前已经取到的时制格式
+    m_userInter->use24HourFormat();
+    return m_is24HourFormat;
 }
 
 ADDomainUser::ADDomainUser(uid_t uid, QObject *parent)

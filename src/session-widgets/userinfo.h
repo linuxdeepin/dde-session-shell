@@ -129,6 +129,7 @@ private:
     QString m_avatar;
     QString m_greeterBackground;
     QString m_desktopBackground;
+    bool m_is24HourFormat;
 };
 
 class ADDomainUser : public User

@@ -147,7 +147,7 @@ void LockContent::onCurrentUserChanged(std::shared_ptr<User> user)
     }
 
     m_currentUserConnects << connect(user.get(), &User::greeterBackgroundPathChanged, this, &LockContent::requestBackground, Qt::UniqueConnection)
-                          << connect(userInter, &UserInter::Use24HourFormatChanged, this, &LockContent::updateTimeFormat, Qt::UniqueConnection)
+                          << connect(user.get(), &User::use24HourFormatChanged, this, &LockContent::updateTimeFormat, Qt::UniqueConnection)
                           << connect(userInter, &UserInter::WeekdayFormatChanged, m_timeWidget, &TimeWidget::setWeekdayFormatType)
                           << connect(userInter, &UserInter::ShortDateFormatChanged, m_timeWidget, &TimeWidget::setShortDateFormat)
                           << connect(userInter, &UserInter::ShortTimeFormatChanged, m_timeWidget, &TimeWidget::setShortTimeFormat);
@@ -162,7 +162,10 @@ void LockContent::onCurrentUserChanged(std::shared_ptr<User> user)
             userInter->shortDateFormat();
             userInter->shortTimeFormat();
         }
-        user->is24HourFormat();
+
+        //获取到用户后,及时刷新界面时间格式
+        bool is24HourFormat = user->is24HourFormat();
+        updateTimeFormat(is24HourFormat);
 
         m_user->greeterBackgroundPath();
     });
