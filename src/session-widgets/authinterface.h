@@ -8,7 +8,6 @@
 #include <com_deepin_daemon_accounts.h>
 #include <com_deepin_daemon_logined.h>
 #include <org_freedesktop_login1_session_self.h>
-#include <com_deepin_sessionmanager.h>
 
 #include <QJsonArray>
 #include <QObject>
@@ -18,8 +17,6 @@
 using AccountsInter = com::deepin::daemon::Accounts;
 using LoginedInter = com::deepin::daemon::Logined;
 using Login1SessionSelf = org::freedesktop::login1::Session;
-//com.deepin.SessionManager接口统一使用frameworkdbus中的声明
-using SessionManager = com::deepin::SessionManager;
 
 class User;
 class SessionBaseModel;
@@ -74,7 +71,6 @@ protected:
     LoginedInter*      m_loginedInter;
     DBusLogin1Manager* m_login1Inter;
     Login1SessionSelf* m_login1SessionSelf = nullptr;
-    SessionManager*    m_sessionManager;
     QGSettings*        m_gsettings = nullptr;
     uint               m_lastLogoutUid;
     uint               m_currentUserUid;

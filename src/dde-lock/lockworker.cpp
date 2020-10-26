@@ -28,9 +28,11 @@ LockWorker::LockWorker(SessionBaseModel *const model, QObject *parent)
     , m_isThumbAuth(false)
     , m_lockInter(new DBusLockService(LOCKSERVICE_NAME, LOCKSERVICE_PATH, QDBusConnection::systemBus(), this))
     , m_hotZoneInter(new DBusHotzone("com.deepin.daemon.Zone", "/com/deepin/daemon/Zone", QDBusConnection::sessionBus(), this))
+    , m_sessionManager(new SessionManager("com.deepin.SessionManager", "/com/deepin/SessionManager", QDBusConnection::sessionBus(), this))
 {
     m_currentUserUid = getuid();
     m_authFramework = new DeepinAuthFramework(this, this);
+    m_sessionManager->setSync(false);
 
     onUserAdded(ACCOUNTS_DBUS_PREFIX + QString::number(m_currentUserUid));
 
