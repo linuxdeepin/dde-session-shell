@@ -126,9 +126,13 @@ static int set_rootwindow_cursor() {
 
 static double get_scale_ratio() {
     Display *display = XOpenDisplay(nullptr);
+    double scaleRatio = 0.0;
+
+    if (!display) {
+        return scaleRatio;
+    }
 
     XRRScreenResources *resources = XRRGetScreenResourcesCurrent(display, DefaultRootWindow(display));
-    double scaleRatio = 0.0;
 
     if (!resources) {
         resources = XRRGetScreenResources(display, DefaultRootWindow(display));
