@@ -79,6 +79,11 @@ void LogoWidget::initUI() {
 #endif
     this->setObjectName("LogoWidget");
 
+    //设置版本号的默认字体
+    QFont font(m_logoVersionLabel->font());
+    font.setFamily("Noto Sans CJK SC-Thin");
+    m_logoVersionLabel->setFont(font);
+
     m_logoLayout = new QHBoxLayout;
     m_logoLayout->setMargin(0);
     m_logoLayout->setSpacing(0);
@@ -118,4 +123,15 @@ void LogoWidget::updateLocale(const QString &locale)
     m_locale = locale;
     m_logoVersionLabel->setText(getVersion());
     adjustSize();
+}
+
+void LogoWidget::resizeEvent(QResizeEvent *event)
+{
+    QFrame::resizeEvent(event);
+
+    //使用系统名称图标一半高度做为版本信息字体大小
+    QFont font(m_logoVersionLabel->font());
+    int fontSize = m_logoLabel->height() / 2;
+    font.setPixelSize(fontSize);
+    m_logoVersionLabel->setFont(font);
 }

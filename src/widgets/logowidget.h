@@ -42,6 +42,9 @@ public:
 
     void updateLocale(const QString &locale);
 
+protected:
+    void resizeEvent(QResizeEvent *event) override;
+
 private:
     void initUI();
     QString getVersion();
