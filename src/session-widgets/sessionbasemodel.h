@@ -130,6 +130,7 @@ signals:
     void activeAuthChanged(bool active);
     void blackModeChanged(bool is_black);
     void HibernateModeChanged(bool is_hibernate);//休眠信号改变
+    void SleepModeChanged(bool is_Sleep);//待机信号改变
 
 private:
     com::deepin::SessionManager *m_sessionManagerInter;

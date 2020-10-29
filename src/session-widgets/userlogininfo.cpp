@@ -126,6 +126,9 @@ void UserLoginInfo::initConnect()
         if (m_model->currentModeState() == SessionBaseModel::ModeStatus::ConfirmPasswordMode)
             m_model->setAbortConfirm(false);
     });
+
+    //连接系统待机信号
+    connect(m_model, &SessionBaseModel::SleepModeChanged, m_userLoginWidget, &UserLoginWidget::SleepModeChange, Qt::QueuedConnection);
 }
 
 void UserLoginInfo::onAbortConfirmChanged(bool abort)
