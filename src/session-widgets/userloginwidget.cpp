@@ -255,6 +255,18 @@ bool UserLoginWidget::inputInfoCheck(bool is_server)
     return true;
 }
 
+//TODO：待机时系统不能冻结进程 ，此时可以输入密码解锁，只能在待机时不允许输入密码来暂时规避
+//TODO：等系统内核优化后能快速冻结锁屏进程后，可以去掉这段代码
+void UserLoginWidget::SleepModeChange(bool isSleep)
+{
+    //接收到待机信号开始锁屏，密码输入框不可用
+    m_passwordEdit->setDisabled(isSleep);
+    //接收到待机唤醒信号需要解锁，密码输入框可用，并设置焦点
+    if (!isSleep && m_passwordEdit->isVisible()) {
+        m_passwordEdit->lineEdit()->setFocus();
+    }
+}
+
 void UserLoginWidget::onOtherPageAccountChanged(const QVariant &value)
 {
     int cursorIndex =  m_accountEdit->lineEdit()->cursorPosition();

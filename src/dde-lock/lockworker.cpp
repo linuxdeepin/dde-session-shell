@@ -119,6 +119,9 @@ LockWorker::LockWorker(SessionBaseModel *const model, QObject *parent)
         m_model->setIsServerModel(true);
         m_model->userAdd(user);
     }
+
+    //连接系统待机信号
+    connect(m_login1Inter, &DBusLogin1Manager::PrepareForSleep, m_model, &SessionBaseModel::SleepModeChanged);
 }
 
 void LockWorker::switchToUser(std::shared_ptr<User> user)
