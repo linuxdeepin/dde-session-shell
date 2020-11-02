@@ -52,10 +52,16 @@ DWIDGET_USE_NAMESPACE
 
 int main(int argc, char *argv[])
 {
-    DApplication app(argc, argv);
+    DApplication *app = nullptr;
+#if (DTK_VERSION < DTK_VERSION_CHECK(5, 4, 0, 0))
+    app = new DApplication(argc, argv);
+#else
+    app = DApplication::globalApplication(argc, argv);
+#endif
+
     QApplication::setAttribute(Qt::AA_UseHighDpiPixmaps);
-    app.setOrganizationName("deepin");
-    app.setApplicationName("dde-shutdown");
+    app->setOrganizationName("deepin");
+    app->setApplicationName("dde-shutdown");
 
     // crash catch
     init_sig_crash();
@@ -88,17 +94,17 @@ int main(int argc, char *argv[])
 
     QTranslator translator;
     translator.load("/usr/share/dde-session-shell/translations/dde-session-shell_" + QLocale::system().name());
-    app.installTranslator(&translator);
+    app->installTranslator(&translator);
 
     QCommandLineOption showOption(QStringList() << "s" << "show", "show dde-shutdown(hide for default).");
     QCommandLineParser parser;
     parser.addHelpOption();
     parser.addOption(showOption);
-    parser.process(app);
+    parser.process(*app);
 
     QDBusConnection session = QDBusConnection::sessionBus();
     if (!session.registerService(DBUS_NAME) ||
-            !app.setSingleInstance(QString("dde-shutdown%1").arg(getuid()), DApplication::UserScope)) {
+            !app->setSingleInstance(QString("dde-shutdown%1").arg(getuid()), DApplication::UserScope)) {
         qWarning() << "dde-shutdown is running...";
 
         if (parser.isSet(showOption)) {
@@ -161,6 +167,6 @@ int main(int argc, char *argv[])
         Q_UNUSED(adaptor);
         QDBusConnection::sessionBus().registerObject(DBUS_PATH, dbusAgent);
 
-        return app.exec();
+        return app->exec();
     }
 }

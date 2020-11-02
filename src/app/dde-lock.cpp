@@ -48,12 +48,19 @@ DWIDGET_USE_NAMESPACE
 int main(int argc, char *argv[])
 {
     if(DGuiApplicationHelper::isXWindowPlatform()) DApplication::loadDXcbPlugin();
-    DApplication app(argc, argv);
+
+    DApplication *app = nullptr;
+#if (DTK_VERSION < DTK_VERSION_CHECK(5, 4, 0, 0))
+    app = new DApplication(argc, argv);
+#else
+    app = DApplication::globalApplication(argc, argv);
+#endif
+
     //解决Qt在Retina屏幕上图片模糊问题
     QApplication::setAttribute(Qt::AA_UseHighDpiPixmaps);
-    app.setOrganizationName("deepin");
-    app.setApplicationName("dde-lock");
-    app.setApplicationVersion("2015.1.0");
+    app->setOrganizationName("deepin");
+    app->setApplicationName("dde-lock");
+    app->setApplicationVersion("2015.1.0");
 
     // crash catch
     init_sig_crash();
@@ -88,7 +95,7 @@ int main(int argc, char *argv[])
 
     QTranslator translator;
     translator.load("/usr/share/dde-session-shell/translations/dde-session-shell_" + QLocale::system().name());
-    app.installTranslator(&translator);
+    app->installTranslator(&translator);
 
     QCommandLineParser cmdParser;
     cmdParser.addHelpOption();
@@ -98,7 +105,8 @@ int main(int argc, char *argv[])
     cmdParser.addOption(backend);
     QCommandLineOption switchUser(QStringList() << "s" << "switch", "show user switch");
     cmdParser.addOption(switchUser);
-    cmdParser.process(app);
+    QStringList xddd = app->arguments();
+    cmdParser.process(*app);
 
     bool runDaemon = cmdParser.isSet(backend);
     bool showUserList = cmdParser.isSet(switchUser);
@@ -143,7 +151,7 @@ int main(int argc, char *argv[])
     QDBusConnection conn = QDBusConnection::sessionBus();
     if (!conn.registerService(DBUS_NAME) ||
             !conn.registerObject("/com/deepin/dde/lockFront", &agent) ||
-            !app.setSingleInstance(QString("dde-lock%1").arg(getuid()), DApplication::UserScope)) {
+            !app->setSingleInstance(QString("dde-lock%1").arg(getuid()), DApplication::UserScope)) {
         qDebug() << "register dbus failed"<< "maybe lockFront is running..." << conn.lastError();
 
         if (!runDaemon) {
@@ -163,7 +171,7 @@ int main(int argc, char *argv[])
                 model->setIsShow(true);
             }
         }
-        app.exec();
+        app->exec();
     }
 
     return 0;

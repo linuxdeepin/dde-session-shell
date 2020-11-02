@@ -6,3 +6,4 @@ Name=Deepin Shutdown
 OnlyShowIn=''
 Type=Application
 X-Deepin-Vendor=user-custom
+X-Deepin-TurboType=dtkwidget
