@@ -188,8 +188,7 @@ void LockContent::pushPasswordFrame()
 
 void LockContent::pushUserFrame()
 {
-    qDebug() << "pushUserFrame is DoMAinUser: " << m_model->currentUser()->isDoMainUser();
-    if(m_model->isServerModel() && m_model->currentUser()->isDoMainUser())
+    if(m_model->isServerModel())
         m_controlWidget->setUserSwitchEnable(false);
     setCenterContent(m_userLoginInfo->getUserFrameList());
 }
@@ -346,11 +345,10 @@ void LockContent::onUserListChanged(QList<std::shared_ptr<User> > list)
     if (m_model->isServerModel() && m_model->currentType() == SessionBaseModel::LightdmType) {
         haveLogindUser = !m_model->logindUser().isEmpty();
     }
-
-    auto hasUserList = m_model->isServerModel() ? true :list.size() > 1;
-    m_controlWidget->setUserSwitchEnable(alwaysShowUserSwitchButton ||
+    m_controlWidget->setUserSwitchEnable((alwaysShowUserSwitchButton ||
                                           (allowShowUserSwitchButton &&
-                                           (hasUserList || haveLogindUser)));
+                                           (list.size() > (m_model->isServerModel() ? 0 : 1)))) &&
+                                         haveLogindUser);
 }
 
 void LockContent::tryGrabKeyboard()

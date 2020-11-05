@@ -86,9 +86,7 @@ void UserLoginInfo::initConnect()
             return;
         }
 
-        if (m_model->isServerModel() && m_model->currentType() == SessionBaseModel::LightdmType
-                && (m_model->currentUser()->isDoMainUser() || !account.isEmpty())) {
-            qDebug() << "ServerModel & set User Name: " << account << ", current user Name: " << m_model->currentUser().get()->name();
+        if (m_model->isServerModel() && m_model->currentType() == SessionBaseModel::LightdmType) {
             auto user = dynamic_cast<NativeUser *>(m_model->findUserByName(account).get());
             auto current_user = m_model->currentUser();
 
