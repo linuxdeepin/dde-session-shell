@@ -193,7 +193,7 @@ void GreeterWorkek::onUserAdded(const QString &user)
         }
     }
 
-    if (!user_ptr->isLogin() && user_ptr->uid() == m_currentUserUid) {
+    if (!user_ptr->isLogin() && user_ptr->uid() == m_currentUserUid && !m_model->isServerModel()) {
         m_model->setCurrentUser(user_ptr);
         userAuthForLightdm(user_ptr);
     }
