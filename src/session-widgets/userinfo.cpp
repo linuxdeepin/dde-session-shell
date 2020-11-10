@@ -246,8 +246,16 @@ NativeUser::NativeUser(const QString &path, QObject *parent)
     });
 
     connect(m_userInter, &UserInter::DesktopBackgroundsChanged, this, [ = ] (const QStringList & paths) {
-        m_desktopBackground = toLocalFile(paths.first());
-        emit desktopBackgroundPathChanged(m_desktopBackground);
+        QSettings settings(DDESESSIONCC::CONFIG_FILE + m_userName, QSettings::IniFormat);
+        settings.beginGroup("User");
+
+        int index = settings.value("Workspace").toInt();
+        if (paths.size() >= index && index > 0) {
+            m_desktopBackground = toLocalFile(paths.at(index - 1));
+            emit desktopBackgroundPathChanged(m_desktopBackground);
+        } else {
+            qDebug() << "DesktopBackgroundsChanged get error index:" << index << ", paths:" << paths;
+        }
     });
 
     connect(m_userInter, &UserInter::GreeterBackgroundChanged, this, [ = ](const QString & path) {
@@ -305,8 +313,13 @@ void NativeUser::configAccountInfo(const QString &account_config)
     //初始化时读取用户的配置文件中设置的时制格式
     m_is24HourFormat = settings.value("Use24HourFormat").toBool();
 
-    QStringList desktop_backgrounds = settings.value("DesktopBackgrounds").toString().split(";");
-    if(!desktop_backgrounds.isEmpty()) m_desktopBackground = toLocalFile(desktop_backgrounds.first());
+    QStringList desktopBackgrounds = settings.value("DesktopBackgrounds").toString().split(";");
+    int index = settings.value("Workspace").toInt();
+    if (desktopBackgrounds.size() >= index && index > 0) {
+        m_desktopBackground = toLocalFile(desktopBackgrounds.at(index - 1));
+    } else {
+        qDebug() << "configAccountInfo get error index:" << index << ", backgrounds:" << desktopBackgrounds;
+    }
 }
 
 void NativeUser::setCurrentLayout(const QString &layout)
