@@ -249,6 +249,7 @@ void FullscreenBackground::leaveEvent(QEvent *event)
 void FullscreenBackground::resizeEvent(QResizeEvent *event)
 {
     m_content->resize(size());
+    updateBackground(m_background);
 
     return QWidget::resizeEvent(event);
 }

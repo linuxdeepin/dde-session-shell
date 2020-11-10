@@ -34,6 +34,10 @@ LoginWindow::LoginWindow(SessionBaseModel *const model, QWidget *parent)
     , m_loginContent(new LoginContent(model, this))
     , m_model(model)
 {
+    QPixmap image(this->size());
+    image.fill(Qt::black);
+    updateBackground(image);
+
     QTimer::singleShot(0, this, [ = ] {
         auto user = model->currentUser();
         if (user != nullptr) updateBackground(QPixmap(user->greeterBackgroundPath()));
@@ -67,10 +71,6 @@ LoginWindow::LoginWindow(SessionBaseModel *const model, QWidget *parent)
 
 void LoginWindow::resizeEvent(QResizeEvent *event)
 {
-    QPixmap image(this->size());
-    image.fill(Qt::black);
-
-    updateBackground(image);
     return FullscreenBackground::resizeEvent(event);
 }
 

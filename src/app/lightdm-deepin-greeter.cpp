@@ -182,11 +182,11 @@ int main(int argc, char* argv[])
 {
     DGuiApplicationHelper::setUseInactiveColorGroup(false);
     // load dpi settings
-    if (!QFile::exists("/etc/lightdm/deepin/qt-theme.ini")) {
+    if (!QFile::exists("/etc/lightdm/deepin/xsettingsd.conf")) {
         set_auto_QT_SCALE_FACTOR();
     }
     else {
-        DApplication::customQtThemeConfigPath("/etc/lightdm/");
+        QProcess::startDetached("xsettingsd -c /etc/lightdm/deepin/xsettingsd.conf");
     }
 
     if(DGuiApplicationHelper::isXWindowPlatform()) DApplication::loadDXcbPlugin();
