@@ -566,6 +566,8 @@ void UserLoginWidget::initConnect()
     connect(m_capslockMonitor, &KeyboardMonitor::capslockStatusChanged, m_passwordEdit, &DPasswordEditEx::capslockStatusChanged);
     connect(m_passwordEdit, &DPasswordEditEx::toggleKBLayoutWidget, this, &UserLoginWidget::toggleKBLayoutWidget);
     connect(m_passwordEdit, &DPasswordEditEx::selectionChanged, this, &UserLoginWidget::hidePasswordEditMessage);
+    //字体大小改变需要更新用户名显示
+    connect(qGuiApp, &QGuiApplication::fontChanged, this, &UserLoginWidget::updateNameLabel);
 }
 
 //设置用户名
@@ -729,7 +731,7 @@ void UserLoginWidget::updateNameLabel()
     int width = m_nameLbl->fontMetrics().width(m_name);
     int labelMaxWidth = this->width() - 3 * m_nameLayout->spacing();
     if (m_isLogin)
-        labelMaxWidth -= (m_loginLabel->pixmap()->width() + Margins);
+        labelMaxWidth -= (m_loginLabel->pixmap()->width() + m_nameLbl->height());
 
     if (width > labelMaxWidth) {
         QString str = m_nameLbl->fontMetrics().elidedText(m_name, Qt::ElideRight, labelMaxWidth);
