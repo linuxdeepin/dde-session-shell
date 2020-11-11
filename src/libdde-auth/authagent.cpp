@@ -20,6 +20,7 @@
 AuthAgent::AuthAgent(DeepinAuthFramework *deepin)
     : m_deepinauth(deepin)
     , m_isCondition(true)
+    , m_isCancel(false)
 {
     connect(this, &AuthAgent::displayErrorMsg, deepin, &DeepinAuthFramework::DisplayErrorMsg, Qt::QueuedConnection);
     connect(this, &AuthAgent::displayTextInfo, deepin, &DeepinAuthFramework::DisplayTextInfo, Qt::QueuedConnection);
@@ -95,7 +96,14 @@ int AuthAgent::pamConversation(int num_msg, const struct pam_message **msg,
         switch(PAM_MSG_MEMBER(msg, idx, msg_style)) {
 
         case PAM_PROMPT_ECHO_OFF: {
-            while(app_ptr->m_isCondition) sleep(1);
+            while(app_ptr->m_isCondition) {
+                //取消验证时返回一般错误,退出等待输入密码的循环,然后退出验证线程
+                if (app_ptr->m_isCancel) {
+                    return PAM_ABORT;
+                }
+                sleep(1);
+            }
+
             app_ptr->m_isCondition = true;
 
             if (!QPointer<DeepinAuthFramework>(app_ptr->deepinAuth())) {

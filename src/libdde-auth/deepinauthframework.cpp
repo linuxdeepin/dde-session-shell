@@ -20,14 +20,16 @@ DeepinAuthFramework::DeepinAuthFramework(DeepinAuthInterface *inter, QObject *pa
 DeepinAuthFramework::~DeepinAuthFramework()
 {
     if (!m_authagent.isNull()) {
-        delete m_authagent;
-        m_authagent = nullptr;
-
         if (m_pamAuth != 0) {
+            //先取消上次验证请求
+            m_authagent->setCancelAuth(true);
             pthread_cancel(m_pamAuth);
             pthread_join(m_pamAuth, nullptr);
             m_pamAuth = 0;
         }
+
+        delete m_authagent;
+        m_authagent = nullptr;
     }
 }
 
@@ -45,6 +47,8 @@ void* DeepinAuthFramework::pamAuthWorker(void *arg)
 {
     DeepinAuthFramework* deepin_auth = static_cast<DeepinAuthFramework*>(arg);
     if(deepin_auth != nullptr && deepin_auth->m_currentUser != nullptr) {
+        //开始验证,并重置变量等待输入密码
+        deepin_auth->m_authagent->setCancelAuth(false);
         deepin_auth->m_authagent->Authenticate(deepin_auth->m_currentUser->name());
     } else {
         qDebug() << "pam auth worker deepin framework is nullptr";
@@ -60,20 +64,23 @@ void DeepinAuthFramework::Authenticate(std::shared_ptr<User> user)
     m_password.clear();
 
     if (m_pamAuth != 0) {
+        qDebug() << Q_FUNC_INFO << "pam auth cancel" << m_authagent->thread()->loopLevel();
+        //先取消上次验证请求
+        m_authagent->setCancelAuth(true);
+        //发送退出线程消息
         pthread_cancel(m_pamAuth);
+        //等待线程退出
         pthread_join(m_pamAuth, nullptr);
         m_pamAuth = 0;
     }
 
-    qDebug() << Q_FUNC_INFO << "pam auth start" << m_authagent->thread()->loopLevel();
-
     m_currentUser = user;
 
+    //创建验证线程,等待输入密码
     int rc = pthread_create(&m_pamAuth, nullptr, &pamAuthWorker, this);
     if (rc != 0) {
         qDebug() << "failed to create the authentication thread: %s" << strerror(errno);
     }
-    pthread_detach(m_pamAuth);
 }
 
 void DeepinAuthFramework::Responsed(const QString &password)

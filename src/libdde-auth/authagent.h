@@ -36,6 +36,7 @@ public:
     void Authenticate(const QString& username);
     int GetAuthType();
     DeepinAuthFramework *deepinAuth() { return m_deepinauth; }
+    void setCancelAuth(bool isCancel) { m_isCancel = isCancel; }
 
 signals:
     void displayErrorMsg(const QString &msg);
@@ -50,7 +51,11 @@ private:
 
 private:
     DeepinAuthFramework* m_deepinauth = nullptr;
-    bool m_isCondition = true;
+    //添加volatile类型修饰符，告知编译器该变量可以被某些未知的因素更改
+    //所以对访问该变量的代码就不再进行优化从而可以提供对特殊地址的稳定访问
+    bool volatile m_isCondition = true;
+    //增加变量判断是否取消验证,以退出等待输入密码循环
+    bool volatile m_isCancel = false;
 
     QString m_password;
     AuthFlag m_authType;
