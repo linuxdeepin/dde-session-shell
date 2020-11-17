@@ -80,6 +80,7 @@ public:
     bool getIsLogin();
     void setSelected(bool isSelected);
     bool getSelected();
+    void setFastSelected(bool isSelected);
     void setIsServer(bool isServer);
     bool getIsServer();
     void setIsServerMode(bool isServer);

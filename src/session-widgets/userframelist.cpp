@@ -129,6 +129,11 @@ void UserFrameList::onUserClicked()
     if (!widget) return;
 
     currentSelectedUser = widget;
+    for (int i = 0; i != m_loginWidgets.size(); ++i) {
+        if (m_loginWidgets[i]->getSelected()) {
+            m_loginWidgets[i]->setFastSelected(false);
+        }
+    }
     emit requestSwitchUser(m_model->findUserByUid(widget->uid()));
 }
 

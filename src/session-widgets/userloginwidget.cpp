@@ -698,6 +698,12 @@ void UserLoginWidget::setSelected(bool isSelected)
     update();
 }
 
+void UserLoginWidget::setFastSelected(bool isSelected)
+{
+    m_isSelected = isSelected;
+    repaint();
+}
+
 void UserLoginWidget::updateClipPath() 
 {
     if (!m_kbLayoutClip)
