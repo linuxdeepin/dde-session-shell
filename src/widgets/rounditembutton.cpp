@@ -116,7 +116,6 @@ void RoundItemButton::initUI() {
     mainLayout->addWidget(m_itemText, 0, Qt::AlignCenter);
 
     setFocusPolicy(Qt::NoFocus);
-    setFocusPolicy(Qt::StrongFocus);
     setLayout(mainLayout);
     setFixedSize(QSize(140, 140));
     setCheckable(true);
