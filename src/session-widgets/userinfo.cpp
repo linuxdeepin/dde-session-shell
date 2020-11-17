@@ -281,6 +281,7 @@ NativeUser::NativeUser(const QString &path, QObject *parent)
     m_userInter->userName();
     m_userInter->locale();
     m_userInter->passwordStatus();
+    m_userInter->fullName();
 
     // intercept account dbus path uid
     m_uid = path.mid(QString(ACCOUNTS_DBUS_PREFIX).size()).toUInt();
