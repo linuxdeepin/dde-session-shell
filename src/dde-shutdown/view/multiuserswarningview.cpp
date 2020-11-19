@@ -62,6 +62,7 @@ MultiUsersWarningView::MultiUsersWarningView(QWidget *parent)
     m_warningTip->setStyleSheet("color: white;");
     m_warningTip->setWordWrap(true);
     m_warningTip->setAlignment(Qt::AlignCenter);
+    m_warningTip->setFocusPolicy(Qt::NoFocus);
     m_warningTip->setSizePolicy(QSizePolicy::Expanding, QSizePolicy::Fixed);
 
     m_actionBtn->setIconSize(QSize(m_buttonIconSize, m_buttonIconSize));

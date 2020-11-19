@@ -122,6 +122,8 @@ void ContentWidget::showEvent(QShowEvent *event)
 
     if (m_warningView) {
         m_mainLayout->setCurrentWidget(m_warningView);
+        m_warningView->setFocusPolicy(Qt::NoFocus);
+        setFocusPolicy(Qt::NoFocus);
     }
 
     tryGrabKeyboard();
@@ -352,6 +354,8 @@ bool ContentWidget::beforeInvokeAction(const Actions action)
 
     if (!inhibitors.isEmpty()) {
         InhibitWarnView *view = new InhibitWarnView(action, this);
+        view->setFocusPolicy(Qt::NoFocus);
+        setFocusPolicy(Qt::NoFocus);
         view->setAction(action);
         view->setInhibitorList(inhibitors);
 
@@ -429,6 +433,8 @@ bool ContentWidget::beforeInvokeAction(const Actions action)
         }
 
         MultiUsersWarningView *view = new MultiUsersWarningView(this);
+        view->setFocusPolicy(Qt::NoFocus);
+        setFocusPolicy(Qt::NoFocus);
         view->setUsers(tmpList);
         view->setAction(action);
         if (action == Shutdown)
@@ -452,6 +458,8 @@ bool ContentWidget::beforeInvokeAction(const Actions action)
         m_confirm = false;
 
         InhibitWarnView *view = new InhibitWarnView(action, this);
+        view->setFocusPolicy(Qt::NoFocus);
+        setFocusPolicy(Qt::NoFocus);
         view->setAction(action);
         if (action == Shutdown) {
             view->setAcceptReason(tr("Shut down"));
@@ -673,6 +681,7 @@ void ContentWidget::initUI()
         QFile file("/usr/bin/deepin-system-monitor");
         if (file.exists()) {
             m_systemMonitor = new SystemMonitor(m_normalView);
+            setFocusPolicy(Qt::StrongFocus);
             defaultpageLayout->addWidget(m_systemMonitor);
             defaultpageLayout->setAlignment(m_systemMonitor, Qt::AlignCenter);
             defaultpageLayout->addSpacing(40);
@@ -848,6 +857,7 @@ void ContentWidget::recoveryLayout()
     }
 
     m_mainLayout->setCurrentWidget(m_normalView);
+    setFocusPolicy(Qt::StrongFocus);
 }
 
 void ContentWidget::runSystemMonitor()
