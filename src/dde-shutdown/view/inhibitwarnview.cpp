@@ -211,15 +211,10 @@ void InhibitWarnView::setAcceptVisible(const bool acceptable)
 
 void InhibitWarnView::toggleButtonState()
 {
-    if (m_cancelBtn->isChecked() && m_acceptBtn->isVisible()) {
-        m_cancelBtn->setChecked(false);
-        m_acceptBtn->setChecked(true);
-        m_currentBtn = m_acceptBtn;
-    } else {
-        m_acceptBtn->setChecked(false);
-        m_cancelBtn->setChecked(true);
-        m_currentBtn = m_cancelBtn;
-    }
+    if (m_cancelBtn->isChecked() && m_acceptBtn->isVisible())
+        setCurrentButton(ButtonType::Accept);
+    else
+        setCurrentButton(ButtonType::Cancel);
 
     FrameDataBind::Instance()->updateValue("InhibitWarnView", m_currentBtn->objectName());
 }
@@ -234,17 +229,46 @@ Actions InhibitWarnView::inhibitType() const
     return m_inhibitType;
 }
 
+bool InhibitWarnView::focusNextPrevChild(bool next)
+{
+    if (!next) {
+        qWarning() << "focus handling error, nextPrevChild is False";
+        return WarningView::focusNextPrevChild(next);
+    }
+
+    if (m_acceptBtn->hasFocus() && m_acceptBtn->isVisible())
+        setCurrentButton(ButtonType::Cancel);
+    else
+        setCurrentButton(ButtonType::Accept);
+
+    FrameDataBind::Instance()->updateValue("InhibitWarnView", m_currentBtn->objectName());
+
+    return WarningView::focusNextPrevChild(next);
+}
+
+void InhibitWarnView::setCurrentButton(const ButtonType btntype)
+{
+    switch (btntype) {
+    case ButtonType::Cancel:
+        m_acceptBtn->setChecked(false);
+        m_cancelBtn->setChecked(true);
+        m_currentBtn = m_cancelBtn;
+        break;
+
+    case ButtonType::Accept:
+        m_cancelBtn->setChecked(false);
+        m_acceptBtn->setChecked(true);
+        m_currentBtn = m_acceptBtn;
+        break;
+    }
+}
+
 void InhibitWarnView::onOtherPageDataChanged(const QVariant &value)
 {
     const QString objectName { value.toString() };
 
-    if (objectName == "AcceptButton") {
-        m_cancelBtn->setChecked(false);
-        m_acceptBtn->setChecked(true);
-        m_currentBtn = m_acceptBtn;
-    } else {
-        m_acceptBtn->setChecked(false);
-        m_cancelBtn->setChecked(true);
-        m_currentBtn = m_cancelBtn;
-    }
+    if (objectName == "AcceptButton")
+        setCurrentButton(ButtonType::Accept);
+    else
+        setCurrentButton(ButtonType::Cancel);
 }

@@ -142,15 +142,10 @@ void MultiUsersWarningView::setAction(const Actions action)
 
 void MultiUsersWarningView::toggleButtonState()
 {
-    if (m_actionBtn->isChecked()) {
-        m_actionBtn->setChecked(false);
-        m_cancelBtn->setChecked(true);
-        m_currentBtn = m_cancelBtn;
-    } else {
-        m_cancelBtn->setChecked(false);
-        m_actionBtn->setChecked(true);
-        m_currentBtn = m_actionBtn;
-    }
+    if (m_actionBtn->isChecked())
+        setCurrentButton(ButtonType::Cancel);
+    else
+        setCurrentButton(ButtonType::Accept);
 }
 
 void MultiUsersWarningView::buttonClickHandle()
@@ -161,6 +156,38 @@ void MultiUsersWarningView::buttonClickHandle()
 void MultiUsersWarningView::setAcceptReason(const QString &reason)
 {
     m_actionBtn->setText(reason);
+}
+
+bool MultiUsersWarningView::focusNextPrevChild(bool next)
+{
+    if (!next) {
+        qWarning() << "focus handling error, nextPrevChild is False";
+        return WarningView::focusNextPrevChild(next);
+    }
+
+    if (m_actionBtn->hasFocus())
+        setCurrentButton(ButtonType::Cancel);
+    else
+        setCurrentButton(ButtonType::Accept);
+
+    return WarningView::focusNextPrevChild(next);
+}
+
+void MultiUsersWarningView::setCurrentButton(const ButtonType btntype)
+{
+    switch (btntype) {
+    case ButtonType::Cancel:
+        m_actionBtn->setChecked(false);
+        m_cancelBtn->setChecked(true);
+        m_currentBtn = m_cancelBtn;
+        break;
+
+    case ButtonType::Accept:
+        m_cancelBtn->setChecked(false);
+        m_actionBtn->setChecked(true);
+        m_currentBtn = m_actionBtn;
+        break;
+    }
 }
 
 QString MultiUsersWarningView::getUserIcon(const QString &path)

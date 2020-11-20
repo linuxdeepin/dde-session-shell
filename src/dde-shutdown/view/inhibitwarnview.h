@@ -71,6 +71,10 @@ public:
 
     Actions inhibitType() const;
 
+protected:
+    bool focusNextPrevChild(bool next) Q_DECL_OVERRIDE;
+    void setCurrentButton(const ButtonType btntype) Q_DECL_OVERRIDE;
+
 signals:
     void cancelled() const;
     void actionInvoked(const Actions action) const;

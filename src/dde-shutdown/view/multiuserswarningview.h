@@ -55,6 +55,10 @@ public:
     void buttonClickHandle() Q_DECL_OVERRIDE;
     void setAcceptReason(const QString &reason) Q_DECL_OVERRIDE;
 
+protected:
+    bool focusNextPrevChild(bool next) Q_DECL_OVERRIDE;
+    void setCurrentButton(const ButtonType btntype) Q_DECL_OVERRIDE;
+
 signals:
     void actionInvoked();
     void cancelled();
