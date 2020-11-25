@@ -27,6 +27,9 @@ LockContent::LockContent(SessionBaseModel *const model, QWidget *parent)
     m_logoWidget = new LogoWidget;
 
     m_timeWidget = new TimeWidget();
+    // 处理时间制跳转策略，获取到时间制再显示时间窗口
+    m_timeWidget->setVisible(false);
+
     m_mediaWidget = nullptr;
 
     m_shutdownFrame->setModel(model);
@@ -141,6 +144,7 @@ void LockContent::onCurrentUserChanged(std::shared_ptr<User> user)
     std::shared_ptr<NativeUser> nativeUser = std::dynamic_pointer_cast<NativeUser>(user);
     UserInter *userInter = nullptr;
     if (!nativeUser) {
+        m_timeWidget->setVisible(true);
         qDebug() << "trans to NativeUser user failed, user:" << user->metaObject()->className();
     } else {
         userInter = nativeUser->getUserInter();
@@ -163,9 +167,8 @@ void LockContent::onCurrentUserChanged(std::shared_ptr<User> user)
             userInter->shortTimeFormat();
         }
 
-        //获取到用户后,及时刷新界面时间格式
-        bool is24HourFormat = user->is24HourFormat();
-        updateTimeFormat(is24HourFormat);
+        // 异步刷新界面时间格式
+        user->is24HourFormat();
 
         m_user->greeterBackgroundPath();
     });
@@ -307,6 +310,7 @@ void LockContent::updateTimeFormat(bool use24)
     if (m_user != nullptr) {
         m_timeWidget->updateLocale(m_user->locale());
         m_timeWidget->set24HourFormat(use24);
+        m_timeWidget->setVisible(true);
     }
 }
 
