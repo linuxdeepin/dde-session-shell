@@ -356,10 +356,16 @@ void LockContent::tryGrabKeyboard()
 #ifdef QT_DEBUG
     return;
 #endif
-
     if (window()->windowHandle() && window()->windowHandle()->setKeyboardGrabEnabled(true)) {
         m_failures = 0;
         return;
+    } else {
+        // 通过以下指令暂时解除grab状态, 在有右键弹窗时可以锁屏
+        QProcess process;
+        process.start("/usr/bin/setxkbmap", QStringList() << "-option" << "grab:break_actions");
+        process.waitForFinished();
+        process.start("/usr/bin/xdotool", QStringList() << "key" << "XF86Ungrab");
+        process.waitForFinished();
     }
 
     m_failures++;
