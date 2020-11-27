@@ -86,7 +86,7 @@ void UserLoginInfo::initConnect()
             return;
         }
 
-        if (m_model->isServerModel() && m_model->currentType() == SessionBaseModel::LightdmType) {
+        if (m_model->isServerModel() && m_model->currentUser()->isDoMainUser()) {
             auto user = dynamic_cast<NativeUser *>(m_model->findUserByName(account).get());
             auto current_user = m_model->currentUser();
 

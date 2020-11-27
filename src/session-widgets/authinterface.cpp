@@ -77,7 +77,8 @@ void AuthInterface::onUserListChanged(const QStringList &list)
 
     QStringList tmpList;
     for (std::shared_ptr<User> u : m_model->userList()) {
-        tmpList << ACCOUNTS_DBUS_PREFIX + QString::number(u->uid());
+        if (u->type() == User::Native)
+            tmpList << ACCOUNTS_DBUS_PREFIX + QString::number(u->uid());
     }
 
     for (const QString &u : list) {

@@ -7,7 +7,7 @@
 
 static const std::vector<uint> DEFAULT_WAIT_TIME = {3, 5, 15, 60, 1440};
 
-static QString userPwdName(__uid_t uid)
+QString userPwdName(__uid_t uid)
 {
     if (uid < 1000) return QString();
 

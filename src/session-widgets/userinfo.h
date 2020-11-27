@@ -12,6 +12,8 @@
 
 using UserInter = com::deepin::daemon::accounts::User;
 
+QString userPwdName(__uid_t uid);
+
 class User : public QObject
 {
     Q_OBJECT
