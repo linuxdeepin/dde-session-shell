@@ -29,7 +29,6 @@
 
 class User;
 class UserLoginWidget;
-class UserExpiredWidget;
 class SessionBaseModel;
 class UserFrameList;
 
@@ -41,7 +40,6 @@ public:
     void initConnect();
     void setUser(std::shared_ptr<User> user);
     UserLoginWidget *getUserLoginWidget();
-    UserExpiredWidget *getUserExpiredWidget();
     UserFrameList *getUserFrameList();
     void hideKBLayout();
     void abortConfirm(bool abort = true);
@@ -55,7 +53,6 @@ signals:
     void requestSwitchUser(std::shared_ptr<User> user);
     void hideUserFrameList();
     void requestSetLayout(std::shared_ptr<User> user, const QString &value);
-    void changePasswordFinished();
     void unlockActionFinish();
 
 private:
@@ -67,7 +64,6 @@ private:
     std::shared_ptr<User> m_user;
     SessionBaseModel *m_model;
     QPointer<UserLoginWidget> m_userLoginWidget;
-    QPointer<UserExpiredWidget> m_userExpiredWidget;
     UserFrameList *m_userFrameList;
     QList<QMetaObject::Connection> m_currentUserConnects;
 };

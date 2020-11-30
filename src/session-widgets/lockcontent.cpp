@@ -9,7 +9,6 @@
 #include "src/widgets/timewidget.h"
 #include "userlogininfo.h"
 #include "userloginwidget.h"
-#include "userexpiredwidget.h"
 #include "userframelist.h"
 
 #include <QMouseEvent>
@@ -70,7 +69,6 @@ LockContent::LockContent(SessionBaseModel *const model, QWidget *parent)
     connect(m_userLoginInfo, &UserLoginInfo::requestSwitchUser, this, &LockContent::requestSwitchToUser);
     connect(m_userLoginInfo, &UserLoginInfo::switchToCurrentUser, this, &LockContent::restoreMode);
     connect(m_userLoginInfo, &UserLoginInfo::requestSetLayout, this, &LockContent::requestSetLayout);
-    connect(m_userLoginInfo, &UserLoginInfo::changePasswordFinished, this, &LockContent::restoreMode);
     connect(m_userLoginInfo, &UserLoginInfo::unlockActionFinish, this, [&]{
         emit unlockActionFinish();
     });
@@ -196,11 +194,6 @@ void LockContent::pushUserFrame()
     setCenterContent(m_userLoginInfo->getUserFrameList());
 }
 
-void LockContent::pushChangeFrame()
-{
-    setCenterContent(m_userLoginInfo->getUserExpiredWidget());
-}
-
 void LockContent::pushConfirmFrame()
 {
     setCenterContent(m_userLoginInfo->getUserLoginWidget());
@@ -235,9 +228,6 @@ void LockContent::onStatusChanged(SessionBaseModel::ModeStatus status)
     switch (status) {
     case SessionBaseModel::ModeStatus::PasswordMode:
         restoreCenterContent();
-        break;
-    case SessionBaseModel::ModeStatus::ChangePasswordMode:
-        pushChangeFrame();
         break;
     case SessionBaseModel::ModeStatus::ConfirmPasswordMode:
         pushConfirmFrame();

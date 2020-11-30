@@ -22,7 +22,6 @@
 #include "userlogininfo.h"
 #include "userinfo.h"
 #include "userloginwidget.h"
-#include "userexpiredwidget.h"
 #include "sessionbasemodel.h"
 #include "userframelist.h"
 #include "src/global_util/constants.h"
@@ -32,11 +31,9 @@ UserLoginInfo::UserLoginInfo(SessionBaseModel *model, QObject *parent)
     : QObject(parent)
     , m_model(model)
     , m_userLoginWidget(new UserLoginWidget)
-    , m_userExpiredWidget(new UserExpiredWidget)
     , m_userFrameList(new UserFrameList)
 {
     m_userLoginWidget->setWidgetWidth(DDESESSIONCC::PASSWDLINEEIDT_WIDTH);
-    m_userExpiredWidget->setFixedWidth(DDESESSIONCC::PASSWDLINEEIDT_WIDTH);
     m_userFrameList->setModel(model);
     initConnect();
 }
@@ -67,10 +64,6 @@ void UserLoginInfo::setUser(std::shared_ptr<User> user)
     user->kbLayoutList();
     user->currentKBLayout();
 
-    m_userExpiredWidget->setDisplayName(user->displayName());
-    m_userExpiredWidget->setUserName(user->name());
-    m_userExpiredWidget->updateAuthType(m_model->currentType());
-
     updateLoginContent();
 }
 
@@ -94,13 +87,7 @@ void UserLoginInfo::initConnect()
             static_cast<ADDomainUser *>(m_model->currentUser().get())->setUserInter(nullptr);
             if (user != nullptr) {
                 static_cast<ADDomainUser *>(m_model->currentUser().get())->setUserInter(user->getUserInter());
-                m_userExpiredWidget->setDisplayName(user->displayName());
-                m_userExpiredWidget->setUserName(account);
             }
-        }
-
-        if (m_model->currentUser()->isPasswordExpired()) {
-            m_userExpiredWidget->setPassword(password);
         }
         emit requestAuthUser(password);
     });
@@ -116,7 +103,6 @@ void UserLoginInfo::initConnect()
         }
         emit unlockActionFinish();
     });
-    connect(m_userExpiredWidget, &UserExpiredWidget::changePasswordFinished, this, &UserLoginInfo::changePasswordFinished);
 
     //UserFrameList
     connect(m_userFrameList, &UserFrameList::clicked, this, &UserLoginInfo::hideUserFrameList);
@@ -161,19 +147,12 @@ void UserLoginInfo::beforeUnlockAction(bool is_finish)
 
 UserLoginWidget *UserLoginInfo::getUserLoginWidget()
 {
-    m_userExpiredWidget->resetAllState();
     return m_userLoginWidget;
 }
 
 UserFrameList *UserLoginInfo::getUserFrameList()
 {
     return m_userFrameList;
-}
-
-UserExpiredWidget *UserLoginInfo::getUserExpiredWidget()
-{
-    m_userLoginWidget->resetAllState();
-    return m_userExpiredWidget;
 }
 
 void UserLoginInfo::hideKBLayout()

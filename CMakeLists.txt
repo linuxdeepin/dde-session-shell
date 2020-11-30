@@ -191,7 +191,6 @@ set(SESSION_WIDGETS_SRCS
     ./src/session-widgets/lockcontent.h
     ./src/session-widgets/userinfo.h
     ./src/session-widgets/userloginwidget.h
-    ./src/session-widgets/userexpiredwidget.h
     ./src/session-widgets/userframelist.h
     ./src/session-widgets/userlogininfo.h
     ./src/session-widgets/hibernatewidget.h
@@ -204,7 +203,6 @@ set(SESSION_WIDGETS_SRCS
     ./src/session-widgets/lockcontent.cpp
     ./src/session-widgets/sessionbasemodel.cpp
     ./src/session-widgets/userloginwidget.cpp
-    ./src/session-widgets/userexpiredwidget.cpp
     ./src/session-widgets/userframelist.cpp
     ./src/session-widgets/userlogininfo.cpp
     ./src/session-widgets/hibernatewidget.cpp

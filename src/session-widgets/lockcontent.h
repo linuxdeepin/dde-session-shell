@@ -38,7 +38,6 @@ public slots:
     void pushPasswordFrame();
     void pushUserFrame();
     void pushConfirmFrame();
-    void pushChangeFrame();
     void pushShutdownFrame();
     void setMPRISEnable(const bool state);
     void beforeUnlockAction(bool is_finish);

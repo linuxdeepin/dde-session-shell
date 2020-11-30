@@ -35,7 +35,6 @@ public:
     enum ModeStatus {
         NoStatus,
         PasswordMode,
-        ChangePasswordMode,
         ConfirmPasswordMode,
         UserMode,
         SessionMode,

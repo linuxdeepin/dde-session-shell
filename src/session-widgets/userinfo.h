@@ -59,7 +59,6 @@ public:
     void setLocale(const QString &locale);
 
     virtual bool isNoPasswdGrp() const;
-    virtual bool isPasswordExpired() const { return false; }
     virtual bool isUserIsvalid() const;
     virtual bool isDoMainUser() const { return m_isServer; }
     virtual bool is24HourFormat() const { return true; }
@@ -90,7 +89,6 @@ protected:
     bool m_isLock;
     bool m_isServer = false;
     bool m_noPasswdGrp = true;
-    bool m_isPasswdExpired = false;
 
     uid_t m_uid = INT_MAX;
     QString m_userName;
@@ -118,7 +116,6 @@ public:
     QStringList kbLayoutList() override;
     QString currentKBLayout() override;
     bool isNoPasswdGrp() const override;
-    bool isPasswordExpired() const override;
     bool isUserIsvalid() const override;
     bool is24HourFormat() const override;
 
@@ -152,7 +149,6 @@ public:
     QString avatarPath() const override;
     QString greeterBackgroundPath() const override;
     QString desktopBackgroundPath() const override;
-    bool isPasswordExpired() const override;
 
 private:
     QString m_displayName;
