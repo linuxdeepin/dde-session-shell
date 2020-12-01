@@ -185,9 +185,6 @@ int main(int argc, char* argv[])
     if (!QFile::exists("/etc/lightdm/deepin/xsettingsd.conf")) {
         set_auto_QT_SCALE_FACTOR();
     }
-    else {
-        QProcess::startDetached("xsettingsd -c /etc/lightdm/deepin/xsettingsd.conf");
-    }
 
     if(DGuiApplicationHelper::isXWindowPlatform()) DApplication::loadDXcbPlugin();
     DApplication a(argc, argv);
