@@ -10,6 +10,16 @@ SET(CMAKE_CXX_FLAGS_DEBUG "${CMAKE_CXX_FLAGS} -O0 -ggdb")
 SET(CMAKE_CXX_FLAGS_RELEASE "${CMAKE_CXX_FLAGS} -O3")
 set(CMAKE_MODULE_PATH ${CMAKE_SOURCE_DIR}/cmake/modules)
 
+# coverage option
+# cmake -DENABLE_COVERAGE=ON ..
+OPTION (ENABLE_COVERAGE "Use gcov" OFF)
+MESSAGE(STATUS ENABLE_COVERAGE=${ENABLE_COVERAGE})
+if (ENABLE_COVERAGE)
+    SET(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -fprofile-arcs -ftest-coverage")
+    SET(CMAKE_C_FLAGS "${CMAKE_C_FLAGS} -fprofile-arcs -ftest-coverage")
+    #SET(CMAKE_EXE_LINKER_FLAGS "${CMAKE_EXE_LINKER_FLAGS} -fprofile-arcs -ftest-coverage")
+endif()
+
 if (${CMAKE_SYSTEM_PROCESSOR} MATCHES "mips64")
     set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -O3 -ftree-vectorize -march=loongson3a -mhard-float -mno-micromips -mno-mips16 -flax-vector-conversions -mloongson-ext2 -mloongson-mmi")
 endif()
@@ -61,19 +71,6 @@ function(generation_dbus_interface xml class_name class_file option)
     WORKING_DIRECTORY ${CMAKE_CURRENT_BINARY_DIR})
 endfunction(generation_dbus_interface)
 
-#set(dde_control_center_DBUS_SCRS xml/com.deepin.dde.ControlCenter.xml)
-#qt5_add_dbus_interface(dde_control_center_DBUS_SCRS
-#xml/com.deepin.dde.ControlCenter.xml
-#ControlCenterAdaptor
-#)
-
-#set(agent_adapter_DBUS_SRCS xml/com.deepin.daemon.authority.Agent.xml)
-#qt5_add_dbus_adaptor(agent_adapter_DBUS_SRCS
-#xml/com.deepin.daemon.authority.Agent.xml
-#./src/libdde-auth/authagent.h
-#AuthAgent
-#)
-
 generation_dbus_interface(
     ${CMAKE_SOURCE_DIR}/xml/com.deepin.daemon.Authenticate.xml
     AuthenticateInterface
@@ -84,17 +81,6 @@ set(authority_DBUS_SCRS
     ${CMAKE_CURRENT_BINARY_DIR}/authenticate_interface.h
     ${CMAKE_CURRENT_BINARY_DIR}/authenticate_interface.cpp
 )
-
-#generation_dbus_interface(
-#    ${CMAKE_SOURCE_DIR}/xml/com.deepin.daemon.authority.Transaction.xml
-#    TransactionInterface
-#    ${CMAKE_CURRENT_BINARY_DIR}/transaction_interface
-#    -N
-#)
-#set(transaction_DBUS_SCRS
-#    ${CMAKE_CURRENT_BINARY_DIR}/transaction_interface.h
-#    ${CMAKE_CURRENT_BINARY_DIR}/transaction_interface.cpp
-#)
 
 generation_dbus_interface(
     ${CMAKE_SOURCE_DIR}/xml/com.huawei.switchos.xml

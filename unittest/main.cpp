@@ -19,28 +19,16 @@
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-#include <com_deepin_daemon_accounts_user.h>
+#include <QApplication>
+#include <gtest/gtest.h>
 
-#include "unit_test.h"
-
-/**
- * @brief UnitTest::authenticate_test  
- */
-using UserInter = com::deepin::daemon::accounts::User;
-TEST_F(UnitTest, accountDBus)
+int main(int argc, char **argv)
 {
-    UserInter account_dbus("com.deepin.daemon.Accounts", "/com/deepin/daemon/Accounts/User1000", QDBusConnection::systemBus(), nullptr);
+    // gerrit编译时没有显示器，需要指定环境变量
+    qputenv("QT_QPA_PLATFORM", "offscreen");
+    QApplication app(argc,argv);
 
-    ASSERT_FALSE(account_dbus.greeterBackground().isEmpty());
+    ::testing::InitGoogleTest(&argc, argv);
 
-    ASSERT_FALSE(account_dbus.uid().isEmpty());
-
-    ASSERT_FALSE(account_dbus.userName().isEmpty());
-
-    ASSERT_FALSE(account_dbus.homeDir().isEmpty());
-
-    ASSERT_TRUE(account_dbus.desktopBackgrounds().size() > 0);
-
-    ASSERT_TRUE(account_dbus.isValid());
+    return RUN_ALL_TESTS();
 }
- 

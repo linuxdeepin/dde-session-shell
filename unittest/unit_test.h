@@ -1,9 +1,9 @@
 /*
- * Copyright (C) 2018 ~ 2028 Uniontech Technology Co., Ltd.
+ * Copyright (C) 2018 ~ 2020 Uniontech Technology Co., Ltd.
  *
- * Author:     fanpengcheng <fanpengcheng@uniontech.com>
+ * Author:     pengwenhao <pengwenhao@uniontech.com>
  *
- * Maintainer: fanpengcheng <fanpengcheng@uniontech.com>
+ * Maintainer: pengwenhao <pengwenhao@uniontech.com>
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -18,21 +18,20 @@
  * You should have received a copy of the GNU General Public License
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
-#ifndef DOCK_UNIT_TEST_H
-#define DOCK_UNIT_TEST_H
-#include <QObject>
+#ifndef LOCK_UNIT_TEST_H
+#define LOCK_UNIT_TEST_H
 
-class UnitTest : public QObject
+#include <gtest/gtest.h>
+
+class UnitTest : public testing::Test
 {
-    Q_OBJECT
-
 public:
-    UnitTest();
-    ~UnitTest();
+    UnitTest() {}
+    ~UnitTest() {}
 
-private slots:
-    void authenticate_test();  // 认证测试
+    virtual void SetUp() {}
+    virtual void TearDown() {}
 };
 
-#endif // DOCK_UNIT_TEST_H
- 
+#endif // LOCK_UNIT_TEST_H
+
