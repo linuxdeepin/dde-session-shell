@@ -38,11 +38,6 @@ LoginWindow::LoginWindow(SessionBaseModel *const model, QWidget *parent)
     image.fill(Qt::black);
     updateBackground(image);
 
-    QTimer::singleShot(0, this, [ = ] {
-        auto user = model->currentUser();
-        if (user != nullptr) updateBackground(QPixmap(user->greeterBackgroundPath()));
-    });
-
     setContent(m_loginContent);
     m_loginContent->hide();
 

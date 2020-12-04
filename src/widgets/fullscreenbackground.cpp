@@ -54,7 +54,7 @@ FullscreenBackground::FullscreenBackground(QWidget *parent)
 #endif
 
     m_fadeOutAni->setEasingCurve(QEasingCurve::InOutCubic);
-    m_fadeOutAni->setDuration(1000);
+    m_fadeOutAni->setDuration(2000);
     m_fadeOutAni->setStartValue(1.0);
     m_fadeOutAni->setEndValue(0.0);
 
@@ -81,10 +81,7 @@ void FullscreenBackground::updateBackground(const QPixmap &background)
     m_backgroundCache = pixmapHandle(m_background);
     m_fakeBackgroundCache = pixmapHandle(m_fakeBackground);
 
-    if (!m_fakeBackground.isNull()) {
-        m_fadeOutAni->start();
-    } else
-        update();
+    m_fadeOutAni->start();
 }
 
 bool FullscreenBackground::isPicture(const QString &file)
@@ -143,7 +140,7 @@ void FullscreenBackground::updateBlurBackground(const QString &file)
 void FullscreenBackground::setScreen(QScreen *screen)
 {
     QScreen *primary_screen = QGuiApplication::primaryScreen();
-    if(primary_screen == screen) {
+    if(primary_screen == screen && !m_isBlackMode) {
         m_content->show();
         m_primaryShowFinished = true;
         emit contentVisibleChanged(true);
@@ -168,7 +165,7 @@ void FullscreenBackground::setContentVisible(bool contentVisible)
     if (!isVisible() && !contentVisible)
         return;
 
-    m_content->setVisible(contentVisible);
+    m_content->setVisible(contentVisible && !m_isBlackMode);
 
     emit contentVisibleChanged(contentVisible);
 }
@@ -176,7 +173,6 @@ void FullscreenBackground::setContentVisible(bool contentVisible)
 void FullscreenBackground::setContent(QWidget *const w)
 {
     //Q_ASSERT(m_content.isNull());
-
     m_content = w;
     m_content->setParent(this);
     m_content->raise();
@@ -235,8 +231,10 @@ void FullscreenBackground::paintEvent(QPaintEvent *e)
 void FullscreenBackground::enterEvent(QEvent *event)
 {
     if(m_primaryShowFinished) {
-        m_content->show();
-        emit contentVisibleChanged(true);
+        if (!m_isBlackMode) {
+            m_content->show();
+            emit contentVisibleChanged(true);
+        }
     }
 
     return QWidget::enterEvent(event);
@@ -257,8 +255,10 @@ void FullscreenBackground::resizeEvent(QResizeEvent *event)
 
 void FullscreenBackground::mouseMoveEvent(QMouseEvent *event)
 {
-    m_content->show();
-    emit contentVisibleChanged(true);
+    if (!m_isBlackMode) {
+        m_content->show();
+        emit contentVisibleChanged(true);
+    }
 
     return QWidget::mouseMoveEvent(event);
 }

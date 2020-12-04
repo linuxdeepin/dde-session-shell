@@ -29,16 +29,16 @@
 #include <QFrame>
 #include "warningview.h"
 #include <dimagebutton.h>
-#include "src/dde-shutdown/common.h"
 #include "src/session-widgets/userinfo.h"
+#include "src/session-widgets/sessionbasemodel.h"
 
 class QListWidget;
 class QLabel;
 class QVBoxLayout;
-class QPushButton;
 
 DWIDGET_USE_NAMESPACE
 
+class QPushButton;
 class MultiUsersWarningView : public WarningView
 {
     Q_OBJECT
@@ -48,8 +48,8 @@ public:
 
     void setUsers(QList<std::shared_ptr<User>> users);
 
-    Actions action() const;
-    void setAction(const Actions action);
+    SessionBaseModel::PowerAction action() const;
+    void setAction(const SessionBaseModel::PowerAction action);
 
     void toggleButtonState() Q_DECL_OVERRIDE;
     void buttonClickHandle() Q_DECL_OVERRIDE;
@@ -73,7 +73,7 @@ private:
     QPushButton * m_cancelBtn;
     QPushButton * m_actionBtn;
     QPushButton *m_currentBtn;
-    Actions m_action;
+    SessionBaseModel::PowerAction m_action;
     const int m_buttonIconSize = 28;
     const int m_buttonWidth = 200;
     const int m_buttonHeight = 64;

@@ -150,6 +150,9 @@ set(WIDGETS_SRCS
     ./src/widgets/timewidget.h
     ./src/widgets/dlineeditex.h
     ./src/widgets/dpasswordeditex.h
+    ./src/widgets/systemmonitor.h
+    ./src/widgets/inhibitwarnview.h
+    ./src/widgets/multiuserswarningview.h
     ./src/widgets/fullscreenbackground.cpp
     ./src/widgets/loginbutton.cpp
     ./src/widgets/mediawidget.cpp
@@ -165,6 +168,9 @@ set(WIDGETS_SRCS
     ./src/widgets/timewidget.cpp
     ./src/widgets/dpasswordeditex.cpp
     ./src/widgets/dlineeditex.cpp
+    ./src/widgets/systemmonitor.cpp
+    ./src/widgets/inhibitwarnview.cpp
+    ./src/widgets/multiuserswarningview.cpp
 )
 
 set(SESSION_WIDGETS_SRCS
@@ -200,11 +206,14 @@ set(LOCK_SRCS
     ${GLOBAL_UTILS_SRCS}
     ${WIDGETS_SRCS}
     ${SESSION_WIDGETS_SRCS}
+    ${haweiswitchos_DBUS_SCRS}
     ./src/libdde-auth/deepinauthframework.cpp
     ./src/libdde-auth/authagent.cpp
     ./src/dde-lock/lockframe.cpp
     ./src/dde-lock/dbus/dbuslockagent.cpp
     ./src/dde-lock/dbus/dbuslockfrontservice.cpp
+    ./src/dde-lock/dbus/dbusshutdownagent.cpp
+    ./src/dde-lock/dbus/dbusshutdownfrontservice.cpp
     ./src/dde-lock/lockworker.cpp
 )
 
@@ -214,6 +223,7 @@ set(GREETER_SRCS
     ${GLOBAL_UTILS_SRCS}
     ${WIDGETS_SRCS}
     ${SESSION_WIDGETS_SRCS}
+    ${haweiswitchos_DBUS_SCRS}
     ./src/libdde-auth/deepinauthframework.cpp
     ./src/libdde-auth/authagent.cpp
     ./src/widgets/sessionwidget.h
@@ -223,30 +233,6 @@ set(GREETER_SRCS
     ./src/lightdm-deepin-greeter/loginwindow.cpp
     ./src/lightdm-deepin-greeter/greeterworkek.cpp
     ./src/lightdm-deepin-greeter/logincontent.cpp
-)
-
-set(SHUTDOWN_SRCS
-    ${haweiswitchos_DBUS_SCRS}
-#   ${dde_control_center_DBUS_SCRS}
-    ${GLOBAL_UTILS_SRCS}
-    ${WIDGETS_SRCS}
-    ${SESSION_WIDGETS_SRCS}
-    ./src/dde-shutdown/common.h
-    ./src/dde-shutdown/app/shutdownframe.h
-    ./src/dde-shutdown/view/multiuserswarningview.h
-    ./src/dde-shutdown/view/contentwidget.h
-    ./src/dde-shutdown/view/systemmonitor.h
-    ./src/dde-shutdown/view/warningview.h
-    ./src/dde-shutdown/view/inhibitwarnview.h
-    ./src/dde-shutdown/shutdownworker.h
-    ./src/dde-shutdown/dbusshutdownagent.h
-    ./src/dde-shutdown/shutdownworker.cpp
-    ./src/dde-shutdown/app/shutdownframe.cpp
-    ./src/dde-shutdown/dbusshutdownagent.cpp
-    ./src/dde-shutdown/view/systemmonitor.cpp
-    ./src/dde-shutdown/view/inhibitwarnview.cpp
-    ./src/dde-shutdown/view/multiuserswarningview.cpp
-    ./src/dde-shutdown/view/contentwidget.cpp
 )
 
 set(QRCS
@@ -275,36 +261,6 @@ target_include_directories(dde-lock PUBLIC
 target_link_libraries(dde-lock PRIVATE
     ${Qt_LIBS}
     ${PAM_LIBRARIES}
-    ${XCB_EWMH_LIBRARIES}
-    ${DFrameworkDBus_LIBRARIES}
-    ${DtkWidget_LIBRARIES}
-    ${Qt5Widgets_LIBRARIES}
-    ${Qt5Concurrent_LIBRARIES}
-    ${Qt5X11Extras_LIBRARIES}
-    ${Qt5DBus_LIBRARIES}
-    ${Qt5Network_LIBRARIES}
-    ${QGSettings_LIBRARIES}
-)
-
-add_executable(
-    dde-shutdown
-    ${SHUTDOWN_SRCS}
-    ./src/app/dde-shutdown.cpp
-    ${QRCS}
-    ./src/dde-shutdown/image.qrc
-    ./src/dde-shutdown/qss.qrc
-)
-target_include_directories(dde-shutdown PUBLIC
-    ${DtkWidget_INCLUDE_DIRS}
-    ${XCB_EWMH_INCLUDE_DIRS}
-    ${DFrameworkDBus_INCLUDE_DIRS}
-    ${Qt5Gui_PRIVATE_INCLUDE_DIRS}
-    ${PROJECT_BINARY_DIR}
-    ${QGSettings_INCLUDE_DIRS}
-    ${Qt5X11Extras_INCLUDE_DIRS}
-)
-target_link_libraries(dde-shutdown PRIVATE
-    ${Qt_LIBS}
     ${XCB_EWMH_LIBRARIES}
     ${DFrameworkDBus_LIBRARIES}
     ${DtkWidget_LIBRARIES}
@@ -359,7 +315,7 @@ if (CMAKE_INSTALL_PREFIX_INITIALIZED_TO_DEFAULT)
 endif ()
 
 # bin
-install(TARGETS dde-lock dde-shutdown lightdm-deepin-greeter DESTINATION bin)
+install(TARGETS dde-lock lightdm-deepin-greeter DESTINATION bin)
 install(FILES files/deepin-greeter DESTINATION bin)
 
 file(GLOB SCRIPTS  scripts/*)
@@ -371,7 +327,6 @@ install(FILES ${QM_FILES}
 
 install(FILES files/lightdm-deepin-greeter.desktop DESTINATION share/xgreeters/)
 install(FILES files/dde-lock.desktop DESTINATION share/applications/)
-install(FILES files/dde-shutdown.desktop DESTINATION share/applications)
 install(FILES files/dde-session-shell.conf DESTINATION share/dde-session-shell/)
 
 # services

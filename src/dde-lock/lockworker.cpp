@@ -30,6 +30,7 @@ LockWorker::LockWorker(SessionBaseModel *const model, QObject *parent)
     , m_lockInter(new DBusLockService(LOCKSERVICE_NAME, LOCKSERVICE_PATH, QDBusConnection::systemBus(), this))
     , m_hotZoneInter(new DBusHotzone("com.deepin.daemon.Zone", "/com/deepin/daemon/Zone", QDBusConnection::sessionBus(), this))
     , m_sessionManager(new SessionManager("com.deepin.SessionManager", "/com/deepin/SessionManager", QDBusConnection::sessionBus(), this))
+    , m_switchosInterface(new HuaWeiSwitchOSInterface("com.huawei", "/com/huawei/switchos", QDBusConnection::sessionBus(), this))
 {
     m_currentUserUid = getuid();
     m_authFramework = new DeepinAuthFramework(this, this);
@@ -47,13 +48,34 @@ LockWorker::LockWorker(SessionBaseModel *const model, QObject *parent)
             m_sessionManager->RequestHibernate();
             break;
         case SessionBaseModel::PowerAction::RequireRestart:
-            m_authFramework->Authenticate(m_model->currentUser());
-            model->setPowerAction(SessionBaseModel::PowerAction::RequireRestart);
+            if (m_model->currentModeState() == SessionBaseModel::ModeStatus::ShutDownMode) {
+                m_sessionManager->RequestReboot();
+            } else {
+                m_authFramework->Authenticate(m_model->currentUser());
+            }
             return;
         case SessionBaseModel::PowerAction::RequireShutdown:
-            m_authFramework->Authenticate(m_model->currentUser());
-            model->setPowerAction(SessionBaseModel::PowerAction::RequireShutdown);
+            if (m_model->currentModeState() == SessionBaseModel::ModeStatus::ShutDownMode) {
+               m_sessionManager->RequestShutdown();
+            } else {
+                m_authFramework->Authenticate(m_model->currentUser());
+            }
             return;
+        case SessionBaseModel::PowerAction::RequireLock:
+            m_model->setCurrentModeState(SessionBaseModel::ModeStatus::PasswordMode);
+            m_authFramework->Authenticate(m_model->currentUser());
+            break;
+        case SessionBaseModel::PowerAction::RequireLogout:
+            m_sessionManager->RequestLogout();
+            return;
+        case SessionBaseModel::PowerAction::RequireSwitchSystem:
+            m_switchosInterface->setOsFlag(!m_switchosInterface->getOsFlag());
+            QTimer::singleShot(200, this, [ = ] { m_sessionManager->RequestReboot(); });
+            break;
+        case SessionBaseModel::PowerAction::RequireSwitchUser:
+            m_model->setCurrentModeState(SessionBaseModel::ModeStatus::UserMode);
+            m_authFramework->Authenticate(m_model->currentUser());
+            break;
         default:
             break;
         }
@@ -68,6 +90,7 @@ LockWorker::LockWorker(SessionBaseModel *const model, QObject *parent)
     });
 
     connect(model, &SessionBaseModel::visibleChanged, this, [ = ](bool isVisible) {
+        if (model->currentModeState() == SessionBaseModel::ModeStatus::ShutDownMode) return;
         if (!isVisible || model->currentType() != SessionBaseModel::AuthType::LockType) return;
 
         std::shared_ptr<User> user_ptr = model->currentUser();
@@ -80,7 +103,8 @@ LockWorker::LockWorker(SessionBaseModel *const model, QObject *parent)
 
     connect(m_lockInter, &DBusLockService::Event, this, &LockWorker::lockServiceEvent);
     connect(model, &SessionBaseModel::onStatusChanged, this, [ = ](SessionBaseModel::ModeStatus status) {
-        if (status == SessionBaseModel::ModeStatus::PowerMode) {
+        if (status == SessionBaseModel::ModeStatus::PowerMode ||
+            status == SessionBaseModel::ModeStatus::ShutDownMode) {
             checkPowerInfo();
         }
     });

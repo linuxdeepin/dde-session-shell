@@ -52,7 +52,6 @@ make
 
 %files
 %{_bindir}/dde-lock
-%{_bindir}/dde-shutdown
 %{_bindir}/lightdm-deepin-greeter
 %attr(755,root,root) %{_bindir}/deepin-greeter
 %{_sysconfdir}/deepin/greeters.d/00-xrandr

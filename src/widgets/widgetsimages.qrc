@@ -62,15 +62,6 @@
         <file>img/sessions/xfce_indicator_hover.svg</file>
         <file>img/sessions/xfce_indicator_normal.svg</file>
         <file>img/sessions/xfce_indicator_press.svg</file>
-        <file>img/list_actions/reboot_hover.svg</file>
-        <file>img/list_actions/reboot_normal.svg</file>
-        <file>img/list_actions/reboot_press.svg</file>
-        <file>img/list_actions/suspend_hover.svg</file>
-        <file>img/list_actions/suspend_normal.svg</file>
-        <file>img/list_actions/suspend_press.svg</file>
-        <file>img/list_actions/poweroff_hover.svg</file>
-        <file>img/list_actions/poweroff_normal.svg</file>
-        <file>img/list_actions/poweroff_press.svg</file>
         <file>img/mpris/mute_hover.svg</file>
         <file>img/mpris/mute_normal.svg</file>
         <file>img/mpris/mute_press.svg</file>
@@ -121,9 +112,6 @@
         <file>img/screen_keyboard_hover.svg</file>
         <file>img/screen_keyboard_press.svg</file>
         <file>img/screen_keyboard_normal.svg</file>
-        <file>img/list_actions/sleep_normal.svg</file>
-        <file>img/list_actions/sleep_hover.svg</file>
-        <file>img/list_actions/sleep_press.svg</file>
         <file>img/nopassword_login_press.svg</file>
         <file>img/nopassword_login_hover.svg</file>
         <file>img/nopassword_login_normal.svg</file>
@@ -158,5 +146,34 @@
         <file>img/unlockFalse/unlock_error_14.svg</file>
         <file>img/unlockFalse/unlock_error_15.svg</file>
         <file>img/spinner_white.svg</file>
+        <file>img/list_actions/facelogin_boder.png</file>
+        <file>img/list_actions/lock_hover.svg</file>
+        <file>img/list_actions/lock_normal.svg</file>
+        <file>img/list_actions/lock_press.svg</file>
+        <file>img/list_actions/logout_hover.svg</file>
+        <file>img/list_actions/logout_normal.svg</file>
+        <file>img/list_actions/logout_press.svg</file>
+        <file>img/list_actions/logout_warning_normal.svg</file>
+        <file>img/list_actions/osswitch_hover.svg</file>
+        <file>img/list_actions/osswitch_normal.svg</file>
+        <file>img/list_actions/osswitch_press.svg</file>
+        <file>img/list_actions/poweroff_hover.svg</file>
+        <file>img/list_actions/poweroff_normal.svg</file>
+        <file>img/list_actions/poweroff_press.svg</file>
+        <file>img/list_actions/poweroff_warning_normal.svg</file>
+        <file>img/list_actions/reboot_hover.svg</file>
+        <file>img/list_actions/reboot_normal.svg</file>
+        <file>img/list_actions/reboot_press.svg</file>
+        <file>img/list_actions/reboot_warning_normal.svg</file>
+        <file>img/list_actions/sleep_hover.svg</file>
+        <file>img/list_actions/sleep_normal.svg</file>
+        <file>img/list_actions/sleep_press.svg</file>
+        <file>img/list_actions/suspend_hover.svg</file>
+        <file>img/list_actions/suspend_normal.svg</file>
+        <file>img/list_actions/suspend_press.svg</file>
+        <file>img/list_actions/userswitch_hover.svg</file>
+        <file>img/list_actions/userswitch_normal.svg</file>
+        <file>img/list_actions/userswitch_press.svg</file>
+        <file>img/deepin-system-monitor.svg</file>
     </qresource>
 </RCC>

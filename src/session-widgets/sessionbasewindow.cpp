@@ -1,17 +1,25 @@
 #include "sessionbasewindow.h"
 
 #include <QDebug>
-#include <QScrollArea>
 #include <QResizeEvent>
 #include <QApplication>
 
 SessionBaseWindow::SessionBaseWindow(QWidget *parent)
     : QFrame(parent)
+    , m_centerTopFrame(nullptr)
+    , m_centerFrame(nullptr)
+    , m_bottomFrame(nullptr)
+    , m_mainLayou(nullptr)
+    , m_centerTopLayout(nullptr)
+    , m_centerLayout(nullptr)
+    , m_leftBottomLayout(nullptr)
+    , m_centerBottomLayout(nullptr)
+    , m_rightBottomLayout(nullptr)
+    , m_centerTopWidget(nullptr)
     , m_centerWidget(nullptr)
     , m_leftBottomWidget(nullptr)
-    , m_rightBottomWidget(nullptr)
-    , m_centerTopWidget(nullptr)
     , m_centerBottomWidget(nullptr)
+    , m_rightBottomWidget(nullptr)
 {
     initUI();
 }
@@ -28,7 +36,7 @@ void SessionBaseWindow::setLeftBottomWidget(QWidget * const widget)
 
 void SessionBaseWindow::setCenterBottomWidget(QWidget *const widget)
 {
-    if (m_centerBottomLayout != nullptr) {
+    if (m_centerBottomWidget != nullptr) {
         m_centerBottomLayout->removeWidget(m_centerBottomWidget);
     }
     m_centerBottomLayout->addWidget(widget, 0, Qt::AlignCenter);
@@ -55,18 +63,18 @@ void SessionBaseWindow::setCenterContent(QWidget * const widget)
         m_centerWidget->hide();
         m_centerWidget->setParent(nullptr);
     }
-
-    widget->setSizePolicy(QSizePolicy::Expanding, QSizePolicy::Expanding);
-    m_centerLayout->addWidget(widget);
     m_centerWidget = widget;
 
-    widget->setFocus();
-    widget->show();
+    //Minimum 布局中部件大小是最小值并且是足够大的。而部件允许扩展，并不一定要扩展，但是不能比缺省大小更小
+    m_centerWidget->setSizePolicy(QSizePolicy::Fixed, QSizePolicy::Fixed);
+    m_centerLayout->addWidget(m_centerWidget, 0, Qt::AlignCenter);
+    m_centerWidget->setFocus();
+    m_centerWidget->show();
 }
 
 void SessionBaseWindow::setCenterTopWidget(QWidget *const widget)
 {
-    if (m_centerTopLayout != nullptr) {
+    if (m_centerTopWidget != nullptr) {
         m_centerTopLayout->removeWidget(m_centerTopWidget);
     }
     m_centerTopLayout->addStretch();
@@ -77,69 +85,81 @@ void SessionBaseWindow::setCenterTopWidget(QWidget *const widget)
 
 void SessionBaseWindow::initUI()
 {
-    m_mainLayou = new QVBoxLayout;
-
-    m_centerLayout = new QHBoxLayout;
-    m_leftBottomLayout = new QHBoxLayout;
-    m_rightBottomLayout = new QHBoxLayout;
+    //整理代码顺序，让子部件层级清晰明了,
+    //同时方便计算中间区域的大小,使用QFrame替换了QScrollArea
     m_centerTopLayout = new QHBoxLayout;
-    m_centerBottomLayout = new QHBoxLayout;
-
-    m_centerLayout->setMargin(0);
-    m_centerLayout->setSpacing(0);
-
-    m_leftBottomLayout->setMargin(0);
-    m_leftBottomLayout->setSpacing(0);
-
-    m_rightBottomLayout->setMargin(0);
-    m_rightBottomLayout->setSpacing(0);
-
     m_centerTopLayout->setMargin(0);
     m_centerTopLayout->setSpacing(0);
 
+    m_centerTopFrame = new QFrame;
+    m_centerTopFrame->setLayout(m_centerTopLayout);
+    m_centerTopFrame->setFixedHeight(132);
+    m_centerTopFrame->setAutoFillBackground(false);
+
+    m_centerLayout = new QHBoxLayout;
+    m_centerLayout->setMargin(0);
+    m_centerLayout->setSpacing(0);
+
+    m_centerFrame = new QFrame;
+    m_centerFrame->setLayout(m_centerLayout);
+    m_centerFrame->setAutoFillBackground(false);
+
+    m_leftBottomLayout = new QHBoxLayout;
+    m_rightBottomLayout = new QHBoxLayout;
+    m_centerBottomLayout = new QHBoxLayout;
+
+    m_leftBottomLayout->setMargin(0);
+    m_leftBottomLayout->setSpacing(0);
     m_centerBottomLayout->setMargin(0);
     m_centerBottomLayout->setSpacing(0);
-
-    QFrame *bottomWidget = new QFrame;
-    m_scrollArea = new QScrollArea;
-    QWidget *centerWidget = new QWidget;
-    centerWidget->setLayout(m_centerLayout);
-
-    m_scrollArea->setWidgetResizable(true);
-    m_scrollArea->setFocusPolicy(Qt::NoFocus);
-    m_scrollArea->setFrameStyle(QFrame::NoFrame);
-    m_scrollArea->setSizePolicy(QSizePolicy::Expanding, QSizePolicy::Expanding);
-    m_scrollArea->setVerticalScrollBarPolicy(Qt::ScrollBarAlwaysOff);
-    m_scrollArea->setHorizontalScrollBarPolicy(Qt::ScrollBarAlwaysOff);
-    m_scrollArea->setWidget(centerWidget);
-    m_scrollArea->viewport()->setAutoFillBackground(false);
-    centerWidget->setAutoFillBackground(false);
+    m_rightBottomLayout->setMargin(0);
+    m_rightBottomLayout->setSpacing(0);
 
     QHBoxLayout *bottomLayout = new QHBoxLayout;
     bottomLayout->setMargin(0);
     bottomLayout->setSpacing(0);
+    bottomLayout->addLayout(m_leftBottomLayout, 1);
+    bottomLayout->addLayout(m_centerBottomLayout, 3);
+    bottomLayout->addLayout(m_rightBottomLayout, 1);
 
-    bottomLayout->addLayout(m_leftBottomLayout);
-    bottomLayout->addLayout(m_centerBottomLayout);
-    bottomLayout->addLayout(m_rightBottomLayout);
-    bottomLayout->setStretch(0, 1);
-    bottomLayout->setStretch(1, 3);
-    bottomLayout->setStretch(2, 1);
+    m_bottomFrame = new QFrame;
+    m_bottomFrame->setLayout(bottomLayout);
+    m_bottomFrame->setFixedHeight(132);
+    m_bottomFrame->setAutoFillBackground(false);
 
-    bottomWidget->setLayout(bottomLayout);
-    bottomWidget->setFixedHeight(132);
-
+    m_mainLayou = new QVBoxLayout;
     m_mainLayou->setContentsMargins(0, 33, 0, 33);
     m_mainLayou->setSpacing(0);
-
-    QFrame *topCenterWidget = new QFrame;
-    topCenterWidget->setLayout(m_centerTopLayout);
-    topCenterWidget->setFixedHeight(132);
-
-    m_mainLayou->addWidget(topCenterWidget, 0, Qt::AlignTop);
-    m_mainLayou->addWidget(m_scrollArea);
-    m_mainLayou->addWidget(bottomWidget, 0, Qt::AlignBottom);
+    m_mainLayou->addWidget(m_centerTopFrame);
+    m_mainLayou->addWidget(m_centerFrame);
+    m_mainLayou->addWidget(m_bottomFrame);
 
     setLayout(m_mainLayou);
+}
+
+QSize SessionBaseWindow::getCenterContentSize()
+{
+    //计算中间区域的大小
+    int w = width() - m_mainLayou->contentsMargins().left() - m_mainLayou->contentsMargins().right();
+
+    int h = height() - m_mainLayou->contentsMargins().top() - m_mainLayou->contentsMargins().bottom();
+    if (m_centerTopFrame->isVisible()) {
+        h = h - m_centerTopFrame->height();
+    }
+    if (m_bottomFrame->isVisible()) {
+        h = h - m_bottomFrame->height();
+    }
+
+    return QSize(w, h);
+}
+
+void SessionBaseWindow::setTopFrameVisible(bool visible)
+{
+    m_centerTopFrame->setVisible(visible);
+}
+
+void SessionBaseWindow::setBottomFrameVisible(bool visible)
+{
+    m_bottomFrame->setVisible(visible);
 }
 

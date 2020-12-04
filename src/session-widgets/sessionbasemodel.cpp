@@ -16,7 +16,6 @@ SessionBaseModel::SessionBaseModel(AuthType type, QObject *parent)
     , m_isShow(false)
     , m_isServerModel(false)
     , m_canSleep(false)
-    , m_isLockNoPassword(false)
     , m_currentType(type)
     , m_currentUser(nullptr)
     , m_powerAction(PowerAction::RequireNormal)
@@ -187,32 +186,6 @@ void SessionBaseModel::setIsShow(bool isShow)
 
     m_isShow = isShow;
 
-#ifndef QT_DEBUG
-    // shutdown screen
-    if ( m_sessionManagerInter && m_currentType == UnknowAuthType ) {
-        connect(m_sessionManagerInter, &SessionManager::LockedChanged, this, [ this ] (bool locked) {
-            m_isLock = locked;
-            if ( !locked ) this->setIsShow(false);
-        });
-        m_sessionManagerInter->locked();
-    }
-
-    if (m_sessionManagerInter && m_currentType == LockType) {
-        /** FIXME
-         * 在执行待机操作时，后端监听的是这里设置的“Locked”，当设置为“true”时，后端认为锁屏完全起来了，执行冻结进程等接下来的操作；
-         * 但是锁屏界面的显示“show”监听的是“visibleChanged”，这个信号发出后，在性能较差的机型上（arm），前端需要更长的时间来使锁屏界面显示出来，
-         * 导致后端收到了“Locked=true”的信号时，锁屏界面还没有完全起来。
-         * 唤醒时，锁屏接着待机前的步骤努力显示界面，但由于桌面界面在待机前一直在，不存在创建的过程，所以唤醒时直接就显示了，
-         * 而这时候锁屏还在处理信号跟其它进程抢占CPU资源努力显示界面中。
-         * 故增加这个延时，在待机前多给锁屏一点时间去处理显示界面的信号，尽量保证执行待机时，锁屏界面显示完成。
-         * 建议后端修改监听信号或前端修改这块逻辑。
-         */
-        QTimer::singleShot(200, this, [=] {
-            m_sessionManagerInter->SetLocked(m_isShow);
-        });
-    }
-#endif
-
     //根据界面显示还是隐藏设置是否加载虚拟键盘
     setHasVirtualKB(m_isShow);
 
@@ -258,11 +231,6 @@ void SessionBaseModel::setAbortConfirm(bool abortConfirm)
 void SessionBaseModel::setLocked(bool lock)
 {
     if (m_sessionManagerInter) m_sessionManagerInter->SetLocked(lock);
-}
-
-bool SessionBaseModel::isLocked()
-{
-    return m_isLock;
 }
 
 void SessionBaseModel::setIsLockNoPassword(bool LockNoPassword)

@@ -30,6 +30,10 @@ public:
         RequireRestart,
         RequireSuspend,
         RequireHibernate,
+        RequireLock,
+        RequireLogout,
+        RequireSwitchUser,
+        RequireSwitchSystem
     };
 
     enum ModeStatus {
@@ -38,7 +42,8 @@ public:
         ConfirmPasswordMode,
         UserMode,
         SessionMode,
-        PowerMode
+        PowerMode,
+        ShutDownMode
     };
 
     explicit SessionBaseModel(AuthType type, QObject *parent = nullptr);
@@ -91,7 +96,6 @@ public:
 
     void setAbortConfirm(bool abortConfirm);
     void setLocked(bool lock);
-    bool isLocked();
 
     inline bool isLockNoPassword() const { return m_isLockNoPassword; }
     void setIsLockNoPassword(bool LockNoPassword);
@@ -112,9 +116,11 @@ signals:
     void authFinished(bool success);
     void switchUserFinished();
     void onPowerActionChanged(PowerAction poweraction);
+    void onRequirePowerAction(PowerAction poweraction, bool requireConfirm);
     void onSessionKeyChanged(const QString &sessionKey);
     void onLogindUserChanged();
     void showUserList();
+    void showShutdown();
     void visibleChanged(bool visible);
     void onStatusChanged(ModeStatus status);
     void onUserListChanged(QList<std::shared_ptr<User>> list);
@@ -143,7 +149,6 @@ private:
     bool m_isLockNoPassword;
     bool m_isBlackMode;
     bool m_isHibernateMode;
-    bool m_isLock = false;
     int m_userListSize = 0;
     AuthType m_currentType;
     QList<std::shared_ptr<User>> m_userList;

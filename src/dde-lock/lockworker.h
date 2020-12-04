@@ -8,6 +8,7 @@
 #include "../libdde-auth/interface/deepinauthinterface.h"
 #include "../libdde-auth/deepinauthframework.h"
 #include "src/session-widgets/authinterface.h"
+#include "switchos_interface.h"
 
 #include <QObject>
 #include <QWidget>
@@ -64,6 +65,7 @@ private:
     QString m_password;
     QMap<std::shared_ptr<User>, bool> m_lockUser;
     SessionManager *m_sessionManager;
+    HuaWeiSwitchOSInterface* m_switchosInterface = nullptr;
 };
 
 #endif // LOCKWORKER_H

@@ -95,7 +95,7 @@ public:
     void setPassWordEditFocus();
     void ShutdownPrompt(SessionBaseModel::PowerAction action);
     bool inputInfoCheck(bool is_server = false);
-    void SleepModeChange(bool isSleep);//待机信号
+    void sleepModeChange(bool isSleep);//待机信号
 
 signals:
     void requestAuthUser(const QString &account, const QString &password);

@@ -35,8 +35,11 @@
 #include <QDBusAbstractAdaptor>
 #include <memory>
 
-const QString DBUS_PATH = "/com/deepin/dde/lockFront";
-const QString DBUS_NAME = "com.deepin.dde.lockFront";
+const QString DBUS_LOCK_PATH = "/com/deepin/dde/lockFront";
+const QString DBUS_LOCK_NAME = "com.deepin.dde.lockFront";
+
+const QString DBUS_SHUTDOWN_PATH = "/com/deepin/dde/shutdownFront";
+const QString DBUS_SHUTDOWN_NAME = "com.deepin.dde.shutdownFront";
 
 class DBusLockService;
 class SessionBaseModel;
@@ -58,6 +61,7 @@ signals:
 
 public slots:
     void showUserList();
+    void showShutdown();
 
 protected:
     void keyPressEvent(QKeyEvent *e) Q_DECL_OVERRIDE;
@@ -71,7 +75,6 @@ private:
 private:
     LockContent *m_content;
     SessionBaseModel *m_model;
-    HibernateWidget *Hibernate;
     DBusLogin1Manager *m_login1Inter;
     bool m_preparingSleep;
     bool m_prePreparingSleep;

@@ -32,7 +32,7 @@
 #include <QApplication>
 #include <QWindow>
 #include <QDBusInterface>
-
+#include <QScreen>
 
 LockFrame::LockFrame(SessionBaseModel *const model, QWidget *parent)
     : FullscreenBackground(parent)
@@ -43,13 +43,6 @@ LockFrame::LockFrame(SessionBaseModel *const model, QWidget *parent)
 {
     qDebug() << "LockFrame geometry:" << geometry();
 
-    QTimer::singleShot(0, this, [ = ] {
-        auto user = model->currentUser();
-        if (user != nullptr) updateBackground(QPixmap(user->greeterBackgroundPath()));
-    });
-
-    Hibernate = new HibernateWidget(this);
-    Hibernate->hide();
     m_content = new LockContent(model);
     m_content->hide();
     setContent(m_content);
@@ -59,17 +52,12 @@ LockFrame::LockFrame(SessionBaseModel *const model, QWidget *parent)
     connect(m_content, &LockContent::requestSetLayout, this, &LockFrame::requestSetLayout);
     connect(m_content, &LockContent::requestBackground, this, static_cast<void (LockFrame::*)(const QString &)>(&LockFrame::updateBackground));
     connect(model, &SessionBaseModel::blackModeChanged, this, &FullscreenBackground::setIsBlackMode);
-    connect(model, &SessionBaseModel::HibernateModeChanged, this, [&](bool is_hibernate){
-        if(is_hibernate){
-            m_content->hide();
-            setContent(Hibernate);
-            setIsHibernateMode();     //更新大小 现示动画
-        }else{
-            Hibernate->hide();
-            setContent(m_content);
-        }
-    });
     connect(model, &SessionBaseModel::showUserList, this, &LockFrame::showUserList);
+    connect(model, &SessionBaseModel::showShutdown, this, &LockFrame::showShutdown);
+    connect(model, &SessionBaseModel::SleepModeChanged, this, [ = ](bool isSleep) {
+        setIsBlackMode(isSleep);
+    } );
+
     connect(model, &SessionBaseModel::authFinished, this, [ = ](bool success){
         m_content->beforeUnlockAction(success);
 
@@ -182,6 +170,12 @@ bool LockFrame::handlePoweroffKey()
 void LockFrame::showUserList()
 {
     m_model->setCurrentModeState(SessionBaseModel::ModeStatus::UserMode);
+    show();
+}
+
+void LockFrame::showShutdown()
+{
+    m_model->setCurrentModeState(SessionBaseModel::ModeStatus::ShutDownMode);
     show();
 }
 

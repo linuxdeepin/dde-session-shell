@@ -7,6 +7,9 @@
 #include "sessionbasewindow.h"
 #include "sessionbasemodel.h"
 #include "src/widgets/mediawidget.h"
+#include "src/widgets/systemmonitor.h"
+
+#include <com_deepin_wm.h>
 
 class ControlWidget;
 class UserInputWidget;
@@ -26,6 +29,8 @@ public:
     virtual void onStatusChanged(SessionBaseModel::ModeStatus status);
     virtual void restoreCenterContent();
     virtual void restoreMode();
+    void updateGreeterBackgroundPath(const QString &path);
+    void updateDesktopBackgroundPath(const QString &path);
 
 signals:
     void requestBackground(const QString &path);
@@ -55,6 +60,11 @@ protected:
     void updateVirtualKBPosition();
     void onUserListChanged(QList<std::shared_ptr<User>> list);
     void tryGrabKeyboard();
+    void hideToplevelWindow();
+    void currentWorkspaceChanged();
+    void updateWallpaper(const QString &path);
+    void refreshBackground(SessionBaseModel::ModeStatus status);
+    void refreshLayout(SessionBaseModel::ModeStatus status);
 
 protected:
     SessionBaseModel *m_model;
@@ -66,8 +76,12 @@ protected:
     QTranslator *m_translator;
     LogoWidget *m_logoWidget;
     TimeWidget *m_timeWidget;
-    MediaWidget *m_mediaWidget;
+    MediaWidget *m_mediaWidget = nullptr;
     UserLoginInfo *m_userLoginInfo;
+    com::deepin::wm *m_wmInter;
+    QString m_greeterBackgroundPath;
+    QString m_desktopBackgroundPath;
+
     int m_failures = 0;
 };
 

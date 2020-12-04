@@ -43,13 +43,13 @@ class UserFrameList : public QWidget
 public:
     explicit UserFrameList(QWidget *parent = nullptr);
     void setModel(SessionBaseModel *model);
+    void setFixedSize(const QSize &size);
 
 signals:
     void requestSwitchUser(std::shared_ptr<User> user);
     void clicked();
 
 protected:
-    void showEvent(QShowEvent *event) override;
     void mouseReleaseEvent(QMouseEvent *event) override;
     void hideEvent(QHideEvent *event) override;
     void keyPressEvent(QKeyEvent *event) override;
@@ -65,6 +65,7 @@ private:
     void switchNextUser();
     void switchPreviousUser();
     void onOtherPageChanged(const QVariant &value);
+    void calcUserListArea();
 
 private:
     QScrollArea *m_scrollArea;

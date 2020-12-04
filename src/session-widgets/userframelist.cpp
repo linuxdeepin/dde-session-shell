@@ -59,6 +59,13 @@ void UserFrameList::setModel(SessionBaseModel *model)
     }
 }
 
+void UserFrameList::setFixedSize(const QSize &size)
+{
+    QWidget::setFixedSize(size);
+    //先确定界面大小，再根据界面大小计算用户列表区域大小
+    calcUserListArea();
+}
+
 void UserFrameList::handlerBeforeAddUser(std::shared_ptr<User> user)
 {
     if (m_model->isServerModel()) {
@@ -108,6 +115,9 @@ void UserFrameList::addUser(std::shared_ptr<User> user)
     });
     int index = m_loginWidgets.indexOf(widget);
     m_flowLayout->insertWidget(index, widget);
+
+    //添加用户和删除用户时，重新计算区域大小
+    calcUserListArea();
 }
 
 //删除用户
@@ -120,6 +130,9 @@ void UserFrameList::removeUser(const uint uid)
             break;
         }
     }
+
+    //添加用户和删除用户时，重新计算区域大小
+    calcUserListArea();
 }
 
 //点击用户
@@ -135,44 +148,6 @@ void UserFrameList::onUserClicked()
         }
     }
     emit requestSwitchUser(m_model->findUserByUid(widget->uid()));
-}
-
-
-void UserFrameList::showEvent(QShowEvent *event)
-{
-    Q_UNUSED(event);
-    //处理窗体数量小于5个时的居中显示，取 窗体数量*窗体宽度 和 最大宽度 的较小值，设置为m_centerWidget的宽度
-    int maxWidth = this->width();
-    int maxHeight = this->height();
-    m_colCount = maxWidth / (UserFrameWidth + UserFrameSpaceing);
-    m_colCount = m_colCount > 5 ? 5 : m_colCount;
-    m_rowCount = maxHeight / (UserFrameHeight + UserFrameSpaceing);
-    m_rowCount = m_rowCount > 2 ? 2 : m_rowCount;
-
-    //fix BUG 3268
-    if (m_loginWidgets.size() <= m_colCount) {
-        m_rowCount = 1;
-    }
-
-    m_scrollArea->setFixedHeight((UserFrameHeight + UserFrameSpaceing) * m_rowCount);
-    int width = qMin((UserFrameWidth + UserFrameSpaceing) * m_colCount, m_loginWidgets.size() * (UserFrameWidth + UserFrameSpaceing));
-    m_centerWidget->setFixedWidth(width);
-    m_scrollArea->setFixedWidth(width + 10);
-
-    std::shared_ptr<User> user = m_model->currentUser();
-    if (user.get() == nullptr) return;
-    for (auto it = m_loginWidgets.constBegin(); it != m_loginWidgets.constEnd(); ++it) {
-        auto login_widget = *it;
-
-        if (login_widget->uid() == user->uid()) {
-            currentSelectedUser = login_widget;
-            currentSelectedUser->setSelected(true);
-        } else {
-            login_widget->setSelected(false);
-        }
-    }
-
-    this->setFocus();
 }
 
 void UserFrameList::mouseReleaseEvent(QMouseEvent *event)
@@ -257,7 +232,7 @@ void UserFrameList::initUI()
     m_centerWidget->setLayout(m_flowLayout);
 
     m_scrollArea->setWidgetResizable(true);
-    m_scrollArea->setSizePolicy(QSizePolicy::Expanding, QSizePolicy::Expanding);
+    m_scrollArea->setSizePolicy(QSizePolicy::Fixed, QSizePolicy::Fixed);
     //m_scrollArea纵向滑动条在需要时显示，横向不显示
     m_scrollArea->setVerticalScrollBarPolicy(Qt::ScrollBarAsNeeded);
     m_scrollArea->setHorizontalScrollBarPolicy(Qt::ScrollBarAlwaysOff);
@@ -346,5 +321,42 @@ void UserFrameList::onOtherPageChanged(const QVariant &value)
 {
     foreach (auto w, m_loginWidgets) {
         w->setSelected(w->uid() == value.toUInt());
+    }
+}
+
+void UserFrameList::calcUserListArea()
+{
+    //处理窗体数量小于5个时的居中显示，取 窗体数量*窗体宽度 和 最大宽度 的较小值，设置为m_centerWidget的宽度
+    int maxWidth = this->width();
+    int maxHeight = this->height();
+
+    m_colCount = maxWidth / (UserFrameWidth + UserFrameSpaceing);
+    m_colCount = m_colCount > 5 ? 5 : m_colCount;
+    m_rowCount = maxHeight / (UserFrameHeight + UserFrameSpaceing);
+    m_rowCount = m_rowCount > 2 ? 2 : m_rowCount;
+
+    //fix BUG 3268
+    if (m_loginWidgets.size() <= m_colCount) {
+        m_rowCount = 1;
+    }
+
+    int totalHeight = (UserFrameHeight + UserFrameSpaceing) * m_rowCount;
+    int totalWidth = qMin((UserFrameWidth + UserFrameSpaceing) * m_colCount, (UserFrameWidth + UserFrameSpaceing) * m_loginWidgets.size());
+
+    m_scrollArea->setFixedHeight(totalHeight);
+    m_scrollArea->setFixedWidth(totalWidth + 10);
+    m_centerWidget->setFixedWidth(totalWidth);
+
+    std::shared_ptr<User> user = m_model->currentUser();
+    if (user.get() == nullptr) return;
+    for (auto it = m_loginWidgets.constBegin(); it != m_loginWidgets.constEnd(); ++it) {
+        auto login_widget = *it;
+
+        if (login_widget->uid() == user->uid()) {
+            currentSelectedUser = login_widget;
+            currentSelectedUser->setSelected(true);
+        } else {
+            login_widget->setSelected(false);
+        }
     }
 }

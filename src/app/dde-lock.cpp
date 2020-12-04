@@ -28,6 +28,8 @@
 #include "src/dde-lock//lockframe.h"
 #include "src/dde-lock/dbus/dbuslockfrontservice.h"
 #include "src/dde-lock/dbus/dbuslockagent.h"
+#include "src/dde-lock/dbus/dbusshutdownagent.h"
+#include "src/dde-lock/dbus/dbusshutdownfrontservice.h"
 #include "src/global_util/multiscreenmanager.h"
 
 #include "src/session-widgets/lockcontent.h"
@@ -106,21 +108,29 @@ int main(int argc, char *argv[])
     QCommandLineOption switchUser(QStringList() << "s" << "switch", "show user switch");
     cmdParser.addOption(switchUser);
 
+    QCommandLineOption shutdown(QStringList() << "t" << "shutdown", "show shut down");
+    cmdParser.addOption(shutdown);
+
     QStringList xddd = app->arguments();
     cmdParser.process(*app);
 
     bool runDaemon = cmdParser.isSet(backend);
     bool showUserList = cmdParser.isSet(switchUser);
+    bool showShutdown = cmdParser.isSet(shutdown);
 
     SessionBaseModel *model = new SessionBaseModel(SessionBaseModel::AuthType::LockType);
-    LockWorker *worker = new LockWorker(model); //
+    LockWorker *worker = new LockWorker(model);
     PropertyGroup *property_group = new PropertyGroup(worker);
 
     property_group->addProperty("contentVisible");
 
-    DBusLockAgent agent;
-    agent.setModel(model);
-    DBusLockFrontService service(&agent);
+    DBusLockAgent lockAgent;
+    lockAgent.setModel(model);
+    DBusLockFrontService lockService(&lockAgent);
+
+    DBusShutdownAgent shutdownAgent;
+    shutdownAgent.setModel(model);
+    DBusShutdownFrontService shutdownServices(&shutdownAgent);
 
     auto createFrame = [&] (QScreen *screen) -> QWidget* {
         LockFrame *lockFrame = new LockFrame(model);
@@ -130,17 +140,16 @@ int main(int argc, char *argv[])
         QObject::connect(lockFrame, &LockFrame::requestAuthUser, worker, &LockWorker::authUser);
         QObject::connect(model, &SessionBaseModel::visibleChanged, lockFrame, &LockFrame::setVisible);
         QObject::connect(model, &SessionBaseModel::visibleChanged, lockFrame,[&](bool visible) {
-            emit service.Visible(visible);
+            emit lockService.Visible(visible);
         });
-        QObject::connect(model, &SessionBaseModel::showUserList, lockFrame, &LockFrame::showUserList);
         QObject::connect(lockFrame, &LockFrame::requestSetLayout, worker, &LockWorker::setLayout);
         QObject::connect(lockFrame, &LockFrame::requestEnableHotzone, worker, &LockWorker::enableZoneDetected, Qt::UniqueConnection);
         QObject::connect(lockFrame, &LockFrame::destroyed, property_group, &PropertyGroup::removeObject);
         QObject::connect(lockFrame, &LockFrame::sendKeyValue, [&](QString key) {
-             emit service.ChangKey(key);
+             emit lockService.ChangKey(key);
         });
         lockFrame->setVisible(model->isShow());
-        emit service.Visible(true);
+        emit lockService.Visible(true);
         return lockFrame;
     };
 
@@ -150,30 +159,29 @@ int main(int argc, char *argv[])
     QObject::connect(model, &SessionBaseModel::visibleChanged, &multi_screen_manager, &MultiScreenManager::startRaiseContentFrame);
 
     QDBusConnection conn = QDBusConnection::sessionBus();
-    if (!conn.registerService(DBUS_NAME) ||
-            !conn.registerObject("/com/deepin/dde/lockFront", &agent) ||
-            !app->setSingleInstance(QString("dde-lock%1").arg(getuid()), DApplication::UserScope)) {
+    if (!conn.registerService(DBUS_LOCK_NAME) ||
+        !conn.registerObject(DBUS_LOCK_PATH, &lockAgent) ||
+        !conn.registerService(DBUS_SHUTDOWN_NAME) ||
+        !conn.registerObject(DBUS_SHUTDOWN_PATH, &shutdownAgent) ||
+        !app->setSingleInstance(QString("dde-lock%1").arg(getuid()), DApplication::UserScope)) {
         qDebug() << "register dbus failed"<< "maybe lockFront is running..." << conn.lastError();
 
         if (!runDaemon) {
             const char *interface = "com.deepin.dde.lockFront";
-            QDBusInterface ifc(DBUS_NAME, DBUS_PATH, interface, QDBusConnection::sessionBus(), nullptr);
+            QDBusInterface ifc(DBUS_LOCK_NAME, DBUS_LOCK_PATH, interface, QDBusConnection::sessionBus(), nullptr);
             if (showUserList) {
                 ifc.asyncCall("ShowUserList");
-            } else {
-                ifc.asyncCall("Show");
             }
         }
     } else {
         if (!runDaemon) {
             if (showUserList) {
                 emit model->showUserList();
-            } else {
-                model->setIsShow(true);
+            } else if (showShutdown) {
+                emit model->showShutdown();
             }
         }
         app->exec();
     }
-
     return 0;
 }
