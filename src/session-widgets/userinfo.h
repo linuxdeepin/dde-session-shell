@@ -9,6 +9,7 @@
 
 #define ACCOUNT_DBUS_SERVICE "com.deepin.daemon.Accounts"
 #define ACCOUNT_DBUS_PATH "/com/deepin/daemon/Accounts"
+#define DEFAULT_BACKGROUND "/usr/share/backgrounds/default_background.jpg"
 
 using UserInter = com::deepin::daemon::accounts::User;
 

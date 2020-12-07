@@ -38,10 +38,11 @@
 #include <QDir>
 #include <DGuiApplicationHelper>
 #include <unistd.h>
+
+#include "src/session-widgets/userinfo.h"
 #include "src/session-widgets/framedatabind.h"
 
 DGUI_USE_NAMESPACE
-#define  DEFAULT_BACKGROUND "/usr/share/backgrounds/default_background.jpg"
 
 FullscreenBackground::FullscreenBackground(QWidget *parent)
     : QWidget(parent)
