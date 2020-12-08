@@ -386,7 +386,6 @@ void UserLoginWidget::showEvent(QShowEvent *event)
 
     m_lockPasswordWidget->setFixedSize(QSize(m_passwordEdit->width(), m_passwordEdit->height()));
 
-    adjustSize();
     return QWidget::showEvent(event);
 }
 
