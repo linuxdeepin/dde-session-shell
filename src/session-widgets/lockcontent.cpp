@@ -316,6 +316,7 @@ void LockContent::toggleVirtualKB()
         return;
     }
 
+    m_virtualKB->setParent(this);
     m_virtualKB->raise();
     m_userLoginInfo->getUserLoginWidget()->setPassWordEditFocus();
 
