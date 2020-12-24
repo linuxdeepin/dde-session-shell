@@ -111,7 +111,7 @@ LockWorker::LockWorker(SessionBaseModel *const model, QObject *parent)
     }
 
     // init ADDomain User
-    if (DSysInfo::deepinType() == DSysInfo::DeepinServer || valueByQSettings<bool>("", "loginPromptInput", false)) {
+    if (DSysInfo::deepinType() == DSysInfo::DeepinServer) {
         std::shared_ptr<User> user = std::make_shared<ADDomainUser>(m_currentUserUid);
         static_cast<ADDomainUser *>(user.get())->setUserDisplayName("...");
         static_cast<ADDomainUser *>(user.get())->setIsServerUser(true);
