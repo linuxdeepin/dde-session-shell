@@ -72,7 +72,6 @@ signals:
 protected:
     void mouseReleaseEvent(QMouseEvent *event) Q_DECL_OVERRIDE;
     void showEvent(QShowEvent *event) Q_DECL_OVERRIDE;
-    void resizeEvent(QResizeEvent *event) Q_DECL_OVERRIDE;
     void hideEvent(QHideEvent *event) Q_DECL_OVERRIDE;
     bool event(QEvent *event) Q_DECL_OVERRIDE;
 
@@ -127,7 +126,6 @@ private:
 
     WarningView *m_warningView = nullptr;
     QWidget *m_normalView = nullptr;
-    QSpacerItem *m_buttonSpacer = nullptr;
     QStackedLayout *m_mainLayout;
 
     bool m_confirm = false;

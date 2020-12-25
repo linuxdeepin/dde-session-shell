@@ -196,13 +196,6 @@ bool ContentWidget::handleKeyPress(QKeyEvent *event)
     return false;
 }
 
-void ContentWidget::resizeEvent(QResizeEvent *event)
-{
-    QFrame::resizeEvent(event);
-
-    m_buttonSpacer->changeSize(0, (height() - m_shutdownButton->height()) / 2);
-}
-
 bool ContentWidget::event(QEvent *event)
 {
     if (event->type() == QEvent::KeyPress) {
@@ -411,6 +404,7 @@ bool ContentWidget::beforeInvokeAction(const Actions action)
 
         m_warningView = view;
         m_mainLayout->addWidget(m_warningView);
+        m_mainLayout->setAlignment(m_warningView, Qt::AlignCenter);
         m_mainLayout->setCurrentWidget(m_warningView);
 
         connect(view, &InhibitWarnView::cancelled, this, &ContentWidget::onCancel);
@@ -444,6 +438,7 @@ bool ContentWidget::beforeInvokeAction(const Actions action)
 
         m_warningView = view;
         m_mainLayout->addWidget(m_warningView);
+        m_mainLayout->setAlignment(m_warningView, Qt::AlignCenter);
         m_mainLayout->setCurrentWidget(m_warningView);
 
         connect(view, &MultiUsersWarningView::cancelled, this, &ContentWidget::onCancel);
@@ -475,6 +470,7 @@ bool ContentWidget::beforeInvokeAction(const Actions action)
         m_warningView = view;
 
         m_mainLayout->addWidget(m_warningView);
+        m_mainLayout->setAlignment(m_warningView, Qt::AlignCenter);
         m_mainLayout->setCurrentWidget(m_warningView);
 
         connect(view, &InhibitWarnView::cancelled, this, &ContentWidget::onCancel);
@@ -611,6 +607,9 @@ void ContentWidget::enableSleepBtn(bool enable)
 
 void ContentWidget::initUI()
 {
+    //整理代码顺序，让子部件的构建层级先后顺序更清晰
+    m_inhibitorBlacklists << "NetworkManager" << "ModemManager" << "com.deepin.daemon.Power";
+
     m_btnsList = new QList<RoundItemButton *>;
     m_shutdownButton = new RoundItemButton(tr("Shut down"));
     m_shutdownButton->setAutoExclusive(true);
@@ -630,7 +629,6 @@ void ContentWidget::initUI()
     m_logoutButton = new RoundItemButton(tr("Log out"));
     m_logoutButton->setAutoExclusive(true);
     m_logoutButton->setObjectName("LogoutButton");
-
     m_switchUserBtn = new RoundItemButton(tr("Switch user"));
     m_switchUserBtn->setAutoExclusive(true);
     m_switchUserBtn->setObjectName("SwitchUserButton");
@@ -641,10 +639,7 @@ void ContentWidget::initUI()
         m_switchSystemBtn->setObjectName("SwitchSystemButton");
     }
 
-    m_normalView = new QWidget(this);
-
     QHBoxLayout *buttonLayout = new QHBoxLayout;
-    QVBoxLayout *defaultpageLayout = new QVBoxLayout;
     buttonLayout->setMargin(0);
     buttonLayout->setSpacing(10);
     buttonLayout->addStretch();
@@ -658,35 +653,37 @@ void ContentWidget::initUI()
     buttonLayout->addWidget(m_logoutButton);
     buttonLayout->addStretch(0);
 
+    QVBoxLayout *defaultpageLayout = new QVBoxLayout;
     defaultpageLayout->setMargin(0);
 #ifdef QT_DEBUG
     QLabel *m_debugHint = new QLabel("!!! DEBUG MODE !!!", this);
     m_debugHint->setStyleSheet("color: #FFF;");
-    defaultpageLayout->addWidget(m_debugHint);
-    defaultpageLayout->setAlignment(m_debugHint, Qt::AlignCenter);
+    defaultpageLayout->addWidget(m_debugHint, 0, Qt::AlignCenter);
 #endif // QT_DEBUG
-    defaultpageLayout->addSpacerItem(m_buttonSpacer = new QSpacerItem(0, 0));
-    defaultpageLayout->addLayout(buttonLayout);
-    defaultpageLayout->addStretch();
-    m_normalView->setLayout(defaultpageLayout);
 
-    m_mainLayout = new QStackedLayout;
-    m_mainLayout->setMargin(0);
-    m_mainLayout->setSpacing(0);
-    m_mainLayout->addWidget(m_normalView);
-
-    m_inhibitorBlacklists << "NetworkManager" << "ModemManager" << "com.deepin.daemon.Power";
+    //使各功能按钮自动居中显示
+    defaultpageLayout->addStretch(0);
+    defaultpageLayout->addLayout(buttonLayout, 3);
+    defaultpageLayout->addStretch(0);
 
     if (findValueByQSettings<bool>(DDESESSIONCC::SHUTDOWN_CONFIGS, "Shutdown", "enableSystemMonitor", true)) {
         QFile file("/usr/bin/deepin-system-monitor");
         if (file.exists()) {
             m_systemMonitor = new SystemMonitor(m_normalView);
             setFocusPolicy(Qt::StrongFocus);
-            defaultpageLayout->addWidget(m_systemMonitor);
-            defaultpageLayout->setAlignment(m_systemMonitor, Qt::AlignCenter);
+            defaultpageLayout->addWidget(m_systemMonitor, 0, Qt::AlignCenter);
             defaultpageLayout->addSpacing(40);
         }
     }
+
+    m_normalView = new QWidget(this);
+    m_normalView->setLayout(defaultpageLayout);
+
+    m_mainLayout = new QStackedLayout;
+    m_mainLayout->setMargin(0);
+    m_mainLayout->setSpacing(0);
+    m_mainLayout->addWidget(m_normalView);
+    m_mainLayout->setAlignment(m_normalView, Qt::AlignCenter);
 
     setFocusPolicy(Qt::StrongFocus);
     setLayout(m_mainLayout);
