@@ -17,7 +17,6 @@
 
 #define LOCKSERVICE_PATH "/com/deepin/dde/LockService"
 #define LOCKSERVICE_NAME "com.deepin.dde.LockService"
-#define DOMAIN_BASE_UID 10000
 
 using PowerInter = com::deepin::daemon::Power;
 using namespace Auth;
@@ -35,6 +34,8 @@ LockWorker::LockWorker(SessionBaseModel *const model, QObject *parent)
     m_currentUserUid = getuid();
     m_authFramework = new DeepinAuthFramework(this, this);
     m_sessionManager->setSync(false);
+
+    onUserAdded(ACCOUNTS_DBUS_PREFIX + QString::number(m_currentUserUid));
 
     //该信号用来处理初始化切换用户(锁屏+锁屏)或者切换用户(锁屏+登陆)两种种场景的指纹认证
     connect(m_lockInter, &DBusLockService::UserChanged, this, &LockWorker::onCurrentUserChanged);
@@ -153,14 +154,12 @@ LockWorker::LockWorker(SessionBaseModel *const model, QObject *parent)
     }
 
     // init ADDomain User
-    if (DSysInfo::deepinType() == DSysInfo::DeepinServer) {
-        std::shared_ptr<User> user = std::make_shared<ADDomainUser>(m_currentUserUid);
+    if (DSysInfo::deepinType() == DSysInfo::DeepinServer || valueByQSettings<bool>("", "loginPromptInput", false)) {
+        std::shared_ptr<User> user = std::make_shared<ADDomainUser>(INT_MAX);
         static_cast<ADDomainUser *>(user.get())->setUserDisplayName("...");
         static_cast<ADDomainUser *>(user.get())->setIsServerUser(true);
         m_model->setIsServerModel(true);
-        m_model->setCurrentUser(user);
-    } else {
-        onUserAdded(ACCOUNTS_DBUS_PREFIX + QString::number(m_currentUserUid));
+        m_model->userAdd(user);
     }
 
     //连接系统待机信号
@@ -243,14 +242,7 @@ void LockWorker::onPasswordResult(const QString &msg)
 
 void LockWorker::onUserAdded(const QString &user)
 {
-    std::shared_ptr<User> user_ptr = nullptr;
-    uid_t uid = user.mid(QString(ACCOUNTS_DBUS_PREFIX).size()).toUInt();
-    if(uid < DOMAIN_BASE_UID) {
-        user_ptr = std::make_shared<NativeUser>(user);
-    } else {
-        user_ptr = std::make_shared<ADDomainUser>(uid);
-        static_cast<ADDomainUser *>(user_ptr.get())->setUserName(userPwdName(uid));
-    }
+    std::shared_ptr<NativeUser> user_ptr(new NativeUser(user));
 
     if (!user_ptr->isUserIsvalid())
         return;
@@ -260,11 +252,14 @@ void LockWorker::onUserAdded(const QString &user)
     if (user_ptr->uid() == m_currentUserUid) {
         m_model->setCurrentUser(user_ptr);
 
-        // 正常情况认证走SessionBaseModel::visibleChanged,这里是异常状况没有触发认证的补充,Authenticate调用时间间隔过短,会导致认证会崩溃,加延时处理
-        QTimer::singleShot(100, user_ptr.get(), [ = ]{
-            if (user_ptr.get()) {
-                m_authFramework->Authenticate(user_ptr);
-            }
+        // AD domain account auth will not be activated for the first time
+        connect(user_ptr->getUserInter(), &UserInter::UserNameChanged, this, [ = ] {
+            // 正常情况认证走SessionBaseModel::visibleChanged,这里是异常状况没有触发认证的补充,Authenticate调用时间间隔过短,会导致认证会崩溃,加延时处理
+            QTimer::singleShot(100, user_ptr.get(), [ = ]{
+                if (user_ptr.get()) {
+                    m_authFramework->Authenticate(user_ptr);
+                }
+            });
         });
     }
 

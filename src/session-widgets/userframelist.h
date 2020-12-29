@@ -66,6 +66,7 @@ private:
     void switchPreviousUser();
     void onOtherPageChanged(const QVariant &value);
     void calcUserListArea();
+    void updateLayout();
 
 private:
     QScrollArea *m_scrollArea;
