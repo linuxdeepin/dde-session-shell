@@ -122,6 +122,7 @@ public:
 
 private:
     void configAccountInfo(const QString& account_config);
+    QStringList readDesktopBackgroundPath(const QString &path);
 
 private:
     UserInter *m_userInter;

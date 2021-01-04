@@ -250,6 +250,8 @@ NativeUser::NativeUser(const QString &path, QObject *parent)
         settings.beginGroup("User");
 
         int index = settings.value("Workspace").toInt();
+        //刚安装的系统中返回的Workspace为0
+        index = index <= 0 ? 1 : index;
         if (paths.size() >= index && index > 0) {
             m_desktopBackground = toLocalFile(paths.at(index - 1));
             emit desktopBackgroundPathChanged(m_desktopBackground);
@@ -303,13 +305,39 @@ void NativeUser::configAccountInfo(const QString &account_config)
     //初始化时读取用户的配置文件中设置的时制格式
     m_is24HourFormat = settings.value("Use24HourFormat").toBool();
 
-    QStringList desktopBackgrounds = settings.value("DesktopBackgrounds").toString().split(";");
+    //QSettings中分号为结束符，分号后面的数据不会被读取，因此使用QFile直接读取桌面背景图片路径
+    QStringList desktopBackgrounds = readDesktopBackgroundPath(account_config);
+
     int index = settings.value("Workspace").toInt();
+    //刚安装的系统中返回的Workspace为0
+    index = index <= 0 ? 1 : index;
     if (desktopBackgrounds.size() >= index && index > 0) {
         m_desktopBackground = toLocalFile(desktopBackgrounds.at(index - 1));
     } else {
         qDebug() << "configAccountInfo get error index:" << index << ", backgrounds:" << desktopBackgrounds;
     }
+}
+
+QStringList NativeUser::readDesktopBackgroundPath(const QString &path)
+{
+    QStringList desktopBackgrounds;
+    QFile file(path);
+    if (file.exists()) {
+        if (file.open(QIODevice::Text | QIODevice::ReadOnly)) {
+            QTextStream read(&file);
+            while (!read.atEnd()) {
+                QString line = read.readLine();
+                if (line.contains("DesktopBackgrounds=", Qt::CaseInsensitive)) {
+                    QString paths = line.section('=',1);
+                    desktopBackgrounds << paths.split(";");
+                }
+            }
+
+            file.close();
+        }
+    }
+
+    return desktopBackgrounds;
 }
 
 void NativeUser::setCurrentLayout(const QString &layout)
