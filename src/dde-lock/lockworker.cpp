@@ -151,7 +151,7 @@ LockWorker::LockWorker(SessionBaseModel *const model, QObject *parent)
 
 void LockWorker::switchToUser(std::shared_ptr<User> user)
 {
-    qDebug() << "switch user from" << m_model->currentUser()->name() << " to " << user->name();
+    qWarning() << "switch user from" << m_model->currentUser()->name() << " to " << user->name();
 
     // clear old password
     m_password.clear();
@@ -182,7 +182,7 @@ void LockWorker::authUser(const QString &password)
 
     m_password = password;
 
-    qDebug() << "start authentication of user: " << user->name();
+    qWarning() << "start authentication of user: " << user->name();
 
     // 服务器登录输入用户与当前用户不同时给予提示
     if (m_currentUserUid != user->uid()) {
@@ -278,11 +278,11 @@ void LockWorker::lockServiceEvent(quint32 eventType, quint32 pid, const QString 
 
     switch (eventType) {
     case DBusLockService::PromptQuestion:
-        qDebug() << "prompt quesiton from pam: " << message;
+        qWarning() << "prompt quesiton from pam: " << message;
         emit m_model->authFaildMessage(message);
         break;
     case DBusLockService::PromptSecret:
-        qDebug() << "prompt secret from pam: " << message;
+        qWarning() << "prompt secret from pam: " << message;
         if (m_isThumbAuth && !msg.isEmpty()) {
             emit m_model->authFaildMessage(msg);
         }
@@ -310,7 +310,7 @@ void LockWorker::lockServiceEvent(quint32 eventType, quint32 pid, const QString 
 
 void LockWorker::onUnlockFinished(bool unlocked)
 {
-    qDebug() << "LockWorker::onUnlockFinished -- unlocked status : " << unlocked;
+    qWarning() << "LockWorker::onUnlockFinished -- unlocked status : " << unlocked;
     emit m_model->authFinished(unlocked);
 
     if (unlocked) {
@@ -320,7 +320,7 @@ void LockWorker::onUnlockFinished(bool unlocked)
     m_authenticating = false;
 
     if (!unlocked && m_authFramework->GetAuthType() == AuthFlag::Password) {
-        qDebug() << "Authorization password failed!";
+        qWarning() << "Authorization password failed!";
         emit m_model->authFaildTipsMessage(tr("Wrong Password"));
 
         if (m_model->currentUser()->isLockForNum()) {
@@ -349,7 +349,7 @@ void LockWorker::onUnlockFinished(bool unlocked)
 
 void LockWorker::onCurrentUserChanged(const QString &user)
 {
-    qDebug() << "LockWorker::onCurrentUserChanged -- change to :" << user;
+    qWarning() << "LockWorker::onCurrentUserChanged -- change to :" << user;
     const QJsonObject obj = QJsonDocument::fromJson(user.toUtf8()).object();
     auto user_cur = static_cast<uint>(obj["Uid"].toInt());
     if (user_cur == m_currentUserUid) {

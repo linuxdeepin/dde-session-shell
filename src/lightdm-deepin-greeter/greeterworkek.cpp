@@ -131,7 +131,7 @@ GreeterWorkek::GreeterWorkek(SessionBaseModel *const model, QObject *parent)
 
 void GreeterWorkek::switchToUser(std::shared_ptr<User> user)
 {
-    qDebug() << "switch user from" << m_model->currentUser()->name() << " to "
+    qWarning() << "switch user from" << m_model->currentUser()->name() << " to "
              << user->name();
 
     // clear old password
@@ -160,7 +160,7 @@ void GreeterWorkek::authUser(const QString &password)
     std::shared_ptr<User> user = m_model->currentUser();
     m_password = password;
 
-    qDebug() << "greeter authenticate user: " << m_greeter->authenticationUser() << " current user: " << user->name();
+    qWarning() << "greeter authenticate user: " << m_greeter->authenticationUser() << " current user: " << user->name();
     if (m_greeter->authenticationUser() != user->name()) {
         resetLightdmAuth(user, 100, false);
     }
@@ -227,7 +227,7 @@ void GreeterWorkek::oneKeyLogin()
     connect(watcher, &QDBusPendingCallWatcher::finished, [ = ] {
         if (!call.isError()) {
             QDBusReply<QString> reply = call.reply();
-            qDebug() << "one key Login User Name is : " << reply.value();
+            qWarning() << "one key Login User Name is : " << reply.value();
 
             auto user_ptr = m_model->findUserByName(reply.value());
             if (user_ptr.get() != nullptr && reply.isValid()) {
@@ -271,7 +271,7 @@ void GreeterWorkek::prompt(QString text, QLightDM::Greeter::PromptType type)
 {
     // Don't show password prompt from standard pam modules since
     // we'll provide our own prompt or just not.
-    qDebug() << "pam prompt: " << text << type;
+    qWarning() << "pam prompt: " << text << type;
 
     const QString msg = text.simplified() == "Password:" ? "" : text;
 
@@ -296,11 +296,11 @@ void GreeterWorkek::prompt(QString text, QLightDM::Greeter::PromptType type)
 // TODO(justforlxz): 错误信息应该存放在User类中, 切换用户后其他控件读取错误信息，而不是在这里分发。
 void GreeterWorkek::message(QString text, QLightDM::Greeter::MessageType type)
 {
-    qDebug() << "pam message: " << text << type;
+    qWarning() << "pam message: " << text << type;
 
     switch (type) {
     case QLightDM::Greeter::MessageTypeInfo:
-        qDebug() << Q_FUNC_INFO << "lightdm greeter message type info: " << text.toUtf8() << QString(dgettext("fprintd", text.toUtf8()));
+        qWarning() << Q_FUNC_INFO << "lightdm greeter message type info: " << text.toUtf8() << QString(dgettext("fprintd", text.toUtf8()));
         emit m_model->authFaildMessage(QString(dgettext("fprintd", text.toUtf8())));
         break;
 
@@ -312,7 +312,7 @@ void GreeterWorkek::message(QString text, QLightDM::Greeter::MessageType type)
 
 void GreeterWorkek::authenticationComplete()
 {
-    qDebug() << "authentication complete, authenticated " << m_greeter->isAuthenticated();
+    qWarning() << "authentication complete, authenticated " << m_greeter->isAuthenticated();
 
     emit m_model->authFinished(m_greeter->isAuthenticated());
 
@@ -356,7 +356,7 @@ void GreeterWorkek::authenticationComplete()
     default: break;
     }
 
-    qDebug() << "start session = " << m_model->sessionKey();
+    qWarning() << "start session = " << m_model->sessionKey();
 
     auto startSessionSync = [ = ]() {
         QJsonObject json;
@@ -394,7 +394,7 @@ void GreeterWorkek::recoveryUserKBState(std::shared_ptr<User> user)
 
     const bool enabled = UserNumlockSettings(user->name()).get(false);
 
-    qDebug() << "restore numlock status to " << enabled;
+    qWarning() << "restore numlock status to " << enabled;
 
     // Resync numlock light with numlock status
     bool cur_numlock = KeyboardMonitor::instance()->isNumlockOn();
