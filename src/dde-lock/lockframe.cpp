@@ -33,6 +33,7 @@
 #include <QWindow>
 #include <QDBusInterface>
 #include <QScreen>
+#include <QGSettings>
 
 LockFrame::LockFrame(SessionBaseModel *const model, QWidget *parent)
     : FullscreenBackground(parent)
@@ -40,6 +41,7 @@ LockFrame::LockFrame(SessionBaseModel *const model, QWidget *parent)
     , m_login1Inter(new DBusLogin1Manager("org.freedesktop.login1", "/org/freedesktop/login1", QDBusConnection::systemBus(), this))
     , m_preparingSleep(false)
     , m_prePreparingSleep(false)
+    , m_oldCursor(this->cursor())
 {
     qDebug() << "LockFrame geometry:" << geometry();
 
@@ -55,7 +57,24 @@ LockFrame::LockFrame(SessionBaseModel *const model, QWidget *parent)
     connect(model, &SessionBaseModel::showUserList, this, &LockFrame::showUserList);
     connect(model, &SessionBaseModel::showShutdown, this, &LockFrame::showShutdown);
     connect(model, &SessionBaseModel::SleepModeChanged, this, [ = ](bool isSleep) {
-        setIsBlackMode(isSleep);
+        //待机时由锁屏提供假黑屏，唤醒时显示正常界面
+        model->setIsBlackModel(isSleep);
+
+        if (isSleep) {
+            //待机时隐藏鼠标
+            m_oldCursor = this->cursor();
+            setCursor(Qt::BlankCursor);
+        } else  {
+            //唤醒后显示鼠标
+            setCursor(m_oldCursor);
+            //待机唤醒后检查是否需要密码，若不需要密码直接隐藏锁定界面
+            if (QGSettings::isSchemaInstalled("com.deepin.dde.power")) {
+                QGSettings powerSettings("com.deepin.dde.power", QByteArray(), this);
+                if (!powerSettings.get("sleep-lock").toBool()) {
+                    hide();
+                }
+            }
+        }
     } );
 
     connect(model, &SessionBaseModel::authFinished, this, [ = ](bool success){

@@ -78,6 +78,7 @@ private:
     DBusLogin1Manager *m_login1Inter;
     bool m_preparingSleep;
     bool m_prePreparingSleep;
+    QCursor m_oldCursor;
 };
 
 #endif // LOCKFRAME

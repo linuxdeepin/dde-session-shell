@@ -62,6 +62,7 @@ public slots:
     void onCancelAction();
     void recoveryLayout();
     void onRequirePowerAction(SessionBaseModel::PowerAction powerAction, bool requireConfirm);
+    void setUserSwitchEnable(bool enable);
 
 protected:
     void keyPressEvent(QKeyEvent *event) Q_DECL_OVERRIDE;
@@ -75,7 +76,6 @@ private:
     void hideToplevelWindow();
     bool beforeInvokeAction(const SessionBaseModel::PowerAction action);
     void enterKeyPushed();
-    void onUserListChanged(int users_size);
     void enableHibernateBtn(bool enable);
     void enableSleepBtn(bool enable);
 

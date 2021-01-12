@@ -318,25 +318,6 @@ void ShutdownWidget::enterKeyPushed()
         beforeInvokeAction(SessionBaseModel::PowerAction::RequireLogout);
 }
 
-void ShutdownWidget::onUserListChanged(int users_size)
-{
-    if(users_size == 0) return;
-
-    const bool allowShowUserSwitchButton = m_model->allowShowUserSwitchButton();
-    const bool alwaysShowUserSwitchButton = m_model->alwaysShowUserSwitchButton();
-    bool haveLogindUser = true;
-
-    if (m_model->isServerModel() && m_model->currentType() == SessionBaseModel::LightdmType) {
-        haveLogindUser = !m_model->logindUser().isEmpty();
-    }
-
-    m_requireSwitchUserBtn->setVisible((alwaysShowUserSwitchButton ||
-                                          (allowShowUserSwitchButton &&
-                                          (users_size > (m_model->isServerModel() ? 0 : 1)))) &&
-                                       haveLogindUser &&
-                                       m_model->currentModeState() == SessionBaseModel::ModeStatus::ShutDownMode);
-}
-
 void ShutdownWidget::enableHibernateBtn(bool enable)
 {
     m_requireHibernateButton->setVisible(enable);
@@ -613,8 +594,6 @@ QList<InhibitWarnView::InhibitorData> ShutdownWidget::listInhibitors(const Sessi
 
 void ShutdownWidget::onStatusChanged(SessionBaseModel::ModeStatus status)
 {
-    onUserListChanged(m_model->userListSize());
-
     RoundItemButton * roundItemButton = m_requireShutdownButton;
     if (m_model->currentModeState() == SessionBaseModel::ModeStatus::ShutDownMode) {
         m_requireLockButton->setVisible(true);
@@ -661,15 +640,9 @@ void ShutdownWidget::onCancelAction()
 
 void ShutdownWidget::recoveryLayout()
 {
-    for (RoundItemButton *btn : m_btnList) {
-        btn->show();
-    }
-
     enableHibernateBtn(m_model->canSleep());
 
     enableSleepBtn(m_model->hasSwap());
-
-    onUserListChanged(m_model->userListSize());
 
     if (m_systemMonitor) {
         m_systemMonitor->setVisible(false);
@@ -705,6 +678,11 @@ void ShutdownWidget::onRequirePowerAction(SessionBaseModel::PowerAction powerAct
         m_model->setPowerAction(powerAction);
         emit abortOperation();
     }
+}
+
+void ShutdownWidget::setUserSwitchEnable(bool enable)
+{
+    m_requireSwitchUserBtn->setVisible(enable);
 }
 
 void ShutdownWidget::keyPressEvent(QKeyEvent *event)
@@ -767,9 +745,6 @@ void ShutdownWidget::setModel(SessionBaseModel *const model)
     m_model = model;
 
     connect(model, &SessionBaseModel::onRequirePowerAction, this, &ShutdownWidget::onRequirePowerAction);
-
-    connect(model, &SessionBaseModel::onUserListSizeChanged, this, &ShutdownWidget::onUserListChanged);
-    onUserListChanged(model->userListSize());
 
     connect(model, &SessionBaseModel::onHasSwapChanged, this, &ShutdownWidget::enableHibernateBtn);
     enableHibernateBtn(model->hasSwap());
