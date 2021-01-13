@@ -594,9 +594,11 @@ QList<InhibitWarnView::InhibitorData> ShutdownWidget::listInhibitors(const Sessi
 
 void ShutdownWidget::onStatusChanged(SessionBaseModel::ModeStatus status)
 {
+    //根据当前是锁屏还是关机,设置按钮可见状态,同时需要判官切换用户按钮是否允许可见
     RoundItemButton * roundItemButton = m_requireShutdownButton;
     if (m_model->currentModeState() == SessionBaseModel::ModeStatus::ShutDownMode) {
         m_requireLockButton->setVisible(true);
+        m_requireSwitchUserBtn->setVisible(m_switchUserEnable);
         if (m_requireSwitchSystemBtn) {
             m_requireSwitchSystemBtn->setVisible(true);
         }
@@ -604,6 +606,7 @@ void ShutdownWidget::onStatusChanged(SessionBaseModel::ModeStatus status)
         roundItemButton = m_requireLockButton;
     } else {
         m_requireLockButton->setVisible(false);
+        m_requireSwitchUserBtn->setVisible(false);
         if (m_requireSwitchSystemBtn) {
             m_requireSwitchSystemBtn->setVisible(false);
         }
@@ -640,9 +643,14 @@ void ShutdownWidget::onCancelAction()
 
 void ShutdownWidget::recoveryLayout()
 {
+    //关机或重启确认前会隐藏所有按钮,取消重启或关机后隐藏界面时重置按钮可见状态
+    //同时需要判断切换用户按钮是否允许可见
+    m_requireShutdownButton->setVisible(true);
+    m_requireRestartButton->setVisible(true);
     enableHibernateBtn(m_model->canSleep());
-
     enableSleepBtn(m_model->hasSwap());
+    m_requireLockButton->setVisible(true);
+    m_requireSwitchUserBtn->setVisible(m_switchUserEnable);
 
     if (m_systemMonitor) {
         m_systemMonitor->setVisible(false);
@@ -682,7 +690,13 @@ void ShutdownWidget::onRequirePowerAction(SessionBaseModel::PowerAction powerAct
 
 void ShutdownWidget::setUserSwitchEnable(bool enable)
 {
-    m_requireSwitchUserBtn->setVisible(enable);
+    //接收到用户列表变更信号号,记录切换用户是否允许可见,再根据当前是锁屏还是关机设置切换按钮可见状态
+    if (m_switchUserEnable == enable) {
+        return;
+    }
+
+    m_switchUserEnable = enable;
+    m_requireSwitchUserBtn->setVisible(m_switchUserEnable && m_model->currentModeState() == SessionBaseModel::ModeStatus::ShutDownMode);
 }
 
 void ShutdownWidget::keyPressEvent(QKeyEvent *event)

@@ -82,6 +82,7 @@ private:
 private:
     int m_index;
     bool m_confirm = false;
+    bool m_switchUserEnable= false;
     QList<RoundItemButton *> m_btnList;
     QStringList m_inhibitorBlacklists;
     QList<std::pair<std::function<void (QString)>, QString>> m_trList;
