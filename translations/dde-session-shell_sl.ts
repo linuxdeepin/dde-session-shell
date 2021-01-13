@@ -2,125 +2,123 @@
 <context>
     <name>ContentWidget</name>
     <message>
-        <location filename="../src/dde-shutdown/view/contentwidget.cpp" line="345"/>
-        <source>The programs are preventing the computer from shutting down, and forcing shut down may cause data loss.</source>
-        <translation type="unfinished"/>
-    </message>
-    <message>
-        <location filename="../src/dde-shutdown/view/contentwidget.cpp" line="346"/>
-        <location filename="../src/dde-shutdown/view/contentwidget.cpp" line="350"/>
-        <location filename="../src/dde-shutdown/view/contentwidget.cpp" line="354"/>
-        <location filename="../src/dde-shutdown/view/contentwidget.cpp" line="358"/>
-        <location filename="../src/dde-shutdown/view/contentwidget.cpp" line="362"/>
-        <source>To close the program, click Cancel, and then close the program.</source>
-        <translation type="unfinished"/>
-    </message>
-    <message>
-        <location filename="../src/dde-shutdown/view/contentwidget.cpp" line="349"/>
-        <source>The programs are preventing the computer from reboot, and forcing reboot may cause data loss.</source>
-        <translation type="unfinished"/>
-    </message>
-    <message>
-        <location filename="../src/dde-shutdown/view/contentwidget.cpp" line="353"/>
-        <source>The programs are preventing the computer from suspend, and forcing suspend may cause data loss.</source>
-        <translation type="unfinished"/>
-    </message>
-    <message>
         <location filename="../src/dde-shutdown/view/contentwidget.cpp" line="357"/>
+        <source>The programs are preventing the computer from shutting down, and forcing shut down may cause data loss.</source>
+        <translation>Programi preprečujejo računalniku, da bi se zaustavil, prisilna zaustavitev pa lahko povzroči izgubo podatkov.</translation>
+    </message>
+    <message>
+        <location filename="../src/dde-shutdown/view/contentwidget.cpp" line="358"/>
+        <location filename="../src/dde-shutdown/view/contentwidget.cpp" line="363"/>
+        <location filename="../src/dde-shutdown/view/contentwidget.cpp" line="367"/>
+        <location filename="../src/dde-shutdown/view/contentwidget.cpp" line="371"/>
+        <location filename="../src/dde-shutdown/view/contentwidget.cpp" line="375"/>
+        <source>To close the program, click Cancel, and then close the program.</source>
+        <translation>Da bi program zaprli, klknite Prekini in nato zaprite program.</translation>
+    </message>
+    <message>
+        <location filename="../src/dde-shutdown/view/contentwidget.cpp" line="362"/>
+        <source>The programs are preventing the computer from reboot, and forcing reboot may cause data loss.</source>
+        <translation>Programi preprečujejo računalniku, da bi se ponovno zagnal, prisilna zaustavitev pa lahko povzroči izgubo podatkov.</translation>
+    </message>
+    <message>
+        <location filename="../src/dde-shutdown/view/contentwidget.cpp" line="366"/>
+        <source>The programs are preventing the computer from suspend, and forcing suspend may cause data loss.</source>
+        <translation>Programi preprečujejo računalniku, da bi obmiroval, prisilna zaustavitev pa lahko povzroči izgubo podatkov.</translation>
+    </message>
+    <message>
+        <location filename="../src/dde-shutdown/view/contentwidget.cpp" line="370"/>
         <source>The programs are preventing the computer from hibernate, and forcing hibernate may cause data loss.</source>
-        <translation type="unfinished"/>
+        <translation>Programi preprečujejo računalniku, da bi zaspal, prisilna zaustavitev pa lahko povzroči izgubo podatkov.</translation>
     </message>
     <message>
-        <location filename="../src/dde-shutdown/view/contentwidget.cpp" line="361"/>
+        <location filename="../src/dde-shutdown/view/contentwidget.cpp" line="374"/>
         <source>The programs are preventing the computer from log out, and forcing log out may cause data loss.</source>
-        <translation type="unfinished"/>
+        <translation>Programi preprečujejo računalniku, da bi se odjavil prisilna zaustavitev pa lahko povzroči izgubo podatkov.</translation>
     </message>
     <message>
-        <location filename="../src/dde-shutdown/view/contentwidget.cpp" line="379"/>
-        <location filename="../src/dde-shutdown/view/contentwidget.cpp" line="416"/>
-        <location filename="../src/dde-shutdown/view/contentwidget.cpp" line="438"/>
-        <location filename="../src/dde-shutdown/view/contentwidget.cpp" line="574"/>
+        <location filename="../src/dde-shutdown/view/contentwidget.cpp" line="391"/>
+        <location filename="../src/dde-shutdown/view/contentwidget.cpp" line="435"/>
+        <location filename="../src/dde-shutdown/view/contentwidget.cpp" line="460"/>
+        <location filename="../src/dde-shutdown/view/contentwidget.cpp" line="614"/>
         <source>Shut down</source>
         <translation>Zaustavitev sistema</translation>
     </message>
     <message>
-        <location filename="../src/dde-shutdown/view/contentwidget.cpp" line="381"/>
-        <location filename="../src/dde-shutdown/view/contentwidget.cpp" line="418"/>
-        <location filename="../src/dde-shutdown/view/contentwidget.cpp" line="441"/>
-        <location filename="../src/dde-shutdown/view/contentwidget.cpp" line="577"/>
+        <location filename="../src/dde-shutdown/view/contentwidget.cpp" line="394"/>
+        <location filename="../src/dde-shutdown/view/contentwidget.cpp" line="437"/>
+        <location filename="../src/dde-shutdown/view/contentwidget.cpp" line="463"/>
+        <location filename="../src/dde-shutdown/view/contentwidget.cpp" line="617"/>
         <source>Reboot</source>
         <translation>Ponovni zagon</translation>
     </message>
     <message>
-        <location filename="../src/dde-shutdown/view/contentwidget.cpp" line="383"/>
-        <location filename="../src/dde-shutdown/view/contentwidget.cpp" line="580"/>
+        <location filename="../src/dde-shutdown/view/contentwidget.cpp" line="397"/>
+        <location filename="../src/dde-shutdown/view/contentwidget.cpp" line="620"/>
         <source>Suspend</source>
-        <translation>V način mirovanja</translation>
+        <translation>Mirovanje</translation>
     </message>
     <message>
-        <location filename="../src/dde-shutdown/view/contentwidget.cpp" line="385"/>
-        <location filename="../src/dde-shutdown/view/contentwidget.cpp" line="583"/>
+        <location filename="../src/dde-shutdown/view/contentwidget.cpp" line="399"/>
+        <location filename="../src/dde-shutdown/view/contentwidget.cpp" line="623"/>
         <source>Hibernate</source>
-        <translation type="unfinished"/>
+        <translation>Spanje</translation>
     </message>
     <message>
-        <location filename="../src/dde-shutdown/view/contentwidget.cpp" line="387"/>
-        <location filename="../src/dde-shutdown/view/contentwidget.cpp" line="444"/>
-        <location filename="../src/dde-shutdown/view/contentwidget.cpp" line="589"/>
+        <location filename="../src/dde-shutdown/view/contentwidget.cpp" line="401"/>
+        <location filename="../src/dde-shutdown/view/contentwidget.cpp" line="466"/>
+        <location filename="../src/dde-shutdown/view/contentwidget.cpp" line="629"/>
         <source>Log out</source>
-        <translation>Izpis</translation>
+        <translation>Odjava</translation>
     </message>
     <message>
-        <location filename="../src/dde-shutdown/view/contentwidget.cpp" line="439"/>
+        <location filename="../src/dde-shutdown/view/contentwidget.cpp" line="461"/>
         <source>Are you sure you want to shut down?</source>
-        <translation type="unfinished"/>
+        <translation>Ste prepričani, da želite zaustaviti sistem?</translation>
     </message>
     <message>
-        <location filename="../src/dde-shutdown/view/contentwidget.cpp" line="442"/>
+        <location filename="../src/dde-shutdown/view/contentwidget.cpp" line="464"/>
         <source>Are you sure you want to reboot?</source>
-        <translation type="unfinished"/>
+        <translation>Ste prepričani, da žeelite ponovni zagon?</translation>
     </message>
     <message>
-        <location filename="../src/dde-shutdown/view/contentwidget.cpp" line="445"/>
+        <location filename="../src/dde-shutdown/view/contentwidget.cpp" line="467"/>
         <source>Are you sure you want to log out?</source>
-        <translation type="unfinished"/>
+        <translation>Ste preričani, da se želite odjaviti?</translation>
     </message>
     <message>
-        <location filename="../src/dde-shutdown/view/contentwidget.cpp" line="586"/>
+        <location filename="../src/dde-shutdown/view/contentwidget.cpp" line="626"/>
         <source>Lock</source>
         <translation>Zakleni</translation>
     </message>
     <message>
-        <location filename="../src/dde-shutdown/view/contentwidget.cpp" line="593"/>
+        <location filename="../src/dde-shutdown/view/contentwidget.cpp" line="632"/>
         <source>Switch user</source>
         <translation>Zamenjaj uporabnika</translation>
     </message>
-</context>
-<context>
-    <name>DeepinAuthFramework</name>
     <message>
-        <location filename="../src/libdde-auth/deepinauthframework.cpp" line="109"/>
-        <source>Verify your fingerprint or password</source>
-        <translation type="unfinished"/>
+        <location filename="../src/dde-shutdown/view/contentwidget.cpp" line="637"/>
+        <source>Switch system</source>
+        <translation>Zamenjaj sistem</translation>
     </message>
 </context>
 <context>
     <name>GreeterWorkek</name>
     <message>
-        <location filename="../src/lightdm-deepin-greeter/greeterworkek.cpp" line="347"/>
+        <location filename="../src/lightdm-deepin-greeter/greeterworkek.cpp" line="329"/>
         <source>Wrong Password</source>
         <translation>Napačno geslo</translation>
     </message>
     <message>
-        <location filename="../src/lightdm-deepin-greeter/greeterworkek.cpp" line="352"/>
-        <source>The domain account or password is not correct. Please enter again.</source>
-        <translation>Domenski račun ali geslo ni pravilno. Prosim, ponovno vnesite.</translation>
+        <location filename="../src/lightdm-deepin-greeter/greeterworkek.cpp" line="333"/>
+        <source>The account or password is not correct. Please enter again.</source>
+        <translation>Račun ali geslo sta napačna. Poskusite ponovno.</translation>
     </message>
 </context>
 <context>
     <name>InhibitWarnView</name>
     <message>
-        <location filename="../src/dde-shutdown/view/inhibitwarnview.cpp" line="88"/>
+        <location filename="../src/dde-shutdown/view/inhibitwarnview.cpp" line="90"/>
+        <location filename="../src/widgets/inhibitwarnview.cpp" line="90"/>
         <source>Cancel</source>
         <translation>Prekliči</translation>
     </message>
@@ -128,35 +126,30 @@
 <context>
     <name>LockContent</name>
     <message>
-        <location filename="../src/session-widgets/lockcontent.cpp" line="330"/>
+        <location filename="../src/session-widgets/lockcontent.cpp" line="430"/>
         <source>Lock Screen</source>
-        <translation type="unfinished"/>
+        <translation>Zakleni zaslon</translation>
     </message>
     <message>
-        <location filename="../src/session-widgets/lockcontent.cpp" line="334"/>
+        <location filename="../src/session-widgets/lockcontent.cpp" line="434"/>
         <source>Failed to lock screen</source>
-        <translation type="unfinished"/>
+        <translation>Ni bilo mogoče zakleniti zaslona</translation>
     </message>
 </context>
 <context>
     <name>LockWorker</name>
     <message>
-        <location filename="../src/dde-lock/lockworker.cpp" line="119"/>
-        <source>Domain account</source>
-        <translation>Domenski račun</translation>
-    </message>
-    <message>
-        <location filename="../src/dde-lock/lockworker.cpp" line="269"/>
+        <location filename="../src/dde-lock/lockworker.cpp" line="275"/>
         <source>Fingerprint verification timed out, please enter your password manually</source>
-        <translation>Zaznavanje prstnega odtisa je bilo neuspešno, prosim ročno vnesite geslo</translation>
+        <translation>Preverjanje prstnega odtisa ni bilo uspešno, vnesite geslo</translation>
     </message>
     <message>
-        <location filename="../src/dde-lock/lockworker.cpp" line="287"/>
+        <location filename="../src/dde-lock/lockworker.cpp" line="293"/>
         <source>Failed to match fingerprint</source>
-        <translation>Prstni odtisi se ne ujemajo</translation>
+        <translation>Neustrezen prstni odtis</translation>
     </message>
     <message>
-        <location filename="../src/dde-lock/lockworker.cpp" line="322"/>
+        <location filename="../src/dde-lock/lockworker.cpp" line="324"/>
         <source>Wrong Password</source>
         <translation>Napačno geslo</translation>
     </message>
@@ -165,133 +158,163 @@
     <name>MultiUsersWarningView</name>
     <message>
         <location filename="../src/dde-shutdown/view/multiuserswarningview.cpp" line="45"/>
+        <location filename="../src/widgets/multiuserswarningview.cpp" line="45"/>
         <source>Cancel</source>
         <translation>Prekliči</translation>
     </message>
     <message>
-        <location filename="../src/dde-shutdown/view/multiuserswarningview.cpp" line="129"/>
+        <location filename="../src/dde-shutdown/view/multiuserswarningview.cpp" line="130"/>
+        <location filename="../src/widgets/multiuserswarningview.cpp" line="130"/>
         <source>The above users are still logged in and data will be lost due to shutdown, are you sure you want to shut down?</source>
-        <translation type="unfinished"/>
+        <translation>Navedeni uporabniki so še vedno prijavljeni in njihovi podatki bodo izgubljeni, če bo sistem zaustavljen. Želite vseeno zaustaviti sistem?</translation>
     </message>
     <message>
-        <location filename="../src/dde-shutdown/view/multiuserswarningview.cpp" line="133"/>
+        <location filename="../src/dde-shutdown/view/multiuserswarningview.cpp" line="134"/>
+        <location filename="../src/widgets/multiuserswarningview.cpp" line="134"/>
         <source>The above users are still logged in and data will be lost due to reboot, are you sure you want to reboot?</source>
-        <translation type="unfinished"/>
+        <translation>Navedeni uporabniki so še vedno prijavljeni in njihovi podatki bodo izgubljeni, če bo sistem ponovno zagnan. Želite vseeno zaustaviti sistem?</translation>
     </message>
 </context>
 <context>
     <name>ShutdownWidget</name>
     <message>
-        <location filename="../src/widgets/shutdownwidget.cpp" line="29"/>
+        <location filename="../src/widgets/shutdownwidget.cpp" line="30"/>
+        <location filename="../src/widgets/shutdownwidget.cpp" line="190"/>
+        <location filename="../src/widgets/shutdownwidget.cpp" line="234"/>
+        <location filename="../src/widgets/shutdownwidget.cpp" line="259"/>
         <source>Shut down</source>
         <translation>Zaustavitev sistema</translation>
     </message>
     <message>
-        <location filename="../src/widgets/shutdownwidget.cpp" line="30"/>
-        <location filename="../src/widgets/shutdownwidget.cpp" line="101"/>
+        <location filename="../src/widgets/shutdownwidget.cpp" line="31"/>
+        <location filename="../src/widgets/shutdownwidget.cpp" line="193"/>
+        <location filename="../src/widgets/shutdownwidget.cpp" line="236"/>
+        <location filename="../src/widgets/shutdownwidget.cpp" line="262"/>
+        <location filename="../src/widgets/shutdownwidget.cpp" line="340"/>
         <source>Reboot</source>
         <translation>Ponovni zagon</translation>
     </message>
     <message>
-        <location filename="../src/widgets/shutdownwidget.cpp" line="31"/>
-        <location filename="../src/widgets/shutdownwidget.cpp" line="108"/>
+        <location filename="../src/widgets/shutdownwidget.cpp" line="32"/>
+        <location filename="../src/widgets/shutdownwidget.cpp" line="196"/>
+        <location filename="../src/widgets/shutdownwidget.cpp" line="346"/>
         <source>Suspend</source>
-        <translation>V način mirovanja</translation>
+        <translation>Mirovanje</translation>
     </message>
     <message>
-        <location filename="../src/widgets/shutdownwidget.cpp" line="32"/>
-        <location filename="../src/widgets/shutdownwidget.cpp" line="115"/>
+        <location filename="../src/widgets/shutdownwidget.cpp" line="33"/>
+        <location filename="../src/widgets/shutdownwidget.cpp" line="198"/>
+        <location filename="../src/widgets/shutdownwidget.cpp" line="352"/>
         <source>Hibernate</source>
-        <translation type="unfinished"/>
+        <translation>Spanje</translation>
+    </message>
+    <message>
+        <location filename="../src/widgets/shutdownwidget.cpp" line="156"/>
+        <source>The programs are preventing the computer from shutting down, and forcing shut down may cause data loss.</source>
+        <translation>Programi preprečujejo zaustavitev sistema, prisiljena zaustavitev pa ima lahko za posledico izgubo podatkov.</translation>
+    </message>
+    <message>
+        <location filename="../src/widgets/shutdownwidget.cpp" line="157"/>
+        <location filename="../src/widgets/shutdownwidget.cpp" line="162"/>
+        <location filename="../src/widgets/shutdownwidget.cpp" line="166"/>
+        <location filename="../src/widgets/shutdownwidget.cpp" line="170"/>
+        <location filename="../src/widgets/shutdownwidget.cpp" line="174"/>
+        <source>To close the program, click Cancel, and then close the program.</source>
+        <translation>Za zapiranje programa kliknite na Prekini, nato pa zaprite program.</translation>
+    </message>
+    <message>
+        <location filename="../src/widgets/shutdownwidget.cpp" line="161"/>
+        <source>The programs are preventing the computer from reboot, and forcing reboot may cause data loss.</source>
+        <translation>Programi preprečujejo ponovni zagon, prisilni ponovni zagon pa lahko povzroči izgubo podatkov.</translation>
+    </message>
+    <message>
+        <location filename="../src/widgets/shutdownwidget.cpp" line="165"/>
+        <source>The programs are preventing the computer from suspend, and forcing suspend may cause data loss.</source>
+        <translation>Programi preprečujejo računalniku, da bi obmiroval, prisilno obmirovanje pa lahko povzroči izgubo podatkov.</translation>
+    </message>
+    <message>
+        <location filename="../src/widgets/shutdownwidget.cpp" line="169"/>
+        <source>The programs are preventing the computer from hibernate, and forcing hibernate may cause data loss.</source>
+        <translation>Programi preprečujejo računalniku, da bi zaspal, prisilno spanje pa lahko povzroči izgubo podatkov.</translation>
+    </message>
+    <message>
+        <location filename="../src/widgets/shutdownwidget.cpp" line="173"/>
+        <source>The programs are preventing the computer from log out, and forcing log out may cause data loss.</source>
+        <translation>Programi preprečujejo odjavo, prisilna odjava pa lahko povzroči izgubo podatkov.</translation>
+    </message>
+    <message>
+        <location filename="../src/widgets/shutdownwidget.cpp" line="200"/>
+        <location filename="../src/widgets/shutdownwidget.cpp" line="265"/>
+        <location filename="../src/widgets/shutdownwidget.cpp" line="364"/>
+        <source>Log out</source>
+        <translation>Odjava</translation>
+    </message>
+    <message>
+        <location filename="../src/widgets/shutdownwidget.cpp" line="260"/>
+        <source>Are you sure you want to shut down?</source>
+        <translation>Ste prepričani, da želite zaustaviti sistem?</translation>
+    </message>
+    <message>
+        <location filename="../src/widgets/shutdownwidget.cpp" line="263"/>
+        <source>Are you sure you want to reboot?</source>
+        <translation>Ste prepričani, da želite ponovni zagon?</translation>
+    </message>
+    <message>
+        <location filename="../src/widgets/shutdownwidget.cpp" line="266"/>
+        <source>Are you sure you want to log out?</source>
+        <translation>Ste prepričani, da se želite odjaviti?</translation>
+    </message>
+    <message>
+        <location filename="../src/widgets/shutdownwidget.cpp" line="358"/>
+        <source>Lock</source>
+        <translation>Zakleni</translation>
+    </message>
+    <message>
+        <location filename="../src/widgets/shutdownwidget.cpp" line="370"/>
+        <source>Switch user</source>
+        <translation>Zamenjaj uporabnika</translation>
+    </message>
+    <message>
+        <location filename="../src/widgets/shutdownwidget.cpp" line="378"/>
+        <source>Switch system</source>
+        <translation>Zamenjaj sistem</translation>
     </message>
 </context>
 <context>
     <name>SystemMonitor</name>
     <message>
         <location filename="../src/dde-shutdown/view/systemmonitor.cpp" line="45"/>
+        <location filename="../src/widgets/systemmonitor.cpp" line="45"/>
         <source>Start system monitor</source>
-        <translation>Zaženi sistemski nadzor</translation>
-    </message>
-</context>
-<context>
-    <name>UserExpiredWidget</name>
-    <message>
-        <location filename="../src/session-widgets/userexpiredwidget.cpp" line="149"/>
-        <source>Password expired, please change</source>
-        <translation type="unfinished"/>
-    </message>
-    <message>
-        <location filename="../src/session-widgets/userexpiredwidget.cpp" line="153"/>
-        <source>New password</source>
-        <translation type="unfinished"/>
-    </message>
-    <message>
-        <location filename="../src/session-widgets/userexpiredwidget.cpp" line="162"/>
-        <source>Repeat password</source>
-        <translation>Ponovite geslo</translation>
-    </message>
-    <message>
-        <location filename="../src/session-widgets/userexpiredwidget.cpp" line="320"/>
-        <source>Failed to change your password</source>
-        <translation type="unfinished"/>
-    </message>
-    <message>
-        <location filename="../src/session-widgets/userexpiredwidget.cpp" line="334"/>
-        <source>Password too weak</source>
-        <translation type="unfinished"/>
-    </message>
-    <message>
-        <location filename="../src/session-widgets/userexpiredwidget.cpp" line="342"/>
-        <source>Please enter the new password</source>
-        <translation>Prosimo, vnesite novo geslo</translation>
-    </message>
-    <message>
-        <location filename="../src/session-widgets/userexpiredwidget.cpp" line="348"/>
-        <source>Please repeat the new password</source>
-        <translation type="unfinished"/>
-    </message>
-    <message>
-        <location filename="../src/session-widgets/userexpiredwidget.cpp" line="354"/>
-        <source>Passwords do not match</source>
-        <translation type="unfinished"/>
+        <translation>Zaženi nadzornika sistema</translation>
     </message>
 </context>
 <context>
     <name>UserLoginWidget</name>
     <message>
-        <location filename="../src/session-widgets/userloginwidget.cpp" line="189"/>
+        <location filename="../src/session-widgets/userloginwidget.cpp" line="193"/>
         <source>Password</source>
         <translation>Geslo</translation>
     </message>
     <message>
-        <location filename="../src/session-widgets/userloginwidget.cpp" line="191"/>
+        <location filename="../src/session-widgets/userloginwidget.cpp" line="197"/>
         <source>Account</source>
-        <translation type="unfinished"/>
-    </message>
-    <message>
-        <location filename="../src/session-widgets/userloginwidget.cpp" line="226"/>
-        <source>Enter your password to reboot</source>
-        <translation>Vnesite geslo, da ponovno zaženete napravo</translation>
-    </message>
-    <message>
-        <location filename="../src/session-widgets/userloginwidget.cpp" line="229"/>
-        <source>Enter your password to shut down</source>
-        <translation type="unfinished"/>
+        <translation>Račun</translation>
     </message>
     <message>
         <location filename="../src/session-widgets/userloginwidget.cpp" line="239"/>
         <source>Please enter the account</source>
-        <translation type="unfinished"/>
+        <translation>Vnesite račun</translation>
     </message>
     <message>
         <location filename="../src/session-widgets/userloginwidget.cpp" line="246"/>
         <source>Please enter the password</source>
-        <translation type="unfinished"/>
+        <translation>Vnesite geslo</translation>
     </message>
     <message numerus="yes">
-        <location filename="../src/session-widgets/userloginwidget.cpp" line="319"/>
+        <location filename="../src/session-widgets/userloginwidget.cpp" line="338"/>
         <source>Please try again %n minute(s) later</source>
-        <translation type="unfinished"><numerusform></numerusform><numerusform></numerusform><numerusform></numerusform><numerusform></numerusform></translation>
+        <translation><numerusform>Pokusite znova %n minuto kasneje</numerusform><numerusform>Pokusite znova %n minuti kasneje</numerusform><numerusform>Pokusite znova %n minute kasneje</numerusform><numerusform>Pokusite znova %n minut kasneje</numerusform></translation>
     </message>
 </context>
 </TS>
