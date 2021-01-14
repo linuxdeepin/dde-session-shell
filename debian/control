@@ -45,3 +45,8 @@ Replaces: deepin-notifications
 Breaks: dde-workspace, startdde(<< 2.91.1)
 Description: deepin desktop-environment - dde-session-shell module
  Deepin desktop environment 2015 - dde-session-shell module.
+ lightdm-deepin-greeter - login，the entry to the desktop
+ dde-lock - lock screen, to protect privacy
+ dde-shutdown - shutdown, provide some options like shutdown, reboot and more
+ deepin-greeter - actual call the lightdm-deepin-greeter
+
