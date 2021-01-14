@@ -28,6 +28,7 @@ public:
     void switchToUser(std::shared_ptr<User> user) override;
     void authUser(const QString &password) override;
     void onUserAdded(const QString &user) override;
+    bool isConnectSync() {return m_greeter->connectSync();}
 
 signals:
     void requestUpdateBackground(const QString &path);

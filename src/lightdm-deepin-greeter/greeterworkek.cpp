@@ -39,7 +39,7 @@ GreeterWorkek::GreeterWorkek(SessionBaseModel *const model, QObject *parent)
     , m_authenticating(false)
     , m_password(QString())
 {
-    if (!m_greeter->connectSync()) {
+    if (!isConnectSync()) {
         qWarning() << "greeter connect fail !!!";
     }
 
