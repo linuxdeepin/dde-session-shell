@@ -51,6 +51,7 @@ public:
     explicit FullscreenBackground(QWidget *parent = nullptr);
     ~FullscreenBackground();
     bool contentVisible() const;
+    void enableEnterEvent(bool enable);
 
 public slots:
     void updateBackground(const QPixmap &background);
@@ -75,7 +76,6 @@ private:
     void enterEvent(QEvent *event) Q_DECL_OVERRIDE;
     void leaveEvent(QEvent *event) Q_DECL_OVERRIDE;
     void mouseMoveEvent(QMouseEvent *event) Q_DECL_OVERRIDE;
-
     const QPixmap pixmapHandle(const QPixmap &pixmap);
 
 private:
@@ -98,6 +98,7 @@ private:
     bool m_primaryShowFinished = false;
     bool m_isBlackMode = false;
     bool m_isHibernateMode = false;
+    bool m_enableEnterEvent = false;
 };
 
 #endif // FULLSCREENBACKGROUND_H
