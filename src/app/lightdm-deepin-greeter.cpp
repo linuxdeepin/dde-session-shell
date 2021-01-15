@@ -226,8 +226,12 @@ int main(int argc, char* argv[])
 
     SessionBaseModel *model = new SessionBaseModel(SessionBaseModel::AuthType::LightdmType);
     GreeterWorkek *worker = new GreeterWorkek(model); //
+
+#ifndef QT_DEBUG
     if (!worker->isConnectSync())
         return 0;
+#endif
+
     if(model->currentUser()) {
         QTranslator translator;
         translator.load("/usr/share/dde-session-shell/translations/dde-session-shell_" + model->currentUser()->locale().split(".").first());
