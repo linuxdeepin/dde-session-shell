@@ -21,7 +21,8 @@ Build-Depends: debhelper (>= 8.0.0), pkg-config,
  libxcursor-dev,
  libxrandr-dev,
  libdtkcore5-bin,
- libgtest-dev
+ libgtest-dev,
+ libx11-xcb-dev
 Standards-Version: 3.9.4
 Homepage: http://www.deepin.org/
 
