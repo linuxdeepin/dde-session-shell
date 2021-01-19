@@ -61,6 +61,7 @@ void LoginContent::onStatusChanged(SessionBaseModel::ModeStatus status)
 
 void LoginContent::pushSessionFrame()
 {
+    QSize size = getCenterContentSize();
+    m_sessionFrame->setFixedSize(size);
     setCenterContent(m_sessionFrame);
-    m_sessionFrame->show();
 }
