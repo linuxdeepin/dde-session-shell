@@ -149,6 +149,7 @@ private:
     bool m_isLockNoPassword;
     bool m_isBlackMode;
     bool m_isHibernateMode;
+    bool m_isLock = false;
     int m_userListSize = 0;
     AuthType m_currentType;
     QList<std::shared_ptr<User>> m_userList;

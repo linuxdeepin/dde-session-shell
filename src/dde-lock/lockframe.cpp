@@ -172,14 +172,18 @@ bool LockFrame::handlePoweroffKey()
     qDebug() << "battery is: " << isBattery << "," << action;
     // 需要特殊处理：关机(0)和无任何操作(4)
     if (action == 0) {
-        m_model->setPowerAction(SessionBaseModel::PowerAction::RequireShutdown);
-        m_model->setCurrentModeState(SessionBaseModel::ModeStatus::ConfirmPasswordMode);
-        m_content->pushConfirmFrame();
+        //锁屏时或显示关机界面时，需要确认是否关机
+        emit m_model->onRequirePowerAction(SessionBaseModel::PowerAction::RequireShutdown, true);
         return true;
     } else if (action == 4) {
         // 需要同时检测两个值
         if (!m_prePreparingSleep && !m_preparingSleep) {
-            m_model->setCurrentModeState(SessionBaseModel::ModeStatus::PowerMode);
+            //无任何操作时，如果是锁定时显示小关机界面，否则显示全屏大关机界面
+            if (m_model->currentModeState() == SessionBaseModel::ModeStatus::ShutDownMode){
+                m_model->setCurrentModeState(SessionBaseModel::ModeStatus::ShutDownMode);
+            } else {
+                m_model->setCurrentModeState(SessionBaseModel::ModeStatus::PowerMode);
+            }
         }
         return true;
     }
