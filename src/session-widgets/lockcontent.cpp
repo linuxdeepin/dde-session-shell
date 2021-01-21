@@ -75,7 +75,7 @@ LockContent::LockContent(SessionBaseModel *const model, QWidget *parent)
         emit unlockActionFinish();
     });
     connect(m_shutdownFrame, &ShutdownWidget::abortOperation, this, [ = ] {
-            restoreMode();
+        restoreMode();
     });
 
     if (m_model->currentType() == SessionBaseModel::LockType) {
@@ -507,6 +507,8 @@ void LockContent::keyPressEvent(QKeyEvent *event)
             m_model->setAbortConfirm(false);
         } else if (m_model->currentModeState() == SessionBaseModel::ModeStatus::ShutDownMode) {
             hideToplevelWindow();
+        } else if (m_model->currentModeState() == SessionBaseModel::ModeStatus::PowerMode) {
+            emit m_shutdownFrame->abortOperation();
         }
         break;
     }

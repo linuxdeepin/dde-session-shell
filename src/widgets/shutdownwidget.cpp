@@ -426,7 +426,7 @@ void ShutdownWidget::initUI()
             m_systemMonitor = new SystemMonitor;
             m_systemMonitor->setSizePolicy(QSizePolicy::Fixed, QSizePolicy::Fixed);
             m_systemMonitor->setFocusPolicy(Qt::NoFocus);
-            setFocusPolicy(Qt::NoFocus);
+            setFocusPolicy(Qt::StrongFocus);
             m_actionLayout->addWidget(m_systemMonitor);
             m_actionLayout->setAlignment(m_systemMonitor, Qt::AlignHCenter);
         }
