@@ -114,7 +114,7 @@ void DPasswordEditEx::setKBLayoutList(QStringList kbLayoutList)
     m_KBLayoutList = kbLayoutList;
 
     if (kbLayoutList.size() > 1) {
-        receiveUserKBLayoutChanged(kbLayoutList[0]);
+        receiveUserKBLayoutChanged(m_currentKBLayout);
     } else {
         m_KBButton->hide();
     }
@@ -124,6 +124,7 @@ void DPasswordEditEx::receiveUserKBLayoutChanged(const QString &layout)
 {
     if (!m_showKB)  return;
 
+    m_currentKBLayout = layout;
     QString layoutName = layout;
     layoutName = layoutName.split(";").first();
 

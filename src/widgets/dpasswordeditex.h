@@ -76,6 +76,7 @@ private:
     QPropertyAnimation *m_loadSliderAnim;
     DClipEffectWidget *m_clipEffectWidget;
     QStringList m_KBLayoutList;
+    QString m_currentKBLayout;
     QPushButton *m_KBButton;                           //键盘布局Button
     QPushButton *m_capsButton;                         //大小写锁定Button
 
