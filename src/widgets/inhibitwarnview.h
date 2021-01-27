@@ -63,7 +63,6 @@ public:
     void setInhibitorList(const QList<InhibitorData> & list);
     void setInhibitConfirmMessage(const QString &text);
     void setAcceptReason(const QString &reason) override;
-    void setAction(const SessionBaseModel::PowerAction action);
     void setAcceptVisible(const bool acceptable);
 
     void toggleButtonState() Q_DECL_OVERRIDE;
@@ -72,19 +71,19 @@ public:
     SessionBaseModel::PowerAction inhibitType() const;
 
 protected:
+    void updateIcon();
     bool focusNextPrevChild(bool next) Q_DECL_OVERRIDE;
     void setCurrentButton(const ButtonType btntype) Q_DECL_OVERRIDE;
 
 signals:
     void cancelled() const;
-    void actionInvoked(const SessionBaseModel::PowerAction action) const;
+    void actionInvoked() const;
 
 private:
     void onOtherPageDataChanged(const QVariant &value);
 
 private:
-    SessionBaseModel::PowerAction m_action;
-
+    SessionBaseModel::PowerAction m_inhibitType;
     QList<QWidget*> m_inhibitorPtrList;
     QVBoxLayout *m_inhibitorListLayout = nullptr;
     QLabel *m_confirmTextLabel = nullptr;
@@ -92,7 +91,6 @@ private:
     QPushButton *m_cancelBtn;
     QPushButton *m_currentBtn;
     int m_dataBindIndex;
-    SessionBaseModel::PowerAction m_inhibitType;
 };
 
 #endif // INHIBITWARNVIEW_H

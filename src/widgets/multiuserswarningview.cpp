@@ -37,7 +37,7 @@
 const static QSize UserAvatarSize = QSize(64, 64);
 const static QSize UserListItemSize = QSize(180, 80);
 
-MultiUsersWarningView::MultiUsersWarningView(QWidget *parent)
+MultiUsersWarningView::MultiUsersWarningView(SessionBaseModel::PowerAction inhibitType, QWidget *parent)
     : WarningView(parent)
     , m_vLayout(new QVBoxLayout(this))
     , m_userList(new QListWidget)
@@ -45,6 +45,7 @@ MultiUsersWarningView::MultiUsersWarningView(QWidget *parent)
     , m_cancelBtn(new QPushButton(tr("Cancel")))
     , m_actionBtn(new QPushButton(QString()))
     , m_currentBtn(nullptr)
+    , m_inhibitType(inhibitType)
 {
     m_userList->setAttribute(Qt::WA_TranslucentBackground);
 //    m_userList->setSelectionRectVisible(false);
@@ -92,6 +93,8 @@ MultiUsersWarningView::MultiUsersWarningView(QWidget *parent)
     m_cancelBtn->setChecked(true);
     m_currentBtn = m_cancelBtn;
 
+    updateIcon();
+
     connect(m_cancelBtn, &QPushButton::clicked, this, &MultiUsersWarningView::cancelled);
     connect(m_actionBtn, &QPushButton::clicked, this, &MultiUsersWarningView::actionInvoked);
 }
@@ -121,10 +124,10 @@ SessionBaseModel::PowerAction MultiUsersWarningView::action() const
     return m_action;
 }
 
-void MultiUsersWarningView::setAction(const SessionBaseModel::PowerAction action)
+void MultiUsersWarningView::updateIcon()
 {
     QString icon_string;
-    switch (action) {
+    switch (m_inhibitType) {
     case SessionBaseModel::PowerAction::RequireShutdown:
         icon_string = ":/img/poweroff_warning_normal.svg";
         m_warningTip->setText(tr("The above users are still logged in and data will be lost due to shutdown, are you sure you want to shut down?"));

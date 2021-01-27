@@ -215,6 +215,7 @@ set(LOCK_SRCS
     ./src/dde-lock/dbus/dbusshutdownagent.cpp
     ./src/dde-lock/dbus/dbusshutdownfrontservice.cpp
     ./src/dde-lock/lockworker.cpp
+    ./src/widgets/warningcontent.cpp
 )
 
 set(GREETER_SRCS

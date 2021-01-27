@@ -116,7 +116,7 @@ signals:
     void authFinished(bool success);
     void switchUserFinished();
     void onPowerActionChanged(PowerAction poweraction);
-    void onRequirePowerAction(PowerAction poweraction, bool requireConfirm);
+    void onRequirePowerAction(PowerAction poweraction);
     void onSessionKeyChanged(const QString &sessionKey);
     void onLogindUserChanged();
     void showUserList();
@@ -136,6 +136,8 @@ signals:
     void blackModeChanged(bool is_black);
     void HibernateModeChanged(bool is_hibernate);//休眠信号改变
     void SleepModeChanged(bool is_Sleep);//待机信号改变
+    void shutdownInhibit(const SessionBaseModel::PowerAction action);
+    void cancelShutdownInhibit();
 
 private:
     com::deepin::SessionManager *m_sessionManagerInter;

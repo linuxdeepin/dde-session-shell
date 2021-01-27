@@ -74,18 +74,6 @@ LockContent::LockContent(SessionBaseModel *const model, QWidget *parent)
     connect(m_userLoginInfo, &UserLoginInfo::unlockActionFinish, this, [&]{
         emit unlockActionFinish();
     });
-    connect(m_shutdownFrame, &ShutdownWidget::abortOperation, this, [ = ] {
-        restoreMode();
-    });
-
-    if (m_model->currentType() == SessionBaseModel::LockType) {
-        // 锁屏，点击关机，需要提示“输入密码以关机”。登录不需要这个提示
-        connect(m_shutdownFrame, &ShutdownWidget::abortOperation, m_userLoginInfo, [ = ] {
-            if (m_model->currentModeState() != SessionBaseModel::ModeStatus::ShutDownMode) {
-                m_model->setCurrentModeState(SessionBaseModel::ModeStatus::ConfirmPasswordMode);
-            }
-        });
-    }
 
     connect(model, &SessionBaseModel::onStatusChanged, this, &LockContent::onStatusChanged);
 
@@ -183,12 +171,12 @@ void LockContent::onCurrentUserChanged(std::shared_ptr<User> user)
 
 void LockContent::pushPasswordFrame()
 {
-    if (m_model->currentModeState() == SessionBaseModel::ModeStatus::ConfirmPasswordMode) {
-        m_model->setAbortConfirm(false);
-    } else {
-        restoreMode();
-        setCenterContent(m_userLoginInfo->getUserLoginWidget());
+    auto current_user = m_model->currentUser();
+    if (current_user != nullptr && current_user->isLock()) {
+        current_user->onLockTimeOut();
     }
+
+    setCenterContent(m_userLoginInfo->getUserLoginWidget());
 
     // hide keyboardlayout widget
     m_userLoginInfo->hideKBLayout();
@@ -207,7 +195,6 @@ void LockContent::pushUserFrame()
 void LockContent::pushConfirmFrame()
 {
     setCenterContent(m_userLoginInfo->getUserLoginWidget());
-    m_model->setAbortConfirm(true);
 }
 
 void LockContent::pushShutdownFrame()
@@ -243,7 +230,7 @@ void LockContent::onStatusChanged(SessionBaseModel::ModeStatus status)
         onUserListChanged(m_model->logindUser());
     switch (status) {
     case SessionBaseModel::ModeStatus::PasswordMode:
-        restoreCenterContent();
+        pushPasswordFrame();
         break;
     case SessionBaseModel::ModeStatus::ConfirmPasswordMode:
         pushConfirmFrame();
@@ -258,6 +245,8 @@ void LockContent::onStatusChanged(SessionBaseModel::ModeStatus status)
     default:
         break;
     }
+
+    m_model->setAbortConfirm(status == SessionBaseModel::ModeStatus::ConfirmPasswordMode);
 }
 
 void LockContent::mouseReleaseEvent(QMouseEvent *event)
@@ -267,7 +256,7 @@ void LockContent::mouseReleaseEvent(QMouseEvent *event)
         hideToplevelWindow();
     }
 
-    pushPasswordFrame();
+    m_model->setCurrentModeState(SessionBaseModel::ModeStatus::PasswordMode);
 
     return SessionBaseWindow::mouseReleaseEvent(event);
 }
@@ -296,22 +285,6 @@ void LockContent::resizeEvent(QResizeEvent *event)
     });
 
     return QFrame::resizeEvent(event);
-}
-
-void LockContent::restoreCenterContent()
-{
-    auto current_user = m_model->currentUser();
-    if (current_user != nullptr && current_user->isLock()) {
-        current_user->onLockTimeOut();
-    }
-    if ((m_model->powerAction() == SessionBaseModel::RequireShutdown) ||
-        (m_model->powerAction() == SessionBaseModel::RequireRestart)) {
-        m_model->setCurrentModeState(SessionBaseModel::ModeStatus::ConfirmPasswordMode);
-    } else {
-        restoreMode();
-    }
-
-    setCenterContent(m_userLoginInfo->getUserLoginWidget());
 }
 
 void LockContent::restoreMode()
@@ -507,8 +480,9 @@ void LockContent::keyPressEvent(QKeyEvent *event)
             m_model->setAbortConfirm(false);
         } else if (m_model->currentModeState() == SessionBaseModel::ModeStatus::ShutDownMode) {
             hideToplevelWindow();
+            m_model->setCurrentModeState(SessionBaseModel::ModeStatus::PasswordMode);
         } else if (m_model->currentModeState() == SessionBaseModel::ModeStatus::PowerMode) {
-            emit m_shutdownFrame->abortOperation();
+            m_model->setCurrentModeState(SessionBaseModel::ModeStatus::PasswordMode);
         }
         break;
     }

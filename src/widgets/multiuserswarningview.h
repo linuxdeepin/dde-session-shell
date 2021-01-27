@@ -27,8 +27,9 @@
 #define MULTIUSERSWARNINGVIEW_H
 
 #include <QFrame>
-#include "warningview.h"
+#include <QKeyEvent>
 #include <dimagebutton.h>
+#include "warningview.h"
 #include "src/session-widgets/userinfo.h"
 #include "src/session-widgets/sessionbasemodel.h"
 
@@ -43,14 +44,10 @@ class MultiUsersWarningView : public WarningView
 {
     Q_OBJECT
 public:
-    MultiUsersWarningView(QWidget *parent = 0);
+    MultiUsersWarningView(SessionBaseModel::PowerAction inhibitType, QWidget *parent = 0);
     ~MultiUsersWarningView();
-
     void setUsers(QList<std::shared_ptr<User>> users);
-
     SessionBaseModel::PowerAction action() const;
-    void setAction(const SessionBaseModel::PowerAction action);
-
     void toggleButtonState() Q_DECL_OVERRIDE;
     void buttonClickHandle() Q_DECL_OVERRIDE;
     void setAcceptReason(const QString &reason) Q_DECL_OVERRIDE;
@@ -65,6 +62,7 @@ signals:
 
 private:
     QString getUserIcon(const QString &path);
+    void updateIcon();
 
 private:
     QVBoxLayout * m_vLayout;
@@ -77,6 +75,7 @@ private:
     const int m_buttonIconSize = 28;
     const int m_buttonWidth = 200;
     const int m_buttonHeight = 64;
+    SessionBaseModel::PowerAction m_inhibitType;
 };
 
 class UserListItem : public QFrame

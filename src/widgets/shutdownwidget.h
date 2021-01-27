@@ -37,36 +37,28 @@
 #include "src/global_util/dbus/dbuslogin1manager.h"
 #include "switchos_interface.h"
 #include "systemmonitor.h"
-#include "warningview.h"
-#include "inhibitwarnview.h"
 
-class MultiUsersWarningView;
 class ShutdownWidget: public QFrame
 {
     Q_OBJECT
 public:
     ShutdownWidget(QWidget* parent = nullptr);
     ~ShutdownWidget() override;
-
     void setModel(SessionBaseModel * const model);
     void onStatusChanged(SessionBaseModel::ModeStatus status);
-
-signals:
-    void abortOperation();
 
 public slots:
     void leftKeySwitch();
     void rightKeySwitch();
-    QList<InhibitWarnView::InhibitorData> listInhibitors(const SessionBaseModel::PowerAction action);
     void runSystemMonitor();
-    void onCancelAction();
     void recoveryLayout();
-    void onRequirePowerAction(SessionBaseModel::PowerAction powerAction, bool requireConfirm);
+    void onRequirePowerAction(SessionBaseModel::PowerAction powerAction);
     void setUserSwitchEnable(bool enable);
 
 protected:
     void keyPressEvent(QKeyEvent *event) Q_DECL_OVERRIDE;
     bool event(QEvent *e) Q_DECL_OVERRIDE;
+    void showEvent(QShowEvent *event) Q_DECL_OVERRIDE;
 
 private:
     void initUI();
@@ -74,23 +66,19 @@ private:
     void updateTr(RoundItemButton * widget, const QString &tr);
     void onOtherPageChanged(const QVariant &value);
     void hideToplevelWindow();
-    bool beforeInvokeAction(const SessionBaseModel::PowerAction action);
     void enterKeyPushed();
     void enableHibernateBtn(bool enable);
     void enableSleepBtn(bool enable);
 
 private:
     int m_index;
-    bool m_confirm = false;
     bool m_switchUserEnable= false;
     QList<RoundItemButton *> m_btnList;
-    QStringList m_inhibitorBlacklists;
     QList<std::pair<std::function<void (QString)>, QString>> m_trList;
     SessionBaseModel* m_model;
     FrameDataBind *m_frameDataBind;
     QFrame* m_shutdownFrame = nullptr;
     SystemMonitor* m_systemMonitor = nullptr;
-    WarningView* m_warningView = nullptr;
     QFrame* m_actionFrame = nullptr;
     QStackedLayout* m_mainLayout;
     QHBoxLayout* m_shutdownLayout;
@@ -104,23 +92,9 @@ private:
     RoundItemButton* m_requireLogoutButton;
     RoundItemButton* m_requireSwitchUserBtn;
     RoundItemButton* m_requireSwitchSystemBtn = nullptr;
-    DBusLogin1Manager *m_login1Inter;
     HuaWeiSwitchOSInterface* m_switchosInterface = nullptr;
 
 };
 
-class InhibitHint
-{
-public:
-    QString name, icon, why;
-
-    friend const QDBusArgument &operator>>(const QDBusArgument &argument, InhibitHint &obj)
-    {
-        argument.beginStructure();
-        argument >> obj.name >> obj.icon >> obj.why;
-        argument.endStructure();
-        return argument;
-    }
-};
 #endif // SHUTDOWNWIDGET
 

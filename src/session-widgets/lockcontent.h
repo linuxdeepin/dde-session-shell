@@ -27,7 +27,6 @@ public:
 
     virtual void onCurrentUserChanged(std::shared_ptr<User> user);
     virtual void onStatusChanged(SessionBaseModel::ModeStatus status);
-    virtual void restoreCenterContent();
     virtual void restoreMode();
     void updateGreeterBackgroundPath(const QString &path);
     void updateDesktopBackgroundPath(const QString &path);
@@ -52,7 +51,7 @@ protected:
     void showEvent(QShowEvent *event) Q_DECL_OVERRIDE;
     void hideEvent(QHideEvent *event) Q_DECL_OVERRIDE;
     void resizeEvent(QResizeEvent *event) Q_DECL_OVERRIDE;
-    void keyPressEvent(QKeyEvent *event) override;
+    void keyPressEvent(QKeyEvent *event) Q_DECL_OVERRIDE;
 
 protected:
     void updateTimeFormat(bool use24);

@@ -44,21 +44,21 @@ void DBusShutdownAgent::Shutdown()
 {
     m_model->setCurrentModeState(SessionBaseModel::ModeStatus::ShutDownMode);
     m_model->setIsShow(true);
-    emit m_model->onRequirePowerAction(SessionBaseModel::PowerAction::RequireShutdown, true);
+    emit m_model->onRequirePowerAction(SessionBaseModel::PowerAction::RequireShutdown);
 }
 
 void DBusShutdownAgent::Restart()
 {
     m_model->setCurrentModeState(SessionBaseModel::ModeStatus::ShutDownMode);
     m_model->setIsShow(true);
-    emit m_model->onRequirePowerAction(SessionBaseModel::PowerAction::RequireRestart, true);
+    emit m_model->onRequirePowerAction(SessionBaseModel::PowerAction::RequireRestart);
 }
 
 void DBusShutdownAgent::Logout()
 {
     m_model->setCurrentModeState(SessionBaseModel::ModeStatus::ShutDownMode);
     m_model->setIsShow(true);
-    emit m_model->onRequirePowerAction(SessionBaseModel::PowerAction::RequireLogout, true);
+    emit m_model->onRequirePowerAction(SessionBaseModel::PowerAction::RequireLogout);
 }
 
 void DBusShutdownAgent::Suspend()

@@ -131,8 +131,10 @@ InhibitWarnView::InhibitWarnView(SessionBaseModel::PowerAction inhibitType, QWid
     m_cancelBtn->setChecked(true);
     m_currentBtn = m_cancelBtn;
 
+    updateIcon();
+
     connect(m_cancelBtn, &QPushButton::clicked, this, &InhibitWarnView::cancelled);
-    connect(m_acceptBtn, &QPushButton::clicked, [this] {emit actionInvoked(m_action);});
+    connect(m_acceptBtn, &QPushButton::clicked, [this] {emit actionInvoked();});
 }
 
 InhibitWarnView::~InhibitWarnView()
@@ -182,12 +184,10 @@ void InhibitWarnView::setAcceptReason(const QString &reason)
     m_acceptBtn->setText(reason);
 }
 
-void InhibitWarnView::setAction(const SessionBaseModel::PowerAction action)
+void InhibitWarnView::updateIcon()
 {
-    m_action = action;
-
     QString icon_string;
-    switch (action) {
+    switch (m_inhibitType) {
     case SessionBaseModel::PowerAction::RequireShutdown:
         icon_string = ":/img/poweroff_warning_normal.svg";
         break;

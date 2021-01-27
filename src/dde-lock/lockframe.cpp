@@ -28,6 +28,7 @@
 #include "src/session-widgets/sessionbasemodel.h"
 #include "src/session-widgets/userinfo.h"
 #include "src/session-widgets/hibernatewidget.h"
+#include "src/widgets/warningcontent.h"
 
 #include <QApplication>
 #include <QWindow>
@@ -38,25 +39,28 @@
 LockFrame::LockFrame(SessionBaseModel *const model, QWidget *parent)
     : FullscreenBackground(parent)
     , m_model(model)
-    , m_login1Inter(new DBusLogin1Manager("org.freedesktop.login1", "/org/freedesktop/login1", QDBusConnection::systemBus(), this))
     , m_preparingSleep(false)
     , m_prePreparingSleep(false)
     , m_oldCursor(this->cursor())
 {
     qDebug() << "LockFrame geometry:" << geometry();
+    m_lockContent = new LockContent(model);
+    m_lockContent->hide();
+    setContent(m_lockContent);
 
-    m_content = new LockContent(model);
-    m_content->hide();
-    setContent(m_content);
-
-    connect(m_content, &LockContent::requestSwitchToUser, this, &LockFrame::requestSwitchToUser);
-    connect(m_content, &LockContent::requestAuthUser, this, &LockFrame::requestAuthUser);
-    connect(m_content, &LockContent::requestSetLayout, this, &LockFrame::requestSetLayout);
-    connect(m_content, &LockContent::requestBackground, this, static_cast<void (LockFrame::*)(const QString &)>(&LockFrame::updateBackground));
+    connect(m_lockContent, &LockContent::requestSwitchToUser, this, &LockFrame::requestSwitchToUser);
+    connect(m_lockContent, &LockContent::requestAuthUser, this, &LockFrame::requestAuthUser);
+    connect(m_lockContent, &LockContent::requestSetLayout, this, &LockFrame::requestSetLayout);
+    connect(m_lockContent, &LockContent::requestBackground, this, static_cast<void (LockFrame::*)(const QString &)>(&LockFrame::updateBackground));
     connect(model, &SessionBaseModel::blackModeChanged, this, &FullscreenBackground::setIsBlackMode);
     connect(model, &SessionBaseModel::showUserList, this, &LockFrame::showUserList);
     connect(model, &SessionBaseModel::showShutdown, this, &LockFrame::showShutdown);
+    connect(model, &SessionBaseModel::shutdownInhibit, this, &LockFrame::shutdownInhibit);
+    connect(model, &SessionBaseModel::cancelShutdownInhibit, this, &LockFrame::cancelShutdownInhibit);
     connect(model, &SessionBaseModel::SleepModeChanged, this, [ = ](bool isSleep) {
+        m_prePreparingSleep = m_preparingSleep;
+        m_preparingSleep = isSleep;
+
         //待机时由锁屏提供假黑屏，唤醒时显示正常界面
         model->setIsBlackModel(isSleep);
 
@@ -78,20 +82,12 @@ LockFrame::LockFrame(SessionBaseModel *const model, QWidget *parent)
     } );
 
     connect(model, &SessionBaseModel::authFinished, this, [ = ](bool success){
-        m_content->beforeUnlockAction(success);
+        m_lockContent->beforeUnlockAction(success);
 
         if (success) {
             Q_EMIT requestEnableHotzone(true);
             hide();
         }
-    });
-
-    connect(m_login1Inter, &DBusLogin1Manager::PrepareForSleep, this, [this](bool isSleep){
-        if (isSleep) {
-            m_content->pushPasswordFrame();
-        }
-        m_prePreparingSleep = m_preparingSleep;
-        m_preparingSleep = isSleep;
     });
 }
 
@@ -173,15 +169,13 @@ bool LockFrame::handlePoweroffKey()
     // 需要特殊处理：关机(0)和无任何操作(4)
     if (action == 0) {
         //锁屏时或显示关机界面时，需要确认是否关机
-        emit m_model->onRequirePowerAction(SessionBaseModel::PowerAction::RequireShutdown, true);
+        emit m_model->onRequirePowerAction(SessionBaseModel::PowerAction::RequireShutdown);
         return true;
     } else if (action == 4) {
         // 需要同时检测两个值
         if (!m_prePreparingSleep && !m_preparingSleep) {
             //无任何操作时，如果是锁定时显示小关机界面，否则显示全屏大关机界面
-            if (m_model->currentModeState() == SessionBaseModel::ModeStatus::ShutDownMode){
-                m_model->setCurrentModeState(SessionBaseModel::ModeStatus::ShutDownMode);
-            } else {
+            if (m_model->currentModeState() != SessionBaseModel::ModeStatus::ShutDownMode) {
                 m_model->setCurrentModeState(SessionBaseModel::ModeStatus::PowerMode);
             }
         }
@@ -200,6 +194,32 @@ void LockFrame::showShutdown()
 {
     m_model->setCurrentModeState(SessionBaseModel::ModeStatus::ShutDownMode);
     show();
+}
+
+void LockFrame::shutdownInhibit(const SessionBaseModel::PowerAction action)
+{
+    if (!m_warningContent) {
+        m_warningContent = new WarningContent(m_model);
+    }
+
+    m_warningContent->beforeInvokeAction(action);
+    m_warningContent->setFixedSize(size());
+    setContent(m_warningContent);
+
+    if (m_lockContent->isVisible()) {
+        m_lockContent->hide();
+        m_warningContent->show();
+        m_warningContent->setFocus();
+    }
+}
+
+void LockFrame::cancelShutdownInhibit()
+{
+    setContent(m_lockContent);
+    if (m_warningContent->isVisible()) {
+        m_warningContent->hide();
+        m_lockContent->show();
+    }
 }
 
 void LockFrame::keyPressEvent(QKeyEvent *e)

@@ -28,7 +28,6 @@
 
 #include "src/widgets/fullscreenbackground.h"
 #include "src/session-widgets/hibernatewidget.h"
-#include "src/global_util/dbus/dbuslogin1manager.h"
 
 #include <QKeyEvent>
 #include <QDBusConnection>
@@ -44,6 +43,7 @@ const QString DBUS_SHUTDOWN_NAME = "com.deepin.dde.shutdownFront";
 class DBusLockService;
 class SessionBaseModel;
 class LockContent;
+class WarningContent;
 class User;
 class LockFrame: public FullscreenBackground
 {
@@ -62,6 +62,8 @@ signals:
 public slots:
     void showUserList();
     void showShutdown();
+    void shutdownInhibit(const SessionBaseModel::PowerAction action);
+    void cancelShutdownInhibit();
 
 protected:
     void keyPressEvent(QKeyEvent *e) Q_DECL_OVERRIDE;
@@ -73,9 +75,9 @@ private:
     bool handlePoweroffKey();
 
 private:
-    LockContent *m_content;
+    LockContent *m_lockContent;
+    WarningContent *m_warningContent = nullptr;
     SessionBaseModel *m_model;
-    DBusLogin1Manager *m_login1Inter;
     bool m_preparingSleep;
     bool m_prePreparingSleep;
     QCursor m_oldCursor;

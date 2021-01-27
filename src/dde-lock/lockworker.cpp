@@ -42,37 +42,53 @@ LockWorker::LockWorker(SessionBaseModel *const model, QObject *parent)
     connect(model, &SessionBaseModel::onPowerActionChanged, this, [ = ](SessionBaseModel::PowerAction poweraction) {
         switch (poweraction) {
         case SessionBaseModel::PowerAction::RequireSuspend:
+            //待机时先切换密码输入界面
+            m_model->setCurrentModeState(SessionBaseModel::ModeStatus::PasswordMode);
+            //开始调用后端待机
             m_sessionManager->RequestSuspend();
             break;
         case SessionBaseModel::PowerAction::RequireHibernate:
+            //待机时先切换密码输入界面
+            m_model->setCurrentModeState(SessionBaseModel::ModeStatus::PasswordMode);
+            //开始调用后端休眠
             m_sessionManager->RequestHibernate();
             break;
         case SessionBaseModel::PowerAction::RequireRestart:
             if (m_model->currentModeState() == SessionBaseModel::ModeStatus::ShutDownMode) {
+                //关机界面直接重启
                 m_sessionManager->RequestReboot();
             } else {
+                //锁屏电源界面先切换验证界面并开始验证，在验证结束时再重启
+                m_model->setCurrentModeState(SessionBaseModel::ModeStatus::ConfirmPasswordMode);
                 m_authFramework->Authenticate(m_model->currentUser());
             }
             return;
         case SessionBaseModel::PowerAction::RequireShutdown:
             if (m_model->currentModeState() == SessionBaseModel::ModeStatus::ShutDownMode) {
+                //关机界面直接重启
                m_sessionManager->RequestShutdown();
             } else {
+                //锁屏电源界面先切换验证界面并开始验证，在验证结束时再关机
+                m_model->setCurrentModeState(SessionBaseModel::ModeStatus::ConfirmPasswordMode);
                 m_authFramework->Authenticate(m_model->currentUser());
             }
             return;
         case SessionBaseModel::PowerAction::RequireLock:
+            //锁屏切换密码输入界面并开始验证
             m_model->setCurrentModeState(SessionBaseModel::ModeStatus::PasswordMode);
             m_authFramework->Authenticate(m_model->currentUser());
             break;
         case SessionBaseModel::PowerAction::RequireLogout:
+            //直接注销
             m_sessionManager->RequestLogout();
             return;
         case SessionBaseModel::PowerAction::RequireSwitchSystem:
+            //切换系统
             m_switchosInterface->setOsFlag(!m_switchosInterface->getOsFlag());
             QTimer::singleShot(200, this, [ = ] { m_sessionManager->RequestReboot(); });
             break;
         case SessionBaseModel::PowerAction::RequireSwitchUser:
+            //切换用户列表
             m_model->setCurrentModeState(SessionBaseModel::ModeStatus::UserMode);
             m_authFramework->Authenticate(m_model->currentUser());
             break;
@@ -311,7 +327,6 @@ void LockWorker::lockServiceEvent(quint32 eventType, quint32 pid, const QString 
 void LockWorker::onUnlockFinished(bool unlocked)
 {
     qWarning() << "LockWorker::onUnlockFinished -- unlocked status : " << unlocked;
-    emit m_model->authFinished(unlocked);
 
     if (unlocked) {
         m_model->currentUser()->resetLock();
@@ -331,20 +346,20 @@ void LockWorker::onUnlockFinished(bool unlocked)
 
     switch (m_model->powerAction()) {
     case SessionBaseModel::PowerAction::RequireRestart:
-        m_model->setPowerAction(SessionBaseModel::PowerAction::RequireRestart);
         if (unlocked) {
             m_sessionManager->RequestReboot();
         }
-        return;
+        break;
     case SessionBaseModel::PowerAction::RequireShutdown:
-        m_model->setPowerAction(SessionBaseModel::PowerAction::RequireShutdown);
         if (unlocked) {
             m_sessionManager->RequestShutdown();
         }
-        return;
+        break;
     default:
         break;
     }
+
+    emit m_model->authFinished(unlocked);
 }
 
 void LockWorker::onCurrentUserChanged(const QString &user)
