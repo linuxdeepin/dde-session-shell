@@ -335,7 +335,7 @@ void UserLoginWidget::disablePassword(bool disable, uint lockTime)
     m_passwordEdit->lineEdit()->setFocus();
 
     if (disable) {
-        setFaildMessage(tr("Please try again %n minute(s) later", "", lockTime));
+        setFaildMessage(tr("Please try again %n minute(s) later", "", int(lockTime)));
     }
 
     if ( false == disable && true == m_isServerMode){

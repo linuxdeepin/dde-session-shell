@@ -89,4 +89,9 @@ bool isDeepinAuth();
 
 void init_sig_crash();
 
+/**
+ * @brief 格式化时间Unix时间
+ */
+uint timeFromString(QString time);
+
 #endif // PUBLIC_FUNC_H

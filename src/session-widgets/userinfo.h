@@ -3,6 +3,7 @@
 
 #include <QObject>
 #include <com_deepin_daemon_accounts_user.h>
+#include <com_deepin_daemon_authenticate.h>
 #include <memory>
 #include "../global_util/public_func.h"
 #include "../global_util/constants.h"
@@ -12,6 +13,7 @@
 #define DEFAULT_BACKGROUND "/usr/share/backgrounds/default_background.jpg"
 
 using UserInter = com::deepin::daemon::accounts::User;
+using com::deepin::daemon::Authenticate;
 
 QString userPwdName(__uid_t uid);
 
@@ -26,14 +28,13 @@ public:
         ADDomain,
     };
 
-    struct lockData {
-        std::vector<uint> waitTime; //可设置的等待时间限制数组
-        uint limitTryNum; //可设置的锁定次数
+    struct lockLimit {
         uint lockTime; //当前的锁定时间
-        uint tryNum; //尝试的次数记录
-    } m_lockData;
+        bool isLock = false; //当前锁定状态
+        bool isFinished = false;
+    } m_lockLimit;
 
-    User(QObject *parent);
+    explicit User(QObject *parent);
     User(const User &user);
 
 signals:
@@ -46,6 +47,7 @@ signals:
     void kbLayoutListChanged(const QStringList &list);
     void currentKBLayoutChanged(const QString &layout);
     void lockChanged(bool lock);
+    void lockLimitFinished();
     void noPasswdLoginChanged(bool no_passw);
     void use24HourFormatChanged(bool use24);
 
@@ -70,11 +72,9 @@ public:
     void setPath(const QString &path);
     const QString path() const { return m_path; }
 
-    uint lockTime() const { return m_lockData.lockTime; }
-    bool isLock() const { return m_isLock; }
-    bool isLockForNum();
-    void startLock();
-    void resetLock();
+    void updateLockLimit(bool is_lock, uint lock_time, uint rest_second = 0);
+    uint lockTime() const { return m_lockLimit.lockTime; }
+    bool isLock() const { return m_lockLimit.isLock; }
 
     virtual UserType type() const = 0;
     virtual QString displayName() const { return m_userName; }
@@ -87,7 +87,6 @@ public:
 
 protected:
     bool m_isLogind;
-    bool m_isLock;
     bool m_isServer = false;
     bool m_noPasswdGrp = true;
 
@@ -97,7 +96,6 @@ protected:
     QString m_locale;
     QString m_path;
     std::shared_ptr<QTimer> m_lockTimer;
-    time_t m_startTime;//记录账号锁定的时间搓
 };
 
 class NativeUser : public User

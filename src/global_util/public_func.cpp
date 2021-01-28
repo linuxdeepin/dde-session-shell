@@ -202,3 +202,13 @@ void init_sig_crash()
     signal(SIGABRT, sig_crash);
     signal(SIGFPE, sig_crash);
 }
+
+uint timeFromString(QString time)
+{
+    if (!time.isEmpty()) {
+        time.replace('T', ' ');
+        QString timeBuffer = QString::fromStdString(time.toStdString().substr(0, time.indexOf('.')));
+        return QDateTime::fromString(timeBuffer, "yyyy-MM-dd hh:mm:ss").toTime_t();
+    }
+}
+

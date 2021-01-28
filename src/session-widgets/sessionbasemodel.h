@@ -130,7 +130,7 @@ signals:
     void canSleepChanged(bool canSleep);
     void allowShowUserSwitchButtonChanged(bool allowShowUserSwitchButton);
     void abortConfirmChanged(bool abortConfirm);
-    void lockChanged(bool lock);
+    void lockLimitFinished(bool lock);
     void userListLoginedChanged(QList<std::shared_ptr<User>> list);
     void activeAuthChanged(bool active);
     void blackModeChanged(bool is_black);

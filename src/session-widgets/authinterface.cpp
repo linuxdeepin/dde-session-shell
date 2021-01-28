@@ -50,6 +50,10 @@ AuthInterface::AuthInterface(SessionBaseModel *const model, QObject *parent)
     , m_loginedInter(new LoginedInter(ACCOUNT_DBUS_SERVICE, "/com/deepin/daemon/Logined", QDBusConnection::systemBus(), this))
     , m_login1Inter(new DBusLogin1Manager("org.freedesktop.login1", "/org/freedesktop/login1", QDBusConnection::systemBus(), this))
     , m_powerManagerInter(new PowerManagerInter("com.deepin.daemon.PowerManager","/com/deepin/daemon/PowerManager", QDBusConnection::systemBus(), this))
+    , m_authenticateInter(new Authenticate("com.deepin.daemon.Authenticate",
+                                           "/com/deepin/daemon/Authenticate",
+                                           QDBusConnection::systemBus(),
+                                           this))
     , m_lastLogoutUid(0)
     , m_loginUserList(0)
 {
@@ -136,6 +140,11 @@ void AuthInterface::initDBus()
 
     connect(m_loginedInter, &LoginedInter::LastLogoutUserChanged, this, &AuthInterface::onLastLogoutUserChanged);
     connect(m_loginedInter, &LoginedInter::UserListChanged, this, &AuthInterface::onLoginUserListChanged);
+
+    connect(m_authenticateInter, &Authenticate::LimitUpdated, this, [this] (const QString& name) {
+        auto user = m_model->findUserByName(name);
+        updateLockLimit(user);
+    });
 }
 
 void AuthInterface::onLastLogoutUserChanged(uint uid)
@@ -240,6 +249,37 @@ QVariant AuthInterface::getGSettings(const QString& node, const QString& key)
         value = m_gsettings->get(key);
     }
     return value;
+}
+
+void AuthInterface::updateLockLimit(std::shared_ptr<User> user)
+{
+    if (user == nullptr && user->name().isEmpty())
+        return;
+
+    QDBusPendingCall call = m_authenticateInter->GetLimits(user->name());
+    QDBusPendingCallWatcher *watcher = new QDBusPendingCallWatcher(call, this);
+    connect(watcher, &QDBusPendingCallWatcher::finished, [ = ] {
+        if (!call.isError()) {
+            QDBusReply<QString> reply = call.reply();
+            QJsonArray arr = QJsonDocument::fromJson(reply.value().toUtf8()).array();
+            for (QJsonValue val : arr) {
+               QJsonObject obj = val.toObject();
+               if (obj["type"].toString() == "password") {
+                   bool is_lock = obj["locked"].toBool();
+                   // cur_time 当前时间，interval_time 间隔时间，rest_time 除分钟外多余的秒数，lock_time 分钟数
+                   uint cur_time = QDateTime::currentDateTime().toTime_t();
+                   uint interval_time = timeFromString(obj["unlockTime"].toString()) - cur_time;
+                   uint rest_time = interval_time % 60;
+                   uint lock_time = (interval_time + 59) / 60;
+                   user->updateLockLimit(is_lock, lock_time, rest_time);
+               }
+            }
+        } else {
+            qWarning() << "get Limits error: " << call.error().message();
+        }
+
+        watcher->deleteLater();
+    });
 }
 
 bool AuthInterface::isLogined(uint uid)

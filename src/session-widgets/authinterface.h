@@ -7,6 +7,7 @@
 
 #include <com_deepin_daemon_accounts.h>
 #include <com_deepin_daemon_logined.h>
+#include <com_deepin_daemon_authenticate.h>
 #include <org_freedesktop_login1_session_self.h>
 #include <com_deepin_daemon_powermanager.h>
 
@@ -19,6 +20,8 @@ using AccountsInter = com::deepin::daemon::Accounts;
 using LoginedInter = com::deepin::daemon::Logined;
 using Login1SessionSelf = org::freedesktop::login1::Session;
 using PowerManagerInter = com::deepin::daemon::PowerManager;
+
+using com::deepin::daemon::Authenticate;
 
 class User;
 class SessionBaseModel;
@@ -36,6 +39,7 @@ public:
     virtual void onUserListChanged(const QStringList &list);
     virtual void onUserAdded(const QString &user);
     virtual void onUserRemove(const QString &user);
+    void updateLockLimit(std::shared_ptr<User> user);
 
     enum SwitchUser {
         Always = 0,
@@ -85,6 +89,7 @@ protected:
     uint               m_lastLogoutUid;
     uint               m_currentUserUid;
     std::list<uint>    m_loginUserList;
+    Authenticate*      m_authenticateInter;
 };
 }  // namespace Auth
 

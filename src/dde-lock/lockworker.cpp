@@ -102,9 +102,11 @@ LockWorker::LockWorker(SessionBaseModel *const model, QObject *parent)
         model->setPowerAction(SessionBaseModel::PowerAction::None);
     });
 
-    connect(model, &SessionBaseModel::lockChanged, this, [ = ](bool lock) {
-        if (!lock) {
-            m_authFramework->Authenticate(m_model->currentUser());
+    connect(model, &SessionBaseModel::lockLimitFinished, this, [ = ] {
+        auto user = m_model->currentUser();
+        if (user != nullptr && user->lockTime() == 0) {
+            m_password.clear();
+            m_authFramework->Authenticate(user);
         }
     });
 
@@ -254,12 +256,7 @@ void LockWorker::onUserAdded(const QString &user)
 
         // AD domain account auth will not be activated for the first time
         connect(user_ptr->getUserInter(), &UserInter::UserNameChanged, this, [ = ] {
-            // 正常情况认证走SessionBaseModel::visibleChanged,这里是异常状况没有触发认证的补充,Authenticate调用时间间隔过短,会导致认证会崩溃,加延时处理
-            QTimer::singleShot(100, user_ptr.get(), [ = ]{
-                if (user_ptr.get()) {
-                    m_authFramework->Authenticate(user_ptr);
-                }
-            });
+            updateLockLimit(user_ptr);
         });
     }
 
@@ -325,19 +322,11 @@ void LockWorker::onUnlockFinished(bool unlocked)
 {
     qWarning() << "LockWorker::onUnlockFinished -- unlocked status : " << unlocked;
 
-    if (unlocked) {
-        m_model->currentUser()->resetLock();
-    }
-
     m_authenticating = false;
 
     if (!unlocked && m_authFramework->GetAuthType() == AuthFlag::Keyboard) {
         qWarning() << "Authorization password failed!";
         emit m_model->authFaildTipsMessage(tr("Wrong Password"));
-
-        if (m_model->currentUser()->isLockForNum()) {
-            m_model->currentUser()->startLock();
-        }
         return;
     }
 
