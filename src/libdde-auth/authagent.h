@@ -9,7 +9,7 @@ class AuthAgent : public QObject {
     Q_OBJECT
 public:
     enum AuthFlag {
-        Password = 1 << 0,
+        keyboard = 1 << 0,
         Fingerprint = 1 << 1,
         Face = 1 << 2,
         ActiveDirectory = 1 << 3
@@ -33,12 +33,15 @@ public:
     ~AuthAgent();
 
     void Responsed(const QString& password);
+    QString Password() { return m_password; }
     void Authenticate(const QString& username);
     int GetAuthType();
     DeepinAuthFramework *deepinAuth() { return m_deepinauth; }
     void setCancelAuth(bool isCancel) { m_isCancel = isCancel; }
 
 signals:
+    void requestEchoOff(const QString &msg);
+    void requestEchoOn(const QString &msg);
     void displayErrorMsg(const QString &msg);
     void displayTextInfo(const QString &msg);
     void respondResult(const QString &msg);

@@ -331,7 +331,7 @@ void LockWorker::onUnlockFinished(bool unlocked)
 
     m_authenticating = false;
 
-    if (!unlocked && m_authFramework->GetAuthType() == AuthFlag::Password) {
+    if (!unlocked && m_authFramework->GetAuthType() == AuthFlag::Keyboard) {
         qWarning() << "Authorization password failed!";
         emit m_model->authFaildTipsMessage(tr("Wrong Password"));
 
