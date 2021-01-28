@@ -23,7 +23,7 @@
     <message>
         <location filename="../src/dde-shutdown/view/contentwidget.cpp" line="366"/>
         <source>The programs are preventing the computer from suspend, and forcing suspend may cause data loss.</source>
-        <translation>這些程式導致電腦不能暫停。強制暫停可能會導致資料遺失。</translation>
+        <translation>這些程式導致電腦不能待機。強制待機可能會導致資料遺失。</translation>
     </message>
     <message>
         <location filename="../src/dde-shutdown/view/contentwidget.cpp" line="370"/>
@@ -126,12 +126,12 @@
 <context>
     <name>LockContent</name>
     <message>
-        <location filename="../src/session-widgets/lockcontent.cpp" line="430"/>
+        <location filename="../src/session-widgets/lockcontent.cpp" line="405"/>
         <source>Lock Screen</source>
         <translation>鎖定螢幕</translation>
     </message>
     <message>
-        <location filename="../src/session-widgets/lockcontent.cpp" line="434"/>
+        <location filename="../src/session-widgets/lockcontent.cpp" line="409"/>
         <source>Failed to lock screen</source>
         <translation>無法鎖定螢幕</translation>
     </message>
@@ -139,17 +139,17 @@
 <context>
     <name>LockWorker</name>
     <message>
-        <location filename="../src/dde-lock/lockworker.cpp" line="275"/>
+        <location filename="../src/dde-lock/lockworker.cpp" line="291"/>
         <source>Fingerprint verification timed out, please enter your password manually</source>
         <translation>指紋驗證逾時，請手動輸入密碼</translation>
     </message>
     <message>
-        <location filename="../src/dde-lock/lockworker.cpp" line="293"/>
+        <location filename="../src/dde-lock/lockworker.cpp" line="309"/>
         <source>Failed to match fingerprint</source>
         <translation>無法進行指紋配對</translation>
     </message>
     <message>
-        <location filename="../src/dde-lock/lockworker.cpp" line="324"/>
+        <location filename="../src/dde-lock/lockworker.cpp" line="339"/>
         <source>Wrong Password</source>
         <translation>密碼錯誤</translation>
     </message>
@@ -164,13 +164,13 @@
     </message>
     <message>
         <location filename="../src/dde-shutdown/view/multiuserswarningview.cpp" line="130"/>
-        <location filename="../src/widgets/multiuserswarningview.cpp" line="130"/>
+        <location filename="../src/widgets/multiuserswarningview.cpp" line="133"/>
         <source>The above users are still logged in and data will be lost due to shutdown, are you sure you want to shut down?</source>
         <translation>以上的使用者仍在登入，且關機後這些使用者的資料將會遺失。確定關機？</translation>
     </message>
     <message>
         <location filename="../src/dde-shutdown/view/multiuserswarningview.cpp" line="134"/>
-        <location filename="../src/widgets/multiuserswarningview.cpp" line="134"/>
+        <location filename="../src/widgets/multiuserswarningview.cpp" line="137"/>
         <source>The above users are still logged in and data will be lost due to reboot, are you sure you want to reboot?</source>
         <translation>以上的使用者仍在登入，且重開機後這些使用者的資料將會遺失。確定重啟？</translation>
     </message>
@@ -179,103 +179,44 @@
     <name>ShutdownWidget</name>
     <message>
         <location filename="../src/widgets/shutdownwidget.cpp" line="30"/>
-        <location filename="../src/widgets/shutdownwidget.cpp" line="190"/>
-        <location filename="../src/widgets/shutdownwidget.cpp" line="234"/>
-        <location filename="../src/widgets/shutdownwidget.cpp" line="259"/>
         <source>Shut down</source>
         <translation>關機</translation>
     </message>
     <message>
         <location filename="../src/widgets/shutdownwidget.cpp" line="31"/>
-        <location filename="../src/widgets/shutdownwidget.cpp" line="193"/>
-        <location filename="../src/widgets/shutdownwidget.cpp" line="236"/>
-        <location filename="../src/widgets/shutdownwidget.cpp" line="262"/>
-        <location filename="../src/widgets/shutdownwidget.cpp" line="340"/>
+        <location filename="../src/widgets/shutdownwidget.cpp" line="172"/>
         <source>Reboot</source>
         <translation>重新啟動</translation>
     </message>
     <message>
         <location filename="../src/widgets/shutdownwidget.cpp" line="32"/>
-        <location filename="../src/widgets/shutdownwidget.cpp" line="196"/>
-        <location filename="../src/widgets/shutdownwidget.cpp" line="346"/>
+        <location filename="../src/widgets/shutdownwidget.cpp" line="178"/>
         <source>Suspend</source>
         <translation>待機</translation>
     </message>
     <message>
         <location filename="../src/widgets/shutdownwidget.cpp" line="33"/>
-        <location filename="../src/widgets/shutdownwidget.cpp" line="198"/>
-        <location filename="../src/widgets/shutdownwidget.cpp" line="352"/>
+        <location filename="../src/widgets/shutdownwidget.cpp" line="184"/>
         <source>Hibernate</source>
         <translation>休眠</translation>
     </message>
     <message>
-        <location filename="../src/widgets/shutdownwidget.cpp" line="156"/>
-        <source>The programs are preventing the computer from shutting down, and forcing shut down may cause data loss.</source>
-        <translation>這些程式導致電腦不能關機。強制關機可能會導致資料遺失。</translation>
-    </message>
-    <message>
-        <location filename="../src/widgets/shutdownwidget.cpp" line="157"/>
-        <location filename="../src/widgets/shutdownwidget.cpp" line="162"/>
-        <location filename="../src/widgets/shutdownwidget.cpp" line="166"/>
-        <location filename="../src/widgets/shutdownwidget.cpp" line="170"/>
-        <location filename="../src/widgets/shutdownwidget.cpp" line="174"/>
-        <source>To close the program, click Cancel, and then close the program.</source>
-        <translation>如要關閉程式，請按下「取消」後關閉程式。</translation>
-    </message>
-    <message>
-        <location filename="../src/widgets/shutdownwidget.cpp" line="161"/>
-        <source>The programs are preventing the computer from reboot, and forcing reboot may cause data loss.</source>
-        <translation>這些程式導致電腦不能重新開機。強制重新開機可能會導致資料遺失。</translation>
-    </message>
-    <message>
-        <location filename="../src/widgets/shutdownwidget.cpp" line="165"/>
-        <source>The programs are preventing the computer from suspend, and forcing suspend may cause data loss.</source>
-        <translation>這些程式導致電腦不能暫停。強制暫停可能會導致資料遺失。</translation>
-    </message>
-    <message>
-        <location filename="../src/widgets/shutdownwidget.cpp" line="169"/>
-        <source>The programs are preventing the computer from hibernate, and forcing hibernate may cause data loss.</source>
-        <translation>這些程式導致電腦不能休眠。強制休眠可能會導致資料遺失。</translation>
-    </message>
-    <message>
-        <location filename="../src/widgets/shutdownwidget.cpp" line="173"/>
-        <source>The programs are preventing the computer from log out, and forcing log out may cause data loss.</source>
-        <translation>這些程式導致電腦不能登出。強制登出可能會導致資料遺失。</translation>
-    </message>
-    <message>
-        <location filename="../src/widgets/shutdownwidget.cpp" line="200"/>
-        <location filename="../src/widgets/shutdownwidget.cpp" line="265"/>
-        <location filename="../src/widgets/shutdownwidget.cpp" line="364"/>
-        <source>Log out</source>
-        <translation>登出</translation>
-    </message>
-    <message>
-        <location filename="../src/widgets/shutdownwidget.cpp" line="260"/>
-        <source>Are you sure you want to shut down?</source>
-        <translation>確定關機？</translation>
-    </message>
-    <message>
-        <location filename="../src/widgets/shutdownwidget.cpp" line="263"/>
-        <source>Are you sure you want to reboot?</source>
-        <translation>確定重開機？</translation>
-    </message>
-    <message>
-        <location filename="../src/widgets/shutdownwidget.cpp" line="266"/>
-        <source>Are you sure you want to log out?</source>
-        <translation>確定登出？</translation>
-    </message>
-    <message>
-        <location filename="../src/widgets/shutdownwidget.cpp" line="358"/>
+        <location filename="../src/widgets/shutdownwidget.cpp" line="190"/>
         <source>Lock</source>
         <translation>鎖定</translation>
     </message>
     <message>
-        <location filename="../src/widgets/shutdownwidget.cpp" line="370"/>
+        <location filename="../src/widgets/shutdownwidget.cpp" line="196"/>
+        <source>Log out</source>
+        <translation>登出</translation>
+    </message>
+    <message>
+        <location filename="../src/widgets/shutdownwidget.cpp" line="202"/>
         <source>Switch user</source>
         <translation>切換使用者</translation>
     </message>
     <message>
-        <location filename="../src/widgets/shutdownwidget.cpp" line="378"/>
+        <location filename="../src/widgets/shutdownwidget.cpp" line="210"/>
         <source>Switch system</source>
         <translation>切換系統</translation>
     </message>
@@ -315,6 +256,88 @@
         <location filename="../src/session-widgets/userloginwidget.cpp" line="338"/>
         <source>Please try again %n minute(s) later</source>
         <translation><numerusform>請在%n分鐘後再試一次</numerusform></translation>
+    </message>
+</context>
+<context>
+    <name>WarningContent</name>
+    <message>
+        <location filename="../src/widgets/warningcontent.cpp" line="149"/>
+        <source>The programs are preventing the computer from shutting down, and forcing shut down may cause data loss.</source>
+        <translation>這些程式導致電腦不能關機。強制關機可能會導致資料遺失。</translation>
+    </message>
+    <message>
+        <location filename="../src/widgets/warningcontent.cpp" line="150"/>
+        <location filename="../src/widgets/warningcontent.cpp" line="155"/>
+        <location filename="../src/widgets/warningcontent.cpp" line="159"/>
+        <location filename="../src/widgets/warningcontent.cpp" line="163"/>
+        <location filename="../src/widgets/warningcontent.cpp" line="167"/>
+        <source>To close the program, click Cancel, and then close the program.</source>
+        <translation>如要關閉程式，請按下「取消」後關閉程式。</translation>
+    </message>
+    <message>
+        <location filename="../src/widgets/warningcontent.cpp" line="154"/>
+        <source>The programs are preventing the computer from reboot, and forcing reboot may cause data loss.</source>
+        <translation>這些程式導致電腦不能重新開機。強制重新開機可能會導致資料遺失。</translation>
+    </message>
+    <message>
+        <location filename="../src/widgets/warningcontent.cpp" line="158"/>
+        <source>The programs are preventing the computer from suspend, and forcing suspend may cause data loss.</source>
+        <translation>這些程式導致電腦不能待機。強制待機可能會導致資料遺失。</translation>
+    </message>
+    <message>
+        <location filename="../src/widgets/warningcontent.cpp" line="162"/>
+        <source>The programs are preventing the computer from hibernate, and forcing hibernate may cause data loss.</source>
+        <translation>這些程式導致電腦不能休眠。強制休眠可能會導致資料遺失。</translation>
+    </message>
+    <message>
+        <location filename="../src/widgets/warningcontent.cpp" line="166"/>
+        <source>The programs are preventing the computer from log out, and forcing log out may cause data loss.</source>
+        <translation>這些程式導致電腦不能登出。強制登出可能會導致資料遺失。</translation>
+    </message>
+    <message>
+        <location filename="../src/widgets/warningcontent.cpp" line="182"/>
+        <location filename="../src/widgets/warningcontent.cpp" line="235"/>
+        <location filename="../src/widgets/warningcontent.cpp" line="267"/>
+        <source>Shut down</source>
+        <translation>關機</translation>
+    </message>
+    <message>
+        <location filename="../src/widgets/warningcontent.cpp" line="185"/>
+        <location filename="../src/widgets/warningcontent.cpp" line="237"/>
+        <location filename="../src/widgets/warningcontent.cpp" line="270"/>
+        <source>Reboot</source>
+        <translation>重新啟動</translation>
+    </message>
+    <message>
+        <location filename="../src/widgets/warningcontent.cpp" line="188"/>
+        <source>Suspend</source>
+        <translation>待機</translation>
+    </message>
+    <message>
+        <location filename="../src/widgets/warningcontent.cpp" line="190"/>
+        <source>Hibernate</source>
+        <translation>休眠</translation>
+    </message>
+    <message>
+        <location filename="../src/widgets/warningcontent.cpp" line="192"/>
+        <location filename="../src/widgets/warningcontent.cpp" line="273"/>
+        <source>Log out</source>
+        <translation>登出</translation>
+    </message>
+    <message>
+        <location filename="../src/widgets/warningcontent.cpp" line="268"/>
+        <source>Are you sure you want to shut down?</source>
+        <translation>確定關機？</translation>
+    </message>
+    <message>
+        <location filename="../src/widgets/warningcontent.cpp" line="271"/>
+        <source>Are you sure you want to reboot?</source>
+        <translation>確定重開機？</translation>
+    </message>
+    <message>
+        <location filename="../src/widgets/warningcontent.cpp" line="274"/>
+        <source>Are you sure you want to log out?</source>
+        <translation>確定登出？</translation>
     </message>
 </context>
 </TS>
