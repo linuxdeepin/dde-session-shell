@@ -114,7 +114,7 @@ void UserLoginInfo::initConnect()
     });
 
     //连接系统待机信号
-    connect(m_model, &SessionBaseModel::SleepModeChanged, m_userLoginWidget, &UserLoginWidget::sleepModeChange, Qt::QueuedConnection);
+    connect(m_model, &SessionBaseModel::prepareForSleep, m_userLoginWidget, &UserLoginWidget::prepareForSleep, Qt::QueuedConnection);
 }
 
 void UserLoginInfo::abortConfirm(bool abort)
