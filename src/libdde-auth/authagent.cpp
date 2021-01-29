@@ -22,8 +22,6 @@ AuthAgent::AuthAgent(DeepinAuthFramework *deepin)
     , m_isCondition(true)
     , m_isCancel(false)
 {
-    connect(this, &AuthAgent::requestEchoOff, deepin, &DeepinAuthFramework::DisplayTextInfo, Qt::QueuedConnection);
-    connect(this, &AuthAgent::requestEchoOn, deepin, &DeepinAuthFramework::DisplayTextInfo, Qt::QueuedConnection);
     connect(this, &AuthAgent::displayErrorMsg, deepin, &DeepinAuthFramework::DisplayErrorMsg, Qt::QueuedConnection);
     connect(this, &AuthAgent::displayTextInfo, deepin, &DeepinAuthFramework::DisplayTextInfo, Qt::QueuedConnection);
     connect(this, &AuthAgent::respondResult, deepin, &DeepinAuthFramework::RespondResult, Qt::QueuedConnection);
@@ -80,7 +78,7 @@ int AuthAgent::pamConversation(int num_msg, const struct pam_message **msg,
     AuthAgent *app_ptr = static_cast<AuthAgent *>(app_data);
     struct pam_response *aresp = nullptr;
     int idx = 0;
-    AuthFlag auth_type = AuthFlag::keyboard;
+    AuthFlag auth_type = AuthFlag::Password;
 
     QPointer<AuthAgent> isThreadAlive(app_ptr);
     if (!isThreadAlive) {
@@ -95,12 +93,9 @@ int AuthAgent::pamConversation(int num_msg, const struct pam_message **msg,
         return PAM_BUF_ERR;
 
     for (idx = 0; idx < num_msg; ++idx) {
-        int msg_style = PAM_MSG_MEMBER(msg, idx, msg_style);
-        QString message = QString::fromLocal8Bit(PAM_MSG_MEMBER(msg, idx, msg));
+        switch(PAM_MSG_MEMBER(msg, idx, msg_style)) {
 
-        switch(msg_style) {
         case PAM_PROMPT_ECHO_OFF: {
-            app_ptr->requestEchoOff(message);
             while(app_ptr->m_isCondition) {
                 //取消验证时返回一般错误,退出等待输入密码的循环,然后退出验证线程
                 if (app_ptr->m_isCancel) {
@@ -116,34 +111,29 @@ int AuthAgent::pamConversation(int num_msg, const struct pam_message **msg,
                 return PAM_CONV_ERR;
             }
 
-            QString password = app_ptr->Password();
+            QString password = app_ptr->deepinAuth()->RequestEchoOff(PAM_MSG_MEMBER(msg, idx, msg));
             aresp[idx].resp = strdup(password.toLocal8Bit().data());
 
             if (aresp[idx].resp == nullptr)
               goto fail;
 
-            auth_type = AuthFlag::keyboard;
+            auth_type = AuthFlag::Password;
             aresp[idx].resp_retcode = PAM_SUCCESS;
             break;
         }
 
-        case PAM_PROMPT_ECHO_ON: {
-            qDebug() << "pam prompt echo on: " << message;
-            app_ptr->requestEchoOn(message);
-            break;
-        }
-
-        case PAM_ERROR_MSG: {
-            qDebug() << "pam authagent error: " << message;
-            app_ptr->displayErrorMsg(message);
+        case PAM_PROMPT_ECHO_ON:
+        case PAM_ERROR_MSG:{
+            qDebug() << "pam authagent error: " << PAM_MSG_MEMBER(msg, idx, msg);
+            app_ptr->displayErrorMsg(QString::fromLocal8Bit(PAM_MSG_MEMBER(msg, idx, msg)));
             auth_type = AuthFlag::Fingerprint;
             aresp[idx].resp_retcode = PAM_SUCCESS;
             break;
         }
 
         case PAM_TEXT_INFO: {
-            qDebug() << "pam authagent info: " << message;
-            app_ptr->displayTextInfo(message);
+            qDebug() << "pam authagent info: " << PAM_MSG_MEMBER(msg, idx, msg);
+            app_ptr->displayTextInfo(QString::fromLocal8Bit(PAM_MSG_MEMBER(msg, idx, msg)));
             aresp[idx].resp_retcode = PAM_SUCCESS;
             break;
          }
@@ -154,7 +144,11 @@ int AuthAgent::pamConversation(int num_msg, const struct pam_message **msg,
     }
 
     *resp = aresp;
-    app_ptr->m_authType = auth_type;
+    if (auth_type == AuthFlag::Password) {
+        app_ptr->m_authType = AuthFlag::Password;
+    } else if (auth_type == AuthFlag::Fingerprint) {
+        app_ptr->m_authType = AuthFlag::Fingerprint;
+    }
     return PAM_SUCCESS;
 
 fail:

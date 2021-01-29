@@ -27,6 +27,13 @@ class LockWorker : public Auth::AuthInterface, public DeepinAuthInterface
 {
     Q_OBJECT
 public:
+    enum AuthFlag {
+        Password = 1 << 0,
+        Fingerprint = 1 << 1,
+        Face = 1 << 2,
+        ActiveDirectory = 1 << 3
+    };
+
     explicit LockWorker(SessionBaseModel *const model, QObject *parent = nullptr);
 
     void switchToUser(std::shared_ptr<User> user) override;

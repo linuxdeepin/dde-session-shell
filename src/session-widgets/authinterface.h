@@ -47,13 +47,6 @@ public:
         Disabled
     };
 
-    enum AuthFlag {
-        Keyboard = 1 << 0,
-        Fingerprint = 1 << 1,
-        Face = 1 << 2,
-        ActiveDirectory = 1 << 3
-    };
-
 protected:
     void initDBus();
     void initData();
