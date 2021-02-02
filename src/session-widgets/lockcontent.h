@@ -78,8 +78,6 @@ protected:
     MediaWidget *m_mediaWidget = nullptr;
     UserLoginInfo *m_userLoginInfo;
     com::deepin::wm *m_wmInter;
-    QString m_greeterBackgroundPath;
-    QString m_desktopBackgroundPath;
 
     int m_failures = 0;
 };

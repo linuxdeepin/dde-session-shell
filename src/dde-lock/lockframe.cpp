@@ -44,6 +44,15 @@ LockFrame::LockFrame(SessionBaseModel *const model, QWidget *parent)
     , m_oldCursor(this->cursor())
 {
     qDebug() << "LockFrame geometry:" << geometry();
+
+    QTimer::singleShot(0, this, [ = ] {
+        auto user = model->currentUser();
+        if (user != nullptr) {
+            //默认刷新清晰的锁屏背景，避免因为获取虚化背景过慢而引起的白屏问题
+            updateBackground(QPixmap(user->greeterBackgroundPath()));
+        }
+    });
+
     m_lockContent = new LockContent(model);
     m_lockContent->hide();
     setContent(m_lockContent);

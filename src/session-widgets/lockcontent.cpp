@@ -21,17 +21,7 @@ LockContent::LockContent(SessionBaseModel *const model, QWidget *parent)
     , m_translator(new QTranslator)
     , m_userLoginInfo(new UserLoginInfo(model))
     , m_wmInter(new com::deepin::wm("com.deepin.wm", "/com/deepin/wm", QDBusConnection::sessionBus(), this))
-    , m_greeterBackgroundPath(QString())
-    , m_desktopBackgroundPath(QString())
 {
-    QTimer::singleShot(0, this, [ = ] {
-        auto user = model->currentUser();
-        if (user != nullptr) {
-            updateGreeterBackgroundPath(user->greeterBackgroundPath());
-            updateDesktopBackgroundPath(user->desktopBackgroundPath());
-        }
-    });
-
     m_model->setCurrentModeState(SessionBaseModel::ModeStatus::PasswordMode);
 
     m_timeWidget = new TimeWidget();
@@ -75,6 +65,8 @@ LockContent::LockContent(SessionBaseModel *const model, QWidget *parent)
         emit unlockActionFinish();
     });
 
+    //刷新背景单独与onStatusChanged信号连接，避免在showEvent事件时调用onStatusChanged而重复刷新背景，减少刷新次数
+    connect(model, &SessionBaseModel::onStatusChanged, this, &LockContent::refreshBackground);
     connect(model, &SessionBaseModel::onStatusChanged, this, &LockContent::onStatusChanged);
 
     //在锁屏显示时，启动onborad进程，锁屏结束时结束onboard进程
@@ -186,9 +178,10 @@ void LockContent::pushUserFrame()
 {
     if(m_model->isServerModel())
         m_controlWidget->setUserSwitchEnable(false);
-    //设置用户列表大小为中间区域的大小
+    //设置用户列表大小为中间区域的大小,并移动到左上角，避免显示后出现移动现象
     UserFrameList * userFrameList = m_userLoginInfo->getUserFrameList();
     userFrameList->setFixedSize(getCenterContentSize());
+    userFrameList->move(0, 0);
     setCenterContent(m_userLoginInfo->getUserFrameList());
 }
 
@@ -199,8 +192,10 @@ void LockContent::pushConfirmFrame()
 
 void LockContent::pushShutdownFrame()
 {
+    //设置关机选项界面大小为中间区域的大小,并移动到左上角，避免显示后出现移动现象
     QSize size = getCenterContentSize();
     m_shutdownFrame->setFixedSize(size);
+    m_shutdownFrame->move(0, 0);
     m_shutdownFrame->onStatusChanged(m_model->currentModeState());
     setCenterContent(m_shutdownFrame);
 }
@@ -223,7 +218,6 @@ void LockContent::beforeUnlockAction(bool is_finish)
 
 void LockContent::onStatusChanged(SessionBaseModel::ModeStatus status)
 {
-    refreshBackground(status);
     refreshLayout(status);
 
     if(m_model->isServerModel())
@@ -294,27 +288,23 @@ void LockContent::restoreMode()
 
 void LockContent::updateGreeterBackgroundPath(const QString &path)
 {
-    m_greeterBackgroundPath = path;
-
-    if (m_greeterBackgroundPath.isEmpty()) {
+    if (path.isEmpty()) {
         return;
     }
 
     if (m_model->currentModeState() != SessionBaseModel::ModeStatus::ShutDownMode) {
-        emit requestBackground(m_greeterBackgroundPath);
+        emit requestBackground(path);
     }
 }
 
 void LockContent::updateDesktopBackgroundPath(const QString &path)
 {
-    m_desktopBackgroundPath = path;
-
-    if (m_desktopBackgroundPath.isEmpty()) {
+    if (path.isEmpty()) {
         return;
     }
 
     if (m_model->currentModeState() == SessionBaseModel::ModeStatus::ShutDownMode) {
-        emit requestBackground(m_desktopBackgroundPath);
+        emit requestBackground(path);
     }
 }
 
@@ -459,10 +449,14 @@ void LockContent::updateWallpaper(const QString &path)
 
 void LockContent::refreshBackground(SessionBaseModel::ModeStatus status)
 {
-    if (status == SessionBaseModel::ModeStatus::ShutDownMode) {
-        emit requestBackground(m_desktopBackgroundPath);
-    } else {
-        emit requestBackground(m_greeterBackgroundPath);
+    //根据当前状态刷新不同的背景
+    auto user = m_model->currentUser();
+    if (user != nullptr) {
+        if (status == SessionBaseModel::ModeStatus::ShutDownMode) {
+            emit requestBackground(user->desktopBackgroundPath());
+        } else {
+            emit requestBackground(user->greeterBackgroundPath());
+        }
     }
 }
 
