@@ -74,6 +74,8 @@ LockWorker::LockWorker(SessionBaseModel *const model, QObject *parent)
             }
             return;
         case SessionBaseModel::PowerAction::RequireLock:
+            //从关机选项界面锁屏时需要调用SessionManager设置setLocked
+            m_model->setLocked(true);
             //锁屏切换密码输入界面并开始验证
             m_model->setCurrentModeState(SessionBaseModel::ModeStatus::PasswordMode);
             m_authFramework->Authenticate(m_model->currentUser());

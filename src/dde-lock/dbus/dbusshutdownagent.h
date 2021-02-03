@@ -31,7 +31,6 @@ class DBusShutdownAgent : public QObject
 public:
     explicit DBusShutdownAgent(QObject *parent = nullptr);
     void setModel(SessionBaseModel *const model);
-
     void show();
     void Shutdown();
     void Restart();
@@ -40,6 +39,9 @@ public:
     void Hibernate();
     void SwitchUser();
     void Lock();
+
+private:
+    bool canShowShutDown();
 
 private:
     SessionBaseModel *m_model;

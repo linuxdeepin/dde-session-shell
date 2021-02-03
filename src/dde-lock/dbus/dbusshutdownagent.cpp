@@ -36,12 +36,20 @@ void DBusShutdownAgent::setModel(SessionBaseModel * const model)
 
 void DBusShutdownAgent::show()
 {
+    if (!canShowShutDown()) {
+        return;
+    }
+
     m_model->setCurrentModeState(SessionBaseModel::ModeStatus::ShutDownMode);
     m_model->setIsShow(true);
 }
 
 void DBusShutdownAgent::Shutdown()
 {
+    if (!canShowShutDown()) {
+        return;
+    }
+
     m_model->setCurrentModeState(SessionBaseModel::ModeStatus::ShutDownMode);
     m_model->setIsShow(true);
     emit m_model->onRequirePowerAction(SessionBaseModel::PowerAction::RequireShutdown);
@@ -49,6 +57,10 @@ void DBusShutdownAgent::Shutdown()
 
 void DBusShutdownAgent::Restart()
 {
+    if (!canShowShutDown()) {
+        return;
+    }
+
     m_model->setCurrentModeState(SessionBaseModel::ModeStatus::ShutDownMode);
     m_model->setIsShow(true);
     emit m_model->onRequirePowerAction(SessionBaseModel::PowerAction::RequireRestart);
@@ -56,6 +68,10 @@ void DBusShutdownAgent::Restart()
 
 void DBusShutdownAgent::Logout()
 {
+    if (!canShowShutDown()) {
+        return;
+    }
+
     m_model->setCurrentModeState(SessionBaseModel::ModeStatus::ShutDownMode);
     m_model->setIsShow(true);
     emit m_model->onRequirePowerAction(SessionBaseModel::PowerAction::RequireLogout);
@@ -63,6 +79,10 @@ void DBusShutdownAgent::Logout()
 
 void DBusShutdownAgent::Suspend()
 {
+    if (!canShowShutDown()) {
+        return;
+    }
+
     m_model->setCurrentModeState(SessionBaseModel::ModeStatus::PasswordMode);
     m_model->setIsShow(true);
     m_model->setIsBlackModel(true);
@@ -71,7 +91,11 @@ void DBusShutdownAgent::Suspend()
 
 void DBusShutdownAgent::Hibernate()
 {
-    m_model->setCurrentModeState(SessionBaseModel::ModeStatus::PasswordMode);
+    if (!canShowShutDown()) {
+        return;
+    }
+
+    m_model->setCurrentModeState(SessionBaseModel::ModeStatus::ShutDownMode);
     m_model->setIsShow(true);
     m_model->setIsBlackModel(true);
     m_model->setPowerAction(SessionBaseModel::RequireHibernate);
@@ -79,13 +103,30 @@ void DBusShutdownAgent::Hibernate()
 
 void DBusShutdownAgent::SwitchUser()
 {
+    if (!canShowShutDown()) {
+        return;
+    }
+
     emit m_model->showUserList();
 }
 
 void DBusShutdownAgent::Lock()
 {
-    m_model->setCurrentModeState(SessionBaseModel::ModeStatus::PasswordMode);
-    m_model->setIsBlackModel(false);
-    m_model->setIsHibernateModel(false);
+    if (!canShowShutDown()) {
+        return;
+    }
+
+    m_model->setCurrentModeState(SessionBaseModel::ModeStatus::ShutDownMode);
     m_model->setIsShow(true);
+    m_model->setPowerAction(SessionBaseModel::RequireLock);
+}
+
+bool DBusShutdownAgent::canShowShutDown()
+{
+    //如果当前界面已显示，而且不是关机模式，则当前已锁屏，因此不允许调用,以免在锁屏时被远程调用而进入桌面
+    if (m_model->isShow() && m_model->currentModeState() != SessionBaseModel::ModeStatus::ShutDownMode) {
+        return false;
+    }
+
+    return true;
 }
