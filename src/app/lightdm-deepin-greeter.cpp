@@ -197,8 +197,7 @@ int main(int argc, char* argv[])
     // crash catch
     init_sig_crash();
 
-    DGuiApplicationHelper::instance()->setPaletteType(DGuiApplicationHelper::LightType);
-    DPalette pa = DGuiApplicationHelper::instance()->applicationPalette();
+    DPalette pa = DGuiApplicationHelper::instance()->standardPalette(DGuiApplicationHelper::LightType);
     pa.setColor(QPalette::Normal, DPalette::WindowText, QColor("#FFFFFF"));
     pa.setColor(QPalette::Normal, DPalette::Text, QColor("#FFFFFF"));
     pa.setColor(QPalette::Normal, DPalette::AlternateBase, QColor(0, 0, 0, 76));
