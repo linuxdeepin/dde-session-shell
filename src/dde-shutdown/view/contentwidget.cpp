@@ -787,6 +787,7 @@ QList<InhibitWarnView::InhibitorData> ContentWidget::listInhibitors(const Action
                     inhibitData.why = inhibitor.why;
                     inhibitData.mode = inhibitor.mode;
                     inhibitData.pid = inhibitor.pid;
+                    inhibitData.uid = inhibitor.uid;
 
                     // 读取翻译后的文本，读取应用图标
                     QDBusConnection connection = QDBusConnection::sessionBus();
@@ -808,7 +809,8 @@ QList<InhibitWarnView::InhibitorData> ContentWidget::listInhibitors(const Action
                             }
                         }
                     }
-
+                    if (action == Logout && inhibitData.uid != m_model->currentUser()->uid())
+                        continue;
                     inhibitorList.append(inhibitData);
                 }
             }

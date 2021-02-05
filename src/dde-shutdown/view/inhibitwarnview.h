@@ -58,6 +58,7 @@ public:
         QString mode;
         quint32 pid;
         QString icon;
+        quint32 uid;
     };
 
     void setInhibitorList(const QList<InhibitorData> & list);
