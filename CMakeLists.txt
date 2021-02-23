@@ -114,6 +114,7 @@ set(GLOBAL_UTILS_SRCS
     ./src/global_util/keyboardplatform.h
     ./src/global_util/keyboardplantform_x11.h
     ./src/global_util/keyboardplantform_wayland.h
+    ./src/global_util/gsettingwatcher.h
     ./src/global_util/xkbparser.cpp
     ./src/global_util/dbus/dbusdisplaymanager.cpp
     ./src/global_util/dbus/dbuslogin1manager.cpp
@@ -132,6 +133,7 @@ set(GLOBAL_UTILS_SRCS
     ./src/global_util/keyboardmonitor.cpp
     ./src/global_util/keyboardplantform_x11.cpp
     ./src/global_util/keyboardplantform_wayland.cpp
+    ./src/global_util/gsettingwatcher.cpp
 )
 
 set(WIDGETS_SRCS
@@ -333,3 +335,7 @@ install(FILES files/dde-session-shell.conf DESTINATION share/dde-session-shell/)
 # services
 file(GLOB SERVICES files/*.service)
 install(FILES ${SERVICES} DESTINATION share/dbus-1/services)
+
+#schemas
+install(FILES xml/com.deepin.dde.session-shell.gschema.xml DESTINATION share/glib-2.0/schemas)
+install(CODE "execute_process(COMMAND glib-compile-schemas ${CMAKE_INSTALL_PREFIX}/share/glib-2.0/schemas)")
