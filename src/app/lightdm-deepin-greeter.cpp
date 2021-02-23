@@ -237,8 +237,9 @@ int main(int argc, char* argv[])
         a.installTranslator(&translator);
     }
 
-    QObject::connect(model, &SessionBaseModel::authFinished, model, [=] {
-        set_rootwindow_cursor();
+    QObject::connect(model, &SessionBaseModel::authFinished, model, [ = ] (bool is_success) {
+        if (is_success)
+            set_rootwindow_cursor();
     });
 
     PropertyGroup *property_group = new PropertyGroup(worker);
