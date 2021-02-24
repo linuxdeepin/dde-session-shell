@@ -185,10 +185,6 @@ void GreeterWorkek::onUserAdded(const QString &user)
     if (m_model->currentUser().get() == nullptr) {
         if (m_model->userList().isEmpty() || m_model->userList().first()->type() == User::ADDomain) {
             m_model->setCurrentUser(user_ptr);
-
-            if (m_model->currentType() == SessionBaseModel::AuthType::LightdmType) {
-                userAuthForLightdm(user_ptr);
-            }
         }
     }
 
@@ -408,7 +404,7 @@ void GreeterWorkek::resetLightdmAuth(std::shared_ptr<User> user,int delay_time ,
 
     QTimer::singleShot(delay_time, this, [ = ] {
         m_greeter->authenticate(user->name());
-        if (is_respond) {
+        if (is_respond && !m_password.isEmpty()) {
             m_greeter->respond(m_password);
         }
     });
