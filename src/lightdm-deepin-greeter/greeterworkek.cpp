@@ -69,7 +69,7 @@ GreeterWorkek::GreeterWorkek(SessionBaseModel *const model, QObject *parent)
 
     connect(model, &SessionBaseModel::lockLimitFinished, this, [ = ] {
         auto user = m_model->currentUser();
-        if (user != nullptr && user->lockTime() == 0) {
+        if (user != nullptr && !user->isLock()) {
             m_password.clear();
             resetLightdmAuth(user, 100, false);
         }
