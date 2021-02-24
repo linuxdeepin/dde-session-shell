@@ -236,6 +236,8 @@ set(GREETER_SRCS
     ./src/lightdm-deepin-greeter/loginwindow.cpp
     ./src/lightdm-deepin-greeter/greeterworkek.cpp
     ./src/lightdm-deepin-greeter/logincontent.cpp
+    ./src/lightdm-deepin-greeter/logintipswindow.cpp
+    ./src/lightdm-deepin-greeter/logintipswindow.h
 )
 
 set(QRCS

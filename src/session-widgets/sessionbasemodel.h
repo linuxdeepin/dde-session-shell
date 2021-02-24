@@ -138,6 +138,8 @@ signals:
     void prepareForSleep(bool is_Sleep);//待机信号改变
     void shutdownInhibit(const SessionBaseModel::PowerAction action);
     void cancelShutdownInhibit();
+    void tipsShowed();
+
 
 private:
     com::deepin::SessionManager *m_sessionManagerInter;
