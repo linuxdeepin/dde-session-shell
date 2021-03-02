@@ -74,6 +74,7 @@ protected:
     void updateIcon();
     bool focusNextPrevChild(bool next) Q_DECL_OVERRIDE;
     void setCurrentButton(const ButtonType btntype) Q_DECL_OVERRIDE;
+    void keyPressEvent(QKeyEvent *event) override;
 
 signals:
     void cancelled() const;

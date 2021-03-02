@@ -86,6 +86,7 @@ InhibitWarnView::InhibitWarnView(SessionBaseModel::PowerAction inhibitType, QWid
     m_acceptBtn->setFixedSize(ButtonWidth, ButtonHeight);
     m_acceptBtn->setCheckable(true);
     m_acceptBtn->setAutoExclusive(true);
+    m_acceptBtn->setFocusPolicy(Qt::NoFocus);
 
     m_cancelBtn = new QPushButton(tr("Cancel"), this);
     m_cancelBtn->setObjectName("CancelButton");
@@ -93,6 +94,7 @@ InhibitWarnView::InhibitWarnView(SessionBaseModel::PowerAction inhibitType, QWid
     m_cancelBtn->setFixedSize(ButtonWidth, ButtonHeight);
     m_cancelBtn->setCheckable(true);
     m_cancelBtn->setAutoExclusive(true);
+    m_cancelBtn->setFocusPolicy(Qt::NoFocus);
 
     const auto ratio = devicePixelRatioF();
     QIcon icon_pix = QIcon::fromTheme(":/img/cancel_normal.svg").pixmap(m_cancelBtn->iconSize() * ratio);
@@ -108,12 +110,6 @@ InhibitWarnView::InhibitWarnView(SessionBaseModel::PowerAction inhibitType, QWid
     m_confirmTextLabel->setText("The reason of inhibit.");
     m_confirmTextLabel->setAlignment(Qt::AlignCenter);
     m_confirmTextLabel->setStyleSheet("color:white;");
-
-    QVBoxLayout *cancelLayout = new QVBoxLayout;
-    cancelLayout->addWidget(m_cancelBtn);
-
-    QVBoxLayout *acceptLayout = new QVBoxLayout;
-    acceptLayout->addWidget(m_acceptBtn);
 
     QVBoxLayout *centralLayout = new QVBoxLayout;
     centralLayout->addStretch();
@@ -134,7 +130,7 @@ InhibitWarnView::InhibitWarnView(SessionBaseModel::PowerAction inhibitType, QWid
     updateIcon();
 
     connect(m_cancelBtn, &QPushButton::clicked, this, &InhibitWarnView::cancelled);
-    connect(m_acceptBtn, &QPushButton::clicked, [this] {emit actionInvoked();});
+    connect(m_acceptBtn, &QPushButton::clicked, this, &InhibitWarnView::actionInvoked);
 }
 
 InhibitWarnView::~InhibitWarnView()
@@ -271,4 +267,19 @@ void InhibitWarnView::onOtherPageDataChanged(const QVariant &value)
         setCurrentButton(ButtonType::Accept);
     else
         setCurrentButton(ButtonType::Cancel);
+}
+
+void InhibitWarnView::keyPressEvent(QKeyEvent *event)
+{
+    switch (event->key()) {
+    case Qt::Key_Up:
+    case Qt::Key_Down:
+    case Qt::Key_Tab:
+        toggleButtonState();
+        break;
+    case Qt::Key_Return:
+        m_currentBtn->clicked();
+        break;
+    }
+    QWidget::keyPressEvent(event);
 }

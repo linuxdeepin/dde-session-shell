@@ -310,10 +310,10 @@ void WarningContent::mouseReleaseEvent(QMouseEvent *event)
 void WarningContent::keyPressEvent(QKeyEvent *event)
 {
     switch (event->key()) {
-    case Qt::Key_Escape: {
+    case Qt::Key_Escape:
         m_model->setPowerAction(SessionBaseModel::PowerAction::None);
         emit m_model->cancelShutdownInhibit();
         break;
     }
-    }
+    QWidget::keyPressEvent(event);
 }
