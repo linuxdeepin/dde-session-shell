@@ -91,7 +91,7 @@ void FullscreenBackground::updateBackground(const QPixmap &background)
 
 bool FullscreenBackground::isPicture(const QString &file)
 {
-    return QFile::exists (file) && QFile (file).size() && !QPixmap (file).isNull() ;
+    return QFile::exists (file) && QFile (file).size();
 }
 
 void FullscreenBackground::updateBackground(const QString &file)
