@@ -98,7 +98,7 @@ private:
     bool m_primaryShowFinished = false;
     bool m_isBlackMode = false;
     bool m_isHibernateMode = false;
-    bool m_enableEnterEvent = false;
+    bool m_enableEnterEvent = true;
 };
 
 #endif // FULLSCREENBACKGROUND_H
