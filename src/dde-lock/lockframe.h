@@ -81,7 +81,6 @@ private:
     bool m_preparingSleep;
     bool m_prePreparingSleep;
     long m_preparingSleepTime;
-    QCursor m_oldCursor;
 };
 
 #endif // LOCKFRAME

@@ -41,7 +41,6 @@ LockFrame::LockFrame(SessionBaseModel *const model, QWidget *parent)
     , m_model(model)
     , m_preparingSleep(false)
     , m_prePreparingSleep(false)
-    , m_oldCursor(this->cursor())
 {
     qDebug() << "LockFrame geometry:" << geometry();
 
@@ -77,13 +76,7 @@ LockFrame::LockFrame(SessionBaseModel *const model, QWidget *parent)
         //待机时由锁屏提供假黑屏，唤醒时显示正常界面
         model->setIsBlackModel(isSleep);
 
-        if (isSleep) {
-            //待机时隐藏鼠标
-            m_oldCursor = this->cursor();
-            setCursor(Qt::BlankCursor);
-        } else  {
-            //唤醒后显示鼠标
-            setCursor(m_oldCursor);
+        if (!isSleep) {
             //待机唤醒后检查是否需要密码，若不需要密码直接隐藏锁定界面
             if (QGSettings::isSchemaInstalled("com.deepin.dde.power")) {
                 QGSettings powerSettings("com.deepin.dde.power", QByteArray(), this);

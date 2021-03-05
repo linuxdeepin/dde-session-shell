@@ -47,16 +47,20 @@ LockWorker::LockWorker(SessionBaseModel *const model, QObject *parent)
             m_model->setIsBlackModel(true);
             //待机时先切换密码输入界面
             m_model->setCurrentModeState(SessionBaseModel::ModeStatus::PasswordMode);
-            //开始调用后端待机
-            m_sessionManager->RequestSuspend();
+            //开始延时调用后端待机，先保证界面切换正常，避免某些机器闪现电源选项界面
+            QTimer::singleShot(0, this, [ = ] {
+                m_sessionManager->RequestSuspend();
+            });
             break;
         case SessionBaseModel::PowerAction::RequireHibernate:
             //休眠之前先黑屏
             m_model->setIsBlackModel(true);
             //待机时先切换密码输入界面
             m_model->setCurrentModeState(SessionBaseModel::ModeStatus::PasswordMode);
-            //开始调用后端休眠
-            m_sessionManager->RequestHibernate();
+            //开始延时调用后端休眠，先保证界面切换正常，避免某些机器闪现电源选项界面
+            QTimer::singleShot(0, this, [ = ] {
+                m_sessionManager->RequestHibernate();
+            });
             break;
         case SessionBaseModel::PowerAction::RequireRestart:
             if (m_model->currentModeState() == SessionBaseModel::ModeStatus::ShutDownMode) {

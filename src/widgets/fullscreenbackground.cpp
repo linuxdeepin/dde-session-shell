@@ -48,6 +48,7 @@ FullscreenBackground::FullscreenBackground(QWidget *parent)
     : QWidget(parent)
     , m_fadeOutAni(new QVariantAnimation(this))
     , m_imageEffectInter(new ImageEffectInter("com.deepin.daemon.ImageEffect", "/com/deepin/daemon/ImageEffect", QDBusConnection::systemBus(), this))
+    , m_originalCursor(this->cursor())
 {
 #ifndef QT_DEBUG
     setWindowFlags(Qt::WindowStaysOnTopHint | Qt::X11BypassWindowManagerHint);
@@ -187,6 +188,18 @@ void FullscreenBackground::setContent(QWidget *const w)
 void FullscreenBackground::setIsBlackMode(bool is_black)
 {
     if(m_isBlackMode == is_black) return;
+
+    if (is_black) {
+        //黑屏的同时隐藏鼠标
+        m_originalCursor = this->cursor();
+        QApplication::setOverrideCursor(Qt::BlankCursor);
+    } else  {
+        //唤醒后显示鼠标
+        QApplication::setOverrideCursor(m_originalCursor);
+    }
+
+    //黑屏鼠标在多屏间移动时不显示界面
+    m_enableEnterEvent = !is_black;
 
     m_isBlackMode = is_black;
     FrameDataBind::Instance()->updateValue("PrimaryShowFinished", !is_black);
