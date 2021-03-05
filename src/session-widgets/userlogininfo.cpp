@@ -46,7 +46,8 @@ void UserLoginInfo::setUser(std::shared_ptr<User> user)
 
     m_currentUserConnects.clear();
     m_currentUserConnects << connect(user.get(), &User::lockChanged, this, &UserLoginInfo::userLockChanged);
-    m_currentUserConnects << connect(user.get(), &User::lockChanged, m_model, &SessionBaseModel::lockLimitFinished);
+    m_currentUserConnects << connect(user.get(), &User::lockLimitFinished, m_model, &SessionBaseModel::lockLimitFinished);
+    m_currentUserConnects << connect(user.get(), &User::lockLimitFinished,this, &UserLoginInfo::userLockChanged);
     m_currentUserConnects << connect(user.get(), &User::avatarChanged, m_userLoginWidget, &UserLoginWidget::setAvatar);
     m_currentUserConnects << connect(user.get(), &User::displayNameChanged, m_userLoginWidget, &UserLoginWidget::setName);
     m_currentUserConnects << connect(user.get(), &User::kbLayoutListChanged, m_userLoginWidget, &UserLoginWidget::updateKBLayout, Qt::UniqueConnection);

@@ -47,7 +47,7 @@ signals:
     void kbLayoutListChanged(const QStringList &list);
     void currentKBLayoutChanged(const QString &layout);
     void lockChanged(bool lock);
-    void lockLimitFinished();
+    void lockLimitFinished(bool lock);
     void noPasswdLoginChanged(bool no_passw);
     void use24HourFormatChanged(bool use24);
 
