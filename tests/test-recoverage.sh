@@ -21,7 +21,7 @@ lcov -c -d ./ -o dde-lock.info
 lcov -c -d ./ -o lightdm-deepin-greeter.info
 
 lcov -a init.info -a dde-lock.info -a lightdm-deepin-greeter.info -o total.info
-lcov -r total.info "*/tests/*" "*/usr/include*" "*build/src*" "*/dbus/*" "*/interfaces/*" "*/xcb/*" -o final.info
+lcov -r total.info "*/tests/*" "*/usr/include*"  "*.h" "*build/*" "*/dbus/*" "*/xcb/*" -o final.info
 
 rm -rf ../../tests/$REPORT_DIR
 mkdir -p ../../tests/$REPORT_DIR

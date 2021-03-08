@@ -26,3 +26,4 @@ build*/
 *.swp
 
 *.vscode
+tests/report/*
