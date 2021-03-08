@@ -66,6 +66,7 @@ private:
     QMap<std::shared_ptr<User>, bool> m_lockUser;
     SessionManager *m_sessionManager;
     HuaWeiSwitchOSInterface* m_switchosInterface = nullptr;
+    bool m_canAuthenticate = false;
 };
 
 #endif // LOCKWORKER_H

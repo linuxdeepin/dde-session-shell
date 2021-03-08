@@ -157,7 +157,21 @@ LockWorker::LockWorker(SessionBaseModel *const model, QObject *parent)
     });
 
     connect(m_login1SessionSelf, &Login1SessionSelf::ActiveChanged, this, [ = ](bool active) {
-        if(active) {
+        if (!active) {
+            m_canAuthenticate = true;
+        } else if (m_canAuthenticate) {
+            m_canAuthenticate = false;
+            m_authenticating = false;
+            m_authFramework->Authenticate(m_model->currentUser());
+        }
+    });
+
+    //因为部分机器在待机休眠唤醒后无法发出Login1SessionSelf::ActiveChange信号，从而无法请求验证密码，增加此信号连接重新请求验证
+    connect(m_login1Inter, &DBusLogin1Manager::PrepareForSleep, this, [ = ](bool sleep) {
+        if (sleep) {
+            m_canAuthenticate = true;
+        } else if (m_canAuthenticate) {
+            m_canAuthenticate = false;
             m_authenticating = false;
             m_authFramework->Authenticate(m_model->currentUser());
         }
