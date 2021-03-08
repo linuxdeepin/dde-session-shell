@@ -164,9 +164,6 @@ void LockContent::onCurrentUserChanged(std::shared_ptr<User> user)
 void LockContent::pushPasswordFrame()
 {
     auto current_user = m_model->currentUser();
-    if (current_user != nullptr && current_user->isLock()) {
-        current_user->onLockTimeOut();
-    }
 
     setCenterContent(m_userLoginInfo->getUserLoginWidget());
 
