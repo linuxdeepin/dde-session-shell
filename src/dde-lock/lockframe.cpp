@@ -24,11 +24,11 @@
  */
 
 #include "lockframe.h"
-#include "src/session-widgets/lockcontent.h"
-#include "src/session-widgets/sessionbasemodel.h"
-#include "src/session-widgets/userinfo.h"
-#include "src/session-widgets/hibernatewidget.h"
-#include "src/widgets/warningcontent.h"
+#include "lockcontent.h"
+#include "sessionbasemodel.h"
+#include "userinfo.h"
+#include "hibernatewidget.h"
+#include "warningcontent.h"
 
 #include <QApplication>
 #include <QWindow>

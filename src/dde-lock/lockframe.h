@@ -26,8 +26,8 @@
 #ifndef LOCKFRAME
 #define LOCKFRAME
 
-#include "src/widgets/fullscreenbackground.h"
-#include "src/session-widgets/hibernatewidget.h"
+#include "fullscreenbackground.h"
+#include "hibernatewidget.h"
 
 #include <QKeyEvent>
 #include <QDBusConnection>
@@ -84,4 +84,3 @@ private:
 };
 
 #endif // LOCKFRAME
-

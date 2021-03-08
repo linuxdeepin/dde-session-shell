@@ -26,7 +26,7 @@
 #ifndef LOGINWINDOW_H
 #define LOGINWINDOW_H
 
-#include "src/widgets/fullscreenbackground.h"
+#include "fullscreenbackground.h"
 
 #include <memory>
 

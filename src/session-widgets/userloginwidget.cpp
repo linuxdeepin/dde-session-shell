@@ -23,13 +23,13 @@
 #include "lockpasswordwidget.h"
 #include "framedatabind.h"
 #include "userinfo.h"
-#include "src/widgets/useravatar.h"
-#include "src/widgets/loginbutton.h"
-#include "src/global_util/constants.h"
-#include "src/widgets/kblayoutwidget.h"
-#include "src/session-widgets/framedatabind.h"
-#include "src/global_util/keyboardmonitor.h"
-#include "src/widgets/dpasswordeditex.h"
+#include "useravatar.h"
+#include "loginbutton.h"
+#include "constants.h"
+#include "kblayoutwidget.h"
+#include "framedatabind.h"
+#include "keyboardmonitor.h"
+#include "dpasswordeditex.h"
 
 #include <DFontSizeManager>
 #include <DPalette>

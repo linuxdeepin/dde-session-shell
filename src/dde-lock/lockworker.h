@@ -1,13 +1,13 @@
 #ifndef LOCKWORKER_H
 #define LOCKWORKER_H
 
-#include "src/global_util/dbus/dbuslockservice.h"
-#include "src/global_util/dbus/dbuslogin1manager.h"
-#include "src/global_util/dbus/dbushotzone.h"
-#include "src/session-widgets/userinfo.h"
-#include "../libdde-auth/interface/deepinauthinterface.h"
-#include "../libdde-auth/deepinauthframework.h"
-#include "src/session-widgets/authinterface.h"
+#include "dbuslockservice.h"
+#include "dbuslogin1manager.h"
+#include "dbushotzone.h"
+#include "userinfo.h"
+#include "interface/deepinauthinterface.h"
+#include "deepinauthframework.h"
+#include "authinterface.h"
 #include "switchos_interface.h"
 
 #include <QObject>

@@ -30,11 +30,11 @@
 
 #include <functional>
 
-#include "src/global_util/util_updateui.h"
+#include "util_updateui.h"
 #include "rounditembutton.h"
-#include "src/session-widgets/sessionbasemodel.h"
-#include "src/session-widgets/framedatabind.h"
-#include "src/global_util/dbus/dbuslogin1manager.h"
+#include "sessionbasemodel.h"
+#include "framedatabind.h"
+#include "dbuslogin1manager.h"
 #include "switchos_interface.h"
 #include "systemmonitor.h"
 

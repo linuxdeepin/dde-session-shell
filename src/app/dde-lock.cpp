@@ -25,17 +25,17 @@
 
 #include <DLog>
 
-#include "src/dde-lock//lockframe.h"
-#include "src/dde-lock/dbus/dbuslockfrontservice.h"
-#include "src/dde-lock/dbus/dbuslockagent.h"
-#include "src/dde-lock/dbus/dbusshutdownagent.h"
-#include "src/dde-lock/dbus/dbusshutdownfrontservice.h"
-#include "src/global_util/multiscreenmanager.h"
+#include "lockframe.h"
+#include "dbuslockfrontservice.h"
+#include "dbuslockagent.h"
+#include "dbusshutdownagent.h"
+#include "dbusshutdownfrontservice.h"
+#include "multiscreenmanager.h"
 
-#include "src/session-widgets/lockcontent.h"
-#include "src/dde-lock/lockworker.h"
-#include "src/session-widgets/sessionbasemodel.h"
-#include "src/widgets/propertygroup.h"
+#include "lockcontent.h"
+#include "lockworker.h"
+#include "sessionbasemodel.h"
+#include "propertygroup.h"
 
 #include <QDBusInterface>
 #include <DGuiApplicationHelper>

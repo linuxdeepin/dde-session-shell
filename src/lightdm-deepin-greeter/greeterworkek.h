@@ -5,9 +5,9 @@
 #include <QLightDM/SessionsModel>
 #include <QObject>
 
-#include "src/global_util/dbus/dbuslockservice.h"
-#include "src/session-widgets/authinterface.h"
-#include "src/global_util/dbus/dbuslogin1manager.h"
+#include "dbuslockservice.h"
+#include "authinterface.h"
+#include "dbuslogin1manager.h"
 #include <com_deepin_daemon_authenticate.h>
 
 using com::deepin::daemon::Authenticate;

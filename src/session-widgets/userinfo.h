@@ -5,8 +5,8 @@
 #include <com_deepin_daemon_accounts_user.h>
 #include <com_deepin_daemon_authenticate.h>
 #include <memory>
-#include "../global_util/public_func.h"
-#include "../global_util/constants.h"
+#include "public_func.h"
+#include "constants.h"
 
 #define ACCOUNT_DBUS_SERVICE "com.deepin.daemon.Accounts"
 #define ACCOUNT_DBUS_PATH "/com/deepin/daemon/Accounts"

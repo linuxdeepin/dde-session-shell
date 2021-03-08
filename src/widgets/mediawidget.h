@@ -26,7 +26,7 @@
 #ifndef MEDIAWIDGET_H
 #define MEDIAWIDGET_H
 
-#include "src/global_util/dbus/dbusmediaplayer2.h"
+#include "dbusmediaplayer2.h"
 
 #include <QWidget>
 #include <dimagebutton.h>

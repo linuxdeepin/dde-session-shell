@@ -12,7 +12,7 @@
 
 #include "sessionbasewindow.h"
 #include "sessionbasemodel.h"
-#include "src/widgets/mediawidget.h"
+#include "mediawidget.h"
 
 class HibernateWidget :public SessionBaseWindow
 {

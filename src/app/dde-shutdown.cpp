@@ -36,10 +36,10 @@
 #include <DLog>
 #include <unistd.h>
 
-#include "src/dde-shutdown/app/shutdownframe.h"
-#include "src/session-widgets/sessionbasemodel.h"
-#include "src/dde-shutdown/shutdownworker.h"
-#include "src/widgets/propertygroup.h"
+#include "shutdownframe.h"
+#include "sessionbasemodel.h"
+#include "shutdownworker.h"
+#include "propertygroup.h"
 #include "src/global_util/multiscreenmanager.h"
 
 #include "src/dde-shutdown/dbusshutdownagent.h"

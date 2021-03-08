@@ -1,6 +1,6 @@
 #include "authagent.h"
 #include "deepinauthframework.h"
-#include "src/global_util/public_func.h"
+#include "public_func.h"
 
 #include <QDebug>
 #include <QJsonDocument>

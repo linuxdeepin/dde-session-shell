@@ -30,8 +30,8 @@
 #include <QDebug>
 #include <QSettings>
 #include <DSysInfo>
-#include "src/global_util/public_func.h"
-#include "src/global_util/util_updateui.h"
+#include "public_func.h"
+#include "util_updateui.h"
 
 #include "logowidget.h"
 

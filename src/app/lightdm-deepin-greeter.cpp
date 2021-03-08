@@ -23,12 +23,12 @@
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-#include "src/lightdm-deepin-greeter/loginwindow.h"
-#include "src/global_util/constants.h"
-#include "src/lightdm-deepin-greeter/greeterworkek.h"
-#include "src/session-widgets/sessionbasemodel.h"
-#include "src/widgets/propertygroup.h"
-#include "src/global_util/multiscreenmanager.h"
+#include "loginwindow.h"
+#include "constants.h"
+#include "greeterworkek.h"
+#include "sessionbasemodel.h"
+#include "propertygroup.h"
+#include "multiscreenmanager.h"
 
 #include <DApplication>
 #include <QtCore/QTranslator>

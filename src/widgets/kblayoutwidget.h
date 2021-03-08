@@ -31,9 +31,9 @@
 #include <QListWidget>
 #include <QHBoxLayout>
 
-#include "src/global_util/constants.h"
-#include "src/global_util/util_updateui.h"
-#include "src/global_util/xkbparser.h"
+#include "constants.h"
+#include "util_updateui.h"
+#include "xkbparser.h"
 
 class LayoutButton: public QPushButton
 {

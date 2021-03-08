@@ -34,8 +34,6 @@ if (NOT (${CMAKE_BUILD_TYPE} MATCHES "Debug"))
                     WORKING_DIRECTORY ${CMAKE_SOURCE_DIR})
 endif ()
 
-add_subdirectory(unittest)
-
 # Find the library
 find_package(PAM REQUIRED)
 find_package(PkgConfig REQUIRED)
@@ -93,165 +91,47 @@ set(haweiswitchos_DBUS_SCRS
     ${CMAKE_CURRENT_BINARY_DIR}/switchos_interface.cpp
 )
 
-set(GLOBAL_UTILS_SRCS
-    ./src/global_util/util_updateui.h
-    ./src/global_util/dbus/dbuslockservice.h
-    ./src/global_util/dbus/dbuslockfront.h
-    ./src/global_util/dbus/dbuskeyboard.h
-    ./src/global_util/dbus/dbusdisplaymanager.h
-    ./src/global_util/dbus/displayinterface.h
-    ./src/global_util/dbus/dbusmediaplayer2.h
-    ./src/global_util/dbus/dbusvariant.h
-    ./src/global_util/dbus/dbuslogin1manager.h
-    ./src/global_util/dbus/dbuscontrolcenter.h
-    ./src/global_util/dbus/dbusinputdevices.h
-    ./src/global_util/dbus/dbushotzone.h
-    ./src/global_util/multiscreenmanager.h
-    ./src/global_util/xkbparser.h
-    ./src/global_util/public_func.h
-    ./src/global_util/constants.h
-    ./src/global_util/keyboardmonitor.h
-    ./src/global_util/keyboardplatform.h
-    ./src/global_util/keyboardplantform_x11.h
-    ./src/global_util/keyboardplantform_wayland.h
-    ./src/global_util/gsettingwatcher.h
-    ./src/global_util/xkbparser.cpp
-    ./src/global_util/dbus/dbusdisplaymanager.cpp
-    ./src/global_util/dbus/dbuslogin1manager.cpp
-    ./src/global_util/dbus/dbuscontrolcenter.cpp
-    ./src/global_util/dbus/displayinterface.cpp
-    ./src/global_util/dbus/dbusvariant.cpp
-    ./src/global_util/dbus/dbusmediaplayer2.cpp
-    ./src/global_util/dbus/dbuslockfront.cpp
-    ./src/global_util/dbus/dbuskeyboard.cpp
-    ./src/global_util/dbus/dbusinputdevices.cpp
-    ./src/global_util/dbus/dbushotzone.cpp
-    ./src/global_util/dbus/dbuslockservice.cpp
-    ./src/global_util/util_updateui.cpp
-    ./src/global_util/multiscreenmanager.cpp
-    ./src/global_util/public_func.cpp
-    ./src/global_util/keyboardmonitor.cpp
-    ./src/global_util/keyboardplantform_x11.cpp
-    ./src/global_util/keyboardplantform_wayland.cpp
-    ./src/global_util/gsettingwatcher.cpp
-)
+include_directories(${PROJECT_SOURCE_DIR}/src/global_util)
+include_directories(${PROJECT_SOURCE_DIR}/src/global_util/dbus)
+include_directories(${PROJECT_SOURCE_DIR}/src/widgets)
+include_directories(${PROJECT_SOURCE_DIR}/src/session-widgets)
+include_directories(${PROJECT_SOURCE_DIR}/src/libdde-auth)
 
-set(WIDGETS_SRCS
-    ./src/widgets/useravatar.h
-    ./src/widgets/loginbutton.h
-    ./src/widgets/fullscreenbackground.h
-    ./src/widgets/userbutton.h
-    ./src/widgets/controlwidget.h
-    ./src/widgets/shutdownwidget.h
-    ./src/widgets/rounditembutton.h
-    ./src/widgets/kblayoutwidget.h
-    ./src/widgets/mediawidget.h
-    ./src/widgets/propertygroup.h
-    ./src/widgets/virtualkbinstance.h
-    ./src/widgets/logowidget.h
-    ./src/widgets/timewidget.h
-    ./src/widgets/dlineeditex.h
-    ./src/widgets/dpasswordeditex.h
-    ./src/widgets/systemmonitor.h
-    ./src/widgets/inhibitwarnview.h
-    ./src/widgets/multiuserswarningview.h
-    ./src/widgets/fullscreenbackground.cpp
-    ./src/widgets/loginbutton.cpp
-    ./src/widgets/mediawidget.cpp
-    ./src/widgets/controlwidget.cpp
-    ./src/widgets/virtualkbinstance.cpp
-    ./src/widgets/propertygroup.cpp
-    ./src/widgets/rounditembutton.cpp
-    ./src/widgets/useravatar.cpp
-    ./src/widgets/userbutton.cpp
-    ./src/widgets/shutdownwidget.cpp
-    ./src/widgets/kblayoutwidget.cpp
-    ./src/widgets/logowidget.cpp
-    ./src/widgets/timewidget.cpp
-    ./src/widgets/dpasswordeditex.cpp
-    ./src/widgets/dlineeditex.cpp
-    ./src/widgets/systemmonitor.cpp
-    ./src/widgets/inhibitwarnview.cpp
-    ./src/widgets/multiuserswarningview.cpp
-)
+aux_source_directory(${PROJECT_SOURCE_DIR}/src/global_util GLOBAL_UTILS)
+aux_source_directory(${PROJECT_SOURCE_DIR}/src/global_util/dbus GLOBAL_UTILS_DBUS)
+aux_source_directory(${PROJECT_SOURCE_DIR}/src/widgets WIDGETS)
+aux_source_directory(${PROJECT_SOURCE_DIR}/src/session-widgets SESSION_WIDGETS)
+aux_source_directory(${PROJECT_SOURCE_DIR}/src/libdde-auth AUTHENTICATE)
 
-set(SESSION_WIDGETS_SRCS
-    ./src/session-widgets/userframe.h
-    ./src/session-widgets/sessionbasemodel.h
-    ./src/session-widgets/authinterface.h
-    ./src/session-widgets/lockpasswordwidget.h
-    ./src/session-widgets/framedatabind.h
-    ./src/session-widgets/sessionbasewindow.h
-    ./src/session-widgets/lockcontent.h
-    ./src/session-widgets/userinfo.h
-    ./src/session-widgets/userloginwidget.h
-    ./src/session-widgets/userframelist.h
-    ./src/session-widgets/userlogininfo.h
-    ./src/session-widgets/hibernatewidget.h
-    ./src/session-widgets/lockpasswordwidget.cpp
-    ./src/session-widgets/authinterface.cpp
-    ./src/session-widgets/userinfo.cpp
-    ./src/session-widgets/framedatabind.cpp
-    ./src/session-widgets/sessionbasewindow.cpp
-    ./src/session-widgets/userframe.cpp
-    ./src/session-widgets/lockcontent.cpp
-    ./src/session-widgets/sessionbasemodel.cpp
-    ./src/session-widgets/userloginwidget.cpp
-    ./src/session-widgets/userframelist.cpp
-    ./src/session-widgets/userlogininfo.cpp
-    ./src/session-widgets/hibernatewidget.cpp
+set(QRCS
+    ${PROJECT_SOURCE_DIR}/src/widgets/widgetsimages.qrc
+    ${PROJECT_SOURCE_DIR}/src/widgets/widgetstheme.qrc
 )
-
+set(LOCK_QRCS
+    ${PROJECT_SOURCE_DIR}/src/dde-lock/images.qrc
+    ${PROJECT_SOURCE_DIR}/src/dde-lock/logintheme.qrc
+)
 set(LOCK_SRCS
     ${authority_DBUS_SCRS}
     ${transaction_DBUS_SCRS}
-    ${GLOBAL_UTILS_SRCS}
-    ${WIDGETS_SRCS}
-    ${SESSION_WIDGETS_SRCS}
+    ${GLOBAL_UTILS}
+    ${GLOBAL_UTILS_DBUS}
+    ${WIDGETS}
+    ${SESSION_WIDGETS}
     ${haweiswitchos_DBUS_SCRS}
-    ./src/libdde-auth/deepinauthframework.cpp
-    ./src/libdde-auth/authagent.cpp
-    ./src/dde-lock/lockframe.cpp
-    ./src/dde-lock/dbus/dbuslockagent.cpp
-    ./src/dde-lock/dbus/dbuslockfrontservice.cpp
-    ./src/dde-lock/dbus/dbusshutdownagent.cpp
-    ./src/dde-lock/dbus/dbusshutdownfrontservice.cpp
-    ./src/dde-lock/lockworker.cpp
-    ./src/widgets/warningcontent.cpp
+    ${AUTHENTICATE}
+    src/app/dde-lock.cpp
+    src/dde-lock/lockframe.cpp
+    src/dde-lock/lockworker.cpp
+    src/dde-lock/dbus/dbuslockagent.cpp
+    src/dde-lock/dbus/dbuslockfrontservice.cpp
+    src/dde-lock/dbus/dbusshutdownagent.cpp
+    src/dde-lock/dbus/dbusshutdownfrontservice.cpp
 )
-
-set(GREETER_SRCS
-    ${authority_DBUS_SCRS}
-    ${transaction_DBUS_SCRS}
-    ${GLOBAL_UTILS_SRCS}
-    ${WIDGETS_SRCS}
-    ${SESSION_WIDGETS_SRCS}
-    ${haweiswitchos_DBUS_SCRS}
-    ./src/libdde-auth/deepinauthframework.cpp
-    ./src/libdde-auth/authagent.cpp
-    ./src/widgets/sessionwidget.h
-    ./src/widgets/sessionwidget.cpp
-    ./src/lightdm-deepin-greeter/loginwindow.h
-    ./src/lightdm-deepin-greeter/greeterworkek.h
-    ./src/lightdm-deepin-greeter/loginwindow.cpp
-    ./src/lightdm-deepin-greeter/greeterworkek.cpp
-    ./src/lightdm-deepin-greeter/logincontent.cpp
-    ./src/lightdm-deepin-greeter/logintipswindow.cpp
-    ./src/lightdm-deepin-greeter/logintipswindow.h
-)
-
-set(QRCS
-    ./src/widgets/widgetsimages.qrc
-    ./src/widgets/widgetstheme.qrc
-)
-
-add_executable(
-    dde-lock
+add_executable(dde-lock
     ${LOCK_SRCS}
-    ./src/app/dde-lock.cpp
     ${QRCS}
-    ./src/dde-lock/images.qrc
-    ./src/dde-lock/logintheme.qrc
+    ${LOCK_QRCS}
 )
 target_include_directories(dde-lock PUBLIC
     ${PAM_INCLUDE_DIR}
@@ -262,6 +142,8 @@ target_include_directories(dde-lock PUBLIC
     ${PROJECT_BINARY_DIR}
     ${QGSettings_INCLUDE_DIRS}
     ${Qt5X11Extras_INCLUDE_DIRS}
+    ${PROJECT_SOURCE_DIR}/src/dde-lock
+    ${PROJECT_SOURCE_DIR}/src/dde-lock/dbus
 )
 target_link_libraries(dde-lock PRIVATE
     ${Qt_LIBS}
@@ -277,13 +159,30 @@ target_link_libraries(dde-lock PRIVATE
     ${QGSettings_LIBRARIES}
 )
 
-add_executable(
-    lightdm-deepin-greeter
+set(GREETER_QRCS
+    ${PROJECT_SOURCE_DIR}/src/lightdm-deepin-greeter/logintheme.qrc
+    ${PROJECT_SOURCE_DIR}/src/lightdm-deepin-greeter/image.qrc
+)
+set(GREETER_SRCS
+    ${authority_DBUS_SCRS}
+    ${transaction_DBUS_SCRS}
+    ${GLOBAL_UTILS}
+    ${GLOBAL_UTILS_DBUS}
+    ${WIDGETS}
+    ${SESSION_WIDGETS}
+    ${haweiswitchos_DBUS_SCRS}
+    ${AUTHENTICATE}
+    src/app/lightdm-deepin-greeter.cpp
+    src/lightdm-deepin-greeter/loginwindow.cpp
+    src/lightdm-deepin-greeter/greeterworkek.cpp
+    src/lightdm-deepin-greeter/logincontent.cpp
+    src/lightdm-deepin-greeter/logintipswindow.cpp
+    src/lightdm-deepin-greeter/sessionwidget.cpp
+)
+add_executable(lightdm-deepin-greeter
     ${GREETER_SRCS}
-    ./src/app/lightdm-deepin-greeter.cpp
     ${QRCS}
-    ./src/lightdm-deepin-greeter/logintheme.qrc
-    ./src/lightdm-deepin-greeter/image.qrc
+    ${GREETER_QRCS}
 )
 target_include_directories(lightdm-deepin-greeter PUBLIC
     ${PAM_INCLUDE_DIR}
@@ -295,6 +194,7 @@ target_include_directories(lightdm-deepin-greeter PUBLIC
     ${QGSettings_INCLUDE_DIRS}
     ${Qt5X11Extras_INCLUDE_DIRS}
     ${Greeter_INCLUDE_DIRS}
+    ${PROJECT_SOURCE_DIR}/src/lightdm-deepin-greeter
 )
 target_compile_definitions(lightdm-deepin-greeter
     PRIVATE ENABLE_SESSION
@@ -313,6 +213,8 @@ target_link_libraries(lightdm-deepin-greeter PRIVATE
     ${QGSettings_LIBRARIES}
     ${Greeter_LIBRARIES}
 )
+
+add_subdirectory(unittest)
 
 # Install settings
 if (CMAKE_INSTALL_PREFIX_INITIALIZED_TO_DEFAULT)

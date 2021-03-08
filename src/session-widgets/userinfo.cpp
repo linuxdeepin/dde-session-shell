@@ -1,5 +1,5 @@
 #include "userinfo.h"
-#include "src/global_util/constants.h"
+#include "constants.h"
 
 #include <unistd.h>
 #include <pwd.h>

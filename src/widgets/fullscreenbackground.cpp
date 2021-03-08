@@ -25,6 +25,9 @@
 
 #include "fullscreenbackground.h"
 
+#include "userinfo.h"
+#include "framedatabind.h"
+
 #include <QApplication>
 #include <QScreen>
 #include <QDesktopWidget>
@@ -38,9 +41,6 @@
 #include <QDir>
 #include <DGuiApplicationHelper>
 #include <unistd.h>
-
-#include "src/session-widgets/userinfo.h"
-#include "src/session-widgets/framedatabind.h"
 
 DGUI_USE_NAMESPACE
 

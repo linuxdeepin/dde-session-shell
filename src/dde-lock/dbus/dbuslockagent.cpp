@@ -1,5 +1,5 @@
 #include "dbuslockagent.h"
-#include "src/session-widgets/sessionbasemodel.h"
+#include "sessionbasemodel.h"
 
 DBusLockAgent::DBusLockAgent(QObject *parent) : QObject(parent), m_model(nullptr)
 {
@@ -55,5 +55,3 @@ void DBusLockAgent::ShowUserList()
 {
     emit m_model->showUserList();
 }
-
-

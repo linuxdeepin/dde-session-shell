@@ -25,8 +25,8 @@
 
 #include "sessionwidget.h"
 
-#include "src/global_util/constants.h"
-#include "src/session-widgets/sessionbasemodel.h"
+#include "constants.h"
+#include "sessionbasemodel.h"
 
 #include <QApplication>
 #include <QDesktopWidget>

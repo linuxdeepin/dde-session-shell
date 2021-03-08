@@ -30,7 +30,7 @@
 
 #include "dhidpihelper.h"
 #include "userbutton.h"
-#include "src/session-widgets/userinfo.h"
+#include "userinfo.h"
 
 DWIDGET_USE_NAMESPACE
 

@@ -25,7 +25,7 @@
 
 #include "loginwindow.h"
 #include "logincontent.h"
-#include "src/session-widgets/userinfo.h"
+#include "userinfo.h"
 
 #include <QWindow>
 

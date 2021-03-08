@@ -22,7 +22,7 @@
 #ifndef LOGINCONTENT_H
 #define LOGINCONTENT_H
 
-#include "src/session-widgets/lockcontent.h"
+#include "lockcontent.h"
 
 class SessionWidget;
 class LoginTipsWindow;

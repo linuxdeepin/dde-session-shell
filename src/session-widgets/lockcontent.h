@@ -6,8 +6,8 @@
 
 #include "sessionbasewindow.h"
 #include "sessionbasemodel.h"
-#include "src/widgets/mediawidget.h"
-#include "src/widgets/systemmonitor.h"
+#include "mediawidget.h"
+#include "systemmonitor.h"
 
 #include <com_deepin_wm.h>
 

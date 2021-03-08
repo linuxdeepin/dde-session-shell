@@ -20,7 +20,7 @@
  */
 
 #include "dbusshutdownagent.h"
-#include "src/session-widgets/sessionbasemodel.h"
+#include "sessionbasemodel.h"
 
 DBusShutdownAgent::DBusShutdownAgent(QObject *parent)
     : QObject(parent)

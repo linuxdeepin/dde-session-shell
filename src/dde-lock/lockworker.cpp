@@ -1,7 +1,7 @@
 #include "lockworker.h"
 
-#include "src/session-widgets/sessionbasemodel.h"
-#include "src/session-widgets/userinfo.h"
+#include "sessionbasemodel.h"
+#include "userinfo.h"
 
 #include <unistd.h>
 #include <pwd.h>

@@ -30,8 +30,8 @@
 #include <QKeyEvent>
 #include <dimagebutton.h>
 #include "warningview.h"
-#include "src/session-widgets/userinfo.h"
-#include "src/session-widgets/sessionbasemodel.h"
+#include "userinfo.h"
+#include "sessionbasemodel.h"
 
 class QListWidget;
 class QLabel;

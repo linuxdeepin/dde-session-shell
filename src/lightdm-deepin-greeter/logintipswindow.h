@@ -1,8 +1,8 @@
 #ifndef LOGINTIPSWINDOW_H
 #define LOGINTIPSWINDOW_H
 
-#include "src/widgets/fullscreenbackground.h"
-#include "src/global_util/public_func.h"
+#include "fullscreenbackground.h"
+#include "public_func.h"
 
 #include <QWidget>
 

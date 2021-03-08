@@ -24,7 +24,7 @@
 #include "userloginwidget.h"
 #include "sessionbasemodel.h"
 #include "userframelist.h"
-#include "src/global_util/constants.h"
+#include "constants.h"
 #include <QKeyEvent>
 
 UserLoginInfo::UserLoginInfo(SessionBaseModel *model, QObject *parent)

@@ -21,8 +21,8 @@
 
 #include "logincontent.h"
 #include "logintipswindow.h"
-#include "src/widgets/sessionwidget.h"
-#include "src/widgets/controlwidget.h"
+#include "sessionwidget.h"
+#include "controlwidget.h"
 
 LoginContent::LoginContent(SessionBaseModel *const model, QWidget *parent)
     : LockContent(model, parent)

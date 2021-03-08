@@ -33,7 +33,7 @@
 #include <QLightDM/SessionsModel>
 
 #include "rounditembutton.h"
-#include "src/session-widgets/framedatabind.h"
+#include "framedatabind.h"
 
 class SessionBaseModel;
 class SessionWidget : public QFrame

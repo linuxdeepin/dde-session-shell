@@ -26,7 +26,7 @@
 #include <QDebug>
 
 #include "kblayoutwidget.h"
-#include "src/global_util/public_func.h"
+#include "public_func.h"
 
 LayoutButton::LayoutButton(QString text, QWidget *parent)
     : QPushButton(parent)

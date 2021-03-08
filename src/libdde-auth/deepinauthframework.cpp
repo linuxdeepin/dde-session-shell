@@ -1,6 +1,6 @@
 #include "deepinauthframework.h"
 #include "interface/deepinauthinterface.h"
-#include "src/session-widgets/userinfo.h"
+#include "userinfo.h"
 
 #include <QThread>
 #include <QTimer>

@@ -29,12 +29,12 @@
 #include <QObject>
 #include <QWidget>
 
-#include "src/session-widgets/sessionbasewindow.h"
-#include "src/session-widgets/sessionbasemodel.h"
-#include "src/widgets/warningview.h"
-#include "src/widgets/inhibitwarnview.h"
-#include "src/widgets/multiuserswarningview.h"
-#include "src/global_util/dbus/dbuslogin1manager.h"
+#include "sessionbasewindow.h"
+#include "sessionbasemodel.h"
+#include "warningview.h"
+#include "inhibitwarnview.h"
+#include "multiuserswarningview.h"
+#include "dbus/dbuslogin1manager.h"
 
 class WarningContent : public SessionBaseWindow
 {

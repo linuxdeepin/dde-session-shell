@@ -27,8 +27,8 @@
 #define INHIBITWARNVIEW_H
 
 #include "warningview.h"
-#include "src/widgets/rounditembutton.h"
-#include "src/session-widgets/sessionbasemodel.h"
+#include "rounditembutton.h"
+#include "sessionbasemodel.h"
 
 #include <QWidget>
 

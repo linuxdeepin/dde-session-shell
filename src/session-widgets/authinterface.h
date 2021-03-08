@@ -1,9 +1,9 @@
 #ifndef AUTHINTERFACE_H
 #define AUTHINTERFACE_H
 
-#include "src/global_util/public_func.h"
-#include "src/global_util/constants.h"
-#include "src/global_util/dbus/dbuslogin1manager.h"
+#include "public_func.h"
+#include "constants.h"
+#include "dbuslogin1manager.h"
 
 #include <com_deepin_daemon_accounts.h>
 #include <com_deepin_daemon_logined.h>

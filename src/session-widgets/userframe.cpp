@@ -1,9 +1,9 @@
 #include "userframe.h"
 
-#include "src/widgets/userbutton.h"
-#include "src/session-widgets/sessionbasemodel.h"
-#include "src/session-widgets/userinfo.h"
-#include "src/session-widgets/framedatabind.h"
+#include "userbutton.h"
+#include "sessionbasemodel.h"
+#include "userinfo.h"
+#include "framedatabind.h"
 
 #define USER_WIDGET_HEIGHT 360
 #define USER_HEIGHT 180
