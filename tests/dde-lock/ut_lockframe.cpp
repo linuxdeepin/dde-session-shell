@@ -1,38 +1,38 @@
-#include <gtest/gtest.h>
-
-#include "sessionbasemodel.h"
+#include "lockcontent.h"
 #include "lockframe.h"
 #include "lockworker.h"
-#include "lockcontent.h"
+#include "sessionbasemodel.h"
 
 #include <QSignalSpy>
 
+#include <gtest/gtest.h>
+
 class UT_LockFrame : public testing::Test
 {
-public:
+protected:
     void SetUp();
     void TearDown();
 
-    SessionBaseModel *sessionBaseModel;
-    LockFrame *lockFrame;
-    LockWorker *lockWorker;
+    SessionBaseModel *m_sessionBaseModel;
+    LockFrame *m_lockFrame;
+    LockWorker *m_lockWorker;
 };
 
 void UT_LockFrame::SetUp()
 {
-    sessionBaseModel = new SessionBaseModel(SessionBaseModel::AuthType::LockType);
-    lockFrame = new LockFrame(sessionBaseModel);
-    lockWorker = new LockWorker(sessionBaseModel);
+    m_sessionBaseModel = new SessionBaseModel(SessionBaseModel::AuthType::LockType);
+    m_lockFrame = new LockFrame(m_sessionBaseModel);
+    m_lockWorker = new LockWorker(m_sessionBaseModel);
 }
 
 void UT_LockFrame::TearDown()
 {
-    delete sessionBaseModel;
-    delete lockFrame;
-    delete lockWorker;
+    delete m_sessionBaseModel;
+    delete m_lockFrame;
+    delete m_lockWorker;
 }
 
-//TEST_F(UT_LockFrame, init)
-//{
-//    EXPECT_TRUE(1);
-//}
+TEST_F(UT_LockFrame, init)
+{
+    EXPECT_TRUE(m_lockFrame);
+}

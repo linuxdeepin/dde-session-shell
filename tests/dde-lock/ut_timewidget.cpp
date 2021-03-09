@@ -1,14 +1,13 @@
-#include <gtest/gtest.h>
-
 #include "timewidget.h"
+
+#include <gtest/gtest.h>
 
 class UT_TimeWidget : public testing::Test
 {
-public:
+protected:
     void SetUp() override;
     void TearDown() override;
 
-protected:
     TimeWidget *timeWidget;
 };
 
@@ -20,4 +19,8 @@ void UT_TimeWidget::SetUp()
 void UT_TimeWidget::TearDown()
 {
     delete timeWidget;
+}
+
+TEST_F(UT_TimeWidget, init)
+{
 }

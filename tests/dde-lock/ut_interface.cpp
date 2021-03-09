@@ -20,27 +20,36 @@
  */
 
 #include <com_deepin_daemon_accounts_user.h>
+#include <gtest/gtest.h>
 
-#include "unit_test.h"
-
-/**
- * @brief UnitTest::authenticate_test  
- */
 using UserInter = com::deepin::daemon::accounts::User;
-TEST_F(UnitTest, accountDBus)
+
+class UT_Interface : public testing::Test
 {
-    UserInter account_dbus("com.deepin.daemon.Accounts", "/com/deepin/daemon/Accounts/User1000", QDBusConnection::systemBus(), nullptr);
+protected:
+    void SetUp() override;
+    void TearDown() override;
 
-    ASSERT_FALSE(account_dbus.greeterBackground().isEmpty());
+    UserInter *m_userInter;
+};
 
-    ASSERT_FALSE(account_dbus.uid().isEmpty());
-
-    ASSERT_FALSE(account_dbus.userName().isEmpty());
-
-    ASSERT_FALSE(account_dbus.homeDir().isEmpty());
-
-    ASSERT_TRUE(account_dbus.desktopBackgrounds().size() > 0);
-
-    ASSERT_TRUE(account_dbus.isValid());
+void UT_Interface::SetUp()
+{
+    m_userInter = new UserInter("com.deepin.daemon.Accounts", "/com/deepin/daemon/Accounts/User1001", QDBusConnection::systemBus(), nullptr);
 }
- 
+
+void UT_Interface::TearDown()
+{
+    delete m_userInter;
+}
+
+TEST_F(UT_Interface, user)
+{
+    ASSERT_TRUE(m_userInter);
+    EXPECT_FALSE(m_userInter->greeterBackground().isEmpty());
+    EXPECT_FALSE(m_userInter->uid().isEmpty());
+    EXPECT_FALSE(m_userInter->userName().isEmpty());
+    EXPECT_FALSE(m_userInter->homeDir().isEmpty());
+    EXPECT_TRUE(m_userInter->desktopBackgrounds().size() > 0);
+    EXPECT_TRUE(m_userInter->isValid());
+}

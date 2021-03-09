@@ -1,7 +1,7 @@
-#include <gtest/gtest.h>
-
-#include "sessionbasemodel.h"
 #include "lockcontent.h"
+#include "sessionbasemodel.h"
+
+#include <gtest/gtest.h>
 
 class UT_LockContent : public testing::Test
 {
@@ -9,23 +9,23 @@ protected:
     void SetUp() override;
     void TearDown() override;
 
-    LockContent *lockContent;
-    SessionBaseModel *sessionBaseModel;
+    LockContent *m_lockContent;
+    SessionBaseModel *m_sessionBaseModel;
 };
 
 void UT_LockContent::SetUp()
 {
-    sessionBaseModel = new SessionBaseModel(SessionBaseModel::AuthType::LockType);
-    lockContent = new LockContent(sessionBaseModel);
+    m_sessionBaseModel = new SessionBaseModel(SessionBaseModel::AuthType::LockType);
+    m_lockContent = new LockContent(m_sessionBaseModel);
 }
 
 void UT_LockContent::TearDown()
 {
-    delete sessionBaseModel;
-    delete lockContent;
+    delete m_sessionBaseModel;
+    delete m_lockContent;
 }
 
-//TEST_F(UT_LockContent, init)
-//{
-//    EXPECT_TRUE(1);
-//}
+TEST_F(UT_LockContent, init)
+{
+    EXPECT_TRUE(m_lockContent);
+}
