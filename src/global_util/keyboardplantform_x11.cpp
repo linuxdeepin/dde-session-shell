@@ -165,13 +165,13 @@ KeyboardPlantformX11::KeyboardPlantformX11(QObject *parent)
 
 bool KeyboardPlantformX11::isCapslockOn()
 {
-    bool result;
+    bool result = false;
     unsigned int n = 0;
-    static Display* d = QX11Info::display();
-
-    XkbGetIndicatorState(d, XkbUseCoreKbd, &n);
-    result = (n & 0x01) != 0;
-
+    static Display *d = QX11Info::display();
+    if (d != nullptr) {
+        XkbGetIndicatorState(d, XkbUseCoreKbd, &n);
+        result = (n & 0x01) != 0;
+    }
     return result;
 }
 
