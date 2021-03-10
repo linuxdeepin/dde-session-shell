@@ -120,6 +120,7 @@ signals:
     void onSessionKeyChanged(const QString &sessionKey);
     void onLogindUserChanged();
     void showUserList();
+    void showLockScreen();
     void showShutdown();
     void visibleChanged(bool visible);
     void onStatusChanged(ModeStatus status);

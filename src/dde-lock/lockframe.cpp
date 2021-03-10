@@ -62,6 +62,7 @@ LockFrame::LockFrame(SessionBaseModel *const model, QWidget *parent)
     connect(m_lockContent, &LockContent::requestBackground, this, static_cast<void (LockFrame::*)(const QString &)>(&LockFrame::updateBackground));
     connect(model, &SessionBaseModel::blackModeChanged, this, &FullscreenBackground::setIsBlackMode);
     connect(model, &SessionBaseModel::showUserList, this, &LockFrame::showUserList);
+    connect(model, &SessionBaseModel::showLockScreen, this, &LockFrame::showLockScreen);
     connect(model, &SessionBaseModel::showShutdown, this, &LockFrame::showShutdown);
     connect(model, &SessionBaseModel::shutdownInhibit, this, &LockFrame::shutdownInhibit);
     connect(model, &SessionBaseModel::cancelShutdownInhibit, this, &LockFrame::cancelShutdownInhibit);
@@ -202,6 +203,12 @@ bool LockFrame::handlePoweroffKey()
 void LockFrame::showUserList()
 {
     m_model->setCurrentModeState(SessionBaseModel::ModeStatus::UserMode);
+    show();
+}
+
+void LockFrame::showLockScreen()
+{
+    m_model->setCurrentModeState(SessionBaseModel::ModeStatus::PasswordMode);
     show();
 }
 

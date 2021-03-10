@@ -111,12 +111,16 @@ int main(int argc, char *argv[])
     QCommandLineOption shutdown(QStringList() << "t" << "shutdown", "show shut down");
     cmdParser.addOption(shutdown);
 
+    QCommandLineOption lockscreen(QStringList() << "l" << "lockscreen", "show lock screen");
+    cmdParser.addOption(lockscreen);
+
     QStringList xddd = app->arguments();
     cmdParser.process(*app);
 
     bool runDaemon = cmdParser.isSet(backend);
     bool showUserList = cmdParser.isSet(switchUser);
     bool showShutdown = cmdParser.isSet(shutdown);
+    bool showLockScreen = cmdParser.isSet(lockscreen);
 
     SessionBaseModel *model = new SessionBaseModel(SessionBaseModel::AuthType::LockType);
     LockWorker *worker = new LockWorker(model);
@@ -175,6 +179,9 @@ int main(int argc, char *argv[])
             } else if (showShutdown) {
                 QDBusInterface ifc(DBUS_SHUTDOWN_NAME, DBUS_SHUTDOWN_PATH, shutdownFrontInter, QDBusConnection::sessionBus(), nullptr);
                 ifc.asyncCall("Show");
+            } else if (showLockScreen) {
+                QDBusInterface ifc(DBUS_LOCK_NAME, DBUS_LOCK_PATH, lockFrontInter, QDBusConnection::sessionBus(), nullptr);
+                ifc.asyncCall("ShowLockScreen");
             }
         }
     } else {
@@ -183,6 +190,8 @@ int main(int argc, char *argv[])
                 emit model->showUserList();
             } else if (showShutdown) {
                 emit model->showShutdown();
+            } else if (showLockScreen) {
+                emit model->showLockScreen();
             }
         }
         app->exec();
