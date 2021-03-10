@@ -393,11 +393,13 @@ bool ContentWidget::beforeInvokeAction(const Actions action)
         } else if (action == Restart || action == SwitchSystem) {
             view->setAcceptReason(tr("Reboot"));
             view->setAcceptVisible(isAccept);
-        } else if (action == Suspend)
+        } else if (action == Suspend) {
             view->setAcceptReason(tr("Suspend"));
-        else if (action == Hibernate)
+            view->setAcceptVisible(isAccept);
+        }else if (action == Hibernate) {
             view->setAcceptReason(tr("Hibernate"));
-        else if (action == Logout) {
+            view->setAcceptVisible(isAccept);
+        }else if (action == Logout) {
             view->setAcceptReason(tr("Log out"));
             view->setAcceptVisible(isAccept);
         }
