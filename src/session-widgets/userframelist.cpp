@@ -63,7 +63,7 @@ void UserFrameList::setFixedSize(const QSize &size)
 {
     QWidget::setFixedSize(size);
     //先确定界面大小，再根据界面大小计算用户列表区域大小
-    calcUserListArea();
+    updateLayout();
 }
 
 void UserFrameList::handlerBeforeAddUser(std::shared_ptr<User> user)
@@ -117,7 +117,6 @@ void UserFrameList::addUser(std::shared_ptr<User> user)
     m_flowLayout->insertWidget(index, widget);
 
     //添加用户和删除用户时，重新计算区域大小
-    calcUserListArea();
     updateLayout();
 }
 
@@ -133,7 +132,6 @@ void UserFrameList::removeUser(const uint uid)
     }
 
     //添加用户和删除用户时，重新计算区域大小
-    calcUserListArea();
     updateLayout();
 }
 
@@ -150,42 +148,6 @@ void UserFrameList::onUserClicked()
         }
     }
     emit requestSwitchUser(m_model->findUserByUid(widget->uid()));
-}
-
-void UserFrameList::updateLayout()
-{
-    //处理窗体数量小于5个时的居中显示，取 窗体数量*窗体宽度 和 最大宽度 的较小值，设置为m_centerWidget的宽度
-    int maxWidth = this->width();
-    int maxHeight = this->height();
-    m_colCount = maxWidth / (UserFrameWidth + UserFrameSpaceing);
-    m_colCount = m_colCount > 5 ? 5 : m_colCount;
-    m_rowCount = maxHeight / (UserFrameHeight + UserFrameSpaceing);
-    m_rowCount = m_rowCount > 2 ? 2 : m_rowCount;
-
-    //fix BUG 3268
-    if (m_loginWidgets.size() <= m_colCount) {
-        m_rowCount = 1;
-    }
-
-    m_scrollArea->setFixedHeight((UserFrameHeight + UserFrameSpaceing) * m_rowCount);
-    int width = qMin((UserFrameWidth + UserFrameSpaceing) * m_colCount, m_loginWidgets.size() * (UserFrameWidth + UserFrameSpaceing));
-    m_centerWidget->setFixedWidth(width);
-    m_scrollArea->setFixedWidth(width + 10);
-
-    std::shared_ptr<User> user = m_model->currentUser();
-    if (user.get() == nullptr) return;
-    for (auto it = m_loginWidgets.constBegin(); it != m_loginWidgets.constEnd(); ++it) {
-        auto login_widget = *it;
-
-        if (login_widget->uid() == user->uid()) {
-            currentSelectedUser = login_widget;
-            currentSelectedUser->setSelected(true);
-        } else {
-            login_widget->setSelected(false);
-        }
-    }
-
-    this->setFocus();
 }
 
 void UserFrameList::mouseReleaseEvent(QMouseEvent *event)
@@ -362,7 +324,7 @@ void UserFrameList::onOtherPageChanged(const QVariant &value)
     }
 }
 
-void UserFrameList::calcUserListArea()
+void UserFrameList::updateLayout()
 {
     //处理窗体数量小于5个时的居中显示，取 窗体数量*窗体宽度 和 最大宽度 的较小值，设置为m_centerWidget的宽度
     int maxWidth = this->width();
