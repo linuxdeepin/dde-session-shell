@@ -78,11 +78,11 @@ protected:
     DBusLogin1Manager* m_login1Inter;
     Login1SessionSelf* m_login1SessionSelf = nullptr;
     PowerManagerInter* m_powerManagerInter;
+    Authenticate*      m_authenticateInter;
     QGSettings*        m_gsettings = nullptr;
     uint               m_lastLogoutUid;
     uint               m_currentUserUid;
     std::list<uint>    m_loginUserList;
-    Authenticate*      m_authenticateInter;
 };
 }  // namespace Auth
 
