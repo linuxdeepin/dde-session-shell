@@ -173,7 +173,8 @@ void UserLoginInfo::receiveSwitchUser(std::shared_ptr<User> user)
 
 void UserLoginInfo::updateLoginContent()
 {
-    if (m_model->currentUser()->isDoMainUser()) {
+    //在INT_MAX的切换用户时输入用户名，其他用户直接显示用户名
+    if (m_model->currentUser()->uid() == INT_MAX) {
         m_userLoginWidget->setWidgetShowType(UserLoginWidget::IDAndPasswordType);
     } else {
         if (m_user->isNoPasswdGrp()) {

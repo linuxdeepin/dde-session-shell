@@ -7,7 +7,8 @@
 
 QString userPwdName(__uid_t uid)
 {
-    if (uid < 1000) return QString();
+    //服务器版root用户的uid为0,需要特殊处理
+    if (uid < 1000 && uid != 0) return QString();
 
     struct passwd *pw = nullptr;
     /* Fetch passwd structure (contains first group ID for user) */

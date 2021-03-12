@@ -12,6 +12,7 @@
 #include <QProcess>
 #include <QRegularExpression>
 #include <DSysInfo>
+#include <pwd.h>
 
 #include <com_deepin_daemon_power.h>
 
@@ -35,7 +36,15 @@ LockWorker::LockWorker(SessionBaseModel *const model, QObject *parent)
     m_authFramework = new DeepinAuthFramework(this, this);
     m_sessionManager->setSync(false);
 
-    onUserAdded(ACCOUNTS_DBUS_PREFIX + QString::number(m_currentUserUid));
+    //当前用户m_currentUserUid是已登录用户,直接按AuthInterface::onLoginUserListChanged中的流程处理
+    std::shared_ptr<User> u(new ADDomainUser(m_currentUserUid));
+    u->setisLogind(true);
+    struct passwd *pws;
+    pws = getpwuid(m_currentUserUid);
+    static_cast<ADDomainUser *>(u.get())->setUserDisplayName(pws->pw_name);
+    static_cast<ADDomainUser *>(u.get())->setUserName(pws->pw_name);
+    m_model->userAdd(u);
+    m_model->setCurrentUser(u);
 
     //该信号用来处理初始化切换用户(锁屏+锁屏)或者切换用户(锁屏+登陆)两种种场景的指纹认证
     connect(m_lockInter, &DBusLockService::UserChanged, this, &LockWorker::onCurrentUserChanged);
