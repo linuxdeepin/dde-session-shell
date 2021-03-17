@@ -122,6 +122,10 @@ int main(int argc, char *argv[])
     bool showShutdown = cmdParser.isSet(shutdown);
     bool showLockScreen = cmdParser.isSet(lockscreen);
 
+#ifdef  QT_DEBUG
+    showLockScreen = true;
+#endif
+
     SessionBaseModel *model = new SessionBaseModel(SessionBaseModel::AuthType::LockType);
     LockWorker *worker = new LockWorker(model);
     PropertyGroup *property_group = new PropertyGroup(worker);
@@ -179,15 +183,10 @@ int main(int argc, char *argv[])
             } else if (showShutdown) {
                 QDBusInterface ifc(DBUS_SHUTDOWN_NAME, DBUS_SHUTDOWN_PATH, shutdownFrontInter, QDBusConnection::sessionBus(), nullptr);
                 ifc.asyncCall("Show");
-            }
-#ifndef  QT_DEBUG
-            else if (showLockScreen) {
+            } else if (showLockScreen) {
                 QDBusInterface ifc(DBUS_LOCK_NAME, DBUS_LOCK_PATH, lockFrontInter, QDBusConnection::sessionBus(), nullptr);
                 ifc.asyncCall("Show");
             }
-#endif
-            QDBusInterface ifc(DBUS_LOCK_NAME, DBUS_LOCK_PATH, lockFrontInter, QDBusConnection::sessionBus(), nullptr);
-            ifc.asyncCall("Show");
         }
     } else {
         if (!runDaemon) {
@@ -195,13 +194,7 @@ int main(int argc, char *argv[])
                 emit model->showUserList();
             } else if (showShutdown) {
                 emit model->showShutdown();
-            }
-#ifndef  QT_DEBUG
-            else if (showLockScreen) {
-                emit model->showLockScreen();
-            }
-#endif
-            else {
+            } else if (showLockScreen) {
                 emit model->showLockScreen();
             }
         }
