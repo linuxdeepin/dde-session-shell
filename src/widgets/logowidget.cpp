@@ -88,7 +88,7 @@ void LogoWidget::initUI() {
     m_logoLayout->setMargin(0);
     m_logoLayout->setSpacing(0);
     m_logoLayout->addSpacing(48);
-    m_logoLayout->addWidget(m_logoLabel);
+    m_logoLayout->addWidget(m_logoLabel, 0, Qt::AlignBottom);
     m_logoLayout->addWidget(m_logoVersionLabel, 0, Qt::AlignTop);
     m_logoLayout->addStretch();
 
