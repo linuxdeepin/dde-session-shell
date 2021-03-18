@@ -253,7 +253,7 @@ QVariant AuthInterface::getGSettings(const QString& node, const QString& key)
 
 void AuthInterface::updateLockLimit(std::shared_ptr<User> user)
 {
-    if (user == nullptr && user->name().isEmpty())
+    if (user == nullptr)
         return;
 
     QDBusPendingCall call = m_authenticateInter->GetLimits(user->name());
