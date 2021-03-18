@@ -134,8 +134,9 @@ void RoundItemButton::enterEvent(QEvent* event)
     if (m_state == Disabled)
         return;
 
-    if (m_state == Normal)
+    if (m_state == Normal && isEnabled()) {
         updateState(Hover);
+    }
 
 //    emit signalManager->setButtonHover(m_itemText->text());
 }
