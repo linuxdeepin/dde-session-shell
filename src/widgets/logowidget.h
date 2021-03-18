@@ -33,12 +33,12 @@
 
 DWIDGET_USE_NAMESPACE
 
-class LogoWidget: public QFrame
+class LogoWidget : public QFrame
 {
     Q_OBJECT
 public:
-    LogoWidget(QWidget* parent=0);
-    ~LogoWidget();
+    LogoWidget(QWidget *parent = nullptr);
+    ~LogoWidget() override;
 
     void updateLocale(const QString &locale);
 
@@ -48,12 +48,10 @@ protected:
 private:
     void initUI();
     QString getVersion();
-    QLabel* m_logoLabel;
-    DLabel* m_logoVersionLabel;
-    QVBoxLayout* m_logoLeftSideLayout;
-    QVBoxLayout* m_logoRightSideLayout;
-    QHBoxLayout* m_logoLayout;
+
+private:
+    QLabel *m_logoLabel;
+    DLabel *m_logoVersionLabel;
     QString m_locale;
 };
 #endif // LOGOFRAME
-
