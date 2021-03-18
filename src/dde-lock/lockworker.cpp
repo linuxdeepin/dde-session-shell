@@ -43,6 +43,8 @@ LockWorker::LockWorker(SessionBaseModel *const model, QObject *parent)
     connect(model, &SessionBaseModel::onPowerActionChanged, this, [ = ](SessionBaseModel::PowerAction poweraction) {
         switch (poweraction) {
         case SessionBaseModel::PowerAction::RequireSuspend:
+            //待机前切换到锁屏时设置状态为锁定
+            m_model->setLocked(true);
             //待机之前先黑屏
             m_model->setIsBlackModel(true);
             //待机时先切换密码输入界面
@@ -53,6 +55,8 @@ LockWorker::LockWorker(SessionBaseModel *const model, QObject *parent)
             });
             break;
         case SessionBaseModel::PowerAction::RequireHibernate:
+            //休眠前切换到锁屏时设置状态为锁定
+            m_model->setLocked(true);
             //休眠之前先黑屏
             m_model->setIsBlackModel(true);
             //待机时先切换密码输入界面
