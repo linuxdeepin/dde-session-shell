@@ -180,13 +180,12 @@ static void set_auto_QT_SCALE_FACTOR() {
 
 int main(int argc, char* argv[])
 {
-    DGuiApplicationHelper::setUseInactiveColorGroup(false);
+    DGuiApplicationHelper::setAttribute(DGuiApplicationHelper::UseInactiveColorGroup, false);
     // load dpi settings
     if (!QFile::exists("/etc/lightdm/deepin/xsettingsd.conf")) {
         set_auto_QT_SCALE_FACTOR();
     }
 
-    if(DGuiApplicationHelper::isXWindowPlatform()) DApplication::loadDXcbPlugin();
     DApplication a(argc, argv);
     QApplication::setAttribute(Qt::AA_UseHighDpiPixmaps);
     qApp->setOrganizationName("deepin");

@@ -74,7 +74,7 @@ QPixmap loadPixmap(const QString &file, const QSize& size)
 
 /**
  * @brief 获取图像共享内存
- * 
+ *
  * @param uid 当前用户ID
  * @param purpose 图像用途，1是锁屏、关机、登录，2是启动器，3-19是工作区
  * @return QString Qt的共享内存key
@@ -205,10 +205,10 @@ void init_sig_crash()
 
 uint timeFromString(QString time)
 {
-    if (!time.isEmpty()) {
-        time.replace('T', ' ');
-        QString timeBuffer = QString::fromStdString(time.toStdString().substr(0, time.indexOf('.')));
-        return QDateTime::fromString(timeBuffer, "yyyy-MM-dd hh:mm:ss").toTime_t();
+    if (time.isEmpty()) {
+        return QDateTime::currentDateTime().toTime_t();
     }
+    time.replace('T', ' ');
+    QString timeBuffer = QString::fromStdString(time.toStdString().substr(0, static_cast<unsigned int>(time.indexOf('.'))));
+    return QDateTime::fromString(timeBuffer, "yyyy-MM-dd hh:mm:ss").toTime_t();
 }
-

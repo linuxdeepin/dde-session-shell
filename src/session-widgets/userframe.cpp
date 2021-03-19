@@ -212,5 +212,5 @@ void UserFrame::onOtherPageChanged(const QVariant &value)
         btn->setSelected(false);
     }
 
-    m_userBtns[value.toInt()]->setSelected(true);
+    m_userBtns[value.toUInt()]->setSelected(true);
 }
