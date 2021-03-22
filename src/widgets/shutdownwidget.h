@@ -46,6 +46,7 @@ public:
     ~ShutdownWidget() override;
     void setModel(SessionBaseModel * const model);
     void onStatusChanged(SessionBaseModel::ModeStatus status);
+    bool enableState(const QString &gsettingsValue);
 
 public slots:
     void leftKeySwitch();
@@ -54,6 +55,7 @@ public slots:
     void recoveryLayout();
     void onRequirePowerAction(SessionBaseModel::PowerAction powerAction);
     void setUserSwitchEnable(bool enable);
+    void onEnable(const QString &gsettingsName, bool enable);
 
 protected:
     void keyPressEvent(QKeyEvent *event) Q_DECL_OVERRIDE;

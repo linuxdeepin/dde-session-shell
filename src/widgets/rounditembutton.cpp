@@ -26,6 +26,7 @@
 #include <QtCore/QObject>
 #include <QSvgRenderer>
 #include "rounditembutton.h"
+#include "../global_util/gsettingwatcher.h"
 
 #include <DFontSizeManager>
 
@@ -179,6 +180,9 @@ bool RoundItemButton::eventFilter(QObject *watched, QEvent *event)
     if (watched == m_itemIcon && event->type() == QEvent::Paint) {
         QSvgRenderer renderer(m_currentIcon, m_itemIcon);
         QPainter painter(m_itemIcon);
+        if (!isEnabled()) {
+            painter.setOpacity(0.4);
+        }
         renderer.render(&painter, m_itemIcon->rect());
     }
 
@@ -255,6 +259,12 @@ void RoundItemButton::updateState(const RoundItemButton::State state)
     } else {
         QPalette palette = m_itemText->palette();
         palette.setColor(QPalette::WindowText, Qt::white);
+        m_itemText->setPalette(palette);
+    }
+
+    if(!isEnabled()) {
+        QPalette palette = m_itemText->palette();
+        palette.setColor(QPalette::WindowText, Qt::gray);
         m_itemText->setPalette(palette);
     }
 

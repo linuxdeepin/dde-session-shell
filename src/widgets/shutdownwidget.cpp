@@ -98,6 +98,8 @@ void ShutdownWidget::initConnect()
         onRequirePowerAction(SessionBaseModel::PowerAction::RequireLogout);
     });
 
+    connect(GSettingWatcher::instance(), &GSettingWatcher::enableChanged, this, &ShutdownWidget::onEnable);
+
     if (m_systemMonitor) {
         connect(m_systemMonitor, &SystemMonitor::clicked, this, &ShutdownWidget::runSystemMonitor);
     }
@@ -106,6 +108,27 @@ void ShutdownWidget::initConnect()
 void ShutdownWidget::updateTr(RoundItemButton *widget, const QString &tr)
 {
     m_trList << std::pair<std::function<void (QString)>, QString>(std::bind(&RoundItemButton::setText, widget, std::placeholders::_1), tr);
+}
+
+bool ShutdownWidget::enableState(const QString &gsettingsValue)
+{
+    if ("Disabled" == gsettingsValue)
+        return false;
+    else
+        return true;
+}
+
+void ShutdownWidget::onEnable(const QString &gsettingsName, bool enable)
+{
+    if ("systemShutdown" == gsettingsName) {
+        m_requireShutdownButton->updateState(enable ? RoundItemButton::Checked : RoundItemButton::Disabled);
+    } else if ("systemSuspend" == gsettingsName) {
+        m_requireSuspendButton->updateState(enable ? RoundItemButton::Normal : RoundItemButton::Disabled);
+    } else if ("systemHibernate" == gsettingsName) {
+        m_requireHibernateButton->updateState(enable ?RoundItemButton::Normal : RoundItemButton::Disabled);
+    } else if ("systemLock" == gsettingsName) {
+        m_requireLockButton->updateState(enable ? RoundItemButton::Normal : RoundItemButton::Disabled);
+    }
 }
 
 void ShutdownWidget::onOtherPageChanged(const QVariant &value)
@@ -118,6 +141,11 @@ void ShutdownWidget::onOtherPageChanged(const QVariant &value)
 
     m_currentSelectedBtn = m_btnList.at(m_index);
     m_currentSelectedBtn->updateState(RoundItemButton::Checked);
+
+    onEnable("systemShutdown", enableState(GSettingWatcher::instance()->getStatus("systemShutdown")));
+    onEnable("systemSuspend", enableState(GSettingWatcher::instance()->getStatus("systemSuspend")));
+    onEnable("systemHibernate", enableState(GSettingWatcher::instance()->getStatus("systemHibernate")));
+    onEnable("systemLock", enableState(GSettingWatcher::instance()->getStatus("systemLock")));
 }
 
 void ShutdownWidget::hideToplevelWindow()

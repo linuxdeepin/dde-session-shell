@@ -37,6 +37,9 @@ public:
     void erase(const QString &gsettingsName, QWidget *binder);
     const QString getStatus(const QString &gsettingsName);
 
+signals:
+    void enableChanged(const QString &gsettingsName, bool enable);
+
 private:
     GSettingWatcher(QObject *parent = nullptr);
 
