@@ -445,6 +445,8 @@ void ShutdownWidget::onRequirePowerAction(SessionBaseModel::PowerAction powerAct
         case SessionBaseModel::PowerAction::RequireRestart:
         case SessionBaseModel::PowerAction::RequireSwitchSystem:
         case SessionBaseModel::PowerAction::RequireLogout:
+        case SessionBaseModel::PowerAction::RequireSuspend:
+        case SessionBaseModel::PowerAction::RequireHibernate:
             emit m_model->shutdownInhibit(powerAction);
             break;
         default:

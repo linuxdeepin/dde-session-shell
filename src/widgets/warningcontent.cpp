@@ -78,7 +78,7 @@ QList<InhibitWarnView::InhibitorData> WarningContent::listInhibitors(const Sessi
                         && !m_inhibitorBlacklists.contains(inhibitor.who)) {
 
                     // 待机时，非block暂不处理，因为目前没有倒计时待机功能
-                    if (type == "sleep" && inhibitor.mode != "block")
+                    if (inhibitor.mode != "block")
                         continue;
 
                     InhibitWarnView::InhibitorData inhibitData;
@@ -184,11 +184,13 @@ void WarningContent::beforeInvokeAction(const SessionBaseModel::PowerAction acti
         } else if (action == SessionBaseModel::PowerAction::RequireRestart || action == SessionBaseModel::PowerAction::RequireSwitchSystem) {
             view->setAcceptReason(tr("Reboot"));
             view->setAcceptVisible(isAccept);
-        } else if (action == SessionBaseModel::PowerAction::RequireSuspend)
+        } else if (action == SessionBaseModel::PowerAction::RequireSuspend) {
             view->setAcceptReason(tr("Suspend"));
-        else if (action == SessionBaseModel::PowerAction::RequireHibernate)
+            view->setAcceptVisible(isAccept);
+        } else if (action == SessionBaseModel::PowerAction::RequireHibernate) {
             view->setAcceptReason(tr("Hibernate"));
-        else if (action == SessionBaseModel::PowerAction::RequireLogout) {
+            view->setAcceptVisible(isAccept);
+        } else if (action == SessionBaseModel::PowerAction::RequireLogout) {
             view->setAcceptReason(tr("Log out"));
             view->setAcceptVisible(isAccept);
         }
