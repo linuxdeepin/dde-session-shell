@@ -72,6 +72,10 @@ LoginWindow::LoginWindow(SessionBaseModel *const model, QWidget *parent)
     connect(m_loginContent, &LockContent::requestAuthUser, this, &LoginWindow::requestAuthUser);
     connect(m_loginContent, &LockContent::requestSwitchToUser, this, &LoginWindow::requestSwitchToUser);
     connect(m_loginContent, &LockContent::requestSetLayout, this, &LoginWindow::requestSetLayout);
+
+    connect(m_loginContent, &LockContent::requestCreateAuthController, this, &LoginWindow::requestCreateAuthController);
+    connect(m_loginContent, &LockContent::requestStartAuthentication, this, &LoginWindow::requestStartAuthentication);
+    connect(m_loginContent, &LockContent::sendTokenToAuth, this, &LoginWindow::sendTokenToAuth);
 }
 
 void LoginWindow::resizeEvent(QResizeEvent *event)
@@ -85,6 +89,7 @@ void LoginWindow::showEvent(QShowEvent *event)
     FullscreenBackground::showEvent(event);
 
     m_model->setHasVirtualKB(true);
+    m_model->setVisible(true);
 }
 
 void LoginWindow::hideEvent(QHideEvent *event)
@@ -93,4 +98,5 @@ void LoginWindow::hideEvent(QHideEvent *event)
     FullscreenBackground::hideEvent(event);
 
     m_model->setHasVirtualKB(false);
+    m_model->setVisible(false);
 }

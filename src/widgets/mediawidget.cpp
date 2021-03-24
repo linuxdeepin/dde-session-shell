@@ -67,7 +67,7 @@ void MediaWidget::initMediaPlayer()
     connect(watcher, &QDBusPendingCallWatcher::finished, [ = ] {
         if (!call.isError()) {
             QDBusReply<QStringList> reply = call.reply();
-            qDebug() << "one key Login User Name is : " << reply.value();
+            //qDebug() << "one key Login User Name is : " << reply.value();
 
             const QStringList &serviceList = reply.value();
             QString service = QString();

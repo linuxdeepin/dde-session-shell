@@ -30,29 +30,6 @@
 
 #define KB_MARGIN 5
 
-LoadSlider::LoadSlider(QWidget *parent)
-    : QWidget(parent)
-    , m_loadSliderColor(Qt::gray)
-{
-}
-
-void LoadSlider::setLoadSliderColor(const QColor &color)
-{
-    m_loadSliderColor = color;
-    update();
-}
-
-void LoadSlider::paintEvent(QPaintEvent *event)
-{
-    QPainter painter(this);
-    QLinearGradient grad(0, height() / 2, width(), height() / 2);
-    grad.setColorAt(0.0, Qt::transparent);
-    grad.setColorAt(1.0, m_loadSliderColor);
-    painter.fillRect(0, 1, width(), height() - 2, grad);
-
-    QWidget::paintEvent(event);
-}
-
 DPasswordEditEx::DPasswordEditEx(QWidget *parent)
     : DLineEditEx(parent)
 {

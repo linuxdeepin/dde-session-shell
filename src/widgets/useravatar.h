@@ -53,14 +53,15 @@ class UserAvatar : public QPushButton
 
 public:
     enum AvatarSize {
-        AvatarSmallSize,
-        AvatarNormalSize,
-        AvatarLargeSize
+        AvatarSmallSize = 80,
+        AvatarNormalSize = 90,
+        AvatarLargeSize = 100
     };
+    Q_ENUM(AvatarSize)
 
     explicit UserAvatar(QWidget *parent = 0, bool deleteable = false);
-    void setIcon(const QString &iconPath, const QSize &size = QSize(0, 0));
-    void setAvatarSize(const AvatarSize &avatarSize);
+    void setIcon(const QString &iconPath);
+    void setAvatarSize(const int size);
     void setDisabled(bool disable);
 
     QColor borderSelectedColor() const;
@@ -101,7 +102,7 @@ private:
     QString m_iconPath = "";
     QColor m_borderColor;
     QColor m_borderSelectedColor;
-    AvatarSize m_avatarSize = AvatarNormalSize;
+    int m_avatarSize = 90;
     int m_borderWidth = 0;
     bool m_selected = false;
     bool m_deleteable = false;

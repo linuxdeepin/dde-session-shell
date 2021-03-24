@@ -66,8 +66,7 @@ void SessionBaseWindow::setCenterContent(QWidget * const widget)
     m_centerWidget = widget;
 
     //Minimum 布局中部件大小是最小值并且是足够大的。而部件允许扩展，并不一定要扩展，但是不能比缺省大小更小
-    m_centerWidget->setSizePolicy(QSizePolicy::Fixed, QSizePolicy::Fixed);
-    m_centerLayout->addWidget(m_centerWidget, 0, Qt::AlignCenter);
+    m_centerLayout->addWidget(m_centerWidget);
     m_centerWidget->setFocus();
     m_centerWidget->show();
 }
@@ -162,4 +161,3 @@ void SessionBaseWindow::setBottomFrameVisible(bool visible)
 {
     m_bottomFrame->setVisible(visible);
 }
-

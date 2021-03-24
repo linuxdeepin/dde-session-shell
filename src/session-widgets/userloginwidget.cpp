@@ -20,251 +20,574 @@
  */
 
 #include "userloginwidget.h"
-#include "lockpasswordwidget.h"
-#include "framedatabind.h"
-#include "userinfo.h"
-#include "useravatar.h"
-#include "loginbutton.h"
+
 #include "constants.h"
-#include "kblayoutwidget.h"
-#include "framedatabind.h"
-#include "keyboardmonitor.h"
+#include "dhidpihelper.h"
 #include "dpasswordeditex.h"
+#include "framedatabind.h"
+#include "kblayoutwidget.h"
+#include "keyboardmonitor.h"
+#include "lockpasswordwidget.h"
+#include "loginbutton.h"
+#include "useravatar.h"
+#include "userinfo.h"
+#include "authenticationmodule.h"
 
 #include <DFontSizeManager>
 #include <DPalette>
-#include "dhidpihelper.h"
 
-#include <QVBoxLayout>
 #include <QAction>
 #include <QImage>
 #include <QPropertyAnimation>
+#include <QVBoxLayout>
 
 static const int BlurRectRadius = 15;
 static const int WidgetsSpacing = 10;
 static const int Margins = 16;
 static const QColor shutdownColor(QColor(247, 68, 68));
 
-UserLoginWidget::UserLoginWidget(QWidget *parent)
+UserLoginWidget::UserLoginWidget(const SessionBaseModel *model, const WidgetType widgetType, QWidget *parent)
     : QWidget(parent)
+    , m_model(model)
+    , m_widgetType(widgetType)
     , m_blurEffectWidget(new DBlurEffectWidget(this))
+    , m_userLoginLayout(new QVBoxLayout(this))
     , m_userAvatar(new UserAvatar(this))
-    , m_nameLbl(new QLabel(this))
-    , m_passwordEdit(new DPasswordEditEx(this))
-    , m_lockPasswordWidget(new LockPasswordWidget)
+    , m_nameWidget(new QWidget(this))
+    , m_nameLabel(new QLabel(m_nameWidget))
+    , m_loginStateLabel(new QLabel(m_nameWidget))
     , m_accountEdit(new DLineEditEx(this))
-    , m_lockButton(new DFloatingButton(DStyle::SP_LockElement))
-    , m_kbLayoutBorder(new DArrowRectangle(DArrowRectangle::ArrowTop))
-    , m_kbLayoutWidget(new KbLayoutWidget(QStringList()))
-    , m_showType(NormalType)
+    , m_lockButton(new DFloatingButton(DStyle::SP_LockElement, this))
+    , m_passwordAuth(nullptr)
+    , m_fingerprintAuth(nullptr)
+    , m_faceAuth(nullptr)
+    , m_ukeyAuth(nullptr)
+    , m_activeDirectoryAuth(nullptr)
+    , m_fingerVeinAuth(nullptr)
+    , m_irisAuth(nullptr)
+    , m_PINAuth(nullptr)
+
+    , m_kbLayoutBorder(nullptr)
+
     , m_isLock(false)
-    , m_isLogin(false)
+    , m_loginState(true)
     , m_isSelected(false)
     , m_isLockNoPassword(false)
-    , m_capslockMonitor(KeyboardMonitor::instance())
     , m_isAlertMessageShow(false)
     , m_aniTimer(new QTimer(this))
 {
+    setGeometry(0, 0, 280, 280);                           // 设置本窗口默认大小和相对父窗口的位置
+    setMinimumSize(228, 146);                              // 设置本窗口的最小大小（参考用户列表模式下的最小大小）
+    setSizePolicy(QSizePolicy::Fixed, QSizePolicy::Fixed); // 大小策略设置为fixed，使本窗口不受父窗口布局管理器的拉伸效果
+    setFocusPolicy(Qt::NoFocus);
+
+    m_capslockMonitor = KeyboardMonitor::instance();
+    m_capslockMonitor->start(QThread::LowestPriority);
+
     initUI();
-    initConnect();
+    initConnections();
+
+    m_accountEdit->installEventFilter(this);
+    m_accountEdit->hide();
+
+    if (m_widgetType == LoginType) {
+        setMaximumWidth(280); // 设置本窗口的最大宽度（参考登录模式下的最大宽度）
+        m_userAvatar->setAvatarSize(UserAvatar::AvatarLargeSize);
+        m_loginStateLabel->hide();
+        if (m_model->currentType() == SessionBaseModel::LightdmType && m_model->isServerModel()) {
+            m_accountEdit->show();
+            m_nameLabel->hide();
+        }
+    } else {
+        setMaximumWidth(228); // 设置本窗口的最大宽度（参考用户列表模式下的最大宽度）
+        m_userAvatar->setAvatarSize(UserAvatar::AvatarSmallSize);
+        m_lockButton->hide();
+    }
 }
 
 UserLoginWidget::~UserLoginWidget()
 {
+    for (auto it = m_registerFunctionIndexs.constBegin(); it != m_registerFunctionIndexs.constEnd(); ++it) {
+        FrameDataBind::Instance()->unRegisterFunction(it.key(), it.value());
+    }
     m_kbLayoutBorder->deleteLater();
 }
 
-//重置控件的状态
-void UserLoginWidget::resetAllState()
+/**
+ * @brief 登录窗口布局
+ */
+void UserLoginWidget::initUI()
 {
-    m_passwordEdit->hideLoadSlider();
-    m_passwordEdit->lineEdit()->clear();
-    m_passwordEdit->lineEdit()->setPlaceholderText(QString());
-    m_accountEdit->lineEdit()->clear();
-    m_accountEdit->lineEdit()->setEnabled(true);
-    if (m_authType == SessionBaseModel::LightdmType) {
-        m_lockButton->setIcon(DStyle::SP_ArrowNext);
+    m_userLoginLayout->setContentsMargins(10, 0, 10, 0);
+    m_userLoginLayout->setSpacing(10);
+    /* 头像 */
+    m_userAvatar->setFocusPolicy(Qt::NoFocus);
+    m_userLoginLayout->addWidget(m_userAvatar, 0, Qt::AlignHCenter);
+    /* 用户名 */
+    QHBoxLayout *nameLayout = new QHBoxLayout(m_nameWidget);
+    nameLayout->setContentsMargins(0, 0, 0, 0);
+    nameLayout->setSpacing(5);
+    QPixmap pixmap = DHiDPIHelper::loadNxPixmap(":/icons/dedpin/builtin/select.svg");
+    pixmap.setDevicePixelRatio(devicePixelRatioF());
+    m_loginStateLabel->setPixmap(pixmap);
+    nameLayout->addWidget(m_loginStateLabel, 0, Qt::AlignRight);
+    m_nameLabel->setTextFormat(Qt::TextFormat::PlainText);
+    DFontSizeManager::instance()->bind(m_nameLabel, DFontSizeManager::T2);
+    QPalette palette = m_nameLabel->palette();
+    palette.setColor(QPalette::WindowText, Qt::white);
+    m_nameLabel->setPalette(palette);
+    nameLayout->addWidget(m_nameLabel, 1, Qt::AlignLeft);
+    m_userLoginLayout->addWidget(m_nameWidget, 0, Qt::AlignCenter);
+    /* 用户名输入框 */
+    m_accountEdit->setContextMenuPolicy(Qt::NoContextMenu);
+    m_accountEdit->lineEdit()->setAlignment(Qt::AlignCenter);
+    m_accountEdit->setSizePolicy(QSizePolicy::Expanding, QSizePolicy::Fixed);
+    m_accountEdit->setClearButtonEnabled(false);
+    m_accountEdit->setPlaceholderText(tr("Account"));
+    m_userLoginLayout->addWidget(m_accountEdit);
+    /* 解锁图标与上面控件的间距 */
+    if (m_widgetType != UserListType) {
+        m_userLoginLayout->addSpacing(10);
     } else {
-        m_lockButton->setIcon(DStyle::SP_LockElement);
+        m_userLoginLayout->addSpacing(20);
     }
-    updateUI();
+    /* 解锁图标 */
+    m_lockButton->setFocusPolicy(Qt::StrongFocus);
+    m_userLoginLayout->addWidget(m_lockButton, 0, Qt::AlignHCenter);
+    /* 模糊背景 */
+    m_blurEffectWidget->setMaskColor(DBlurEffectWidget::LightColor);
+    m_blurEffectWidget->setMaskAlpha(76); // fix BUG 3400 设置模糊窗体的不透明度为30%
+    m_blurEffectWidget->setBlurRectXRadius(BlurRectRadius);
+    m_blurEffectWidget->setBlurRectYRadius(BlurRectRadius);
+    /* 键盘布局菜单 */
+    m_kbLayoutBorder = new DArrowRectangle(DArrowRectangle::ArrowTop);
+    m_kbLayoutWidget = new KbLayoutWidget(QStringList());
+    m_kbLayoutBorder->setContent(m_kbLayoutWidget);
+    m_kbLayoutBorder->setBackgroundColor(QColor(102, 102, 102)); //255*0.2
+    m_kbLayoutBorder->setBorderColor(QColor(0, 0, 0, 0));
+    m_kbLayoutBorder->setBorderWidth(0);
+    m_kbLayoutBorder->setContentsMargins(0, 0, 0, 0);
+    m_kbLayoutClip = new Dtk::Widget::DClipEffectWidget(m_kbLayoutBorder);
+    updateClipPath();
+}
+
+void UserLoginWidget::initConnections()
+{
+    /* 头像 */
+    connect(m_userAvatar, &UserAvatar::clicked, this, &UserLoginWidget::clicked);
+    /* 用户名 */
+    connect(qGuiApp, &QGuiApplication::fontChanged, this, &UserLoginWidget::updateNameLabel);
+    /* 用户名输入框 */
+    std::function<void(QVariant)> accountChanged = std::bind(&UserLoginWidget::onOtherPageAccountChanged, this, std::placeholders::_1);
+    m_registerFunctionIndexs["UserLoginAccount"] = FrameDataBind::Instance()->registerFunction("UserLoginAccount", accountChanged);
+    connect(m_accountEdit, &DLineEditEx::textChanged, this, [=](const QString &value) {
+        FrameDataBind::Instance()->updateValue("UserLoginAccount", value);
+    });
+    FrameDataBind::Instance()->refreshData("UserLoginAccount");
+    connect(m_accountEdit, &DLineEditEx::returnPressed, this, [=] {
+        if (m_accountEdit->isVisible()) {
+            emit requestCreateAuthController(m_accountEdit->text());
+        }
+    });
+    /* 键盘布局菜单 */
+    connect(m_kbLayoutWidget, &KbLayoutWidget::setButtonClicked, this, &UserLoginWidget::requestUserKBLayoutChanged);
+    std::function<void(QVariant)> kblayoutChanged = std::bind(&UserLoginWidget::onOtherPageKBLayoutChanged, this, std::placeholders::_1);
+    m_registerFunctionIndexs["UserLoginKBLayout"] = FrameDataBind::Instance()->registerFunction("UserLoginKBLayout", kblayoutChanged);
+    FrameDataBind::Instance()->refreshData("UserLoginKBLayout");
+}
+
+/**
+ * @brief 根据开启的认证类型更新对应的界面显示。
+ *
+ * @param type
+ */
+void UserLoginWidget::updateWidgetShowType(const int type)
+{
+    int index = 3;
+    /**
+     * @brief 设置布局
+     * 这里是按照显示顺序初始化的，如果后续布局改变或者新增认证方式，初始化顺序需要重新调整
+     */
+    /* 面容 */
+    if (type & AuthenticationModule::AuthTypeFace) {
+        initFaceAuth(index++);
+    } else if (m_faceAuth != nullptr) {
+        m_faceAuth->deleteLater();
+        m_faceAuth = nullptr;
+    }
+    /* 指纹 */
+    if (type & AuthenticationModule::AuthTypeFingerprint) {
+        initFingerprintAuth(index++);
+    } else if (m_fingerprintAuth != nullptr) {
+        m_fingerprintAuth->deleteLater();
+        m_fingerprintAuth = nullptr;
+    }
+    /* AD域 */
+    if (type & AuthenticationModule::AuthTypeActiveDirectory) {
+        initActiveDirectoryAuth(index++);
+    }
+    /* Ukey */
+    if (type & AuthenticationModule::AuthTypeUkey) {
+        initUkeyAuth(index++);
+    } else if (m_ukeyAuth != nullptr) {
+        m_ukeyAuth->deleteLater();
+        m_ukeyAuth = nullptr;
+    }
+    /* 指静脉 */
+    if (type & AuthenticationModule::AuthTypeFingerVein) {
+        initFingerVeinAuth(index++);
+    }
+    /* 虹膜 */
+    if (type & AuthenticationModule::AuthTypeIris) {
+        initIrisAuth(index++);
+    }
+    /* PIN码 */
+    if (type & AuthenticationModule::AuthTypePIN) {
+        initPINAuth(index++);
+    } else if (m_PINAuth != nullptr) {
+        m_PINAuth->deleteLater();
+        m_PINAuth = nullptr;
+    }
+    /* 密码 */
+    if (type & AuthenticationModule::AuthTypePassword) {
+        initPasswdAuth(index++);
+    } else if (m_passwordAuth != nullptr) {
+        m_passwordAuth->deleteLater();
+        m_passwordAuth = nullptr;
+    }
+
+    /**
+     * @brief 设置焦点
+     * 优先级: 用户名输入框 > PIN码输入框 > 密码输入框 > 解锁按钮
+     * 这里的优先级是根据布局来的，如果后续布局改变或者新增认证方式，焦点需要重新调整
+     */
+    if (m_lockButton->isVisible()) {
+        m_lockButton->setFocus();
+    }
+    if (type & AuthenticationModule::AuthTypePassword) {
+        m_passwordAuth->setFocus();
+    }
+    if (type & AuthenticationModule::AuthTypeUkey) {
+        m_ukeyAuth->setFocus();
+    }
+    if (type & AuthenticationModule::AuthTypePIN) {
+        m_PINAuth->setFocus();
+    }
+    if (m_accountEdit->isVisible()) {
+        m_accountEdit->setFocus();
+    }
+}
+
+/**
+ * @brief 密码认证
+ */
+void UserLoginWidget::initPasswdAuth(const int index)
+{
+    if (m_passwordAuth != nullptr) {
+        return;
+    }
+    m_passwordAuth = new AuthenticationModule(AuthenticationModule::AuthTypePassword, this);
+    m_passwordAuth->setLineEditInfo(tr("Password"), AuthenticationModule::PlaceHolderText);
+    m_passwordAuth->setCapsStatus(m_capslockMonitor->isCapslockOn());
+    m_passwordAuth->setAuthStatus(":/icons/dedpin/builtin/select.svg");
+    m_userLoginLayout->insertWidget(index, m_passwordAuth);
+
+    connect(m_passwordAuth, &AuthenticationModule::activateAuthentication, this, [=] {
+        QString account = m_nameLabel->text().isEmpty() ? m_accountEdit->text() : m_nameLabel->text();
+        emit requestStartAuthentication(account, AuthenticationModule::AuthTypePassword);
+    });
+    connect(m_passwordAuth, &AuthenticationModule::requestAuthenticate, this, [=] {
+        if (m_passwordAuth->lineEditText().isEmpty()) {
+            return;
+        }
+        m_passwordAuth->setAnimationState(true);
+        QString account = m_accountEdit->text().isEmpty() ? m_nameLabel->text() : m_accountEdit->text();
+        emit sendTokenToAuth(account, AuthenticationModule::AuthTypePassword, m_passwordAuth->lineEditText());
+    });
+    connect(m_passwordAuth, &AuthenticationModule::requestShowKeyboardList, this, &UserLoginWidget::showKeyboardList);
+    connect(m_passwordAuth, &AuthenticationModule::authFinished, this, &UserLoginWidget::checkAuthResult);
+    connect(m_lockButton, &QPushButton::clicked, m_passwordAuth, &AuthenticationModule::requestAuthenticate);
+    connect(m_capslockMonitor, &KeyboardMonitor::capslockStatusChanged, m_passwordAuth, &AuthenticationModule::setCapsStatus);
+    connect(m_kbLayoutWidget, &KbLayoutWidget::setButtonClicked, m_passwordAuth, &AuthenticationModule::setKeyboardButtonInfo);
+
+    /* 输入框数据同步 */
+    std::function<void(QVariant)> passwordChanged = std::bind(&UserLoginWidget::onOtherPagePasswordChanged, this, std::placeholders::_1);
+    m_registerFunctionIndexs["UserLoginPassword"] = FrameDataBind::Instance()->registerFunction("UserLoginPassword", passwordChanged);
+    connect(m_passwordAuth, &AuthenticationModule::lineEditTextChanged, this, [=](const QString &value) {
+        FrameDataBind::Instance()->updateValue("UserLoginPassword", value);
+        m_lockButton->setEnabled(true);
+    });
+    FrameDataBind::Instance()->refreshData("UserLoginPassword");
+}
+
+/**
+ * @brief 指纹认证
+ */
+void UserLoginWidget::initFingerprintAuth(const int index)
+{
+    if (m_fingerprintAuth != nullptr) {
+        return;
+    }
+    m_fingerprintAuth = new AuthenticationModule(AuthenticationModule::AuthTypeFingerprint, this);
+    m_fingerprintAuth->setText("Fingerprint ID");
+    m_fingerprintAuth->setAuthStatus(":/icons/dedpin/builtin/select.svg");
+    m_userLoginLayout->insertWidget(index, m_fingerprintAuth);
+    QString account = m_nameLabel->text().isEmpty() ? m_accountEdit->text() : m_nameLabel->text();
+
+    connect(m_fingerprintAuth, &AuthenticationModule::activateAuthentication, this, [=] {
+        QString account = m_nameLabel->text().isEmpty() ? m_accountEdit->text() : m_nameLabel->text();
+        emit requestStartAuthentication(account, AuthenticationModule::AuthTypeFingerprint);
+    });
+    connect(m_fingerprintAuth, &AuthenticationModule::authFinished, this, &UserLoginWidget::checkAuthResult);
+}
+
+/**
+ * @brief 面容认证
+ */
+void UserLoginWidget::initFaceAuth(const int index)
+{
+    if (m_faceAuth != nullptr) {
+        return;
+    }
+    m_faceAuth = new AuthenticationModule(AuthenticationModule::AuthTypeFace, this);
+    m_faceAuth->setText("Face ID");
+    m_faceAuth->setAuthStatus(":/icons/dedpin/builtin/select.svg");
+    m_userLoginLayout->insertWidget(index, m_faceAuth);
+    QString account = m_nameLabel->text().isEmpty() ? m_accountEdit->text() : m_nameLabel->text();
+
+    connect(m_faceAuth, &AuthenticationModule::activateAuthentication, this, [=] {
+        QString account = m_nameLabel->text().isEmpty() ? m_accountEdit->text() : m_nameLabel->text();
+        emit requestStartAuthentication(account, AuthenticationModule::AuthTypeFace);
+    });
+    connect(m_faceAuth, &AuthenticationModule::authFinished, this, &UserLoginWidget::checkAuthResult);
+}
+
+/**
+ * @brief AD域认证
+ */
+void UserLoginWidget::initActiveDirectoryAuth(const int index)
+{
+    // TODO
+}
+
+/**
+ * @brief Ukey认证
+ */
+void UserLoginWidget::initUkeyAuth(const int index)
+{
+    if (m_ukeyAuth != nullptr) {
+        return;
+    }
+    m_ukeyAuth = new AuthenticationModule(AuthenticationModule::AuthTypeUkey, this);
+    m_ukeyAuth->setLineEditInfo(tr("Please enter the PIN code"), AuthenticationModule::PlaceHolderText);
+    m_ukeyAuth->setCapsStatus(m_capslockMonitor->isCapslockOn());
+    m_ukeyAuth->setAuthStatus(":/icons/dedpin/builtin/select.svg");
+    m_userLoginLayout->insertWidget(index, m_ukeyAuth);
+
+    std::function<void(QVariant)> PINChanged = std::bind(&UserLoginWidget::onOtherPageUKeyChanged, this, std::placeholders::_1);
+    m_registerFunctionIndexs["UserLoginUKey"] = FrameDataBind::Instance()->registerFunction("UserLoginUKey", PINChanged);
+    connect(m_ukeyAuth, &AuthenticationModule::lineEditTextChanged, this, [=](const QString &value) {
+        if (m_model->getAuthProperty().PINLen > 0 && value.size() >= m_model->getAuthProperty().PINLen) {
+            emit m_ukeyAuth->requestAuthenticate();
+        }
+        FrameDataBind::Instance()->updateValue("UserLoginUKey", value);
+        m_lockButton->setEnabled(true);
+    });
+    connect(m_ukeyAuth, &AuthenticationModule::activateAuthentication, this, [=] {
+        QString account = m_nameLabel->text().isEmpty() ? m_accountEdit->text() : m_nameLabel->text();
+        emit requestStartAuthentication(account, AuthenticationModule::AuthTypeUkey);
+    });
+    connect(m_ukeyAuth, &AuthenticationModule::requestAuthenticate, this, [=] {
+        if (m_ukeyAuth->lineEditText().isEmpty()) {
+            return;
+        }
+        m_ukeyAuth->setAnimationState(true);
+        QString account = m_accountEdit->text().isEmpty() ? m_nameLabel->text() : m_accountEdit->text();
+        emit sendTokenToAuth(account, AuthenticationModule::AuthTypeUkey, m_ukeyAuth->lineEditText());
+    });
+    connect(m_lockButton, &QPushButton::clicked, m_ukeyAuth, &AuthenticationModule::requestAuthenticate);
+    connect(m_ukeyAuth, &AuthenticationModule::authFinished, this, &UserLoginWidget::checkAuthResult);
+    connect(m_capslockMonitor, &KeyboardMonitor::capslockStatusChanged, m_ukeyAuth, &AuthenticationModule::setCapsStatus);
+    FrameDataBind::Instance()->refreshData("UserLoginUKey");
+}
+
+/**
+ * @brief 指静脉认证
+ */
+void UserLoginWidget::initFingerVeinAuth(const int index)
+{
+    Q_UNUSED(index)
+    // TODO
+}
+
+/**
+ * @brief 虹膜认证
+ */
+void UserLoginWidget::initIrisAuth(const int index)
+{
+    Q_UNUSED(index)
+    // TODO
+}
+
+/**
+ * @brief PIN码认证
+ */
+void UserLoginWidget::initPINAuth(const int index)
+{
+    if (m_PINAuth != nullptr) {
+        return;
+    }
+    m_PINAuth = new AuthenticationModule(AuthenticationModule::AuthTypePIN, this);
+    m_PINAuth->setLineEditInfo(tr("Please enter the PIN code"), AuthenticationModule::PlaceHolderText);
+    m_PINAuth->setAuthStatus(":/icons/dedpin/builtin/select.svg");
+    m_userLoginLayout->insertWidget(index, m_PINAuth);
+
+    std::function<void(QVariant)> PINChanged = std::bind(&UserLoginWidget::onOtherPagePINChanged, this, std::placeholders::_1);
+    m_registerFunctionIndexs["UserLoginPIN"] = FrameDataBind::Instance()->registerFunction("UserLoginPIN", PINChanged);
+    connect(m_PINAuth, &AuthenticationModule::lineEditTextChanged, this, [=](const QString &value) {
+        FrameDataBind::Instance()->updateValue("UserLoginPIN", value);
+        m_lockButton->setEnabled(true);
+    });
+    connect(m_PINAuth, &AuthenticationModule::activateAuthentication, this, [=] {
+        QString account = m_nameLabel->text().isEmpty() ? m_accountEdit->text() : m_nameLabel->text();
+        emit requestStartAuthentication(account, AuthenticationModule::AuthTypePIN);
+    });
+    connect(m_PINAuth, &AuthenticationModule::requestAuthenticate, this, [=] {
+        qDebug() << "PIN:" << m_PINAuth->lineEditText();
+        if (m_PINAuth->lineEditText().isEmpty()) {
+            return;
+        }
+        m_PINAuth->setAnimationState(true);
+        QString account = m_accountEdit->text().isEmpty() ? m_nameLabel->text() : m_accountEdit->text();
+        emit sendTokenToAuth(account, AuthenticationModule::AuthTypePIN, m_PINAuth->lineEditText());
+    });
+    connect(m_lockButton, &QPushButton::clicked, m_PINAuth, &AuthenticationModule::requestAuthenticate);
+    connect(m_PINAuth, &AuthenticationModule::authFinished, this, &UserLoginWidget::checkAuthResult);
+    connect(m_capslockMonitor, &KeyboardMonitor::capslockStatusChanged, m_PINAuth, &AuthenticationModule::setCapsStatus);
+    FrameDataBind::Instance()->refreshData("UserLoginPIN");
+}
+
+/**
+ * @brief 根据返回的认证结果更新界面显示。分别返回各个认证类型的结果，最后返回总的认证结果。
+ * @param authType   认证类型
+ * @param status     认证结果
+ * @param message    返回的结果文案（成功，失败，等）
+ */
+void UserLoginWidget::updateAuthResult(const int authType, const int status, const QString &message)
+{
+    switch (authType) {
+    case AuthenticationModule::AuthTypePassword:
+        if (m_passwordAuth != nullptr) {
+            m_passwordAuth->setAuthResult(status, message);
+        }
+        break;
+    case AuthenticationModule::AuthTypeFingerprint:
+        if (m_fingerprintAuth != nullptr) {
+            m_fingerprintAuth->setAuthResult(status, message);
+        }
+        break;
+    case AuthenticationModule::AuthTypeFace:
+        if (m_faceAuth != nullptr) {
+            m_faceAuth->setAuthResult(status, message);
+        }
+        break;
+    case AuthenticationModule::AuthTypeActiveDirectory:
+        if (m_activeDirectoryAuth != nullptr) {
+            m_activeDirectoryAuth->setAuthResult(status, message);
+        }
+        break;
+    case AuthenticationModule::AuthTypeUkey:
+        if (m_ukeyAuth != nullptr) {
+            m_ukeyAuth->setAuthResult(status, message);
+        }
+        break;
+    case AuthenticationModule::AuthTypeFingerVein:
+        if (m_fingerVeinAuth != nullptr) {
+            m_fingerVeinAuth->setAuthResult(status, message);
+        }
+        break;
+    case AuthenticationModule::AuthTypeIris:
+        if (m_irisAuth != nullptr) {
+            m_irisAuth->setAuthResult(status, message);
+        }
+        break;
+    case AuthenticationModule::AuthTypeAll:
+        checkAuthResult(authType, status);
+        break;
+    default:
+        break;
+    }
+}
+
+/**
+ * @brief 更新展示的头像
+ *
+ * @param avatar 头像图片路径
+ */
+void UserLoginWidget::updateAvatar(const QString &path)
+{
+    if (m_userAvatar == nullptr) {
+        return;
+    }
+
+    m_userAvatar->setIcon(path);
 }
 
 //密码连续输入错误5次，设置提示信息
 void UserLoginWidget::setFaildMessage(const QString &message, SessionBaseModel::AuthFaildType type)
 {
-    if (m_isLock && !message.isEmpty()) {
-        m_lockPasswordWidget->setMessage(message);
-        m_accountEdit->lineEdit()->setEnabled(false);
-        m_passwordEdit->hideAlertMessage();
-        return;
-    }
-
-    if (type == SessionBaseModel::KEYBOARD) {
-        m_passwordEdit->hideLoadSlider();
-    } else {
-        m_passwordEdit->hideAlertMessage();
-    }
-
-    m_passwordEdit->lineEdit()->clear();
-    m_passwordEdit->lineEdit()->setPlaceholderText(message);
-    m_passwordEdit->lineEdit()->update();
-}
-
-//密码输入错误,设置错误信息
-void UserLoginWidget::setFaildTipMessage(const QString &message, SessionBaseModel::AuthFaildType type)
-{
-    Q_UNUSED(type);
-
-    m_accountEdit->lineEdit()->setEnabled(true);
-    if (m_isLock && !message.isEmpty()) {
-        m_passwordEdit->hideAlertMessage();
-        return;
-    }
-    m_passwordEdit->lineEdit()->clear();
-    m_passwordEdit->hideLoadSlider();
-    m_passwordEdit->showAlertMessage(message, 3000);
-    m_passwordEdit->raise();
-}
-
-//设置窗体显示模式
-void UserLoginWidget::setWidgetShowType(UserLoginWidget::WidgetShowType showType)
-{
-    m_showType = showType;
-    updateUI();
-    if (m_showType == NormalType || m_showType == IDAndPasswordType) {
-        QMap<QString, int> registerFunctionIndexs;
-        std::function<void (QVariant)> accountChanged = std::bind(&UserLoginWidget::onOtherPageAccountChanged, this, std::placeholders::_1);
-        registerFunctionIndexs["UserLoginAccount"] = FrameDataBind::Instance()->registerFunction("UserLoginAccount", accountChanged);
-        std::function<void (QVariant)> passwordChanged = std::bind(&UserLoginWidget::onOtherPagePasswordChanged, this, std::placeholders::_1);
-        registerFunctionIndexs["UserLoginPassword"] = FrameDataBind::Instance()->registerFunction("UserLoginPassword", passwordChanged);
-        std::function<void (QVariant)> kblayoutChanged = std::bind(&UserLoginWidget::onOtherPageKBLayoutChanged, this, std::placeholders::_1);
-        registerFunctionIndexs["UserLoginKBLayout"] = FrameDataBind::Instance()->registerFunction("UserLoginKBLayout", kblayoutChanged);
-        connect(this, &UserLoginWidget::destroyed, this, [ = ] {
-            for (auto it = registerFunctionIndexs.constBegin(); it != registerFunctionIndexs.constEnd(); ++it)
-            {
-                FrameDataBind::Instance()->unRegisterFunction(it.key(), it.value());
-            }
-        });
-
-        QTimer::singleShot(0, this, [ = ] {
-            FrameDataBind::Instance()->refreshData("UserLoginAccount");
-            FrameDataBind::Instance()->refreshData("UserLoginPassword");
-            FrameDataBind::Instance()->refreshData("UserLoginKBLayout");
-        });
-    }
-}
-
-//更新窗体控件显示
-void UserLoginWidget::updateUI()
-{
-    m_lockPasswordWidget->hide();
-    m_accountEdit->hide();
-    m_nameLbl->hide();
-    switch (m_showType) {
-    case NoPasswordType: {
-        bool isNopassword = true;
-        if (m_authType == SessionBaseModel::LockType && !m_isLockNoPassword) {
-            isNopassword = false;
-            m_passwordEdit->lineEdit()->setFocus();
+    if (!message.isEmpty()) {
+        // m_passwordEdit->setPlaceholderText(message);
+        if (type == SessionBaseModel::KEYBOARD) {
+            // m_passwordEdit->hideLoadSlider();
         } else {
-            m_lockButton->setFocus();
+            // m_passwordEdit->hideAlertMessage();
         }
-        m_passwordEdit->setVisible(!isNopassword && !m_isLock&& !m_isLockNoPassword);
-        m_lockPasswordWidget->setVisible(m_isLock);
-
-        m_lockButton->show();
-        m_nameLbl->show();
-        break;
     }
-    case NormalType: {
-        m_passwordEdit->setVisible(!m_isLock);
-        m_lockButton->show();
-        m_nameLbl->show();
-        m_lockPasswordWidget->setVisible(m_isLock);
-        m_passwordEdit->lineEdit()->setFocus();
-        break;
-    }
-    case IDAndPasswordType: {
-        // 解决右键菜单弹出问题
-        m_passwordEdit->setContextMenuPolicy(Qt::NoContextMenu);
-        m_passwordEdit->show();
-        m_passwordEdit->setShowKB(false);
-        m_passwordEdit->lineEdit()->setPlaceholderText(tr("Password"));
-        // 解决右键菜单弹出问题
-        m_accountEdit->setContextMenuPolicy(Qt::NoContextMenu);
-        m_accountEdit->show();
-        m_accountEdit->lineEdit()->setPlaceholderText(tr("Account"));
-        m_accountEdit->lineEdit()->setFocus();
-        m_nameLbl->hide();
-        m_lockButton->show();
-
-        setTabOrder(m_accountEdit->lineEdit(), m_passwordEdit->lineEdit());
-        setTabOrder(m_passwordEdit->lineEdit(), m_lockButton);
-        break;
-    }
-    case UserFrameType: {
-        m_nameLbl->show();
-        m_passwordEdit->hide();
-        m_lockButton->hide();
-        break;
-    }
-    case UserFrameLoginType: {
-        m_nameLbl->show();
-        m_passwordEdit->hide();
-        m_lockButton->hide();
-        break;
-    }
-    default:
-        break;
-    }
-
-    if (m_accountEdit->isVisible()) {
-        setFocusProxy(m_accountEdit->lineEdit());
-    } else if (m_passwordEdit->isVisible())
-        setFocusProxy(m_passwordEdit->lineEdit());
-
 }
 
+/**
+ * @brief 显示用户名输入错误
+ *
+ * @param message
+ */
+void UserLoginWidget::setFaildTipMessage(const QString &message)
+{
+    if (m_accountEdit->isVisible()) {
+        m_accountEdit->showAlertMessage(message);
+    }
+}
+
+/**
+ * @brief 关机提示
+ *
+ * @param action
+ */
 void UserLoginWidget::ShutdownPrompt(SessionBaseModel::PowerAction action)
 {
     m_action = action;
 
-    resetPowerIcon();
+    QPalette lockPalatte = m_lockButton->palette();
+    switch (m_action) {
+    case SessionBaseModel::PowerAction::RequireRestart:
+        m_lockButton->setIcon(QIcon(":/img/bottom_actions/reboot.svg"));
+        lockPalatte.setColor(QPalette::Highlight, shutdownColor);
+        break;
+    case SessionBaseModel::PowerAction::RequireShutdown:
+        m_lockButton->setIcon(QIcon(":/img/bottom_actions/shutdown.svg"));
+        lockPalatte.setColor(QPalette::Highlight, shutdownColor);
+        break;
+    }
+    m_lockButton->setPalette(lockPalatte);
 }
 
-bool UserLoginWidget::inputInfoCheck(bool is_server)
+/**
+ * @brief 焦点同步
+ *
+ * @param value
+ */
+void UserLoginWidget::onOtherPageFocusChanged(const QVariant &value)
 {
-    if (is_server && m_accountEdit->isVisible() && m_accountEdit->text().isEmpty()) {
-        setFaildTipMessage(tr("Please enter the account"));
-        m_accountEdit->lineEdit()->setFocus();
-        return false;
-    }
-
-    if (m_passwordEdit->isVisible() && m_passwordEdit->lineEdit()->text().isEmpty()) {
-        m_passwordEdit->hideLoadSlider();
-        if (is_server) setFaildTipMessage(tr("Please enter the password"));
-        return false;
-    }
-
-    if (m_lockPasswordWidget->isVisible()) {
-        m_passwordEdit->hideLoadSlider();
-        return false;
-    }
-
-    return true;
-}
-
-//TODO：待机时系统不能冻结进程 ，此时可以输入密码解锁，只能在待机时不允许输入密码来暂时规避
-//TODO：等系统内核优化后能快速冻结锁屏进程后，可以去掉这段代码
-void UserLoginWidget::prepareForSleep(bool isSleep)
-{
-    //接收到待机信号开始锁屏，密码输入框不可用
-    m_passwordEdit->setDisabled(isSleep);
-    //接收到待机唤醒信号需要解锁，密码输入框可用，并设置焦点
-    if (!isSleep && m_passwordEdit->isVisible()) {
-        m_passwordEdit->lineEdit()->setFocus();
-    }
 }
 
 void UserLoginWidget::updateLoginEditLocale(const QLocale &locale)
@@ -281,20 +604,52 @@ void UserLoginWidget::updateLoginEditLocale(const QLocale &locale)
     }
 }
 
+/**
+ * @brief 用户名输入框数据同步
+ *
+ * @param value
+ */
 void UserLoginWidget::onOtherPageAccountChanged(const QVariant &value)
 {
-    int cursorIndex =  m_accountEdit->lineEdit()->cursorPosition();
+    int cursorIndex = m_accountEdit->lineEdit()->cursorPosition();
     m_accountEdit->setText(value.toString());
     m_accountEdit->lineEdit()->setCursorPosition(cursorIndex);
 }
 
-void UserLoginWidget::onOtherPagePasswordChanged(const QVariant &value)
+/**
+ * @brief PIN码输入框数据同步
+ *
+ * @param value
+ */
+void UserLoginWidget::onOtherPagePINChanged(const QVariant &value)
 {
-    int cursorIndex =  m_passwordEdit->lineEdit()->cursorPosition();
-    m_passwordEdit->setText(value.toString());
-    m_passwordEdit->lineEdit()->setCursorPosition(cursorIndex);
+    m_PINAuth->setLineEditInfo(value.toString(), AuthenticationModule::InputText);
 }
 
+/**
+ * @brief ukey 输入框数据同步
+ * @param value
+ */
+void UserLoginWidget::onOtherPageUKeyChanged(const QVariant &value)
+{
+    m_ukeyAuth->setLineEditInfo(value.toString(), AuthenticationModule::InputText);
+}
+
+/**
+ * @brief 密码输入框数据同步
+ *
+ * @param value
+ */
+void UserLoginWidget::onOtherPagePasswordChanged(const QVariant &value)
+{
+    m_passwordAuth->setLineEditInfo(value.toString(), AuthenticationModule::InputText);
+}
+
+/**
+ * @brief 键盘布局同步
+ *
+ * @param value
+ */
 void UserLoginWidget::onOtherPageKBLayoutChanged(const QVariant &value)
 {
     if (value.toBool()) {
@@ -307,10 +662,13 @@ void UserLoginWidget::onOtherPageKBLayoutChanged(const QVariant &value)
         m_kbLayoutBorder->raise();
     }
 
-    refreshKBLayoutWidgetPosition();
+    updateKeyboardListPosition();
 }
 
-void UserLoginWidget::toggleKBLayoutWidget()
+/**
+ * @brief 显示/隐藏键盘布局菜单
+ */
+void UserLoginWidget::showKeyboardList()
 {
     if (m_kbLayoutBorder->isVisible()) {
         m_kbLayoutBorder->hide();
@@ -319,478 +677,376 @@ void UserLoginWidget::toggleKBLayoutWidget()
         // 必须要将它作为主窗口的子控件
         m_kbLayoutBorder->setParent(window());
         m_kbLayoutBorder->setVisible(true);
-        refreshKBLayoutWidgetPosition();
         m_kbLayoutBorder->raise();
+        updateKeyboardListPosition();
     }
     FrameDataBind::Instance()->updateValue("UserLoginKBLayout", m_kbLayoutBorder->isVisible());
     updateClipPath();
 }
 
-void UserLoginWidget::refreshKBLayoutWidgetPosition()
+/**
+ * @brief 更新键盘布局菜单位置
+ */
+void UserLoginWidget::updateKeyboardListPosition()
 {
-    const QPoint &point = mapTo(m_kbLayoutBorder->parentWidget(), QPoint(m_passwordEdit->geometry().x() + (m_passwordEdit->width() / 2),
-                                                                         m_passwordEdit->geometry().bottomLeft().y()));
+    const QPoint &point = mapTo(m_kbLayoutBorder->parentWidget(), QPoint(m_blurEffectWidget->geometry().left() + m_blurEffectWidget->width() / 2,
+                                                                         m_blurEffectWidget->geometry().bottom() - 10));
     m_kbLayoutBorder->move(point.x(), point.y());
     m_kbLayoutBorder->setArrowX(15);
     updateClipPath();
 }
 
-//设置密码输入框不可用
+/**
+ * @brief 输入5次错误密码后，显示提示信息，并更新各个输入框禁用状态
+ *
+ * @param disable
+ * @param lockTime
+ */
 void UserLoginWidget::disablePassword(bool disable, uint lockTime)
 {
     m_isLock = disable;
-    m_passwordEdit->setDisabled(disable);
-    m_passwordEdit->setVisible(!disable);
-    m_lockPasswordWidget->setVisible(disable);
 
-    if (!m_passwordEdit->lineEdit()->text().isEmpty()) {
-        m_passwordEdit->lineEdit()->clear();
-    }
-    m_passwordEdit->lineEdit()->setFocus();
+    //    if (m_accountEdit->isVisible()) {
+    //        m_accountEdit->setDisabled(disable);
+    //    }
+    //    m_passwordAuth->setDisabled(disable);
 
     if (disable) {
         setFaildMessage(tr("Please try again %n minute(s) later", "", int(lockTime)));
-    }
-
-    if ( false == disable && true == m_isServerMode){
-        m_accountEdit->lineEdit()->setEnabled(true);
+    } else {
+        // m_passwordEdit->setFocus();
     }
 }
 
+/**
+ * @brief 更新解锁按钮样式  TODO
+ *
+ * @param type
+ */
 void UserLoginWidget::updateAuthType(SessionBaseModel::AuthType type)
 {
     m_authType = type;
+
     if (m_authType == SessionBaseModel::LightdmType) {
         m_lockButton->setIcon(DStyle::SP_ArrowNext);
+    } else {
+        m_lockButton->setIcon(DStyle::SP_LockElement);
     }
 }
 
-void UserLoginWidget::updateIsLockNoPassword(const bool lockNoPassword)
+/**
+ * @brief 更新模糊背景大小
+ */
+void UserLoginWidget::updateBlurEffectGeometry()
 {
-    m_isLockNoPassword = lockNoPassword;
-}
-
-void UserLoginWidget::receiveUserKBLayoutChanged(const QString &layout)
-{
-    m_passwordEdit->receiveUserKBLayoutChanged(layout);
-    m_passwordEdit->lineEdit()->setFocus();
-    emit requestUserKBLayoutChanged(layout);
-}
-
-void UserLoginWidget::refreshBlurEffectPosition()
-{
-    QRect rect = m_userLayout->geometry();
-    rect.setTop(rect.top() + m_userAvatar->height() / 2 + m_userLayout->margin());
-
+    QRect rect = layout()->geometry();
+    rect.setTop(rect.top() + m_userAvatar->height() / 2);
+    if (m_widgetType == LoginType) {
+        rect.setBottom(rect.bottom() - m_lockButton->height() - layout()->spacing());
+    } else {
+        rect.setBottom(rect.bottom() - 15);
+    }
     m_blurEffectWidget->setGeometry(rect);
 }
 
-//窗体resize事件,更新阴影窗体的位置
-void UserLoginWidget::resizeEvent(QResizeEvent *event)
+/**
+ * @brief 用户改变键盘布局后，触发这里同步更新菜单列表
+ *
+ * @param kbLayoutList
+ */
+void UserLoginWidget::updateKeyboardList(const QStringList &list)
 {
-    refreshBlurEffectPosition();
-    QTimer::singleShot(0, this, &UserLoginWidget::refreshKBLayoutWidgetPosition);
-
-    return QWidget::resizeEvent(event);
-}
-
-void UserLoginWidget::showEvent(QShowEvent *event)
-{
-    updateUI();
-
-    m_lockPasswordWidget->setFixedSize(QSize(m_passwordEdit->width(), m_passwordEdit->height()));
-
-    return QWidget::showEvent(event);
-}
-
-void UserLoginWidget::mousePressEvent(QMouseEvent *event)
-{
-    Q_UNUSED(event);
-    emit clicked();
-}
-
-void UserLoginWidget::paintEvent(QPaintEvent *event)
-{
-    Q_UNUSED(event);
-    if (!m_isSelected)
+    static QStringList tmpList;
+    if (list == tmpList) {
         return;
-    QPainter painter(this);
-    //选中时，在窗体底端居中，绘制92*4尺寸的圆角矩形，样式数据来源于设计图
-    painter.setPen(QColor(255, 255, 255, 76));
-    painter.setBrush(QColor(255, 255, 255, 76));
-    painter.setRenderHint(QPainter::Antialiasing, true);
-    painter.drawRoundedRect(QRect(width() / 2 - 46, rect().bottom() - 4, 92, 4), 2, 2);
-}
-
-//fixed BUG 3518
-void UserLoginWidget::hideEvent(QHideEvent *event)
-{
-    Q_UNUSED(event);
-
-    m_passwordEdit->hideAlertMessage();
-    m_kbLayoutBorder->hide();
-}
-
-bool UserLoginWidget::eventFilter(QObject *watched, QEvent *event)
-{
-    if (event->type() == QEvent::KeyPress) {
-        QKeyEvent *key_event = static_cast<QKeyEvent *>(event);
-        if (key_event->modifiers() & (Qt::ControlModifier | Qt::AltModifier | Qt::MetaModifier)) {
-            if ((key_event->modifiers() & Qt::ControlModifier) && key_event->key() == Qt::Key_A) return false;
-            return true;
-        }
     }
-
-    return QObject::eventFilter(watched, event);
-}
-
-//初始化窗体控件
-void UserLoginWidget::initUI()
-{
-    m_userAvatar->setAvatarSize(UserAvatar::AvatarLargeSize);
-    m_userAvatar->setFixedSize(100, 100);
-    m_userAvatar->setFocusPolicy(Qt::NoFocus);
-
-    m_capslockMonitor->start(QThread::LowestPriority);
-
-    QPalette palette = m_nameLbl->palette();
-    palette.setColor(QPalette::WindowText, Qt::white);
-    m_nameLbl->setPalette(palette);
-    m_nameLbl->setSizePolicy(QSizePolicy::Expanding, QSizePolicy::Fixed);
-    DFontSizeManager::instance()->bind(m_nameLbl, DFontSizeManager::T2);
-    m_nameLbl->setAlignment(Qt::AlignCenter);
-    m_nameLbl->setTextFormat(Qt::TextFormat::PlainText);
-
-    m_passwordEdit->lineEdit()->setContextMenuPolicy(Qt::NoContextMenu);
-    m_passwordEdit->setSizePolicy(QSizePolicy::Expanding, QSizePolicy::Fixed);
-    m_passwordEdit->setFixedHeight(DDESESSIONCC::PASSWDLINEEDIT_HEIGHT);
-    m_passwordEdit->lineEdit()->setAlignment(Qt::AlignCenter);
-    m_passwordEdit->capslockStatusChanged(m_capslockMonitor->isCapslockOn());
-    m_passwordEdit->lineEdit()->setFocusPolicy(Qt::StrongFocus);
-    m_passwordEdit->lineEdit()->installEventFilter(this);
-
-    m_kbLayoutBorder->hide();
-    m_kbLayoutBorder->setBackgroundColor(QColor(102, 102, 102));    //255*0.2
-    m_kbLayoutBorder->setBorderColor(QColor(0, 0, 0, 0));
-    m_kbLayoutBorder->setBorderWidth(0);
-    m_kbLayoutBorder->setMargin(0);
-    m_kbLayoutBorder->setContent(m_kbLayoutWidget);
-    m_kbLayoutBorder->setFixedWidth(DDESESSIONCC::PASSWDLINEEIDT_WIDTH);
-    m_kbLayoutWidget->setFixedWidth(DDESESSIONCC::PASSWDLINEEIDT_WIDTH);
-
-    m_kbLayoutClip=new Dtk::Widget::DClipEffectWidget(m_kbLayoutBorder);
-    updateClipPath();
-
-    m_lockPasswordWidget->setSizePolicy(QSizePolicy::Expanding, QSizePolicy::Fixed);
-    m_lockPasswordWidget->setLockIconVisible(false);
-    m_accountEdit->setSizePolicy(QSizePolicy::Expanding, QSizePolicy::Fixed);
-    m_accountEdit->setClearButtonEnabled(false);
-    m_accountEdit->setFixedHeight(DDESESSIONCC::PASSWDLINEEDIT_HEIGHT);
-    m_accountEdit->lineEdit()->setAlignment(Qt::AlignCenter);
-    m_passwordEdit->lineEdit()->setFocusPolicy(Qt::StrongFocus);
-    m_accountEdit->lineEdit()->installEventFilter(this);
-
-    m_passwordEdit->setVisible(true);
-
-    m_userLayout = new QVBoxLayout;
-    m_userLayout->setMargin(WidgetsSpacing);
-    m_userLayout->setSpacing(WidgetsSpacing);
-
-    m_userLayout->addWidget(m_userAvatar, 0, Qt::AlignHCenter);
-
-    m_nameLayout = new QHBoxLayout;
-    m_nameLayout->setMargin(0);
-    m_nameLayout->setSpacing(5);
-    //在用户名前，插入一个图标(m_loginLabel)用来表示多用户切换时已登录用户的标记
-    m_loginLabel = new QLabel();
-    QPixmap pixmap = DHiDPIHelper::loadNxPixmap(":/icons/dedpin/builtin/select.svg");
-    pixmap.setDevicePixelRatio(devicePixelRatioF());
-    m_loginLabel->setPixmap(pixmap);
-    m_loginLabel->hide();
-    m_nameLayout->addWidget(m_loginLabel);
-    m_nameLayout->addWidget(m_nameLbl);
-    m_nameFrame = new QFrame;
-    m_nameFrame->setLayout(m_nameLayout);
-    m_userLayout->addWidget(m_nameFrame, 0, Qt::AlignHCenter);
-
-    m_userLayout->addWidget(m_accountEdit);
-    m_userLayout->addWidget(m_passwordEdit);
-    m_userLayout->addWidget(m_lockPasswordWidget);
-    m_lockPasswordWidget->hide();
-
-    m_blurEffectWidget->setMaskColor(DBlurEffectWidget::LightColor);
-    // fix BUG 3400 设置模糊窗体的不透明度为30%
-    m_blurEffectWidget->setMaskAlpha(76);
-    m_blurEffectWidget->setBlurRectXRadius(BlurRectRadius);
-    m_blurEffectWidget->setBlurRectYRadius(BlurRectRadius);
-
-    m_lockButton->setFocusPolicy(Qt::StrongFocus);
-
-    m_lockLayout = new QVBoxLayout;
-    m_lockLayout->setMargin(0);
-    m_lockLayout->setSpacing(0);
-    m_lockLayout->addWidget(m_lockButton, 0, Qt::AlignHCenter);
-
-    QVBoxLayout *mainLayout = new QVBoxLayout;
-    mainLayout->setMargin(0);
-    mainLayout->addStretch();
-    mainLayout->addLayout(m_userLayout);
-    mainLayout->addLayout(m_lockLayout);
-    //此处插入18的间隔，是为了在登录和锁屏多用户切换时，绘制选中的样式（一个92*4的圆角矩形，距离阴影下边间隔14像素）
-    mainLayout->addSpacing(18);
-    mainLayout->addStretch();
-
-    setLayout(mainLayout);
-}
-
-//初始化槽函数连接
-void UserLoginWidget::initConnect()
-{
-    connect(m_passwordEdit->lineEdit(), &QLineEdit::textChanged, this, [ = ](const QString & value) {
-        FrameDataBind::Instance()->updateValue("UserLoginPassword", value);
-    });
-    connect(m_accountEdit, &DLineEdit::editingFinished, this, [ = ]{
-       Q_EMIT accountLineEditFinished(m_accountEdit->text());
-    });
-
-    connect(m_passwordEdit, &DPasswordEditEx::returnPressed, this, [ = ] {
-        const QString account = m_accountEdit->text();
-        const QString passwd = m_passwordEdit->text();
-
-        m_accountEdit->lineEdit()->setEnabled(false);
-        emit requestAuthUser(account, passwd);
-    });
-
-    connect(m_lockButton, &QPushButton::clicked, this, [ = ] {
-        const QString account = m_accountEdit->text();
-        const QString password = m_passwordEdit->text();
-
-        if (m_passwordEdit->isVisible())
-        {
-            m_passwordEdit->lineEdit()->setFocus();
-        }
-
-        m_passwordEdit->showLoadSlider();
-        m_accountEdit->lineEdit()->setEnabled(false);
-        emit requestAuthUser(m_accountEdit->text(), password);
-    });
-    connect(m_userAvatar, &UserAvatar::clicked, this, &UserLoginWidget::clicked);
-
-    connect(m_kbLayoutWidget, &KbLayoutWidget::setButtonClicked, this, &UserLoginWidget::receiveUserKBLayoutChanged);
-    //鼠标点击切换键盘布局，就将DArrowRectangle隐藏掉
-    connect(m_kbLayoutWidget, &KbLayoutWidget::setButtonClicked, m_kbLayoutBorder, &DArrowRectangle::hide);
-    //大小写锁定状态改变
-    connect(m_capslockMonitor, &KeyboardMonitor::capslockStatusChanged, m_passwordEdit, &DPasswordEditEx::capslockStatusChanged);
-    connect(m_passwordEdit, &DPasswordEditEx::toggleKBLayoutWidget, this, &UserLoginWidget::toggleKBLayoutWidget);
-    connect(m_passwordEdit, &DPasswordEditEx::selectionChanged, this, &UserLoginWidget::hidePasswordEditMessage);
-    //字体大小改变需要更新用户名显示
-    connect(qGuiApp, &QGuiApplication::fontChanged, this, &UserLoginWidget::updateNameLabel);
-}
-
-//设置用户名
-void UserLoginWidget::setName(const QString &name)
-{
-    if (m_showType != IDAndPasswordType) {
-        m_name = name;
-    }
-    updateNameLabel();
-}
-
-//设置用户头像
-void UserLoginWidget::setAvatar(const QString &avatar)
-{
-    m_userAvatar->setIcon(avatar);
-}
-
-//设置用户头像尺寸
-void UserLoginWidget::setUserAvatarSize(const AvatarSize &avatarSize)
-{
-    if (avatarSize == AvatarSmallSize) {
-        m_userAvatar->setAvatarSize(m_userAvatar->AvatarSmallSize);
-    } else if (avatarSize == AvatarNormalSize) {
-        m_userAvatar->setAvatarSize(m_userAvatar->AvatarNormalSize);
-    } else {
-        m_userAvatar->setAvatarSize(m_userAvatar->AvatarLargeSize);
-    }
-    m_userAvatar->setFixedSize(avatarSize, avatarSize);
-}
-
-void UserLoginWidget::setWidgetWidth(int width)
-{
-    this->setFixedWidth(width);
-}
-
-void UserLoginWidget::setIsLogin(bool isLogin)
-{
-    m_isLogin = isLogin;
-    m_loginLabel->setVisible(isLogin);
-    updateNameLabel();
-    if (m_isLogin) {
-        m_nameFrame->setContentsMargins(0, 0, Margins, 0);
-    } else {
-        m_nameFrame->setContentsMargins(0, 0, 0, 0);
-    }
-}
-
-bool UserLoginWidget::getIsLogin()
-{
-    return  m_isLogin;
-}
-
-bool UserLoginWidget::getSelected()
-{
-    return  m_isSelected;
-}
-
-void UserLoginWidget::setIsServer(bool isServer)
-{
-    m_isServerUser = isServer;
-}
-
-bool UserLoginWidget::getIsServer()
-{
-    return m_isServerUser;
-}
-
-void UserLoginWidget::setIsServerMode(bool isServer)
-{
-    m_isServerMode = isServer;
-}
-
-bool UserLoginWidget::getIsServerMode()
-{
-    return m_isServerMode;
-}
-
-void UserLoginWidget::updateKBLayout(const QStringList &list)
-{
-    QTimer::singleShot(0, this, [this, list] {
+    tmpList = list;
+    if (m_kbLayoutWidget != nullptr && m_kbLayoutBorder != nullptr) {
         m_kbLayoutWidget->updateButtonList(list);
         m_kbLayoutBorder->setContent(m_kbLayoutWidget);
-        m_passwordEdit->setKBLayoutList(list);
         updateClipPath();
-    });
+    }
+    if (m_passwordAuth != nullptr) {
+        m_passwordAuth->setKeyboardButtonVisible(list.size() > 1 ? true : false);
+    }
 }
 
-void UserLoginWidget::hideKBLayout()
+/**
+ * @brief 更新账户限制信息
+ *
+ * @param limitsInfo
+ */
+void UserLoginWidget::updateLimitsInfo(const QMap<int, User::LimitsInfo> *limitsInfo)
+{
+    AuthenticationModule::LimitsInfo limitsInfoTmpA;
+    User::LimitsInfo limitsInfoTmpU;
+
+    QMap<int, User::LimitsInfo>::const_iterator i = limitsInfo->constBegin();
+    while (i != limitsInfo->end()) {
+        limitsInfoTmpU = i.value();
+        switch (i.key()) {
+        case AuthenticationModule::AuthTypePassword:
+            if (m_passwordAuth != nullptr) {
+                limitsInfoTmpA.locked = limitsInfoTmpU.locked;
+                limitsInfoTmpA.maxTries = limitsInfoTmpU.maxTries;
+                limitsInfoTmpA.numFailures = limitsInfoTmpU.numFailures;
+                limitsInfoTmpA.unlockSecs = limitsInfoTmpU.unlockSecs;
+                limitsInfoTmpA.unlockTime = limitsInfoTmpU.unlockTime;
+                m_passwordAuth->setLimitsInfo(limitsInfoTmpA);
+            }
+            break;
+        case AuthenticationModule::AuthTypeFingerprint:
+            if (m_fingerprintAuth != nullptr) {
+                limitsInfoTmpA.locked = limitsInfoTmpU.locked;
+                limitsInfoTmpA.maxTries = limitsInfoTmpU.maxTries;
+                limitsInfoTmpA.numFailures = limitsInfoTmpU.numFailures;
+                limitsInfoTmpA.unlockSecs = limitsInfoTmpU.unlockSecs;
+                limitsInfoTmpA.unlockTime = limitsInfoTmpU.unlockTime;
+                m_fingerprintAuth->setLimitsInfo(limitsInfoTmpA);
+            }
+            break;
+        case AuthenticationModule::AuthTypeFace:
+            if (m_faceAuth != nullptr) {
+                limitsInfoTmpA.locked = limitsInfoTmpU.locked;
+                limitsInfoTmpA.maxTries = limitsInfoTmpU.maxTries;
+                limitsInfoTmpA.numFailures = limitsInfoTmpU.numFailures;
+                limitsInfoTmpA.unlockSecs = limitsInfoTmpU.unlockSecs;
+                limitsInfoTmpA.unlockTime = limitsInfoTmpU.unlockTime;
+                m_faceAuth->setLimitsInfo(limitsInfoTmpA);
+            }
+            break;
+        case AuthenticationModule::AuthTypeActiveDirectory:
+            if (m_activeDirectoryAuth != nullptr) {
+                limitsInfoTmpA.locked = limitsInfoTmpU.locked;
+                limitsInfoTmpA.maxTries = limitsInfoTmpU.maxTries;
+                limitsInfoTmpA.numFailures = limitsInfoTmpU.numFailures;
+                limitsInfoTmpA.unlockSecs = limitsInfoTmpU.unlockSecs;
+                limitsInfoTmpA.unlockTime = limitsInfoTmpU.unlockTime;
+                m_activeDirectoryAuth->setLimitsInfo(limitsInfoTmpA);
+            }
+            break;
+        case AuthenticationModule::AuthTypeUkey:
+            if (m_ukeyAuth != nullptr) {
+                limitsInfoTmpA.locked = limitsInfoTmpU.locked;
+                limitsInfoTmpA.maxTries = limitsInfoTmpU.maxTries;
+                limitsInfoTmpA.numFailures = limitsInfoTmpU.numFailures;
+                limitsInfoTmpA.unlockSecs = limitsInfoTmpU.unlockSecs;
+                limitsInfoTmpA.unlockTime = limitsInfoTmpU.unlockTime;
+                m_ukeyAuth->setLimitsInfo(limitsInfoTmpA);
+            }
+            break;
+        case AuthenticationModule::AuthTypeFingerVein:
+            if (m_fingerVeinAuth != nullptr) {
+                limitsInfoTmpA.locked = limitsInfoTmpU.locked;
+                limitsInfoTmpA.maxTries = limitsInfoTmpU.maxTries;
+                limitsInfoTmpA.numFailures = limitsInfoTmpU.numFailures;
+                limitsInfoTmpA.unlockSecs = limitsInfoTmpU.unlockSecs;
+                limitsInfoTmpA.unlockTime = limitsInfoTmpU.unlockTime;
+                m_fingerVeinAuth->setLimitsInfo(limitsInfoTmpA);
+            }
+            break;
+        case AuthenticationModule::AuthTypeIris:
+            if (m_irisAuth != nullptr) {
+                limitsInfoTmpA.locked = limitsInfoTmpU.locked;
+                limitsInfoTmpA.maxTries = limitsInfoTmpU.maxTries;
+                limitsInfoTmpA.numFailures = limitsInfoTmpU.numFailures;
+                limitsInfoTmpA.unlockSecs = limitsInfoTmpU.unlockSecs;
+                limitsInfoTmpA.unlockTime = limitsInfoTmpU.unlockTime;
+                m_irisAuth->setLimitsInfo(limitsInfoTmpA);
+            }
+            break;
+        case AuthenticationModule::AuthTypePIN:
+            if (m_PINAuth != nullptr) {
+                limitsInfoTmpA.locked = limitsInfoTmpU.locked;
+                limitsInfoTmpA.maxTries = limitsInfoTmpU.maxTries;
+                limitsInfoTmpA.numFailures = limitsInfoTmpU.numFailures;
+                limitsInfoTmpA.unlockSecs = limitsInfoTmpU.unlockSecs;
+                limitsInfoTmpA.unlockTime = limitsInfoTmpU.unlockTime;
+                m_PINAuth->setLimitsInfo(limitsInfoTmpA);
+            }
+            break;
+        default:
+            qWarning() << "Error! Authentication type is wrong." << i.key();
+            break;
+        }
+        ++i;
+    }
+}
+
+/**
+ * @brief 设置当前键盘布局
+ *
+ * @param layout
+ */
+void UserLoginWidget::updateKeyboardInfo(const QString &text)
 {
     m_kbLayoutBorder->hide();
+    static QString tmpText;
+    if (text == tmpText) {
+        return;
+    }
+    tmpText = text;
+    m_kbLayoutWidget->setDefault(text);
+    if (m_passwordAuth != nullptr) {
+        m_passwordAuth->setKeyboardButtonInfo(text);
+    }
 }
 
-void UserLoginWidget::setKBLayoutList(QStringList kbLayoutList)
+/**
+ * @brief 设置用户的 uid 用于用户列表排序
+ *
+ * @param uid
+ */
+void UserLoginWidget::setUid(const uint uid)
 {
-    m_KBLayoutList = kbLayoutList;
-    updateKBLayout(m_KBLayoutList);
-}
-
-void UserLoginWidget::setDefaultKBLayout(const QString &layout)
-{
-    m_kbLayoutWidget->setDefault(layout);
-    updateClipPath();
-}
-
-void UserLoginWidget::clearPassWord()
-{
-    m_passwordEdit->lineEdit()->clear();
-}
-
-void UserLoginWidget::setPassWordEditFocus()
-{
-    m_passwordEdit->lineEdit()->setFocus();
-}
-
-void UserLoginWidget::setUid(uint uid)
-{
+    if (uid == m_uid) {
+        return;
+    }
     m_uid = uid;
 }
 
-uint UserLoginWidget::uid()
-{
-    return m_uid;
-}
-
+/**
+ * @brief 设置绘制用户列表选中标识
+ *
+ * @param isSelected
+ */
 void UserLoginWidget::setSelected(bool isSelected)
 {
     m_isSelected = isSelected;
     update();
 }
 
+/**
+ * @brief 设置绘制用户列表选中标识
+ *
+ * @param isSelected
+ */
 void UserLoginWidget::setFastSelected(bool isSelected)
 {
     m_isSelected = isSelected;
     repaint();
 }
 
+/**
+ * @brief 设置键盘布局下边缘的圆角
+ */
 void UserLoginWidget::updateClipPath()
 {
     if (!m_kbLayoutClip)
         return;
-    QRectF rc (0, 0, DDESESSIONCC::PASSWDLINEEIDT_WIDTH, m_kbLayoutBorder->height());
-    qInfo() << "m_kbLayoutBorder->arrowHeight()-->" << rc.height();
+    QRectF rc(0, 0, DDESESSIONCC::PASSWDLINEEIDT_WIDTH, m_kbLayoutBorder->height());
     int iRadius = 20;
     QPainterPath path;
-    path.lineTo (0, 0);
-    path.lineTo (rc.width(), 0);
-    path.lineTo (rc.width(), rc.height() - iRadius);
-    path.arcTo (rc.width() - iRadius, rc.height() - iRadius, iRadius, iRadius, 0, -90);
-    path.lineTo (rc.width() - iRadius, rc.height());
-    path.lineTo (iRadius, rc.height());
-    path.arcTo (0, rc.height() - iRadius, iRadius, iRadius, -90, -90);
-    path.lineTo (0, rc.height() - iRadius);
-    path.lineTo (0, 0);
-    m_kbLayoutClip->setClipPath (path);
+    path.lineTo(0, 0);
+    path.lineTo(rc.width(), 0);
+    path.lineTo(rc.width(), rc.height() - iRadius);
+    path.arcTo(rc.width() - iRadius, rc.height() - iRadius, iRadius, iRadius, 0, -90);
+    path.lineTo(rc.width() - iRadius, rc.height());
+    path.lineTo(iRadius, rc.height());
+    path.arcTo(0, rc.height() - iRadius, iRadius, iRadius, -90, -90);
+    path.lineTo(0, rc.height() - iRadius);
+    path.lineTo(0, 0);
+    m_kbLayoutClip->setClipPath(path);
 }
 
-void UserLoginWidget::hidePasswordEditMessage()
+/**
+ * @brief 检查多因子认证结果
+ *
+ * @param type
+ * @param succeed
+ */
+void UserLoginWidget::checkAuthResult(const int type, const int status)
 {
-    if (m_isAlertMessageShow) {
-        m_passwordEdit->hideAlertMessage();
-        m_isAlertMessageShow = false;
+    static int authType = 0;
+    /* 当返回 -1 时，优先以服务返回的结果为准 */
+    if (type == -1 && status == 0) {
+        emit authFininshed(status);
+        authType = 0;
+        return;
     }
-}
-
-void UserLoginWidget::updateNameLabel()
-{
-    int width = m_nameLbl->fontMetrics().horizontalAdvance(m_name);
-    int labelMaxWidth = this->width() - 3 * m_nameLayout->spacing();
-    if (m_isLogin)
-        labelMaxWidth -= (m_loginLabel->pixmap()->width() + m_nameLbl->height());
-
-    if (width > labelMaxWidth) {
-        QString str = m_nameLbl->fontMetrics().elidedText(m_name, Qt::ElideRight, labelMaxWidth);
-        m_nameLbl->setText(str);
-    }else{
-        m_nameLbl->setText(m_name);
+    if (!(type & m_model->getAuthProperty().AuthType)) {
+        qWarning() << "Error! The type of authentication is wrong!" << type << status;
+        return;
     }
-}
-
-void UserLoginWidget::resetPowerIcon()
-{
-    QPalette lockPalatte;
-    if (m_action == SessionBaseModel::PowerAction::RequireRestart) {
-        m_lockButton->setIcon(QIcon(":/img/bottom_actions/reboot.svg"));
-        lockPalatte.setColor(QPalette::Highlight, shutdownColor);
-    } else if (m_action == SessionBaseModel::PowerAction::RequireShutdown) {
-        m_lockButton->setIcon(QIcon(":/img/bottom_actions/shutdown.svg"));
-        lockPalatte.setColor(QPalette::Highlight, shutdownColor);
-    } else {
-        if (m_authType == SessionBaseModel::LightdmType) {
-            m_lockButton->setIcon(DStyle::SP_ArrowNext);
-            return;
-        } else {
-            m_lockButton->setIcon(DStyle::SP_LockElement);
+    if (m_model->getAuthProperty().MFAFlag) {
+        if (!status) {
+            authType |= type; // 记录认证通过的
+        } else if (authType & type) {
+            authType ^= type; // 删除认证失败的记录
         }
+        if (authType == m_model->getAuthProperty().AuthType) {
+            emit authFininshed(status);
+        }
+    } else {
+        emit authFininshed(status);
     }
-    m_lockButton->setPalette(lockPalatte);
 }
 
+/**
+ * @brief 设置用户名
+ *
+ * @param name
+ */
+void UserLoginWidget::updateName(const QString &name)
+{
+    if (name == m_name || m_nameLabel == nullptr) {
+        return;
+    }
+    m_name = name;
+    updateNameLabel(m_nameLabel->font());
+    if (m_nameLabel->isVisible()) {
+        emit requestCreateAuthController(name);
+    }
+}
+
+/**
+ * @brief 更新账户登录状态
+ *
+ * @param loginState
+ */
+void UserLoginWidget::updateLoginState(const bool loginState)
+{
+    if (loginState == m_loginState) {
+        return;
+    }
+    m_loginState = loginState;
+    m_loginStateLabel->setVisible(loginState);
+    updateNameLabel(m_nameLabel->font());
+}
+
+/**
+ * @brief 更新用户名的字体
+ *
+ * @param font
+ */
+void UserLoginWidget::updateNameLabel(const QFont &font)
+{
+    if (font != m_nameLabel->font()) {
+        m_nameLabel->setFont(font);
+    }
+    int nameWidth = m_nameLabel->fontMetrics().width(m_name);
+    int labelMaxWidth = width() - 10 * 2;
+    if (m_loginStateLabel->isVisible()) {
+        labelMaxWidth -= m_loginStateLabel->width() - m_nameWidget->layout()->spacing();
+    }
+    if (nameWidth > labelMaxWidth) {
+        QString str = m_nameLabel->fontMetrics().elidedText(m_name, Qt::ElideRight, labelMaxWidth);
+        m_nameLabel->setText(str);
+    } else {
+        m_nameLabel->setText(m_name);
+    }
+}
+
+/**
+ * @brief obsolete
+ */
 void UserLoginWidget::unlockSuccessAni()
 {
     m_timerIndex = 0;
     m_lockButton->setIcon(DStyle::SP_LockElement);
 
     disconnect(m_connection);
-    m_connection = connect(m_aniTimer, &QTimer::timeout, [ & ]() {
+    m_connection = connect(m_aniTimer, &QTimer::timeout, [&]() {
         if (m_timerIndex <= 11) {
             m_lockButton->setIcon(QIcon(QString(":/img/unlockTrue/unlock_%1.svg").arg(m_timerIndex)));
         } else {
@@ -805,25 +1061,108 @@ void UserLoginWidget::unlockSuccessAni()
     m_aniTimer->start(15);
 }
 
+/**
+ * @brief obsolete
+ */
 void UserLoginWidget::unlockFailedAni()
 {
-    m_passwordEdit->lineEdit()->clear();
-    m_passwordEdit->hideLoadSlider();
+    //    m_passwordEdit->lineEdit()->clear();
+    //    m_passwordEdit->hideLoadSlider();
 
     m_timerIndex = 0;
     m_lockButton->setIcon(DStyle::SP_LockElement);
 
     disconnect(m_connection);
-    m_connection = connect(m_aniTimer, &QTimer::timeout, [ & ](){
-        if(m_timerIndex <= 15){
+    m_connection = connect(m_aniTimer, &QTimer::timeout, [&]() {
+        if (m_timerIndex <= 15) {
             m_lockButton->setIcon(QIcon(QString(":/img/unlockFalse/unlock_error_%1.svg").arg(m_timerIndex)));
-        }  else {
+        } else {
             m_aniTimer->stop();
-            resetPowerIcon();
         }
 
         m_timerIndex++;
     });
 
     m_aniTimer->start(15);
+}
+
+/**
+ * @brief 用于过滤编辑框的快捷键操作
+ *
+ * @param watched   编辑框对象
+ * @param event     键盘事件
+ * @return true     过滤
+ * @return false    放行
+ */
+bool UserLoginWidget::eventFilter(QObject *watched, QEvent *event)
+{
+    if (event->type() == QEvent::KeyPress) {
+        QKeyEvent *key_event = static_cast<QKeyEvent *>(event);
+        if (key_event->modifiers() & (Qt::ControlModifier | Qt::AltModifier | Qt::MetaModifier)) {
+            if ((key_event->modifiers() & Qt::ControlModifier) && key_event->key() == Qt::Key_A)
+                return false;
+            return true;
+        }
+    }
+
+    return QObject::eventFilter(watched, event);
+}
+
+/**
+ * @brief 键盘事件
+ *
+ * @param event
+ */
+void UserLoginWidget::keyReleaseEvent(QKeyEvent *event)
+{
+    switch (event->key()) {
+    case Qt::Key_Return:
+    case Qt::Key_Enter:
+        if (m_lockButton->isEnabled()) {
+            // emit m_lockButton->clicked();
+        }
+        break;
+    }
+    QWidget::keyReleaseEvent(event);
+}
+
+void UserLoginWidget::focusOutEvent(QFocusEvent *event)
+{
+    m_lockButton->setEnabled(false);
+
+    QWidget::focusOutEvent(event);
+}
+
+//窗体resize事件,更新阴影窗体的位置
+void UserLoginWidget::resizeEvent(QResizeEvent *event)
+{
+    updateBlurEffectGeometry();
+    //    refreshKBLayoutWidgetPosition();
+    QWidget::resizeEvent(event);
+}
+
+void UserLoginWidget::mousePressEvent(QMouseEvent *event)
+{
+    emit clicked();
+
+    QWidget::mousePressEvent(event);
+}
+
+/**
+ * @brief 选中时，在窗体底端居中，绘制92*4尺寸的圆角矩形，样式数据来源于设计图
+ *
+ * @param event
+ */
+void UserLoginWidget::paintEvent(QPaintEvent *event)
+{
+    if (!m_isSelected) {
+        return;
+    }
+    QPainter painter(this);
+    painter.setPen(QColor(255, 255, 255, 76));
+    painter.setBrush(QColor(255, 255, 255, 76));
+    painter.setRenderHint(QPainter::Antialiasing, true);
+    painter.drawRoundedRect(QRect(width() / 2 - 46, rect().bottom() - 4, 92, 4), 2, 2);
+
+    QWidget::paintEvent(event);
 }

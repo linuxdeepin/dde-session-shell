@@ -248,7 +248,7 @@ void SessionWidget::onOtherPageChanged(const QVariant &value)
 {
     const int index = value.toInt();
 
-    qDebug() << index;
+    // qDebug() << index;
 
     if (index == m_currentSessionIndex) return;
 

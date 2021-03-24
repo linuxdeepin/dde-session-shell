@@ -235,6 +235,7 @@ install(FILES ${QM_FILES}
 install(FILES files/lightdm-deepin-greeter.desktop DESTINATION share/xgreeters/)
 install(FILES files/dde-lock.desktop DESTINATION share/applications/)
 install(FILES files/dde-session-shell.conf DESTINATION share/dde-session-shell/)
+install(FILES files/lightdm-deepin-greeter.conf DESTINATION share/deepin-authentication/privileges/)
 
 # services
 file(GLOB SERVICES files/*.service)

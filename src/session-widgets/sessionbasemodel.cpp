@@ -13,7 +13,7 @@ SessionBaseModel::SessionBaseModel(AuthType type, QObject *parent)
     : QObject(parent)
     , m_sessionManagerInter(nullptr)
     , m_hasSwap(false)
-    , m_isShow(false)
+    , m_visible(false)
     , m_isServerModel(false)
     , m_canSleep(false)
     , m_isLockNoPassword(false)
@@ -21,11 +21,21 @@ SessionBaseModel::SessionBaseModel(AuthType type, QObject *parent)
     , m_currentUser(nullptr)
     , m_powerAction(PowerAction::RequireNormal)
     , m_currentModeState(ModeStatus::NoStatus)
+    , m_users(new QMap<QString, std::shared_ptr<User>>())
+    , m_loginedUsers(new QMap<QString, std::shared_ptr<User>>())
 {
     if (m_currentType == LockType || m_currentType == UnknowAuthType) {
         m_sessionManagerInter = new SessionManager(SessionManagerService, SessionManagerPath, QDBusConnection::sessionBus(), this);
         m_sessionManagerInter->setSync(false);
     }
+}
+
+SessionBaseModel::~SessionBaseModel()
+{
+    for (const QString &key : m_users->keys()) {
+        m_users->remove(key);
+    }
+    delete m_users;
 }
 
 std::shared_ptr<User> SessionBaseModel::findUserByUid(const uint uid) const
@@ -36,7 +46,7 @@ std::shared_ptr<User> SessionBaseModel::findUserByUid(const uint uid) const
         }
     }
 
-    qDebug() << "Wrong, you shouldn't be here!";
+    // qDebug() << "Wrong, you shouldn't be here!";
     return std::shared_ptr<User>(nullptr);
 }
 
@@ -50,7 +60,7 @@ std::shared_ptr<User> SessionBaseModel::findUserByName(const QString &name) cons
         }
     }
 
-    qDebug() << "Wrong, you shouldn't be here!";
+    // qDebug() << "Wrong, you shouldn't be here!";
     return std::shared_ptr<User>(nullptr);
 }
 
@@ -70,7 +80,7 @@ void SessionBaseModel::userAdd(std::shared_ptr<User> user)
 {
     // NOTE(zorowk): If there are duplicate uids, delete ADDomainUser first
     auto user_exist = findUserByUid(user->uid());
-    if (user_exist != nullptr && user_exist->metaObject() == &ADDomainUser::staticMetaObject) {
+    if (user_exist != nullptr) {
         userRemoved(user_exist);
     };
 
@@ -181,11 +191,17 @@ void SessionBaseModel::setHasSwap(bool hasSwap) {
     emit onHasSwapChanged(hasSwap);
 }
 
-void SessionBaseModel::setIsShow(bool isShow)
+/**
+ * @brief 设置界面显示状态
+ *
+ * @param visible
+ */
+void SessionBaseModel::setVisible(const bool visible)
 {
-    if (m_isShow == isShow) return;
-
-    m_isShow = isShow;
+    if (m_visible == visible) {
+        return;
+    }
+    m_visible = visible;
 
 #ifndef QT_DEBUG
     if (m_sessionManagerInter && m_currentType == LockType && m_currentModeState != ShutDownMode) {
@@ -199,15 +215,15 @@ void SessionBaseModel::setIsShow(bool isShow)
          * 建议后端修改监听信号或前端修改这块逻辑。
          */
         QTimer::singleShot(200, this, [=] {
-            m_sessionManagerInter->SetLocked(m_isShow);
+            m_sessionManagerInter->SetLocked(m_visible);
         });
     }
 #endif
 
     //根据界面显示还是隐藏设置是否加载虚拟键盘
-    setHasVirtualKB(m_isShow);
+    setHasVirtualKB(m_visible);
 
-    emit visibleChanged(m_isShow);
+    emit visibleChanged(m_visible);
 }
 
 void SessionBaseModel::setCanSleep(bool canSleep)
@@ -246,6 +262,11 @@ void SessionBaseModel::setAbortConfirm(bool abortConfirm)
     emit abortConfirmChanged(abortConfirm);
 }
 
+/**
+ * @brief SessionBaseModel::setLocked
+ * @param lock
+ * 设置锁屏状态，后端会监听此属性，来做真正的锁屏，已经响应的处理
+ */
 void SessionBaseModel::setLocked(bool lock)
 {
     if (m_sessionManagerInter) m_sessionManagerInter->SetLocked(lock);
@@ -276,4 +297,234 @@ void SessionBaseModel::setIsCheckedInhibit(bool checked)
 {
     if (m_isCheckedInhibit == checked) return;
     m_isCheckedInhibit = checked;
+}
+
+/**
+ * @brief 新增用户
+ *
+ * @param path 用户路径或 Uid
+ */
+void SessionBaseModel::addUser(const QString &path)
+{
+    if (m_users->contains(path)) {
+        return;
+    }
+    std::shared_ptr<User> user;
+    if (path.startsWith("/")) {
+        user = std::make_shared<NativeUser>(path);
+    } else {
+        user = std::make_shared<ADDomainUser>(static_cast<uid_t>(path.toInt()));
+    }
+    m_users->insert(path, user);
+    emit userAdded(user);
+}
+
+/**
+ * @brief 删除用户
+ *
+ * @param path 用户路径或 Uid
+ */
+void SessionBaseModel::removeUser(const QString &path)
+{
+    if (!m_users->contains(path)) {
+        return;
+    }
+    m_users->remove(path);
+    emit userRemoved(m_users->value(path));
+}
+
+/**
+ * @brief 更新用户列表。当用户增加或减少时，会将新的用户列表通过信号发过来。
+ *
+ * @param list
+ */
+void SessionBaseModel::updateUserList(const QStringList &list)
+{
+    QStringList listTmp = m_users->keys();
+    std::shared_ptr<User> user;
+    for (const QString &path : list) {
+        if (m_users->contains(path)) {
+            listTmp.removeAll(path);
+        } else {
+            if (path.startsWith("/")) {
+                user = std::make_shared<NativeUser>(path);
+            } else {
+                user = std::make_shared<ADDomainUser>(static_cast<uid_t>(path.toInt()));
+            }
+            m_users->insert(path, user);
+        }
+    }
+    for (const QString &path : listTmp) {
+        m_users->remove(path);
+    }
+    emit userListChanged(m_users->values());
+}
+
+/**
+ * @brief 更新上一个登录用户的 uid
+ *
+ * @param id
+ */
+void SessionBaseModel::updateLastLogoutUser(const int uid)
+{
+    // TODO
+}
+
+/**
+ * @brief 更新已登录用户列表
+ *
+ * @param list
+ */
+void SessionBaseModel::updateLoginedUserList(const QString &list)
+{
+    std::shared_ptr<User> user_ptr;
+    QList<QString> loginedUsersTmp = m_loginedUsers->keys();
+    const QJsonDocument loginedUserListDoc = QJsonDocument::fromJson(list.toUtf8());
+    const QJsonArray loginedUserListArr = loginedUserListDoc.array();
+    for (const QJsonValue &loginedUserStr : loginedUserListArr) {
+        const QJsonObject loginedUserListObj = loginedUserStr.toObject();
+        const int uid = loginedUserListObj["Uid"].toInt();
+        const QString path = QString("/com/deepin/daemon/Accounts/User") + QString::number(uid);
+        if (!m_loginedUsers->contains(QString::number(uid)) && !m_loginedUsers->contains(path)) {
+            if (uid > 10000) {
+                user_ptr = std::make_shared<ADDomainUser>(uid);
+                m_loginedUsers->insert(QString::number(uid), user_ptr);
+            } else {
+                user_ptr = std::make_shared<NativeUser>(path);
+                m_loginedUsers->insert(path, user_ptr);
+            }
+            user_ptr->setisLogind(true);
+        } else if (m_loginedUsers->contains(QString::number(uid))) {
+            loginedUsersTmp.removeAll(QString::number(uid));
+        } else if (m_loginedUsers->contains(path)) {
+            loginedUsersTmp.removeAll(path);
+        }
+    }
+    for (const QString &path : loginedUsersTmp) {
+        m_loginedUsers->remove(path);
+    }
+    /* 更新所有用户的登录状态 */
+    for (const QString &path : m_loginedUsers->keys()) {
+        if (m_users->contains(path)) {
+            m_users->value(path)->setisLogind(true);
+        } else {
+            m_users->value(path)->setisLogind(false);
+        }
+    }
+}
+
+/**
+ * @brief 更新账户限制信息
+ *
+ * @param info
+ */
+void SessionBaseModel::updateLimitedInfo(const QString &info)
+{
+    m_currentUser->updateLimitsInfo(info);
+}
+
+/**
+ * @brief 认证框架类型
+ *
+ * @param state
+ */
+void SessionBaseModel::updateFrameworkState(const int state)
+{
+    if (state == m_authProperty.FrameworkState) {
+        return;
+    }
+    m_authProperty.FrameworkState = state;
+}
+
+/**
+ * @brief 支持的认证类型
+ *
+ * @param flags
+ */
+void SessionBaseModel::updateSupportedMixAuthFlags(const int flags)
+{
+    if (flags == m_authProperty.MixAuthFlags) {
+        return;
+    }
+    m_authProperty.MixAuthFlags = flags;
+}
+
+/**
+ * @brief 支持的加密类型
+ *
+ * @param type
+ */
+void SessionBaseModel::updateSupportedEncryptionType(const QString &type)
+{
+    if (type == m_authProperty.EncryptionType) {
+        return;
+    }
+    m_authProperty.EncryptionType = type;
+}
+
+/**
+ * @brief 模糊多因子信息，供 PAM 使用，暂时用上
+ *
+ * @param fuzzMFA
+ */
+void SessionBaseModel::updateFuzzyMFA(const bool fuzzMFA)
+{
+    if (fuzzMFA == m_authProperty.FuzzyMFA) {
+        return;
+    }
+    m_authProperty.FuzzyMFA = fuzzMFA;
+}
+
+/**
+ * @brief 多因子标志
+ *
+ * @param MFAFlag true: 使用多因子  false: 使用单因子
+ */
+void SessionBaseModel::updateMFAFlag(const bool MFAFlag)
+{
+    if (MFAFlag == m_authProperty.MFAFlag) {
+        return;
+    }
+    m_authProperty.MFAFlag = MFAFlag;
+}
+
+/**
+ * @brief 总的提示语
+ *
+ * @param prompt 提示语
+ */
+void SessionBaseModel::updatePrompt(const QString &prompt)
+{
+    if (prompt == m_authProperty.Prompt) {
+        return;
+    }
+    m_authProperty.Prompt = prompt;
+}
+
+/**
+ * @brief 更新多因子信息
+ *
+ * @param info
+ */
+void SessionBaseModel::updateFactorsInfo(const MFAInfoList &infoList)
+{
+    int factorsInfoAuthType = 0;
+    for (const MFAInfo &info : infoList) {
+        factorsInfoAuthType |= info.AuthType;
+    }
+    m_authProperty.AuthType = factorsInfoAuthType;
+    emit authTypeChanged(factorsInfoAuthType);
+}
+
+/**
+ * @brief 更新认证状态
+ *
+ * @param currentAuthType
+ * @param status
+ * @param result
+ */
+void SessionBaseModel::updateAuthStatus(const int currentAuthType, const int status, const QString &result)
+{
+    qInfo() << "Authentication Service status:" << currentAuthType << status << result;
+    emit authStatusChanged(currentAuthType, status, result);
 }

@@ -24,10 +24,11 @@
 
 #include "sessionbasemodel.h"
 
-#include <darrowrectangle.h>
+#include <DArrowRectangle>
 #include <DBlurEffectWidget>
 #include <DClipEffectWidget>
 #include <DFloatingButton>
+#include <DLineEdit>
 
 using DClipEffectWidget = Dtk::Widget::DClipEffectWidget;
 
@@ -46,128 +47,146 @@ class KbLayoutWidget;
 class KeyboardMonitor;
 class DPasswordEditEx;
 class DLineEditEx;
+class AuthenticationModule;
 
 class UserLoginWidget : public QWidget
 {
     Q_OBJECT
 public:
-    enum WidgetShowType {
-        NoPasswordType,         //无密码登录显示模式
-        NormalType,             //正常显示模式-密码登录
-        IDAndPasswordType,      //ID和密码登录显示模式
-        UserFrameType,          //用户列表显示模式
-        UserFrameLoginType      //用户列表,已登录
+    enum WidgetType {
+        LoginType,   // 登录
+        UserListType // 多用户
     };
+    Q_ENUM(WidgetType)
 
-    enum AvatarSize {
-        AvatarSmallSize = 80,
-        AvatarNormalSize = 90,
-        AvatarLargeSize = 100
-    };
-
-    explicit UserLoginWidget(QWidget *parent = nullptr);
+    explicit UserLoginWidget(const SessionBaseModel *model, const WidgetType widgetType = LoginType, QWidget *parent = nullptr);
     ~UserLoginWidget() override;
-    void resetAllState();
     void disablePassword(bool disable, uint lockTime = 0);
     void setFaildMessage(const QString &message, SessionBaseModel::AuthFaildType type = SessionBaseModel::KEYBOARD);
-    void setFaildTipMessage(const QString &message, SessionBaseModel::AuthFaildType type = SessionBaseModel::KEYBOARD);
-    void setWidgetShowType(WidgetShowType showType);
-    void setName(const QString &name);
-    void setAvatar(const QString &avatar);
-    void setUserAvatarSize(const AvatarSize &avatarSize);
-    void setWidgetWidth(int width);
-    void setIsLogin(bool isLogin);
-    bool getIsLogin();
+    void setFaildTipMessage(const QString &message);
+
     void setSelected(bool isSelected);
-    bool getSelected();
+    inline bool getSelected() const { return m_isSelected; }
     void setFastSelected(bool isSelected);
-    void setIsServer(bool isServer);
-    bool getIsServer();
-    void setIsServerMode(bool isServer);
-    bool getIsServerMode();
-    void updateKBLayout(const QStringList &list);
-    void setDefaultKBLayout(const QString &layout);
-    void hideKBLayout();
-    void setKBLayoutList(QStringList kbLayoutList);
-    void clearPassWord();
-    void setUid(uint uid);
-    uint uid();
-    void setPassWordEditFocus();
+
+    void setUid(const uint uid);
+    inline uint uid() const { return m_uid; }
     void ShutdownPrompt(SessionBaseModel::PowerAction action);
     bool inputInfoCheck(bool is_server = false);
     void prepareForSleep(bool isSleep);//待机信号
     void updateLoginEditLocale(const QLocale &locale);
 
 signals:
+    void requestCreateAuthController(const QString &account);                               // 为每个用户创建一个认证服务
+    void requestDestoryAuthController(const QString &account);                              // 销毁之前创建的认证服务
+    void requestStartAuthentication(const QString &account, const int authType);            // 开启某一种认证
+    void sendTokenToAuth(const QString &account, const int authType, const QString &token); // 将密文发送给认证服务
     void requestAuthUser(const QString &account, const QString &password);
     void clicked();
+    void authFininshed(const int status);
+    /////////////////////////////////////////////////////////////////////////
     void requestUserKBLayoutChanged(const QString &layout);
     void unlockActionFinish();
     void accountLineEditFinished(const QString &accountName);
 
 public slots:
+    void updateWidgetShowType(const int type);
+    void updateAuthResult(const int authType, const int status, const QString &message);
+    void updateBlurEffectGeometry();
+    void updateAvatar(const QString &path);
+    void updateName(const QString &name);
+    void updateLimitsInfo(const QMap<int, User::LimitsInfo> *limitsInfo);
+    void updateLoginState(const bool loginState);
+    void updateKeyboardInfo(const QString &text);
+    void updateKeyboardList(const QStringList &list);
+    /////////////////////////////////////////////////////
     void updateAuthType(SessionBaseModel::AuthType type);
-    void updateIsLockNoPassword(const bool lockNoPassword);
-    void refreshBlurEffectPosition();
-    void hidePasswordEditMessage();
-    void unlockSuccessAni();
-    void unlockFailedAni();
+    void unlockSuccessAni(); // obsolete
+    void unlockFailedAni();  // obsolete
 
 protected:
-    void resizeEvent(QResizeEvent *event) override;
-    void showEvent(QShowEvent *event) override;
-    void mousePressEvent(QMouseEvent *event) override;
-    void paintEvent(QPaintEvent *event) override;
-    void hideEvent(QHideEvent *event) override;
     bool eventFilter(QObject *watched, QEvent *event) override;
+    void resizeEvent(QResizeEvent *event) override;
+    void mousePressEvent(QMouseEvent *event) override;
+    void keyReleaseEvent(QKeyEvent *event) override;
+    void focusOutEvent(QFocusEvent *event) override;
+    void paintEvent(QPaintEvent *event) override;
 
 private:
     void initUI();
-    void initConnect();
-    void updateUI();
+    void initConnections();
+
+    void initPasswdAuth(const int index);
+    void initFingerprintAuth(const int index);
+    void initFaceAuth(const int index);
+    void initActiveDirectoryAuth(const int index);
+    void initUkeyAuth(const int index);
+    void initFingerVeinAuth(const int index);
+    void initIrisAuth(const int index);
+    void initPINAuth(const int index);
+
+    void onOtherPageFocusChanged(const QVariant &value);
     void onOtherPageAccountChanged(const QVariant &value);
+    void onOtherPagePINChanged(const QVariant &value);
+    void onOtherPageUKeyChanged(const QVariant &value);
     void onOtherPagePasswordChanged(const QVariant &value);
     void onOtherPageKBLayoutChanged(const QVariant &value);
-    void toggleKBLayoutWidget();
-    void refreshKBLayoutWidgetPosition();
-    void receiveUserKBLayoutChanged(const QString &layout);
-    void updateNameLabel();
-    void resetPowerIcon();
+
+    void showKeyboardList();
+    void updateKeyboardListPosition();
+
+    void updateNameLabel(const QFont &font);
     void updateClipPath();
 
+    void checkAuthResult(const int type, const int status);
+
 private:
-    DBlurEffectWidget *m_blurEffectWidget;         //阴影窗体
-    UserAvatar *m_userAvatar;                      //用户头像
-    QLabel *m_nameLbl;                             //用户名
-    DPasswordEditEx *m_passwordEdit;               //密码输入框
-    LockPasswordWidget *m_lockPasswordWidget;      //密码锁定后,错误信息提示框
-    SessionBaseModel::AuthType m_authType;         //认证类型
-    DLineEditEx *m_accountEdit;
-    DFloatingButton *m_lockButton;                 //解锁按钮
-    DArrowRectangle *m_kbLayoutBorder;             //键盘布局异性框类
-    DClipEffectWidget* m_kbLayoutClip=nullptr;     //键盘布局裁减类
-    KbLayoutWidget *m_kbLayoutWidget;              //键盘布局窗体
-    WidgetShowType m_showType;                     //窗体显示模式,分为无密码登录模式\正常模式\ID和密码登录模式
-    QVBoxLayout *m_userLayout;                     //用户输入框布局
-    QVBoxLayout *m_lockLayout;                     //解锁按钮布局
-    bool m_isLock;                                 //解锁功能是否被锁定(连续5次密码输入错误锁定)
-    bool m_isLogin;                                //是否登录（UserFrame中使用）
-    bool m_isServerUser;                           //是否为服务器登录账户
-    bool m_isServerMode = false;                   //系统是否为服务器模式
+    const SessionBaseModel *const m_model; // 数据
+    WidgetType m_widgetType;               // 窗体显示模式，正常登录样式和多用户选择列表样式
+
+    DBlurEffectWidget *m_blurEffectWidget; // 模糊背景
+    QVBoxLayout *m_userLoginLayout;        // 登录界面布局
+    UserAvatar *m_userAvatar;              // 用户头像
+    QWidget *m_nameWidget;                 // 用户名控件
+    QLabel *m_nameLabel;                   // 用户名
+    QLabel *m_loginStateLabel;             // 用户登录状态
+    DLineEditEx *m_accountEdit;            // 用户名输入框
+    DFloatingButton *m_lockButton;         // 解锁按钮
+
+    AuthenticationModule *m_passwordAuth;        // 密码
+    AuthenticationModule *m_fingerprintAuth;     // 指纹
+    AuthenticationModule *m_faceAuth;            // 面容
+    AuthenticationModule *m_ukeyAuth;            // UKey
+    AuthenticationModule *m_activeDirectoryAuth; // AD域
+    AuthenticationModule *m_fingerVeinAuth;      // 指静脉
+    AuthenticationModule *m_irisAuth;            // 虹膜
+    AuthenticationModule *m_PINAuth;             // PIN
+
+    ///////////////////////////////////////
+
+    DPasswordEditEx *m_passwordEdit;          // 密码输入框
+    LockPasswordWidget *m_lockPasswordWidget; // 密码锁定后，错误信息提示
+
+    DArrowRectangle *m_kbLayoutBorder; // 键盘布局异性框类
+    KbLayoutWidget *m_kbLayoutWidget;  // 键盘布局窗体
+    DClipEffectWidget *m_kbLayoutClip; // 键盘布局裁减类
+
+    QMap<QString, int> m_registerFunctionIndexs; // 数据同步
+
+    SessionBaseModel::AuthType m_authType; // 认证类型
+
+    bool m_isLock;     // 解锁功能是否被锁定(连续5次密码输入错误锁定)
+    bool m_loginState; // 是否登录（UserFrame中使用）
     bool m_isSelected;
     bool m_isLockNoPassword;
-    QStringList m_KBLayoutList;
-    QLabel *m_loginLabel;
     KeyboardMonitor *m_capslockMonitor;
-    QHBoxLayout *m_nameLayout;
-    QFrame *m_nameFrame;
     uint m_uid;
-    bool m_isAlertMessageShow;                      //判断密码错误提示是否显示
+    bool m_isAlertMessageShow; //判断密码错误提示是否显示
     QString m_name;
-    QTimer *m_aniTimer;                             //切换图标计时器
-    QMetaObject::Connection m_connection;           //定時器connection
+    QTimer *m_aniTimer;                   //切换图标计时器
+    QMetaObject::Connection m_connection; //定時器connection
     int m_timerIndex = 0;
-    int m_action;                                   //重启或关机行为记录
+    int m_action; //重启或关机行为记录
 };
 
 #endif // USERLOGINWIDGET_H

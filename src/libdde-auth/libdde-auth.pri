@@ -1,10 +1,8 @@
 HEADERS += \
     $$PWD/interface/deepinauthinterface.h \
-    $$PWD/authagent.h \
     $$PWD/deepinauthframework.h
 
 SOURCES += \
-    $$PWD/authagent.cpp \
     $$PWD/deepinauthframework.cpp
 
 DBUS_ADAPTORS += $$PWD/dbus/com.deepin.daemon.authority.Agent.xml

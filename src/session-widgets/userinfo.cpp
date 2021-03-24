@@ -74,6 +74,7 @@ User::User(QObject *parent)
     , m_isLogind(false)
     , m_locale(getenv("LANG"))
     , m_lockTimer(new QTimer)
+    , m_limitsInfo(new QMap<int, LimitsInfo>())
 
 {
     m_lockTimer->setInterval(1000 * 60);
@@ -89,6 +90,7 @@ User::User(const User &user)
     , m_userName(user.m_userName)
     , m_locale(user.m_locale)
     , m_lockTimer(user.m_lockTimer)
+    , m_limitsInfo(new QMap<int, LimitsInfo>())
 {
 
 }
@@ -154,6 +156,28 @@ void User::onLockTimeOut()
     }
 
     emit lockChanged(m_lockLimit.isLock);
+}
+
+/**
+ * @brief 更新账户限制信息
+ *
+ * @param info
+ */
+void User::updateLimitsInfo(const QString &info)
+{
+    LimitsInfo limitsInfoTmp;
+    const QJsonDocument limitsInfoDoc = QJsonDocument::fromJson(info.toUtf8());
+    const QJsonArray limitsInfoArr = limitsInfoDoc.array();
+    for (const QJsonValue &limitsInfoStr : limitsInfoArr) {
+        const QJsonObject limitsInfoObj = limitsInfoStr.toObject();
+        limitsInfoTmp.unlockSecs = limitsInfoObj["unlockSecs"].toInt();
+        limitsInfoTmp.maxTries = limitsInfoObj["maxTries"].toInt();
+        limitsInfoTmp.numFailures = limitsInfoObj["numFailures"].toInt();
+        limitsInfoTmp.locked = limitsInfoObj["locked"].toBool();
+        limitsInfoTmp.unlockTime = limitsInfoObj["unlockTime"].toString();
+        m_limitsInfo->insert(limitsInfoObj["flag"].toInt(), limitsInfoTmp);
+    }
+    emit limitsInfoChanged(m_limitsInfo);
 }
 
 void User::updateLockLimit(bool is_lock, uint lock_time, uint rest_second)

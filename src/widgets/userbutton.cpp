@@ -71,7 +71,7 @@ void UserButton::initUI()
     setFocusPolicy(Qt::NoFocus);
 
     m_userAvatar = new UserAvatar;
-    m_userAvatar->setAvatarSize(UserAvatar::AvatarLargeSize);
+    m_userAvatar->setAvatarSize(AvatarLargeSize);
     m_userAvatar->setFixedSize(120, 120);
 
     m_userNameLabel = new QLabel;
@@ -126,15 +126,9 @@ void UserButton::initUI()
     connect(this, &UserButton::opacityChanged, &UserButton::setCustomEffect);
 }
 
-void UserButton::setImageSize(const AvatarSize &avatarsize) {
-    if (avatarsize==AvatarLargerSize) {
-        m_userAvatar->setAvatarSize(m_userAvatar->AvatarLargeSize);
-    } else {
-        m_userAvatar->setAvatarSize(m_userAvatar->AvatarSmallSize);
-    }
-
-    m_avatarsize = avatarsize;
-    update();
+void UserButton::setImageSize(const AvatarSize &avatarsize)
+{
+    m_userAvatar->setAvatarSize(avatarsize);
 }
 
 void UserButton::show()

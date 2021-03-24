@@ -34,6 +34,14 @@ public:
         bool isFinished = false;
     } m_lockLimit;
 
+    struct LimitsInfo {
+        int unlockSecs;     // 本次锁定总解锁时间（秒），不会随着时间推移减少
+        int maxTries;       // 最大重试次数
+        int numFailures;    // 失败次数，一直累加
+        bool locked;        // 账户锁定状态 --- true: 锁定  false: 解锁
+        QString unlockTime; // 解锁时间（本地时间）
+    };
+
     explicit User(QObject *parent);
     User(const User &user);
 
@@ -50,6 +58,8 @@ signals:
     void lockLimitFinished(bool lock);
     void noPasswdLoginChanged(bool no_passw);
     void use24HourFormatChanged(bool use24);
+
+    void limitsInfoChanged(const QMap<int, LimitsInfo> *);
 
 public:
     bool operator==(const User &user) const;
@@ -85,6 +95,9 @@ public:
     virtual QString currentKBLayout() { return QString(); }
     void onLockTimeOut();
 
+    inline QMap<int, LimitsInfo> *limitsInfo() const { return m_limitsInfo; }
+    void updateLimitsInfo(const QString &info);
+
 protected:
     bool m_isLogind;
     bool m_isServer = false;
@@ -96,6 +109,7 @@ protected:
     QString m_locale;
     QString m_path;
     std::shared_ptr<QTimer> m_lockTimer;
+    QMap<int, LimitsInfo> *m_limitsInfo;
 };
 
 class NativeUser : public User

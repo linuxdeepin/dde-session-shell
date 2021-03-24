@@ -143,7 +143,7 @@ int main(int argc, char *argv[])
         lockFrame->setScreen(screen);
         property_group->addObject(lockFrame);
         QObject::connect(lockFrame, &LockFrame::requestSwitchToUser, worker, &LockWorker::switchToUser);
-        QObject::connect(lockFrame, &LockFrame::requestAuthUser, worker, &LockWorker::authUser);
+        // QObject::connect(lockFrame, &LockFrame::requestAuthUser, worker, &LockWorker::authUser);
         QObject::connect(model, &SessionBaseModel::visibleChanged, lockFrame, &LockFrame::setVisible);
         QObject::connect(model, &SessionBaseModel::visibleChanged, lockFrame,[&](bool visible) {
             emit lockService.Visible(visible);
@@ -154,7 +154,12 @@ int main(int argc, char *argv[])
         QObject::connect(lockFrame, &LockFrame::sendKeyValue, [&](QString key) {
              emit lockService.ChangKey(key);
         });
-        lockFrame->setVisible(model->isShow());
+        QObject::connect(lockFrame, &LockFrame::requestCreateAuthentication, worker, &LockWorker::createAuthentication);
+        QObject::connect(lockFrame, &LockFrame::requestDestoryAuthentication, worker, &LockWorker::destoryAuthentication);
+        QObject::connect(lockFrame, &LockFrame::requestStartAuthentication, worker, &LockWorker::startAuthentication);
+        QObject::connect(lockFrame, &LockFrame::requestEndAuthentication, worker, &LockWorker::endAuthentication);
+        QObject::connect(lockFrame, &LockFrame::sendTokenToAuth, worker, &LockWorker::sendTokenToAuth);
+        lockFrame->setVisible(model->visible());
         emit lockService.Visible(true);
         return lockFrame;
     };
@@ -171,6 +176,7 @@ int main(int argc, char *argv[])
         !conn.registerObject(DBUS_SHUTDOWN_PATH, &shutdownAgent) ||
         !app->setSingleInstance(QString("dde-lock%1").arg(getuid()), DApplication::UserScope)) {
         qDebug() << "register dbus failed"<< "maybe lockFront is running..." << conn.lastError();
+
 
         if (!runDaemon) {
             const char *lockFrontInter = "com.deepin.dde.lockFront";

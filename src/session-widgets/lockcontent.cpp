@@ -77,6 +77,9 @@ LockContent::LockContent(SessionBaseModel *const model, QWidget *parent)
     connect(m_userLoginInfo, &UserLoginInfo::unlockActionFinish, this, [&]{
         emit unlockActionFinish();
     });
+    connect(m_userLoginInfo, &UserLoginInfo::requestCreateAuthController, this, &LockContent::requestCreateAuthController);
+    connect(m_userLoginInfo, &UserLoginInfo::requestStartAuthentication, this, &LockContent::requestStartAuthentication);
+    connect(m_userLoginInfo, &UserLoginInfo::sendTokenToAuth, this, &LockContent::sendTokenToAuth);
 
     //刷新背景单独与onStatusChanged信号连接，避免在showEvent事件时调用onStatusChanged而重复刷新背景，减少刷新次数
     connect(model, &SessionBaseModel::onStatusChanged, this, &LockContent::onStatusChanged);
@@ -183,7 +186,7 @@ void LockContent::pushPasswordFrame()
     setCenterContent(m_userLoginInfo->getUserLoginWidget());
 
     // hide keyboardlayout widget
-    m_userLoginInfo->hideKBLayout();
+    // m_userLoginInfo->hideKBLayout();
 }
 
 void LockContent::pushUserFrame()
@@ -344,7 +347,7 @@ void LockContent::toggleVirtualKB()
 
     m_virtualKB->setParent(this);
     m_virtualKB->raise();
-    m_userLoginInfo->getUserLoginWidget()->setPassWordEditFocus();
+    // m_userLoginInfo->getUserLoginWidget()->setPassWordEditFocus();
 
     updateVirtualKBPosition();
     m_virtualKB->setVisible(!m_virtualKB->isVisible());
@@ -407,8 +410,7 @@ void LockContent::tryGrabKeyboard()
                 .arg(5000)
                 .call();
 
-        qApp->quit();
-        return;
+        return qApp->quit();
     }
 
     QTimer::singleShot(100, this, &LockContent::tryGrabKeyboard);

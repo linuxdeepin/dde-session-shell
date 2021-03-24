@@ -85,10 +85,10 @@ TEST_F(UT_SessionBaseModel, init)
     m_sessionBaseModel->setHasSwap(!ishasSwap);
     EXPECT_EQ(m_sessionBaseModel->hasSwap(), !ishasSwap);
 
-    bool isshow = m_sessionBaseModel->isShow();
+    bool isshow = m_sessionBaseModel->visible();
     m_sessionBaseModel->visibleChanged(!isshow);
-    m_sessionBaseModel->setIsShow(!isshow);
-    EXPECT_EQ(m_sessionBaseModel->isShow(), !isshow);
+    m_sessionBaseModel->setVisible(!isshow);
+    EXPECT_EQ(m_sessionBaseModel->visible(), !isshow);
 
     bool sleep = m_sessionBaseModel->canSleep();
     m_sessionBaseModel->canSleepChanged(!sleep);

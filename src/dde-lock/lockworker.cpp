@@ -3,23 +3,20 @@
 #include "sessionbasemodel.h"
 #include "userinfo.h"
 
-#include <unistd.h>
-#include <pwd.h>
-#include <grp.h>
-#include <libintl.h>
-#include <QDebug>
-#include <QApplication>
-#include <QProcess>
-#include <QRegularExpression>
 #include <DSysInfo>
 
-#include <com_deepin_daemon_power.h>
+#include <QApplication>
+#include <QDebug>
+#include <QProcess>
+#include <QRegularExpression>
 
-#define LOCKSERVICE_PATH "/com/deepin/dde/LockService"
-#define LOCKSERVICE_NAME "com.deepin.dde.LockService"
+#include <grp.h>
+#include <libintl.h>
+#include <pwd.h>
+#include <unistd.h>
+
 #define DOMAIN_BASE_UID 10000
 
-using PowerInter = com::deepin::daemon::Power;
 using namespace Auth;
 DCORE_USE_NAMESPACE
 
@@ -27,150 +24,32 @@ LockWorker::LockWorker(SessionBaseModel *const model, QObject *parent)
     : AuthInterface(model, parent)
     , m_authenticating(false)
     , m_isThumbAuth(false)
-    , m_lockInter(new DBusLockService(LOCKSERVICE_NAME, LOCKSERVICE_PATH, QDBusConnection::systemBus(), this))
+    , m_authFramework(new DeepinAuthFramework(this, this))
+    , m_lockInter(new DBusLockService("com.deepin.dde.LockService", "/com/deepin/dde/LockService", QDBusConnection::systemBus(), this))
     , m_hotZoneInter(new DBusHotzone("com.deepin.daemon.Zone", "/com/deepin/daemon/Zone", QDBusConnection::sessionBus(), this))
     , m_sessionManager(new SessionManager("com.deepin.SessionManager", "/com/deepin/SessionManager", QDBusConnection::sessionBus(), this))
     , m_switchosInterface(new HuaWeiSwitchOSInterface("com.huawei", "/com/huawei/switchos", QDBusConnection::sessionBus(), this))
+    , m_accountsInter(new AccountsInter("com.deepin.daemon.Accounts", "/com/deepin/daemon/Accounts", QDBusConnection::systemBus(), this))
+    , m_loginedInter(new LoginedInter("com.deepin.daemon.Accounts", "/com/deepin/daemon/Logined", QDBusConnection::systemBus(), this))
 {
+    /* com.deepin.daemon.Accounts */
+    m_accountsInter->setSync(false);
+    m_model->updateUserList(m_accountsInter->userList());
+    m_model->updateLoginedUserList(m_loginedInter->userList());
+    /* com.deepin.daemon.Authenticate */
+    m_model->updateFrameworkState(m_authFramework->GetFrameworkState());
+    m_model->updateSupportedEncryptionType(m_authFramework->GetSupportedEncrypts());
+    m_model->updateSupportedMixAuthFlags(m_authFramework->GetSupportedMixAuthFlags());
+
     m_currentUserUid = getuid();
-    m_authFramework = new DeepinAuthFramework(this, this);
     m_sessionManager->setSync(false);
 
-    //该信号用来处理初始化切换用户(锁屏+锁屏)或者切换用户(锁屏+登陆)两种种场景的指纹认证
-    connect(m_lockInter, &DBusLockService::UserChanged, this, &LockWorker::onCurrentUserChanged);
+    initConnections();
 
-    connect(model, &SessionBaseModel::onPowerActionChanged, this, [ = ](SessionBaseModel::PowerAction poweraction) {
-        switch (poweraction) {
-        case SessionBaseModel::PowerAction::RequireSuspend:
-            //待机前切换到锁屏时设置状态为锁定
-            m_model->setLocked(true);
-            //待机之前先黑屏
-            m_model->setIsBlackModel(true);
-            //待机时先切换密码输入界面
-            m_model->setCurrentModeState(SessionBaseModel::ModeStatus::PasswordMode);
-            //开始延时调用后端待机，先保证界面切换正常，避免某些机器闪现电源选项界面
-            QTimer::singleShot(0, this, [ = ] {
-                m_sessionManager->RequestSuspend();
-            });
-            break;
-        case SessionBaseModel::PowerAction::RequireHibernate:
-            //休眠前切换到锁屏时设置状态为锁定
-            m_model->setLocked(true);
-            //休眠之前先黑屏
-            m_model->setIsBlackModel(true);
-            //待机时先切换密码输入界面
-            m_model->setCurrentModeState(SessionBaseModel::ModeStatus::PasswordMode);
-            //开始延时调用后端休眠，先保证界面切换正常，避免某些机器闪现电源选项界面
-            QTimer::singleShot(0, this, [ = ] {
-                m_sessionManager->RequestHibernate();
-            });
-            break;
-        case SessionBaseModel::PowerAction::RequireRestart:
-            if (m_model->currentModeState() == SessionBaseModel::ModeStatus::ShutDownMode) {
-                //关机界面直接重启
-                m_sessionManager->RequestReboot();
-            } else {
-                //锁屏电源界面先切换验证界面并开始验证，在验证结束时再重启
-                m_model->setCurrentModeState(SessionBaseModel::ModeStatus::ConfirmPasswordMode);
-                m_authFramework->Authenticate(m_model->currentUser());
-            }
-            return;
-        case SessionBaseModel::PowerAction::RequireShutdown:
-            if (m_model->currentModeState() == SessionBaseModel::ModeStatus::ShutDownMode) {
-                //关机界面直接重启
-               m_sessionManager->RequestShutdown();
-            } else {
-                //锁屏电源界面先切换验证界面并开始验证，在验证结束时再关机
-                m_model->setCurrentModeState(SessionBaseModel::ModeStatus::ConfirmPasswordMode);
-                m_authFramework->Authenticate(m_model->currentUser());
-            }
-            return;
-        case SessionBaseModel::PowerAction::RequireLock:
-            //从关机选项界面锁屏时需要调用SessionManager设置setLocked
-            m_model->setLocked(true);
-            //锁屏切换密码输入界面并开始验证
-            m_model->setCurrentModeState(SessionBaseModel::ModeStatus::PasswordMode);
-            m_authFramework->Authenticate(m_model->currentUser());
-            break;
-        case SessionBaseModel::PowerAction::RequireLogout:
-            //直接注销
-            m_sessionManager->RequestLogout();
-            return;
-        case SessionBaseModel::PowerAction::RequireSwitchSystem:
-            //切换系统
-            m_switchosInterface->setOsFlag(!m_switchosInterface->getOsFlag());
-            QTimer::singleShot(200, this, [ = ] { m_sessionManager->RequestReboot(); });
-            break;
-        case SessionBaseModel::PowerAction::RequireSwitchUser:
-            //切换用户列表
-            m_model->setCurrentModeState(SessionBaseModel::ModeStatus::UserMode);
-            m_authFramework->Authenticate(m_model->currentUser());
-            break;
-        default:
-            break;
-        }
-
-        model->setPowerAction(SessionBaseModel::PowerAction::None);
-    });
-
-    connect(model, &SessionBaseModel::lockLimitFinished, this, [ = ] {
-        auto user = m_model->currentUser();
-        if (user != nullptr && !user->isLock()) {
-            m_password.clear();
-            m_authFramework->Authenticate(user);
-        }
-    });
-
-    connect(model, &SessionBaseModel::visibleChanged, this, [ = ](bool isVisible) {
-        if (model->currentModeState() == SessionBaseModel::ModeStatus::ShutDownMode) return;
-        if (!isVisible || model->currentType() != SessionBaseModel::AuthType::LockType) return;
-
-        std::shared_ptr<User> user_ptr = model->currentUser();
-        if (!user_ptr.get()) return;
-
-        if (user_ptr->type() == User::ADDomain && user_ptr->uid() == 0) return;
-        m_authFramework->Authenticate(user_ptr);
-    });
-
-    connect(m_lockInter, &DBusLockService::Event, this, &LockWorker::lockServiceEvent);
-    connect(model, &SessionBaseModel::onStatusChanged, this, [ = ](SessionBaseModel::ModeStatus status) {
-        if (status == SessionBaseModel::ModeStatus::PowerMode ||
-            status == SessionBaseModel::ModeStatus::ShutDownMode) {
-            checkPowerInfo();
-        }
-    });
-
-    connect(m_sessionManager, &SessionManager::Unlock, this, [ = ] {
-        m_authenticating = false;
-        m_password.clear();
-        emit m_model->authFinished(true);
-    });
-
-    connect(m_login1SessionSelf, &Login1SessionSelf::ActiveChanged, this, [ = ](bool active) {
-        if (!active) {
-            m_canAuthenticate = true;
-        } else if (m_canAuthenticate) {
-            m_canAuthenticate = false;
-            m_authenticating = false;
-            m_authFramework->Authenticate(m_model->currentUser());
-        }
-    });
-
-    //因为部分机器在待机休眠唤醒后无法发出Login1SessionSelf::ActiveChange信号，从而无法请求验证密码，增加此信号连接重新请求验证
-    connect(m_login1Inter, &DBusLogin1Manager::PrepareForSleep, this, [ = ](bool sleep) {
-        if (sleep) {
-            m_canAuthenticate = true;
-        } else if (m_canAuthenticate) {
-            m_canAuthenticate = false;
-            m_authenticating = false;
-            m_authFramework->Authenticate(m_model->currentUser());
-        }
-    });
-
-    const bool &LockNoPasswordValue { valueByQSettings<bool>("", "lockNoPassword", false) };
+    const bool &LockNoPasswordValue = valueByQSettings<bool>("", "lockNoPassword", false);
     m_model->setIsLockNoPassword(LockNoPasswordValue);
 
-    const QString &switchUserButtonValue { valueByQSettings<QString>("Lock", "showSwitchUserButton", "ondemand") };
+    const QString &switchUserButtonValue = valueByQSettings<QString>("Lock", "showSwitchUserButton", "ondemand");
     m_model->setAlwaysShowUserSwitchButton(switchUserButtonValue == "always");
     m_model->setAllowShowUserSwitchButton(switchUserButtonValue == "ondemand");
 
@@ -188,15 +67,134 @@ LockWorker::LockWorker(SessionBaseModel *const model, QObject *parent)
         m_model->userAdd(user);
     }
     onUserAdded(ACCOUNTS_DBUS_PREFIX + QString::number(m_currentUserUid));
+}
 
-    //连接系统待机信号
+LockWorker::~LockWorker()
+{
+}
+
+/**
+ * @brief 初始化信号连接
+ */
+void LockWorker::initConnections()
+{
+    /* com.deepin.daemon.Accounts */
+    connect(m_accountsInter, &AccountsInter::UserAdded, m_model, &SessionBaseModel::addUser);
+    connect(m_accountsInter, &AccountsInter::UserDeleted, m_model, &SessionBaseModel::removeUser);
+    connect(m_accountsInter, &AccountsInter::UserListChanged, m_model, &SessionBaseModel::updateUserList);
+    connect(m_loginedInter, &LoginedInter::LastLogoutUserChanged, m_model, &SessionBaseModel::updateLastLogoutUser);
+    connect(m_loginedInter, &LoginedInter::UserListChanged, m_model, &SessionBaseModel::updateLoginedUserList);
+    /* com.deepin.daemon.Authenticate */
+    connect(m_authFramework, &DeepinAuthFramework::FramworkStateChanged, m_model, &SessionBaseModel::updateFrameworkState);
+    connect(m_authFramework, &DeepinAuthFramework::LimitedInfoChanged, m_model, &SessionBaseModel::updateLimitedInfo);
+    connect(m_authFramework, &DeepinAuthFramework::SupportedEncryptsChanged, m_model, &SessionBaseModel::updateSupportedEncryptionType);
+    connect(m_authFramework, &DeepinAuthFramework::SupportedMixAuthFlagsChanged, m_model, &SessionBaseModel::updateSupportedMixAuthFlags);
+    /* com.deepin.daemon.Authenticate.Session */
+    connect(m_authFramework, &DeepinAuthFramework::FuzzyMFAChanged, m_model, &SessionBaseModel::updateFuzzyMFA);
+    connect(m_authFramework, &DeepinAuthFramework::MFAFlagChanged, m_model, &SessionBaseModel::updateMFAFlag);
+    connect(m_authFramework, &DeepinAuthFramework::PromptChanged, m_model, &SessionBaseModel::updatePrompt);
+    connect(m_authFramework, &DeepinAuthFramework::AuthStatusChanged, m_model, &SessionBaseModel::updateAuthStatus);
+    connect(m_authFramework, &DeepinAuthFramework::FactorsInfoChanged, m_model, &SessionBaseModel::updateFactorsInfo);
+    /* com.deepin.dde.lock */
+    connect(m_lockInter, &DBusLockService::UserChanged, this, &LockWorker::onCurrentUserChanged);
+    connect(m_lockInter, &DBusLockService::Event, this, &LockWorker::lockServiceEvent);
+    /* com.deepin.SessionManager */
+    connect(m_sessionManager, &SessionManager::Unlock, this, [=] {
+        m_authenticating = false;
+        m_password.clear();
+        emit m_model->authFinished(true);
+    });
+    /* org.freedesktop.login1.Session */
+    connect(m_login1SessionSelf, &Login1SessionSelf::ActiveChanged, this, [=](bool active) {
+        if (active) {
+            m_authenticating = false;
+            // m_authFramework->AuthenticateByUser(m_model->currentUser());
+        }
+    });
+    /* org.freedesktop.login1.Manager */
     connect(m_login1Inter, &DBusLogin1Manager::PrepareForSleep, m_model, &SessionBaseModel::prepareForSleep);
+    /* model */
+    connect(m_model, &SessionBaseModel::onPowerActionChanged, this, &LockWorker::doPowerAction);
+    connect(m_model, &SessionBaseModel::lockLimitFinished, this, [=] {
+        auto user = m_model->currentUser();
+        if (user != nullptr && !user->isLock()) {
+            m_password.clear();
+            // m_authFramework->AuthenticateByUser(user);
+        }
+    });
+    connect(m_model, &SessionBaseModel::visibleChanged, this, [=](bool visible) {
+        std::shared_ptr<User> user_ptr = m_model->currentUser();
+        if (visible && user_ptr.get() && user_ptr->type() == User::Native) {
+            createAuthentication(user_ptr->name());
+            startAuthentication(user_ptr->name(), m_model->getAuthProperty().AuthType);
+        }
+        if (!visible && user_ptr.get() && user_ptr->type() == User::Native) {
+            destoryAuthentication(user_ptr->name());
+        }
+    });
+    connect(m_model, &SessionBaseModel::onStatusChanged, this, [=](SessionBaseModel::ModeStatus status) {
+        if (status == SessionBaseModel::ModeStatus::PowerMode || status == SessionBaseModel::ModeStatus::ShutDownMode) {
+            checkPowerInfo();
+        }
+    });
+}
+
+void LockWorker::doPowerAction(const SessionBaseModel::PowerAction action)
+{
+    switch (action) {
+    case SessionBaseModel::PowerAction::RequireSuspend:
+        m_model->setIsBlackModel(true);
+        m_model->setCurrentModeState(SessionBaseModel::ModeStatus::PasswordMode);
+        QTimer::singleShot(0, this, [=] {
+            m_sessionManager->RequestSuspend();
+        });
+        break;
+    case SessionBaseModel::PowerAction::RequireHibernate:
+        m_model->setIsBlackModel(true);
+        m_model->setCurrentModeState(SessionBaseModel::ModeStatus::PasswordMode);
+        QTimer::singleShot(0, this, [=] {
+            m_sessionManager->RequestHibernate();
+        });
+        break;
+    case SessionBaseModel::PowerAction::RequireRestart:
+        if (m_model->currentModeState() == SessionBaseModel::ModeStatus::ShutDownMode) {
+            m_sessionManager->RequestReboot();
+        } else {
+            m_model->setCurrentModeState(SessionBaseModel::ModeStatus::ConfirmPasswordMode);
+        }
+        return;
+    case SessionBaseModel::PowerAction::RequireShutdown:
+        if (m_model->currentModeState() == SessionBaseModel::ModeStatus::ShutDownMode) {
+            m_sessionManager->RequestShutdown();
+        } else {
+            m_model->setCurrentModeState(SessionBaseModel::ModeStatus::ConfirmPasswordMode);
+        }
+        return;
+    case SessionBaseModel::PowerAction::RequireLock:
+        m_model->setLocked(true);
+        m_model->setCurrentModeState(SessionBaseModel::ModeStatus::PasswordMode);
+        // m_authFramework->AuthenticateByUser(m_model->currentUser());
+        break;
+    case SessionBaseModel::PowerAction::RequireLogout:
+        m_sessionManager->RequestLogout();
+        return;
+    case SessionBaseModel::PowerAction::RequireSwitchSystem:
+        m_switchosInterface->setOsFlag(!m_switchosInterface->getOsFlag());
+        QTimer::singleShot(200, this, [=] { m_sessionManager->RequestReboot(); });
+        break;
+    case SessionBaseModel::PowerAction::RequireSwitchUser:
+        m_model->setCurrentModeState(SessionBaseModel::ModeStatus::UserMode);
+        // m_authFramework->AuthenticateByUser(m_model->currentUser());
+        break;
+    default:
+        break;
+    }
+
+    m_model->setPowerAction(SessionBaseModel::PowerAction::None);
 }
 
 void LockWorker::switchToUser(std::shared_ptr<User> user)
 {
-    qWarning() << "switch user from" << m_model->currentUser()->name() << " to " << user->name();
-
     // clear old password
     m_password.clear();
     m_authenticating = false;
@@ -205,6 +203,8 @@ void LockWorker::switchToUser(std::shared_ptr<User> user)
     QJsonObject json;
     json["Uid"] = static_cast<int>(user->uid());
     json["Type"] = user->type();
+
+    qInfo() << "switch user from" << m_model->currentUser()->name() << " to " << user->name() << json << user->isLogin();
 
     m_lockInter->SwitchToUser(QString(QJsonDocument(json).toJson(QJsonDocument::Compact))).waitForFinished();
 
@@ -217,27 +217,13 @@ void LockWorker::switchToUser(std::shared_ptr<User> user)
 
 void LockWorker::authUser(const QString &password)
 {
-    if (m_authenticating) return;
-
-    m_authenticating = true;
-
-    // auth interface
-    std::shared_ptr<User> user = m_model->currentUser();
-
-    m_password = password;
-
-    qDebug() << "start authentication of user: " << user->name();
-
-    // 服务器登录输入用户与当前用户不同时给予提示
-    if (m_currentUserUid != user->uid()) {
-        QTimer::singleShot(800, this, [ = ] {
-            onUnlockFinished(false);
-        });
+    QString userPath = m_accountsInter->FindUserByName(m_model->currentUser()->name());
+    if (!userPath.startsWith("/")) {
+        qWarning() << userPath;
+        onDisplayErrorMsg(userPath);
         return;
     }
-    if(!m_authFramework->isAuthenticate())
-        m_authFramework->Authenticate(user);
-
+    m_authFramework->Authenticate(m_model->currentUser()->name());
     m_authFramework->Responsed(password);
 }
 
@@ -246,24 +232,116 @@ void LockWorker::enableZoneDetected(bool disable)
     m_hotZoneInter->EnableZoneDetected(disable);
 }
 
+/**
+ * @brief 显示错误信息
+ *
+ * @param msg
+ */
 void LockWorker::onDisplayErrorMsg(const QString &msg)
 {
     emit m_model->authFaildTipsMessage(msg);
 }
 
+/**
+ * @brief 显示提示文案
+ *
+ * @param msg
+ */
 void LockWorker::onDisplayTextInfo(const QString &msg)
 {
     m_authenticating = false;
     emit m_model->authFaildMessage(msg);
 }
 
+/**
+ * @brief 显示认证结果
+ *
+ * @param msg
+ */
 void LockWorker::onPasswordResult(const QString &msg)
 {
     onUnlockFinished(!msg.isEmpty());
 
-    if(msg.isEmpty()) {
-        m_authFramework->Authenticate(m_model->currentUser());
+    if (msg.isEmpty()) {
+        // m_authFramework->AuthenticateByUser(m_model->currentUser());
     }
+}
+
+/**
+ * @brief 创建认证服务
+ * 有用户时，通过dbus发过来的user信息创建认证服务，类服务器模式下通过用户输入的用户创建认证服务
+ * @param account
+ */
+void LockWorker::createAuthentication(const QString &account)
+{
+    QString userPath = m_accountsInter->FindUserByName(account);
+    if (!userPath.startsWith("/")) {
+        qWarning() << userPath;
+        return;
+    }
+    switch (m_model->getAuthProperty().FrameworkState) {
+    case 0:
+        m_authFramework->CreateAuthController(account, m_authFramework->GetSupportedMixAuthFlags(), 0);
+        m_model->updateLimitedInfo(m_authFramework->GetLimitedInfo(account));
+        m_model->updatePrompt(m_authFramework->GetPrompt(account));
+        m_model->updateFactorsInfo(m_authFramework->GetFactorsInfo(account));
+        break;
+    default:
+        m_authFramework->Authenticate(account);
+        break;
+    }
+}
+
+/**
+ * @brief 退出认证服务
+ *
+ * @param account
+ */
+void LockWorker::destoryAuthentication(const QString &account)
+{
+    m_authFramework->DestoryAuthController(account);
+}
+
+/**
+ * @brief 开启认证服务    -- 作为接口提供给上层，屏蔽底层细节
+ *
+ * @param account   账户
+ * @param authType  认证类型（可传入一种或多种）
+ * @param timeout   设定超时时间（默认 -1）
+ */
+void LockWorker::startAuthentication(const QString &account, const int authType)
+{
+    m_authFramework->StartAuthentication(account, authType, -1);
+}
+
+/**
+ * @brief 将密文发送给认证服务
+ *
+ * @param account   账户
+ * @param authType  认证类型
+ * @param token     密文
+ */
+void LockWorker::sendTokenToAuth(const QString &account, const int authType, const QString &token)
+{
+    switch (m_model->getAuthProperty().FrameworkState) {
+    case 0:
+        m_authFramework->SendTokenToAuth(account, authType, token);
+        break;
+    default:
+        m_authFramework->Responsed(token);
+        break;
+    }
+}
+
+/**
+ * @brief 结束本次认证，下次认证前需要先开启认证服务
+ *
+ * @param account   账户
+ * @param authType  认证类型
+ */
+void LockWorker::endAuthentication(const QString &account, const int authType)
+{
+    m_authFramework->EndAuthenticatioin(account, authType);
 }
 
 void LockWorker::onUserAdded(const QString &user)
@@ -295,7 +373,8 @@ void LockWorker::onUserAdded(const QString &user)
 
 void LockWorker::lockServiceEvent(quint32 eventType, quint32 pid, const QString &username, const QString &message)
 {
-    if (!m_model->currentUser()) return;
+    if (!m_model->currentUser())
+        return;
 
     if (username != m_model->currentUser()->name())
         return;
@@ -354,11 +433,11 @@ void LockWorker::onUnlockFinished(bool unlocked)
     if (m_model->currentModeState() == SessionBaseModel::ModeStatus::UserMode)
         m_model->setCurrentModeState(SessionBaseModel::ModeStatus::PasswordMode);
 
-    if (!unlocked && m_authFramework->GetAuthType() == AuthFlag::Password) {
-        qWarning() << "Authorization password failed!";
-        emit m_model->authFaildTipsMessage(tr("Wrong Password"));
-        return;
-    }
+    //    if (!unlocked && m_authFramework->GetAuthType() == AuthFlag::Password) {
+    //        qWarning() << "Authorization password failed!";
+    //        emit m_model->authFaildTipsMessage(tr("Wrong Password"));
+    //        return;
+    //    }
 
     switch (m_model->powerAction()) {
     case SessionBaseModel::PowerAction::RequireRestart:
@@ -378,21 +457,24 @@ void LockWorker::onUnlockFinished(bool unlocked)
     emit m_model->authFinished(unlocked);
 }
 
+/**
+ * @brief LockWorker::onCurrentUserChanged
+ * 用来处理初始化切换用户(锁屏+锁屏)或者切换用户(锁屏+登陆)两种种场景的指纹认证
+ * @param user
+ */
 void LockWorker::onCurrentUserChanged(const QString &user)
 {
     qWarning() << "LockWorker::onCurrentUserChanged -- change to :" << user;
-    if (m_currentUserUid != user )
+    if (m_currentUserUid != user)
         m_authFramework->cancelAuthenticate();
+
     updateLockLimit(m_model->findUserByName(user));
-    const QJsonObject obj = QJsonDocument::fromJson(user.toUtf8()).object();
-    auto user_cur = static_cast<uint>(obj["Uid"].toInt());
-    if (user_cur == m_currentUserUid) {
-        for (std::shared_ptr<User> user_ptr : m_model->userList()) {
-            if (user_ptr->uid() == m_currentUserUid) {
-                m_authFramework->Authenticate(user_ptr);
-                break;
-            }
-        }
+    std::shared_ptr<User> user_ptr = m_model->currentUser();
+    const QJsonObject userObj = QJsonDocument::fromJson(user.toUtf8()).object();
+    uint uid = static_cast<uint>(userObj["Uid"].toInt());
+    if (uid == user_ptr->uid()) {
+        createAuthentication(user_ptr->name());
+        startAuthentication(user_ptr->name(), m_model->getAuthProperty().AuthType);
     }
     emit m_model->switchUserFinished();
 }

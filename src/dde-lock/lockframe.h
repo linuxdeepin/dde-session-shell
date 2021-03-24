@@ -59,6 +59,12 @@ signals:
     void requestEnableHotzone(bool disable);
     void sendKeyValue(QString keyValue);
 
+    void requestCreateAuthentication(const QString &account);
+    void requestDestoryAuthentication(const QString &account);
+    void requestStartAuthentication(const QString &account, const int authType);
+    void requestEndAuthentication(const QString &account, const int authType);
+    void sendTokenToAuth(const QString &account, const int authType, const QString &token);
+
 public slots:
     void showUserList();
     void showLockScreen();
@@ -76,9 +82,9 @@ private:
     bool handlePoweroffKey();
 
 private:
-    LockContent *m_lockContent;
-    WarningContent *m_warningContent = nullptr;
     SessionBaseModel *m_model;
+    LockContent *m_lockContent;
+    WarningContent *m_warningContent;
     bool m_preparingSleep;
     bool m_prePreparingSleep;
     long m_preparingSleepTime;

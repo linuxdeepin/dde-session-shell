@@ -37,10 +37,7 @@ AuthInterface::AuthInterface(SessionBaseModel *const model, QObject *parent)
     , m_loginedInter(new LoginedInter(ACCOUNT_DBUS_SERVICE, "/com/deepin/daemon/Logined", QDBusConnection::systemBus(), this))
     , m_login1Inter(new DBusLogin1Manager("org.freedesktop.login1", "/org/freedesktop/login1", QDBusConnection::systemBus(), this))
     , m_powerManagerInter(new PowerManagerInter("com.deepin.daemon.PowerManager","/com/deepin/daemon/PowerManager", QDBusConnection::systemBus(), this))
-    , m_authenticateInter(new Authenticate("com.deepin.daemon.Authenticate",
-                                           "/com/deepin/daemon/Authenticate",
-                                           QDBusConnection::systemBus(),
-                                           this))
+    , m_authenticateInter(new Authenticate("com.deepin.daemon.Authenticate", "/com/deepin/daemon/Authenticate", QDBusConnection::systemBus(), this))
     , m_lastLogoutUid(0)
     , m_loginUserList(0)
 {
@@ -109,8 +106,10 @@ void AuthInterface::onUserRemove(const QString &user)
 
 void AuthInterface::initData()
 {
-    m_accountsInter->userList();
-    m_loginedInter->lastLogoutUser();
+    onUserListChanged(m_accountsInter->userList());
+    onLastLogoutUserChanged(m_loginedInter->lastLogoutUser());
+    // m_accountsInter->userList();
+    // m_loginedInter->lastLogoutUser();
 
     checkConfig();
     checkPowerInfo();
@@ -118,8 +117,8 @@ void AuthInterface::initData()
 
 void AuthInterface::initDBus()
 {
-    m_accountsInter->setSync(false);
-    m_loginedInter->setSync(false);
+    // m_accountsInter->setSync(false);
+    // m_loginedInter->setSync(false);
 
     connect(m_accountsInter, &AccountsInter::UserListChanged, this, &AuthInterface::onUserListChanged, Qt::QueuedConnection);
     connect(m_accountsInter, &AccountsInter::UserAdded, this, &AuthInterface::onUserAdded, Qt::QueuedConnection);

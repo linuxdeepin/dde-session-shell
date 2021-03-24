@@ -22,19 +22,82 @@
 #include "dlineeditex.h"
 
 #include <QPainter>
+#include <QVariantAnimation>
+#include <QPropertyAnimation>
 
-DLineEditEx::DLineEditEx(QWidget *parent)
-    : DLineEdit(parent)
+LoadSlider::LoadSlider(QWidget *parent)
+    : QWidget(parent)
+    , m_loadSliderColor(Qt::gray)
 {
 }
 
-//重写QLineEdit paintEvent函数，实现当文本设置居中后，holderText仍然显示的需求
+void LoadSlider::setLoadSliderColor(const QColor &color)
+{
+    m_loadSliderColor = color;
+}
+
+void LoadSlider::paintEvent(QPaintEvent *event)
+{
+    QPainter painter(this);
+    QLinearGradient grad(0, height() / 2, width(), height() / 2);
+    grad.setColorAt(0.0, Qt::transparent);
+    grad.setColorAt(1.0, m_loadSliderColor);
+    painter.fillRect(0, 1, width(), height() - 2, grad);
+
+    QWidget::paintEvent(event);
+}
+
+DLineEditEx::DLineEditEx(QWidget *parent)
+    : DLineEdit(parent)
+    , m_loadSlider(new LoadSlider(this))
+    , m_animation(new QPropertyAnimation(m_loadSlider, "pos", m_loadSlider))
+{
+    initAnimation();
+}
+
+/**
+ * @brief 初始化动画
+ */
+void DLineEditEx::initAnimation()
+{
+    m_loadSlider->setGeometry(0, -40, 40, height());
+    m_loadSlider->setLoadSliderColor(QColor(255, 255, 255, 90));
+    m_animation->setDuration(1000);
+    m_animation->setLoopCount(-1);
+    m_animation->setEasingCurve(QEasingCurve::Linear);
+    m_animation->targetObject();
+}
+
+/**
+ * @brief 显示动画
+ */
+void DLineEditEx::startAnimation()
+{
+    m_loadSlider->show();
+    m_loadSlider->resize(40, height());
+    m_animation->setStartValue(QPoint(0 - 40, 0));
+    m_animation->setEndValue(QPoint(width(), 0));
+    m_animation->start();
+}
+
+/**
+ * @brief 隐藏动画
+ */
+void DLineEditEx::stopAnimation()
+{
+    m_loadSlider->hide();
+    m_animation->stop();
+}
+
+/**
+ * @brief 重写 QLineEdit paintEvent 函数，实现当文本设置居中后，holderText 仍然显示的需求
+ *
+ * @param event
+ */
 void DLineEditEx::paintEvent(QPaintEvent *event)
 {
-    Q_UNUSED(event);
-
     if (lineEdit()->hasFocus() && lineEdit()->alignment() == Qt::AlignCenter
-            && !lineEdit()->placeholderText().isEmpty() && lineEdit()->text().isEmpty()) {
+        && !lineEdit()->placeholderText().isEmpty() && lineEdit()->text().isEmpty()) {
         QPainter pa(this);
         QPalette pal = palette();
         QColor col = pal.text().color();
@@ -45,4 +108,5 @@ void DLineEditEx::paintEvent(QPaintEvent *event)
         option.setAlignment(Qt::AlignCenter);
         pa.drawText(lineEdit()->rect(), lineEdit()->placeholderText(), option);
     }
+    QWidget::paintEvent(event);
 }

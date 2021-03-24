@@ -39,6 +39,8 @@
 LockFrame::LockFrame(SessionBaseModel *const model, QWidget *parent)
     : FullscreenBackground(parent)
     , m_model(model)
+    , m_lockContent(new LockContent(model))
+    , m_warningContent(nullptr)
     , m_preparingSleep(false)
     , m_prePreparingSleep(false)
 {
@@ -52,14 +54,15 @@ LockFrame::LockFrame(SessionBaseModel *const model, QWidget *parent)
         }
     });
 
-    m_lockContent = new LockContent(model);
     m_lockContent->hide();
     setContent(m_lockContent);
 
     connect(m_lockContent, &LockContent::requestSwitchToUser, this, &LockFrame::requestSwitchToUser);
-    connect(m_lockContent, &LockContent::requestAuthUser, this, &LockFrame::requestAuthUser);
     connect(m_lockContent, &LockContent::requestSetLayout, this, &LockFrame::requestSetLayout);
     connect(m_lockContent, &LockContent::requestBackground, this, static_cast<void (LockFrame::*)(const QString &)>(&LockFrame::updateBackground));
+    connect(m_lockContent, &LockContent::requestCreateAuthController, this, &LockFrame::requestCreateAuthentication);
+    connect(m_lockContent, &LockContent::requestStartAuthentication, this, &LockFrame::requestStartAuthentication);
+    connect(m_lockContent, &LockContent::sendTokenToAuth, this, &LockFrame::sendTokenToAuth);
     connect(model, &SessionBaseModel::blackModeChanged, this, &FullscreenBackground::setIsBlackMode);
     connect(model, &SessionBaseModel::showUserList, this, &LockFrame::showUserList);
     connect(model, &SessionBaseModel::showLockScreen, this, &LockFrame::showLockScreen);
@@ -273,7 +276,7 @@ void LockFrame::showEvent(QShowEvent *event)
 {
     emit requestEnableHotzone(false);
 
-    m_model->setIsShow(true);
+    m_model->setVisible(true);
 
     return FullscreenBackground::showEvent(event);
 }
@@ -282,7 +285,7 @@ void LockFrame::hideEvent(QHideEvent *event)
 {
     emit requestEnableHotzone(true);
 
-    m_model->setIsShow(false);
+    m_model->setVisible(false);
 
     return FullscreenBackground::hideEvent(event);
 }

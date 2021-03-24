@@ -26,14 +26,43 @@
 
 DWIDGET_USE_NAMESPACE
 
+class QVariantAnimation;
+class QPropertyAnimation;
+class LoadSlider : public QWidget
+{
+public:
+    LoadSlider(QWidget *parent = nullptr);
+
+public:
+    QColor loadSliderColor() const;
+    void setLoadSliderColor(const QColor &color);
+
+protected:
+    void paintEvent(QPaintEvent *event) Q_DECL_OVERRIDE;
+
+private:
+    QColor m_loadSliderColor;
+};
+
 class DLineEditEx : public DLineEdit
 {
     Q_OBJECT
 public:
     DLineEditEx(QWidget *parent = nullptr);
 
+public slots:
+    void startAnimation();
+    void stopAnimation();
+
 protected:
     void paintEvent(QPaintEvent *event) override;
+
+private:
+    void initAnimation();
+
+private:
+    LoadSlider *m_loadSlider;
+    QPropertyAnimation *m_animation;
 };
 
 #endif // DLINEEDITEX_H

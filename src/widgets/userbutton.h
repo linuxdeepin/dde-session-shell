@@ -50,13 +50,14 @@ class UserButton : public QPushButton
     Q_OBJECT
     Q_PROPERTY(double opacity READ opacity WRITE setOpacity NOTIFY opacityChanged)
 public:
+    enum AvatarSize {
+        AvatarSmallSize = 80,
+        AvatarNormalSize = 90,
+        AvatarLargeSize = 100
+    };
+
     UserButton(std::shared_ptr<User> user, QWidget* parent=0);
     ~UserButton();
-
-    enum AvatarSize {
-        AvatarSmallSize = 90,
-        AvatarLargerSize = 110,
-    };
 
     bool selected() const;
     void setSelected(bool selected);
@@ -98,7 +99,6 @@ private:
     QHBoxLayout *m_nameLayout;
     QVBoxLayout* m_centralLayout;
 
-    AvatarSize m_avatarsize = AvatarLargerSize;
     int m_borderWidth = 0;
 
     double m_opacity;

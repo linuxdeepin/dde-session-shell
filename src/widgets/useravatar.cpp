@@ -32,19 +32,18 @@
 UserAvatar::UserAvatar(QWidget *parent, bool deleteable) :
     QPushButton(parent), m_deleteable(deleteable)
 {
+    setGeometry(0, 0, AvatarLargeSize, AvatarLargeSize);
+
     setCheckable(true);
 
     QVBoxLayout *mainLayout = new QVBoxLayout(this);
-    mainLayout->setMargin(0);
+    mainLayout->setContentsMargins(0, 0, 0, 0);
     mainLayout->setSpacing(0);
-    mainLayout->setAlignment(Qt::AlignCenter);
 
-    m_iconLabel = new QLabel;
+    m_iconLabel = new QLabel(this);
     m_iconLabel->setObjectName("UserAvatar");
-    m_iconLabel->setAlignment(Qt::AlignCenter);
 
-    mainLayout->addWidget(m_iconLabel);
-    setLayout(mainLayout);
+    mainLayout->addWidget(m_iconLabel, 0, Qt::AlignCenter);
 
     initDeleteButton();
     m_borderColor = QColor(255, 255, 255, 255);
@@ -53,39 +52,20 @@ UserAvatar::UserAvatar(QWidget *parent, bool deleteable) :
                                     border: none;");
 }
 
-void UserAvatar::setIcon(const QString &iconPath, const QSize &size)
+void UserAvatar::setIcon(const QString &iconPath)
 {
     QUrl url(iconPath);
-
-    if (url.isLocalFile())
+    if (url.isLocalFile()) {
         m_iconPath = url.path();
-    else
+    } else {
         m_iconPath = iconPath;
-
-    if (size.isEmpty())
-        m_iconLabel->setFixedSize(NORMAL_ICON_SIZE, NORMAL_ICON_SIZE);
-    else
-        m_iconLabel->setFixedSize(size);
-
-    update();
+    }
 }
 
 void UserAvatar::paintEvent(QPaintEvent *)
 {
-    int iconSize = NORMAL_ICON_SIZE;
-    switch (m_avatarSize){
-    case AvatarSmallSize:
-        iconSize = SMALL_ICON_SIZE;
-        break;
-    case AvatarLargeSize:
-        iconSize = LARGE_ICON_SIZE;
-        break;
-    default:
-        break;
-    }
-
     QPainter painter(this);
-    QRect roundedRect((width() -iconSize) / 2.0, (height() - iconSize) / 2.0, iconSize, iconSize);
+    QRect roundedRect((width() - m_avatarSize) / 2, (height() - m_avatarSize) / 2, m_avatarSize, m_avatarSize);
     QPainterPath path;
     path.addRoundedRect(roundedRect, AVATAR_ROUND_RADIUS, AVATAR_ROUND_RADIUS);
 
@@ -175,22 +155,13 @@ void UserAvatar::setDeleteable(bool deleteable)
 }
 
 
-void UserAvatar::setAvatarSize(const AvatarSize &avatarSize)
+void UserAvatar::setAvatarSize(const int size)
 {
-    int tmpSize = NORMAL_ICON_SIZE;
-    switch (avatarSize){
-    case AvatarSmallSize:
-        tmpSize = SMALL_ICON_SIZE;
-        break;
-    case AvatarLargeSize:
-        tmpSize = LARGE_ICON_SIZE;
-        break;
-    default:
-        break;
+    if (size == m_avatarSize) {
+        return;
     }
-    m_iconLabel->setFixedSize(tmpSize, tmpSize);
-
-    m_avatarSize = avatarSize;
+    m_avatarSize = size;
+    setMinimumSize(size, size);
 }
 
 void UserAvatar::setDisabled(bool disable)
