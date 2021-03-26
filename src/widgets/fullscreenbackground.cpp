@@ -48,7 +48,7 @@ FullscreenBackground::FullscreenBackground(QWidget *parent)
     : QWidget(parent)
     , m_fadeOutAni(new QVariantAnimation(this))
     , m_imageEffectInter(new ImageEffectInter("com.deepin.daemon.ImageEffect", "/com/deepin/daemon/ImageEffect", QDBusConnection::systemBus(), this))
-    , m_originalCursor(this->cursor())
+    , m_originalCursor(cursor())
 {
 #ifndef QT_DEBUG
     setWindowFlags(Qt::WindowStaysOnTopHint | Qt::X11BypassWindowManagerHint);
@@ -173,7 +173,7 @@ void FullscreenBackground::setContentVisible(bool contentVisible)
 
     m_content->setVisible(contentVisible && !m_isBlackMode);
 
-    emit contentVisibleChanged(contentVisible);
+    emit contentVisibleChanged(contentVisible && !m_isBlackMode);
 }
 
 void FullscreenBackground::setContent(QWidget *const w)
@@ -191,20 +191,26 @@ void FullscreenBackground::setIsBlackMode(bool is_black)
 
     if (is_black) {
         //黑屏的同时隐藏鼠标
-        m_originalCursor = this->cursor();
-        QApplication::setOverrideCursor(Qt::BlankCursor);
+        setCursor(Qt::BlankCursor);
     } else  {
         //唤醒后显示鼠标
-        QApplication::setOverrideCursor(m_originalCursor);
+        setCursor(m_originalCursor);
     }
 
     //黑屏鼠标在多屏间移动时不显示界面
     m_enableEnterEvent = !is_black;
-
     m_isBlackMode = is_black;
-    FrameDataBind::Instance()->updateValue("PrimaryShowFinished", !is_black);
-    m_content->setVisible(!is_black);
-    emit contentVisibleChanged(!is_black);
+
+    if (m_isBlackMode) {
+        //记录待机黑屏前的显示状态
+        m_blackModeContentVisible = contentVisible();
+        m_content->setVisible(false);
+        emit contentVisibleChanged(false);
+    } else if (m_blackModeContentVisible) {
+        //若待机黑屏前是显示状态，则唤醒后也显示，否则不显示
+        m_content->setVisible(true);
+        emit contentVisibleChanged(true);
+    }
 
     update();
 }

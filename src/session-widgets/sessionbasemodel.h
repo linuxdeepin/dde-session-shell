@@ -106,6 +106,9 @@ public:
     inline bool isHibernateMode() const {return m_isHibernateMode; }
     void setIsHibernateModel(bool is_Hibernate);
 
+    inline bool isCheckedInhibit() const { return m_isCheckedInhibit; }
+    void setIsCheckedInhibit(bool checked);
+
 signals:
     void onUserAdded(std::shared_ptr<User> user);
     void onUserRemoved(const uint uid);
@@ -163,6 +166,7 @@ private:
     QString m_sessionKey;
     PowerAction m_powerAction;
     ModeStatus m_currentModeState;
+    bool m_isCheckedInhibit = false;
 };
 
 #endif // SESSIONBASEMODEL_H

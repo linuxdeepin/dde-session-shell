@@ -41,20 +41,23 @@ class WarningContent : public SessionBaseWindow
     Q_OBJECT
 
 public:
-    explicit WarningContent(SessionBaseModel *const model, QWidget *parent = nullptr);
+    explicit WarningContent(SessionBaseModel *const model, const SessionBaseModel::PowerAction action, QWidget *parent = nullptr);
     ~WarningContent();
-    void beforeInvokeAction(const SessionBaseModel::PowerAction action);   
+    void beforeInvokeAction();
 
 protected:
     void mouseReleaseEvent(QMouseEvent *event) Q_DECL_OVERRIDE;
     void keyPressEvent(QKeyEvent *event) Q_DECL_OVERRIDE;
     QList<InhibitWarnView::InhibitorData> listInhibitors(const SessionBaseModel::PowerAction action);
+    void doCancelShutdownInhibit();
+    void doAccecpShutdownInhibit();
 
 private:
     SessionBaseModel *m_model;
     DBusLogin1Manager *m_login1Inter;
     WarningView * m_warningView = nullptr;
     QStringList m_inhibitorBlacklists;
+    SessionBaseModel::PowerAction m_powerAction;
 };
 
 class InhibitHint

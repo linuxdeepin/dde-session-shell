@@ -25,10 +25,11 @@
 
 #include "warningcontent.h"
 
-WarningContent::WarningContent(SessionBaseModel * const model, QWidget *parent)
+WarningContent::WarningContent(SessionBaseModel * const model, const SessionBaseModel::PowerAction action, QWidget *parent)
     : SessionBaseWindow(parent)
     , m_model(model)
     , m_login1Inter(new DBusLogin1Manager("org.freedesktop.login1", "/org/freedesktop/login1", QDBusConnection::systemBus(), this))
+    , m_powerAction(action)
 {
     m_inhibitorBlacklists << "NetworkManager" << "ModemManager" << "com.deepin.daemon.Power";
     setTopFrameVisible(false);
@@ -78,7 +79,7 @@ QList<InhibitWarnView::InhibitorData> WarningContent::listInhibitors(const Sessi
                         && !m_inhibitorBlacklists.contains(inhibitor.who)) {
 
                     // 待机时，非block暂不处理，因为目前没有倒计时待机功能
-                    if (inhibitor.mode != "block")
+                    if (type == "sleep" && inhibitor.mode != "block")
                         continue;
 
                     InhibitWarnView::InhibitorData inhibitData;
@@ -131,20 +132,38 @@ QList<InhibitWarnView::InhibitorData> WarningContent::listInhibitors(const Sessi
     return inhibitorList;
 }
 
-void WarningContent::beforeInvokeAction(const SessionBaseModel::PowerAction action)
+void WarningContent::doCancelShutdownInhibit()
+{
+    if (m_model->isCheckedInhibit()) return;
+
+    m_model->setIsCheckedInhibit(true);
+    m_model->setPowerAction(SessionBaseModel::PowerAction::None);
+    emit m_model->cancelShutdownInhibit();
+}
+
+void WarningContent::doAccecpShutdownInhibit()
+{
+    if (m_model->isCheckedInhibit()) return;
+
+    m_model->setIsCheckedInhibit(true);
+    m_model->setPowerAction(m_powerAction);
+    emit m_model->cancelShutdownInhibit();
+}
+
+void WarningContent::beforeInvokeAction()
 {
     WarningView * old_warningView = m_warningView;
-    const QList<InhibitWarnView::InhibitorData> inhibitors = listInhibitors(action);
+    const QList<InhibitWarnView::InhibitorData> inhibitors = listInhibitors(m_powerAction);
     const QList<std::shared_ptr<User>> &loginUsers = m_model->logindUser();
 
     // change ui
     if (!inhibitors.isEmpty()) {
-        InhibitWarnView *view = new InhibitWarnView(action, this);
+        InhibitWarnView *view = new InhibitWarnView(m_powerAction, this);
         view->setFocusPolicy(Qt::StrongFocus);
         setFocusPolicy(Qt::NoFocus);
         view->setInhibitorList(inhibitors);
 
-        switch (action) {
+        switch (m_powerAction) {
         case SessionBaseModel::PowerAction::RequireShutdown:
             view->setInhibitConfirmMessage(tr("The programs are preventing the computer from shutting down, and forcing shut down may cause data loss.") + "\n" +
                                            tr("To close the program, click Cancel, and then close the program."));
@@ -178,19 +197,19 @@ void WarningContent::beforeInvokeAction(const SessionBaseModel::PowerAction acti
             }
         }
 
-        if (action == SessionBaseModel::PowerAction::RequireShutdown) {
+        if (m_powerAction == SessionBaseModel::PowerAction::RequireShutdown) {
             view->setAcceptReason(tr("Shut down"));
             view->setAcceptVisible(isAccept);
-        } else if (action == SessionBaseModel::PowerAction::RequireRestart || action == SessionBaseModel::PowerAction::RequireSwitchSystem) {
+        } else if (m_powerAction == SessionBaseModel::PowerAction::RequireRestart || m_powerAction == SessionBaseModel::PowerAction::RequireSwitchSystem) {
             view->setAcceptReason(tr("Reboot"));
             view->setAcceptVisible(isAccept);
-        } else if (action == SessionBaseModel::PowerAction::RequireSuspend) {
+        } else if (m_powerAction == SessionBaseModel::PowerAction::RequireSuspend) {
             view->setAcceptReason(tr("Suspend"));
             view->setAcceptVisible(isAccept);
-        } else if (action == SessionBaseModel::PowerAction::RequireHibernate) {
+        } else if (m_powerAction == SessionBaseModel::PowerAction::RequireHibernate) {
             view->setAcceptReason(tr("Hibernate"));
             view->setAcceptVisible(isAccept);
-        } else if (action == SessionBaseModel::PowerAction::RequireLogout) {
+        } else if (m_powerAction == SessionBaseModel::PowerAction::RequireLogout) {
             view->setAcceptReason(tr("Log out"));
             view->setAcceptVisible(isAccept);
         }
@@ -204,21 +223,13 @@ void WarningContent::beforeInvokeAction(const SessionBaseModel::PowerAction acti
         }
         old_warningView = m_warningView;
 
-        connect(view, &InhibitWarnView::cancelled, [ this ] {
-            m_model->setPowerAction(SessionBaseModel::PowerAction::None);
-            emit m_model->cancelShutdownInhibit();
-        });
-        connect(view, &InhibitWarnView::actionInvoked, [this, action] {
-            if (m_model->currentModeState() != SessionBaseModel::ModeStatus::ShutDownMode) {
-                emit m_model->cancelShutdownInhibit();
-            }
-            m_model->setPowerAction(action);
-        });
+        connect(view, &InhibitWarnView::cancelled, this, &WarningContent::doCancelShutdownInhibit);
+        connect(view, &InhibitWarnView::actionInvoked, this, &WarningContent::doAccecpShutdownInhibit);
 
         return;
     }
 
-    if (loginUsers.length() > 1 && (action == SessionBaseModel::PowerAction::RequireShutdown || action == SessionBaseModel::PowerAction::RequireRestart)) {
+    if (loginUsers.length() > 1 && (m_powerAction == SessionBaseModel::PowerAction::RequireShutdown || m_powerAction == SessionBaseModel::PowerAction::RequireRestart)) {
         QList<std::shared_ptr<User>> tmpList = loginUsers;
 
         for (auto it = tmpList.begin(); it != tmpList.end();) {
@@ -229,13 +240,13 @@ void WarningContent::beforeInvokeAction(const SessionBaseModel::PowerAction acti
             ++it;
         }
 
-        MultiUsersWarningView *view = new MultiUsersWarningView(action, this);
+        MultiUsersWarningView *view = new MultiUsersWarningView(m_powerAction, this);
         view->setFocusPolicy(Qt::StrongFocus);
         setFocusPolicy(Qt::NoFocus);
         view->setUsers(tmpList);
-        if (action == SessionBaseModel::PowerAction::RequireShutdown)
+        if (m_powerAction == SessionBaseModel::PowerAction::RequireShutdown)
             view->setAcceptReason(tr("Shut down"));
-        else if (action == SessionBaseModel::PowerAction::RequireRestart)
+        else if (m_powerAction == SessionBaseModel::PowerAction::RequireRestart)
             view->setAcceptReason(tr("Reboot"));
 
         m_warningView = view;
@@ -247,31 +258,23 @@ void WarningContent::beforeInvokeAction(const SessionBaseModel::PowerAction acti
         }
         old_warningView = m_warningView;
 
-        connect(view, &MultiUsersWarningView::cancelled, [ this ] {
-            m_model->setPowerAction(SessionBaseModel::PowerAction::None);
-            emit m_model->cancelShutdownInhibit();
-        });
-        connect(view, &MultiUsersWarningView::actionInvoked, [this, action] {
-            if (m_model->currentModeState() != SessionBaseModel::ModeStatus::ShutDownMode) {
-                emit m_model->cancelShutdownInhibit();
-            }
-            m_model->setPowerAction(action);
-        });
+        connect(view, &MultiUsersWarningView::cancelled, this, &WarningContent::doCancelShutdownInhibit);
+        connect(view, &MultiUsersWarningView::actionInvoked, this, &WarningContent::doAccecpShutdownInhibit);
 
         return;
     }
 
-    if (action == SessionBaseModel::PowerAction::RequireShutdown || action == SessionBaseModel::PowerAction::RequireRestart || action == SessionBaseModel::PowerAction::RequireLogout) {
-        InhibitWarnView *view = new InhibitWarnView(action, this);
+    if (m_powerAction == SessionBaseModel::PowerAction::RequireShutdown || m_powerAction == SessionBaseModel::PowerAction::RequireRestart || m_powerAction == SessionBaseModel::PowerAction::RequireLogout) {
+        InhibitWarnView *view = new InhibitWarnView(m_powerAction, this);
         view->setFocusPolicy(Qt::StrongFocus);
         setFocusPolicy(Qt::NoFocus);
-        if (action == SessionBaseModel::PowerAction::RequireShutdown) {
+        if (m_powerAction == SessionBaseModel::PowerAction::RequireShutdown) {
             view->setAcceptReason(tr("Shut down"));
             view->setInhibitConfirmMessage(tr("Are you sure you want to shut down?"));
-        } else if (action == SessionBaseModel::PowerAction::RequireRestart) {
+        } else if (m_powerAction == SessionBaseModel::PowerAction::RequireRestart) {
             view->setAcceptReason(tr("Reboot"));
             view->setInhibitConfirmMessage(tr("Are you sure you want to reboot?"));
-        } else if (action == SessionBaseModel::PowerAction::RequireLogout) {
+        } else if (m_powerAction == SessionBaseModel::PowerAction::RequireLogout) {
             view->setAcceptReason(tr("Log out"));
             view->setInhibitConfirmMessage(tr("Are you sure you want to log out?"));
         }
@@ -285,27 +288,18 @@ void WarningContent::beforeInvokeAction(const SessionBaseModel::PowerAction acti
         }
         old_warningView = m_warningView;
 
-        connect(view, &InhibitWarnView::cancelled, [ this ] {
-            m_model->setPowerAction(SessionBaseModel::PowerAction::None);
-            emit m_model->cancelShutdownInhibit();
-        });
-        connect(view, &InhibitWarnView::actionInvoked, [this, action] {
-            if (m_model->currentModeState() != SessionBaseModel::ModeStatus::ShutDownMode) {
-                emit m_model->cancelShutdownInhibit();
-            }
-            m_model->setPowerAction(action);
-        });
+        connect(view, &InhibitWarnView::cancelled, this, &WarningContent::doCancelShutdownInhibit);
+        connect(view, &InhibitWarnView::actionInvoked, this, &WarningContent::doAccecpShutdownInhibit);
 
         return;
     }
 
-    m_model->setPowerAction(action);
+    doAccecpShutdownInhibit();
 }
 
 void WarningContent::mouseReleaseEvent(QMouseEvent *event)
 {
-    m_model->setPowerAction(SessionBaseModel::PowerAction::None);
-    emit m_model->cancelShutdownInhibit();
+    doCancelShutdownInhibit();
     return SessionBaseWindow::mouseReleaseEvent(event);
 }
 
@@ -313,8 +307,7 @@ void WarningContent::keyPressEvent(QKeyEvent *event)
 {
     switch (event->key()) {
     case Qt::Key_Escape:
-        m_model->setPowerAction(SessionBaseModel::PowerAction::None);
-        emit m_model->cancelShutdownInhibit();
+        doCancelShutdownInhibit();
         break;
     }
     QWidget::keyPressEvent(event);

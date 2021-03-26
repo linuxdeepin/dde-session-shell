@@ -220,27 +220,45 @@ void LockFrame::showShutdown()
 
 void LockFrame::shutdownInhibit(const SessionBaseModel::PowerAction action)
 {
-    if (!m_warningContent) {
-        m_warningContent = new WarningContent(m_model);
-    }
+    //如果其他显示屏界面已经检查过是否允许关机，此显示屏上的界面不再显示，避免重复检查并触发信号
+    if (m_model->isCheckedInhibit()) return;
+    //记录多屏状态下当前显示屏是否显示内容
+    bool old_visible = contentVisible();
 
-    m_warningContent->beforeInvokeAction(action);
+    if (!m_warningContent) {
+        m_warningContent = new WarningContent(m_model, action, this);
+    }
     m_warningContent->setFixedSize(size());
     setContent(m_warningContent);
 
-    if (m_lockContent->isVisible()) {
+    //多屏状态下，当前界面显示内容时才显示提示界面
+    if (old_visible) {
+        setContentVisible(true);
         m_lockContent->hide();
-        m_warningContent->show();
-        m_warningContent->setFocus();
     }
+
+    //检查是否允许关机
+    m_warningContent->beforeInvokeAction();
 }
 
 void LockFrame::cancelShutdownInhibit()
 {
+    //允许关机检查结束后切换界面
+    //记录多屏状态下当前显示屏是否显示内容
+    bool old_visible = contentVisible();
+
     setContent(m_lockContent);
-    if (m_warningContent->isVisible()) {
+
+    //隐藏提示界面
+    if (m_warningContent) {
         m_warningContent->hide();
-        m_lockContent->show();
+        delete m_warningContent;
+        m_warningContent = nullptr;
+    }
+
+    //多屏状态下，当前界面显示内容时才显示
+    if (old_visible) {
+        setContentVisible(true);
     }
 }
 

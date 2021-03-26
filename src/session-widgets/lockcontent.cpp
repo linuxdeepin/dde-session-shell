@@ -19,7 +19,7 @@ LockContent::LockContent(SessionBaseModel *const model, QWidget *parent)
     , m_model(model)
     , m_virtualKB(nullptr)
     , m_translator(new QTranslator)
-    , m_userLoginInfo(new UserLoginInfo(model))
+    , m_userLoginInfo(new UserLoginInfo(model, this))
     , m_wmInter(new com::deepin::wm("com.deepin.wm", "/com/deepin/wm", QDBusConnection::sessionBus(), this))
 {
     m_model->setCurrentModeState(SessionBaseModel::ModeStatus::PasswordMode);
