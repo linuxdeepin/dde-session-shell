@@ -18,38 +18,50 @@
  * You should have received a copy of the GNU General Public License
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
-
-#include <com_deepin_daemon_accounts_user.h>
 #include <gtest/gtest.h>
 
-using UserInter = com::deepin::daemon::accounts::User;
+#include "userinfo.h"
 
 class UT_Interface : public testing::Test
 {
 protected:
     void SetUp() override;
     void TearDown() override;
-
-    UserInter *m_userInter;
 };
 
 void UT_Interface::SetUp()
 {
-    m_userInter = new UserInter("com.deepin.daemon.Accounts", "/com/deepin/daemon/Accounts/User1001", QDBusConnection::systemBus(), nullptr);
+
 }
 
 void UT_Interface::TearDown()
 {
-    delete m_userInter;
+
 }
 
 TEST_F(UT_Interface, user)
 {
-    ASSERT_TRUE(m_userInter);
-    EXPECT_FALSE(m_userInter->greeterBackground().isEmpty());
-    EXPECT_FALSE(m_userInter->uid().isEmpty());
-    EXPECT_FALSE(m_userInter->userName().isEmpty());
-    EXPECT_FALSE(m_userInter->homeDir().isEmpty());
-    EXPECT_TRUE(m_userInter->desktopBackgrounds().size() > 0);
-    EXPECT_TRUE(m_userInter->isValid());
+    std::shared_ptr<NativeUser> nativeUser(new NativeUser("/com/deepin/daemon/Accounts/User1001"));
+    ASSERT_TRUE(nativeUser->getUserInter());
+    EXPECT_TRUE(nativeUser->getUserInter()->greeterBackground().isEmpty());
+    EXPECT_TRUE(nativeUser->getUserInter()->uid().isEmpty());
+    EXPECT_TRUE(nativeUser->getUserInter()->userName().isEmpty());
+    EXPECT_TRUE(nativeUser->getUserInter()->homeDir().isEmpty());
+    EXPECT_FALSE(nativeUser->getUserInter()->desktopBackgrounds().size() > 0);
+    EXPECT_TRUE(nativeUser->getUserInter()->isValid());
+    EXPECT_FALSE(nativeUser->getUserInter()->use24HourFormat());
+
+    std::shared_ptr<ADDomainUser> addomainUser(new ADDomainUser(getuid()));
+    QString name = nativeUser->name();
+    nativeUser->getUserInter()->UserNameChanged(name.append("marks"));
+    EXPECT_EQ(nativeUser->displayName(), name);
+    addomainUser->setUserName(name);
+
+    QString displayname = nativeUser->displayName();
+    addomainUser->displayNameChanged(displayname.append("aaaaaa"));
+    EXPECT_EQ(nativeUser->name(), name);
+    addomainUser->setUserDisplayName(displayname);
+
+    uid_t id = getuid();
+    addomainUser->setUid(++id);
 }

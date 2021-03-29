@@ -12,13 +12,11 @@ protected:
     void TearDown() override;
 
     SessionBaseModel *m_sessionBaseModel;
-    std::shared_ptr<NativeUser> m_nativeUser;
 };
 
 void UT_SessionBaseModel::SetUp()
 {
     m_sessionBaseModel = new SessionBaseModel(SessionBaseModel::AuthType::LockType);
-    std::shared_ptr<NativeUser> nativeUser(new NativeUser("/com/deepin/daemon/Accounts/User1001"));
 }
 
 void UT_SessionBaseModel::TearDown()
@@ -26,13 +24,13 @@ void UT_SessionBaseModel::TearDown()
     delete m_sessionBaseModel;
 }
 
-TEST_F(UT_SessionBaseModel, init)
+TEST_F(UT_SessionBaseModel, buttonClicked)
 {
+    std::shared_ptr<NativeUser> nativeUser(new NativeUser("/com/deepin/daemon/Accounts/User1000"));
     ASSERT_TRUE(m_sessionBaseModel);
     EXPECT_EQ(m_sessionBaseModel->currentType(), SessionBaseModel::AuthType::LockType);
-    m_sessionBaseModel->setCurrentUser(m_nativeUser);
-    QSignalSpy signalSpy(m_sessionBaseModel, SIGNAL(currentUserChanged(std::shared_ptr<User>)));
-    EXPECT_EQ(m_sessionBaseModel->currentUser(), m_nativeUser);
+    m_sessionBaseModel->setCurrentUser(nativeUser);
+    EXPECT_EQ(m_sessionBaseModel->currentUser(), nativeUser);
 
     m_sessionBaseModel->onPowerActionChanged(SessionBaseModel::PowerAction::None);
     m_sessionBaseModel->setPowerAction(SessionBaseModel::PowerAction::RequireNormal);

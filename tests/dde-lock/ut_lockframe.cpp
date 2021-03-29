@@ -21,8 +21,8 @@ protected:
 void UT_LockFrame::SetUp()
 {
     m_sessionBaseModel = new SessionBaseModel(SessionBaseModel::AuthType::LockType);
-    m_lockFrame = new LockFrame(m_sessionBaseModel);
     m_lockWorker = new LockWorker(m_sessionBaseModel);
+    m_lockFrame = new LockFrame(m_sessionBaseModel);
 }
 
 void UT_LockFrame::TearDown()
@@ -34,7 +34,7 @@ void UT_LockFrame::TearDown()
 
 TEST_F(UT_LockFrame, init)
 {
-    EXPECT_TRUE(m_lockFrame);
+    EXPECT_TRUE(m_lockFrame); 
     m_lockWorker->onDisplayErrorMsg("aaaa");
     m_lockWorker->onDisplayTextInfo("ssssss");
     m_lockWorker->onPasswordResult("ddddd");
