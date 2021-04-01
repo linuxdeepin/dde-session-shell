@@ -30,19 +30,6 @@ static std::pair<bool, qint64> checkIsPartitionType(const QStringList &list)
     return result;
 }
 
-static qint64 get_power_image_size()
-{
-    qint64 size{ 0 };
-    QFile  file("/sys/power/image_size");
-
-    if (file.open(QIODevice::Text | QIODevice::ReadOnly)) {
-        size = file.readAll().trimmed().toLongLong();
-        file.close();
-    }
-
-    return size;
-}
-
 AuthInterface::AuthInterface(SessionBaseModel *const model, QObject *parent)
     : QObject(parent)
     , m_model(model)
@@ -316,44 +303,6 @@ void AuthInterface::checkPowerInfo()
 
     bool can_hibernate = env.contains(POWER_CAN_HIBERNATE) ? QVariant(env.value(POWER_CAN_HIBERNATE)).toBool()
                                                            : getGSettings("Power","hibernate").toBool() && m_powerManagerInter->CanHibernate();
-    if (can_hibernate) {
-        checkSwap();
-    } else {
-        m_model->setHasSwap(false);
-    }
-}
 
-void AuthInterface::checkSwap()
-{
-    QFile file("/proc/swaps");
-    if (file.open(QIODevice::Text | QIODevice::ReadOnly)) {
-        bool           hasSwap{ false };
-        const QString &body = file.readAll();
-        QTextStream    stream(body.toUtf8());
-        while (!stream.atEnd()) {
-            const std::pair<bool, qint64> result =
-                checkIsPartitionType(stream.readLine().simplified().split(
-                    " ", QString::SplitBehavior::SkipEmptyParts));
-            qint64 image_size{ get_power_image_size() };
-
-            if (result.first) {
-                hasSwap = image_size < result.second;
-            }
-
-            qDebug() << "check using swap partition!";
-            qDebug() << QString("image_size: %1, swap partition size: %2")
-                            .arg(QString::number(image_size))
-                            .arg(QString::number(result.second));
-
-            if (hasSwap) {
-                break;
-            }
-        }
-
-        m_model->setHasSwap(hasSwap);
-        file.close();
-    }
-    else {
-        qWarning() << "open /proc/swaps failed! please check permission!!!";
-    }
+    m_model->setHasSwap(can_hibernate);
 }
