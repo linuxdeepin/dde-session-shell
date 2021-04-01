@@ -2,10 +2,12 @@
 
 #include <QTest>
 #include <QLabel>
+#include <QSignalSpy>
+#include <QPushButton>
 
 #include "logintipswindow.h"
 
-class TstLoginTipsWindow : public testing::Test
+class UT_LoginTipsWindow : public testing::Test
 {
 public:
     void SetUp() override
@@ -21,12 +23,21 @@ public:
     LoginTipsWindow *loginTipsWindow = nullptr;
 };
 
-TEST_F(TstLoginTipsWindow, coverage_main)
+TEST_F(UT_LoginTipsWindow, coverage_main)
 {
     ASSERT_NE(loginTipsWindow, nullptr);
 }
 
-TEST_F(TstLoginTipsWindow, coverage_isValid)
+TEST_F(UT_LoginTipsWindow, coverage_isValid)
 {
     loginTipsWindow->isValid();
+}
+
+TEST_F(UT_LoginTipsWindow, buttonClicked)
+{
+    QPushButton button1;
+    QSignalSpy spy(&button1, SIGNAL(clicked()));
+    QPushButton *button = loginTipsWindow->findChild<QPushButton *>("RequireSureButton");
+    QTest::mouseClick(button, Qt::MouseButton::LeftButton, Qt::KeyboardModifier::NoModifier, QPoint(0, 0));
+
 }

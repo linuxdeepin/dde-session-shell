@@ -79,6 +79,7 @@ void LoginTipsWindow::initUI()
     // 确认按钮
     m_btn = new QPushButton();
     m_btn->setFixedSize(90, 40);
+    m_btn->setObjectName("RequireSureButton");
     m_btn->setText("OK");
 
     vLayout->addStretch();

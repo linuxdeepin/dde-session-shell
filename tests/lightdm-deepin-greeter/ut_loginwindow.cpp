@@ -1,37 +1,54 @@
 #include <gtest/gtest.h>
 
-#include "sessionbasemodel.h"
-#include "logincontent.h"
-#include "greeterworkek.h"
-
+#include <QTest>
+#include <QLabel>
 #include <QSignalSpy>
+#include <QPushButton>
+
+#include "loginwindow.h"
+//#include "logincontent.h"
+#include "sessionbasemodel.h"
 
 class UT_LoginWindow : public testing::Test
 {
-public:
-    void SetUp();
-    void TearDown();
+protected:
+    void SetUp() override;
+    void TearDown() override;
 
-    SessionBaseModel *sessionBaseModel;
-    LoginContent *loginContent;
-    GreeterWorkek *greeterWorker;
+    SessionBaseModel *m_sessionBaseModel;
+    LoginWindow *m_loginwindow;
+  //  LoginContent *m_logincontent;
 };
 
 void UT_LoginWindow::SetUp()
 {
-    sessionBaseModel = new SessionBaseModel(SessionBaseModel::AuthType::LockType);
-    loginContent = new LoginContent(sessionBaseModel);
-    greeterWorker = new GreeterWorkek(sessionBaseModel);
+    m_sessionBaseModel = new SessionBaseModel(SessionBaseModel::AuthType::LightdmType);
+    m_loginwindow = new LoginWindow(m_sessionBaseModel);
+//    m_logincontent = new LoginContent(m_sessionBaseModel);
+
 }
 
 void UT_LoginWindow::TearDown()
 {
-    delete sessionBaseModel;
-    delete loginContent;
-    delete greeterWorker;
+    delete m_sessionBaseModel;
+    delete m_loginwindow;
 }
 
-//TEST_F(UT_LoginWindow, init)
-//{
-//    EXPECT_TRUE(1);
-//}
+TEST_F(UT_LoginWindow, coverage_main)
+{
+    ASSERT_NE(m_loginwindow, nullptr);
+}
+
+TEST_F(UT_LoginWindow, coverage_isValid)
+{
+
+}
+
+TEST_F(UT_LoginWindow, buttonClicked)
+{
+//    QPushButton button1;
+//    QSignalSpy spy(&button1, SIGNAL(clicked()));
+//    QPushButton *button = UT_LoginWindow->findChild<QPushButton *>("RequireSureButton");
+//    QTest::mouseClick(button, Qt::MouseButton::LeftButton, Qt::KeyboardModifier::NoModifier, QPoint(0, 0));
+
+}
