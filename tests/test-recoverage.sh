@@ -9,20 +9,5 @@ mkdir $BUILD_DIR
 cd $BUILD_DIR
 cmake ../
 make -j 16
-
-cd tests/
-
-#lcov -c -i -d ./ -o init.info
-
-./dde-lock/dde-lock-test
-#lcov -c -d ./ -o dde-lock.info
-
-./lightdm-deepin-greeter/lightdm-deepin-greeter-test
-lcov -c -d ./ -o coverage.info
-
-#lcov -a init.info -a dde-lock.info -a lightdm-deepin-greeter.info -o total.info
-lcov -r coverage.info "*/tests/*" "*/usr/include*"  "*.h" "*build/*" "*/dbus/*" "*/xcb/*" -o final.info
-
-rm -rf ../../tests/$REPORT_DIR
-mkdir -p ../../tests/$REPORT_DIR
-genhtml -o ../../tests/$REPORT_DIR final.info
+make dde-lock-check
+make lightdm-deepin-greeter-check
