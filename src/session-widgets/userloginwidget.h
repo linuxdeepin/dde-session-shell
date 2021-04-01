@@ -96,12 +96,14 @@ public:
     void ShutdownPrompt(SessionBaseModel::PowerAction action);
     bool inputInfoCheck(bool is_server = false);
     void prepareForSleep(bool isSleep);//待机信号
+    void updateLoginEditLocale(const QLocale &locale);
 
 signals:
     void requestAuthUser(const QString &account, const QString &password);
     void clicked();
     void requestUserKBLayoutChanged(const QString &layout);
     void unlockActionFinish();
+    void accountLineEditFinished(const QString &accountName);
 
 public slots:
     void updateAuthType(SessionBaseModel::AuthType type);

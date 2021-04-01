@@ -64,6 +64,7 @@ protected:
     void updateWallpaper(const QString &path);
     void refreshBackground(SessionBaseModel::ModeStatus status);
     void refreshLayout(SessionBaseModel::ModeStatus status);
+    void updateUserLoginInfoLocale(const QLocale &locale){};
 
 protected:
     SessionBaseModel *m_model;
@@ -78,6 +79,7 @@ protected:
     MediaWidget *m_mediaWidget = nullptr;
     UserLoginInfo *m_userLoginInfo;
     com::deepin::wm *m_wmInter;
+    bool m_localeFlag = false;
 
     int m_failures = 0;
 };

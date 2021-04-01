@@ -267,6 +267,15 @@ void UserLoginWidget::prepareForSleep(bool isSleep)
     }
 }
 
+void UserLoginWidget::updateLoginEditLocale(const QLocale &locale)
+{
+    QTranslator translator;
+    translator.load("/usr/share/dde-session-shell/translations/dde-session-shell_" + locale.name());
+    qApp->installTranslator(&translator);
+    m_passwordEdit->lineEdit()->setPlaceholderText(tr("Password"));
+    m_accountEdit->lineEdit()->setPlaceholderText(tr("Account"));
+}
+
 void UserLoginWidget::onOtherPageAccountChanged(const QVariant &value)
 {
     int cursorIndex =  m_accountEdit->lineEdit()->cursorPosition();
@@ -535,6 +544,10 @@ void UserLoginWidget::initConnect()
     connect(m_passwordEdit->lineEdit(), &QLineEdit::textChanged, this, [ = ](const QString & value) {
         FrameDataBind::Instance()->updateValue("UserLoginPassword", value);
     });
+    connect(m_accountEdit, &DLineEdit::editingFinished, this, [ = ]{
+       Q_EMIT accountLineEditFinished(m_accountEdit->text());
+    });
+
     connect(m_passwordEdit, &DPasswordEditEx::returnPressed, this, [ = ] {
         const QString account = m_accountEdit->text();
         const QString passwd = m_passwordEdit->text();
@@ -703,7 +716,7 @@ void UserLoginWidget::setFastSelected(bool isSelected)
     repaint();
 }
 
-void UserLoginWidget::updateClipPath() 
+void UserLoginWidget::updateClipPath()
 {
     if (!m_kbLayoutClip)
         return;

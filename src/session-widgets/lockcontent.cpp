@@ -47,6 +47,22 @@ LockContent::LockContent(SessionBaseModel *const model, QWidget *parent)
     }
 
     // init connect
+    connect(m_userLoginInfo, &UserLoginInfo::accountLineEditFinished, this, [ = ](const QString &accountName) {
+        auto user_ptr = m_model->findUserByName(accountName);
+        if (user_ptr != nullptr) {
+            auto locale = user_ptr->locale();
+            m_logoWidget->updateLocale(locale);
+            m_timeWidget->updateLocale(locale);
+            m_userLoginInfo->updateUserLoginLocale(locale);
+            m_localeFlag = true;
+        } else if (m_localeFlag) {
+            QLocale locale;
+            m_logoWidget->updateLocale(locale.name());
+            m_timeWidget->updateLocale(locale.name());
+             m_userLoginInfo->updateUserLoginLocale(locale);
+            m_localeFlag = false;
+        }
+    });
     connect(model, &SessionBaseModel::currentUserChanged, this, &LockContent::onCurrentUserChanged);
     connect(m_controlWidget, &ControlWidget::requestSwitchUser, this, [ = ] {
         if (m_model->currentModeState() == SessionBaseModel::ModeStatus::UserMode) return;

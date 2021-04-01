@@ -71,7 +71,9 @@ void UserLoginInfo::setUser(std::shared_ptr<User> user)
 
 void UserLoginInfo::initConnect()
 {
-    //UserLoginWidget
+    if (m_model->isServerModel()) {
+        connect(m_userLoginWidget, &UserLoginWidget::accountLineEditFinished, this, &UserLoginInfo::accountLineEditFinished);
+    }
     connect(m_userLoginWidget, &UserLoginWidget::requestAuthUser, this, [ = ](const QString & account, const QString & password) {
         if (!m_userLoginWidget->inputInfoCheck(m_model->isServerModel())) return;
 
@@ -183,4 +185,9 @@ void UserLoginInfo::updateLoginContent()
             m_userLoginWidget->setWidgetShowType(UserLoginWidget::NormalType);
         }
     }
+}
+
+void UserLoginInfo::updateUserLoginLocale(const QLocale &locale)
+{
+    m_userLoginWidget->updateLoginEditLocale(locale);
 }
