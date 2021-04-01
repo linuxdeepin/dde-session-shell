@@ -8,8 +8,7 @@ cd $BUILD_DIR
 cmake ../
 make -j 16
 cd tests/
-./dde-lock/dde-lock-test
-./lightdm-deepin-greeter/lightdm-deepin-greeter-test
+./lightdm-deepin-greeter/lightdm-deepin-greeter-test && ./dde-lock/dde-lock-test
 lcov -c -d ./ -o coverage.info
 lcov -r coverage.info "*/tests/*" "*/usr/include*"  "*.h" "*build/*" "*/dbus/*" "*/xcb/*" -o final.info
 rm -rf ../../tests/$REPORT_DIR
