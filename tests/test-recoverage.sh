@@ -12,16 +12,16 @@ make -j 16
 
 cd tests/
 
-lcov -c -i -d ./ -o init.info
+#lcov -c -i -d ./ -o init.info
 
 ./dde-lock/dde-lock-test
-lcov -c -d ./ -o dde-lock.info
+#lcov -c -d ./ -o dde-lock.info
 
 ./lightdm-deepin-greeter/lightdm-deepin-greeter-test
-lcov -c -d ./ -o lightdm-deepin-greeter.info
+lcov -c -d ./ -o coverage.info
 
-lcov -a init.info -a dde-lock.info -a lightdm-deepin-greeter.info -o total.info
-lcov -r total.info "*/tests/*" "*/usr/include*"  "*.h" "*build/*" "*/dbus/*" "*/xcb/*" -o final.info
+#lcov -a init.info -a dde-lock.info -a lightdm-deepin-greeter.info -o total.info
+lcov -r coverage.info "*/tests/*" "*/usr/include*"  "*.h" "*build/*" "*/dbus/*" "*/xcb/*" -o final.info
 
 rm -rf ../../tests/$REPORT_DIR
 mkdir -p ../../tests/$REPORT_DIR
