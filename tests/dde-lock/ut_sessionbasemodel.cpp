@@ -26,7 +26,7 @@ void UT_SessionBaseModel::TearDown()
 
 TEST_F(UT_SessionBaseModel, buttonClicked)
 {
-    std::shared_ptr<NativeUser> nativeUser(new NativeUser("/com/deepin/daemon/Accounts/User1000"));
+    std::shared_ptr<NativeUser> nativeUser(new NativeUser("/com/deepin/daemon/Accounts/User"+QString::number((getuid()))));
     ASSERT_TRUE(m_sessionBaseModel);
     EXPECT_EQ(m_sessionBaseModel->currentType(), SessionBaseModel::AuthType::LockType);
     m_sessionBaseModel->setCurrentUser(nativeUser);

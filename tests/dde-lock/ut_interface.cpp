@@ -41,7 +41,7 @@ void UT_Interface::TearDown()
 
 TEST_F(UT_Interface, user)
 {
-    std::shared_ptr<NativeUser> nativeUser(new NativeUser("/com/deepin/daemon/Accounts/User1001"));
+    std::shared_ptr<NativeUser> nativeUser(new NativeUser("/com/deepin/daemon/Accounts/User"+QString::number((getuid()))));
     ASSERT_TRUE(nativeUser->getUserInter());
     EXPECT_TRUE(nativeUser->getUserInter()->greeterBackground().isEmpty());
     EXPECT_TRUE(nativeUser->getUserInter()->uid().isEmpty());
