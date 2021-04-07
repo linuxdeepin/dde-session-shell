@@ -357,6 +357,10 @@ void LockWorker::onUnlockFinished(bool unlocked)
 
     m_authenticating = false;
 
+    //To Do: 最好的方案是修改同步后端认证信息的代码设计
+    if (m_model->currentModeState() == SessionBaseModel::ModeStatus::UserMode)
+        m_model->setCurrentModeState(SessionBaseModel::ModeStatus::PasswordMode);
+
     if (!unlocked && m_authFramework->GetAuthType() == AuthFlag::Password) {
         qWarning() << "Authorization password failed!";
         emit m_model->authFaildTipsMessage(tr("Wrong Password"));
