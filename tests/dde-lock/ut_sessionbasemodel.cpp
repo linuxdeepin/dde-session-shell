@@ -24,7 +24,7 @@ void UT_SessionBaseModel::TearDown()
     delete m_sessionBaseModel;
 }
 
-TEST_F(UT_SessionBaseModel, buttonClicked)
+TEST_F(UT_SessionBaseModel, init)
 {
     std::shared_ptr<NativeUser> nativeUser(new NativeUser("/com/deepin/daemon/Accounts/User"+QString::number((getuid()))));
     ASSERT_TRUE(m_sessionBaseModel);
@@ -32,50 +32,53 @@ TEST_F(UT_SessionBaseModel, buttonClicked)
     m_sessionBaseModel->setCurrentUser(nativeUser);
     EXPECT_EQ(m_sessionBaseModel->currentUser(), nativeUser);
 
-    m_sessionBaseModel->onPowerActionChanged(SessionBaseModel::PowerAction::None);
-    m_sessionBaseModel->setPowerAction(SessionBaseModel::PowerAction::RequireNormal);
-    EXPECT_EQ(m_sessionBaseModel->powerAction(), SessionBaseModel::PowerAction::RequireNormal);
+    SessionBaseModel::PowerAction poweraction = m_sessionBaseModel->powerAction();
+    m_sessionBaseModel->onPowerActionChanged(SessionBaseModel::PowerAction::RequireNormal);
+    EXPECT_EQ(m_sessionBaseModel->powerAction(), poweraction);
 
-    m_sessionBaseModel->onPowerActionChanged(SessionBaseModel::PowerAction::None);
-    m_sessionBaseModel->setPowerAction(SessionBaseModel::PowerAction::RequireShutdown);
-    EXPECT_EQ(m_sessionBaseModel->powerAction(), SessionBaseModel::PowerAction::RequireShutdown);
+    SessionBaseModel::PowerAction poweractiontwo = m_sessionBaseModel->powerAction();
+    m_sessionBaseModel->onPowerActionChanged(SessionBaseModel::PowerAction::RequireShutdown);
+    EXPECT_EQ(m_sessionBaseModel->powerAction(), poweractiontwo);
 
-    m_sessionBaseModel->onPowerActionChanged(SessionBaseModel::PowerAction::None);
-    m_sessionBaseModel->setPowerAction(SessionBaseModel::PowerAction::RequireRestart);
-    EXPECT_EQ(m_sessionBaseModel->powerAction(), SessionBaseModel::PowerAction::RequireRestart);
+    SessionBaseModel::PowerAction poweractionthe = m_sessionBaseModel->powerAction();
+    m_sessionBaseModel->onPowerActionChanged(SessionBaseModel::PowerAction::RequireRestart);
+    EXPECT_EQ(m_sessionBaseModel->powerAction(), poweractionthe);
 
-    m_sessionBaseModel->onPowerActionChanged(SessionBaseModel::PowerAction::None);
-    m_sessionBaseModel->setPowerAction(SessionBaseModel::PowerAction::RequireSuspend);
-    EXPECT_EQ(m_sessionBaseModel->powerAction(), SessionBaseModel::PowerAction::RequireSuspend);
+    SessionBaseModel::PowerAction poweractionfor = m_sessionBaseModel->powerAction();
+    m_sessionBaseModel->onPowerActionChanged(SessionBaseModel::PowerAction::RequireSuspend);
+    EXPECT_EQ(m_sessionBaseModel->powerAction(), poweractionfor);
 
-    m_sessionBaseModel->onPowerActionChanged(SessionBaseModel::PowerAction::None);
-    m_sessionBaseModel->setPowerAction(SessionBaseModel::PowerAction::RequireHibernate);
-    EXPECT_EQ(m_sessionBaseModel->powerAction(), SessionBaseModel::PowerAction::RequireHibernate);
+    SessionBaseModel::PowerAction poweractionfiv = m_sessionBaseModel->powerAction();
+    m_sessionBaseModel->onPowerActionChanged(SessionBaseModel::PowerAction::RequireHibernate);
+    EXPECT_EQ(m_sessionBaseModel->powerAction(), poweractionfiv);
 
+    m_sessionBaseModel->setPowerAction(SessionBaseModel::PowerAction::None);
 
-    m_sessionBaseModel->onStatusChanged(SessionBaseModel::ModeStatus::NoStatus);
-    m_sessionBaseModel->setCurrentModeState(SessionBaseModel::ModeStatus::PasswordMode);
-    EXPECT_EQ(m_sessionBaseModel->currentModeState(), SessionBaseModel::ModeStatus::PasswordMode);
+    SessionBaseModel::ModeStatus currentmode = m_sessionBaseModel->currentModeState();
+    m_sessionBaseModel->onStatusChanged(SessionBaseModel::ModeStatus::PasswordMode);
+    EXPECT_EQ(m_sessionBaseModel->currentModeState(), currentmode);
 
-    m_sessionBaseModel->onStatusChanged(SessionBaseModel::ModeStatus::NoStatus);
-    m_sessionBaseModel->setCurrentModeState(SessionBaseModel::ModeStatus::ConfirmPasswordMode);
-    EXPECT_EQ(m_sessionBaseModel->currentModeState(), SessionBaseModel::ModeStatus::ConfirmPasswordMode);
+    SessionBaseModel::ModeStatus currentmodetwo = m_sessionBaseModel->currentModeState();
+    m_sessionBaseModel->onStatusChanged(SessionBaseModel::ModeStatus::ConfirmPasswordMode);
+    EXPECT_EQ(m_sessionBaseModel->currentModeState(), currentmodetwo);
 
-    m_sessionBaseModel->onStatusChanged(SessionBaseModel::ModeStatus::NoStatus);
-    m_sessionBaseModel->setCurrentModeState(SessionBaseModel::ModeStatus::UserMode);
-    EXPECT_EQ(m_sessionBaseModel->currentModeState(), SessionBaseModel::ModeStatus::UserMode);
+    SessionBaseModel::ModeStatus currentmodethr = m_sessionBaseModel->currentModeState();
+    m_sessionBaseModel->onStatusChanged(SessionBaseModel::ModeStatus::UserMode);
+    EXPECT_EQ(m_sessionBaseModel->currentModeState(), currentmodethr);
 
-    m_sessionBaseModel->onStatusChanged(SessionBaseModel::ModeStatus::NoStatus);
-    m_sessionBaseModel->setCurrentModeState(SessionBaseModel::ModeStatus::SessionMode);
-    EXPECT_EQ(m_sessionBaseModel->currentModeState(), SessionBaseModel::ModeStatus::SessionMode);
+    SessionBaseModel::ModeStatus currentmodefor = m_sessionBaseModel->currentModeState();
+    m_sessionBaseModel->onStatusChanged(SessionBaseModel::ModeStatus::SessionMode);
+    EXPECT_EQ(m_sessionBaseModel->currentModeState(), currentmodefor);
 
-    m_sessionBaseModel->onStatusChanged(SessionBaseModel::ModeStatus::NoStatus);
-    m_sessionBaseModel->setCurrentModeState(SessionBaseModel::ModeStatus::PowerMode);
-    EXPECT_EQ(m_sessionBaseModel->currentModeState(), SessionBaseModel::ModeStatus::PowerMode);
+    SessionBaseModel::ModeStatus currentmodefiv = m_sessionBaseModel->currentModeState();
+    m_sessionBaseModel->onStatusChanged(SessionBaseModel::ModeStatus::PowerMode);
+    EXPECT_EQ(m_sessionBaseModel->currentModeState(), currentmodefiv);
 
-    m_sessionBaseModel->onStatusChanged(SessionBaseModel::ModeStatus::NoStatus);
-    m_sessionBaseModel->setCurrentModeState(SessionBaseModel::ModeStatus::ShutDownMode);
-    EXPECT_EQ(m_sessionBaseModel->currentModeState(), SessionBaseModel::ModeStatus::ShutDownMode);
+    SessionBaseModel::ModeStatus currentmodesix = m_sessionBaseModel->currentModeState();
+    m_sessionBaseModel->onStatusChanged(SessionBaseModel::ModeStatus::ShutDownMode);
+    EXPECT_EQ(m_sessionBaseModel->currentModeState(), currentmodesix);
+
+    m_sessionBaseModel->setCurrentModeState(SessionBaseModel::ModeStatus::NoStatus);
 
     bool ishasSwap = m_sessionBaseModel->hasSwap();
     m_sessionBaseModel->onHasSwapChanged(!ishasSwap);
@@ -108,6 +111,11 @@ TEST_F(UT_SessionBaseModel, buttonClicked)
     bool isLock = m_sessionBaseModel->isLockNoPassword();
     m_sessionBaseModel->setIsLockNoPassword(!isLock);
     EXPECT_EQ(m_sessionBaseModel->isLockNoPassword(), !isLock);
+
+    bool abortConfirm = m_sessionBaseModel->abortConfim();
+    m_sessionBaseModel->abortConfirmChanged(!abortConfirm);
+    m_sessionBaseModel->setAbortConfirm(!abortConfirm);
+    EXPECT_EQ(m_sessionBaseModel->abortConfim(), !abortConfirm);
 
     bool isBlack = m_sessionBaseModel->isBlackMode();
     m_sessionBaseModel->setIsBlackModel(!isBlack);

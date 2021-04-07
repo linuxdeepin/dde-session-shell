@@ -94,6 +94,7 @@ public:
     inline bool isServerModel() const { return m_isServerModel; }
     void setIsServerModel(bool server_model);
 
+    inline bool abortConfim() const { return m_abortConfirm; }
     void setAbortConfirm(bool abortConfirm);
     void setLocked(bool lock);
 
