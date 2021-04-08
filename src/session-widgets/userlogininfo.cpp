@@ -78,7 +78,7 @@ void UserLoginInfo::initConnect()
         if (!m_userLoginWidget->inputInfoCheck(m_model->isServerModel())) return;
 
         //当前锁定不需要密码和当前用户不需要密码登录则直接进入系统
-        if(m_model->isLockNoPassword() && m_model->currentUser()->isNoPasswdGrp()) {
+        if (m_model->isLockNoPassword() && m_model->currentUser()->isNoPasswdGrp()) {
             emit m_model->authFinished(true);
             return;
         }
