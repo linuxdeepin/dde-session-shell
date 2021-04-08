@@ -12,12 +12,12 @@
 #include <QProcess>
 #include <QRegularExpression>
 #include <DSysInfo>
-#include <pwd.h>
 
 #include <com_deepin_daemon_power.h>
 
 #define LOCKSERVICE_PATH "/com/deepin/dde/LockService"
 #define LOCKSERVICE_NAME "com.deepin.dde.LockService"
+#define DOMAIN_BASE_UID 10000
 
 using PowerInter = com::deepin::daemon::Power;
 using namespace Auth;
@@ -35,16 +35,6 @@ LockWorker::LockWorker(SessionBaseModel *const model, QObject *parent)
     m_currentUserUid = getuid();
     m_authFramework = new DeepinAuthFramework(this, this);
     m_sessionManager->setSync(false);
-
-    //当前用户m_currentUserUid是已登录用户,直接按AuthInterface::onLoginUserListChanged中的流程处理
-    std::shared_ptr<User> u(new ADDomainUser(m_currentUserUid));
-    u->setisLogind(true);
-    struct passwd *pws;
-    pws = getpwuid(m_currentUserUid);
-    static_cast<ADDomainUser *>(u.get())->setUserDisplayName(pws->pw_name);
-    static_cast<ADDomainUser *>(u.get())->setUserName(pws->pw_name);
-    m_model->userAdd(u);
-    m_model->setCurrentUser(u);
 
     //该信号用来处理初始化切换用户(锁屏+锁屏)或者切换用户(锁屏+登陆)两种种场景的指纹认证
     connect(m_lockInter, &DBusLockService::UserChanged, this, &LockWorker::onCurrentUserChanged);
@@ -197,6 +187,7 @@ LockWorker::LockWorker(SessionBaseModel *const model, QObject *parent)
         m_model->setIsServerModel(true);
         m_model->userAdd(user);
     }
+    onUserAdded(ACCOUNTS_DBUS_PREFIX + QString::number(m_currentUserUid));
 
     //连接系统待机信号
     connect(m_login1Inter, &DBusLogin1Manager::PrepareForSleep, m_model, &SessionBaseModel::prepareForSleep);
@@ -277,7 +268,14 @@ void LockWorker::onPasswordResult(const QString &msg)
 
 void LockWorker::onUserAdded(const QString &user)
 {
-    std::shared_ptr<NativeUser> user_ptr(new NativeUser(user));
+    std::shared_ptr<User> user_ptr = nullptr;
+    uid_t uid = user.mid(QString(ACCOUNTS_DBUS_PREFIX).size()).toUInt();
+    if (uid < DOMAIN_BASE_UID) {
+        user_ptr = std::make_shared<NativeUser>(user);
+    } else {
+        user_ptr = std::make_shared<ADDomainUser>(uid);
+        qobject_cast<ADDomainUser *>(user_ptr.get())->setUserName(userPwdName(uid));
+    }
 
     if (!user_ptr->isUserIsvalid())
         return;
@@ -286,11 +284,6 @@ void LockWorker::onUserAdded(const QString &user)
 
     if (user_ptr->uid() == m_currentUserUid) {
         m_model->setCurrentUser(user_ptr);
-
-        // AD domain account auth will not be activated for the first time
-        connect(user_ptr->getUserInter(), &UserInter::UserNameChanged, this, [ = ] {
-            updateLockLimit(user_ptr);
-        });
     }
 
     if (user_ptr->uid() == m_lastLogoutUid) {

@@ -82,7 +82,6 @@ LockContent::LockContent(SessionBaseModel *const model, QWidget *parent)
     });
 
     //刷新背景单独与onStatusChanged信号连接，避免在showEvent事件时调用onStatusChanged而重复刷新背景，减少刷新次数
-    connect(model, &SessionBaseModel::onStatusChanged, this, &LockContent::refreshBackground);
     connect(model, &SessionBaseModel::onStatusChanged, this, &LockContent::onStatusChanged);
 
     //在锁屏显示时，启动onborad进程，锁屏结束时结束onboard进程
