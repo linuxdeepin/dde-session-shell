@@ -90,7 +90,7 @@ bool isDeepinAuth();
 void init_sig_crash();
 
 /**
- * @brief 格式化时间Unix时间
+ * @brief 把字符串解析成时间，然后转换为Unix时间戳
  */
 uint timeFromString(QString time);
 

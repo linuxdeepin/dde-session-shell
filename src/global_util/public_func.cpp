@@ -208,7 +208,5 @@ uint timeFromString(QString time)
     if (time.isEmpty()) {
         return QDateTime::currentDateTime().toTime_t();
     }
-    time.replace('T', ' ');
-    QString timeBuffer = QString::fromStdString(time.toStdString().substr(0, static_cast<unsigned int>(time.indexOf('.'))));
-    return QDateTime::fromString(timeBuffer, "yyyy-MM-dd hh:mm:ss").toTime_t();
+    return QDateTime::fromString(time, Qt::ISODateWithMs).toLocalTime().toTime_t();
 }
