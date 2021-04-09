@@ -278,9 +278,6 @@ void GreeterWorkek::prompt(QString text, QLightDM::Greeter::PromptType type)
     switch (type) {
     case QLightDM::Greeter::PromptTypeSecret:
         m_authenticating = false;
-
-        if (m_password.isEmpty()) break;
-
         if (msg.isEmpty()) {
             m_greeter->respond(m_password);
         } else {

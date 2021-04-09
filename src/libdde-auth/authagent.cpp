@@ -96,6 +96,8 @@ int AuthAgent::pamConversation(int num_msg, const struct pam_message **msg,
         switch(PAM_MSG_MEMBER(msg, idx, msg_style)) {
 
         case PAM_PROMPT_ECHO_OFF: {
+            app_ptr->displayTextInfo(QString::fromLocal8Bit(PAM_MSG_MEMBER(msg, idx, msg)));
+
             while(app_ptr->m_isCondition) {
                 //取消验证时返回一般错误,退出等待输入密码的循环,然后退出验证线程
                 if (app_ptr->m_isCancel) {
