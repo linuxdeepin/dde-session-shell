@@ -746,7 +746,7 @@ void UserLoginWidget::hidePasswordEditMessage()
 
 void UserLoginWidget::updateNameLabel()
 {
-    int width = m_nameLbl->fontMetrics().width(m_name);
+    int width = m_nameLbl->fontMetrics().horizontalAdvance(m_name);
     int labelMaxWidth = this->width() - 3 * m_nameLayout->spacing();
     if (m_isLogin)
         labelMaxWidth -= (m_loginLabel->pixmap()->width() + m_nameLbl->height());

@@ -220,7 +220,7 @@ void LockWorker::switchToUser(std::shared_ptr<User> user)
     if (user->isLogin()) {
         QProcess::startDetached("dde-switchtogreeter", QStringList() << user->name());
     } else {
-        QProcess::startDetached("dde-switchtogreeter");
+        QProcess::startDetached("dde-switchtogreeter", QStringList());
     }
 }
 
