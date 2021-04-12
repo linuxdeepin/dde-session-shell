@@ -180,6 +180,11 @@ static void set_auto_QT_SCALE_FACTOR() {
 
 int main(int argc, char* argv[])
 {
+    //for qt5platform-plugins load DPlatformIntegration or DPlatformIntegrationParent
+    if (!QString(qgetenv("XDG_CURRENT_DESKTOP")).toLower().startsWith("deepin")){
+        setenv("XDG_CURRENT_DESKTOP", "Deepin", 1);
+    }
+
     DGuiApplicationHelper::setAttribute(DGuiApplicationHelper::UseInactiveColorGroup, false);
     // load dpi settings
     if (!QFile::exists("/etc/lightdm/deepin/xsettingsd.conf")) {
