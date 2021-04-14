@@ -273,7 +273,7 @@ void GreeterWorkek::prompt(QString text, QLightDM::Greeter::PromptType type)
     // we'll provide our own prompt or just not.
     qWarning() << "pam prompt: " << text << type;
 
-    const QString msg = text.simplified() == "Password:" ? "" : text;
+    const QString msg = text.simplified() == "Please input Password" ? "" : text;
 
     switch (type) {
     case QLightDM::Greeter::PromptTypeSecret:
