@@ -388,6 +388,7 @@ void LockWorker::onUnlockFinished(bool unlocked)
 void LockWorker::onCurrentUserChanged(const QString &user)
 {
     qWarning() << "LockWorker::onCurrentUserChanged -- change to :" << user;
+    updateLockLimit(m_model->findUserByName(user));
     const QJsonObject obj = QJsonDocument::fromJson(user.toUtf8()).object();
     auto user_cur = static_cast<uint>(obj["Uid"].toInt());
     if (user_cur == m_currentUserUid) {
