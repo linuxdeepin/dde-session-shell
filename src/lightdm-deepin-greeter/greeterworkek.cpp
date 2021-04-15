@@ -76,7 +76,7 @@ GreeterWorkek::GreeterWorkek(SessionBaseModel *const model, QObject *parent)
     });
 
     connect(m_login1SessionSelf, &Login1SessionSelf::ActiveChanged, this, [ = ](bool active) {
-        if(active) {
+        if(active && !m_model->currentUser()->isNoPasswdGrp()) {
             m_authenticating = false;
             resetLightdmAuth(m_model->currentUser(), 100, false);
         }
