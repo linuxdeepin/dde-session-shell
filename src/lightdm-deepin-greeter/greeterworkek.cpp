@@ -281,7 +281,7 @@ void GreeterWorkek::prompt(QString text, QLightDM::Greeter::PromptType type)
         if (msg.isEmpty() && !m_password.isEmpty()) {
             m_greeter->respond(m_password);
         } else {
-            emit m_model->authFaildMessage(msg);
+            emit m_model->authFaildMessage(text);
         }
         break;
     case QLightDM::Greeter::PromptTypeQuestion:
