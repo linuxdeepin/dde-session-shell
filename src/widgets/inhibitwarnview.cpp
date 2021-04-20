@@ -130,7 +130,7 @@ InhibitWarnView::InhibitWarnView(SessionBaseModel::PowerAction inhibitType, QWid
     updateIcon();
 
     connect(m_cancelBtn, &QPushButton::clicked, this, &InhibitWarnView::cancelled);
-    connect(m_acceptBtn, &QPushButton::clicked, this, &InhibitWarnView::actionInvoked);
+    connect(m_acceptBtn, &QPushButton::clicked, this, &InhibitWarnView::actionInvoked, Qt::QueuedConnection);
 }
 
 InhibitWarnView::~InhibitWarnView()
