@@ -269,11 +269,16 @@ void UserLoginWidget::prepareForSleep(bool isSleep)
 
 void UserLoginWidget::updateLoginEditLocale(const QLocale &locale)
 {
-    QTranslator translator;
-    translator.load("/usr/share/dde-session-shell/translations/dde-session-shell_" + locale.name());
-    qApp->installTranslator(&translator);
-    m_passwordEdit->lineEdit()->setPlaceholderText(tr("Password"));
-    m_accountEdit->lineEdit()->setPlaceholderText(tr("Account"));
+    if ("en_US" == locale.name()) {
+        m_passwordEdit->lineEdit()->setPlaceholderText("Password");
+        m_accountEdit->lineEdit()->setPlaceholderText("Account");
+    } else {
+        QTranslator translator;
+        translator.load("/usr/share/dde-session-shell/translations/dde-session-shell_" + locale.name());
+        qApp->installTranslator(&translator);
+        m_passwordEdit->lineEdit()->setPlaceholderText(tr("Password"));
+        m_accountEdit->lineEdit()->setPlaceholderText(tr("Account"));
+    }
 }
 
 void UserLoginWidget::onOtherPageAccountChanged(const QVariant &value)
