@@ -144,6 +144,8 @@ signals:
     void shutdownInhibit(const SessionBaseModel::PowerAction action);
     void cancelShutdownInhibit();
     void tipsShowed();
+    void clearServerLoginWidgetContent();
+    void updateLockLimit(std::shared_ptr<User> user);
 
 
 private:

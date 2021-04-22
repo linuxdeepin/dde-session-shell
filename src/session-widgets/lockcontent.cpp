@@ -50,6 +50,7 @@ LockContent::LockContent(SessionBaseModel *const model, QWidget *parent)
     connect(m_userLoginInfo, &UserLoginInfo::accountLineEditFinished, this, [ = ](const QString &accountName) {
         auto user_ptr = m_model->findUserByName(accountName);
         if (user_ptr != nullptr) {
+            Q_EMIT m_model->updateLockLimit(user_ptr);
             auto locale = user_ptr->locale();
             m_logoWidget->updateLocale(locale);
             m_timeWidget->updateLocale(locale);

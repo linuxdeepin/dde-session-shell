@@ -77,8 +77,17 @@ GreeterWorkek::GreeterWorkek(SessionBaseModel *const model, QObject *parent)
 
     connect(m_login1SessionSelf, &Login1SessionSelf::ActiveChanged, this, [ = ](bool active) {
         if(active && !m_model->currentUser()->isNoPasswdGrp()) {
-            m_authenticating = false;
-            resetLightdmAuth(m_model->currentUser(), 100, false);
+            if (m_model->isServerModel()) {
+                Q_EMIT m_model->clearServerLoginWidgetContent();
+                connect(m_model, &SessionBaseModel::updateLockLimit, this, [this](std::shared_ptr<User> user) {
+                    updateLockLimit(user);
+                    m_authenticating = false;
+                    resetLightdmAuth(user, 100, false);
+                }, Qt::UniqueConnection);
+            } else {
+                m_authenticating = false;
+                resetLightdmAuth(m_model->currentUser(), 100, false);
+            }
         }
     });
 
