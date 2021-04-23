@@ -272,8 +272,8 @@ void LockContent::showEvent(QShowEvent *event)
 {
     onStatusChanged(m_model->currentModeState());
 
-    QFrame::showEvent(event);
-    tryGrabKeyboard(); 
+    tryGrabKeyboard();
+    return QFrame::showEvent(event);
 }
 
 void LockContent::hideEvent(QHideEvent *event)
@@ -381,7 +381,7 @@ void LockContent::tryGrabKeyboard()
     return;
 #endif
 
-    if (window()->windowHandle() && isVisible() && window()->windowHandle()->setKeyboardGrabEnabled(true)) {
+    if (window()->windowHandle() && window()->windowHandle()->setKeyboardGrabEnabled(true)) {
         m_failures = 0;
         return;
     }

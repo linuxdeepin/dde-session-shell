@@ -950,7 +950,7 @@ void ContentWidget::tryGrabKeyboard()
     return;
 #endif
 
-    if (window()->windowHandle() && isVisible() && window()->windowHandle()->setKeyboardGrabEnabled(true)) {
+    if (window()->windowHandle() && window()->windowHandle()->setKeyboardGrabEnabled(true)) {
         m_failures = 0;
         return;
     }
