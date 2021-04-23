@@ -51,6 +51,7 @@ public:
     void toggleButtonState() Q_DECL_OVERRIDE;
     void buttonClickHandle() Q_DECL_OVERRIDE;
     void setAcceptReason(const QString &reason) Q_DECL_OVERRIDE;
+    void keyPressEvent(QKeyEvent *event)Q_DECL_OVERRIDE;
 
 protected:
     bool focusNextPrevChild(bool next) Q_DECL_OVERRIDE;

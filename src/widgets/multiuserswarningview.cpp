@@ -89,6 +89,8 @@ MultiUsersWarningView::MultiUsersWarningView(SessionBaseModel::PowerAction inhib
     m_vLayout->addSpacing(40);
     m_vLayout->addLayout(btnLayout);
     m_vLayout->addStretch();
+    m_cancelBtn->setCheckable(true);
+    m_actionBtn->setCheckable(true);
 
     m_cancelBtn->setChecked(true);
     m_currentBtn = m_cancelBtn;
@@ -200,6 +202,24 @@ QString MultiUsersWarningView::getUserIcon(const QString &path)
         return url.path();
 
     return path;
+}
+
+void MultiUsersWarningView::keyPressEvent(QKeyEvent *event)
+{
+    switch (event->key()) {
+    case Qt::Key_Up:
+    case Qt::Key_Down:
+    case Qt::Key_Tab:
+        toggleButtonState();
+        break;
+    case Qt::Key_Return:
+        m_currentBtn->clicked();
+        break;
+    case Qt::Key_Enter:
+        m_currentBtn->clicked();
+        break;
+    }
+    QWidget::keyPressEvent(event);
 }
 
 UserListItem::UserListItem(const QString &icon, const QString &name) :
