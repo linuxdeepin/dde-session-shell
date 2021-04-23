@@ -280,6 +280,9 @@ void InhibitWarnView::keyPressEvent(QKeyEvent *event)
     case Qt::Key_Return:
         m_currentBtn->clicked();
         break;
+    case Qt::Key_Enter:
+        m_currentBtn->clicked();
+        break;
     }
     QWidget::keyPressEvent(event);
 }
