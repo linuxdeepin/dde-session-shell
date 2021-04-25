@@ -124,7 +124,7 @@ void LockContent::onCurrentUserChanged(std::shared_ptr<User> user)
 
     // set user language
     qApp->removeTranslator(m_translator);
-    const QString locale { user->locale().split(".").first() };
+    const QString locale { QLocale::system().name().split(".").first() };
     m_translator->load("/usr/share/dde-session-shell/translations/dde-session-shell_" + QLocale(locale.isEmpty() ? "en_US" : locale).name());
     qApp->installTranslator(m_translator);
 
