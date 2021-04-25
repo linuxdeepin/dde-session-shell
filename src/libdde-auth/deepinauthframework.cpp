@@ -124,3 +124,16 @@ void DeepinAuthFramework::RespondResult(const QString &msg)
 {
     m_interface->onPasswordResult(msg);
 }
+
+void DeepinAuthFramework::cancelAuthenticate()
+{
+    if (!m_authagent.isNull()) {
+        if (m_pamAuth != 0) {
+            //先取消上次验证请求
+            m_authagent->setCancelAuth(true);
+            pthread_cancel(m_pamAuth);
+            pthread_join(m_pamAuth, nullptr);
+            m_pamAuth = 0;
+        }
+    }
+}

@@ -20,6 +20,7 @@ public:
     friend class AuthAgent;
     bool isAuthenticate() const;
     int GetAuthType();
+    void cancelAuthenticate();
 
 public slots:
     void Authenticate(std::shared_ptr<User> user);

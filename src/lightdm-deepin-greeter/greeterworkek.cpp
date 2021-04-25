@@ -147,6 +147,9 @@ void GreeterWorkek::switchToUser(std::shared_ptr<User> user)
     m_password.clear();
     m_authenticating = false;
 
+    if (m_greeter->inAuthentication())
+        m_greeter->cancelAuthentication();
+
     // just switch user
     if (user->isLogin()) {
         // switch to user Xorg
