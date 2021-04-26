@@ -107,10 +107,7 @@ void UserLoginWidget::setFaildMessage(const QString &message, SessionBaseModel::
     }
 
     m_passwordEdit->lineEdit()->clear();
-
-    const QFontMetrics fm(fontMetrics());
-    const QString elidedText = fm.elidedText(message, Qt::ElideRight, m_passwordEdit->lineEdit()->width());
-    m_passwordEdit->lineEdit()->setPlaceholderText(elidedText);
+    m_passwordEdit->lineEdit()->setPlaceholderText(message);
     m_passwordEdit->lineEdit()->update();
 }
 

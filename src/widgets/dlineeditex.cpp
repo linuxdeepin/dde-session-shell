@@ -43,8 +43,6 @@ void DLineEditEx::paintEvent(QPaintEvent *event)
         pa.setPen(col);
         QTextOption option;
         option.setAlignment(Qt::AlignCenter);
-        auto lineEditRech = lineEdit()->rect();
-        lineEditRech.setWidth(lineEditRech.width() + 10);
-        pa.drawText(lineEditRech,lineEdit()->placeholderText(), option);
+        pa.drawText(lineEdit()->rect(), lineEdit()->placeholderText(), option);
     }
 }
