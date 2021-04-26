@@ -252,8 +252,6 @@ void LockFrame::cancelShutdownInhibit()
     //隐藏提示界面
     if (m_warningContent) {
         m_warningContent->hide();
-        delete m_warningContent;
-        m_warningContent = nullptr;
     }
 
     //多屏状态下，当前界面显示内容时才显示
