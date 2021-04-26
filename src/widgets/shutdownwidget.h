@@ -56,6 +56,7 @@ public slots:
     void onRequirePowerAction(SessionBaseModel::PowerAction powerAction);
     void setUserSwitchEnable(bool enable);
     void onEnable(const QString &gsettingsName, bool enable);
+    void updateLocale(std::shared_ptr<User> user);
 
 protected:
     void keyPressEvent(QKeyEvent *event) Q_DECL_OVERRIDE;

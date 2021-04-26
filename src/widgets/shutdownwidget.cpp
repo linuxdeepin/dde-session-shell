@@ -507,13 +507,6 @@ void ShutdownWidget::keyPressEvent(QKeyEvent *event)
 
 bool ShutdownWidget::event(QEvent *e)
 {
-    if (e->type() == QEvent::LanguageChange) {
-        // refresh language
-        for (auto it = m_trList.constBegin(); it != m_trList.constEnd(); ++it) {
-            it->first(qApp->translate("ShutdownWidget", it->second.toUtf8()));
-        }
-    }
-
     if (e->type() == QEvent::FocusIn) {
         if (m_index < 0) {
             m_index = 0;
@@ -530,6 +523,23 @@ void ShutdownWidget::showEvent(QShowEvent *event)
     QFrame::showEvent(event);
 }
 
+void ShutdownWidget::updateLocale(std::shared_ptr<User> user)
+{
+    //只有登陆界面才需要根据系统切换语言
+    if(qApp->applicationName() == "dde-lock") return;
+
+    auto locale = user->locale();
+
+    QTranslator translator;
+    translator.load("/usr/share/dde-session-shell/translations/dde-session-shell_" + locale.split(".").first());
+    qApp->installTranslator(&translator);
+
+    // refresh language
+    for (auto it = m_trList.constBegin(); it != m_trList.constEnd(); ++it) {
+        it->first(qApp->translate("ShutdownWidget", it->second.toUtf8()));
+    }
+}
+
 void ShutdownWidget::setModel(SessionBaseModel *const model)
 {
     m_model = model;
@@ -540,5 +550,7 @@ void ShutdownWidget::setModel(SessionBaseModel *const model)
     enableHibernateBtn(model->hasSwap());
 
     connect(model, &SessionBaseModel::canSleepChanged, this, &ShutdownWidget::enableSleepBtn);
+    connect(model, &SessionBaseModel::currentUserChanged, this, &ShutdownWidget::updateLocale);
+
     enableSleepBtn(model->canSleep());
 }

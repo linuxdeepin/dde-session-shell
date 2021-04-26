@@ -49,7 +49,7 @@ LockContent::LockContent(SessionBaseModel *const model, QWidget *parent)
     // init connect
     connect(m_userLoginInfo, &UserLoginInfo::accountLineEditFinished, this, [ = ](const QString &accountName) {
         auto user_ptr = m_model->findUserByName(accountName);
-        auto locale = QLocale::system().name();
+        auto locale = qApp->applicationName() == "dde-lock" ? QLocale::system().name() : user_ptr->locale();
         m_logoWidget->updateLocale(locale);
         m_timeWidget->updateLocale(locale);
         m_userLoginInfo->updateUserLoginLocale(locale);
@@ -124,8 +124,10 @@ void LockContent::onCurrentUserChanged(std::shared_ptr<User> user)
     m_translator->load("/usr/share/dde-session-shell/translations/dde-session-shell_" + QLocale(locale.isEmpty() ? "en_US" : locale).name());
     qApp->installTranslator(m_translator);
 
-    m_logoWidget->updateLocale(QLocale::system().name());
-    m_timeWidget->updateLocale(QLocale::system().name());
+    //如果是锁屏就用系统语言，如果是登陆界面就用用户语言
+    auto locale2 = qApp->applicationName() == "dde-lock" ? QLocale::system().name() : user->locale();
+    m_logoWidget->updateLocale(locale2);
+    m_timeWidget->updateLocale(locale2);
 
     for (auto connect : m_currentUserConnects) {
         m_user.get()->disconnect(connect);
@@ -171,7 +173,7 @@ void LockContent::onCurrentUserChanged(std::shared_ptr<User> user)
         m_user->desktopBackgroundPath();
     });
 
-    m_logoWidget->updateLocale(m_user->locale());
+    m_logoWidget->updateLocale(locale2);
 }
 
 void LockContent::pushPasswordFrame()
@@ -321,7 +323,8 @@ void LockContent::updateDesktopBackgroundPath(const QString &path)
 void LockContent::updateTimeFormat(bool use24)
 {
     if (m_user != nullptr) {
-        m_timeWidget->updateLocale(QLocale::system().name());
+        auto locale = qApp->applicationName() == "dde-lock" ? QLocale::system().name() : m_user->locale();
+        m_timeWidget->updateLocale(locale);
         m_timeWidget->set24HourFormat(use24);
         m_timeWidget->setVisible(true);
     }
