@@ -228,9 +228,10 @@ void LockFrame::shutdownInhibit(const SessionBaseModel::PowerAction action)
     //记录多屏状态下当前显示屏是否显示内容
     bool old_visible = contentVisible();
 
-    if (!m_warningContent) {
+    if (!m_warningContent)
         m_warningContent = new WarningContent(m_model, action, this);
-    }
+    else
+        m_warningContent->setPowerAction(action);
     m_warningContent->setFixedSize(size());
     setContent(m_warningContent);
 

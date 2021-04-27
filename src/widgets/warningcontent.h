@@ -44,6 +44,7 @@ public:
     explicit WarningContent(SessionBaseModel *const model, const SessionBaseModel::PowerAction action, QWidget *parent = nullptr);
     ~WarningContent();
     void beforeInvokeAction();
+    void setPowerAction(const SessionBaseModel::PowerAction action);
 
 protected:
     void mouseReleaseEvent(QMouseEvent *event) Q_DECL_OVERRIDE;

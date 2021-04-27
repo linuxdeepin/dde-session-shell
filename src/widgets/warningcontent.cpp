@@ -297,6 +297,13 @@ void WarningContent::beforeInvokeAction()
     doAccecpShutdownInhibit();
 }
 
+void WarningContent::setPowerAction(const SessionBaseModel::PowerAction action)
+{
+    if (m_powerAction == action)
+        return;
+    m_powerAction = action;
+}
+
 void WarningContent::mouseReleaseEvent(QMouseEvent *event)
 {
     doCancelShutdownInhibit();
