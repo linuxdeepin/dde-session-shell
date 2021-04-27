@@ -108,6 +108,7 @@ void AuthInterface::initData()
 {
     onUserListChanged(m_accountsInter->userList());
     onLastLogoutUserChanged(m_loginedInter->lastLogoutUser());
+    onLoginUserListChanged(m_loginedInter->userList());
     // m_accountsInter->userList();
     // m_loginedInter->lastLogoutUser();
 

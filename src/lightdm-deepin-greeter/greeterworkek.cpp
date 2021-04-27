@@ -47,6 +47,7 @@ GreeterWorkek::GreeterWorkek(SessionBaseModel *const model, QObject *parent)
     m_model->updateSupportedEncryptionType(m_authFramework->GetSupportedEncrypts());
     m_model->updateSupportedMixAuthFlags(m_authFramework->GetSupportedMixAuthFlags());
 
+    onCurrentUserChanged(m_lockInter->CurrentUser());
     initConnections();
 
     const QString &switchUserButtonValue {valueByQSettings<QString>("Lock", "showSwitchUserButton", "ondemand")};
