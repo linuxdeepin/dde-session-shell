@@ -186,6 +186,7 @@ private:
     QMetaObject::Connection m_connection; //定時器connection
     int m_timerIndex = 0;
     int m_action; //重启或关机行为记录
+    QString m_local;
 };
 
 #endif // USERLOGINWIDGET_H

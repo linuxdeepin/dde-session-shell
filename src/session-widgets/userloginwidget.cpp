@@ -594,6 +594,7 @@ void UserLoginWidget::onOtherPageFocusChanged(const QVariant &value)
 
 void UserLoginWidget::updateLoginEditLocale(const QLocale &locale)
 {
+    m_local = locale.name();
     if ("en_US" == locale.name()) {
         m_passwordEdit->lineEdit()->setPlaceholderText("Password");
         m_accountEdit->lineEdit()->setPlaceholderText("Account");
@@ -714,7 +715,18 @@ void UserLoginWidget::disablePassword(bool disable, uint lockTime)
     //    m_passwordAuth->setDisabled(disable);
 
     if (disable) {
-        setFaildMessage(tr("Please try again %n minute(s) later", "", int(lockTime)));
+        if ("en_US" == m_local) {
+            if (lockTime > 1) {
+                setFaildMessage(QString("Please try again %1 minutes later").arg(int(lockTime)));
+            } else {
+                setFaildMessage(QString("Please try again %1 minute later").arg(int(lockTime)));
+            }
+        } else {
+            QTranslator translator;
+            translator.load("/usr/share/dde-session-shell/translations/dde-session-shell_" + m_local);
+            qApp->installTranslator(&translator);
+            setFaildMessage(tr("Please try again %n minute(s) later", "", int(lockTime)));
+        }
     } else {
         // m_passwordEdit->setFocus();
     }
