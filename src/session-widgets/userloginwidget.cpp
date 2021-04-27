@@ -185,8 +185,8 @@ void UserLoginWidget::initConnections()
     });
     FrameDataBind::Instance()->refreshData("UserLoginAccount");
     connect(m_accountEdit, &DLineEditEx::returnPressed, this, [=] {
-        if (m_accountEdit->isVisible()) {
-            emit requestCreateAuthController(m_accountEdit->text());
+        if (m_accountEdit->isVisible() && m_model->currentUser()) {
+                emit requestCreateAuthController(m_model->currentUser()->name());
         }
     });
     /* 键盘布局菜单 */
@@ -301,7 +301,7 @@ void UserLoginWidget::initPasswdAuth(const int index)
             return;
         }
         m_passwordAuth->setAnimationState(true);
-        QString account = m_accountEdit->text().isEmpty() ? m_nameLabel->text() : m_accountEdit->text();
+        QString account = m_accountEdit->text().isEmpty() ? m_model->currentUser()->name() : m_accountEdit->text();
         emit sendTokenToAuth(account, AuthenticationModule::AuthTypePassword, m_passwordAuth->lineEditText());
     });
     connect(m_passwordAuth, &AuthenticationModule::requestShowKeyboardList, this, &UserLoginWidget::showKeyboardList);
@@ -402,7 +402,7 @@ void UserLoginWidget::initUkeyAuth(const int index)
             return;
         }
         m_ukeyAuth->setAnimationState(true);
-        QString account = m_accountEdit->text().isEmpty() ? m_nameLabel->text() : m_accountEdit->text();
+        QString account = m_accountEdit->text().isEmpty() ? m_model->currentUser()->name() : m_accountEdit->text();
         emit sendTokenToAuth(account, AuthenticationModule::AuthTypeUkey, m_ukeyAuth->lineEditText());
     });
     connect(m_lockButton, &QPushButton::clicked, m_ukeyAuth, &AuthenticationModule::requestAuthenticate);
@@ -458,7 +458,7 @@ void UserLoginWidget::initPINAuth(const int index)
             return;
         }
         m_PINAuth->setAnimationState(true);
-        QString account = m_accountEdit->text().isEmpty() ? m_nameLabel->text() : m_accountEdit->text();
+        QString account = m_accountEdit->text().isEmpty() ? m_model->currentUser()->name() : m_accountEdit->text();
         emit sendTokenToAuth(account, AuthenticationModule::AuthTypePIN, m_PINAuth->lineEditText());
     });
     connect(m_lockButton, &QPushButton::clicked, m_PINAuth, &AuthenticationModule::requestAuthenticate);
@@ -995,7 +995,7 @@ void UserLoginWidget::updateName(const QString &name)
     m_name = name;
     updateNameLabel(m_nameLabel->font());
     if (m_nameLabel->isVisible()) {
-        emit requestCreateAuthController(name);
+        emit requestCreateAuthController(m_model->currentUser()->name());
     }
 }
 
