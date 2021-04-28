@@ -959,9 +959,11 @@ void UserLoginWidget::checkAuthResult(const int type, const int status)
 {
     static int authType = 0;
     /* 当返回 -1 时，优先以服务返回的结果为准 */
-    if (type == -1 && status == 0) {
-        emit authFininshed(status);
-        authType = 0;
+    if (type == -1) {
+        if (status == 0) {
+            emit authFininshed(status);
+            authType = 0;
+        }
         return;
     }
     if (!(type & m_model->getAuthProperty().AuthType)) {
@@ -978,7 +980,9 @@ void UserLoginWidget::checkAuthResult(const int type, const int status)
             emit authFininshed(status);
         }
     } else {
-        emit authFininshed(status);
+        if (!status) {
+            emit authFininshed(status);
+        }
     }
 }
 
