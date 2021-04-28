@@ -154,10 +154,7 @@ int main(int argc, char *argv[])
         QObject::connect(lockFrame, &LockFrame::sendKeyValue, [&](QString key) {
              emit lockService.ChangKey(key);
         });
-        QObject::connect(lockFrame, &LockFrame::requestCreateAuthentication, worker, &LockWorker::createAuthentication);
-        QObject::connect(lockFrame, &LockFrame::requestDestoryAuthentication, worker, &LockWorker::destoryAuthentication);
         QObject::connect(lockFrame, &LockFrame::requestStartAuthentication, worker, &LockWorker::startAuthentication);
-        QObject::connect(lockFrame, &LockFrame::requestEndAuthentication, worker, &LockWorker::endAuthentication);
         QObject::connect(lockFrame, &LockFrame::sendTokenToAuth, worker, &LockWorker::sendTokenToAuth);
         lockFrame->setVisible(model->visible());
         emit lockService.Visible(true);

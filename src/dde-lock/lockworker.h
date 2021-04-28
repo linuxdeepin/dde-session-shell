@@ -71,8 +71,6 @@ private:
     void lockServiceEvent(quint32 eventType, quint32 pid, const QString &username, const QString &message);
     void onUnlockFinished(bool unlocked);
 
-    void onCurrentUserChanged(const QString &user);
-
 private:
     bool m_authenticating;
     bool m_isThumbAuth;
@@ -86,6 +84,7 @@ private:
     bool m_canAuthenticate = false;
     AccountsInter *m_accountsInter;
     LoginedInter *m_loginedInter;
+    QString m_account;
 };
 
 #endif // LOCKWORKER_H

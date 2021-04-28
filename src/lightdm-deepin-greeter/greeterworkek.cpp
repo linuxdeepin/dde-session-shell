@@ -36,8 +36,6 @@ GreeterWorkek::GreeterWorkek(SessionBaseModel *const model, QObject *parent)
     , m_authFramework(new DeepinAuthFramework(this, this))
     , m_lockInter(new DBusLockService(LOCKSERVICE_NAME, LOCKSERVICE_PATH, QDBusConnection::systemBus(), this))
     , m_authenticating(false)
-    , m_framworkState(1)
-    , m_password(QString())
 {
     if (!isConnectSync()) {
         qWarning() << "greeter connect fail !!!";
@@ -47,7 +45,6 @@ GreeterWorkek::GreeterWorkek(SessionBaseModel *const model, QObject *parent)
     m_model->updateSupportedEncryptionType(m_authFramework->GetSupportedEncrypts());
     m_model->updateSupportedMixAuthFlags(m_authFramework->GetSupportedMixAuthFlags());
 
-    onCurrentUserChanged(m_lockInter->CurrentUser());
     initConnections();
 
     const QString &switchUserButtonValue {valueByQSettings<QString>("Lock", "showSwitchUserButton", "ondemand")};
@@ -86,7 +83,7 @@ GreeterWorkek::GreeterWorkek(SessionBaseModel *const model, QObject *parent)
             }
         });
     }
-    // oneKeyLogin();
+    m_model->setCurrentUser(m_lockInter->CurrentUser());
 }
 
 void GreeterWorkek::initConnections()
@@ -102,8 +99,10 @@ void GreeterWorkek::initConnections()
     connect(m_authFramework, &DeepinAuthFramework::SupportedMixAuthFlagsChanged, m_model, &SessionBaseModel::updateSupportedMixAuthFlags);
     /* com.deepin.daemon.Authenticate.Session */
     connect(m_authFramework, &DeepinAuthFramework::AuthStatusChanged, this, [=](const int type, const int status, const QString &message) {
+        if (type != -1 && status == 0) {
+            endAuthentication(m_account, type);
+        }
         if (type == -1 && status == 0 && m_model->getAuthProperty().FrameworkState == 0) {
-            qDebug() << m_authFramework->AuthSessionPath(m_account) << m_model->getAuthProperty().FrameworkState;
             m_greeter->respond(m_authFramework->AuthSessionPath(m_account));
         }
         m_model->updateAuthStatus(type, status, message);
@@ -114,9 +113,11 @@ void GreeterWorkek::initConnections()
     connect(m_authFramework, &DeepinAuthFramework::PromptChanged, m_model, &SessionBaseModel::updatePrompt);
     /* org.freedesktop.login1.Session */
     connect(m_login1SessionSelf, &Login1SessionSelf::ActiveChanged, this, [=](bool active) {
-        if (active && !m_greeter->inAuthentication()) {
-            createAuthentication(m_model->currentUser()->name());
-            startAuthentication(m_model->currentUser()->name(), m_model->getAuthProperty().AuthType);
+        if (active && !m_account.isEmpty()) {
+            if (!m_greeter->inAuthentication()) {
+                m_greeter->authenticate(m_account);
+            }
+            startAuthentication(m_account, m_model->getAuthProperty().AuthType);
         }
         if (active && !m_model->currentUser()->isNoPasswdGrp()) {
             if (m_model->isServerModel()) {
@@ -132,22 +133,32 @@ void GreeterWorkek::initConnections()
             }
         }
     });
-    /* com.deepin.dde.lock */
-    connect(m_lockInter, &DBusLockService::UserChanged, this, &GreeterWorkek::onCurrentUserChanged);
+    /* com.deepin.dde.LockService */
+    connect(m_lockInter, &DBusLockService::UserChanged, this, [=](const QString &json) {
+        m_model->setCurrentUser(json);
+        std::shared_ptr<User> user_ptr = m_model->currentUser();
+        const QString &account = user_ptr->name();
+        updateLockLimit(user_ptr);
+        m_greeter->authenticate(account);
+        createAuthentication(account);
+        startAuthentication(account, m_model->getAuthProperty().AuthType);
+        emit m_model->switchUserFinished();
+    });
     /* model */
+    connect(m_model, &SessionBaseModel::authTypeChanged, this, [=]() {
+        startAuthentication(m_account, m_model->getAuthProperty().AuthType);
+    });
     connect(m_model, &SessionBaseModel::onPowerActionChanged, this, &GreeterWorkek::doPowerAction);
     connect(m_model, &SessionBaseModel::lockLimitFinished, this, [=] {
         if (!m_greeter->inAuthentication()) {
-            createAuthentication(m_model->currentUser()->name());
-            startAuthentication(m_model->currentUser()->name(), m_model->getAuthProperty().AuthType);
+            m_greeter->authenticate(m_account);
         }
+        startAuthentication(m_account, m_model->getAuthProperty().AuthType);
     });
     connect(m_model, &SessionBaseModel::currentUserChanged, this, &GreeterWorkek::recoveryUserKBState);
     connect(m_model, &SessionBaseModel::visibleChanged, this, [=](bool visible) {
-        std::shared_ptr<User> user_ptr = m_model->currentUser();
-        if (visible && user_ptr.get() && user_ptr->type() == User::Native) {
-            // createAuthentication(user_ptr->name());
-            // startAuthentication(user_ptr->name(), m_model->getAuthProperty().AuthType);
+        if (!m_model->isServerModel() && visible) {
+            createAuthentication(m_model->currentUser()->name());
         }
     });
     /* others */
@@ -238,7 +249,6 @@ void GreeterWorkek::onUserAdded(const QString &user)
     if (m_model->currentUser().get() == nullptr) {
         if (m_model->userList().isEmpty() || m_model->userList().first()->type() == User::ADDomain) {
             m_model->setCurrentUser(user_ptr);
-            // createAuthentication(user_ptr->name());
         }
     }
 
@@ -267,12 +277,6 @@ void GreeterWorkek::onUserAdded(const QString &user)
  */
 void GreeterWorkek::createAuthentication(const QString &account)
 {
-    QString userPath = m_accountsInter->FindUserByName(account);
-    if (!userPath.startsWith("/")) {
-        qWarning() << userPath;
-        onDisplayErrorMsg(userPath);
-        return;
-    }
     m_account = account;
     if (!m_greeter->inAuthentication()) {
         m_greeter->authenticate(account);
@@ -280,10 +284,8 @@ void GreeterWorkek::createAuthentication(const QString &account)
     switch (m_model->getAuthProperty().FrameworkState) {
     case 0:
         m_authFramework->CreateAuthController(account, m_authFramework->GetSupportedMixAuthFlags(), 0);
+        m_authFramework->SetAuthQuitFlag(account, DeepinAuthFramework::ManualQuit);
         m_model->updateLimitedInfo(m_authFramework->GetLimitedInfo(account));
-        m_model->updatePrompt(m_authFramework->GetPrompt(account));
-        m_model->updateFactorsInfo(m_authFramework->GetFactorsInfo(account));
-        m_authFramework->StartAuthentication(account, m_authFramework->GetSupportedMixAuthFlags(), 0);
         break;
     default:
         break;
@@ -346,7 +348,25 @@ void GreeterWorkek::sendTokenToAuth(const QString &account, const int authType, 
  */
 void GreeterWorkek::endAuthentication(const QString &account, const int authType)
 {
-    m_authFramework->EndAuthenticatioin(account, authType);
+    m_authFramework->EndAuthentication(account, authType);
+}
+
+/**
+ * @brief 检查用户输入的账户是否合理
+ *
+ * @param account
+ */
+void GreeterWorkek::checkAccount(const QString &account)
+{
+    QString userPath = m_accountsInter->FindUserByName(account);
+    if (!userPath.startsWith("/")) {
+        qWarning() << userPath;
+        onDisplayErrorMsg(userPath);
+        return;
+    }
+    std::shared_ptr<User> user_ptr = std::make_shared<NativeUser>(userPath);
+    m_model->setCurrentUser(user_ptr);
+    createAuthentication(account);
 }
 
 void GreeterWorkek::checkDBusServer(bool isvalid)
@@ -383,27 +403,6 @@ void GreeterWorkek::oneKeyLogin()
 
         watcher->deleteLater();
     });
-
-    onCurrentUserChanged(m_lockInter->CurrentUser());
-}
-
-void GreeterWorkek::onCurrentUserChanged(const QString &user)
-{
-    const QJsonObject obj = QJsonDocument::fromJson(user.toUtf8()).object();
-    m_currentUserUid = static_cast<uint>(obj["Uid"].toInt());
-
-    for (std::shared_ptr<User> user_ptr : m_model->userList()) {
-        if (!user_ptr->isLogin() && user_ptr->uid() == m_currentUserUid) {
-            m_model->setCurrentUser(user_ptr);
-            updateLockLimit(m_model->currentUser());
-            if (!m_model->isServerModel()) {
-                createAuthentication(user_ptr->name());
-                startAuthentication(user_ptr->name(), m_model->getAuthProperty().AuthType);
-            }
-            break;
-        }
-    }
-    emit m_model->switchUserFinished();
 }
 
 void GreeterWorkek::userAuthForLightdm(std::shared_ptr<User> user)
@@ -458,8 +457,6 @@ void GreeterWorkek::authenticationComplete()
 {
     qInfo() << "authentication complete, authenticated " << m_greeter->isAuthenticated();
 
-    emit m_model->authFinished(m_greeter->isAuthenticated());
-
     if (!m_greeter->isAuthenticated()) {
         // m_authenticating = false;
         // if (m_password.isEmpty()) {
@@ -481,6 +478,8 @@ void GreeterWorkek::authenticationComplete()
 
         return;
     }
+
+    emit m_model->authFinished(m_greeter->isAuthenticated());
 
     m_password.clear();
 
@@ -576,15 +575,15 @@ void GreeterWorkek::resetLightdmAuth(std::shared_ptr<User> user, int delay_time,
         // m_greeter->authenticate(user->name());
         // m_authFramework->AuthenticateByUser(user);
         if (is_respond && !m_password.isEmpty()) {
-            if (m_framworkState == 0) {
-                //其他
-            } else if (m_framworkState == 1) {
-                //没有修改过
-                // m_authFramework->Responsed(m_password);
-            } else if (m_framworkState == 2) {
-                //修改过的pam
-                // m_greeter->respond(m_password);
-            }
+            // if (m_framworkState == 0) {
+            //其他
+            // } else if (m_framworkState == 1) {
+            //没有修改过
+            // m_authFramework->Responsed(m_password);
+            // } else if (m_framworkState == 2) {
+            //修改过的pam
+            // m_greeter->respond(m_password);
+            // }
         }
     });
 }

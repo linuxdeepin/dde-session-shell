@@ -83,6 +83,7 @@ public:
     void userAdd(std::shared_ptr<User> user);
     void userRemoved(std::shared_ptr<User> user);
     void setCurrentUser(std::shared_ptr<User> user);
+    void setCurrentUser(const QString &userJson);
     void setLastLogoutUser(const std::shared_ptr<User> &lastLogoutUser);
 
     inline QString sessionKey() const { return m_sessionKey; }

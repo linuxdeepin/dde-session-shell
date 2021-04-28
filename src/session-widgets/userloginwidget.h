@@ -77,11 +77,10 @@ public:
     void updateLoginEditLocale(const QLocale &locale);
 
 signals:
-    void requestCreateAuthController(const QString &account);                               // 为每个用户创建一个认证服务
-    void requestDestoryAuthController(const QString &account);                              // 销毁之前创建的认证服务
     void requestStartAuthentication(const QString &account, const int authType);            // 开启某一种认证
     void sendTokenToAuth(const QString &account, const int authType, const QString &token); // 将密文发送给认证服务
     void requestAuthUser(const QString &account, const QString &password);
+    void requestCheckAccount(const QString &account);
     void clicked();
     void authFininshed(const int status);
     /////////////////////////////////////////////////////////////////////////

@@ -59,10 +59,7 @@ signals:
     void requestEnableHotzone(bool disable);
     void sendKeyValue(QString keyValue);
 
-    void requestCreateAuthentication(const QString &account);
-    void requestDestoryAuthentication(const QString &account);
     void requestStartAuthentication(const QString &account, const int authType);
-    void requestEndAuthentication(const QString &account, const int authType);
     void sendTokenToAuth(const QString &account, const int authType, const QString &token);
 
 public slots:

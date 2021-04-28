@@ -50,13 +50,14 @@ public slots:
     void endAuthentication(const QString &account, const int authType);
     void sendTokenToAuth(const QString &account, const int authType, const QString &token);
 
+    void checkAccount(const QString &account);
+
 private:
     void initConnections();
     void doPowerAction(const SessionBaseModel::PowerAction action);
 
     void checkDBusServer(bool isvalid);
     void oneKeyLogin();
-    void onCurrentUserChanged(const QString &user);
     void userAuthForLightdm(std::shared_ptr<User> user);
     void prompt(QString text, QLightDM::Greeter::PromptType type);
     void message(QString text, QLightDM::Greeter::MessageType type);
@@ -68,12 +69,10 @@ private:
 private:
     QLightDM::Greeter *m_greeter;
     DeepinAuthFramework *m_authFramework;
-    DBusLockService   *m_lockInter;
-    bool               m_authenticating;
-    //系统中pam是否被修改过，修改过就lightdm,否则就dbus
-    int                m_framworkState;
-    QString            m_password;
+    DBusLockService *m_lockInter;
     QString m_account;
+    QString m_password;
+    bool m_authenticating;
 };
 
 #endif  // GREETERWORKEK_H

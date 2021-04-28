@@ -124,11 +124,26 @@ void SessionBaseModel::userRemoved(std::shared_ptr<User> user)
 
 void SessionBaseModel::setCurrentUser(std::shared_ptr<User> user)
 {
-    if (m_currentUser == user) return;
-
+    if (m_currentUser != nullptr && m_currentUser->uid() == user->uid()) {
+        return;
+    }
     m_currentUser = user;
-
     emit currentUserChanged(user);
+}
+
+/**
+ * @brief 设置当前用户
+ *
+ * @param userJson
+ */
+void SessionBaseModel::setCurrentUser(const QString &userJson)
+{
+    const QJsonObject userObj = QJsonDocument::fromJson(userJson.toUtf8()).object();
+    const uid_t uid = static_cast<uid_t>(userObj["Uid"].toInt());
+    std::shared_ptr<User> user_ptr = findUserByUid(uid);
+    if (user_ptr != nullptr) {
+        setCurrentUser(user_ptr);
+    }
 }
 
 void SessionBaseModel::setLastLogoutUser(const std::shared_ptr<User> &lastLogoutUser)
@@ -511,6 +526,9 @@ void SessionBaseModel::updateFactorsInfo(const MFAInfoList &infoList)
     int factorsInfoAuthType = 0;
     for (const MFAInfo &info : infoList) {
         factorsInfoAuthType |= info.AuthType;
+    }
+    if (factorsInfoAuthType == m_authProperty.AuthType) {
+        return;
     }
     m_authProperty.AuthType = factorsInfoAuthType;
     emit authTypeChanged(factorsInfoAuthType);

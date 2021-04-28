@@ -137,9 +137,9 @@ void AuthenticationModule::init()
  */
 void AuthenticationModule::setAuthResult(const int status, const QString &resault)
 {
-    setEnabled(true);
     switch (status) {
     case StatusCodeSuccess:
+        setEnabled(false);
         if (m_textLabel != nullptr) {
             m_textLabel->setText(resault);
         }
@@ -153,9 +153,9 @@ void AuthenticationModule::setAuthResult(const int status, const QString &resaul
             setAuthStatus(":/icons/dedpin/builtin/select.svg");
         }
         emit authFinished(m_authType, StatusCodeSuccess);
-        setEnabled(false);
         break;
     case StatusCodeFailure:
+        setEnabled(true);
         if (m_textLabel != nullptr) {
             m_textLabel->setText(resault);
         }
@@ -172,6 +172,7 @@ void AuthenticationModule::setAuthResult(const int status, const QString &resaul
         emit activateAuthentication(); // TODO retry times
         break;
     case StatusCodeCancel:
+        setEnabled(true);
         if (m_textLabel != nullptr) {
             m_textLabel->setText(resault);
         }
@@ -185,6 +186,7 @@ void AuthenticationModule::setAuthResult(const int status, const QString &resaul
         }
         break;
     case StatusCodeTimeout:
+        setEnabled(true);
         if (m_textLabel != nullptr) {
             m_textLabel->setText(resault);
         }
@@ -198,6 +200,7 @@ void AuthenticationModule::setAuthResult(const int status, const QString &resaul
         }
         break;
     case StatusCodeError:
+        setEnabled(true);
         if (m_textLabel != nullptr) {
             m_textLabel->setText(resault);
         }
@@ -211,6 +214,7 @@ void AuthenticationModule::setAuthResult(const int status, const QString &resaul
         }
         break;
     case StatusCodeVerify:
+        setEnabled(true);
         if (m_textLabel != nullptr) {
             m_textLabel->setText(resault);
         }
@@ -224,6 +228,7 @@ void AuthenticationModule::setAuthResult(const int status, const QString &resaul
         }
         break;
     case StatusCodeExcept:
+        setEnabled(true);
         if (m_textLabel != nullptr) {
             m_textLabel->setText(resault);
         }
@@ -237,6 +242,7 @@ void AuthenticationModule::setAuthResult(const int status, const QString &resaul
         }
         break;
     case StatusCodePrompt:
+        setEnabled(true);
         if (m_textLabel != nullptr) {
             m_textLabel->setText(resault);
         }
@@ -250,7 +256,10 @@ void AuthenticationModule::setAuthResult(const int status, const QString &resaul
         }
         break;
     case StatusCodeStarted:
+        setEnabled(true);
+        break;
     case StatusCodeEnded:
+        setEnabled(false);
         break;
     case StatusCodeLocked:
         setEnabled(false);
@@ -271,8 +280,10 @@ void AuthenticationModule::setAuthResult(const int status, const QString &resaul
          * 设备异常后，认证会被 end，当设备状态恢复正常后，会发出这个状态
          * 需要在这里调用 start 重新开启认证
          */
+        setEnabled(true);
         break;
     case StatusCodeUnknown:
+        setEnabled(true);
         if (m_textLabel != nullptr) {
             m_textLabel->setText(resault);
         }
@@ -286,6 +297,7 @@ void AuthenticationModule::setAuthResult(const int status, const QString &resaul
         }
         break;
     default:
+        setEnabled(false);
         qWarning() << "Error! The status of authentication is wrong!" << status << resault;
         break;
     }

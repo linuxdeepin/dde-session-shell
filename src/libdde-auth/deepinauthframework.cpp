@@ -266,9 +266,10 @@ const QString &DeepinAuthFramework::RequestEchoOff(const QString &msg)
  */
 void DeepinAuthFramework::CreateAuthController(const QString &account, const int authType, const int appType)
 {
-    if (m_authenticateControllers->keys().contains(account) && m_authenticateControllers->value(account)->isValid()) {
+    if (m_authenticateControllers->contains(account) && m_authenticateControllers->value(account)->isValid()) {
         return;
     }
+    qInfo() << "Create Authenticate Session:" << account << authType << appType;
     const QString authControllerInterPath = m_authenticateInter->Authenticate(account, authType, appType);
     AuthControllerInter *authControllerInter = new AuthControllerInter("com.deepin.daemon.Authenticate", authControllerInterPath, QDBusConnection::systemBus(), this);
     m_authenticateControllers->insert(account, authControllerInter);
@@ -279,6 +280,13 @@ void DeepinAuthFramework::CreateAuthController(const QString &account, const int
     connect(authControllerInter, &AuthControllerInter::PINLenChanged, this, &DeepinAuthFramework::PINLenChanged);
     connect(authControllerInter, &AuthControllerInter::PromptChanged, this, &DeepinAuthFramework::PromptChanged);
     connect(authControllerInter, &AuthControllerInter::Status, this, &DeepinAuthFramework::AuthStatusChanged);
+
+    emit FactorsInfoChanged(authControllerInter->factorsInfo());
+    emit FuzzyMFAChanged(authControllerInter->isFuzzyMFA());
+    emit MFAFlagChanged(authControllerInter->isMFA());
+    emit PINLenChanged(authControllerInter->pINLen());
+    emit PromptChanged(authControllerInter->prompt());
+
     // initPublicKey(account);
 }
 
@@ -289,13 +297,14 @@ void DeepinAuthFramework::CreateAuthController(const QString &account, const int
  */
 void DeepinAuthFramework::DestoryAuthController(const QString &account)
 {
-    for (const QString &name : m_authenticateControllers->keys()) {
-        if (account == name) {
-            m_authenticateControllers->value(account)->End(-1);
-            // m_authenticateControllers->value(account)->Quit();
-            m_authenticateControllers->remove(account);
-        }
+    if (!m_authenticateControllers->contains(account)) {
+        return;
     }
+    qInfo() << "Destory Authenticate Sesssion:" << account;
+    AuthControllerInter *authControllerInter = m_authenticateControllers->value(account);
+    authControllerInter->End(-1);
+    authControllerInter->Quit();
+    m_authenticateControllers->remove(account);
 }
 
 /**
@@ -307,16 +316,12 @@ void DeepinAuthFramework::DestoryAuthController(const QString &account)
  */
 void DeepinAuthFramework::StartAuthentication(const QString &account, const int authType, const int timeout)
 {
-    for (const QString &name : m_authenticateControllers->keys()) {
-        if (account == name) {
-            AuthControllerInter *authControlerInter = m_authenticateControllers->value(account);
-            int ret = authControlerInter->Start(authType, timeout);
-            if (ret == 0) {
-                qInfo() << "Authentication service starts normally." << account << authType;
-            }
-            // authControlerInter->SetQuitFlag() // TODO 设置退出标志位
-            break;
-        }
+    if (!m_authenticateControllers->contains(account)) {
+        return;
+    }
+    int ret = m_authenticateControllers->value(account)->Start(authType, timeout);
+    if (ret == 0) {
+        qInfo() << "Authentication service starts normally." << account << authType;
     }
 }
 
@@ -326,15 +331,13 @@ void DeepinAuthFramework::StartAuthentication(const QString &account, const int 
  * @param account   账户
  * @param authType  认证类型
  */
-void DeepinAuthFramework::EndAuthenticatioin(const QString &account, const int authType)
+void DeepinAuthFramework::EndAuthentication(const QString &account, const int authType)
 {
-    for (const QString &name : m_authenticateControllers->keys()) {
-        if (account == name) {
-            AuthControllerInter *authControllerInter = m_authenticateControllers->value(account);
-            authControllerInter->End(authType);
-            break;
-        }
+    if (!m_authenticateControllers->contains(account)) {
+        return;
     }
+    qInfo() << "End Authentication:" << account << authType;
+    m_authenticateControllers->value(account)->End(authType);
 }
 
 /**
@@ -346,75 +349,74 @@ void DeepinAuthFramework::EndAuthenticatioin(const QString &account, const int a
  */
 void DeepinAuthFramework::SendTokenToAuth(const QString &account, const int authType, const QString &token)
 {
-    for (const QString &name : m_authenticateControllers->keys()) {
-        if (account == name) {
-            AuthControllerInter *authControllerInter = m_authenticateControllers->value(account);
-#if 0
-            void *handle = nullptr;
-
-            if ((handle = dlopen(OPENSSLNAME, RTLD_NOW)) == nullptr) {
-                printf("dlopen - %sn", dlerror());
-                exit(-1);
-            }
-
-            FUNC_BIO_S_MEM d_BIO_s_mem = (FUNC_BIO_S_MEM)dlsym(handle, "BIO_s_mem");
-
-            FUNC_BIO_NEW d_BIO_new = (FUNC_BIO_NEW)dlsym(handle, "BIO_new");
-
-            FUNC_BIO_PUTS d_BIO_puts = (FUNC_BIO_PUTS)dlsym(handle, "BIO_puts");
-
-            PEM_READ_BIO_RSAPUBLICKEY d_PEM_read_bio_RSAPublicKey = (PEM_READ_BIO_RSAPUBLICKEY)dlsym(handle, "PEM_read_bio_RSAPublicKey");
-
-            PEM_READ_BIO_RSA_PUBKEY d_PEM_read_bio_RSA_PUBKEY = (PEM_READ_BIO_RSA_PUBKEY)dlsym(handle, "PEM_read_bio_RSA_PUBKEY");
-
-            RSA_PUBLIC_ENCRYPT d_RSA_public_encrypt = (RSA_PUBLIC_ENCRYPT)dlsym(handle, "RSA_public_encrypt");
-
-            //FUNC_RSA_SIZE d_RSA_size = (FUNC_RSA_SIZE)dlsym(handle, "RSA_size");
-
-            FUNC_RSA_FREE d_RSA_free = (FUNC_RSA_FREE)dlsym(handle, "RSA_free");
-
-            FUNC_RSA_FREE d_BIO_free = (FUNC_RSA_FREE)dlsym(handle, "BIO_free");
-
-            void *bio = d_BIO_new(d_BIO_s_mem());
-            if (nullptr == bio)
-                qDebug() << "==========bio is null";
-
-            while (!QString(m_pubkey).startsWith("-----BEGIN")) {
-                qDebug() << "m_pubkey is error pubkey:" << m_pubkey;
-                initPublicKey(account);
-            }
-
-            const char *pubKey = m_pubkey;
-
-            d_BIO_puts(bio, pubKey);
-
-            d_RSA d_rsa = nullptr;
-
-            if (0 == strncmp(pubKey, PKCS8_HEADER, strlen(PKCS8_HEADER))) {
-                d_rsa = d_PEM_read_bio_RSA_PUBKEY(bio, nullptr, nullptr, nullptr);
-            } else if (0 == strncmp(pubKey, PKCS1_HEADER, strlen(PKCS1_HEADER))) {
-                d_rsa = d_PEM_read_bio_RSAPublicKey(bio, nullptr, nullptr, nullptr);
-            }
-
-            if (d_rsa == nullptr) {
-                qWarning() << "d_rsa is nullptr. pubkey:\n"
-                           << pubKey;
-                return;
-            }
-            char dData[128];
-            d_RSA_public_encrypt(token.length(), (unsigned char *)token.toLatin1().data(), (unsigned char *)dData, d_rsa, 1);
-
-            d_RSA_free(d_rsa);
-            d_BIO_free(bio);
-            dlclose(handle);
-
-            authControllerInter->SetToken(authType, QByteArray(dData, 128));
-#else
-            authControllerInter->SetToken(authType, token);
-#endif
-            break;
-        }
+    if (!m_authenticateControllers->contains(account)) {
+        return;
     }
+    qInfo() << "Send token to authentication:" << account << authType;
+
+#if 0 // 加密暂时未使用
+    void *handle = nullptr;
+
+    if ((handle = dlopen(OPENSSLNAME, RTLD_NOW)) == nullptr) {
+        printf("dlopen - %sn", dlerror());
+        exit(-1);
+    }
+
+    FUNC_BIO_S_MEM d_BIO_s_mem = (FUNC_BIO_S_MEM)dlsym(handle, "BIO_s_mem");
+
+    FUNC_BIO_NEW d_BIO_new = (FUNC_BIO_NEW)dlsym(handle, "BIO_new");
+
+    FUNC_BIO_PUTS d_BIO_puts = (FUNC_BIO_PUTS)dlsym(handle, "BIO_puts");
+
+    PEM_READ_BIO_RSAPUBLICKEY d_PEM_read_bio_RSAPublicKey = (PEM_READ_BIO_RSAPUBLICKEY)dlsym(handle, "PEM_read_bio_RSAPublicKey");
+
+    PEM_READ_BIO_RSA_PUBKEY d_PEM_read_bio_RSA_PUBKEY = (PEM_READ_BIO_RSA_PUBKEY)dlsym(handle, "PEM_read_bio_RSA_PUBKEY");
+
+    RSA_PUBLIC_ENCRYPT d_RSA_public_encrypt = (RSA_PUBLIC_ENCRYPT)dlsym(handle, "RSA_public_encrypt");
+
+    //FUNC_RSA_SIZE d_RSA_size = (FUNC_RSA_SIZE)dlsym(handle, "RSA_size");
+
+    FUNC_RSA_FREE d_RSA_free = (FUNC_RSA_FREE)dlsym(handle, "RSA_free");
+
+    FUNC_RSA_FREE d_BIO_free = (FUNC_RSA_FREE)dlsym(handle, "BIO_free");
+
+    void *bio = d_BIO_new(d_BIO_s_mem());
+    if (nullptr == bio)
+        qDebug() << "==========bio is null";
+
+    while (!QString(m_pubkey).startsWith("-----BEGIN")) {
+        qDebug() << "m_pubkey is error pubkey:" << m_pubkey;
+        initPublicKey(account);
+    }
+
+    const char *pubKey = m_pubkey;
+
+    d_BIO_puts(bio, pubKey);
+
+    d_RSA d_rsa = nullptr;
+
+    if (0 == strncmp(pubKey, PKCS8_HEADER, strlen(PKCS8_HEADER))) {
+        d_rsa = d_PEM_read_bio_RSA_PUBKEY(bio, nullptr, nullptr, nullptr);
+    } else if (0 == strncmp(pubKey, PKCS1_HEADER, strlen(PKCS1_HEADER))) {
+        d_rsa = d_PEM_read_bio_RSAPublicKey(bio, nullptr, nullptr, nullptr);
+    }
+
+    if (d_rsa == nullptr) {
+        qWarning() << "d_rsa is nullptr. pubkey:\n"
+                   << pubKey;
+        return;
+    }
+    char dData[128];
+    d_RSA_public_encrypt(token.length(), (unsigned char *)token.toLatin1().data(), (unsigned char *)dData, d_rsa, 1);
+
+    d_RSA_free(d_rsa);
+    d_BIO_free(bio);
+    dlclose(handle);
+
+    authControllerInter->SetToken(authType, QByteArray(dData, 128));
+#else
+    m_authenticateControllers->value(account)->SetToken(authType, token);
+#endif
 }
 
 /**
@@ -425,11 +427,10 @@ void DeepinAuthFramework::SendTokenToAuth(const QString &account, const int auth
  */
 void DeepinAuthFramework::SetAuthQuitFlag(const QString &account, const int flag)
 {
-    for (const QString &name : m_authenticateControllers->keys()) {
-        if (account == name) {
-            m_authenticateControllers->value(account)->SetQuitFlag(flag);
-        }
+    if (!m_authenticateControllers->contains(account)) {
+        return;
     }
+    m_authenticateControllers->value(account)->SetQuitFlag(flag);
 }
 
 /**
@@ -492,15 +493,10 @@ QString DeepinAuthFramework::GetLimitedInfo(const QString &account) const
  */
 int DeepinAuthFramework::GetMFAFlag(const QString &account) const
 {
-    int MFAFlag = 0;
-    for (const QString &name : m_authenticateControllers->keys()) {
-        if (account == name) {
-            AuthControllerInter *authControllerInter = m_authenticateControllers->value(account);
-            MFAFlag = authControllerInter->isMFA();
-            break;
-        }
+    if (!m_authenticateControllers->contains(account)) {
+        return 0;
     }
-    return MFAFlag;
+    return m_authenticateControllers->value(account)->isMFA();
 }
 
 /**
@@ -511,15 +507,10 @@ int DeepinAuthFramework::GetMFAFlag(const QString &account) const
  */
 int DeepinAuthFramework::GetPINLen(const QString &account) const
 {
-    int PINLen = 0;
-    for (const QString &name : m_authenticateControllers->keys()) {
-        if (account == name) {
-            AuthControllerInter *authControllerInter = m_authenticateControllers->value(account);
-            PINLen = authControllerInter->pINLen();
-            break;
-        }
+    if (!m_authenticateControllers->contains(account)) {
+        return 0;
     }
-    return PINLen;
+    return m_authenticateControllers->value(account)->pINLen();
 }
 
 /**
@@ -530,15 +521,10 @@ int DeepinAuthFramework::GetPINLen(const QString &account) const
  */
 int DeepinAuthFramework::GetFuzzyMFA(const QString &account) const
 {
-    int fuzzyMFA = 0;
-    for (const QString &name : m_authenticateControllers->keys()) {
-        if (account == name) {
-            AuthControllerInter *authControllerInter = m_authenticateControllers->value(account);
-            fuzzyMFA = authControllerInter->isFuzzyMFA();
-            break;
-        }
+    if (!m_authenticateControllers->contains(account)) {
+        return 0;
     }
-    return fuzzyMFA;
+    return m_authenticateControllers->value(account)->isFuzzyMFA();
 }
 
 /**
@@ -549,15 +535,10 @@ int DeepinAuthFramework::GetFuzzyMFA(const QString &account) const
  */
 QString DeepinAuthFramework::GetPrompt(const QString &account) const
 {
-    QString prompt;
-    for (const QString &name : m_authenticateControllers->keys()) {
-        if (account == name) {
-            AuthControllerInter *authControllerInter = m_authenticateControllers->value(account);
-            prompt = authControllerInter->prompt();
-            break;
-        }
+    if (!m_authenticateControllers->contains(account)) {
+        return QString();
     }
-    return prompt;
+    return m_authenticateControllers->value(account)->prompt();
 }
 
 /**
@@ -568,15 +549,10 @@ QString DeepinAuthFramework::GetPrompt(const QString &account) const
  */
 MFAInfoList DeepinAuthFramework::GetFactorsInfo(const QString &account) const
 {
-    MFAInfoList factorsInfo;
-    for (const QString &name : m_authenticateControllers->keys()) {
-        if (account == name) {
-            AuthControllerInter *authControllerInter = m_authenticateControllers->value(account);
-            factorsInfo = authControllerInter->factorsInfo();
-            break;
-        }
+    if (!m_authenticateControllers->contains(account)) {
+        return MFAInfoList();
     }
-    return factorsInfo;
+    return m_authenticateControllers->value(account)->factorsInfo();
 }
 
 /**
@@ -587,15 +563,10 @@ MFAInfoList DeepinAuthFramework::GetFactorsInfo(const QString &account) const
  */
 QString DeepinAuthFramework::AuthSessionPath(const QString &account) const
 {
-    QString authenticateSessionPath;
-    for (const QString &name : m_authenticateControllers->keys()) {
-        if (account == name) {
-            AuthControllerInter *authControllerInter = m_authenticateControllers->value(account);
-            authenticateSessionPath = authControllerInter->path();
-            break;
-        }
+    if (!m_authenticateControllers->contains(account)) {
+        return QString();
     }
-    return authenticateSessionPath;
+    return m_authenticateControllers->value(account)->path();
 }
 
 void DeepinAuthFramework::cancelAuthenticate()

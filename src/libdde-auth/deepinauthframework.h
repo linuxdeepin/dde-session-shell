@@ -88,7 +88,7 @@ public slots:
     void CreateAuthController(const QString &account, const int authType, const int encryptType);
     void DestoryAuthController(const QString &account);
     void StartAuthentication(const QString &account, const int authType, const int timeout);
-    void EndAuthenticatioin(const QString &account, const int authType);
+    void EndAuthentication(const QString &account, const int authType);
     void SendTokenToAuth(const QString &account, const int authType, const QString &token);
     void SetAuthQuitFlag(const QString &account, const int flag = AutoQuit);
 

@@ -185,8 +185,8 @@ void UserLoginWidget::initConnections()
     });
     FrameDataBind::Instance()->refreshData("UserLoginAccount");
     connect(m_accountEdit, &DLineEditEx::returnPressed, this, [=] {
-        if (m_accountEdit->isVisible() && m_model->currentUser()) {
-                emit requestCreateAuthController(m_model->currentUser()->name());
+        if (m_accountEdit->isVisible() && !m_accountEdit->text().isEmpty()) {
+            emit requestCheckAccount(m_accountEdit->text());
         }
     });
     /* 键盘布局菜单 */
@@ -293,8 +293,7 @@ void UserLoginWidget::initPasswdAuth(const int index)
     m_userLoginLayout->insertWidget(index, m_passwordAuth);
 
     connect(m_passwordAuth, &AuthenticationModule::activateAuthentication, this, [=] {
-        QString account = m_nameLabel->text().isEmpty() ? m_accountEdit->text() : m_nameLabel->text();
-        emit requestStartAuthentication(account, AuthenticationModule::AuthTypePassword);
+        emit requestStartAuthentication(m_model->currentUser()->name(), AuthenticationModule::AuthTypePassword);
     });
     connect(m_passwordAuth, &AuthenticationModule::requestAuthenticate, this, [=] {
         if (m_passwordAuth->lineEditText().isEmpty()) {
@@ -335,8 +334,7 @@ void UserLoginWidget::initFingerprintAuth(const int index)
     QString account = m_nameLabel->text().isEmpty() ? m_accountEdit->text() : m_nameLabel->text();
 
     connect(m_fingerprintAuth, &AuthenticationModule::activateAuthentication, this, [=] {
-        QString account = m_nameLabel->text().isEmpty() ? m_accountEdit->text() : m_nameLabel->text();
-        emit requestStartAuthentication(account, AuthenticationModule::AuthTypeFingerprint);
+        emit requestStartAuthentication(m_model->currentUser()->name(), AuthenticationModule::AuthTypeFingerprint);
     });
     connect(m_fingerprintAuth, &AuthenticationModule::authFinished, this, &UserLoginWidget::checkAuthResult);
 }
@@ -356,8 +354,7 @@ void UserLoginWidget::initFaceAuth(const int index)
     QString account = m_nameLabel->text().isEmpty() ? m_accountEdit->text() : m_nameLabel->text();
 
     connect(m_faceAuth, &AuthenticationModule::activateAuthentication, this, [=] {
-        QString account = m_nameLabel->text().isEmpty() ? m_accountEdit->text() : m_nameLabel->text();
-        emit requestStartAuthentication(account, AuthenticationModule::AuthTypeFace);
+        emit requestStartAuthentication(m_model->currentUser()->name(), AuthenticationModule::AuthTypeFace);
     });
     connect(m_faceAuth, &AuthenticationModule::authFinished, this, &UserLoginWidget::checkAuthResult);
 }
@@ -394,8 +391,7 @@ void UserLoginWidget::initUkeyAuth(const int index)
         m_lockButton->setEnabled(true);
     });
     connect(m_ukeyAuth, &AuthenticationModule::activateAuthentication, this, [=] {
-        QString account = m_nameLabel->text().isEmpty() ? m_accountEdit->text() : m_nameLabel->text();
-        emit requestStartAuthentication(account, AuthenticationModule::AuthTypeUkey);
+        emit requestStartAuthentication(m_model->currentUser()->name(), AuthenticationModule::AuthTypeUkey);
     });
     connect(m_ukeyAuth, &AuthenticationModule::requestAuthenticate, this, [=] {
         if (m_ukeyAuth->lineEditText().isEmpty()) {
@@ -449,8 +445,7 @@ void UserLoginWidget::initPINAuth(const int index)
         m_lockButton->setEnabled(true);
     });
     connect(m_PINAuth, &AuthenticationModule::activateAuthentication, this, [=] {
-        QString account = m_nameLabel->text().isEmpty() ? m_accountEdit->text() : m_nameLabel->text();
-        emit requestStartAuthentication(account, AuthenticationModule::AuthTypePIN);
+        emit requestStartAuthentication(m_model->currentUser()->name(), AuthenticationModule::AuthTypePIN);
     });
     connect(m_PINAuth, &AuthenticationModule::requestAuthenticate, this, [=] {
         qDebug() << "PIN:" << m_PINAuth->lineEditText();
@@ -1005,9 +1000,6 @@ void UserLoginWidget::updateName(const QString &name)
     }
     m_name = name;
     updateNameLabel(m_nameLabel->font());
-    if (m_nameLabel->isVisible()) {
-        emit requestCreateAuthController(m_model->currentUser()->name());
-    }
 }
 
 /**

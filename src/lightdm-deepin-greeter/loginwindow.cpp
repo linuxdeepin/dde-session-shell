@@ -73,7 +73,7 @@ LoginWindow::LoginWindow(SessionBaseModel *const model, QWidget *parent)
     connect(m_loginContent, &LockContent::requestSwitchToUser, this, &LoginWindow::requestSwitchToUser);
     connect(m_loginContent, &LockContent::requestSetLayout, this, &LoginWindow::requestSetLayout);
 
-    connect(m_loginContent, &LockContent::requestCreateAuthController, this, &LoginWindow::requestCreateAuthController);
+    connect(m_loginContent, &LockContent::requestCheckAccount, this, &LoginWindow::requestCheckAccount);
     connect(m_loginContent, &LockContent::requestStartAuthentication, this, &LoginWindow::requestStartAuthentication);
     connect(m_loginContent, &LockContent::sendTokenToAuth, this, &LoginWindow::sendTokenToAuth);
 }

@@ -74,12 +74,12 @@ LockContent::LockContent(SessionBaseModel *const model, QWidget *parent)
     connect(m_userLoginInfo, &UserLoginInfo::requestSwitchUser, this, &LockContent::requestSwitchToUser);
     connect(m_userLoginInfo, &UserLoginInfo::switchToCurrentUser, this, &LockContent::restoreMode);
     connect(m_userLoginInfo, &UserLoginInfo::requestSetLayout, this, &LockContent::requestSetLayout);
-    connect(m_userLoginInfo, &UserLoginInfo::unlockActionFinish, this, [&]{
+    connect(m_userLoginInfo, &UserLoginInfo::unlockActionFinish, this, [&] {
         emit unlockActionFinish();
     });
-    connect(m_userLoginInfo, &UserLoginInfo::requestCreateAuthController, this, &LockContent::requestCreateAuthController);
     connect(m_userLoginInfo, &UserLoginInfo::requestStartAuthentication, this, &LockContent::requestStartAuthentication);
     connect(m_userLoginInfo, &UserLoginInfo::sendTokenToAuth, this, &LockContent::sendTokenToAuth);
+    connect(m_userLoginInfo, &UserLoginInfo::requestCheckAccount, this, &LockContent::requestCheckAccount);
 
     //刷新背景单独与onStatusChanged信号连接，避免在showEvent事件时调用onStatusChanged而重复刷新背景，减少刷新次数
     connect(model, &SessionBaseModel::onStatusChanged, this, &LockContent::onStatusChanged);

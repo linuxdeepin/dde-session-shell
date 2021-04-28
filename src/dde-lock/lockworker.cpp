@@ -36,6 +36,7 @@ LockWorker::LockWorker(SessionBaseModel *const model, QObject *parent)
     m_accountsInter->setSync(false);
     m_model->updateUserList(m_accountsInter->userList());
     m_model->updateLoginedUserList(m_loginedInter->userList());
+    // m_model->updateLimitedInfo(m_authFramework->GetLimitedInfo(m_model->currentUser()->name()));
     /* com.deepin.daemon.Authenticate */
     m_model->updateFrameworkState(m_authFramework->GetFrameworkState());
     m_model->updateSupportedEncryptionType(m_authFramework->GetSupportedEncrypts());
@@ -67,6 +68,7 @@ LockWorker::LockWorker(SessionBaseModel *const model, QObject *parent)
         m_model->userAdd(user);
     }
     onUserAdded(ACCOUNTS_DBUS_PREFIX + QString::number(m_currentUserUid));
+    m_model->setCurrentUser(m_lockInter->CurrentUser());
 }
 
 LockWorker::~LockWorker()
@@ -93,14 +95,27 @@ void LockWorker::initConnections()
     connect(m_authFramework, &DeepinAuthFramework::FuzzyMFAChanged, m_model, &SessionBaseModel::updateFuzzyMFA);
     connect(m_authFramework, &DeepinAuthFramework::MFAFlagChanged, m_model, &SessionBaseModel::updateMFAFlag);
     connect(m_authFramework, &DeepinAuthFramework::PromptChanged, m_model, &SessionBaseModel::updatePrompt);
-    connect(m_authFramework, &DeepinAuthFramework::AuthStatusChanged, m_model, [ = ](const int currentAuthType, const int status, const QString &){
-        if(currentAuthType == -1 && status == 0)
+    connect(m_authFramework, &DeepinAuthFramework::AuthStatusChanged, this, [=](const int type, const int status, const QString &message) {
+        if (type != -1 && status == 0) {
+            endAuthentication(m_account, type);
+        }
+        if (type == -1 && status == 0) {
             onUnlockFinished(true);
+            destoryAuthentication(m_account);
+        }
+        m_model->updateAuthStatus(type, status, message);
     });
-    connect(m_authFramework, &DeepinAuthFramework::AuthStatusChanged, m_model, &SessionBaseModel::updateAuthStatus);
     connect(m_authFramework, &DeepinAuthFramework::FactorsInfoChanged, m_model, &SessionBaseModel::updateFactorsInfo);
-    /* com.deepin.dde.lock */
-    connect(m_lockInter, &DBusLockService::UserChanged, this, &LockWorker::onCurrentUserChanged);
+    /* com.deepin.dde.LockService */
+    connect(m_lockInter, &DBusLockService::UserChanged, this, [=](const QString &json) {
+        m_model->setCurrentUser(json);
+        std::shared_ptr<User> user_ptr = m_model->currentUser();
+        const QString &account = user_ptr->name();
+        updateLockLimit(user_ptr);
+        createAuthentication(account);
+        startAuthentication(account, m_model->getAuthProperty().AuthType);
+        emit m_model->switchUserFinished();
+    });
     connect(m_lockInter, &DBusLockService::Event, this, &LockWorker::lockServiceEvent);
     /* com.deepin.SessionManager */
     connect(m_sessionManager, &SessionManager::Unlock, this, [=] {
@@ -110,30 +125,28 @@ void LockWorker::initConnections()
     });
     /* org.freedesktop.login1.Session */
     connect(m_login1SessionSelf, &Login1SessionSelf::ActiveChanged, this, [=](bool active) {
-        if (active) {
+        if (active && !m_account.isEmpty()) {
+            startAuthentication(m_account, m_model->getAuthProperty().AuthType);
             m_authenticating = false;
-            // m_authFramework->AuthenticateByUser(m_model->currentUser());
         }
     });
     /* org.freedesktop.login1.Manager */
     connect(m_login1Inter, &DBusLogin1Manager::PrepareForSleep, m_model, &SessionBaseModel::prepareForSleep);
     /* model */
+    connect(m_model, &SessionBaseModel::authTypeChanged, this, [=]() {
+        startAuthentication(m_account, m_model->getAuthProperty().AuthType);
+    });
     connect(m_model, &SessionBaseModel::onPowerActionChanged, this, &LockWorker::doPowerAction);
     connect(m_model, &SessionBaseModel::lockLimitFinished, this, [=] {
         auto user = m_model->currentUser();
         if (user != nullptr && !user->isLock()) {
             m_password.clear();
-            // m_authFramework->AuthenticateByUser(user);
         }
     });
     connect(m_model, &SessionBaseModel::visibleChanged, this, [=](bool visible) {
-        std::shared_ptr<User> user_ptr = m_model->currentUser();
-        if (visible && user_ptr.get() && user_ptr->type() == User::Native) {
-            createAuthentication(user_ptr->name());
-            startAuthentication(user_ptr->name(), m_model->getAuthProperty().AuthType);
-        }
-        if (!visible && user_ptr.get() && user_ptr->type() == User::Native) {
-            destoryAuthentication(user_ptr->name());
+        if (visible) {
+            createAuthentication(m_model->currentUser()->name());
+            startAuthentication(m_account, m_model->getAuthProperty().AuthType);
         }
     });
     connect(m_model, &SessionBaseModel::onStatusChanged, this, [=](SessionBaseModel::ModeStatus status) {
@@ -283,12 +296,11 @@ void LockWorker::createAuthentication(const QString &account)
         qWarning() << userPath;
         return;
     }
+    m_account = account;
     switch (m_model->getAuthProperty().FrameworkState) {
     case 0:
         m_authFramework->CreateAuthController(account, m_authFramework->GetSupportedMixAuthFlags(), 0);
         m_model->updateLimitedInfo(m_authFramework->GetLimitedInfo(account));
-        m_model->updatePrompt(m_authFramework->GetPrompt(account));
-        m_model->updateFactorsInfo(m_authFramework->GetFactorsInfo(account));
         break;
     default:
         m_authFramework->Authenticate(account);
@@ -345,7 +357,7 @@ void LockWorker::sendTokenToAuth(const QString &account, const int authType, con
  */
 void LockWorker::endAuthentication(const QString &account, const int authType)
 {
-    m_authFramework->EndAuthenticatioin(account, authType);
+    m_authFramework->EndAuthentication(account, authType);
 }
 
 void LockWorker::onUserAdded(const QString &user)
@@ -459,26 +471,4 @@ void LockWorker::onUnlockFinished(bool unlocked)
     }
 
     emit m_model->authFinished(unlocked);
-}
-
-/**
- * @brief LockWorker::onCurrentUserChanged
- * 用来处理初始化切换用户(锁屏+锁屏)或者切换用户(锁屏+登陆)两种种场景的指纹认证
- * @param user
- */
-void LockWorker::onCurrentUserChanged(const QString &user)
-{
-    qWarning() << "LockWorker::onCurrentUserChanged -- change to :" << user;
-    if (m_currentUserUid != user)
-        m_authFramework->cancelAuthenticate();
-
-    updateLockLimit(m_model->findUserByName(user));
-    std::shared_ptr<User> user_ptr = m_model->currentUser();
-    const QJsonObject userObj = QJsonDocument::fromJson(user.toUtf8()).object();
-    uint uid = static_cast<uint>(userObj["Uid"].toInt());
-    if (uid == user_ptr->uid()) {
-        createAuthentication(user_ptr->name());
-        startAuthentication(user_ptr->name(), m_model->getAuthProperty().AuthType);
-    }
-    emit m_model->switchUserFinished();
 }

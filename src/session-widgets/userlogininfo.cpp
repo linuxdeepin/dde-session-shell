@@ -127,9 +127,9 @@ void UserLoginInfo::initConnect()
     connect(m_model, &SessionBaseModel::authStatusChanged, m_userLoginWidget, &UserLoginWidget::updateAuthResult);
     // connect(m_userLoginWidget, &UserLoginWidget::authFininshed, m_model, &SessionBaseModel::authFinished);
     connect(m_userLoginWidget, &UserLoginWidget::authFininshed, m_model, &SessionBaseModel::setVisible);
-    connect(m_userLoginWidget, &UserLoginWidget::requestCreateAuthController, this, &UserLoginInfo::requestCreateAuthController);
     connect(m_userLoginWidget, &UserLoginWidget::requestStartAuthentication, this, &UserLoginInfo::requestStartAuthentication);
     connect(m_userLoginWidget, &UserLoginWidget::sendTokenToAuth, this, &UserLoginInfo::sendTokenToAuth);
+    connect(m_userLoginWidget, &UserLoginWidget::requestCheckAccount, this, &UserLoginInfo::requestCheckAccount);
 }
 
 void UserLoginInfo::abortConfirm(bool abort)
