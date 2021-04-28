@@ -93,6 +93,10 @@ void LockWorker::initConnections()
     connect(m_authFramework, &DeepinAuthFramework::FuzzyMFAChanged, m_model, &SessionBaseModel::updateFuzzyMFA);
     connect(m_authFramework, &DeepinAuthFramework::MFAFlagChanged, m_model, &SessionBaseModel::updateMFAFlag);
     connect(m_authFramework, &DeepinAuthFramework::PromptChanged, m_model, &SessionBaseModel::updatePrompt);
+    connect(m_authFramework, &DeepinAuthFramework::AuthStatusChanged, m_model, [ = ](const int currentAuthType, const int status, const QString &){
+        if(currentAuthType == -1 && status == 0)
+            onUnlockFinished(true);
+    });
     connect(m_authFramework, &DeepinAuthFramework::AuthStatusChanged, m_model, &SessionBaseModel::updateAuthStatus);
     connect(m_authFramework, &DeepinAuthFramework::FactorsInfoChanged, m_model, &SessionBaseModel::updateFactorsInfo);
     /* com.deepin.dde.lock */
