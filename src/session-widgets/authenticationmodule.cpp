@@ -160,6 +160,7 @@ void AuthenticationModule::setAuthResult(const int status, const QString &resaul
             m_textLabel->setText(resault);
         }
         if (m_lineEdit != nullptr) {
+            m_lineEdit->clear();
             setLineEditInfo(resault, AlertText);
             setAnimationState(false);
         }
