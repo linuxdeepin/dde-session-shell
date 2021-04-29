@@ -567,7 +567,7 @@ void UserLoginWidget::ShutdownPrompt(SessionBaseModel::PowerAction action)
 {
     m_action = action;
 
-    QPalette lockPalatte = m_lockButton->palette();
+    QPalette lockPalatte;
     switch (m_action) {
     case SessionBaseModel::PowerAction::RequireRestart:
         m_lockButton->setIcon(QIcon(":/img/bottom_actions/reboot.svg"));
@@ -577,6 +577,13 @@ void UserLoginWidget::ShutdownPrompt(SessionBaseModel::PowerAction action)
         m_lockButton->setIcon(QIcon(":/img/bottom_actions/shutdown.svg"));
         lockPalatte.setColor(QPalette::Highlight, shutdownColor);
         break;
+    default:
+        if (m_authType == SessionBaseModel::LightdmType) {
+            m_lockButton->setIcon(DStyle::SP_ArrowNext);
+            return;
+        } else {
+            m_lockButton->setIcon(DStyle::SP_LockElement);
+        }
     }
     m_lockButton->setPalette(lockPalatte);
 }
