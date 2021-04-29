@@ -320,9 +320,7 @@ void DeepinAuthFramework::StartAuthentication(const QString &account, const int 
         return;
     }
     int ret = m_authenticateControllers->value(account)->Start(authType, timeout);
-    if (ret == 0) {
-        qInfo() << "Authentication service starts normally." << account << authType;
-    }
+    qInfo() << "Start Authenticate Session:" << account << authType << ret;
 }
 
 /**

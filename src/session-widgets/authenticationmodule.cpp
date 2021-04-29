@@ -22,25 +22,43 @@
 #include "authenticationmodule.h"
 #include "dlineeditex.h"
 
-#include <DHiDPIHelper>
 #include <DFontSizeManager>
+#include <DHiDPIHelper>
 #include <DPalette>
 
 #include <QDateTime>
 #include <QHBoxLayout>
 #include <QKeyEvent>
+#include <QTimer>
 
 AuthenticationModule::AuthenticationModule(const AuthType type, QWidget *parent)
     : QWidget(parent)
     , m_authType(type)
-    , m_textLabel(nullptr)
     , m_authStatus(nullptr)
     , m_capsStatus(nullptr)
     , m_numLockStatus(nullptr)
+    , m_textLabel(nullptr)
     , m_lineEdit(nullptr)
     , m_keyboardButton(nullptr)
+    , m_limitsInfo(new LimitsInfo())
+    , m_unlockTimer(new QTimer(this))
 {
     init();
+
+    connect(m_unlockTimer, &QTimer::timeout, this, [=] {
+        if (m_integerMinutes > 0) {
+            m_integerMinutes--;
+        }
+        if (m_integerMinutes == 0) {
+            m_unlockTimer->stop();
+        }
+        emit unlockTimeChanged();
+    });
+}
+
+AuthenticationModule::~AuthenticationModule()
+{
+    delete m_limitsInfo;
 }
 
 void AuthenticationModule::init()
@@ -75,9 +93,15 @@ void AuthenticationModule::init()
         connect(m_keyboardButton, &QPushButton::clicked, this, &AuthenticationModule::requestShowKeyboardList);
         connect(m_lineEdit, &DLineEditEx::textChanged, this, &AuthenticationModule::lineEditTextChanged);
         connect(m_lineEdit, &DLineEditEx::returnPressed, this, &AuthenticationModule::requestAuthenticate);
-        connect(m_lineEdit, &DLineEditEx::focusChanged, this, [=] (const bool value) {
-            if (value) {
-                // emit activateAuthentication();
+        /* 解锁时间 */
+        connect(this, &AuthenticationModule::unlockTimeChanged, this, [=] {
+            if (m_integerMinutes > 0) {
+                m_lineEdit->setPlaceholderText(tr("Please try again %n minute(s) later", "", static_cast<int>(m_integerMinutes)));
+            } else {
+                QTimer::singleShot(500, this, [=] {
+                    emit activateAuthentication();
+                });
+                m_lineEdit->setPlaceholderText(tr("Waiting authentication service..."));
             }
         });
         m_lineEdit->installEventFilter(this);
@@ -102,9 +126,13 @@ void AuthenticationModule::init()
         mainLayout->addWidget(m_lineEdit);
         connect(m_lineEdit, &DLineEditEx::textChanged, this, &AuthenticationModule::lineEditTextChanged);
         connect(m_lineEdit, &DLineEditEx::returnPressed, this, &AuthenticationModule::requestAuthenticate);
-        connect(m_lineEdit, &DLineEditEx::focusChanged, this, [=] (const bool value) {
-            if (value) {
-                // emit activateAuthentication();
+        /* 解锁时间 */
+        connect(this, &AuthenticationModule::unlockTimeChanged, this, [=] {
+            if (m_integerMinutes > 0) {
+                m_lineEdit->setPlaceholderText(tr("Please try again %n minute(s) later", "", static_cast<int>(m_integerMinutes)));
+            } else {
+                emit activateAuthentication();
+                m_lineEdit->setPlaceholderText(tr("Waiting authentication service..."));
             }
         });
         m_lineEdit->installEventFilter(this);
@@ -119,6 +147,15 @@ void AuthenticationModule::init()
         m_authStatus = new DLabel(this);
         mainLayout->addWidget(m_authStatus, 0, Qt::AlignRight | Qt::AlignVCenter);
         mainLayout->setContentsMargins(27, 0, 10, 0);
+        /* 解锁时间 */
+        connect(this, &AuthenticationModule::unlockTimeChanged, this, [=] {
+            if (m_integerMinutes > 0) {
+                m_textLabel->setText(tr("Please try again %n minute(s) later", "", static_cast<int>(m_integerMinutes)));
+            } else {
+                emit activateAuthentication();
+                m_textLabel->setText(tr("Waiting authentication service..."));
+            }
+        });
     } break;
     case AuthTypeActiveDirectory: {
         // TODO
@@ -260,6 +297,9 @@ void AuthenticationModule::setAuthResult(const int status, const QString &resaul
         break;
     case StatusCodeEnded:
         setEnabled(false);
+        if (m_lineEdit != nullptr) {
+            setAnimationState(false);
+        }
         break;
     case StatusCodeLocked:
         setEnabled(false);
@@ -352,11 +392,20 @@ void AuthenticationModule::setCapsStatus(const bool isCapsOn)
  */
 void AuthenticationModule::setLimitsInfo(const LimitsInfo &info)
 {
-    m_limitsInfo.locked = info.locked;
-    m_limitsInfo.maxTries = info.maxTries;
-    m_limitsInfo.numFailures = info.numFailures;
-    m_limitsInfo.unlockSecs = info.unlockSecs;
-    m_limitsInfo.unlockTime = info.unlockTime;
+    if (info.locked == m_limitsInfo->locked && info.unlockTime == m_limitsInfo->unlockTime) {
+        return;
+    }
+    m_limitsInfo->locked = info.locked;
+    m_limitsInfo->maxTries = info.maxTries;
+    m_limitsInfo->numFailures = info.numFailures;
+    m_limitsInfo->unlockSecs = info.unlockSecs;
+    m_limitsInfo->unlockTime = info.unlockTime;
+    if (info.locked) {
+        updateUnlockTime();
+    } else {
+        m_integerMinutes = 0;
+        m_unlockTimer->start(0);
+    }
 }
 
 /**
@@ -467,17 +516,22 @@ void AuthenticationModule::setAnimationState(const bool start)
 }
 
 /**
- * @brief 计算解锁剩余的时间
+ * @brief 更新解锁剩余的时间
  *
  * @return QString
  */
-QString AuthenticationModule::calculateUnlockTime()
+void AuthenticationModule::updateUnlockTime()
 {
-    uint intervalSeconds = QDateTime::fromString(m_limitsInfo.unlockTime, Qt::ISODateWithMs).toLocalTime().toTime_t()
+    uint intervalSeconds = QDateTime::fromString(m_limitsInfo->unlockTime, Qt::ISODateWithMs).toLocalTime().toTime_t()
                            - QDateTime::currentDateTime().toTime_t();
-    // TODO
-
-    return QString();
+    uint remainderSeconds = intervalSeconds % 60;
+    m_integerMinutes = (intervalSeconds - remainderSeconds) / 60 + 1;
+    emit unlockTimeChanged();
+    QTimer::singleShot(remainderSeconds * 1000, this, [=] {
+        m_integerMinutes--;
+        emit unlockTimeChanged();
+        m_unlockTimer->start(60 * 1000);
+    });
 }
 
 bool AuthenticationModule::eventFilter(QObject *watched, QEvent *event)

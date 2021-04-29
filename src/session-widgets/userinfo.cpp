@@ -170,9 +170,9 @@ void User::updateLimitsInfo(const QString &info)
     const QJsonArray limitsInfoArr = limitsInfoDoc.array();
     for (const QJsonValue &limitsInfoStr : limitsInfoArr) {
         const QJsonObject limitsInfoObj = limitsInfoStr.toObject();
-        limitsInfoTmp.unlockSecs = limitsInfoObj["unlockSecs"].toInt();
-        limitsInfoTmp.maxTries = limitsInfoObj["maxTries"].toInt();
-        limitsInfoTmp.numFailures = limitsInfoObj["numFailures"].toInt();
+        limitsInfoTmp.unlockSecs = limitsInfoObj["unlockSecs"].toVariant().toUInt();
+        limitsInfoTmp.maxTries = limitsInfoObj["maxTries"].toVariant().toUInt();
+        limitsInfoTmp.numFailures = limitsInfoObj["numFailures"].toVariant().toUInt();
         limitsInfoTmp.locked = limitsInfoObj["locked"].toBool();
         limitsInfoTmp.unlockTime = limitsInfoObj["unlockTime"].toString();
         m_limitsInfo->insert(limitsInfoObj["flag"].toInt(), limitsInfoTmp);

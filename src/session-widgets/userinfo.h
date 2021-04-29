@@ -35,10 +35,10 @@ public:
     } m_lockLimit;
 
     struct LimitsInfo {
-        int unlockSecs;     // 本次锁定总解锁时间（秒），不会随着时间推移减少
-        int maxTries;       // 最大重试次数
-        int numFailures;    // 失败次数，一直累加
         bool locked;        // 账户锁定状态 --- true: 锁定  false: 解锁
+        uint maxTries;      // 最大重试次数
+        uint numFailures;   // 失败次数，一直累加
+        uint unlockSecs;    // 本次锁定总解锁时间（秒），不会随着时间推移减少
         QString unlockTime; // 解锁时间（本地时间）
     };
 

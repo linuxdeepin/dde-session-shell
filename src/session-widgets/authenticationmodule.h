@@ -23,11 +23,11 @@
 #define AUTHENTICATIONMODULE_H
 
 #include <DLabel>
+#include <DPushButton>
 
+#include <QEvent>
 #include <QLabel>
 #include <QWidget>
-#include <DPushButton>
-#include <QEvent>
 
 DWIDGET_USE_NAMESPACE
 class DLineEditEx;
@@ -83,34 +83,37 @@ public:
     Q_ENUM(AuthStatus)
 
     struct LimitsInfo {
-        int unlockSecs;     // 本次锁定总解锁时间（秒），不会随着时间推移减少
-        int maxTries;       // 最大重试次数
-        int numFailures;    // 失败次数，一直累加
-        bool locked;        // 账户锁定状态 --- true: 锁定  false: 解锁
-        QString unlockTime; // 解锁时间（本地时间）
+        bool locked = false;                         // 账户锁定状态 --- true: 锁定  false: 解锁
+        uint maxTries = 0;                           // 最大重试次数
+        uint numFailures = 0;                        // 失败次数，一直累加
+        uint unlockSecs = 0;                         // 本次锁定总解锁时间（秒），不会随着时间推移减少
+        QString unlockTime = "0001-01-01T00:00:00Z"; // 解锁时间（本地时间）
     };
 
     explicit AuthenticationModule(const AuthType type, QWidget *parent = nullptr);
+    ~AuthenticationModule();
+
     QString lineEditText() const;
     void setKeyboardButtonVisible(const bool visible);
 
 signals:
+    void activateAuthentication();
+    void authFinished(const int type, const int status);
     void lineEditTextChanged(const QString &);
+    void unlockTimeChanged();
     void requestAuthenticate();
     void requestShowKeyboardList();
-    void authFinished(const int type, const int status);
-    void activateAuthentication();
 
 public slots:
     void setAuthResult(const int status, const QString &resault);
-    void setText(const QString &text);
+    void setAnimationState(const bool start);
     void setAuthStatus(const QString &path);
     void setCapsStatus(const bool isCapsOn);
     void setLimitsInfo(const LimitsInfo &info);
     void setLineEditInfo(const QString &text, const TextType type);
     void setNumLockStatus(const QString &path);
     void setKeyboardButtonInfo(const QString &text);
-    void setAnimationState(const bool start);
+    void setText(const QString &text);
 
 protected:
     bool eventFilter(QObject *watched, QEvent *event) override;
@@ -118,18 +121,20 @@ protected:
 
 private:
     void init();
-    QString calculateUnlockTime();
+    void updateUnlockTime();
 
 private:
     InputType m_inputType;         // 输入设备类型
     AuthType m_authType;           // 认证类型
-    DLabel *m_textLabel;           // 中间文字标签
     DLabel *m_authStatus;          // 认证状态
     DLabel *m_capsStatus;          // 大小写状态
     DLabel *m_numLockStatus;       // 数字键盘状态
+    DLabel *m_textLabel;           // 中间文字标签
     DLineEditEx *m_lineEdit;       // 输入框
     DPushButton *m_keyboardButton; // 键盘布局按钮
-    LimitsInfo m_limitsInfo;       // 认证限制信息
+    LimitsInfo *m_limitsInfo;      // 认证限制信息
+    QTimer *m_unlockTimer;         // 账户限制计时器
+    uint m_integerMinutes;
 };
 
 #endif // AUTHENTICATIONMODULE_H
