@@ -45,6 +45,7 @@ static const int BlurRectRadius = 15;
 static const int WidgetsSpacing = 10;
 static const int Margins = 16;
 static const QColor shutdownColor(QColor(247, 68, 68));
+static const QColor disableColor(QColor(114, 114, 114));
 
 UserLoginWidget::UserLoginWidget(const SessionBaseModel *model, const WidgetType widgetType, QWidget *parent)
     : QWidget(parent)
@@ -314,7 +315,11 @@ void UserLoginWidget::initPasswdAuth(const int index)
     m_registerFunctionIndexs["UserLoginPassword"] = FrameDataBind::Instance()->registerFunction("UserLoginPassword", passwordChanged);
     connect(m_passwordAuth, &AuthenticationModule::lineEditTextChanged, this, [=](const QString &value) {
         FrameDataBind::Instance()->updateValue("UserLoginPassword", value);
-        m_lockButton->setEnabled(true);
+        if(value.length() > 0)
+           m_lockButton->setEnabled(true);
+        else {
+           m_lockButton->setEnabled(false);
+        }
     });
     FrameDataBind::Instance()->refreshData("UserLoginPassword");
 }
@@ -388,7 +393,13 @@ void UserLoginWidget::initUkeyAuth(const int index)
             emit m_ukeyAuth->requestAuthenticate();
         }
         FrameDataBind::Instance()->updateValue("UserLoginUKey", value);
-        m_lockButton->setEnabled(true);
+
+        if(value.length() > 0){
+            m_lockButton->setEnabled(true);
+        }else{
+            m_lockButton->setEnabled(false);
+        }
+
     });
     connect(m_ukeyAuth, &AuthenticationModule::activateAuthentication, this, [=] {
         emit requestStartAuthentication(m_model->currentUser()->name(), AuthenticationModule::AuthTypeUkey);
@@ -442,7 +453,11 @@ void UserLoginWidget::initPINAuth(const int index)
     m_registerFunctionIndexs["UserLoginPIN"] = FrameDataBind::Instance()->registerFunction("UserLoginPIN", PINChanged);
     connect(m_PINAuth, &AuthenticationModule::lineEditTextChanged, this, [=](const QString &value) {
         FrameDataBind::Instance()->updateValue("UserLoginPIN", value);
-        m_lockButton->setEnabled(true);
+        if(value.length() > 0 )
+            m_lockButton->setEnabled(true);
+        else {
+            m_lockButton->setEnabled(false);
+        }
     });
     connect(m_PINAuth, &AuthenticationModule::activateAuthentication, this, [=] {
         emit requestStartAuthentication(m_model->currentUser()->name(), AuthenticationModule::AuthTypePIN);
@@ -1143,8 +1158,6 @@ void UserLoginWidget::keyReleaseEvent(QKeyEvent *event)
 
 void UserLoginWidget::focusOutEvent(QFocusEvent *event)
 {
-    m_lockButton->setEnabled(false);
-
     QWidget::focusOutEvent(event);
 }
 
