@@ -190,6 +190,12 @@ void UserLoginWidget::initConnections()
             emit requestCheckAccount(m_accountEdit->text());
         }
     });
+    /* 解锁按钮 */
+    connect(m_lockButton, &DFloatingButton::clicked, this, [=] {
+        if (m_model->currentUser()->isNoPasswdGrp()) {
+            emit requestCheckAccount(m_model->currentUser()->name());
+        }
+    });
     /* 键盘布局菜单 */
     connect(m_kbLayoutWidget, &KbLayoutWidget::setButtonClicked, this, &UserLoginWidget::requestUserKBLayoutChanged);
     std::function<void(QVariant)> kblayoutChanged = std::bind(&UserLoginWidget::onOtherPageKBLayoutChanged, this, std::placeholders::_1);

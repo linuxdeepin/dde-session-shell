@@ -157,8 +157,11 @@ void GreeterWorkek::initConnections()
     });
     connect(m_model, &SessionBaseModel::currentUserChanged, this, &GreeterWorkek::recoveryUserKBState);
     connect(m_model, &SessionBaseModel::visibleChanged, this, [=](bool visible) {
-        if (!m_model->isServerModel() && visible) {
+        if (visible && !m_model->isServerModel() && !m_model->currentUser()->isNoPasswdGrp()) {
             createAuthentication(m_model->currentUser()->name());
+        }
+        if (visible && !m_model->isServerModel() && m_model->isLockNoPassword() && m_model->currentUser()->isNoPasswdGrp()) {
+            m_greeter->authenticate(m_model->currentUser()->name());
         }
     });
     /* others */
