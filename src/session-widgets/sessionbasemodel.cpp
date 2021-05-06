@@ -527,9 +527,6 @@ void SessionBaseModel::updateFactorsInfo(const MFAInfoList &infoList)
     for (const MFAInfo &info : infoList) {
         factorsInfoAuthType |= info.AuthType;
     }
-    if (factorsInfoAuthType == m_authProperty.AuthType) {
-        return;
-    }
     m_authProperty.AuthType = factorsInfoAuthType;
     emit authTypeChanged(factorsInfoAuthType);
 }

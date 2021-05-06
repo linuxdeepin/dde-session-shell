@@ -98,55 +98,52 @@ void GreeterWorkek::initConnections()
     connect(m_authFramework, &DeepinAuthFramework::SupportedEncryptsChanged, m_model, &SessionBaseModel::updateSupportedEncryptionType);
     connect(m_authFramework, &DeepinAuthFramework::SupportedMixAuthFlagsChanged, m_model, &SessionBaseModel::updateSupportedMixAuthFlags);
     /* com.deepin.daemon.Authenticate.Session */
-    connect(m_authFramework, &DeepinAuthFramework::AuthStatusChanged, this, [=] (const int type, const int status, const QString &message) {
+    connect(m_authFramework, &DeepinAuthFramework::AuthStatusChanged, this, [=](const int type, const int status, const QString &message) {
+        m_model->updateAuthStatus(type, status, message);
         if (type != -1 && status == 0) {
             endAuthentication(m_account, type);
         }
         if (type == -1 && status == 0 && m_model->getAuthProperty().FrameworkState == 0) {
             m_greeter->respond(m_authFramework->AuthSessionPath(m_account));
         }
-        m_model->updateAuthStatus(type, status, message);
     });
     connect(m_authFramework, &DeepinAuthFramework::FactorsInfoChanged, m_model, &SessionBaseModel::updateFactorsInfo);
     connect(m_authFramework, &DeepinAuthFramework::FuzzyMFAChanged, m_model, &SessionBaseModel::updateFuzzyMFA);
     connect(m_authFramework, &DeepinAuthFramework::MFAFlagChanged, m_model, &SessionBaseModel::updateMFAFlag);
     connect(m_authFramework, &DeepinAuthFramework::PromptChanged, m_model, &SessionBaseModel::updatePrompt);
     /* org.freedesktop.login1.Session */
-    connect(m_login1SessionSelf, &Login1SessionSelf::ActiveChanged, this, [=] (bool active) {
-        if (active && !m_account.isEmpty()) {
-            if (!m_greeter->inAuthentication()) {
+    connect(m_login1SessionSelf, &Login1SessionSelf::ActiveChanged, this, [=](bool active) {
+        if (m_account.isEmpty()) {
+            return;
+        }
+        if (active) {
+            if (!m_model->isServerModel() && !m_model->currentUser()->isNoPasswdGrp()) {
+                createAuthentication(m_account);
+            }
+            if (!m_model->isServerModel() && m_model->currentUser()->isNoPasswdGrp() && !m_greeter->inAuthentication()) {
                 m_greeter->authenticate(m_account);
             }
-            startAuthentication(m_account, m_model->getAuthProperty().AuthType);
-        }
-        if (active && !m_model->currentUser()->isNoPasswdGrp()) {
-            if (m_model->isServerModel()) {
-                Q_EMIT m_model->clearServerLoginWidgetContent();
-                connect(m_model, &SessionBaseModel::updateLockLimit, this, [this](std::shared_ptr<User> user) {
-                    updateLockLimit(user);
-                    m_authenticating = false;
-                    resetLightdmAuth(user, 100, false);
-                }, Qt::UniqueConnection);
-            } else {
-                m_authenticating = false;
-                resetLightdmAuth(m_model->currentUser(), 100, false);
+        } else {
+            if (m_greeter->inAuthentication()) {
+                m_greeter->cancelAuthentication();
             }
+            destoryAuthentication(m_account);
         }
     });
     /* com.deepin.dde.LockService */
-    connect(m_lockInter, &DBusLockService::UserChanged, this, [=] (const QString &json) {
+    connect(m_lockInter, &DBusLockService::UserChanged, this, [=](const QString &json) {
+        destoryAuthentication(m_account);
         m_model->setCurrentUser(json);
         std::shared_ptr<User> user_ptr = m_model->currentUser();
         const QString &account = user_ptr->name();
-        updateLockLimit(user_ptr);
-        m_greeter->authenticate(account);
         createAuthentication(account);
-        startAuthentication(account, m_model->getAuthProperty().AuthType);
         emit m_model->switchUserFinished();
     });
     /* model */
-    connect(m_model, &SessionBaseModel::authTypeChanged, this, [=] {
-        startAuthentication(m_account, m_model->getAuthProperty().AuthType);
+    connect(m_model, &SessionBaseModel::authTypeChanged, this, [=](const int type) {
+        if (type > 0) {
+            startAuthentication(m_account, type);
+        }
     });
     connect(m_model, &SessionBaseModel::onPowerActionChanged, this, &GreeterWorkek::doPowerAction);
     connect(m_model, &SessionBaseModel::lockLimitFinished, this, [=] {
@@ -156,16 +153,18 @@ void GreeterWorkek::initConnections()
         startAuthentication(m_account, m_model->getAuthProperty().AuthType);
     });
     connect(m_model, &SessionBaseModel::currentUserChanged, this, &GreeterWorkek::recoveryUserKBState);
-    connect(m_model, &SessionBaseModel::visibleChanged, this, [=] (bool visible) {
-        if (visible && !m_model->isServerModel() && !m_model->currentUser()->isNoPasswdGrp()) {
-            createAuthentication(m_model->currentUser()->name());
-        }
-        if (visible && !m_model->isServerModel() && m_model->isLockNoPassword() && m_model->currentUser()->isNoPasswdGrp()) {
-            m_greeter->authenticate(m_model->currentUser()->name());
+    connect(m_model, &SessionBaseModel::visibleChanged, this, [=](bool visible) {
+        if (visible) {
+            if (!m_model->isServerModel() && !m_model->currentUser()->isNoPasswdGrp()) {
+                createAuthentication(m_model->currentUser()->name());
+            }
+            if (!m_model->isServerModel() && m_model->currentUser()->isNoPasswdGrp() && !m_greeter->inAuthentication()) {
+                m_greeter->authenticate(m_model->currentUser()->name());
+            }
         }
     });
     /* others */
-    connect(KeyboardMonitor::instance(), &KeyboardMonitor::numlockStatusChanged, this, [=] (bool on) {
+    connect(KeyboardMonitor::instance(), &KeyboardMonitor::numlockStatusChanged, this, [=](bool on) {
         saveNumlockStatus(m_model->currentUser(), on);
     });
 }
@@ -194,8 +193,7 @@ void GreeterWorkek::doPowerAction(const SessionBaseModel::PowerAction action)
 
 void GreeterWorkek::switchToUser(std::shared_ptr<User> user)
 {
-    qWarning() << "switch user from" << m_model->currentUser()->name() << " to "
-               << user->name();
+    qInfo() << "switch user from" << m_model->currentUser()->name() << " to " << user->name() << user->isLogin();
 
     // clear old password
     m_password.clear();

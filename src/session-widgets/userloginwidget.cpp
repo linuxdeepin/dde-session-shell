@@ -342,7 +342,6 @@ void UserLoginWidget::initFingerprintAuth(const int index)
     m_fingerprintAuth->setText("Fingerprint ID");
     m_fingerprintAuth->setAuthStatus(":/icons/dedpin/builtin/select.svg");
     m_userLoginLayout->insertWidget(index, m_fingerprintAuth);
-    QString account = m_nameLabel->text().isEmpty() ? m_accountEdit->text() : m_nameLabel->text();
 
     connect(m_fingerprintAuth, &AuthenticationModule::activateAuthentication, this, [=] {
         emit requestStartAuthentication(m_model->currentUser()->name(), AuthenticationModule::AuthTypeFingerprint);
@@ -362,7 +361,6 @@ void UserLoginWidget::initFaceAuth(const int index)
     m_faceAuth->setText("Face ID");
     m_faceAuth->setAuthStatus(":/icons/dedpin/builtin/select.svg");
     m_userLoginLayout->insertWidget(index, m_faceAuth);
-    QString account = m_nameLabel->text().isEmpty() ? m_accountEdit->text() : m_nameLabel->text();
 
     connect(m_faceAuth, &AuthenticationModule::activateAuthentication, this, [=] {
         emit requestStartAuthentication(m_model->currentUser()->name(), AuthenticationModule::AuthTypeFace);
@@ -375,6 +373,7 @@ void UserLoginWidget::initFaceAuth(const int index)
  */
 void UserLoginWidget::initActiveDirectoryAuth(const int index)
 {
+    Q_UNUSED(index)
     // TODO
 }
 
@@ -392,9 +391,24 @@ void UserLoginWidget::initUkeyAuth(const int index)
     m_ukeyAuth->setAuthStatus(":/icons/dedpin/builtin/select.svg");
     m_userLoginLayout->insertWidget(index, m_ukeyAuth);
 
+    connect(m_ukeyAuth, &AuthenticationModule::activateAuthentication, this, [=] {
+        emit requestStartAuthentication(m_model->currentUser()->name(), AuthenticationModule::AuthTypeUkey);
+    });
+    connect(m_ukeyAuth, &AuthenticationModule::requestAuthenticate, this, [=] {
+        if (m_ukeyAuth->lineEditText().isEmpty()) {
+            return;
+        }
+        m_ukeyAuth->setAnimationState(true);
+        emit sendTokenToAuth(m_model->currentUser()->name(), AuthenticationModule::AuthTypeUkey, m_ukeyAuth->lineEditText());
+    });
+    connect(m_lockButton, &QPushButton::clicked, m_ukeyAuth, &AuthenticationModule::requestAuthenticate);
+    connect(m_ukeyAuth, &AuthenticationModule::authFinished, this, &UserLoginWidget::checkAuthResult);
+    connect(m_capslockMonitor, &KeyboardMonitor::capslockStatusChanged, m_ukeyAuth, &AuthenticationModule::setCapsStatus);
+
+    /* 输入框数据同步 */
     std::function<void(QVariant)> PINChanged = std::bind(&UserLoginWidget::onOtherPageUKeyChanged, this, std::placeholders::_1);
     m_registerFunctionIndexs["UserLoginUKey"] = FrameDataBind::Instance()->registerFunction("UserLoginUKey", PINChanged);
-    connect(m_ukeyAuth, &AuthenticationModule::lineEditTextChanged, this, [=] (const QString &value) {
+    connect(m_ukeyAuth, &AuthenticationModule::lineEditTextChanged, this, [=](const QString &value) {
         if (m_model->getAuthProperty().PINLen > 0 && value.size() >= m_model->getAuthProperty().PINLen) {
             emit m_ukeyAuth->requestAuthenticate();
         }
@@ -405,22 +419,7 @@ void UserLoginWidget::initUkeyAuth(const int index)
         }else{
             m_lockButton->setEnabled(false);
         }
-
     });
-    connect(m_ukeyAuth, &AuthenticationModule::activateAuthentication, this, [=] {
-        emit requestStartAuthentication(m_model->currentUser()->name(), AuthenticationModule::AuthTypeUkey);
-    });
-    connect(m_ukeyAuth, &AuthenticationModule::requestAuthenticate, this, [=] {
-        if (m_ukeyAuth->lineEditText().isEmpty()) {
-            return;
-        }
-        m_ukeyAuth->setAnimationState(true);
-        QString account = m_accountEdit->text().isEmpty() ? m_model->currentUser()->name() : m_accountEdit->text();
-        emit sendTokenToAuth(account, AuthenticationModule::AuthTypeUkey, m_ukeyAuth->lineEditText());
-    });
-    connect(m_lockButton, &QPushButton::clicked, m_ukeyAuth, &AuthenticationModule::requestAuthenticate);
-    connect(m_ukeyAuth, &AuthenticationModule::authFinished, this, &UserLoginWidget::checkAuthResult);
-    connect(m_capslockMonitor, &KeyboardMonitor::capslockStatusChanged, m_ukeyAuth, &AuthenticationModule::setCapsStatus);
     FrameDataBind::Instance()->refreshData("UserLoginUKey");
 }
 
@@ -992,32 +991,8 @@ void UserLoginWidget::updateClipPath()
  */
 void UserLoginWidget::checkAuthResult(const int type, const int status)
 {
-    static int authType = 0;
-    /* 当返回 -1 时，优先以服务返回的结果为准 */
-    if (type == -1) {
-        if (status == 0) {
-            emit authFininshed(status);
-            authType = 0;
-        }
-        return;
-    }
-    if (!(type & m_model->getAuthProperty().AuthType)) {
-        qWarning() << "Error! The type of authentication is wrong!" << type << status;
-        return;
-    }
-    if (m_model->getAuthProperty().MFAFlag) {
-        if (!status) {
-            authType |= type; // 记录认证通过的
-        } else if (authType & type) {
-            authType ^= type; // 删除认证失败的记录
-        }
-        if (authType == m_model->getAuthProperty().AuthType) {
-            emit authFininshed(status);
-        }
-    } else {
-        if (!status) {
-            emit authFininshed(status);
-        }
+    if (type == -1 && status == 0) {
+        emit authFininshed(status);
     }
 }
 
