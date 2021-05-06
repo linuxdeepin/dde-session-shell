@@ -93,7 +93,7 @@ void LoginTipsWindow::initUI()
     m_mainLayout->addStretch();
     setLayout(m_mainLayout);
 
-    connect(m_btn, &QPushButton::clicked, this, [=](){
+    connect(m_btn, &QPushButton::clicked, this, [=] {
         // 点击确认后打开登录界面
         emit requestClosed();
         this->close();

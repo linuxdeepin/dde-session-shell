@@ -95,7 +95,7 @@ void LockWorker::initConnections()
     connect(m_authFramework, &DeepinAuthFramework::FuzzyMFAChanged, m_model, &SessionBaseModel::updateFuzzyMFA);
     connect(m_authFramework, &DeepinAuthFramework::MFAFlagChanged, m_model, &SessionBaseModel::updateMFAFlag);
     connect(m_authFramework, &DeepinAuthFramework::PromptChanged, m_model, &SessionBaseModel::updatePrompt);
-    connect(m_authFramework, &DeepinAuthFramework::AuthStatusChanged, this, [=](const int type, const int status, const QString &message) {
+    connect(m_authFramework, &DeepinAuthFramework::AuthStatusChanged, this, [=] (const int type, const int status, const QString &message) {
         if (type != -1 && status == 0) {
             endAuthentication(m_account, type);
         }
@@ -107,7 +107,7 @@ void LockWorker::initConnections()
     });
     connect(m_authFramework, &DeepinAuthFramework::FactorsInfoChanged, m_model, &SessionBaseModel::updateFactorsInfo);
     /* com.deepin.dde.LockService */
-    connect(m_lockInter, &DBusLockService::UserChanged, this, [=](const QString &json) {
+    connect(m_lockInter, &DBusLockService::UserChanged, this, [=] (const QString &json) {
         m_model->setCurrentUser(json);
         std::shared_ptr<User> user_ptr = m_model->currentUser();
         const QString &account = user_ptr->name();
@@ -124,7 +124,7 @@ void LockWorker::initConnections()
         emit m_model->authFinished(true);
     });
     /* org.freedesktop.login1.Session */
-    connect(m_login1SessionSelf, &Login1SessionSelf::ActiveChanged, this, [=](bool active) {
+    connect(m_login1SessionSelf, &Login1SessionSelf::ActiveChanged, this, [=] (bool active) {
         if (active && !m_account.isEmpty()) {
             startAuthentication(m_account, m_model->getAuthProperty().AuthType);
             m_authenticating = false;
@@ -133,7 +133,7 @@ void LockWorker::initConnections()
     /* org.freedesktop.login1.Manager */
     connect(m_login1Inter, &DBusLogin1Manager::PrepareForSleep, m_model, &SessionBaseModel::prepareForSleep);
     /* model */
-    connect(m_model, &SessionBaseModel::authTypeChanged, this, [=]() {
+    connect(m_model, &SessionBaseModel::authTypeChanged, this, [=] () {
         startAuthentication(m_account, m_model->getAuthProperty().AuthType);
     });
     connect(m_model, &SessionBaseModel::onPowerActionChanged, this, &LockWorker::doPowerAction);
@@ -143,13 +143,13 @@ void LockWorker::initConnections()
             m_password.clear();
         }
     });
-    connect(m_model, &SessionBaseModel::visibleChanged, this, [=](bool visible) {
+    connect(m_model, &SessionBaseModel::visibleChanged, this, [=] (bool visible) {
         if (visible) {
             createAuthentication(m_model->currentUser()->name());
             startAuthentication(m_account, m_model->getAuthProperty().AuthType);
         }
     });
-    connect(m_model, &SessionBaseModel::onStatusChanged, this, [=](SessionBaseModel::ModeStatus status) {
+    connect(m_model, &SessionBaseModel::onStatusChanged, this, [=] (SessionBaseModel::ModeStatus status) {
         if (status == SessionBaseModel::ModeStatus::PowerMode || status == SessionBaseModel::ModeStatus::ShutDownMode) {
             checkPowerInfo();
         }

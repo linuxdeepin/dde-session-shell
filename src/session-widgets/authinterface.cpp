@@ -170,7 +170,7 @@ void AuthInterface::onLoginUserListChanged(const QString &list)
 
         auto find_it = std::find_if(
             availableUidList.begin(), availableUidList.end(),
-            [=](const uint find_addomain_uid) { return find_addomain_uid == uid; });
+            [=] (const uint find_addomain_uid) { return find_addomain_uid == uid; });
 
         if (haveDisplay && find_it == availableUidList.end()) {
             // init addoman user
@@ -197,7 +197,7 @@ void AuthInterface::onLoginUserListChanged(const QString &list)
 
         auto find_it =
             std::find_if(m_loginUserList.begin(), m_loginUserList.end(),
-                         [=](const uint find_uid) { return find_uid == user->uid(); });
+                         [=] (const uint find_uid) { return find_uid == user->uid(); });
 
         if (find_it == m_loginUserList.end() &&
             (user->type() == User::ADDomain && user->uid() != INT_MAX)) {
@@ -272,7 +272,7 @@ void AuthInterface::updateLockLimit(std::shared_ptr<User> user)
 bool AuthInterface::isLogined(uint uid)
 {
     auto isLogind = std::find_if(m_loginUserList.begin(), m_loginUserList.end(),
-                                 [=](uint UID) { return uid == UID; });
+                                 [=] (uint UID) { return uid == UID; });
 
     return isLogind != m_loginUserList.end();
 }

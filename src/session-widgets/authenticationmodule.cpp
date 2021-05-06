@@ -75,7 +75,7 @@ void AuthenticationModule::init()
         connect(m_keyboardButton, &QPushButton::clicked, this, &AuthenticationModule::requestShowKeyboardList);
         connect(m_lineEdit, &DLineEditEx::textChanged, this, &AuthenticationModule::lineEditTextChanged);
         connect(m_lineEdit, &DLineEditEx::returnPressed, this, &AuthenticationModule::requestAuthenticate);
-        connect(m_lineEdit, &DLineEditEx::focusChanged, this, [=](const bool value) {
+        connect(m_lineEdit, &DLineEditEx::focusChanged, this, [=] (const bool value) {
             if (value) {
                 // emit activateAuthentication();
             }
@@ -102,7 +102,7 @@ void AuthenticationModule::init()
         mainLayout->addWidget(m_lineEdit);
         connect(m_lineEdit, &DLineEditEx::textChanged, this, &AuthenticationModule::lineEditTextChanged);
         connect(m_lineEdit, &DLineEditEx::returnPressed, this, &AuthenticationModule::requestAuthenticate);
-        connect(m_lineEdit, &DLineEditEx::focusChanged, this, [=](const bool value) {
+        connect(m_lineEdit, &DLineEditEx::focusChanged, this, [=] (const bool value) {
             if (value) {
                 // emit activateAuthentication();
             }

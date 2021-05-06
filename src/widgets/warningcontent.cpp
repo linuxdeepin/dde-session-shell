@@ -150,7 +150,8 @@ void WarningContent::doAccecpShutdownInhibit()
 
     m_model->setIsCheckedInhibit(true);
     m_model->setPowerAction(m_powerAction);
-    emit m_model->cancelShutdownInhibit();
+    if (m_model->currentModeState() != SessionBaseModel::ModeStatus::ShutDownMode)
+        emit m_model->cancelShutdownInhibit();
 }
 
 void WarningContent::beforeInvokeAction()

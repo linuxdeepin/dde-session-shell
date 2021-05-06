@@ -181,7 +181,7 @@ void UserLoginWidget::initConnections()
     /* 用户名输入框 */
     std::function<void(QVariant)> accountChanged = std::bind(&UserLoginWidget::onOtherPageAccountChanged, this, std::placeholders::_1);
     m_registerFunctionIndexs["UserLoginAccount"] = FrameDataBind::Instance()->registerFunction("UserLoginAccount", accountChanged);
-    connect(m_accountEdit, &DLineEditEx::textChanged, this, [=](const QString &value) {
+    connect(m_accountEdit, &DLineEditEx::textChanged, this, [=] (const QString &value) {
         FrameDataBind::Instance()->updateValue("UserLoginAccount", value);
     });
     FrameDataBind::Instance()->refreshData("UserLoginAccount");
@@ -319,7 +319,7 @@ void UserLoginWidget::initPasswdAuth(const int index)
     /* 输入框数据同步 */
     std::function<void(QVariant)> passwordChanged = std::bind(&UserLoginWidget::onOtherPagePasswordChanged, this, std::placeholders::_1);
     m_registerFunctionIndexs["UserLoginPassword"] = FrameDataBind::Instance()->registerFunction("UserLoginPassword", passwordChanged);
-    connect(m_passwordAuth, &AuthenticationModule::lineEditTextChanged, this, [=](const QString &value) {
+    connect(m_passwordAuth, &AuthenticationModule::lineEditTextChanged, this, [=] (const QString &value) {
         FrameDataBind::Instance()->updateValue("UserLoginPassword", value);
         if(value.length() > 0)
            m_lockButton->setEnabled(true);
@@ -394,7 +394,7 @@ void UserLoginWidget::initUkeyAuth(const int index)
 
     std::function<void(QVariant)> PINChanged = std::bind(&UserLoginWidget::onOtherPageUKeyChanged, this, std::placeholders::_1);
     m_registerFunctionIndexs["UserLoginUKey"] = FrameDataBind::Instance()->registerFunction("UserLoginUKey", PINChanged);
-    connect(m_ukeyAuth, &AuthenticationModule::lineEditTextChanged, this, [=](const QString &value) {
+    connect(m_ukeyAuth, &AuthenticationModule::lineEditTextChanged, this, [=] (const QString &value) {
         if (m_model->getAuthProperty().PINLen > 0 && value.size() >= m_model->getAuthProperty().PINLen) {
             emit m_ukeyAuth->requestAuthenticate();
         }
@@ -457,7 +457,7 @@ void UserLoginWidget::initPINAuth(const int index)
 
     std::function<void(QVariant)> PINChanged = std::bind(&UserLoginWidget::onOtherPagePINChanged, this, std::placeholders::_1);
     m_registerFunctionIndexs["UserLoginPIN"] = FrameDataBind::Instance()->registerFunction("UserLoginPIN", PINChanged);
-    connect(m_PINAuth, &AuthenticationModule::lineEditTextChanged, this, [=](const QString &value) {
+    connect(m_PINAuth, &AuthenticationModule::lineEditTextChanged, this, [=] (const QString &value) {
         FrameDataBind::Instance()->updateValue("UserLoginPIN", value);
         if(value.length() > 0 )
             m_lockButton->setEnabled(true);

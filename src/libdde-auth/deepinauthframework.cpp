@@ -36,7 +36,7 @@ DeepinAuthFramework::DeepinAuthFramework(DeepinAuthInterface *interface, QObject
     , m_authenticateControllers(new QMap<QString, AuthControllerInter *>())
 {
     connect(m_authenticateInter, &AuthInter::FrameworkStateChanged, this, &DeepinAuthFramework::FramworkStateChanged);
-    connect(m_authenticateInter, &AuthInter::LimitUpdated, this, [=](const QString &value) {
+    connect(m_authenticateInter, &AuthInter::LimitUpdated, this, [=] (const QString &value) {
         LimitedInfoChanged(m_authenticateInter->GetLimits(value));
     });
     connect(m_authenticateInter, &AuthInter::SupportedFlagsChanged, this, &DeepinAuthFramework::SupportedMixAuthFlagsChanged);
