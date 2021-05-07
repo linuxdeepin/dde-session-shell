@@ -72,13 +72,13 @@ public:
         StatusCodeTimeout,     // 超时
         StatusCodeError,       // 错误
         StatusCodeVerify,      // 验证中
-        StatusCodeExcept,      // 设备异常，当前认证会被 End
+        StatusCodeException,   // 设备异常，当前认证会被 End
         StatusCodePrompt,      // 设备提示
         StatusCodeStarted,     // 认证已启动，调用 Start 之后，每种成功开启都会发送此信号
         StatusCodeEnded,       // 认证已结束，调用 End 之后，每种成功关闭的都会发送此信号，当某种认证类型被锁定时，也会触发此信号
         StatusCodeLocked,      // 认证已锁定，当认证类型锁定时，触发此信号。该信号不会给出锁定等待时间信息
-        StatusCodeRecover,     // 设备恢复，需要调用 Start 重新开启认证
-        StatusCodeUnknown      // 未知设备状态
+        StatusCodeRecover,     // 设备恢复，需要调用 Start 重新开启认证，对应 StatusCodeException
+        StatusCodeUnlocked     // 认证解锁，对应 StatusCodeLocked
     };
     Q_ENUM(AuthStatus)
 

@@ -264,7 +264,7 @@ void AuthenticationModule::setAuthResult(const int status, const QString &resaul
             m_authStatus->hide();
         }
         break;
-    case StatusCodeExcept:
+    case StatusCodeException:
         setEnabled(true);
         if (m_textLabel != nullptr) {
             m_textLabel->setText(resault);
@@ -322,7 +322,7 @@ void AuthenticationModule::setAuthResult(const int status, const QString &resaul
          */
         setEnabled(true);
         break;
-    case StatusCodeUnknown:
+    case StatusCodeUnlocked:
         setEnabled(true);
         if (m_textLabel != nullptr) {
             m_textLabel->setText(resault);
