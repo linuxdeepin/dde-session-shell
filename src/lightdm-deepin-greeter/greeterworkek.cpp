@@ -99,13 +99,17 @@ void GreeterWorkek::initConnections()
     connect(m_authFramework, &DeepinAuthFramework::SupportedMixAuthFlagsChanged, m_model, &SessionBaseModel::updateSupportedMixAuthFlags);
     /* com.deepin.daemon.Authenticate.Session */
     connect(m_authFramework, &DeepinAuthFramework::AuthStatusChanged, this, [=](const int type, const int status, const QString &message) {
-        m_model->updateAuthStatus(type, status, message);
-        if (type != -1 && status == 0) {
+        if (type != -1 && (status == 0 || status == 1 || status == 3 || status == 4 || status == 10)) {
             endAuthentication(m_account, type);
         }
         if (type == -1 && status == 0 && m_model->getAuthProperty().FrameworkState == 0) {
-            m_greeter->respond(m_authFramework->AuthSessionPath(m_account)+","+m_password);
+            if (m_greeter->inAuthentication()) {
+                m_greeter->respond(m_authFramework->AuthSessionPath(m_account) + QString(",") + m_password);
+            } else {
+                qWarning() << "The lightdm is not in authentication!";
+            }
         }
+        m_model->updateAuthStatus(type, status, message);
     });
     connect(m_authFramework, &DeepinAuthFramework::FactorsInfoChanged, m_model, &SessionBaseModel::updateFactorsInfo);
     connect(m_authFramework, &DeepinAuthFramework::FuzzyMFAChanged, m_model, &SessionBaseModel::updateFuzzyMFA);
@@ -124,9 +128,6 @@ void GreeterWorkek::initConnections()
                 m_greeter->authenticate(m_account);
             }
         } else {
-            if (m_greeter->inAuthentication()) {
-                m_greeter->cancelAuthentication();
-            }
             destoryAuthentication(m_account);
         }
     });
@@ -278,8 +279,12 @@ void GreeterWorkek::onUserAdded(const QString &user)
  */
 void GreeterWorkek::createAuthentication(const QString &account)
 {
-    m_account = account;
-    if (!m_greeter->inAuthentication()) {
+    if (m_account == account) {
+        if (!m_greeter->inAuthentication()) {
+            m_greeter->authenticate(account);
+        }
+    } else {
+        m_account = account;
         m_greeter->authenticate(account);
     }
     switch (m_model->getAuthProperty().FrameworkState) {
@@ -499,7 +504,7 @@ void GreeterWorkek::authenticationComplete()
         break;
     }
 
-    qWarning() << "start session = " << m_model->sessionKey();
+    qInfo() << "start session = " << m_model->sessionKey();
 
     auto startSessionSync = [=] () {
         QJsonObject json;

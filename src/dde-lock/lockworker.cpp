@@ -96,14 +96,14 @@ void LockWorker::initConnections()
     connect(m_authFramework, &DeepinAuthFramework::MFAFlagChanged, m_model, &SessionBaseModel::updateMFAFlag);
     connect(m_authFramework, &DeepinAuthFramework::PromptChanged, m_model, &SessionBaseModel::updatePrompt);
     connect(m_authFramework, &DeepinAuthFramework::AuthStatusChanged, this, [=](const int type, const int status, const QString &message) {
-        m_model->updateAuthStatus(type, status, message);
-        if (type != -1 && status == 0) {
+        if (type != -1 && (status == 0 || status == 1 || status == 3 || status == 4 || status == 10)) {
             endAuthentication(m_account, type);
         }
         if (type == -1 && status == 0) {
             onUnlockFinished(true);
             destoryAuthentication(m_account);
         }
+        m_model->updateAuthStatus(type, status, message);
     });
     connect(m_authFramework, &DeepinAuthFramework::FactorsInfoChanged, m_model, &SessionBaseModel::updateFactorsInfo);
     /* com.deepin.dde.LockService */
