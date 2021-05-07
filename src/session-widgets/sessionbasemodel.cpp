@@ -92,6 +92,8 @@ void SessionBaseModel::userAdd(std::shared_ptr<User> user)
 
 void SessionBaseModel::userRemoved(std::shared_ptr<User> user)
 {
+    if(user == nullptr) return;
+
     emit onUserRemoved(user->uid());
 
     m_userList.removeOne(user);
