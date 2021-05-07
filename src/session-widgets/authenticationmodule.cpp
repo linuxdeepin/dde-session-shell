@@ -101,7 +101,7 @@ void AuthenticationModule::init()
                 QTimer::singleShot(500, this, [=] {
                     emit activateAuthentication();
                 });
-                m_lineEdit->setPlaceholderText(tr("Waiting authentication service..."));
+                qInfo() << "Waiting authentication service...";
             }
         });
         m_lineEdit->installEventFilter(this);
@@ -131,8 +131,10 @@ void AuthenticationModule::init()
             if (m_integerMinutes > 0) {
                 m_lineEdit->setPlaceholderText(tr("Please try again %n minute(s) later", "", static_cast<int>(m_integerMinutes)));
             } else {
-                emit activateAuthentication();
-                m_lineEdit->setPlaceholderText(tr("Waiting authentication service..."));
+                QTimer::singleShot(500, this, [=] {
+                    emit activateAuthentication();
+                });
+                qInfo() << "Waiting authentication service...";
             }
         });
         m_lineEdit->installEventFilter(this);
@@ -152,8 +154,10 @@ void AuthenticationModule::init()
             if (m_integerMinutes > 0) {
                 m_textLabel->setText(tr("Please try again %n minute(s) later", "", static_cast<int>(m_integerMinutes)));
             } else {
-                emit activateAuthentication();
-                m_textLabel->setText(tr("Waiting authentication service..."));
+                QTimer::singleShot(500, this, [=] {
+                    emit activateAuthentication();
+                });
+                qInfo() << "Waiting authentication service...";
             }
         });
     } break;
@@ -186,8 +190,8 @@ void AuthenticationModule::setAuthResult(const int status, const QString &resaul
             m_lineEdit->clear();
         }
         if (m_authStatus != nullptr) {
-            m_authStatus->show();
             setAuthStatus(":/icons/dedpin/builtin/select.svg");
+            m_authStatus->show();
         }
         emit authFinished(m_authType, StatusCodeSuccess);
         break;
@@ -296,7 +300,6 @@ void AuthenticationModule::setAuthResult(const int status, const QString &resaul
         setEnabled(true);
         break;
     case StatusCodeEnded:
-        setEnabled(false);
         if (m_lineEdit != nullptr) {
             setAnimationState(false);
         }
@@ -324,17 +327,6 @@ void AuthenticationModule::setAuthResult(const int status, const QString &resaul
         break;
     case StatusCodeUnlocked:
         setEnabled(true);
-        if (m_textLabel != nullptr) {
-            m_textLabel->setText(resault);
-        }
-        if (m_lineEdit != nullptr) {
-            setLineEditInfo(resault, AlertText);
-            setAnimationState(false);
-        }
-        if (m_authStatus != nullptr) {
-            setAuthStatus(":/icons/dedpin/builtin/select.svg");
-            m_authStatus->hide();
-        }
         break;
     default:
         setEnabled(false);
@@ -402,9 +394,6 @@ void AuthenticationModule::setLimitsInfo(const LimitsInfo &info)
     m_limitsInfo->unlockTime = info.unlockTime;
     if (info.locked) {
         updateUnlockTime();
-    } else {
-        m_integerMinutes = 0;
-        m_unlockTimer->start(0);
     }
 }
 
@@ -522,6 +511,9 @@ void AuthenticationModule::setAnimationState(const bool start)
  */
 void AuthenticationModule::updateUnlockTime()
 {
+    if (QDateTime::fromString(m_limitsInfo->unlockTime, Qt::ISODateWithMs) <= QDateTime::currentDateTime()) {
+        return;
+    }
     uint intervalSeconds = QDateTime::fromString(m_limitsInfo->unlockTime, Qt::ISODateWithMs).toLocalTime().toTime_t()
                            - QDateTime::currentDateTime().toTime_t();
     uint remainderSeconds = intervalSeconds % 60;
