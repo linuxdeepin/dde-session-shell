@@ -120,7 +120,8 @@ void LockWorker::initConnections()
     /* org.freedesktop.login1.Session */
     connect(m_login1SessionSelf, &Login1SessionSelf::ActiveChanged, this, [=](bool active) {
         if (active) {
-            createAuthentication(m_account);
+            if (m_model->currentModeState() !=  SessionBaseModel::ModeStatus::ShutDownMode)
+                 createAuthentication(m_account);
         } else {
             destoryAuthentication(m_account);
         }
@@ -141,7 +142,7 @@ void LockWorker::initConnections()
         }
     });
     connect(m_model, &SessionBaseModel::visibleChanged, this, [=] (bool visible) {
-        if (visible) {
+        if (visible && m_model->currentModeState() !=  SessionBaseModel::ModeStatus::ShutDownMode) {
             createAuthentication(m_model->currentUser()->name());
         }
     });
@@ -186,6 +187,7 @@ void LockWorker::doPowerAction(const SessionBaseModel::PowerAction action)
     case SessionBaseModel::PowerAction::RequireLock:
         m_model->setLocked(true);
         m_model->setCurrentModeState(SessionBaseModel::ModeStatus::PasswordMode);
+        createAuthentication(m_model->currentUser()->name());
         // m_authFramework->AuthenticateByUser(m_model->currentUser());
         break;
     case SessionBaseModel::PowerAction::RequireLogout:
