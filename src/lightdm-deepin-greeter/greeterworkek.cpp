@@ -104,7 +104,7 @@ void GreeterWorkek::initConnections()
             endAuthentication(m_account, type);
         }
         if (type == -1 && status == 0 && m_model->getAuthProperty().FrameworkState == 0) {
-            m_greeter->respond(m_authFramework->AuthSessionPath(m_account));
+            m_greeter->respond(m_authFramework->AuthSessionPath(m_account)+","+m_password);
         }
     });
     connect(m_authFramework, &DeepinAuthFramework::FactorsInfoChanged, m_model, &SessionBaseModel::updateFactorsInfo);
@@ -331,6 +331,10 @@ void GreeterWorkek::startAuthentication(const QString &account, const int authTy
  */
 void GreeterWorkek::sendTokenToAuth(const QString &account, const int authType, const QString &token)
 {
+    //密码输入类型
+    if(authType == 1)
+      m_password = token;
+
     switch (m_model->getAuthProperty().FrameworkState) {
     case 0:
         m_authFramework->SendTokenToAuth(account, authType, token);
