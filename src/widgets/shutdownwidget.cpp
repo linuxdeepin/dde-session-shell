@@ -507,6 +507,12 @@ void ShutdownWidget::keyPressEvent(QKeyEvent *event)
 
 bool ShutdownWidget::event(QEvent *e)
 {
+    if (e->type() == QEvent::LanguageChange) {
+        for (auto it = m_trList.constBegin(); it != m_trList.constEnd(); ++it) {
+            it->first(qApp->translate("ShutdownWidget", it->second.toUtf8()));
+        }
+    }
+
     if (e->type() == QEvent::FocusIn) {
         if (m_index < 0) {
             m_index = 0;
