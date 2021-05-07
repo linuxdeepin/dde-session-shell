@@ -23,6 +23,8 @@ using AccountsInter = com::deepin::daemon::Accounts;
 using UserInter = com::deepin::daemon::accounts::User;
 using LoginedInter = com::deepin::daemon::Logined;
 using SessionManager = com::deepin::SessionManager;
+using AuthType = AuthenticationModule::AuthType;
+using AuthStatus = AuthenticationModule::AuthStatus;
 
 class SessionBaseModel;
 class LockWorker : public Auth::AuthInterface
@@ -30,13 +32,6 @@ class LockWorker : public Auth::AuthInterface
 {
     Q_OBJECT
 public:
-    enum AuthType {
-        Password = 1 << 0,
-        Fingerprint = 1 << 1,
-        Face = 1 << 2,
-        ActiveDirectory = 1 << 3
-    };
-
     explicit LockWorker(SessionBaseModel *const model, QObject *parent = nullptr);
     ~LockWorker();
 

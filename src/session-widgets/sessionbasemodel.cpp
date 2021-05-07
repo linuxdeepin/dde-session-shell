@@ -540,8 +540,8 @@ void SessionBaseModel::updateFactorsInfo(const MFAInfoList &infoList)
  * @param status
  * @param result
  */
-void SessionBaseModel::updateAuthStatus(const int currentAuthType, const int status, const QString &result)
+void SessionBaseModel::updateAuthStatus(const AuthenticationModule::AuthType &authType, const AuthenticationModule::AuthStatus &status, const QString &result)
 {
-    qInfo() << "Authentication Service status:" << currentAuthType << status << result;
-    emit authStatusChanged(currentAuthType, status, result);
+    qInfo() << "Authentication Service status:" << authType << status << result;
+    emit authStatusChanged(authType, status, result);
 }

@@ -279,7 +279,9 @@ void DeepinAuthFramework::CreateAuthController(const QString &account, const int
     connect(authControllerInter, &AuthControllerInter::IsMFAChanged, this, &DeepinAuthFramework::MFAFlagChanged);
     connect(authControllerInter, &AuthControllerInter::PINLenChanged, this, &DeepinAuthFramework::PINLenChanged);
     connect(authControllerInter, &AuthControllerInter::PromptChanged, this, &DeepinAuthFramework::PromptChanged);
-    connect(authControllerInter, &AuthControllerInter::Status, this, &DeepinAuthFramework::AuthStatusChanged);
+    connect(authControllerInter, &AuthControllerInter::Status, this, [=] (int flag, int status, const QString &msg) {
+        emit AuthStatusChanged(AuthType(flag), AuthStatus(status), msg);
+    });
 
     emit FactorsInfoChanged(authControllerInter->factorsInfo());
     emit FuzzyMFAChanged(authControllerInter->isFuzzyMFA());
@@ -577,5 +579,7 @@ void DeepinAuthFramework::cancelAuthenticate()
     //            pthread_join(m_pamAuth, nullptr);
     //            m_pamAuth = 0;
     //        }
-    //    }
+        //    }
+    //}
 }
+

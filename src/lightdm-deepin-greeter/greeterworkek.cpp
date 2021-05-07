@@ -99,11 +99,13 @@ void GreeterWorkek::initConnections()
     connect(m_authFramework, &DeepinAuthFramework::SupportedEncryptsChanged, m_model, &SessionBaseModel::updateSupportedEncryptionType);
     connect(m_authFramework, &DeepinAuthFramework::SupportedMixAuthFlagsChanged, m_model, &SessionBaseModel::updateSupportedMixAuthFlags);
     /* com.deepin.daemon.Authenticate.Session */
-    connect(m_authFramework, &DeepinAuthFramework::AuthStatusChanged, this, [=](const int type, const int status, const QString &message) {
-        if (type != -1 && (status == 0 || status == 1 || status == 3 || status == 4 || status == 10)) {
+    connect(m_authFramework, &DeepinAuthFramework::AuthStatusChanged, this, [=] (const AuthType &type, const AuthStatus &status, const QString &message) {
+        if (type != AuthType::AuthTypeAll && (status == AuthStatus::StatusCodeSuccess || status == AuthStatus::StatusCodeFailure
+                                              || status == AuthStatus::StatusCodeTimeout || status == AuthStatus::StatusCodeError
+                                              || status == AuthStatus::StatusCodeLocked )) {
             endAuthentication(m_account, type);
         }
-        if (type == -1 && status == 0 && m_model->getAuthProperty().FrameworkState == 0) {
+        if (type == AuthType::AuthTypeAll && status == AuthStatus::StatusCodeSuccess && m_model->getAuthProperty().FrameworkState == 0) {
             if (m_greeter->inAuthentication()) {
                 m_greeter->respond(m_authFramework->AuthSessionPath(m_account) + QString(";") + m_password);
             } else {
@@ -117,7 +119,7 @@ void GreeterWorkek::initConnections()
     connect(m_authFramework, &DeepinAuthFramework::MFAFlagChanged, m_model, &SessionBaseModel::updateMFAFlag);
     connect(m_authFramework, &DeepinAuthFramework::PromptChanged, m_model, &SessionBaseModel::updatePrompt);
     /* org.freedesktop.login1.Session */
-    connect(m_login1SessionSelf, &Login1SessionSelf::ActiveChanged, this, [=](bool active) {
+    connect(m_login1SessionSelf, &Login1SessionSelf::ActiveChanged, this, [=] (bool active) {
         if (m_account.isEmpty()) {
             return;
         }
@@ -133,7 +135,7 @@ void GreeterWorkek::initConnections()
         }
     });
     /* com.deepin.dde.LockService */
-    connect(m_lockInter, &DBusLockService::UserChanged, this, [=](const QString &json) {
+    connect(m_lockInter, &DBusLockService::UserChanged, this, [=] (const QString &json) {
         destoryAuthentication(m_account);
         m_model->setCurrentUser(json);
         std::shared_ptr<User> user_ptr = m_model->currentUser();
@@ -142,7 +144,7 @@ void GreeterWorkek::initConnections()
         emit m_model->switchUserFinished();
     });
     /* model */
-    connect(m_model, &SessionBaseModel::authTypeChanged, this, [=](const int type) {
+    connect(m_model, &SessionBaseModel::authTypeChanged, this, [=] (const int type) {
         if (type > 0) {
             startAuthentication(m_account, type);
         }
@@ -155,7 +157,7 @@ void GreeterWorkek::initConnections()
         startAuthentication(m_account, m_model->getAuthProperty().AuthType);
     });
     connect(m_model, &SessionBaseModel::currentUserChanged, this, &GreeterWorkek::recoveryUserKBState);
-    connect(m_model, &SessionBaseModel::visibleChanged, this, [=](bool visible) {
+    connect(m_model, &SessionBaseModel::visibleChanged, this, [=] (bool visible) {
         if (visible) {
             if (!m_model->isServerModel() && !m_model->currentUser()->isNoPasswdGrp()) {
                 createAuthentication(m_model->currentUser()->name());
@@ -166,7 +168,7 @@ void GreeterWorkek::initConnections()
         }
     });
     /* others */
-    connect(KeyboardMonitor::instance(), &KeyboardMonitor::numlockStatusChanged, this, [=](bool on) {
+    connect(KeyboardMonitor::instance(), &KeyboardMonitor::numlockStatusChanged, this, [=] (bool on) {
         saveNumlockStatus(m_model->currentUser(), on);
     });
 }

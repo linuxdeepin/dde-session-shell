@@ -31,6 +31,8 @@
 #include <DLineEdit>
 
 using DClipEffectWidget = Dtk::Widget::DClipEffectWidget;
+using AuthType = AuthenticationModule::AuthType;
+using AuthStatus = AuthenticationModule::AuthStatus;
 
 DWIDGET_USE_NAMESPACE
 
@@ -90,7 +92,7 @@ signals:
 
 public slots:
     void updateWidgetShowType(const int type);
-    void updateAuthResult(const int authType, const int status, const QString &message);
+    void updateAuthResult(const AuthenticationModule::AuthType &authType, const AuthenticationModule::AuthStatus &status, const QString &message);
     void updateBlurEffectGeometry();
     void updateAvatar(const QString &path);
     void updateName(const QString &name);
@@ -137,7 +139,7 @@ private:
     void updateNameLabel(const QFont &font);
     void updateClipPath();
 
-    void checkAuthResult(const int type, const int status);
+    void checkAuthResult(const AuthType &type, const AuthStatus &status);
 
 private:
     const SessionBaseModel *const m_model; // 数据

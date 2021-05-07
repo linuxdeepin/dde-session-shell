@@ -95,11 +95,13 @@ void LockWorker::initConnections()
     connect(m_authFramework, &DeepinAuthFramework::FuzzyMFAChanged, m_model, &SessionBaseModel::updateFuzzyMFA);
     connect(m_authFramework, &DeepinAuthFramework::MFAFlagChanged, m_model, &SessionBaseModel::updateMFAFlag);
     connect(m_authFramework, &DeepinAuthFramework::PromptChanged, m_model, &SessionBaseModel::updatePrompt);
-    connect(m_authFramework, &DeepinAuthFramework::AuthStatusChanged, this, [=](const int type, const int status, const QString &message) {
-        if (type != -1 && (status == 0 || status == 1 || status == 3 || status == 4 || status == 10)) {
+    connect(m_authFramework, &DeepinAuthFramework::AuthStatusChanged, this, [=] (const AuthType &type, const AuthStatus &status, const QString &message) {
+        if (type != AuthType::AuthTypeAll && (status == AuthStatus::StatusCodeSuccess || status == AuthStatus::StatusCodeFailure
+                                              || status == AuthStatus::StatusCodeTimeout || status == AuthStatus::StatusCodeError
+                                              || status == AuthStatus::StatusCodeLocked )) {
             endAuthentication(m_account, type);
         }
-        if (type == -1 && status == 0) {
+        if (type == AuthType::AuthTypeAll && status == AuthStatus::StatusCodeSuccess) {
             onUnlockFinished(true);
             destoryAuthentication(m_account);
         }
@@ -107,7 +109,7 @@ void LockWorker::initConnections()
     });
     connect(m_authFramework, &DeepinAuthFramework::FactorsInfoChanged, m_model, &SessionBaseModel::updateFactorsInfo);
     /* com.deepin.dde.LockService */
-    connect(m_lockInter, &DBusLockService::UserChanged, this, [=](const QString &json) {
+    connect(m_lockInter, &DBusLockService::UserChanged, this, [=] (const QString &json) {
         emit m_model->switchUserFinished();
     });
     connect(m_lockInter, &DBusLockService::Event, this, &LockWorker::lockServiceEvent);
@@ -118,7 +120,7 @@ void LockWorker::initConnections()
         emit m_model->authFinished(true);
     });
     /* org.freedesktop.login1.Session */
-    connect(m_login1SessionSelf, &Login1SessionSelf::ActiveChanged, this, [=](bool active) {
+    connect(m_login1SessionSelf, &Login1SessionSelf::ActiveChanged, this, [=] (bool active) {
         if (active) {
             createAuthentication(m_account);
         } else {
@@ -128,7 +130,7 @@ void LockWorker::initConnections()
     /* org.freedesktop.login1.Manager */
     connect(m_login1Inter, &DBusLogin1Manager::PrepareForSleep, m_model, &SessionBaseModel::prepareForSleep);
     /* model */
-    connect(m_model, &SessionBaseModel::authTypeChanged, this, [=](const int type) {
+    connect(m_model, &SessionBaseModel::authTypeChanged, this, [=] (const int type) {
         if (type > 0) {
             startAuthentication(m_account, type);
         }

@@ -176,9 +176,9 @@ void AuthenticationModule::init()
  * @brief 显示认证结果
  *
  * @param status
- * @param resault
+ * @param result
  */
-void AuthenticationModule::setAuthResult(const int status, const QString &resault)
+void AuthenticationModule::setAuthResult(const AuthStatus &status, const QString &result)
 {
     //双屏时，没有显示的屏幕则不处理消息
     if(!isVisible()) return;
@@ -191,7 +191,7 @@ void AuthenticationModule::setAuthResult(const int status, const QString &resaul
             layout()->setContentsMargins(27, 0, 10, 0);
         }
         if (m_lineEdit != nullptr) {
-            setLineEditInfo(resault, PlaceHolderText);
+            setLineEditInfo(result, PlaceHolderText);
             setAnimationState(false);
             m_lineEdit->clear();
         }
@@ -205,11 +205,11 @@ void AuthenticationModule::setAuthResult(const int status, const QString &resaul
     case StatusCodeFailure:
         setEnabled(true);
         if (m_textLabel != nullptr) {
-            m_textLabel->setText(resault);
+            m_textLabel->setText(result);
         }
         if (m_lineEdit != nullptr) {
             m_lineEdit->clear();
-            setLineEditInfo(resault, AlertText);
+            setLineEditInfo(result, AlertText);
             setAnimationState(false);
         }
         if (m_authStatus != nullptr && m_authType == AuthTypeFingerprint) {
@@ -222,11 +222,11 @@ void AuthenticationModule::setAuthResult(const int status, const QString &resaul
     case StatusCodeCancel:
         setEnabled(true);
         if (m_textLabel != nullptr) {
-            m_textLabel->setText(resault);
+            m_textLabel->setText(result);
             layout()->setContentsMargins(0, 0, 0, 0);
         }
         if (m_lineEdit != nullptr) {
-            setLineEditInfo(resault, PlaceHolderText);
+            setLineEditInfo(result, PlaceHolderText);
             setAnimationState(false);
         }
         if (m_authStatus != nullptr) {
@@ -238,11 +238,11 @@ void AuthenticationModule::setAuthResult(const int status, const QString &resaul
     case StatusCodeTimeout:
         setEnabled(true);
         if (m_textLabel != nullptr) {
-            m_textLabel->setText(resault);
+            m_textLabel->setText(result);
             layout()->setContentsMargins(0, 0, 0, 0);
         }
         if (m_lineEdit != nullptr) {
-            setLineEditInfo(resault, AlertText);
+            setLineEditInfo(result, AlertText);
             setAnimationState(false);
         }
         if (m_authStatus != nullptr) {
@@ -253,11 +253,11 @@ void AuthenticationModule::setAuthResult(const int status, const QString &resaul
     case StatusCodeError:
         setEnabled(true);
         if (m_textLabel != nullptr) {
-            m_textLabel->setText(resault);
+            m_textLabel->setText(result);
             layout()->setContentsMargins(0, 0, 0, 0);
         }
         if (m_lineEdit != nullptr) {
-            setLineEditInfo(resault, AlertText);
+            setLineEditInfo(result, AlertText);
             setAnimationState(false);
         }
         if (m_authStatus != nullptr) {
@@ -268,11 +268,11 @@ void AuthenticationModule::setAuthResult(const int status, const QString &resaul
     case StatusCodeVerify:
         setEnabled(true);
         if (m_textLabel != nullptr) {
-            m_textLabel->setText(resault);
+            m_textLabel->setText(result);
             layout()->setContentsMargins(0, 0, 0, 0);
         }
         if (m_lineEdit != nullptr) {
-            // setLineEditInfo(resault, PlaceHolderText);
+            // setLineEditInfo(result, PlaceHolderText);
             setAnimationState(true);
         }
         if (m_authStatus != nullptr) {
@@ -283,11 +283,11 @@ void AuthenticationModule::setAuthResult(const int status, const QString &resaul
     case StatusCodeException:
         setEnabled(true);
         if (m_textLabel != nullptr) {
-            m_textLabel->setText(resault);
+            m_textLabel->setText(result);
             layout()->setContentsMargins(0, 0, 0, 0);
         }
         if (m_lineEdit != nullptr) {
-            setLineEditInfo(resault, AlertText);
+            setLineEditInfo(result, AlertText);
             setAnimationState(false);
         }
         if (m_authStatus != nullptr) {
@@ -299,12 +299,12 @@ void AuthenticationModule::setAuthResult(const int status, const QString &resaul
         setEnabled(true);
         if (m_textLabel != nullptr) {
             if (m_showPrompt) {
-                m_textLabel->setText(resault);
+                m_textLabel->setText(result);
             }
             layout()->setContentsMargins(0, 0, 0, 0);
         }
         if (m_lineEdit != nullptr) {
-            setLineEditInfo(resault, PlaceHolderText);
+            setLineEditInfo(result, PlaceHolderText);
             setAnimationState(false);
         }
         if (m_authStatus != nullptr && m_authType == AuthTypeFingerprint) {
@@ -327,7 +327,7 @@ void AuthenticationModule::setAuthResult(const int status, const QString &resaul
             layout()->setContentsMargins(0, 0, 0, 0);
         }
         if (m_lineEdit != nullptr) {
-            setLineEditInfo(resault, AlertText);
+            setLineEditInfo(result, AlertText);
             setAnimationState(false);
         }
         if (m_authStatus != nullptr && m_authType == AuthTypeFingerprint) {
@@ -350,7 +350,7 @@ void AuthenticationModule::setAuthResult(const int status, const QString &resaul
         break;
     default:
         setEnabled(false);
-        qWarning() << "Error! The status of authentication is wrong!" << status << resault;
+        qWarning() << "Error! The status of authentication is wrong!" << status << result;
         break;
     }
 }

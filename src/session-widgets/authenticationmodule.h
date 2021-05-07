@@ -99,14 +99,14 @@ public:
 
 signals:
     void activateAuthentication();
-    void authFinished(const int type, const int status);
+    void authFinished(const AuthType &type, const AuthStatus &status);
     void lineEditTextChanged(const QString &);
     void unlockTimeChanged();
     void requestAuthenticate();
     void requestShowKeyboardList();
 
 public slots:
-    void setAuthResult(const int status, const QString &resault);
+    void setAuthResult(const AuthStatus &status, const QString &result);
     void setAnimationState(const bool start);
     void setAuthStatus(const QString &path);
     void setCapsStatus(const bool isCapsOn);

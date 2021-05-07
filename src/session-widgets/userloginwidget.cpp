@@ -413,7 +413,7 @@ void UserLoginWidget::initUkeyAuth(const int index)
     /* 输入框数据同步 */
     std::function<void(QVariant)> PINChanged = std::bind(&UserLoginWidget::onOtherPageUKeyChanged, this, std::placeholders::_1);
     m_registerFunctionIndexs["UserLoginUKey"] = FrameDataBind::Instance()->registerFunction("UserLoginUKey", PINChanged);
-    connect(m_ukeyAuth, &AuthenticationModule::lineEditTextChanged, this, [=](const QString &value) {
+    connect(m_ukeyAuth, &AuthenticationModule::lineEditTextChanged, this, [=] (const QString &value) {
         if (m_model->getAuthProperty().PINLen > 0 && value.size() >= m_model->getAuthProperty().PINLen) {
             emit m_ukeyAuth->requestAuthenticate();
         }
@@ -493,7 +493,7 @@ void UserLoginWidget::initPINAuth(const int index)
  * @param status     认证结果
  * @param message    返回的结果文案（成功，失败，等）
  */
-void UserLoginWidget::updateAuthResult(const int authType, const int status, const QString &message)
+void UserLoginWidget::updateAuthResult(const AuthenticationModule::AuthType &authType, const AuthenticationModule::AuthStatus &status, const QString &message)
 {
     switch (authType) {
     case AuthenticationModule::AuthTypePassword:
@@ -993,9 +993,9 @@ void UserLoginWidget::updateClipPath()
  * @param type
  * @param succeed
  */
-void UserLoginWidget::checkAuthResult(const int type, const int status)
+void UserLoginWidget::checkAuthResult(const AuthType &type, const AuthStatus &status)
 {
-    if (type == -1 && status == 0) {
+    if (type == AuthType::AuthTypeAll && status == AuthStatus::StatusCodeSuccess) {
         emit authFininshed(status);
     }
 }

@@ -1,6 +1,8 @@
 #ifndef DEEPINAUTHFRAMEWORK_H
 #define DEEPINAUTHFRAMEWORK_H
 
+#include "authenticationmodule.h"
+
 #include <QObject>
 #include <QPointer>
 
@@ -10,6 +12,8 @@
 
 using AuthInter = com::deepin::daemon::Authenticate;
 using AuthControllerInter = com::deepin::daemon::authenticate::Session;
+using AuthType = AuthenticationModule::AuthType;
+using AuthStatus = AuthenticationModule::AuthStatus;
 
 typedef void *(* FUNC_BIO_S_MEM)(); // 定义函数指针类型的别名
 typedef void *(* FUNC_BIO_NEW)(void *); // 定义函数指针类型的别名
@@ -24,6 +28,7 @@ typedef void *d_RSA; // 定义结构体类型的别名
 class DeepinAuthInterface;
 class QThread;
 class User;
+class AuthenticationModule;
 class DeepinAuthFramework : public QObject
 {
     Q_OBJECT
@@ -74,7 +79,7 @@ signals:
     void PromptChanged(const QString &);
     void FactorsInfoChanged(const MFAInfoList &);
     void PINLenChanged(const int);
-    void AuthStatusChanged(int flag, int status, const QString &result);
+    void AuthStatusChanged(const AuthType &authType, const AuthStatus &status, const QString &result);
 
 public slots:
     /* Compatible with old authentication methods */
