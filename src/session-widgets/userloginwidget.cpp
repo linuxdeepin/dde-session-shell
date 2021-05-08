@@ -296,7 +296,8 @@ void UserLoginWidget::initPasswdAuth(const int index)
     m_passwordAuth = new AuthenticationModule(AuthenticationModule::AuthTypePassword, this);
     m_passwordAuth->setLineEditInfo(tr("Password"), AuthenticationModule::PlaceHolderText);
     m_passwordAuth->setCapsStatus(m_capslockMonitor->isCapslockOn());
-    m_passwordAuth->setAuthStatus(":/icons/dedpin/builtin/select.svg");
+    m_passwordAuth->setAuthStatus(":/icons/dedpin/builtin/login_wait.svg");
+    m_passwordAuth->setAuthStatusVisible(false);
     m_userLoginLayout->insertWidget(index, m_passwordAuth);
 
     connect(m_passwordAuth, &AuthenticationModule::activateAuthentication, this, [=] {
@@ -342,7 +343,8 @@ void UserLoginWidget::initFingerprintAuth(const int index)
     m_fingerprintAuth = new AuthenticationModule(AuthenticationModule::AuthTypeFingerprint, this);
 	//指纹验证第一次提示内容固定，其他系统根据后端发过来内容显示
     m_fingerprintAuth->setText(tr("Verify your fingerprint"));
-    m_fingerprintAuth->setAuthStatus(":/icons/dedpin/builtin/select.svg");
+    m_fingerprintAuth->setAuthStatus(":/img/login_wait.svg");
+    m_fingerprintAuth->setAuthStatusVisible(true);
     m_userLoginLayout->insertWidget(index, m_fingerprintAuth);
 
     connect(m_fingerprintAuth, &AuthenticationModule::activateAuthentication, this, [=] {
@@ -361,7 +363,8 @@ void UserLoginWidget::initFaceAuth(const int index)
     }
     m_faceAuth = new AuthenticationModule(AuthenticationModule::AuthTypeFace, this);
     m_faceAuth->setText("Face ID");
-    m_faceAuth->setAuthStatus(":/icons/dedpin/builtin/select.svg");
+    m_faceAuth->setAuthStatus(":/icons/dedpin/builtin/login_wait.svg");
+    m_faceAuth->setAuthStatusVisible(true);
     m_userLoginLayout->insertWidget(index, m_faceAuth);
 
     connect(m_faceAuth, &AuthenticationModule::activateAuthentication, this, [=] {
@@ -390,7 +393,7 @@ void UserLoginWidget::initUkeyAuth(const int index)
     m_ukeyAuth = new AuthenticationModule(AuthenticationModule::AuthTypeUkey, this);
     m_ukeyAuth->setLineEditInfo(tr("Please enter the PIN code"), AuthenticationModule::PlaceHolderText);
     m_ukeyAuth->setCapsStatus(m_capslockMonitor->isCapslockOn());
-    m_ukeyAuth->setAuthStatus(":/icons/dedpin/builtin/select.svg");
+    m_ukeyAuth->setAuthStatus(":/icons/dedpin/builtin/login_wait.svg");
     m_userLoginLayout->insertWidget(index, m_ukeyAuth);
 
     connect(m_ukeyAuth, &AuthenticationModule::activateAuthentication, this, [=] {
@@ -453,7 +456,7 @@ void UserLoginWidget::initPINAuth(const int index)
     }
     m_PINAuth = new AuthenticationModule(AuthenticationModule::AuthTypePIN, this);
     m_PINAuth->setLineEditInfo(tr("Please enter the PIN code"), AuthenticationModule::PlaceHolderText);
-    m_PINAuth->setAuthStatus(":/icons/dedpin/builtin/select.svg");
+    m_PINAuth->setAuthStatus(":/icons/dedpin/builtin/login_wait.svg");
     m_userLoginLayout->insertWidget(index, m_PINAuth);
 
     std::function<void(QVariant)> PINChanged = std::bind(&UserLoginWidget::onOtherPagePINChanged, this, std::placeholders::_1);

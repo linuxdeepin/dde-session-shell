@@ -2,5 +2,8 @@
     <qresource prefix="/">
         <file>icons/dedpin/builtin/select.svg</file>
         <file>icons/dedpin/builtin/caps_lock.svg</file>
+        <file>icons/dedpin/builtin/login_lock.svg</file>
+        <file>icons/dedpin/builtin/login_spinner.svg</file>
+        <file>icons/dedpin/builtin/login_wait.svg</file>
     </qresource>
 </RCC>

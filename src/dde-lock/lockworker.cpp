@@ -120,8 +120,7 @@ void LockWorker::initConnections()
     /* org.freedesktop.login1.Session */
     connect(m_login1SessionSelf, &Login1SessionSelf::ActiveChanged, this, [=](bool active) {
         if (active) {
-            if (m_model->currentModeState() !=  SessionBaseModel::ModeStatus::ShutDownMode)
-                 createAuthentication(m_account);
+            createAuthentication(m_account);
         } else {
             destoryAuthentication(m_account);
         }

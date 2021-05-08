@@ -180,6 +180,9 @@ void AuthenticationModule::init()
  */
 void AuthenticationModule::setAuthResult(const int status, const QString &resault)
 {
+    //双屏时，没有显示的屏幕则不处理消息
+    if(!isVisible()) return;
+
     switch (status) {
     case StatusCodeSuccess:
         setEnabled(false);
@@ -193,6 +196,7 @@ void AuthenticationModule::setAuthResult(const int status, const QString &resaul
             m_lineEdit->clear();
         }
         if (m_authStatus != nullptr) {
+            setAuthStatus(":/icons/dedpin/builtin/select.svg");
             m_authStatus->show();
         }
         m_showPrompt = true;
@@ -201,18 +205,17 @@ void AuthenticationModule::setAuthResult(const int status, const QString &resaul
     case StatusCodeFailure:
         setEnabled(true);
         if (m_textLabel != nullptr) {
-            m_textLabel->setText(tr("Verification failed"));
-            layout()->setContentsMargins(0, 0, 0, 0);
+            m_textLabel->setText(resault);
         }
         if (m_lineEdit != nullptr) {
             m_lineEdit->clear();
             setLineEditInfo(resault, AlertText);
             setAnimationState(false);
         }
-        if (m_authStatus != nullptr) {
-            m_authStatus->hide();
+        if (m_authStatus != nullptr && m_authType == AuthTypeFingerprint) {
+            setAuthStatus(":/icons/dedpin/builtin/login_wait.svg");
+            m_authStatus->show();
         }
-        m_showPrompt = false;
         emit authFinished(m_authType, StatusCodeFailure);
         emit activateAuthentication(); // TODO retry times
         break;
@@ -227,7 +230,8 @@ void AuthenticationModule::setAuthResult(const int status, const QString &resaul
             setAnimationState(false);
         }
         if (m_authStatus != nullptr) {
-            m_authStatus->hide();
+            setAuthStatus(":/icons/dedpin/builtin/login_wait.svg");
+            m_authStatus->show();
         }
         m_showPrompt = true;
         break;
@@ -242,7 +246,8 @@ void AuthenticationModule::setAuthResult(const int status, const QString &resaul
             setAnimationState(false);
         }
         if (m_authStatus != nullptr) {
-            m_authStatus->hide();
+            setAuthStatus(":/icons/dedpin/builtin/login_wait.svg");
+            m_authStatus->show();
         }
         break;
     case StatusCodeError:
@@ -256,7 +261,8 @@ void AuthenticationModule::setAuthResult(const int status, const QString &resaul
             setAnimationState(false);
         }
         if (m_authStatus != nullptr) {
-            m_authStatus->hide();
+            setAuthStatus(":/icons/dedpin/builtin/login_wait.svg");
+            m_authStatus->show();
         }
         break;
     case StatusCodeVerify:
@@ -270,7 +276,8 @@ void AuthenticationModule::setAuthResult(const int status, const QString &resaul
             setAnimationState(true);
         }
         if (m_authStatus != nullptr) {
-            m_authStatus->hide();
+            setAuthStatus(":/icons/dedpin/builtin/login_spinner.svg");
+            m_authStatus->show();
         }
         break;
     case StatusCodeException:
@@ -284,7 +291,8 @@ void AuthenticationModule::setAuthResult(const int status, const QString &resaul
             setAnimationState(false);
         }
         if (m_authStatus != nullptr) {
-            m_authStatus->hide();
+            setAuthStatus(":/icons/dedpin/builtin/login_wait.svg");
+            m_authStatus->show();
         }
         break;
     case StatusCodePrompt:
@@ -299,8 +307,9 @@ void AuthenticationModule::setAuthResult(const int status, const QString &resaul
             setLineEditInfo(resault, PlaceHolderText);
             setAnimationState(false);
         }
-        if (m_authStatus != nullptr) {
-            m_authStatus->hide();
+        if (m_authStatus != nullptr && m_authType == AuthTypeFingerprint) {
+            setAuthStatus(":/icons/dedpin/builtin/login_spinner.svg");
+            m_authStatus->show();
         }
         break;
     case StatusCodeStarted:
@@ -321,8 +330,9 @@ void AuthenticationModule::setAuthResult(const int status, const QString &resaul
             setLineEditInfo(resault, AlertText);
             setAnimationState(false);
         }
-        if (m_authStatus != nullptr) {
-            m_authStatus->hide();
+        if (m_authStatus != nullptr && m_authType == AuthTypeFingerprint) {
+            setAuthStatus(":/icons/dedpin/builtin/login_lock.svg");
+            m_authStatus->show();
         }
         m_showPrompt = true;
         break;
@@ -372,6 +382,19 @@ void AuthenticationModule::setAuthStatus(const QString &path)
     QPixmap pixmap = DHiDPIHelper::loadNxPixmap(path);
     pixmap.setDevicePixelRatio(devicePixelRatioF());
     m_authStatus->setPixmap(pixmap);
+}
+
+/**
+ * @brief 设置认证按钮可见  --- 不同认证方式是否可见不同
+ *
+ * @param visible 是否可见
+ */
+void AuthenticationModule::setAuthStatusVisible(const bool visible)
+{
+    if(visible)
+        m_authStatus->show();
+    else
+        m_authStatus->hide();
 }
 
 /**
