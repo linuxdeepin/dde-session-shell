@@ -75,6 +75,7 @@ public:
     virtual bool isUserIsvalid() const;
     virtual bool isDoMainUser() const { return m_isServer; }
     virtual bool is24HourFormat() const { return true; }
+    virtual bool automaticLogin() const { return false; }
 
     void setisLogind(bool isLogind);
     virtual void setCurrentLayout(const QString &layout) { Q_UNUSED(layout); }
@@ -132,6 +133,14 @@ public:
     bool isUserIsvalid() const override;
     bool is24HourFormat() const override;
 
+    bool automaticLogin() const override { return m_automaticLogin;}
+
+signals:
+    void autoLoginStateChanged(const bool);
+
+private slots:
+    void updateAutomaticLogin(const bool autoLoginState);
+
 private:
     void configAccountInfo(const QString& account_config);
     QStringList readDesktopBackgroundPath(const QString &path);
@@ -143,6 +152,7 @@ private:
     QString m_greeterBackground;
     QString m_desktopBackground;
     bool m_is24HourFormat;
+    bool m_automaticLogin;
 };
 
 class ADDomainUser : public User

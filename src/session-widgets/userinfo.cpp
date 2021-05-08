@@ -205,6 +205,9 @@ NativeUser::NativeUser(const QString &path, QObject *parent)
     , m_userInter(new UserInter(ACCOUNT_DBUS_SERVICE, path, QDBusConnection::systemBus(), this))
 {
     m_userInter->setSync(false);
+
+    connect(m_userInter, &UserInter::AutomaticLoginChanged, this, &NativeUser::updateAutomaticLogin);
+
     connect(m_userInter, &UserInter::IconFileChanged, this, [ = ](const QString & avatar) {
         m_avatar = avatar;
         emit avatarChanged(avatar);
@@ -259,6 +262,7 @@ NativeUser::NativeUser(const QString &path, QObject *parent)
     connect(m_userInter, &UserInter::LayoutChanged, this, &NativeUser::currentKBLayoutChanged);
     connect(m_userInter, &UserInter::NoPasswdLoginChanged, this, &NativeUser::noPasswdLoginChanged);
 
+    m_userInter->automaticLogin();
     m_userInter->userName();
     m_userInter->locale();
     m_userInter->passwordStatus();
@@ -376,6 +380,20 @@ bool NativeUser::is24HourFormat() const
     //先触发后端刷新取用户时制信号,并返回当前已经取到的时制格式
     m_userInter->use24HourFormat();
     return m_is24HourFormat;
+}
+
+/**
+ * @brief 更新账户自动登录状态
+ *
+ * @param autoLoginState
+ */
+void NativeUser::updateAutomaticLogin(const bool autoLoginState)
+{
+    if (autoLoginState == m_automaticLogin) {
+        return;
+    }
+    m_automaticLogin = autoLoginState;
+    emit autoLoginStateChanged(autoLoginState);
 }
 
 ADDomainUser::ADDomainUser(uid_t uid, QObject *parent)

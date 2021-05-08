@@ -125,7 +125,7 @@ void GreeterWorkek::initConnections()
             if (!m_model->isServerModel() && !m_model->currentUser()->isNoPasswdGrp()) {
                 createAuthentication(m_account);
             }
-            if (!m_model->isServerModel() && m_model->currentUser()->isNoPasswdGrp() && !m_greeter->inAuthentication()) {
+            if (!m_model->isServerModel() && m_model->currentUser()->isNoPasswdGrp() && m_model->currentUser()->automaticLogin()) {
                 m_greeter->authenticate(m_account);
             }
         } else {
@@ -160,7 +160,7 @@ void GreeterWorkek::initConnections()
             if (!m_model->isServerModel() && !m_model->currentUser()->isNoPasswdGrp()) {
                 createAuthentication(m_model->currentUser()->name());
             }
-            if (!m_model->isServerModel() && m_model->currentUser()->isNoPasswdGrp() && !m_greeter->inAuthentication()) {
+            if (!m_model->isServerModel() && m_model->currentUser()->isNoPasswdGrp() && m_model->currentUser()->automaticLogin()) {
                 m_greeter->authenticate(m_model->currentUser()->name());
             }
         }
