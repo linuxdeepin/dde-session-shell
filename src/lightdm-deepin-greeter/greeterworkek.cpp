@@ -104,7 +104,7 @@ void GreeterWorkek::initConnections()
         }
         if (type == -1 && status == 0 && m_model->getAuthProperty().FrameworkState == 0) {
             if (m_greeter->inAuthentication()) {
-                m_greeter->respond(m_authFramework->AuthSessionPath(m_account) + QString(",") + m_password);
+                m_greeter->respond(m_authFramework->AuthSessionPath(m_account) + QString(";") + m_password);
             } else {
                 qWarning() << "The lightdm is not in authentication!";
             }
