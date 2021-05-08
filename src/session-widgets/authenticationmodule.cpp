@@ -42,6 +42,7 @@ AuthenticationModule::AuthenticationModule(const AuthType type, QWidget *parent)
     , m_keyboardButton(nullptr)
     , m_limitsInfo(new LimitsInfo())
     , m_unlockTimer(new QTimer(this))
+    , m_showPrompt(true)
 {
     init();
 
@@ -64,10 +65,10 @@ AuthenticationModule::~AuthenticationModule()
 void AuthenticationModule::init()
 {
     QHBoxLayout *mainLayout = new QHBoxLayout(this);
-    mainLayout->setContentsMargins(0, 0, 0, 0);
     mainLayout->setSpacing(0);
     switch (m_authType) {
     case AuthTypePassword: {
+        mainLayout->setContentsMargins(0, 0, 0, 0);
         m_lineEdit = new DLineEditEx(this);
         m_lineEdit->setClearButtonEnabled(false);
         m_lineEdit->setEchoMode(QLineEdit::Password);
@@ -109,6 +110,7 @@ void AuthenticationModule::init()
     } break;
     case AuthTypePIN:
     case AuthTypeUkey: {
+        mainLayout->setContentsMargins(0, 0, 0, 0);
         m_lineEdit = new DLineEditEx(this);
         m_lineEdit->setClearButtonEnabled(false);
         m_lineEdit->setEchoMode(QLineEdit::Password);
@@ -144,12 +146,11 @@ void AuthenticationModule::init()
     case AuthTypeFace:
     case AuthTypeFingerVein:
     case AuthTypeIris: {
+        mainLayout->setContentsMargins(27, 0, 10, 0);
         m_textLabel = new DLabel(this);
-        m_textLabel->setAlignment(Qt::AlignCenter);
         mainLayout->addWidget(m_textLabel, 1, Qt::AlignHCenter | Qt::AlignVCenter);
         m_authStatus = new DLabel(this);
         mainLayout->addWidget(m_authStatus, 0, Qt::AlignRight | Qt::AlignVCenter);
-        mainLayout->setContentsMargins(0, 0, 10, 0);
         /* 解锁时间 */
         connect(this, &AuthenticationModule::unlockTimeChanged, this, [=] {
             if (m_integerMinutes > 0) {
@@ -183,7 +184,8 @@ void AuthenticationModule::setAuthResult(const int status, const QString &resaul
     case StatusCodeSuccess:
         setEnabled(false);
         if (m_textLabel != nullptr) {
-            m_textLabel->setText(resault);
+            m_textLabel->setText(tr("Verification successful"));
+            layout()->setContentsMargins(27, 0, 10, 0);
         }
         if (m_lineEdit != nullptr) {
             setLineEditInfo(resault, PlaceHolderText);
@@ -191,15 +193,16 @@ void AuthenticationModule::setAuthResult(const int status, const QString &resaul
             m_lineEdit->clear();
         }
         if (m_authStatus != nullptr) {
-            setAuthStatus(":/icons/dedpin/builtin/select.svg");
             m_authStatus->show();
         }
+        m_showPrompt = true;
         emit authFinished(m_authType, StatusCodeSuccess);
         break;
     case StatusCodeFailure:
         setEnabled(true);
         if (m_textLabel != nullptr) {
-            m_textLabel->setText(resault);
+            m_textLabel->setText(tr("Verification failed"));
+            layout()->setContentsMargins(0, 0, 0, 0);
         }
         if (m_lineEdit != nullptr) {
             m_lineEdit->clear();
@@ -207,9 +210,9 @@ void AuthenticationModule::setAuthResult(const int status, const QString &resaul
             setAnimationState(false);
         }
         if (m_authStatus != nullptr) {
-            setAuthStatus(":/icons/dedpin/builtin/select.svg");
             m_authStatus->hide();
         }
+        m_showPrompt = false;
         emit authFinished(m_authType, StatusCodeFailure);
         emit activateAuthentication(); // TODO retry times
         break;
@@ -217,27 +220,28 @@ void AuthenticationModule::setAuthResult(const int status, const QString &resaul
         setEnabled(true);
         if (m_textLabel != nullptr) {
             m_textLabel->setText(resault);
+            layout()->setContentsMargins(0, 0, 0, 0);
         }
         if (m_lineEdit != nullptr) {
             setLineEditInfo(resault, PlaceHolderText);
             setAnimationState(false);
         }
         if (m_authStatus != nullptr) {
-            setAuthStatus(":/icons/dedpin/builtin/select.svg");
             m_authStatus->hide();
         }
+        m_showPrompt = true;
         break;
     case StatusCodeTimeout:
         setEnabled(true);
         if (m_textLabel != nullptr) {
             m_textLabel->setText(resault);
+            layout()->setContentsMargins(0, 0, 0, 0);
         }
         if (m_lineEdit != nullptr) {
             setLineEditInfo(resault, AlertText);
             setAnimationState(false);
         }
         if (m_authStatus != nullptr) {
-            setAuthStatus(":/icons/dedpin/builtin/select.svg");
             m_authStatus->hide();
         }
         break;
@@ -245,13 +249,13 @@ void AuthenticationModule::setAuthResult(const int status, const QString &resaul
         setEnabled(true);
         if (m_textLabel != nullptr) {
             m_textLabel->setText(resault);
+            layout()->setContentsMargins(0, 0, 0, 0);
         }
         if (m_lineEdit != nullptr) {
             setLineEditInfo(resault, AlertText);
             setAnimationState(false);
         }
         if (m_authStatus != nullptr) {
-            setAuthStatus(":/icons/dedpin/builtin/select.svg");
             m_authStatus->hide();
         }
         break;
@@ -259,13 +263,13 @@ void AuthenticationModule::setAuthResult(const int status, const QString &resaul
         setEnabled(true);
         if (m_textLabel != nullptr) {
             m_textLabel->setText(resault);
+            layout()->setContentsMargins(0, 0, 0, 0);
         }
         if (m_lineEdit != nullptr) {
             // setLineEditInfo(resault, PlaceHolderText);
             setAnimationState(true);
         }
         if (m_authStatus != nullptr) {
-            setAuthStatus(":/icons/dedpin/builtin/select.svg");
             m_authStatus->hide();
         }
         break;
@@ -273,24 +277,29 @@ void AuthenticationModule::setAuthResult(const int status, const QString &resaul
         setEnabled(true);
         if (m_textLabel != nullptr) {
             m_textLabel->setText(resault);
+            layout()->setContentsMargins(0, 0, 0, 0);
         }
         if (m_lineEdit != nullptr) {
             setLineEditInfo(resault, AlertText);
             setAnimationState(false);
         }
         if (m_authStatus != nullptr) {
-            setAuthStatus(":/icons/dedpin/builtin/select.svg");
             m_authStatus->hide();
         }
         break;
     case StatusCodePrompt:
         setEnabled(true);
+        if (m_textLabel != nullptr) {
+            if (m_showPrompt) {
+                m_textLabel->setText(resault);
+            }
+            layout()->setContentsMargins(0, 0, 0, 0);
+        }
         if (m_lineEdit != nullptr) {
             setLineEditInfo(resault, PlaceHolderText);
             setAnimationState(false);
         }
         if (m_authStatus != nullptr) {
-            setAuthStatus(":/icons/dedpin/builtin/select.svg");
             m_authStatus->hide();
         }
         break;
@@ -305,16 +314,17 @@ void AuthenticationModule::setAuthResult(const int status, const QString &resaul
     case StatusCodeLocked:
         setEnabled(false);
         if (m_textLabel != nullptr) {
-            m_textLabel->setText(resault);
+            m_textLabel->setText(tr("Fingerprint locked, use password please"));
+            layout()->setContentsMargins(0, 0, 0, 0);
         }
         if (m_lineEdit != nullptr) {
             setLineEditInfo(resault, AlertText);
             setAnimationState(false);
         }
         if (m_authStatus != nullptr) {
-            setAuthStatus(":/icons/dedpin/builtin/select.svg");
             m_authStatus->hide();
         }
+        m_showPrompt = true;
         break;
     case StatusCodeRecover:
         /** TODO
@@ -322,9 +332,11 @@ void AuthenticationModule::setAuthResult(const int status, const QString &resaul
          * 需要在这里调用 start 重新开启认证
          */
         setEnabled(true);
+        m_showPrompt = true;
         break;
     case StatusCodeUnlocked:
         setEnabled(true);
+        m_showPrompt = true;
         break;
     default:
         setEnabled(false);
@@ -392,6 +404,8 @@ void AuthenticationModule::setLimitsInfo(const LimitsInfo &info)
     m_limitsInfo->unlockTime = info.unlockTime;
     if (info.locked) {
         updateUnlockTime();
+    } else {
+        emit activateAuthentication();
     }
 }
 

@@ -136,6 +136,7 @@ private:
     LimitsInfo *m_limitsInfo;      // 认证限制信息
     QTimer *m_unlockTimer;         // 账户限制计时器
     uint m_integerMinutes;
+    bool m_showPrompt;
     QString m_iconText;
 };
 
