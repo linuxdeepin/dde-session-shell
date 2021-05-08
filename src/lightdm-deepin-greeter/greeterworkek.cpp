@@ -2,6 +2,7 @@
 #include "userinfo.h"
 #include "keyboardmonitor.h"
 
+#include <unistd.h>
 #include <libintl.h>
 #include <DSysInfo>
 
@@ -286,6 +287,9 @@ void GreeterWorkek::createAuthentication(const QString &account)
     } else {
         m_account = account;
         m_greeter->authenticate(account);
+    }
+    while (!m_greeter->inAuthentication()) {
+        usleep(100);
     }
     switch (m_model->getAuthProperty().FrameworkState) {
     case 0:
