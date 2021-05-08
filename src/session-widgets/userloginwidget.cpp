@@ -339,7 +339,8 @@ void UserLoginWidget::initFingerprintAuth(const int index)
         return;
     }
     m_fingerprintAuth = new AuthenticationModule(AuthenticationModule::AuthTypeFingerprint, this);
-    m_fingerprintAuth->setText("Fingerprint ID");
+	//指纹验证第一次提示内容固定，其他系统根据后端发过来内容显示
+    m_fingerprintAuth->setText(tr("Verify your fingerprint"));
     m_fingerprintAuth->setAuthStatus(":/icons/dedpin/builtin/select.svg");
     m_userLoginLayout->insertWidget(index, m_fingerprintAuth);
 

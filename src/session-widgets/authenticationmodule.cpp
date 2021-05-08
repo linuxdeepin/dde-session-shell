@@ -145,10 +145,11 @@ void AuthenticationModule::init()
     case AuthTypeFingerVein:
     case AuthTypeIris: {
         m_textLabel = new DLabel(this);
+        m_textLabel->setAlignment(Qt::AlignCenter);
         mainLayout->addWidget(m_textLabel, 1, Qt::AlignHCenter | Qt::AlignVCenter);
         m_authStatus = new DLabel(this);
         mainLayout->addWidget(m_authStatus, 0, Qt::AlignRight | Qt::AlignVCenter);
-        mainLayout->setContentsMargins(27, 0, 10, 0);
+        mainLayout->setContentsMargins(0, 0, 10, 0);
         /* 解锁时间 */
         connect(this, &AuthenticationModule::unlockTimeChanged, this, [=] {
             if (m_integerMinutes > 0) {
@@ -284,9 +285,6 @@ void AuthenticationModule::setAuthResult(const int status, const QString &resaul
         break;
     case StatusCodePrompt:
         setEnabled(true);
-        if (m_textLabel != nullptr) {
-            m_textLabel->setText(resault);
-        }
         if (m_lineEdit != nullptr) {
             setLineEditInfo(resault, PlaceHolderText);
             setAnimationState(false);
