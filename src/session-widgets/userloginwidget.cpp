@@ -328,6 +328,7 @@ void UserLoginWidget::initPasswdAuth(const int index)
         }
     });
     FrameDataBind::Instance()->refreshData("UserLoginPassword");
+    m_passwordAuth->setKeyboardButtonVisible(m_keyboardList.size() > 1 ? true : false);
 }
 
 /**
@@ -791,11 +792,10 @@ void UserLoginWidget::updateBlurEffectGeometry()
  */
 void UserLoginWidget::updateKeyboardList(const QStringList &list)
 {
-    static QStringList tmpList;
-    if (list == tmpList) {
+    if (list == m_keyboardList) {
         return;
     }
-    tmpList = list;
+    m_keyboardList = list;
     if (m_kbLayoutWidget != nullptr && m_kbLayoutBorder != nullptr) {
         m_kbLayoutWidget->updateButtonList(list);
         m_kbLayoutBorder->setContent(m_kbLayoutWidget);

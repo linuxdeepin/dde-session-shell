@@ -95,6 +95,7 @@ public:
 
     QString lineEditText() const;
     void setKeyboardButtonVisible(const bool visible);
+    void setKeyboardButtontext(const QString &text);
 
 signals:
     void activateAuthentication();
@@ -135,6 +136,7 @@ private:
     LimitsInfo *m_limitsInfo;      // 认证限制信息
     QTimer *m_unlockTimer;         // 账户限制计时器
     uint m_integerMinutes;
+    QString m_iconText;
 };
 
 #endif // AUTHENTICATIONMODULE_H

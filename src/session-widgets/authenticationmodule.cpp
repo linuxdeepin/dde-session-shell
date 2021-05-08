@@ -448,6 +448,9 @@ QString AuthenticationModule::lineEditText() const
 void AuthenticationModule::setKeyboardButtonVisible(const bool visible)
 {
     m_keyboardButton->setVisible(visible);
+    if (visible) {
+        setKeyboardButtontext(m_iconText);
+    }
 }
 
 /**
@@ -458,9 +461,12 @@ void AuthenticationModule::setKeyboardButtonVisible(const bool visible)
  */
 void AuthenticationModule::setKeyboardButtonInfo(const QString &text)
 {
-    if (!m_keyboardButton->isVisible()) {
-        return;
-    }
+    m_iconText = text;
+    setKeyboardButtontext(m_iconText);
+}
+
+void AuthenticationModule::setKeyboardButtontext(const QString &text)
+{
     QString tmpText = text;
     tmpText = tmpText.split(";").first();
     /* special mark in Japanese */
