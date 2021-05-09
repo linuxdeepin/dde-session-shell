@@ -141,7 +141,7 @@ void LockWorker::initConnections()
         }
     });
     connect(m_model, &SessionBaseModel::visibleChanged, this, [=] (bool visible) {
-        if (visible && m_model->currentModeState() !=  SessionBaseModel::ModeStatus::ShutDownMode) {
+        if (visible) {
             createAuthentication(m_model->currentUser()->name());
         }
     });
@@ -186,7 +186,6 @@ void LockWorker::doPowerAction(const SessionBaseModel::PowerAction action)
     case SessionBaseModel::PowerAction::RequireLock:
         m_model->setLocked(true);
         m_model->setCurrentModeState(SessionBaseModel::ModeStatus::PasswordMode);
-        createAuthentication(m_model->currentUser()->name());
         // m_authFramework->AuthenticateByUser(m_model->currentUser());
         break;
     case SessionBaseModel::PowerAction::RequireLogout:
