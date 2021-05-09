@@ -208,17 +208,16 @@ void LockWorker::doPowerAction(const SessionBaseModel::PowerAction action)
 
 void LockWorker::switchToUser(std::shared_ptr<User> user)
 {
-    // clear old password
-    m_password.clear();
-    m_authenticating = false;
+    if (user->name() == m_account) {
+        return;
+    }
+
+    qInfo() << "switch user from" << m_account << " to " << user->name() << user->isLogin();
 
     // if type is lock, switch to greeter
     QJsonObject json;
     json["Uid"] = static_cast<int>(user->uid());
     json["Type"] = user->type();
-
-    qInfo() << "switch user from" << m_model->currentUser()->name() << " to " << user->name() << json << user->isLogin();
-
     m_lockInter->SwitchToUser(QString(QJsonDocument(json).toJson(QJsonDocument::Compact))).waitForFinished();
 
     if (user->isLogin()) {

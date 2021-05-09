@@ -195,25 +195,22 @@ void GreeterWorkek::doPowerAction(const SessionBaseModel::PowerAction action)
 
 void GreeterWorkek::switchToUser(std::shared_ptr<User> user)
 {
-    qInfo() << "switch user from" << m_model->currentUser()->name() << " to " << user->name() << user->isLogin();
+    if (user->name() == m_account) {
+        return;
+    }
 
-    // clear old password
-    m_password.clear();
-    m_authenticating = false;
+    qInfo() << "switch user from" << m_account << " to " << user->name() << user->isLogin();
 
-    if (m_greeter->inAuthentication())
-        m_greeter->cancelAuthentication();
+    QJsonObject json;
+    json["Uid"] = static_cast<int>(user->uid());
+    json["Type"] = user->type();
+    m_lockInter->SwitchToUser(QString(QJsonDocument(json).toJson(QJsonDocument::Compact))).waitForFinished();
 
     // just switch user
     if (user->isLogin()) {
         // switch to user Xorg
         QProcess::startDetached("dde-switchtogreeter", QStringList() << user->name());
     }
-
-    QJsonObject json;
-    json["Uid"] = static_cast<int>(user->uid());
-    json["Type"] = user->type();
-    m_lockInter->SwitchToUser(QString(QJsonDocument(json).toJson(QJsonDocument::Compact))).waitForFinished();
 }
 
 void GreeterWorkek::authUser(const QString &password)
