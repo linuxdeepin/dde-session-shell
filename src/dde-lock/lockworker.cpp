@@ -143,6 +143,8 @@ void LockWorker::initConnections()
     connect(m_model, &SessionBaseModel::visibleChanged, this, [=] (bool visible) {
         if (visible) {
             createAuthentication(m_model->currentUser()->name());
+        } else {
+            destoryAuthentication(m_account);
         }
     });
     connect(m_model, &SessionBaseModel::onStatusChanged, this, [=] (SessionBaseModel::ModeStatus status) {
