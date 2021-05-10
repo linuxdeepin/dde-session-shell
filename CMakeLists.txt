@@ -104,13 +104,11 @@ aux_source_directory(${PROJECT_SOURCE_DIR}/src/session-widgets SESSION_WIDGETS)
 aux_source_directory(${PROJECT_SOURCE_DIR}/src/libdde-auth AUTHENTICATE)
 
 set(QRCS
+    ${CMAKE_CURRENT_SOURCE_DIR}/resources.qrc
     ${PROJECT_SOURCE_DIR}/src/widgets/widgetsimages.qrc
     ${PROJECT_SOURCE_DIR}/src/widgets/widgetstheme.qrc
 )
-set(LOCK_QRCS
-    ${PROJECT_SOURCE_DIR}/src/dde-lock/images.qrc
-    ${PROJECT_SOURCE_DIR}/src/dde-lock/logintheme.qrc
-)
+
 set(LOCK_SRCS
     ${authority_DBUS_SCRS}
     ${transaction_DBUS_SCRS}
@@ -131,7 +129,6 @@ set(LOCK_SRCS
 add_executable(dde-lock
     ${LOCK_SRCS}
     ${QRCS}
-    ${LOCK_QRCS}
 )
 target_include_directories(dde-lock PUBLIC
     ${PAM_INCLUDE_DIR}
@@ -159,10 +156,6 @@ target_link_libraries(dde-lock PRIVATE
     ${QGSettings_LIBRARIES}
 )
 
-set(GREETER_QRCS
-    ${PROJECT_SOURCE_DIR}/src/lightdm-deepin-greeter/logintheme.qrc
-    ${PROJECT_SOURCE_DIR}/src/lightdm-deepin-greeter/image.qrc
-)
 set(GREETER_SRCS
     ${authority_DBUS_SCRS}
     ${transaction_DBUS_SCRS}
@@ -182,7 +175,6 @@ set(GREETER_SRCS
 add_executable(lightdm-deepin-greeter
     ${GREETER_SRCS}
     ${QRCS}
-    ${GREETER_QRCS}
 )
 target_include_directories(lightdm-deepin-greeter PUBLIC
     ${PAM_INCLUDE_DIR}

@@ -115,7 +115,6 @@ public slots:
     void setNumLockStatus(const QString &path);
     void setKeyboardButtonInfo(const QString &text);
     void setText(const QString &text);
-    void setAuthStatusVisible(const bool visible);
 
 protected:
     bool eventFilter(QObject *watched, QEvent *event) override;

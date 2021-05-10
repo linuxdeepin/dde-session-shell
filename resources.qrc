@@ -1,2 +1,9 @@
-<!DOCTYPE RCC>
-<RCC version="1.0"/>
+<!DOCTYPE RCC><RCC version="1.0">
+<qresource>
+    <file>misc/images/caps_lock.svg</file>
+    <file>misc/images/login_lock.svg</file>
+    <file>misc/images/login_spinner.svg</file>
+    <file>misc/images/login_wait.svg</file>
+    <file>misc/images/select.svg</file>
+</qresource>
+</RCC>

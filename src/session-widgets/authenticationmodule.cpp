@@ -180,15 +180,11 @@ void AuthenticationModule::init()
  */
 void AuthenticationModule::setAuthResult(const AuthStatus &status, const QString &result)
 {
-    //双屏时，没有显示的屏幕则不处理消息
-    if(!isVisible()) return;
-
     switch (status) {
     case StatusCodeSuccess:
         setEnabled(false);
         if (m_textLabel != nullptr) {
             m_textLabel->setText(tr("Verification successful"));
-            layout()->setContentsMargins(27, 0, 10, 0);
         }
         if (m_lineEdit != nullptr) {
             setLineEditInfo(result, PlaceHolderText);
@@ -196,8 +192,7 @@ void AuthenticationModule::setAuthResult(const AuthStatus &status, const QString
             m_lineEdit->clear();
         }
         if (m_authStatus != nullptr) {
-            setAuthStatus(":/icons/dedpin/builtin/select.svg");
-            m_authStatus->show();
+            setAuthStatus(":/misc/images/select.svg");
         }
         m_showPrompt = true;
         emit authFinished(m_authType, StatusCodeSuccess);
@@ -205,17 +200,17 @@ void AuthenticationModule::setAuthResult(const AuthStatus &status, const QString
     case StatusCodeFailure:
         setEnabled(true);
         if (m_textLabel != nullptr) {
-            m_textLabel->setText(result);
+            m_textLabel->setText(tr("Verification failed"));
         }
         if (m_lineEdit != nullptr) {
             m_lineEdit->clear();
             setLineEditInfo(result, AlertText);
             setAnimationState(false);
         }
-        if (m_authStatus != nullptr && m_authType == AuthTypeFingerprint) {
-            setAuthStatus(":/icons/dedpin/builtin/login_wait.svg");
-            m_authStatus->show();
+        if (m_authStatus != nullptr) {
+            setAuthStatus(":/misc/images/login_wait.svg");
         }
+        m_showPrompt = false;
         emit authFinished(m_authType, StatusCodeFailure);
         emit activateAuthentication(); // TODO retry times
         break;
@@ -223,14 +218,13 @@ void AuthenticationModule::setAuthResult(const AuthStatus &status, const QString
         setEnabled(true);
         if (m_textLabel != nullptr) {
             m_textLabel->setText(result);
-            layout()->setContentsMargins(0, 0, 0, 0);
         }
         if (m_lineEdit != nullptr) {
             setLineEditInfo(result, PlaceHolderText);
             setAnimationState(false);
         }
         if (m_authStatus != nullptr) {
-            setAuthStatus(":/icons/dedpin/builtin/login_wait.svg");
+            setAuthStatus(":/misc/images/login_wait.svg");
             m_authStatus->show();
         }
         m_showPrompt = true;
@@ -239,14 +233,13 @@ void AuthenticationModule::setAuthResult(const AuthStatus &status, const QString
         setEnabled(true);
         if (m_textLabel != nullptr) {
             m_textLabel->setText(result);
-            layout()->setContentsMargins(0, 0, 0, 0);
         }
         if (m_lineEdit != nullptr) {
             setLineEditInfo(result, AlertText);
             setAnimationState(false);
         }
         if (m_authStatus != nullptr) {
-            setAuthStatus(":/icons/dedpin/builtin/login_wait.svg");
+            setAuthStatus(":/misc/images/login_wait.svg");
             m_authStatus->show();
         }
         break;
@@ -254,14 +247,13 @@ void AuthenticationModule::setAuthResult(const AuthStatus &status, const QString
         setEnabled(true);
         if (m_textLabel != nullptr) {
             m_textLabel->setText(result);
-            layout()->setContentsMargins(0, 0, 0, 0);
         }
         if (m_lineEdit != nullptr) {
             setLineEditInfo(result, AlertText);
             setAnimationState(false);
         }
         if (m_authStatus != nullptr) {
-            setAuthStatus(":/icons/dedpin/builtin/login_wait.svg");
+            setAuthStatus(":/misc/images/login_wait.svg");
             m_authStatus->show();
         }
         break;
@@ -269,14 +261,13 @@ void AuthenticationModule::setAuthResult(const AuthStatus &status, const QString
         setEnabled(true);
         if (m_textLabel != nullptr) {
             m_textLabel->setText(result);
-            layout()->setContentsMargins(0, 0, 0, 0);
         }
         if (m_lineEdit != nullptr) {
             // setLineEditInfo(result, PlaceHolderText);
             setAnimationState(true);
         }
         if (m_authStatus != nullptr) {
-            setAuthStatus(":/icons/dedpin/builtin/login_spinner.svg");
+            setAuthStatus(":/misc/images/login_spinner.svg");
             m_authStatus->show();
         }
         break;
@@ -284,14 +275,13 @@ void AuthenticationModule::setAuthResult(const AuthStatus &status, const QString
         setEnabled(true);
         if (m_textLabel != nullptr) {
             m_textLabel->setText(result);
-            layout()->setContentsMargins(0, 0, 0, 0);
         }
         if (m_lineEdit != nullptr) {
             setLineEditInfo(result, AlertText);
             setAnimationState(false);
         }
         if (m_authStatus != nullptr) {
-            setAuthStatus(":/icons/dedpin/builtin/login_wait.svg");
+            setAuthStatus(":/misc/images/login_wait.svg");
             m_authStatus->show();
         }
         break;
@@ -301,15 +291,13 @@ void AuthenticationModule::setAuthResult(const AuthStatus &status, const QString
             if (m_showPrompt) {
                 m_textLabel->setText(result);
             }
-            layout()->setContentsMargins(0, 0, 0, 0);
         }
         if (m_lineEdit != nullptr) {
             setLineEditInfo(result, PlaceHolderText);
             setAnimationState(false);
         }
-        if (m_authStatus != nullptr && m_authType == AuthTypeFingerprint) {
-            setAuthStatus(":/icons/dedpin/builtin/login_spinner.svg");
-            m_authStatus->show();
+        if (m_authStatus != nullptr) {
+            setAuthStatus(":/misc/images/login_wait.svg");
         }
         break;
     case StatusCodeStarted:
@@ -330,9 +318,8 @@ void AuthenticationModule::setAuthResult(const AuthStatus &status, const QString
             setLineEditInfo(result, AlertText);
             setAnimationState(false);
         }
-        if (m_authStatus != nullptr && m_authType == AuthTypeFingerprint) {
-            setAuthStatus(":/icons/dedpin/builtin/login_lock.svg");
-            m_authStatus->show();
+        if (m_authStatus != nullptr) {
+            setAuthStatus(":/misc/images/login_lock.svg");
         }
         m_showPrompt = true;
         break;
@@ -342,10 +329,16 @@ void AuthenticationModule::setAuthResult(const AuthStatus &status, const QString
          * 需要在这里调用 start 重新开启认证
          */
         setEnabled(true);
+        if (m_authStatus != nullptr) {
+            setAuthStatus(":/misc/images/login_wait.svg");
+        }
         m_showPrompt = true;
         break;
     case StatusCodeUnlocked:
         setEnabled(true);
+        if (m_authStatus != nullptr) {
+            setAuthStatus(":/misc/images/login_wait.svg");
+        }
         m_showPrompt = true;
         break;
     default:
@@ -385,26 +378,13 @@ void AuthenticationModule::setAuthStatus(const QString &path)
 }
 
 /**
- * @brief 设置认证按钮可见  --- 不同认证方式是否可见不同
- *
- * @param visible 是否可见
- */
-void AuthenticationModule::setAuthStatusVisible(const bool visible)
-{
-    if(visible)
-        m_authStatus->show();
-    else
-        m_authStatus->hide();
-}
-
-/**
  * @brief 设置键盘大小写状态
  *
  * @param isCapsOn
  */
 void AuthenticationModule::setCapsStatus(const bool isCapsOn)
 {
-    const QString path = isCapsOn ? ":/icons/dedpin/builtin/caps_lock.svg" : "";
+    const QString path = isCapsOn ? ":/misc/images/caps_lock.svg" : "";
     QPixmap pixmap = DHiDPIHelper::loadNxPixmap(path);
     pixmap.setDevicePixelRatio(devicePixelRatioF());
     m_capsStatus->setPixmap(pixmap);
