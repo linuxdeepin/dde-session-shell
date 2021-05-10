@@ -919,11 +919,10 @@ void UserLoginWidget::updateLimitsInfo(const QMap<int, User::LimitsInfo> *limits
 void UserLoginWidget::updateKeyboardInfo(const QString &text)
 {
     m_kbLayoutBorder->hide();
-    static QString tmpText;
-    if (text == tmpText) {
+    if (text == m_keyboardInfo) {
         return;
     }
-    tmpText = text;
+    m_keyboardInfo = text;
     m_kbLayoutWidget->setDefault(text);
     if (m_passwordAuth != nullptr) {
         m_passwordAuth->setKeyboardButtonInfo(text);

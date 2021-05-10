@@ -190,6 +190,7 @@ private:
     int m_action; //重启或关机行为记录
     QString m_local;
     QStringList m_keyboardList;
+    QString m_keyboardInfo;
 };
 
 #endif // USERLOGINWIDGET_H
