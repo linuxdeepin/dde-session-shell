@@ -312,7 +312,6 @@ void AuthenticationModule::setAuthResult(const AuthStatus &status, const QString
         setEnabled(false);
         if (m_textLabel != nullptr) {
             m_textLabel->setText(tr("Fingerprint locked, use password please"));
-            layout()->setContentsMargins(0, 0, 0, 0);
         }
         if (m_lineEdit != nullptr) {
             setLineEditInfo(result, AlertText);
