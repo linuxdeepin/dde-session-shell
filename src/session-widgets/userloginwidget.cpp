@@ -306,6 +306,7 @@ void UserLoginWidget::initPasswdAuth(const int index)
             return;
         }
         m_passwordAuth->setAnimationState(true);
+        m_passwordAuth->setEnabled(false);
         QString account = m_accountEdit->text().isEmpty() ? m_model->currentUser()->name() : m_accountEdit->text();
         emit sendTokenToAuth(account, AuthenticationModule::AuthTypePassword, m_passwordAuth->lineEditText());
     });
@@ -397,6 +398,7 @@ void UserLoginWidget::initUkeyAuth(const int index)
             return;
         }
         m_ukeyAuth->setAnimationState(true);
+        m_ukeyAuth->setEnabled(false);
         emit sendTokenToAuth(m_model->currentUser()->name(), AuthenticationModule::AuthTypeUkey, m_ukeyAuth->lineEditText());
     });
     connect(m_lockButton, &QPushButton::clicked, m_ukeyAuth, &AuthenticationModule::requestAuthenticate);
@@ -470,6 +472,7 @@ void UserLoginWidget::initPINAuth(const int index)
             return;
         }
         m_PINAuth->setAnimationState(true);
+        m_PINAuth->setEnabled(false);
         QString account = m_accountEdit->text().isEmpty() ? m_model->currentUser()->name() : m_accountEdit->text();
         emit sendTokenToAuth(account, AuthenticationModule::AuthTypePIN, m_PINAuth->lineEditText());
     });
