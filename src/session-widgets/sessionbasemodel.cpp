@@ -506,6 +506,18 @@ void SessionBaseModel::updateMFAFlag(const bool MFAFlag)
 }
 
 /**
+ * @brief PIN 最大长度
+ * @param length
+ */
+void SessionBaseModel::updatePINLen(const int PINLen)
+{
+    if (PINLen == m_authProperty.Prompt) {
+        return;
+    }
+    m_authProperty.PINLen = PINLen;
+}
+
+/**
  * @brief 总的提示语
  *
  * @param prompt 提示语

@@ -164,6 +164,7 @@ public slots:
     void updateFactorsInfo(const MFAInfoList &info);
     void updateFuzzyMFA(const bool fuzzMFA);
     void updateMFAFlag(const bool MFAFlag);
+    void updatePINLen(const int PINLen);
     void updatePrompt(const QString &prompt);
 
 signals:

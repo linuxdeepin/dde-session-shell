@@ -94,6 +94,7 @@ void LockWorker::initConnections()
     /* com.deepin.daemon.Authenticate.Session */
     connect(m_authFramework, &DeepinAuthFramework::FuzzyMFAChanged, m_model, &SessionBaseModel::updateFuzzyMFA);
     connect(m_authFramework, &DeepinAuthFramework::MFAFlagChanged, m_model, &SessionBaseModel::updateMFAFlag);
+    connect(m_authFramework, &DeepinAuthFramework::PINLenChanged, m_model, &SessionBaseModel::updatePINLen);
     connect(m_authFramework, &DeepinAuthFramework::PromptChanged, m_model, &SessionBaseModel::updatePrompt);
     connect(m_authFramework, &DeepinAuthFramework::AuthStatusChanged, this, [=] (const AuthType &type, const AuthStatus &status, const QString &message) {
         if (type != AuthType::AuthTypeAll && (status == AuthStatus::StatusCodeSuccess || status == AuthStatus::StatusCodeFailure
