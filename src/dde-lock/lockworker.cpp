@@ -68,7 +68,6 @@ LockWorker::LockWorker(SessionBaseModel *const model, QObject *parent)
         m_model->userAdd(user);
     }
     onUserAdded(ACCOUNTS_DBUS_PREFIX + QString::number(m_currentUserUid));
-    m_model->setCurrentUser(m_lockInter->CurrentUser());
 }
 
 LockWorker::~LockWorker()

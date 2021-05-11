@@ -81,9 +81,8 @@ void SessionBaseModel::userAdd(std::shared_ptr<User> user)
     // NOTE(zorowk): If there are duplicate uids, delete ADDomainUser first
     auto user_exist = findUserByUid(user->uid());
     if (user_exist != nullptr) {
-        userRemoved(user_exist);
-    };
-
+        return;
+    }
     m_userList << user;
 
     emit onUserAdded(user);
