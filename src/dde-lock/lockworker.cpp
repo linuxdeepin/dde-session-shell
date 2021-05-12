@@ -299,7 +299,6 @@ void LockWorker::createAuthentication(const QString &account)
     switch (m_model->getAuthProperty().FrameworkState) {
     case 0:
         m_authFramework->CreateAuthController(account, m_authFramework->GetSupportedMixAuthFlags(), 0);
-        m_model->updateLimitedInfo(m_authFramework->GetLimitedInfo(account));
         break;
     default:
         m_authFramework->Authenticate(account);
@@ -327,6 +326,7 @@ void LockWorker::destoryAuthentication(const QString &account)
 void LockWorker::startAuthentication(const QString &account, const int authType)
 {
     m_authFramework->StartAuthentication(account, authType, -1);
+    m_model->updateLimitedInfo(m_authFramework->GetLimitedInfo(account));
 }
 
 /**

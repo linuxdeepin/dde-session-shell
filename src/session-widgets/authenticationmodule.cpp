@@ -405,6 +405,7 @@ void AuthenticationModule::setLimitsInfo(const LimitsInfo &info)
     m_limitsInfo->unlockSecs = info.unlockSecs;
     m_limitsInfo->unlockTime = info.unlockTime;
     if (info.locked) {
+        setAuthResult(AuthStatus::StatusCodeLocked, tr("locked"));
         updateUnlockTime();
     } else {
         emit activateAuthentication();

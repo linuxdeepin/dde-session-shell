@@ -130,6 +130,12 @@ void UserLoginInfo::initConnect()
     connect(m_userLoginWidget, &UserLoginWidget::requestStartAuthentication, this, &UserLoginInfo::requestStartAuthentication);
     connect(m_userLoginWidget, &UserLoginWidget::sendTokenToAuth, this, &UserLoginInfo::sendTokenToAuth);
     connect(m_userLoginWidget, &UserLoginWidget::requestCheckAccount, this, &UserLoginInfo::requestCheckAccount);
+
+    /* m_mode */
+    connect(m_model->currentUser().get(), &User::limitsInfoChanged, m_userLoginWidget, &UserLoginWidget::updateLimitsInfo);
+    connect(m_model, &SessionBaseModel::currentUserChanged, this, [=] (std::shared_ptr<User> user){
+       connect(user.get(), &User::limitsInfoChanged, m_userLoginWidget, &UserLoginWidget::updateLimitsInfo);
+    });
 }
 
 void UserLoginInfo::abortConfirm(bool abort)

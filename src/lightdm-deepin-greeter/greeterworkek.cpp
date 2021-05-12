@@ -295,7 +295,6 @@ void GreeterWorkek::createAuthentication(const QString &account)
     case 0:
         m_authFramework->CreateAuthController(account, m_authFramework->GetSupportedMixAuthFlags(), 0);
         m_authFramework->SetAuthQuitFlag(account, DeepinAuthFramework::ManualQuit);
-        m_model->updateLimitedInfo(m_authFramework->GetLimitedInfo(account));
         break;
     default:
         break;
@@ -324,6 +323,7 @@ void GreeterWorkek::startAuthentication(const QString &account, const int authTy
     switch (m_model->getAuthProperty().FrameworkState) {
     case 0:
         m_authFramework->StartAuthentication(account, authType, -1);
+        m_model->updateLimitedInfo(m_authFramework->GetLimitedInfo(account));
         break;
     default:
         m_greeter->authenticate(account);
