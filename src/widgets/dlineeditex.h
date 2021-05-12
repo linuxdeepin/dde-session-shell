@@ -23,6 +23,7 @@
 #define DLINEEDITEX_H
 
 #include <DLineEdit>
+#include <QEvent>
 
 DWIDGET_USE_NAMESPACE
 
@@ -50,12 +51,16 @@ class DLineEditEx : public DLineEdit
 public:
     DLineEditEx(QWidget *parent = nullptr);
 
+signals:
+    void lineEditTextHasFocus(bool focous);
+
 public slots:
     void startAnimation();
     void stopAnimation();
 
 protected:
     void paintEvent(QPaintEvent *event) override;
+    bool eventFilter(QObject *watched, QEvent *event) override;
 
 private:
     void initAnimation();

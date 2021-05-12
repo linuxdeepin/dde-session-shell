@@ -94,6 +94,7 @@ public:
     ~AuthenticationModule();
 
     QString lineEditText() const;
+    AuthStatus getAuthStatus() {return m_status;}
     void setKeyboardButtonVisible(const bool visible);
     void setKeyboardButtontext(const QString &text);
 
@@ -101,6 +102,7 @@ signals:
     void activateAuthentication();
     void authFinished(const AuthType &type, const AuthStatus &status);
     void lineEditTextChanged(const QString &);
+    void lineEditTextHasFocus(bool focus);
     void unlockTimeChanged();
     void requestAuthenticate();
     void requestShowKeyboardList();
@@ -134,6 +136,7 @@ private:
     DLineEditEx *m_lineEdit;       // 输入框
     DPushButton *m_keyboardButton; // 键盘布局按钮
     LimitsInfo *m_limitsInfo;      // 认证限制信息
+    AuthStatus m_status;           // 当前认证的认证状态
     QTimer *m_unlockTimer;         // 账户限制计时器
     uint m_integerMinutes;
     bool m_showPrompt;

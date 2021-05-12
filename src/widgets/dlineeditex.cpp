@@ -110,3 +110,15 @@ void DLineEditEx::paintEvent(QPaintEvent *event)
     }
     QWidget::paintEvent(event);
 }
+
+bool DLineEditEx::eventFilter(QObject *watched, QEvent *event)
+{
+    Q_UNUSED(watched);
+    if(event->type() == QEvent::FocusIn){
+        emit lineEditTextHasFocus(true);
+    }else if(event->type() == QEvent::FocusOut){
+        emit lineEditTextHasFocus(false);
+    }
+
+    return QWidget::eventFilter(watched,event);
+}

@@ -81,6 +81,7 @@ UserLoginWidget::UserLoginWidget(const SessionBaseModel *model, const WidgetType
     setMinimumSize(228, 146);                              // 设置本窗口的最小大小（参考用户列表模式下的最小大小）
     setSizePolicy(QSizePolicy::Fixed, QSizePolicy::Fixed); // 大小策略设置为fixed，使本窗口不受父窗口布局管理器的拉伸效果
     setFocusPolicy(Qt::NoFocus);
+    m_lockButton->setEnabled(false);
 
     m_capslockMonitor = KeyboardMonitor::instance();
     m_capslockMonitor->start(QThread::LowestPriority);
@@ -342,10 +343,17 @@ void UserLoginWidget::initPasswdAuth(const int index)
     m_registerFunctionIndexs["UserLoginPassword"] = FrameDataBind::Instance()->registerFunction("UserLoginPassword", passwordChanged);
     connect(m_passwordAuth, &AuthenticationModule::lineEditTextChanged, this, [=] (const QString &value) {
         FrameDataBind::Instance()->updateValue("UserLoginPassword", value);
-        if(value.length() > 0)
+        if(value.length() > 0 || m_passwordAuth->getAuthStatus() == AuthenticationModule::StatusCodeSuccess)
            m_lockButton->setEnabled(true);
-        else {
-           m_lockButton->setEnabled(false);
+        else if(m_ukeyAuth->lineEditText().isEmpty()) {
+               m_lockButton->setEnabled(false);
+        }
+    });
+
+
+    connect(m_passwordAuth, &AuthenticationModule::lineEditTextHasFocus, this, [=](bool focus) {
+        if (!focus) {
+            m_kbLayoutBorder->setVisible(false);
         }
     });
     FrameDataBind::Instance()->refreshData("UserLoginPassword");
@@ -435,10 +443,10 @@ void UserLoginWidget::initUkeyAuth(const int index)
         }
         FrameDataBind::Instance()->updateValue("UserLoginUKey", value);
 
-        if(value.length() > 0){
+        if (value.length() > 0 || m_ukeyAuth->getAuthStatus() == AuthenticationModule::StatusCodeSuccess) {
             m_lockButton->setEnabled(true);
-        }else{
-            m_lockButton->setEnabled(false);
+        } else if(m_passwordAuth->lineEditText().isEmpty()) {
+                m_lockButton->setEnabled(false);
         }
     });
     FrameDataBind::Instance()->refreshData("UserLoginUKey");
@@ -478,11 +486,6 @@ void UserLoginWidget::initPINAuth(const int index)
     m_registerFunctionIndexs["UserLoginPIN"] = FrameDataBind::Instance()->registerFunction("UserLoginPIN", PINChanged);
     connect(m_PINAuth, &AuthenticationModule::lineEditTextChanged, this, [=] (const QString &value) {
         FrameDataBind::Instance()->updateValue("UserLoginPIN", value);
-        if(value.length() > 0 )
-            m_lockButton->setEnabled(true);
-        else {
-            m_lockButton->setEnabled(false);
-        }
     });
     connect(m_PINAuth, &AuthenticationModule::activateAuthentication, this, [=] {
         emit requestStartAuthentication(m_model->currentUser()->name(), AuthenticationModule::AuthTypePIN);
@@ -719,12 +722,11 @@ void UserLoginWidget::showKeyboardList()
     } else {
         // 保证布局选择控件不会被其它控件遮挡
         // 必须要将它作为主窗口的子控件
-        m_kbLayoutBorder->setParent(window());
+        m_kbLayoutBorder->setParent(parentWidget());
         m_kbLayoutBorder->setVisible(true);
         m_kbLayoutBorder->raise();
         updateKeyboardListPosition();
     }
-    FrameDataBind::Instance()->updateValue("UserLoginKBLayout", m_kbLayoutBorder->isVisible());
     updateClipPath();
 }
 
@@ -987,7 +989,7 @@ void UserLoginWidget::updateClipPath()
 {
     if (!m_kbLayoutClip)
         return;
-    QRectF rc(0, 0, DDESESSIONCC::PASSWDLINEEIDT_WIDTH, m_kbLayoutBorder->height());
+    QRectF rc(0, 0, DDESESSIONCC::PASSWDLINEEIDT_WIDTH - 15, m_kbLayoutBorder->height());
     int iRadius = 20;
     QPainterPath path;
     path.lineTo(0, 0);
