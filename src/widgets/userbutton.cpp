@@ -94,7 +94,7 @@ void UserButton::initUI()
 
     m_checkedMark = new QLabel;
 
-    QPixmap pixmap = DHiDPIHelper::loadNxPixmap(":img/select.svg");
+    QPixmap pixmap = DHiDPIHelper::loadNxPixmap(":/misc/images/select.svg");
     pixmap.setDevicePixelRatio(devicePixelRatioF());
     m_checkedMark->setPixmap(pixmap);
 

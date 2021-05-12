@@ -192,7 +192,7 @@ void AuthenticationModule::setAuthResult(const AuthStatus &status, const QString
             m_lineEdit->clear();
         }
         if (m_authStatus != nullptr) {
-            setAuthStatus(":/misc/images/select.svg");
+            setAuthStatus(":/misc/images/login_check.svg");
         }
         m_showPrompt = true;
         emit authFinished(m_authType, StatusCodeSuccess);
