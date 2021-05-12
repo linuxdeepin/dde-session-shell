@@ -263,13 +263,14 @@ int main(int argc, char* argv[])
         QObject::connect(loginFrame, &LoginWindow::requestCheckAccount, worker, &GreeterWorkek::checkAccount);
         QObject::connect(loginFrame, &LoginWindow::requestStartAuthentication, worker, &GreeterWorkek::startAuthentication);
         QObject::connect(loginFrame, &LoginWindow::sendTokenToAuth, worker, &GreeterWorkek::sendTokenToAuth);
-        loginFrame->show();
+        QObject::connect(model, &SessionBaseModel::visibleChanged, loginFrame, &LoginWindow::setVisible);
         return loginFrame;
     };
 
     MultiScreenManager multi_screen_manager;
     multi_screen_manager.register_for_mutil_screen(createFrame);
     QObject::connect(model, &SessionBaseModel::visibleChanged, &multi_screen_manager, &MultiScreenManager::startRaiseContentFrame);
+    model->setVisible(true);
 
     return a.exec();
 }
