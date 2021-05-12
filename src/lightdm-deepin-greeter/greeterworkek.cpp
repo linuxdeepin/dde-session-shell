@@ -6,9 +6,13 @@
 #include <libintl.h>
 #include <DSysInfo>
 
+#include <com_deepin_system_systempower.h>
+
+
 #define LOCKSERVICE_PATH "/com/deepin/dde/LockService"
 #define LOCKSERVICE_NAME "com.deepin.dde.LockService"
 
+using PowerInter = com::deepin::system::Power;
 using namespace Auth;
 DCORE_USE_NAMESPACE
 
@@ -23,8 +27,8 @@ public:
     {
     }
 
-    bool get(const bool defaultValue) { return m_settings.value(m_username, defaultValue).toBool(); }
-    void set(const bool value) { m_settings.setValue(m_username, value); }
+    int get(const int defaultValue) { return m_settings.value(m_username, defaultValue).toInt(); }
+    void set(const int value) { m_settings.setValue(m_username, value); }
 
 private:
     QString m_username;
@@ -85,6 +89,17 @@ GreeterWorkek::GreeterWorkek(SessionBaseModel *const model, QObject *parent)
         });
     }
     m_model->setCurrentUser(m_lockInter->CurrentUser());
+
+    //当这个配置不存在是，如果是不是笔记本就打开小键盘，否则就关闭小键盘 0关闭键盘 1打开键盘 2默认值（用来判断是不是有这个key）
+    if (m_model->currentUser() != nullptr && UserNumlockSettings(m_model->currentUser()->name()).get(2) == 2) {
+        PowerInter powerInter("com.deepin.system.Power", "/com/deepin/system/Power", QDBusConnection::systemBus(), this);
+        if (powerInter.hasBattery()) {
+            saveNumlockStatus(m_model->currentUser(), 0);
+        } else {
+            saveNumlockStatus(m_model->currentUser(), 1);
+        }
+        recoveryUserKBState(m_model->currentUser());
+    }
 }
 
 void GreeterWorkek::initConnections()
@@ -172,6 +187,7 @@ void GreeterWorkek::initConnections()
     connect(KeyboardMonitor::instance(), &KeyboardMonitor::numlockStatusChanged, this, [=] (bool on) {
         saveNumlockStatus(m_model->currentUser(), on);
     });
+
 }
 
 void GreeterWorkek::doPowerAction(const SessionBaseModel::PowerAction action)
