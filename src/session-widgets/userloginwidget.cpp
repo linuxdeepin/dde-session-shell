@@ -210,6 +210,10 @@ void UserLoginWidget::initConnections()
  */
 void UserLoginWidget::updateWidgetShowType(const int type)
 {
+    if (m_listAuthMoudule.size() != 0) {
+        m_listAuthMoudule.clear();
+    }
+
     int index = 3;
     /**
      * @brief 设置布局
@@ -236,6 +240,7 @@ void UserLoginWidget::updateWidgetShowType(const int type)
     /* Ukey */
     if (type & AuthenticationModule::AuthTypeUkey) {
         initUkeyAuth(index++);
+        m_listAuthMoudule.append(m_ukeyAuth);
     } else if (m_ukeyAuth != nullptr) {
         m_ukeyAuth->deleteLater();
         m_ukeyAuth = nullptr;
@@ -251,6 +256,7 @@ void UserLoginWidget::updateWidgetShowType(const int type)
     /* PIN码 */
     if (type & AuthenticationModule::AuthTypePIN) {
         initPINAuth(index++);
+        m_listAuthMoudule.append(m_PINAuth);
     } else if (m_PINAuth != nullptr) {
         m_PINAuth->deleteLater();
         m_PINAuth = nullptr;
@@ -258,6 +264,7 @@ void UserLoginWidget::updateWidgetShowType(const int type)
     /* 密码 */
     if (type & AuthenticationModule::AuthTypePassword) {
         initPasswdAuth(index++);
+        m_listAuthMoudule.append(m_passwordAuth);
     } else if (m_passwordAuth != nullptr) {
         m_passwordAuth->deleteLater();
         m_passwordAuth = nullptr;
@@ -282,6 +289,20 @@ void UserLoginWidget::updateWidgetShowType(const int type)
     }
     if (m_accountEdit->isVisible()) {
         m_accountEdit->setFocus();
+    }
+
+    /**
+     * @brief 更新焦点
+     * 根据布局顺序存储AuthenticateModule,认证成功后更新焦点位置
+     */
+    for (auto iter = m_listAuthMoudule.begin(); iter != m_listAuthMoudule.end(); iter++) {
+        if (*iter != nullptr) {
+            connect(*iter, &AuthenticationModule::authFinished, [this, iter] (const AuthType &type, const AuthStatus &status) {
+                Q_UNUSED(type);
+                if (AuthStatus::StatusCodeSuccess == status && *(iter+1) != nullptr && iter+1 != m_listAuthMoudule.end())
+                    (*(iter+1))->setFocus();
+            });
+        }
     }
 }
 

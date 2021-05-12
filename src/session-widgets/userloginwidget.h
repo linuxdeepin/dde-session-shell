@@ -191,6 +191,7 @@ private:
     QString m_local;
     QStringList m_keyboardList;
     QString m_keyboardInfo;
+    QList<AuthenticationModule*> m_listAuthMoudule; //按顺序存储AuthenticateModule
 };
 
 #endif // USERLOGINWIDGET_H
