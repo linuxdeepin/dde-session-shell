@@ -437,10 +437,13 @@ void AuthenticationModule::setLineEditInfo(const QString &text, const TextType t
         m_lineEdit->showAlertMessage(text, this, 3000);
         m_lineEdit->lineEdit()->selectAll();
         break;
-    case InputText:
+    case InputText: {
         m_lineEdit->hideAlertMessage();
+        int pos = m_lineEdit->lineEdit()->cursorPosition();
         m_lineEdit->setText(text);
+        m_lineEdit->lineEdit()->setCursorPosition(pos);
         break;
+    }
     case PlaceHolderText:
         m_lineEdit->setPlaceholderText(text);
         break;
