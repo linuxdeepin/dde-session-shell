@@ -81,7 +81,6 @@ UserLoginWidget::UserLoginWidget(const SessionBaseModel *model, const WidgetType
     setMinimumSize(228, 146);                              // 设置本窗口的最小大小（参考用户列表模式下的最小大小）
     setSizePolicy(QSizePolicy::Fixed, QSizePolicy::Fixed); // 大小策略设置为fixed，使本窗口不受父窗口布局管理器的拉伸效果
     setFocusPolicy(Qt::NoFocus);
-    m_lockButton->setEnabled(false);
 
     m_capslockMonitor = KeyboardMonitor::instance();
     m_capslockMonitor->start(QThread::LowestPriority);
@@ -345,7 +344,7 @@ void UserLoginWidget::initPasswdAuth(const int index)
         FrameDataBind::Instance()->updateValue("UserLoginPassword", value);
         if(value.length() > 0 || m_passwordAuth->getAuthStatus() == AuthenticationModule::StatusCodeSuccess)
            m_lockButton->setEnabled(true);
-        else if(m_ukeyAuth->lineEditText().isEmpty()) {
+        else if(m_ukeyAuth && m_ukeyAuth->lineEditText().isEmpty()) {
                m_lockButton->setEnabled(false);
         }
     });
@@ -355,6 +354,7 @@ void UserLoginWidget::initPasswdAuth(const int index)
         if (!focus) {
             m_kbLayoutBorder->setVisible(false);
         }
+        emit m_passwordAuth->lineEditTextChanged(m_passwordAuth->lineEditText());
     });
     FrameDataBind::Instance()->refreshData("UserLoginPassword");
     m_passwordAuth->setKeyboardButtonVisible(m_keyboardList.size() > 1 ? true : false);
@@ -445,9 +445,13 @@ void UserLoginWidget::initUkeyAuth(const int index)
 
         if (value.length() > 0 || m_ukeyAuth->getAuthStatus() == AuthenticationModule::StatusCodeSuccess) {
             m_lockButton->setEnabled(true);
-        } else if(m_passwordAuth->lineEditText().isEmpty()) {
+        } else if(m_passwordAuth && m_passwordAuth->lineEditText().isEmpty()) {
                 m_lockButton->setEnabled(false);
         }
+    });
+
+    connect(m_ukeyAuth, &AuthenticationModule::lineEditTextHasFocus, this, [ = ] {
+        emit m_ukeyAuth->lineEditTextChanged(m_ukeyAuth->lineEditText());
     });
     FrameDataBind::Instance()->refreshData("UserLoginUKey");
 }
