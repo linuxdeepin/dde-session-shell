@@ -380,7 +380,11 @@ void GreeterWorkek::checkAccount(const QString &account)
     }
     std::shared_ptr<User> user_ptr = std::make_shared<NativeUser>(userPath);
     m_model->setCurrentUser(user_ptr);
-    createAuthentication(account);
+    if (user_ptr->isNoPasswdGrp()) {
+        m_greeter->authenticate(account);
+    } else {
+        createAuthentication(account);
+    }
 }
 
 void GreeterWorkek::checkDBusServer(bool isvalid)
