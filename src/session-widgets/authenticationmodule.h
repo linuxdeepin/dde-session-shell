@@ -117,6 +117,7 @@ public slots:
     void setNumLockStatus(const QString &path);
     void setKeyboardButtonInfo(const QString &text);
     void setText(const QString &text);
+    bool lineEditIsEnable();
 
 protected:
     bool eventFilter(QObject *watched, QEvent *event) override;

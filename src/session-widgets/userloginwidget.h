@@ -112,6 +112,7 @@ protected:
     void keyReleaseEvent(QKeyEvent *event) override;
     void focusOutEvent(QFocusEvent *event) override;
     void paintEvent(QPaintEvent *event) override;
+    void showEvent(QShowEvent *event) override;
 
 private:
     void initUI();

@@ -369,7 +369,7 @@ void UserLoginWidget::initFingerprintAuth(const int index)
         return;
     }
     m_fingerprintAuth = new AuthenticationModule(AuthenticationModule::AuthTypeFingerprint, this);
-	//指纹验证第一次提示内容固定，其他系统根据后端发过来内容显示
+    //指纹验证第一次提示内容固定，其他系统根据后端发过来内容显示
     m_fingerprintAuth->setText(tr("Verify your fingerprint"));
     m_userLoginLayout->insertWidget(index, m_fingerprintAuth);
 
@@ -1204,4 +1204,22 @@ void UserLoginWidget::paintEvent(QPaintEvent *event)
     painter.drawRoundedRect(QRect(width() / 2 - 46, rect().bottom() - 4, 92, 4), 2, 2);
 
     QWidget::paintEvent(event);
+}
+
+/**
+ * @brief show之前初始化焦点位置
+ * 若多因子,则按布局顺序,第一个未禁用的输入框设置焦点
+ * * @param event
+ */
+void UserLoginWidget::showEvent(QShowEvent *event)
+{
+    if (m_model->currentModeState() == SessionBaseModel::ModeStatus::PasswordMode && !m_listAuthMoudule.isEmpty())
+        for (auto *item : m_listAuthMoudule) {
+            if (item->lineEditIsEnable()) {
+                item->setFocus();
+                break;
+            }
+        }
+
+    return QWidget::showEvent(event);
 }

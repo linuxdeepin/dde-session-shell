@@ -371,6 +371,15 @@ void AuthenticationModule::setText(const QString &text)
 }
 
 /**
+ * @brief 判断输入框是否可用
+ *
+ */
+bool AuthenticationModule::lineEditIsEnable()
+{
+    return m_lineEdit->isEnabled();
+}
+
+/**
  * @brief 设置认证状态  --- 不同认证方式可能用不同的图片，故预留此接口
  *
  * @param path 图片路径
