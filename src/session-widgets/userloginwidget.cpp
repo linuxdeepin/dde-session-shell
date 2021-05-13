@@ -1059,6 +1059,11 @@ void UserLoginWidget::updateNameLabel(const QFont &font)
 {
     if (font != m_nameLabel->font()) {
         m_nameLabel->setFont(font);
+        m_nameLabel->setTextFormat(Qt::TextFormat::PlainText);
+        DFontSizeManager::instance()->bind(m_nameLabel, DFontSizeManager::T2);
+        QPalette palette = m_nameLabel->palette();
+        palette.setColor(QPalette::WindowText, Qt::white);
+        m_nameLabel->setPalette(palette);
     }
     int nameWidth = m_nameLabel->fontMetrics().width(m_name);
     int labelMaxWidth = width() - 10 * 2;
