@@ -88,7 +88,7 @@ QList<InhibitWarnView::InhibitorData> WarningContent::listInhibitors(const Sessi
                     inhibitData.mode = inhibitor.mode;
                     inhibitData.pid = inhibitor.pid;
 
-                    if(action == SessionBaseModel::PowerAction::RequireLogout && inhibitor.pid != m_model->currentUser()->uid())
+                    if(action == SessionBaseModel::PowerAction::RequireLogout && inhibitor.uid != m_model->currentUser()->uid())
                         continue;
 
                     // 读取翻译后的文本，读取应用图标
