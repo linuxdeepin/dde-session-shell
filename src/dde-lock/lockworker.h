@@ -72,6 +72,7 @@ private:
     DeepinAuthFramework *m_authFramework;
     DBusLockService *m_lockInter;
     DBusHotzone *m_hotZoneInter;
+    QTimer *m_resetSessionTimer;
     QString m_password;
     QMap<std::shared_ptr<User>, bool> m_lockUser;
     SessionManager *m_sessionManager;

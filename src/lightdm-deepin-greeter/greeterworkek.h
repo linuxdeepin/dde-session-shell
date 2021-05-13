@@ -70,6 +70,7 @@ private:
     QLightDM::Greeter *m_greeter;
     DeepinAuthFramework *m_authFramework;
     DBusLockService *m_lockInter;
+    QTimer *m_resetSessionTimer;
     QString m_account;
     QString m_password;
     bool m_authenticating;

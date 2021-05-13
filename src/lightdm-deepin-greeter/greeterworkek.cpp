@@ -6,6 +6,8 @@
 #include <libintl.h>
 #include <DSysInfo>
 
+#include <QGSettings>
+
 #include <com_deepin_system_systempower.h>
 
 
@@ -40,6 +42,7 @@ GreeterWorkek::GreeterWorkek(SessionBaseModel *const model, QObject *parent)
     , m_greeter(new QLightDM::Greeter(this))
     , m_authFramework(new DeepinAuthFramework(this, this))
     , m_lockInter(new DBusLockService(LOCKSERVICE_NAME, LOCKSERVICE_PATH, QDBusConnection::systemBus(), this))
+    , m_resetSessionTimer(new QTimer(this))
     , m_authenticating(false)
 {
     if (!isConnectSync()) {
@@ -100,6 +103,23 @@ GreeterWorkek::GreeterWorkek(SessionBaseModel *const model, QObject *parent)
         }
         recoveryUserKBState(m_model->currentUser());
     }
+
+    //认证超时重启
+    m_resetSessionTimer->setInterval(15000);
+    if (QGSettings::isSchemaInstalled("com.deepin.dde.session-shell")) {
+         QGSettings gsetting("com.deepin.dde.session-shell", "/com/deepin/dde/session-shell/", this);
+         if(gsetting.keys().contains("authResetTime")){
+             int resetTime = gsetting.get("auth-reset-time").toInt();
+             if(resetTime > 0)
+                m_resetSessionTimer->setInterval(resetTime);
+         }
+    }
+
+    m_resetSessionTimer->setSingleShot(true);
+    connect(m_resetSessionTimer,&QTimer::timeout,this,[ = ]{
+         destoryAuthentication(m_account);
+         createAuthentication(m_account);
+    });
 }
 
 void GreeterWorkek::initConnections()
@@ -120,6 +140,13 @@ void GreeterWorkek::initConnections()
                                               || status == AuthStatus::StatusCodeLocked )) {
             endAuthentication(m_account, type);
         }
+
+        if(status == AuthStatus::StatusCodeSuccess && type != AuthType::AuthTypeAll && !m_resetSessionTimer->isActive()){
+            m_resetSessionTimer->start();
+        }else if(status == AuthStatus::StatusCodeSuccess && type == AuthType::AuthTypeAll){
+            m_resetSessionTimer->stop();
+        }
+
         if (type == AuthType::AuthTypeAll && status == AuthStatus::StatusCodeSuccess && m_model->getAuthProperty().FrameworkState == 0) {
             if (m_greeter->inAuthentication()) {
                 m_greeter->respond(m_authFramework->AuthSessionPath(m_account) + QString(";") + m_password);
@@ -152,6 +179,7 @@ void GreeterWorkek::initConnections()
     });
     /* com.deepin.dde.LockService */
     connect(m_lockInter, &DBusLockService::UserChanged, this, [=] (const QString &json) {
+        m_resetSessionTimer->stop();
         destoryAuthentication(m_account);
         m_model->setCurrentUser(json);
         std::shared_ptr<User> user_ptr = m_model->currentUser();

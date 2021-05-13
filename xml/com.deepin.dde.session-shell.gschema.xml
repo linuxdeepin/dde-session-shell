@@ -39,6 +39,13 @@
                 2: disabled show switch user button
             </description>
         </key>
+        <key name='auth-reset-time' type='i'>
+            <default>15000</default>
+            <summary>authResetTime</summary>
+            <description>
+                mixauth Auth Timeout
+            </description>
+        </key>
         <key name="system-suspend" enum="com.deepin.dde.session-shell.StatusMode">
             <default>'Enabled'</default>
             <summary>change system suspend status</summary>

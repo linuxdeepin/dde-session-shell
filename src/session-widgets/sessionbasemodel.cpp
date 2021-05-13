@@ -2,6 +2,7 @@
 
 #include <QDebug>
 #include <DSysInfo>
+#include <QGSettings>
 
 #define SessionManagerService "com.deepin.SessionManager"
 #define SessionManagerPath "/com/deepin/SessionManager"

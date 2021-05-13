@@ -27,6 +27,7 @@ LockWorker::LockWorker(SessionBaseModel *const model, QObject *parent)
     , m_authFramework(new DeepinAuthFramework(this, this))
     , m_lockInter(new DBusLockService("com.deepin.dde.LockService", "/com/deepin/dde/LockService", QDBusConnection::systemBus(), this))
     , m_hotZoneInter(new DBusHotzone("com.deepin.daemon.Zone", "/com/deepin/daemon/Zone", QDBusConnection::sessionBus(), this))
+    , m_resetSessionTimer(new QTimer(this))
     , m_sessionManager(new SessionManager("com.deepin.SessionManager", "/com/deepin/SessionManager", QDBusConnection::sessionBus(), this))
     , m_switchosInterface(new HuaWeiSwitchOSInterface("com.huawei", "/com/huawei/switchos", QDBusConnection::sessionBus(), this))
     , m_accountsInter(new AccountsInter("com.deepin.daemon.Accounts", "/com/deepin/daemon/Accounts", QDBusConnection::systemBus(), this))
@@ -68,6 +69,22 @@ LockWorker::LockWorker(SessionBaseModel *const model, QObject *parent)
         m_model->userAdd(user);
     }
     onUserAdded(ACCOUNTS_DBUS_PREFIX + QString::number(m_currentUserUid));
+
+    m_resetSessionTimer->setInterval(15000);
+    if (QGSettings::isSchemaInstalled("com.deepin.dde.session-shell")) {
+         QGSettings gsetting("com.deepin.dde.session-shell", "/com/deepin/dde/session-shell/", this);
+         if(gsetting.keys().contains("authResetTime")){
+             int resetTime = gsetting.get("auth-reset-time").toInt();
+             if(resetTime > 0)
+                m_resetSessionTimer->setInterval(resetTime);
+         }
+    }
+
+    m_resetSessionTimer->setSingleShot(true);
+    connect(m_resetSessionTimer,&QTimer::timeout,this,[ = ]{
+        destoryAuthentication(m_account);
+        createAuthentication(m_account);
+    });
 }
 
 LockWorker::~LockWorker()
@@ -101,6 +118,13 @@ void LockWorker::initConnections()
                                               || status == AuthStatus::StatusCodeLocked )) {
             endAuthentication(m_account, type);
         }
+
+        if(status == AuthStatus::StatusCodeSuccess && type != AuthType::AuthTypeAll && !m_resetSessionTimer->isActive()){
+            m_resetSessionTimer->start();
+        }else if(status == AuthStatus::StatusCodeSuccess && type == AuthType::AuthTypeAll){
+            m_resetSessionTimer->stop();
+        }
+
         if (type == AuthType::AuthTypeAll && status == AuthStatus::StatusCodeSuccess) {
             onUnlockFinished(true);
             destoryAuthentication(m_account);
@@ -111,6 +135,7 @@ void LockWorker::initConnections()
     /* com.deepin.dde.LockService */
     connect(m_lockInter, &DBusLockService::UserChanged, this, [=] (const QString &json) {
         emit m_model->switchUserFinished();
+        m_resetSessionTimer->stop();
     });
     connect(m_lockInter, &DBusLockService::Event, this, &LockWorker::lockServiceEvent);
     /* com.deepin.SessionManager */
