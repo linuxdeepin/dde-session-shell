@@ -240,6 +240,8 @@ void UserLoginWidget::updateWidgetShowType(const int type)
     /* Ukey */
     if (type & AuthenticationModule::AuthTypeUkey) {
         initUkeyAuth(index++);
+        if (m_ukeyAuth != nullptr)
+            m_listAuthMoudule.append(m_ukeyAuth);
     } else if (m_ukeyAuth != nullptr) {
         m_ukeyAuth->deleteLater();
         m_ukeyAuth = nullptr;
@@ -262,6 +264,8 @@ void UserLoginWidget::updateWidgetShowType(const int type)
     /* 密码 */
     if (type & AuthenticationModule::AuthTypePassword) {
         initPasswdAuth(index++);
+        if (m_passwordAuth != nullptr)
+            m_listAuthMoudule.append(m_passwordAuth);
     } else if (m_passwordAuth != nullptr) {
         m_passwordAuth->deleteLater();
         m_passwordAuth = nullptr;
@@ -292,11 +296,14 @@ void UserLoginWidget::updateWidgetShowType(const int type)
      * @brief 更新焦点
      * 根据布局顺序存储AuthenticateModule,认证成功后更新焦点位置
      */
-    for (int i = 0; i < m_listAuthMoudule.size() - 1; ++i ) {
-        connect(m_listAuthMoudule[i],  &AuthenticationModule::authFinished, [this, i] (const AuthType &type, const AuthStatus &status) {
-            Q_UNUSED(type);
-            if (AuthStatus::StatusCodeSuccess == status)
-                m_listAuthMoudule[i+1]->setFocus();
+    if (m_listAuthMoudule.isEmpty())
+        return;
+    for (int i = 0; i < m_listAuthMoudule.size(); ++i ) {
+        connect(m_listAuthMoudule[i], &AuthenticationModule::authFinished, [this, i] {
+            if (m_listAuthMoudule[i]->lineEditIsEnable())
+                m_listAuthMoudule[i]->setFocus();
+            else if (i + 1 < m_listAuthMoudule.size())
+                m_listAuthMoudule[i + 1]->setFocus();
         });
     }
 }
@@ -354,7 +361,6 @@ void UserLoginWidget::initPasswdAuth(const int index)
     });
     FrameDataBind::Instance()->refreshData("UserLoginPassword");
     m_passwordAuth->setKeyboardButtonVisible(m_keyboardList.size() > 1 ? true : false);
-    m_listAuthMoudule.append(m_passwordAuth);
 }
 
 /**
@@ -452,7 +458,6 @@ void UserLoginWidget::initUkeyAuth(const int index)
         emit m_ukeyAuth->lineEditTextChanged(m_ukeyAuth->lineEditText());
     });
     FrameDataBind::Instance()->refreshData("UserLoginUKey");
-    m_listAuthMoudule.append(m_ukeyAuth);
 }
 
 /**
