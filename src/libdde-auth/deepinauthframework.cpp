@@ -283,9 +283,9 @@ void DeepinAuthFramework::CreateAuthController(const QString &account, const int
         emit AuthStatusChanged(AuthType(flag), AuthStatus(status), msg);
     });
 
+    emit MFAFlagChanged(authControllerInter->isMFA());
     emit FactorsInfoChanged(authControllerInter->factorsInfo());
     emit FuzzyMFAChanged(authControllerInter->isFuzzyMFA());
-    emit MFAFlagChanged(authControllerInter->isMFA());
     emit PINLenChanged(authControllerInter->pINLen());
     emit PromptChanged(authControllerInter->prompt());
 
@@ -582,4 +582,3 @@ void DeepinAuthFramework::cancelAuthenticate()
         //    }
     //}
 }
-

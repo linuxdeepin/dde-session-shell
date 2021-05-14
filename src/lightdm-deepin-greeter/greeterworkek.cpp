@@ -49,10 +49,6 @@ GreeterWorkek::GreeterWorkek(SessionBaseModel *const model, QObject *parent)
         qWarning() << "greeter connect fail !!!";
     }
 
-    m_model->updateFrameworkState(m_authFramework->GetFrameworkState());
-    m_model->updateSupportedEncryptionType(m_authFramework->GetSupportedEncrypts());
-    m_model->updateSupportedMixAuthFlags(m_authFramework->GetSupportedMixAuthFlags());
-
     initConnections();
 
     const QString &switchUserButtonValue {valueByQSettings<QString>("Lock", "showSwitchUserButton", "ondemand")};
@@ -92,6 +88,15 @@ GreeterWorkek::GreeterWorkek(SessionBaseModel *const model, QObject *parent)
         });
     }
     m_model->setCurrentUser(m_lockInter->CurrentUser());
+
+    /* com.deepin.daemon.Accounts */
+    m_model->updateUserList(m_accountsInter->userList());
+    m_model->updateLoginedUserList(m_loginedInter->userList());
+    m_model->updateLimitedInfo(m_authFramework->GetLimitedInfo(m_model->currentUser()->name()));
+    /* com.deepin.daemon.Authenticate */
+    m_model->updateFrameworkState(m_authFramework->GetFrameworkState());
+    m_model->updateSupportedEncryptionType(m_authFramework->GetSupportedEncrypts());
+    m_model->updateSupportedMixAuthFlags(m_authFramework->GetSupportedMixAuthFlags());
 
     //当这个配置不存在是，如果是不是笔记本就打开小键盘，否则就关闭小键盘 0关闭键盘 1打开键盘 2默认值（用来判断是不是有这个key）
     if (m_model->currentUser() != nullptr && UserNumlockSettings(m_model->currentUser()->name()).get(2) == 2) {
@@ -154,6 +159,9 @@ void GreeterWorkek::initConnections()
                 qWarning() << "The lightdm is not in authentication!";
             }
         }
+        if (type == AuthType::AuthTypePassword && status == AuthStatus::StatusCodeLocked && !m_model->getAuthProperty().MFAFlag) {
+            endAuthentication(m_account, m_model->getAuthProperty().AuthType);
+        }
         m_model->updateAuthStatus(type, status, message);
     });
     connect(m_authFramework, &DeepinAuthFramework::FactorsInfoChanged, m_model, &SessionBaseModel::updateFactorsInfo);
@@ -190,9 +198,13 @@ void GreeterWorkek::initConnections()
         emit m_model->switchUserFinished();
     });
     /* model */
-    connect(m_model, &SessionBaseModel::authTypeChanged, this, [=] (const int type) {
-        if (type > 0) {
-            startAuthentication(m_account, type);
+    connect(m_model, &SessionBaseModel::authTypeChanged, this, [=](const int type) {
+        if (type > 0 && !m_model->currentUser()->limitsInfo()->value(type).locked) {
+            startAuthentication(m_account, m_model->getAuthProperty().AuthType);
+        } else {
+            QTimer::singleShot(10, this, [=] {
+                m_model->updateLimitedInfo(m_authFramework->GetLimitedInfo(m_account));
+            });
         }
     });
     connect(m_model, &SessionBaseModel::onPowerActionChanged, this, &GreeterWorkek::doPowerAction);
@@ -369,7 +381,9 @@ void GreeterWorkek::startAuthentication(const QString &account, const int authTy
     switch (m_model->getAuthProperty().FrameworkState) {
     case 0:
         m_authFramework->StartAuthentication(account, authType, -1);
-        m_model->updateLimitedInfo(m_authFramework->GetLimitedInfo(account));
+        QTimer::singleShot(10, this, [=] {
+            m_model->updateLimitedInfo(m_authFramework->GetLimitedInfo(account));
+        });
         break;
     default:
         m_greeter->authenticate(account);
@@ -392,7 +406,11 @@ void GreeterWorkek::sendTokenToAuth(const QString &account, const int authType, 
 
     switch (m_model->getAuthProperty().FrameworkState) {
     case 0:
-        m_authFramework->SendTokenToAuth(account, authType, token);
+        if (m_model->getAuthProperty().MFAFlag) {
+            m_authFramework->SendTokenToAuth(account, authType, token);
+        } else {
+            m_authFramework->SendTokenToAuth(account, -1, token);
+        }
         break;
     default:
         m_greeter->respond(token);

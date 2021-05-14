@@ -299,8 +299,10 @@ void AuthenticationModule::setAuthResult(const AuthStatus &status, const QString
             }
         }
         if (m_lineEdit != nullptr) {
-            setLineEditInfo(result, PlaceHolderText);
             setAnimationState(false);
+            if (m_showPrompt) {
+                setLineEditInfo(result, PlaceHolderText);
+            }
         }
         if (m_authStatus != nullptr) {
             setAuthStatus(":/misc/images/login_wait.svg");

@@ -33,16 +33,7 @@ LockWorker::LockWorker(SessionBaseModel *const model, QObject *parent)
     , m_accountsInter(new AccountsInter("com.deepin.daemon.Accounts", "/com/deepin/daemon/Accounts", QDBusConnection::systemBus(), this))
     , m_loginedInter(new LoginedInter("com.deepin.daemon.Accounts", "/com/deepin/daemon/Logined", QDBusConnection::systemBus(), this))
 {
-    /* com.deepin.daemon.Accounts */
     m_accountsInter->setSync(false);
-    m_model->updateUserList(m_accountsInter->userList());
-    m_model->updateLoginedUserList(m_loginedInter->userList());
-    // m_model->updateLimitedInfo(m_authFramework->GetLimitedInfo(m_model->currentUser()->name()));
-    /* com.deepin.daemon.Authenticate */
-    m_model->updateFrameworkState(m_authFramework->GetFrameworkState());
-    m_model->updateSupportedEncryptionType(m_authFramework->GetSupportedEncrypts());
-    m_model->updateSupportedMixAuthFlags(m_authFramework->GetSupportedMixAuthFlags());
-
     m_currentUserUid = getuid();
     m_sessionManager->setSync(false);
 
@@ -69,6 +60,15 @@ LockWorker::LockWorker(SessionBaseModel *const model, QObject *parent)
         m_model->userAdd(user);
     }
     onUserAdded(ACCOUNTS_DBUS_PREFIX + QString::number(m_currentUserUid));
+
+    /* com.deepin.daemon.Accounts */
+    m_model->updateUserList(m_accountsInter->userList());
+    m_model->updateLoginedUserList(m_loginedInter->userList());
+    m_model->updateLimitedInfo(m_authFramework->GetLimitedInfo(m_model->currentUser()->name()));
+    /* com.deepin.daemon.Authenticate */
+    m_model->updateFrameworkState(m_authFramework->GetFrameworkState());
+    m_model->updateSupportedEncryptionType(m_authFramework->GetSupportedEncrypts());
+    m_model->updateSupportedMixAuthFlags(m_authFramework->GetSupportedMixAuthFlags());
 
     m_resetSessionTimer->setInterval(15000);
     if (QGSettings::isSchemaInstalled("com.deepin.dde.session-shell")) {
@@ -129,6 +129,9 @@ void LockWorker::initConnections()
             onUnlockFinished(true);
             destoryAuthentication(m_account);
         }
+        if (type == AuthType::AuthTypePassword && status == AuthStatus::StatusCodeLocked && !m_model->getAuthProperty().MFAFlag) {
+            endAuthentication(m_account, m_model->getAuthProperty().AuthType);
+        }
         m_model->updateAuthStatus(type, status, message);
     });
     connect(m_authFramework, &DeepinAuthFramework::FactorsInfoChanged, m_model, &SessionBaseModel::updateFactorsInfo);
@@ -155,9 +158,13 @@ void LockWorker::initConnections()
     /* org.freedesktop.login1.Manager */
     connect(m_login1Inter, &DBusLogin1Manager::PrepareForSleep, m_model, &SessionBaseModel::prepareForSleep);
     /* model */
-    connect(m_model, &SessionBaseModel::authTypeChanged, this, [=] (const int type) {
-        if (type > 0) {
-            startAuthentication(m_account, type);
+    connect(m_model, &SessionBaseModel::authTypeChanged, this, [=](const int type) {
+        if (type > 0 && !m_model->currentUser()->limitsInfo()->value(type).locked) {
+            startAuthentication(m_account, m_model->getAuthProperty().AuthType);
+        } else {
+            QTimer::singleShot(10, this, [=] {
+                m_model->updateLimitedInfo(m_authFramework->GetLimitedInfo(m_account));
+            });
         }
     });
     connect(m_model, &SessionBaseModel::onPowerActionChanged, this, &LockWorker::doPowerAction);
@@ -351,7 +358,9 @@ void LockWorker::destoryAuthentication(const QString &account)
 void LockWorker::startAuthentication(const QString &account, const int authType)
 {
     m_authFramework->StartAuthentication(account, authType, -1);
-    m_model->updateLimitedInfo(m_authFramework->GetLimitedInfo(account));
+    QTimer::singleShot(10, this, [=]  {
+        m_model->updateLimitedInfo(m_authFramework->GetLimitedInfo(account));
+    });
 }
 
 /**
@@ -365,7 +374,11 @@ void LockWorker::sendTokenToAuth(const QString &account, const int authType, con
 {
     switch (m_model->getAuthProperty().FrameworkState) {
     case 0:
-        m_authFramework->SendTokenToAuth(account, authType, token);
+        if (m_model->getAuthProperty().MFAFlag) {
+            m_authFramework->SendTokenToAuth(account, authType, token);
+        } else {
+            m_authFramework->SendTokenToAuth(account, -1, token);
+        }
         break;
     default:
         m_authFramework->Responsed(token);
