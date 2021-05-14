@@ -193,7 +193,7 @@ void AuthenticationModule::setAuthResult(const AuthStatus &status, const QString
             m_textLabel->setText(tr("Verification successful"));
         }
         if (m_lineEdit != nullptr) {
-            setLineEditInfo(result, PlaceHolderText);
+            setLineEditInfo(tr("Verification successful"), PlaceHolderText);
             setAnimationState(false);
             m_lineEdit->clear();
         }
@@ -206,12 +206,31 @@ void AuthenticationModule::setAuthResult(const AuthStatus &status, const QString
     case StatusCodeFailure:
         setEnabled(true);
         if (m_textLabel != nullptr) {
-            m_textLabel->setText(tr("Verification failed"));
+            if (m_limitsInfo->maxTries - m_limitsInfo->numFailures > 2) {
+                m_textLabel->setText(tr("Verification failed, %n chances left", "", static_cast<int>(m_limitsInfo->maxTries - m_limitsInfo->numFailures - 1)));
+            } else if (m_limitsInfo->maxTries - m_limitsInfo->numFailures == 0) {
+                m_textLabel->setText(tr("Verification failed, %n chances left", "", 4));
+            } else {
+                m_textLabel->setText(tr("Verification failed, only one chance left"));
+            }
         }
         if (m_lineEdit != nullptr) {
-            m_lineEdit->clear();
-            setLineEditInfo(result, AlertText);
             setAnimationState(false);
+            m_lineEdit->clear();
+            if (m_authType == AuthTypePassword || m_authType == AuthTypeSingle) {
+                if (m_limitsInfo->maxTries - m_limitsInfo->numFailures > 2) {
+                    setLineEditInfo(tr("Verification failed, %n chances left", "", static_cast<int>(m_limitsInfo->maxTries - m_limitsInfo->numFailures - 1)), PlaceHolderText);
+                } else if (m_limitsInfo->maxTries - m_limitsInfo->numFailures == 0) {
+                    setLineEditInfo(tr("Verification failed, %n chances left", "", 4), PlaceHolderText);
+                } else {
+                    setLineEditInfo(tr("Verification failed, only one chance left"), PlaceHolderText);
+                }
+                setLineEditInfo(tr("Wrong Password"), AlertText);
+            } else if (m_authType == AuthTypeUkey) {
+                setLineEditInfo(tr("Wrong PIN"), AlertText);
+            } else {
+                setLineEditInfo(result, AlertText);
+            }
         }
         if (m_authStatus != nullptr) {
             setAuthStatus(":/misc/images/login_wait.svg");
@@ -222,11 +241,7 @@ void AuthenticationModule::setAuthResult(const AuthStatus &status, const QString
         break;
     case StatusCodeCancel:
         setEnabled(true);
-        if (m_textLabel != nullptr) {
-            m_textLabel->setText(result);
-        }
         if (m_lineEdit != nullptr) {
-            setLineEditInfo(result, PlaceHolderText);
             setAnimationState(false);
         }
         if (m_authStatus != nullptr) {
@@ -269,7 +284,6 @@ void AuthenticationModule::setAuthResult(const AuthStatus &status, const QString
             m_textLabel->setText(result);
         }
         if (m_lineEdit != nullptr) {
-            // setLineEditInfo(result, PlaceHolderText);
             setAnimationState(true);
         }
         if (m_authStatus != nullptr) {
@@ -301,7 +315,13 @@ void AuthenticationModule::setAuthResult(const AuthStatus &status, const QString
         if (m_lineEdit != nullptr) {
             setAnimationState(false);
             if (m_showPrompt) {
-                setLineEditInfo(result, PlaceHolderText);
+                if (m_authType == AuthTypePassword) {
+                    setLineEditInfo(tr("Password"), PlaceHolderText);
+                } else if (m_authType == AuthTypeUkey) {
+                    setLineEditInfo(tr("PIN"), PlaceHolderText);
+                } else {
+                    setLineEditInfo(result, PlaceHolderText);
+                }
             }
         }
         if (m_authStatus != nullptr) {
@@ -322,7 +342,6 @@ void AuthenticationModule::setAuthResult(const AuthStatus &status, const QString
             m_textLabel->setText(tr("Fingerprint locked, use password please"));
         }
         if (m_lineEdit != nullptr) {
-            setLineEditInfo(result, AlertText);
             setAnimationState(false);
         }
         if (m_authStatus != nullptr) {
@@ -413,20 +432,15 @@ void AuthenticationModule::setCapsStatus(const bool isCapsOn)
  */
 void AuthenticationModule::setLimitsInfo(const LimitsInfo &info)
 {
-    if (info.locked == m_limitsInfo->locked && info.unlockTime == m_limitsInfo->unlockTime) {
-        return;
+    if (info.locked && info.locked != m_limitsInfo->locked && info.unlockTime != m_limitsInfo->unlockTime) {
+        m_limitsInfo->locked = info.locked;
+        m_limitsInfo->unlockTime = info.unlockTime;
+        setAuthResult(AuthStatus::StatusCodeLocked, QString(""));
+        updateUnlockTime();
     }
-    m_limitsInfo->locked = info.locked;
     m_limitsInfo->maxTries = info.maxTries;
     m_limitsInfo->numFailures = info.numFailures;
     m_limitsInfo->unlockSecs = info.unlockSecs;
-    m_limitsInfo->unlockTime = info.unlockTime;
-    if (info.locked) {
-        setAuthResult(AuthStatus::StatusCodeLocked, tr("locked"));
-        updateUnlockTime();
-    } else {
-        emit activateAuthentication();
-    }
 }
 
 /**
@@ -452,7 +466,7 @@ void AuthenticationModule::setLineEditInfo(const QString &text, const TextType t
     switch (type) {
     case AlertText:
         m_lineEdit->showAlertMessage(text, this, 3000);
-        m_lineEdit->lineEdit()->selectAll();
+        // m_lineEdit->lineEdit()->selectAll();
         break;
     case InputText: {
         m_lineEdit->hideAlertMessage();
@@ -532,6 +546,16 @@ void AuthenticationModule::setKeyboardButtontext(const QString &text)
 }
 
 /**
+ * @brief 设置当前认证方式的类型。-- 仅供单因场景下特殊使用！
+ *
+ * @param authType
+ */
+void AuthenticationModule::setAuthType(const AuthType authType)
+{
+    m_authType = authType;
+}
+
+/**
  * @brief 设置动画执行状态  ---  后续可添加更多动画
  *
  * @param start
@@ -556,7 +580,7 @@ void AuthenticationModule::updateUnlockTime()
         return;
     }
     uint intervalSeconds = QDateTime::fromString(m_limitsInfo->unlockTime, Qt::ISODateWithMs).toLocalTime().toTime_t()
-                           - QDateTime::currentDateTime().toTime_t();
+                           - QDateTime::currentDateTimeUtc().toTime_t();
     uint remainderSeconds = intervalSeconds % 60;
     m_integerMinutes = (intervalSeconds - remainderSeconds) / 60 + 1;
     emit unlockTimeChanged();

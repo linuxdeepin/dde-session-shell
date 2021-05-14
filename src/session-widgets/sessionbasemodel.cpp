@@ -511,7 +511,7 @@ void SessionBaseModel::updateMFAFlag(const bool MFAFlag)
  */
 void SessionBaseModel::updatePINLen(const int PINLen)
 {
-    if (PINLen == m_authProperty.Prompt) {
+    if (PINLen == m_authProperty.PINLen) {
         return;
     }
     m_authProperty.PINLen = PINLen;
@@ -537,25 +537,23 @@ void SessionBaseModel::updatePrompt(const QString &prompt)
  */
 void SessionBaseModel::updateFactorsInfo(const MFAInfoList &infoList)
 {
-    int factorsInfoAuthType = 0;
     if (m_authProperty.MFAFlag) {
         for (const MFAInfo &info : infoList) {
-            factorsInfoAuthType |= info.AuthType;
+            m_authProperty.AuthType |= info.AuthType;
         }
-        m_authProperty.AuthType = factorsInfoAuthType;
+        emit authTypeChanged(m_authProperty.AuthType);
     } else {
         if (m_currentUser->limitsInfo()->value(AuthenticationModule::AuthType::AuthTypePassword).locked) {
-            m_authProperty.AuthType = factorsInfoAuthType = 1;
-            emit authStatusChanged(AuthenticationModule::AuthType::AuthTypePassword, AuthenticationModule::AuthStatus::StatusCodeLocked, "");
+            m_authProperty.AuthType = 1;
+            emit authTypeChanged(1);
+            emit authStatusChanged(AuthenticationModule::AuthType::AuthTypeSingle, AuthenticationModule::AuthStatus::StatusCodeLocked, "");
         } else {
             for (const MFAInfo &info : infoList) {
-                factorsInfoAuthType |= info.AuthType;
+                m_authProperty.AuthType |= info.AuthType;
             }
-            m_authProperty.AuthType = factorsInfoAuthType;
-            factorsInfoAuthType = 1;
+            emit authTypeChanged(1);
         }
     }
-    emit authTypeChanged(factorsInfoAuthType);
 }
 
 /**
@@ -572,7 +570,7 @@ void SessionBaseModel::updateAuthStatus(const AuthenticationModule::AuthType &au
         emit authStatusChanged(authType, status, result);
     } else {
         if (authType == AuthenticationModule::AuthType::AuthTypeAll) {
-            emit authStatusChanged(AuthenticationModule::AuthType::AuthTypePassword, status, result);
+            emit authStatusChanged(AuthenticationModule::AuthType::AuthTypeSingle, status, result);
         }
     }
 }

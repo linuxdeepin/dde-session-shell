@@ -418,7 +418,6 @@ void UserLoginWidget::initUkeyAuth(const int index)
         return;
     }
     m_ukeyAuth = new AuthenticationModule(AuthenticationModule::AuthTypeUkey, this);
-    m_ukeyAuth->setLineEditInfo(tr("Please enter the PIN code"), AuthenticationModule::PlaceHolderText);
     m_ukeyAuth->setCapsStatus(m_capslockMonitor->isCapslockOn());
     m_userLoginLayout->insertWidget(index, m_ukeyAuth);
 
@@ -487,7 +486,6 @@ void UserLoginWidget::initPINAuth(const int index)
         return;
     }
     m_PINAuth = new AuthenticationModule(AuthenticationModule::AuthTypePIN, this);
-    m_PINAuth->setLineEditInfo(tr("Please enter the PIN code"), AuthenticationModule::PlaceHolderText);
     m_userLoginLayout->insertWidget(index, m_PINAuth);
 
     std::function<void(QVariant)> PINChanged = std::bind(&UserLoginWidget::onOtherPagePINChanged, this, std::placeholders::_1);
@@ -523,6 +521,12 @@ void UserLoginWidget::initPINAuth(const int index)
 void UserLoginWidget::updateAuthResult(const AuthenticationModule::AuthType &authType, const AuthenticationModule::AuthStatus &status, const QString &message)
 {
     switch (authType) {
+    case AuthenticationModule::AuthTypeSingle:
+        if (m_passwordAuth != nullptr) {
+            m_passwordAuth->setAuthType(AuthenticationModule::AuthTypeSingle);
+            m_passwordAuth->setAuthResult(status, message);
+        }
+        break;
     case AuthenticationModule::AuthTypePassword:
         if (m_passwordAuth != nullptr) {
             m_passwordAuth->setAuthResult(status, message);

@@ -46,6 +46,7 @@ public:
     Q_ENUM(InputType)
 
     enum AuthType {
+        AuthTypeSingle = 0,
         AuthTypePassword = 1 << 0,        // 密码
         AuthTypeFingerprint = 1 << 1,     // 指纹
         AuthTypeFace = 1 << 2,            // 人脸
@@ -97,6 +98,7 @@ public:
     AuthStatus getAuthStatus() {return m_status;}
     void setKeyboardButtonVisible(const bool visible);
     void setKeyboardButtontext(const QString &text);
+    void setAuthType(const AuthType authType);
 
 signals:
     void activateAuthentication();
