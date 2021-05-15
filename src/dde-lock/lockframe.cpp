@@ -205,7 +205,9 @@ bool LockFrame::handlePoweroffKey()
 void LockFrame::showUserList()
 {
     m_model->setCurrentModeState(SessionBaseModel::ModeStatus::UserMode);
-    show();
+    QTimer::singleShot(10, this, [ = ] {
+        this->show();
+    });
 }
 
 void LockFrame::showLockScreen()
