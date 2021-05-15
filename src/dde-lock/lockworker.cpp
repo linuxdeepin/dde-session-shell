@@ -175,7 +175,7 @@ void LockWorker::initConnections()
         }
     });
     connect(m_model, &SessionBaseModel::visibleChanged, this, [=] (bool visible) {
-        if (visible && m_model->currentModeState() !=  SessionBaseModel::ModeStatus::ShutDownMode) {
+        if (visible) {
             createAuthentication(m_model->currentUser()->name());
         } else {
             destoryAuthentication(m_account);
@@ -222,7 +222,6 @@ void LockWorker::doPowerAction(const SessionBaseModel::PowerAction action)
     case SessionBaseModel::PowerAction::RequireLock:
         m_model->setLocked(true);
         m_model->setCurrentModeState(SessionBaseModel::ModeStatus::PasswordMode);
-        createAuthentication(m_model->currentUser()->name());
         // m_authFramework->AuthenticateByUser(m_model->currentUser());
         break;
     case SessionBaseModel::PowerAction::RequireLogout:
@@ -245,9 +244,8 @@ void LockWorker::doPowerAction(const SessionBaseModel::PowerAction action)
 
 void LockWorker::switchToUser(std::shared_ptr<User> user)
 {
-    //如果没有开启认证则开启
-    if(m_authFramework->AuthSessionPath(user->name()) == QString()) {
-        createAuthentication(user->name());
+    if (user->name() == m_account) {
+        return;
     }
 
     qInfo() << "switch user from" << m_account << " to " << user->name() << user->isLogin();
