@@ -107,6 +107,7 @@ signals:
     void lineEditTextHasFocus(bool focus);
     void unlockTimeChanged();
     void requestAuthenticate();
+    void requestChangeFocus();
     void requestShowKeyboardList();
 
 public slots:

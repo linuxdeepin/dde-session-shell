@@ -202,6 +202,7 @@ void AuthenticationModule::setAuthResult(const AuthStatus &status, const QString
         }
         m_showPrompt = true;
         emit authFinished(m_authType, StatusCodeSuccess);
+        emit requestChangeFocus();
         break;
     case StatusCodeFailure:
         setEnabled(true);
@@ -217,6 +218,7 @@ void AuthenticationModule::setAuthResult(const AuthStatus &status, const QString
         if (m_lineEdit != nullptr) {
             setAnimationState(false);
             m_lineEdit->clear();
+            m_lineEdit->setFocus();
             if (m_authType == AuthTypePassword || m_authType == AuthTypeSingle) {
                 if (m_limitsInfo->maxTries - m_limitsInfo->numFailures > 2) {
                     setLineEditInfo(tr("Verification failed, %n chances left", "", static_cast<int>(m_limitsInfo->maxTries - m_limitsInfo->numFailures - 1)), PlaceHolderText);

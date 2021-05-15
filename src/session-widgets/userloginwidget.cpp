@@ -153,7 +153,6 @@ void UserLoginWidget::initUI()
         m_userLoginLayout->addSpacing(20);
     }
     /* 解锁图标 */
-    m_lockButton->setFocusPolicy(Qt::StrongFocus);
     m_userLoginLayout->addWidget(m_lockButton, 0, Qt::AlignHCenter);
     /* 模糊背景 */
     m_blurEffectWidget->setMaskColor(DBlurEffectWidget::LightColor);
@@ -210,10 +209,6 @@ void UserLoginWidget::initConnections()
  */
 void UserLoginWidget::updateWidgetShowType(const int type)
 {
-    if (m_listAuthMoudule.size() != 0) {
-        m_listAuthMoudule.clear();
-    }
-
     int index = 3;
     /**
      * @brief 设置布局
@@ -240,8 +235,6 @@ void UserLoginWidget::updateWidgetShowType(const int type)
     /* Ukey */
     if (type & AuthenticationModule::AuthTypeUkey) {
         initUkeyAuth(index++);
-        if (m_ukeyAuth != nullptr)
-            m_listAuthMoudule.append(m_ukeyAuth);
     } else if (m_ukeyAuth != nullptr) {
         m_ukeyAuth->deleteLater();
         m_ukeyAuth = nullptr;
@@ -264,8 +257,6 @@ void UserLoginWidget::updateWidgetShowType(const int type)
     /* 密码 */
     if (type & AuthenticationModule::AuthTypePassword) {
         initPasswdAuth(index++);
-        if (m_passwordAuth != nullptr)
-            m_listAuthMoudule.append(m_passwordAuth);
     } else if (m_passwordAuth != nullptr) {
         m_passwordAuth->deleteLater();
         m_passwordAuth = nullptr;
@@ -290,21 +281,6 @@ void UserLoginWidget::updateWidgetShowType(const int type)
     }
     if (m_accountEdit->isVisible()) {
         m_accountEdit->setFocus();
-    }
-
-    /**
-     * @brief 更新焦点
-     * 根据布局顺序存储AuthenticateModule,认证成功后更新焦点位置
-     */
-    if (m_listAuthMoudule.isEmpty())
-        return;
-    for (int i = 0; i < m_listAuthMoudule.size(); ++i ) {
-        connect(m_listAuthMoudule[i], &AuthenticationModule::authFinished, [this, i] {
-            if (m_listAuthMoudule[i]->lineEditIsEnable())
-                m_listAuthMoudule[i]->setFocus();
-            else if (i + 1 < m_listAuthMoudule.size())
-                m_listAuthMoudule[i + 1]->setFocus();
-        });
     }
 }
 
@@ -352,6 +328,7 @@ void UserLoginWidget::initPasswdAuth(const int index)
         }
     });
 
+    connect(m_passwordAuth, &AuthenticationModule::requestChangeFocus, this, &UserLoginWidget::updateNextFocusPosition);
 
     connect(m_passwordAuth, &AuthenticationModule::lineEditTextHasFocus, this, [=](bool focus) {
         if (!focus) {
@@ -452,6 +429,8 @@ void UserLoginWidget::initUkeyAuth(const int index)
             m_lockButton->setEnabled(false);
         }
     });
+
+    connect(m_ukeyAuth, &AuthenticationModule::requestChangeFocus, this, &UserLoginWidget::updateNextFocusPosition);
 
     connect(m_ukeyAuth, &AuthenticationModule::lineEditTextHasFocus, this, [ = ] {
         emit m_ukeyAuth->lineEditTextChanged(m_ukeyAuth->lineEditText());
@@ -840,6 +819,25 @@ void UserLoginWidget::updateKeyboardList(const QStringList &list)
 }
 
 /**
+ * @brief 移动焦点到下一个输入框
+ */
+void UserLoginWidget::updateNextFocusPosition()
+{
+    AuthenticationModule *module = static_cast<AuthenticationModule *>(sender());
+    if (module == m_passwordAuth) {
+        if (m_ukeyAuth != nullptr) {
+            setFocusProxy(m_ukeyAuth);
+            m_ukeyAuth->setFocus();
+        }
+    } else {
+        if (m_passwordAuth != nullptr) {
+            setFocusProxy(m_passwordAuth);
+            m_passwordAuth->setFocus();
+        }
+    }
+}
+
+/**
  * @brief 更新账户限制信息
  *
  * @param limitsInfo
@@ -1212,22 +1210,4 @@ void UserLoginWidget::paintEvent(QPaintEvent *event)
     painter.drawRoundedRect(QRect(width() / 2 - 46, rect().bottom() - 4, 92, 4), 2, 2);
 
     QWidget::paintEvent(event);
-}
-
-/**
- * @brief show之前初始化焦点位置
- * 若多因子,则按布局顺序,第一个未禁用的输入框设置焦点
- * * @param event
- */
-void UserLoginWidget::showEvent(QShowEvent *event)
-{
-    if (m_model->currentModeState() == SessionBaseModel::ModeStatus::PasswordMode && !m_listAuthMoudule.isEmpty())
-        for (auto *item : m_listAuthMoudule) {
-            if (item->lineEditIsEnable()) {
-                item->setFocus();
-                break;
-            }
-        }
-
-    return QWidget::showEvent(event);
 }

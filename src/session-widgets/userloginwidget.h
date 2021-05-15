@@ -100,6 +100,7 @@ public slots:
     void updateLoginState(const bool loginState);
     void updateKeyboardInfo(const QString &text);
     void updateKeyboardList(const QStringList &list);
+    void updateNextFocusPosition();
     /////////////////////////////////////////////////////
     void updateAuthType(SessionBaseModel::AuthType type);
     void unlockSuccessAni(); // obsolete
@@ -112,7 +113,6 @@ protected:
     void keyReleaseEvent(QKeyEvent *event) override;
     void focusOutEvent(QFocusEvent *event) override;
     void paintEvent(QPaintEvent *event) override;
-    void showEvent(QShowEvent *event) override;
 
 private:
     void initUI();
@@ -192,7 +192,6 @@ private:
     QString m_local;
     QStringList m_keyboardList;
     QString m_keyboardInfo;
-    QList<AuthenticationModule*> m_listAuthMoudule; //按顺序存储AuthenticateModule
 };
 
 #endif // USERLOGINWIDGET_H
