@@ -403,6 +403,16 @@ bool AuthenticationModule::lineEditIsEnable()
 }
 
 /**
+ * @brief 设置输入框Alert
+ *
+ */
+void AuthenticationModule::setLineEditBkColor(const bool value)
+{
+    if (m_lineEdit != nullptr)
+        m_lineEdit->setAlert(value);
+}
+
+/**
  * @brief 设置认证状态  --- 不同认证方式可能用不同的图片，故预留此接口
  *
  * @param path 图片路径
@@ -466,10 +476,12 @@ void AuthenticationModule::setNumLockStatus(const QString &path)
 void AuthenticationModule::setLineEditInfo(const QString &text, const TextType type)
 {
     switch (type) {
-    case AlertText:
+    case AlertText: {
         m_lineEdit->showAlertMessage(text, this, 3000);
+        m_lineEdit->setAlert(true);
         // m_lineEdit->lineEdit()->selectAll();
         break;
+    }
     case InputText: {
         m_lineEdit->hideAlertMessage();
         int pos = m_lineEdit->lineEdit()->cursorPosition();

@@ -121,6 +121,7 @@ public slots:
     void setKeyboardButtonInfo(const QString &text);
     void setText(const QString &text);
     bool lineEditIsEnable();
+    void setLineEditBkColor(const bool value);
 
 protected:
     bool eventFilter(QObject *watched, QEvent *event) override;
