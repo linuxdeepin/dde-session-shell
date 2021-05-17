@@ -27,6 +27,7 @@ public:
     };
 
     explicit GreeterWorkek(SessionBaseModel *const model, QObject *parent = nullptr);
+    ~GreeterWorkek();
 
     void switchToUser(std::shared_ptr<User> user) override;
     void onUserAdded(const QString &user) override;

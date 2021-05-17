@@ -95,6 +95,11 @@ User::User(const User &user)
 
 }
 
+User::~User()
+{
+    delete m_limitsInfo;
+}
+
 bool User::operator==(const User &user) const
 {
     return type() == user.type() &&
@@ -400,6 +405,11 @@ ADDomainUser::ADDomainUser(uid_t uid, QObject *parent)
     : User(parent)
 {
     m_uid = uid;
+}
+
+ADDomainUser::~ADDomainUser()
+{
+    delete m_userInter;
 }
 
 void ADDomainUser::setUserDisplayName(const QString &name)

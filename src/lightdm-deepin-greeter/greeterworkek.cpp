@@ -127,6 +127,13 @@ GreeterWorkek::GreeterWorkek(SessionBaseModel *const model, QObject *parent)
     });
 }
 
+GreeterWorkek::~GreeterWorkek()
+{
+    delete m_greeter;
+    delete m_authFramework;
+    delete m_lockInter;
+}
+
 void GreeterWorkek::initConnections()
 {
     /* greeter */

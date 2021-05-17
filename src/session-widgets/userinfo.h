@@ -44,6 +44,7 @@ public:
 
     explicit User(QObject *parent);
     User(const User &user);
+    ~User();
 
 signals:
     void displayNameChanged(const QString &displayname) const;
@@ -161,6 +162,7 @@ class ADDomainUser : public User
 
 public:
     ADDomainUser(uid_t uid, QObject *parent = nullptr);
+    ~ADDomainUser();
 
     void setUserDisplayName(const QString &name);
     void setUserName(const QString &name);
