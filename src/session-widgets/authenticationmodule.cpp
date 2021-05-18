@@ -510,7 +510,8 @@ void AuthenticationModule::setLineEditInfo(const QString &text, const TextType t
  */
 QString AuthenticationModule::lineEditText() const
 {
-    return m_lineEdit->text();
+    if(m_lineEdit != nullptr)
+        return m_lineEdit->text();
 }
 
 /**

@@ -336,7 +336,8 @@ void UserLoginWidget::initPasswdAuth(const int index)
             m_kbLayoutBorder->setVisible(false);
             m_passwordAuth->setLineEditBkColor(false);
         }
-        emit m_passwordAuth->lineEditTextChanged(m_passwordAuth->lineEditText());
+        if(m_passwordAuth)
+            emit m_passwordAuth->lineEditTextChanged(m_passwordAuth->lineEditText());
     });
     FrameDataBind::Instance()->refreshData("UserLoginPassword");
     m_passwordAuth->setKeyboardButtonVisible(m_keyboardList.size() > 1 ? true : false);
@@ -437,7 +438,8 @@ void UserLoginWidget::initUkeyAuth(const int index)
     connect(m_ukeyAuth, &AuthenticationModule::lineEditTextHasFocus, this, [ = ] (bool focus) {
         if (!focus)
             m_ukeyAuth->setLineEditBkColor(false);
-        emit m_ukeyAuth->lineEditTextChanged(m_ukeyAuth->lineEditText());
+        if(m_ukeyAuth)
+            emit m_ukeyAuth->lineEditTextChanged(m_ukeyAuth->lineEditText());
     });
     FrameDataBind::Instance()->refreshData("UserLoginUKey");
 }
