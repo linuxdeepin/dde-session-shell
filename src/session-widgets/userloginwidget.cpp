@@ -268,20 +268,21 @@ void UserLoginWidget::updateWidgetShowType(const int type)
      * 这里的优先级是根据布局来的，如果后续布局改变或者新增认证方式，焦点需要重新调整
      */
     if (m_lockButton->isVisible()) {
-        m_lockButton->setFocus();
+        setFocusProxy(m_lockButton);
     }
     if (type & AuthenticationModule::AuthTypePassword) {
-        m_passwordAuth->setFocus();
+        setFocusProxy(m_passwordAuth);
     }
     if (type & AuthenticationModule::AuthTypeUkey) {
-        m_ukeyAuth->setFocus();
+        setFocusProxy(m_ukeyAuth);
     }
     if (type & AuthenticationModule::AuthTypePIN) {
-        m_PINAuth->setFocus();
+        setFocusProxy(m_PINAuth);
     }
     if (m_accountEdit->isVisible()) {
-        m_accountEdit->setFocus();
+        setFocusProxy(m_accountEdit);
     }
+    setFocus();
 }
 
 /**
@@ -830,14 +831,13 @@ void UserLoginWidget::updateNextFocusPosition()
     if (module == m_passwordAuth) {
         if (m_ukeyAuth != nullptr) {
             setFocusProxy(m_ukeyAuth);
-            m_ukeyAuth->setFocus();
         }
     } else {
         if (m_passwordAuth != nullptr) {
             setFocusProxy(m_passwordAuth);
-            m_passwordAuth->setFocus();
         }
     }
+    setFocus();
 }
 
 /**
