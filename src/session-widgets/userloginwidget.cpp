@@ -267,16 +267,16 @@ void UserLoginWidget::updateWidgetShowType(const int type)
      * 优先级: 用户名输入框 > PIN码输入框 > 密码输入框 > 解锁按钮
      * 这里的优先级是根据布局来的，如果后续布局改变或者新增认证方式，焦点需要重新调整
      */
-    if (m_lockButton->isVisible()) {
+    if (m_lockButton->isVisible() && m_lockButton->isEnabled()) {
         setFocusProxy(m_lockButton);
     }
-    if (type & AuthenticationModule::AuthTypePassword) {
+    if (m_passwordAuth != nullptr) {
         setFocusProxy(m_passwordAuth);
     }
-    if (type & AuthenticationModule::AuthTypeUkey) {
+    if (m_ukeyAuth != nullptr) {
         setFocusProxy(m_ukeyAuth);
     }
-    if (type & AuthenticationModule::AuthTypePIN) {
+    if (m_PINAuth != nullptr) {
         setFocusProxy(m_PINAuth);
     }
     if (m_accountEdit->isVisible()) {
@@ -831,12 +831,16 @@ void UserLoginWidget::updateNextFocusPosition()
 {
     AuthenticationModule *module = static_cast<AuthenticationModule *>(sender());
     if (module == m_passwordAuth) {
-        if (m_ukeyAuth != nullptr) {
+        if (m_ukeyAuth != nullptr && m_ukeyAuth->isEnabled()) {
             setFocusProxy(m_ukeyAuth);
+        } else {
+            setFocusProxy(m_lockButton);
         }
     } else {
-        if (m_passwordAuth != nullptr) {
+        if (m_passwordAuth != nullptr && m_passwordAuth->isEnabled()) {
             setFocusProxy(m_passwordAuth);
+        } else {
+            setFocusProxy(m_lockButton);
         }
     }
     setFocus();
