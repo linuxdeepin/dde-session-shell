@@ -381,6 +381,7 @@ void AuthenticationModule::setAuthResult(const AuthStatus &status, const QString
         qWarning() << "Error! The status of authentication is wrong!" << status << result;
         break;
     }
+    update();
 }
 
 /**
