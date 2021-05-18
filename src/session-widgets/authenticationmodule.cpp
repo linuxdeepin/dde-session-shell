@@ -299,7 +299,7 @@ void AuthenticationModule::setAuthResult(const AuthStatus &status, const QString
             m_textLabel->setText(result);
         }
         if (m_lineEdit != nullptr) {
-            setLineEditInfo(result, AlertText);
+            setLineEditInfo(tr("UKey is required"), PlaceHolderText);
             setAnimationState(false);
         }
         if (m_authStatus != nullptr) {
@@ -311,7 +311,7 @@ void AuthenticationModule::setAuthResult(const AuthStatus &status, const QString
         setEnabled(true);
         if (m_textLabel != nullptr) {
             if (m_showPrompt) {
-                m_textLabel->setText(result);
+                m_textLabel->setText(tr("Verify your fingerprint"));
             }
         }
         if (m_lineEdit != nullptr) {
@@ -320,7 +320,7 @@ void AuthenticationModule::setAuthResult(const AuthStatus &status, const QString
                 if (m_authType == AuthTypePassword) {
                     setLineEditInfo(tr("Password"), PlaceHolderText);
                 } else if (m_authType == AuthTypeUkey) {
-                    setLineEditInfo(tr("PIN"), PlaceHolderText);
+                    setLineEditInfo(tr("Enter your PIN"), PlaceHolderText);
                 } else {
                     setLineEditInfo(result, PlaceHolderText);
                 }
