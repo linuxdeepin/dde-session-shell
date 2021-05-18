@@ -10,72 +10,58 @@
     </message>
     <message>
         <location filename="../src/session-widgets/authenticationmodule.cpp" line="193"/>
+        <location filename="../src/session-widgets/authenticationmodule.cpp" line="196"/>
         <source>Verification successful</source>
         <translation>验证成功</translation>
     </message>
-    <message>
-        <location filename="../src/session-widgets/authenticationmodule.cpp" line="320"/>
-        <source>Fingerprint locked, use password please</source>
-        <translation>指纹已锁定，请输入密码</translation>
-    </message>
-    <message>
-        <location filename="../src/session-widgets/authenticationmodule.cpp" line="424"/>
-        <source>Locked</source>
-        <translation>已锁定</translation>
-    </message>
-    <message>
-        <location filename="../src/session-widgets/authenticationmodule.cpp" line="313"/>
-        <location filename="../src/session-widgets/authenticationmodule.cpp" line="524"/>
-        <location filename="../src/session-widgets/authenticationmodule.cpp" line="703"/>
-        <source>Password</source>
-        <translation>密码</translation>
-    </message>
-    <message>
-        <location filename="../src/session-widgets/authenticationmodule.cpp" line="370"/>
-        <source>Verify your fingerprint</source>
-        <translation>请验证指纹</translation>
-    </message>
-    <message>
-        <location filename="../src/session-widgets/authenticationmodule.cpp" line="526"/>
-        <source>Wrong Password</source>
-        <translation>密码错误</translation>
-    </message>
-    <message>
-        <location filename="../src/session-widgets/authenticationmodule.cpp" line="531"/>
-        <location filename="../src/session-widgets/authenticationmodule.cpp" line="548"/>
-        <source>Verification failed, only one chance left</source>
-        <translation>验证失败，您还可以尝试1次</translation>
-    </message>
     <message numerus="yes">
-        <location filename="../src/session-widgets/authenticationmodule.cpp" line="533"/>
-        <location filename="../src/session-widgets/authenticationmodule.cpp" line="550"/>
+        <location filename="../src/session-widgets/authenticationmodule.cpp" line="211"/>
+        <location filename="../src/session-widgets/authenticationmodule.cpp" line="213"/>
+        <location filename="../src/session-widgets/authenticationmodule.cpp" line="224"/>
+        <location filename="../src/session-widgets/authenticationmodule.cpp" line="226"/>
         <source>Verification failed, %n chances left</source>
         <translation><numerusform>验证失败，您还可以尝试%n次</numerusform></translation>
     </message>
     <message>
-        <location filename="../src/session-widgets/authenticationmodule.cpp" line="566"/>
-        <source>Unclear fingerprint, please clean your finger and try again</source>
-        <translation>图像模糊，请清洁手指后再次验证</translation>
+        <location filename="../src/session-widgets/authenticationmodule.cpp" line="215"/>
+        <location filename="../src/session-widgets/authenticationmodule.cpp" line="228"/>
+        <source>Verification failed, only one chance left</source>
+        <translation>验证失败，您还可以尝试1次</translation>
     </message>
     <message>
-        <location filename="../src/session-widgets/authenticationmodule.cpp" line="568"/>
-        <source>Finger moved too fast, please do not lift until prompted</source>
-        <translation>接触时间短，验证时请勿移动手指</translation>
+        <location filename="../src/session-widgets/authenticationmodule.cpp" line="230"/>
+        <source>Wrong Password</source>
+        <translation>密码错误</translation>
     </message>
     <message>
-        <location filename="../src/session-widgets/authenticationmodule.cpp" line="570"/>
-        <source>Fingerprint verification unavailable, please input password</source>
-        <translation>指纹不可用，请输入密码</translation>
-    </message>
-    <message>
-        <location filename="../src/session-widgets/authenticationmodule.cpp" line="589"/>
-        <source>PIN</source>
-        <translation>请输入PIN</translation>
-    </message>
-    <message>
-        <location filename="../src/session-widgets/authenticationmodule.cpp" line="591"/>
+        <location filename="../src/session-widgets/authenticationmodule.cpp" line="232"/>
         <source>Wrong PIN</source>
         <translation>PIN错误</translation>
+    </message>
+    <message>
+        <location filename="../src/session-widgets/authenticationmodule.cpp" line="302"/>
+        <source>UKey is required</source>
+        <translation>需要使用UKEY认证</translation>
+    </message>
+    <message>
+        <location filename="../src/session-widgets/authenticationmodule.cpp" line="314"/>
+        <source>Verify your fingerprint</source>
+        <translation>请验证指纹</translation>
+    </message>
+    <message>
+        <location filename="../src/session-widgets/authenticationmodule.cpp" line="321"/>
+        <source>Password</source>
+        <translation>请输入密码</translation>
+    </message>
+    <message>
+        <location filename="../src/session-widgets/authenticationmodule.cpp" line="323"/>
+        <source>Enter your PIN</source>
+        <translation>识别到UKEY，需要输入PIN</translation>
+    </message>
+    <message>
+        <location filename="../src/session-widgets/authenticationmodule.cpp" line="344"/>
+        <source>Fingerprint locked, use password please</source>
+        <translation>指纹已锁定，请输入密码</translation>
     </message>
 </context>
 <context>
@@ -183,12 +169,12 @@
 <context>
     <name>GreeterWorkek</name>
     <message>
-        <location filename="../src/lightdm-deepin-greeter/greeterworkek.cpp" line="536"/>
+        <location filename="../src/lightdm-deepin-greeter/greeterworkek.cpp" line="559"/>
         <source>Wrong Password</source>
         <translation>密码错误</translation>
     </message>
     <message>
-        <location filename="../src/lightdm-deepin-greeter/greeterworkek.cpp" line="540"/>
+        <location filename="../src/lightdm-deepin-greeter/greeterworkek.cpp" line="563"/>
         <source>The account or password is not correct. Please enter again.</source>
         <translation>帐户或密码不正确，请重新输入。</translation>
     </message>
@@ -218,12 +204,12 @@
 <context>
     <name>LockWorker</name>
     <message>
-        <location filename="../src/dde-lock/lockworker.cpp" line="437"/>
+        <location filename="../src/dde-lock/lockworker.cpp" line="443"/>
         <source>Fingerprint verification timed out, please enter your password manually</source>
         <translation>指纹密码验证超时，请手动输入密码</translation>
     </message>
     <message>
-        <location filename="../src/dde-lock/lockworker.cpp" line="455"/>
+        <location filename="../src/dde-lock/lockworker.cpp" line="461"/>
         <source>Failed to match fingerprint</source>
         <translation>指纹解锁失败</translation>
     </message>
@@ -308,71 +294,23 @@
     <name>UserLoginWidget</name>
     <message>
         <location filename="../src/session-widgets/userloginwidget.cpp" line="147"/>
-        <location filename="../src/session-widgets/userloginwidget.cpp" line="704"/>
+        <location filename="../src/session-widgets/userloginwidget.cpp" line="644"/>
         <source>Account</source>
         <translation>帐户</translation>
     </message>
     <message>
-        <location filename="../src/session-widgets/userloginwidget.cpp" line="313"/>
-        <location filename="../src/session-widgets/userloginwidget.cpp" line="524"/>
-        <location filename="../src/session-widgets/userloginwidget.cpp" line="703"/>
+        <location filename="../src/session-widgets/userloginwidget.cpp" line="296"/>
+        <location filename="../src/session-widgets/userloginwidget.cpp" line="643"/>
         <source>Password</source>
         <translation>密码</translation>
     </message>
     <message>
-        <location filename="../src/session-widgets/userloginwidget.cpp" line="370"/>
+        <location filename="../src/session-widgets/userloginwidget.cpp" line="354"/>
         <source>Verify your fingerprint</source>
         <translation>请验证指纹</translation>
     </message>
-    <message>
-        <location filename="../src/session-widgets/userloginwidget.cpp" line="526"/>
-        <source>Wrong Password</source>
-        <translation>密码错误</translation>
-    </message>
-    <message>
-        <location filename="../src/session-widgets/userloginwidget.cpp" line="531"/>
-        <location filename="../src/session-widgets/userloginwidget.cpp" line="548"/>
-        <source>Verification failed, only one chance left</source>
-        <translation>验证失败，您还可以尝试1次</translation>
-    </message>
-    <message>
-        <location filename="../src/session-widgets/userloginwidget.cpp" line="533"/>
-        <location filename="../src/session-widgets/userloginwidget.cpp" line="550"/>
-        <source>Verification failed, %1 chances left</source>
-        <translation>验证失败，您还可以尝试%1次</translation>
-    </message>
-    <message>
-        <location filename="../src/session-widgets/userloginwidget.cpp" line="554"/>
-        <source>Fingerprint locked, use password please</source>
-        <translation>指纹已锁定，请输入密码</translation>
-    </message>
-    <message>
-        <location filename="../src/session-widgets/userloginwidget.cpp" line="566"/>
-        <source>Unclear fingerprint, please clean your finger and try again</source>
-        <translation>图像模糊，请清洁手指后再次验证</translation>
-    </message>
-    <message>
-        <location filename="../src/session-widgets/userloginwidget.cpp" line="568"/>
-        <source>Finger moved too fast, please do not lift until prompted</source>
-        <translation>接触时间短，验证时请勿移动手指</translation>
-    </message>
-    <message>
-        <location filename="../src/session-widgets/userloginwidget.cpp" line="570"/>
-        <source>Fingerprint verification unavailable, please input password</source>
-        <translation>指纹不可用，请输入密码</translation>
-    </message>
-    <message>
-        <location filename="../src/session-widgets/userloginwidget.cpp" line="589"/>
-        <source>PIN</source>
-        <translation>请输入PIN</translation>
-    </message>
-    <message>
-        <location filename="../src/session-widgets/userloginwidget.cpp" line="591"/>
-        <source>Wrong PIN</source>
-        <translation>PIN错误</translation>
-    </message>
     <message numerus="yes">
-        <location filename="../src/session-widgets/userloginwidget.cpp" line="825"/>
+        <location filename="../src/session-widgets/userloginwidget.cpp" line="765"/>
         <source>Please try again %n minute(s) later</source>
         <translation><numerusform>请%n分钟后再试</numerusform></translation>
     </message>
