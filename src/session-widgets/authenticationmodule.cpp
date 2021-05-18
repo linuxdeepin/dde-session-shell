@@ -129,7 +129,14 @@ void AuthenticationModule::init()
         PINLayout->addWidget(m_authStatus, 0, Qt::AlignRight | Qt::AlignVCenter);
         mainLayout->addWidget(m_lineEdit);
 
-        connect(m_lineEdit, &DLineEditEx::lineEditTextHasFocus, this, &AuthenticationModule::lineEditTextHasFocus);
+        connect(m_lineEdit, &DLineEditEx::lineEditTextHasFocus, this, [this](const bool value) {
+            if (value) {
+                m_authStatus->hide();
+            } else {
+                m_authStatus->show();
+            }
+            emit lineEditTextHasFocus(value);
+        });
         connect(m_lineEdit, &DLineEditEx::textChanged, this, &AuthenticationModule::lineEditTextChanged);
         connect(m_lineEdit, &DLineEditEx::returnPressed, this, &AuthenticationModule::requestAuthenticate);
 
