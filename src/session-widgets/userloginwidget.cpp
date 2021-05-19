@@ -332,12 +332,14 @@ void UserLoginWidget::initPasswdAuth(const int index)
     connect(m_passwordAuth, &AuthenticationModule::requestChangeFocus, this, &UserLoginWidget::updateNextFocusPosition);
 
     connect(m_passwordAuth, &AuthenticationModule::lineEditTextHasFocus, this, [=](bool focus) {
-        if (!focus) {
-            m_kbLayoutBorder->setVisible(false);
-            m_passwordAuth->setLineEditBkColor(false);
+        if(m_passwordAuth != nullptr){
+            if (!focus) {
+                m_kbLayoutBorder->setVisible(false);
+                m_passwordAuth->setLineEditBkColor(false);
+            }
+            if(m_passwordAuth)
+                emit m_passwordAuth->lineEditTextChanged(m_passwordAuth->lineEditText());
         }
-        if(m_passwordAuth)
-            emit m_passwordAuth->lineEditTextChanged(m_passwordAuth->lineEditText());
     });
     FrameDataBind::Instance()->refreshData("UserLoginPassword");
     m_passwordAuth->setKeyboardButtonVisible(m_keyboardList.size() > 1 ? true : false);
@@ -436,10 +438,13 @@ void UserLoginWidget::initUkeyAuth(const int index)
     connect(m_ukeyAuth, &AuthenticationModule::requestChangeFocus, this, &UserLoginWidget::updateNextFocusPosition);
 
     connect(m_ukeyAuth, &AuthenticationModule::lineEditTextHasFocus, this, [ = ] (bool focus) {
-        if (!focus)
-            m_ukeyAuth->setLineEditBkColor(false);
-        if(m_ukeyAuth)
-            emit m_ukeyAuth->lineEditTextChanged(m_ukeyAuth->lineEditText());
+
+        if(m_ukeyAuth != nullptr){
+            if (!focus)
+                m_ukeyAuth->setLineEditBkColor(false);
+            if(m_ukeyAuth)
+                emit m_ukeyAuth->lineEditTextChanged(m_ukeyAuth->lineEditText());
+        }
     });
     FrameDataBind::Instance()->refreshData("UserLoginUKey");
 }
@@ -676,7 +681,8 @@ void UserLoginWidget::onOtherPagePINChanged(const QVariant &value)
  */
 void UserLoginWidget::onOtherPageUKeyChanged(const QVariant &value)
 {
-    m_ukeyAuth->setLineEditInfo(value.toString(), AuthenticationModule::InputText);
+    if(m_ukeyAuth != nullptr)
+        m_ukeyAuth->setLineEditInfo(value.toString(), AuthenticationModule::InputText);
 }
 
 /**
@@ -686,7 +692,8 @@ void UserLoginWidget::onOtherPageUKeyChanged(const QVariant &value)
  */
 void UserLoginWidget::onOtherPagePasswordChanged(const QVariant &value)
 {
-    m_passwordAuth->setLineEditInfo(value.toString(), AuthenticationModule::InputText);
+    if(m_passwordAuth != nullptr)
+        m_passwordAuth->setLineEditInfo(value.toString(), AuthenticationModule::InputText);
 }
 
 /**
