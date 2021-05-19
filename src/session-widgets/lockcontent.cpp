@@ -18,7 +18,7 @@ LockContent::LockContent(SessionBaseModel *const model, QWidget *parent)
     : SessionBaseWindow(parent)
     , m_model(model)
     , m_virtualKB(nullptr)
-    , m_translator(new QTranslator)
+    , m_translator(new QTranslator(this))
     , m_userLoginInfo(new UserLoginInfo(model, this))
     , m_wmInter(new com::deepin::wm("com.deepin.wm", "/com/deepin/wm", QDBusConnection::sessionBus(), this))
 {
