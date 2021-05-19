@@ -195,7 +195,9 @@ void GreeterWorkek::initConnections()
             }
         }
 
-        if(status == AuthStatus::StatusCodeSuccess && type != AuthType::AuthTypeAll && !m_resetSessionTimer->isActive()){
+        if(status == AuthStatus::StatusCodeSuccess && type != AuthType::AuthTypeAll
+           && !m_resetSessionTimer->isActive() && m_model->getAuthProperty().MFAFlag
+           && !m_greeter->isAuthenticated()){
             m_resetSessionTimer->start();
         }else if(status == AuthStatus::StatusCodeSuccess && type == AuthType::AuthTypeAll){
             m_resetSessionTimer->stop();
@@ -267,6 +269,8 @@ void GreeterWorkek::initConnections()
             if (!m_model->isServerModel() && m_model->currentUser()->isNoPasswdGrp() && m_model->currentUser()->automaticLogin()) {
                 m_greeter->authenticate(m_model->currentUser()->name());
             }
+        } else {
+            m_resetSessionTimer->stop();
         }
     });
     /* others */

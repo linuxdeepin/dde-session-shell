@@ -117,6 +117,7 @@ void LockWorker::initConnections()
             onUnlockFinished(true);
             destoryAuthentication(m_account);
             m_model->updateAuthStatus(type, status, message);
+            m_resetSessionTimer->stop();
             return;
         }
         if (m_model->getAuthProperty().MFAFlag) {
@@ -160,10 +161,9 @@ void LockWorker::initConnections()
             }
         }
 
-        if(status == AuthStatus::StatusCodeSuccess && type != AuthType::AuthTypeAll && !m_resetSessionTimer->isActive()){
+        if(status == AuthStatus::StatusCodeSuccess && type != AuthType::AuthTypeAll
+           && !m_resetSessionTimer->isActive() && m_model->getAuthProperty().MFAFlag && m_model->visible()){
             m_resetSessionTimer->start();
-        }else if(status == AuthStatus::StatusCodeSuccess && type == AuthType::AuthTypeAll){
-            m_resetSessionTimer->stop();
         }
     });
     connect(m_authFramework, &DeepinAuthFramework::FactorsInfoChanged, m_model, &SessionBaseModel::updateFactorsInfo);
@@ -215,6 +215,7 @@ void LockWorker::initConnections()
         if (visible) {
             createAuthentication(m_model->currentUser()->name());
         } else {
+            m_resetSessionTimer->stop();
             destoryAuthentication(m_account);
         }
     });
