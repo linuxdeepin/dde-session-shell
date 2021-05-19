@@ -537,6 +537,7 @@ void SessionBaseModel::updatePrompt(const QString &prompt)
  */
 void SessionBaseModel::updateFactorsInfo(const MFAInfoList &infoList)
 {
+    m_authProperty.AuthType = 0;
     if (m_authProperty.MFAFlag) {
         for (const MFAInfo &info : infoList) {
             m_authProperty.AuthType |= info.AuthType;
