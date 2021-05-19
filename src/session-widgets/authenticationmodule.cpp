@@ -101,7 +101,7 @@ void AuthenticationModule::init()
             if (m_integerMinutes > 0) {
                 m_lineEdit->setPlaceholderText(tr("Please try again %n minute(s) later", "", static_cast<int>(m_integerMinutes)));
             } else {
-                QTimer::singleShot(500, this, [=] {
+                QTimer::singleShot(1000, this, [=] {
                     emit activateAuthentication();
                 });
                 qInfo() << "Waiting authentication service...";
@@ -168,7 +168,7 @@ void AuthenticationModule::init()
             if (m_integerMinutes > 0) {
                 m_textLabel->setText(tr("Please try again %n minute(s) later", "", static_cast<int>(m_integerMinutes)));
             } else {
-                QTimer::singleShot(500, this, [=] {
+                QTimer::singleShot(1000, this, [=] {
                     emit activateAuthentication();
                 });
                 qInfo() << "Waiting authentication service...";
@@ -214,11 +214,9 @@ void AuthenticationModule::setAuthResult(const AuthStatus &status, const QString
     case StatusCodeFailure:
         setEnabled(true);
         if (m_textLabel != nullptr) {
-            if (m_limitsInfo->maxTries - m_limitsInfo->numFailures > 2) {
-                m_textLabel->setText(tr("Verification failed, %n chances left", "", static_cast<int>(m_limitsInfo->maxTries - m_limitsInfo->numFailures - 1)));
-            } else if (m_limitsInfo->maxTries - m_limitsInfo->numFailures == 0) {
-                m_textLabel->setText(tr("Verification failed, %n chances left", "", 4));
-            } else {
+            if (m_limitsInfo->maxTries - m_limitsInfo->numFailures > 1) {
+                m_textLabel->setText(tr("Verification failed, %n chances left", "", static_cast<int>(m_limitsInfo->maxTries - m_limitsInfo->numFailures)));
+            } else if (m_limitsInfo->maxTries - m_limitsInfo->numFailures == 1) {
                 m_textLabel->setText(tr("Verification failed, only one chance left"));
             }
         }
@@ -227,11 +225,9 @@ void AuthenticationModule::setAuthResult(const AuthStatus &status, const QString
             m_lineEdit->clear();
             m_lineEdit->setFocus();
             if (m_authType == AuthTypePassword || m_authType == AuthTypeSingle) {
-                if (m_limitsInfo->maxTries - m_limitsInfo->numFailures > 2) {
-                    setLineEditInfo(tr("Verification failed, %n chances left", "", static_cast<int>(m_limitsInfo->maxTries - m_limitsInfo->numFailures - 1)), PlaceHolderText);
-                } else if (m_limitsInfo->maxTries - m_limitsInfo->numFailures == 0) {
-                    setLineEditInfo(tr("Verification failed, %n chances left", "", 4), PlaceHolderText);
-                } else {
+                if (m_limitsInfo->maxTries - m_limitsInfo->numFailures > 1) {
+                    setLineEditInfo(tr("Verification failed, %n chances left", "", static_cast<int>(m_limitsInfo->maxTries - m_limitsInfo->numFailures)), PlaceHolderText);
+                } else if (m_limitsInfo->maxTries - m_limitsInfo->numFailures == 1) {
                     setLineEditInfo(tr("Verification failed, only one chance left"), PlaceHolderText);
                 }
                 setLineEditInfo(tr("Wrong Password"), AlertText);

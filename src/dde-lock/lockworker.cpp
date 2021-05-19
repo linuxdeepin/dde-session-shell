@@ -112,11 +112,52 @@ void LockWorker::initConnections()
     connect(m_authFramework, &DeepinAuthFramework::MFAFlagChanged, m_model, &SessionBaseModel::updateMFAFlag);
     connect(m_authFramework, &DeepinAuthFramework::PINLenChanged, m_model, &SessionBaseModel::updatePINLen);
     connect(m_authFramework, &DeepinAuthFramework::PromptChanged, m_model, &SessionBaseModel::updatePrompt);
-    connect(m_authFramework, &DeepinAuthFramework::AuthStatusChanged, this, [=] (const AuthType &type, const AuthStatus &status, const QString &message) {
-        if (type != AuthType::AuthTypeAll && (status == AuthStatus::StatusCodeSuccess || status == AuthStatus::StatusCodeFailure
-                                              || status == AuthStatus::StatusCodeTimeout || status == AuthStatus::StatusCodeError
-                                              || status == AuthStatus::StatusCodeLocked )) {
-            endAuthentication(m_account, type);
+    connect(m_authFramework, &DeepinAuthFramework::AuthStatusChanged, this, [=](const AuthType &type, const AuthStatus &status, const QString &message) {
+        if (type == AuthType::AuthTypeAll && status == AuthStatus::StatusCodeSuccess) {
+            onUnlockFinished(true);
+            destoryAuthentication(m_account);
+            m_model->updateAuthStatus(type, status, message);
+            return;
+        }
+        if (m_model->getAuthProperty().MFAFlag) {
+            if (type != AuthType::AuthTypeAll && (status == AuthStatus::StatusCodeSuccess || status == AuthStatus::StatusCodeFailure
+                                                  || status == AuthStatus::StatusCodeTimeout || status == AuthStatus::StatusCodeError
+                                                  || status == AuthStatus::StatusCodeLocked )) {
+                endAuthentication(m_account, type);
+            }
+            QTimer::singleShot(100, this, [=] {
+                m_model->updateAuthStatus(type, status, message);
+                if (status == AuthStatus::StatusCodeLocked) {
+                    endAuthentication(m_account, type);
+                }
+            });
+        } else {
+            if (type == AuthType::AuthTypeAll && status == AuthStatus::StatusCodePrompt) {
+                if (!message.isEmpty()) {
+                    m_model->updateAuthStatus(type, status, message);
+                }
+            }
+            if (type == AuthType::AuthTypePassword) {
+                if (status == AuthStatus::StatusCodeSuccess || status == AuthStatus::StatusCodeFailure || status == AuthStatus::StatusCodeTimeout
+                    || status == AuthStatus::StatusCodeError || status == AuthStatus::StatusCodeLocked) {
+                    endAuthentication(m_account, m_model->getAuthProperty().MixAuthFlags);
+                    QTimer::singleShot(100, this, [=] {
+                        m_model->updateAuthStatus(type, status, message);
+                        if (status == AuthStatus::StatusCodeLocked) {
+                            endAuthentication(m_account, m_model->getAuthProperty().MixAuthFlags);
+                        }
+                    });
+                }
+            }
+            if (type == AuthType::AuthTypeFingerprint) {
+                if (status == AuthStatus::StatusCodeSuccess || status == AuthStatus::StatusCodeFailure || status == AuthStatus::StatusCodeTimeout
+                    || status == AuthStatus::StatusCodeError || status == AuthStatus::StatusCodeLocked) {
+                    endAuthentication(m_account, m_model->getAuthProperty().MixAuthFlags);
+                    QTimer::singleShot(100, this, [=] {
+                        m_model->updateAuthStatus(type, status, message);
+                    });
+                }
+            }
         }
 
         if(status == AuthStatus::StatusCodeSuccess && type != AuthType::AuthTypeAll && !m_resetSessionTimer->isActive()){
@@ -124,15 +165,6 @@ void LockWorker::initConnections()
         }else if(status == AuthStatus::StatusCodeSuccess && type == AuthType::AuthTypeAll){
             m_resetSessionTimer->stop();
         }
-
-        if (type == AuthType::AuthTypeAll && status == AuthStatus::StatusCodeSuccess) {
-            onUnlockFinished(true);
-            destoryAuthentication(m_account);
-        }
-        if (type == AuthType::AuthTypePassword && status == AuthStatus::StatusCodeLocked && !m_model->getAuthProperty().MFAFlag) {
-            endAuthentication(m_account, m_model->getAuthProperty().AuthType);
-        }
-        m_model->updateAuthStatus(type, status, message);
     });
     connect(m_authFramework, &DeepinAuthFramework::FactorsInfoChanged, m_model, &SessionBaseModel::updateFactorsInfo);
     /* com.deepin.dde.LockService */
@@ -357,7 +389,11 @@ void LockWorker::destoryAuthentication(const QString &account)
  */
 void LockWorker::startAuthentication(const QString &account, const int authType)
 {
-    m_authFramework->StartAuthentication(account, authType, -1);
+    if (m_model->getAuthProperty().MFAFlag) {
+        m_authFramework->StartAuthentication(account, authType, -1);
+    } else {
+        m_authFramework->StartAuthentication(account, -1, -1);
+    }
     QTimer::singleShot(10, this, [=]  {
         m_model->updateLimitedInfo(m_authFramework->GetLimitedInfo(account));
     });

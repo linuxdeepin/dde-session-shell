@@ -146,19 +146,7 @@ void GreeterWorkek::initConnections()
     connect(m_authFramework, &DeepinAuthFramework::SupportedEncryptsChanged, m_model, &SessionBaseModel::updateSupportedEncryptionType);
     connect(m_authFramework, &DeepinAuthFramework::SupportedMixAuthFlagsChanged, m_model, &SessionBaseModel::updateSupportedMixAuthFlags);
     /* com.deepin.daemon.Authenticate.Session */
-    connect(m_authFramework, &DeepinAuthFramework::AuthStatusChanged, this, [=] (const AuthType &type, const AuthStatus &status, const QString &message) {
-        if (type != AuthType::AuthTypeAll && (status == AuthStatus::StatusCodeSuccess || status == AuthStatus::StatusCodeFailure
-                                              || status == AuthStatus::StatusCodeTimeout || status == AuthStatus::StatusCodeError
-                                              || status == AuthStatus::StatusCodeLocked )) {
-            endAuthentication(m_account, type);
-        }
-
-        if(status == AuthStatus::StatusCodeSuccess && type != AuthType::AuthTypeAll && !m_resetSessionTimer->isActive()){
-            m_resetSessionTimer->start();
-        }else if(status == AuthStatus::StatusCodeSuccess && type == AuthType::AuthTypeAll){
-            m_resetSessionTimer->stop();
-        }
-
+    connect(m_authFramework, &DeepinAuthFramework::AuthStatusChanged, this, [=](const AuthType &type, const AuthStatus &status, const QString &message) {
         if (type == AuthType::AuthTypeAll && status == AuthStatus::StatusCodeSuccess && m_model->getAuthProperty().FrameworkState == 0) {
             if (m_greeter->inAuthentication()) {
                 m_greeter->respond(m_authFramework->AuthSessionPath(m_account) + QString(";") + m_password);
@@ -166,10 +154,52 @@ void GreeterWorkek::initConnections()
                 qWarning() << "The lightdm is not in authentication!";
             }
         }
-        if (type == AuthType::AuthTypePassword && status == AuthStatus::StatusCodeLocked && !m_model->getAuthProperty().MFAFlag) {
-            endAuthentication(m_account, m_model->getAuthProperty().AuthType);
+        if (m_model->getAuthProperty().MFAFlag) {
+            if (type != AuthType::AuthTypeAll && (status == AuthStatus::StatusCodeSuccess || status == AuthStatus::StatusCodeFailure
+                                                  || status == AuthStatus::StatusCodeTimeout || status == AuthStatus::StatusCodeError
+                                                  || status == AuthStatus::StatusCodeLocked )) {
+                endAuthentication(m_account, type);
+            }
+            QTimer::singleShot(100, this, [=] {
+                m_model->updateAuthStatus(type, status, message);
+                if (status == AuthStatus::StatusCodeLocked) {
+                    endAuthentication(m_account, type);
+                }
+            });
+        } else {
+            if (type == AuthType::AuthTypeAll && status == AuthStatus::StatusCodePrompt) {
+                if (!message.isEmpty()) {
+                    m_model->updateAuthStatus(type, status, message);
+                }
+            }
+            if (type == AuthType::AuthTypePassword) {
+                if (status == AuthStatus::StatusCodeSuccess || status == AuthStatus::StatusCodeFailure || status == AuthStatus::StatusCodeTimeout
+                    || status == AuthStatus::StatusCodeError || status == AuthStatus::StatusCodeLocked) {
+                    endAuthentication(m_account, m_model->getAuthProperty().MixAuthFlags);
+                    QTimer::singleShot(100, this, [=] {
+                        m_model->updateAuthStatus(type, status, message);
+                        if (status == AuthStatus::StatusCodeLocked) {
+                            endAuthentication(m_account, m_model->getAuthProperty().MixAuthFlags);
+                        }
+                    });
+                }
+            }
+            if (type == AuthType::AuthTypeFingerprint) {
+                if (status == AuthStatus::StatusCodeSuccess || status == AuthStatus::StatusCodeFailure || status == AuthStatus::StatusCodeTimeout
+                    || status == AuthStatus::StatusCodeError || status == AuthStatus::StatusCodeLocked) {
+                    endAuthentication(m_account, m_model->getAuthProperty().MixAuthFlags);
+                    QTimer::singleShot(100, this, [=] {
+                        m_model->updateAuthStatus(type, status, message);
+                    });
+                }
+            }
         }
-        m_model->updateAuthStatus(type, status, message);
+
+        if(status == AuthStatus::StatusCodeSuccess && type != AuthType::AuthTypeAll && !m_resetSessionTimer->isActive()){
+            m_resetSessionTimer->start();
+        }else if(status == AuthStatus::StatusCodeSuccess && type == AuthType::AuthTypeAll){
+            m_resetSessionTimer->stop();
+        }
     });
     connect(m_authFramework, &DeepinAuthFramework::FactorsInfoChanged, m_model, &SessionBaseModel::updateFactorsInfo);
     connect(m_authFramework, &DeepinAuthFramework::FuzzyMFAChanged, m_model, &SessionBaseModel::updateFuzzyMFA);
@@ -387,7 +417,11 @@ void GreeterWorkek::startAuthentication(const QString &account, const int authTy
 {
     switch (m_model->getAuthProperty().FrameworkState) {
     case 0:
-        m_authFramework->StartAuthentication(account, authType, -1);
+        if (m_model->getAuthProperty().MFAFlag) {
+            m_authFramework->StartAuthentication(account, authType, -1);
+        } else {
+            m_authFramework->StartAuthentication(account, -1, -1);
+        }
         QTimer::singleShot(10, this, [=] {
             m_model->updateLimitedInfo(m_authFramework->GetLimitedInfo(account));
         });

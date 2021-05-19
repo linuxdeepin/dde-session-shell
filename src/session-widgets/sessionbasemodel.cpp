@@ -547,7 +547,6 @@ void SessionBaseModel::updateFactorsInfo(const MFAInfoList &infoList)
         if (m_currentUser->limitsInfo()->value(AuthenticationModule::AuthType::AuthTypePassword).locked) {
             m_authProperty.AuthType = 1;
             emit authTypeChanged(1);
-            emit authStatusChanged(AuthenticationModule::AuthType::AuthTypeSingle, AuthenticationModule::AuthStatus::StatusCodeLocked, "");
         } else {
             for (const MFAInfo &info : infoList) {
                 m_authProperty.AuthType |= info.AuthType;
@@ -570,8 +569,6 @@ void SessionBaseModel::updateAuthStatus(const AuthenticationModule::AuthType &au
     if (m_authProperty.MFAFlag) {
         emit authStatusChanged(authType, status, result);
     } else {
-        if (authType == AuthenticationModule::AuthType::AuthTypeAll) {
-            emit authStatusChanged(AuthenticationModule::AuthType::AuthTypeSingle, status, result);
-        }
+        emit authStatusChanged(AuthenticationModule::AuthType::AuthTypeSingle, status, result);
     }
 }
