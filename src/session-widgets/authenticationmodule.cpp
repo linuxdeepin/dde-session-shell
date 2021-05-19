@@ -273,6 +273,8 @@ void AuthenticationModule::setAuthResult(const AuthStatus &status, const QString
         setEnabled(true);
         if (m_textLabel != nullptr) {
             m_textLabel->setText(result);
+            //指纹断电重新激活
+            emit activateAuthentication();
         }
         if (m_lineEdit != nullptr) {
             setLineEditInfo(result, AlertText);
