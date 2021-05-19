@@ -3,63 +3,63 @@
     <name>AuthenticationModule</name>
     <message numerus="yes">
         <location filename="../src/session-widgets/authenticationmodule.cpp" line="102"/>
-        <location filename="../src/session-widgets/authenticationmodule.cpp" line="139"/>
-        <location filename="../src/session-widgets/authenticationmodule.cpp" line="162"/>
+        <location filename="../src/session-widgets/authenticationmodule.cpp" line="146"/>
+        <location filename="../src/session-widgets/authenticationmodule.cpp" line="169"/>
         <source>Please try again %n minute(s) later</source>
         <translation><numerusform>Будь ласка, повторіть спробу за %n хвилину</numerusform><numerusform>Будь ласка, повторіть спробу за %n хвилини</numerusform><numerusform>Будь ласка, повторіть спробу за %n хвилин</numerusform><numerusform>Будь ласка, повторіть спробу за %n хвилину</numerusform></translation>
     </message>
     <message>
-        <location filename="../src/session-widgets/authenticationmodule.cpp" line="193"/>
-        <location filename="../src/session-widgets/authenticationmodule.cpp" line="196"/>
+        <location filename="../src/session-widgets/authenticationmodule.cpp" line="200"/>
+        <location filename="../src/session-widgets/authenticationmodule.cpp" line="203"/>
         <source>Verification successful</source>
         <translation>Перевірку пройдено</translation>
     </message>
     <message numerus="yes">
-        <location filename="../src/session-widgets/authenticationmodule.cpp" line="211"/>
-        <location filename="../src/session-widgets/authenticationmodule.cpp" line="213"/>
-        <location filename="../src/session-widgets/authenticationmodule.cpp" line="224"/>
-        <location filename="../src/session-widgets/authenticationmodule.cpp" line="226"/>
+        <location filename="../src/session-widgets/authenticationmodule.cpp" line="218"/>
+        <location filename="../src/session-widgets/authenticationmodule.cpp" line="220"/>
+        <location filename="../src/session-widgets/authenticationmodule.cpp" line="231"/>
+        <location filename="../src/session-widgets/authenticationmodule.cpp" line="233"/>
         <source>Verification failed, %n chances left</source>
         <translation><numerusform>Перевірку не пройдено, лишилася %n спроба</numerusform><numerusform>Перевірку не пройдено, лишилося %n спроби</numerusform><numerusform>Перевірку не пройдено, лишилося %n спроб</numerusform><numerusform>Перевірку не пройдено, лишилася %n спроба</numerusform></translation>
     </message>
     <message>
-        <location filename="../src/session-widgets/authenticationmodule.cpp" line="215"/>
-        <location filename="../src/session-widgets/authenticationmodule.cpp" line="228"/>
+        <location filename="../src/session-widgets/authenticationmodule.cpp" line="222"/>
+        <location filename="../src/session-widgets/authenticationmodule.cpp" line="235"/>
         <source>Verification failed, only one chance left</source>
         <translation>Перевірку не пройдено. Лишилася одна спроба.</translation>
     </message>
     <message>
-        <location filename="../src/session-widgets/authenticationmodule.cpp" line="230"/>
+        <location filename="../src/session-widgets/authenticationmodule.cpp" line="237"/>
         <source>Wrong Password</source>
         <translation>Помилковий пароль</translation>
     </message>
     <message>
-        <location filename="../src/session-widgets/authenticationmodule.cpp" line="232"/>
+        <location filename="../src/session-widgets/authenticationmodule.cpp" line="239"/>
         <source>Wrong PIN</source>
         <translation>Помилковий пін-код</translation>
     </message>
     <message>
-        <location filename="../src/session-widgets/authenticationmodule.cpp" line="302"/>
+        <location filename="../src/session-widgets/authenticationmodule.cpp" line="309"/>
         <source>UKey is required</source>
-        <translation type="unfinished"/>
-    </message>
-    <message>
-        <location filename="../src/session-widgets/authenticationmodule.cpp" line="314"/>
-        <source>Verify your fingerprint</source>
-        <translation type="unfinished"/>
+        <translation>Потрібен UKey</translation>
     </message>
     <message>
         <location filename="../src/session-widgets/authenticationmodule.cpp" line="321"/>
+        <source>Verify your fingerprint</source>
+        <translation>Перевірити ваш відбиток</translation>
+    </message>
+    <message>
+        <location filename="../src/session-widgets/authenticationmodule.cpp" line="328"/>
         <source>Password</source>
         <translation>Пароль</translation>
     </message>
     <message>
-        <location filename="../src/session-widgets/authenticationmodule.cpp" line="323"/>
+        <location filename="../src/session-widgets/authenticationmodule.cpp" line="330"/>
         <source>Enter your PIN</source>
-        <translation type="unfinished"/>
+        <translation>Введіть ваш пін-код</translation>
     </message>
     <message>
-        <location filename="../src/session-widgets/authenticationmodule.cpp" line="344"/>
+        <location filename="../src/session-widgets/authenticationmodule.cpp" line="351"/>
         <source>Fingerprint locked, use password please</source>
         <translation>Відбиток заблоковано. Будь ласка, скористайтеся паролем.</translation>
     </message>
@@ -294,23 +294,23 @@
     <name>UserLoginWidget</name>
     <message>
         <location filename="../src/session-widgets/userloginwidget.cpp" line="147"/>
-        <location filename="../src/session-widgets/userloginwidget.cpp" line="644"/>
+        <location filename="../src/session-widgets/userloginwidget.cpp" line="647"/>
         <source>Account</source>
         <translation>Обліковий запис</translation>
     </message>
     <message>
-        <location filename="../src/session-widgets/userloginwidget.cpp" line="296"/>
-        <location filename="../src/session-widgets/userloginwidget.cpp" line="643"/>
+        <location filename="../src/session-widgets/userloginwidget.cpp" line="297"/>
+        <location filename="../src/session-widgets/userloginwidget.cpp" line="646"/>
         <source>Password</source>
         <translation>Пароль</translation>
     </message>
     <message>
-        <location filename="../src/session-widgets/userloginwidget.cpp" line="354"/>
+        <location filename="../src/session-widgets/userloginwidget.cpp" line="356"/>
         <source>Verify your fingerprint</source>
         <translation>Перевірити ваш відбиток</translation>
     </message>
     <message numerus="yes">
-        <location filename="../src/session-widgets/userloginwidget.cpp" line="765"/>
+        <location filename="../src/session-widgets/userloginwidget.cpp" line="768"/>
         <source>Please try again %n minute(s) later</source>
         <translation><numerusform>Будь ласка, повторіть спробу за %n хвилину</numerusform><numerusform>Будь ласка, повторіть спробу за %n хвилини</numerusform><numerusform>Будь ласка, повторіть спробу за %n хвилин</numerusform><numerusform>Будь ласка, повторіть спробу за %n хвилину</numerusform></translation>
     </message>
