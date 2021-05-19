@@ -180,6 +180,7 @@ void SessionBaseModel::setCurrentModeState(const ModeStatus &currentModeState)
     emit onStatusChanged(currentModeState);
 }
 
+
 void SessionBaseModel::setUserListSize(int users_size)
 {
     if(m_userListSize == users_size) return;

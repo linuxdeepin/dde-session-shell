@@ -23,7 +23,6 @@ LockContent::LockContent(SessionBaseModel *const model, QWidget *parent)
     , m_wmInter(new com::deepin::wm("com.deepin.wm", "/com/deepin/wm", QDBusConnection::sessionBus(), this))
 {
     m_model->setCurrentModeState(SessionBaseModel::ModeStatus::PasswordMode);
-
     m_timeWidget = new TimeWidget();
     setCenterTopWidget(m_timeWidget);
     // 处理时间制跳转策略，获取到时间制再显示时间窗口
