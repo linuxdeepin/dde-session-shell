@@ -23,8 +23,6 @@ using AccountsInter = com::deepin::daemon::Accounts;
 using UserInter = com::deepin::daemon::accounts::User;
 using LoginedInter = com::deepin::daemon::Logined;
 using SessionManager = com::deepin::SessionManager;
-using AuthType = AuthenticationModule::AuthType;
-using AuthStatus = AuthenticationModule::AuthStatus;
 
 class SessionBaseModel;
 class LockWorker : public Auth::AuthInterface

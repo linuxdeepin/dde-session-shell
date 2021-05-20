@@ -19,6 +19,7 @@
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
+#include "authcommon.h"
 #include "userloginwidget.h"
 
 #include "constants.h"
@@ -40,6 +41,8 @@
 #include <QImage>
 #include <QPropertyAnimation>
 #include <QVBoxLayout>
+
+using namespace AuthCommon;
 
 static const int BlurRectRadius = 15;
 static const int WidgetsSpacing = 10;
@@ -215,47 +218,47 @@ void UserLoginWidget::updateWidgetShowType(const int type)
      * 这里是按照显示顺序初始化的，如果后续布局改变或者新增认证方式，初始化顺序需要重新调整
      */
     /* 面容 */
-    if (type & AuthenticationModule::AuthTypeFace) {
+    if (type & AuthTypeFace) {
         initFaceAuth(index++);
     } else if (m_faceAuth != nullptr) {
         m_faceAuth->deleteLater();
         m_faceAuth = nullptr;
     }
     /* 指纹 */
-    if (type & AuthenticationModule::AuthTypeFingerprint) {
+    if (type & AuthTypeFingerprint) {
         initFingerprintAuth(index++);
     } else if (m_fingerprintAuth != nullptr) {
         m_fingerprintAuth->deleteLater();
         m_fingerprintAuth = nullptr;
     }
     /* AD域 */
-    if (type & AuthenticationModule::AuthTypeActiveDirectory) {
+    if (type & AuthTypeActiveDirectory) {
         initActiveDirectoryAuth(index++);
     }
     /* Ukey */
-    if (type & AuthenticationModule::AuthTypeUkey) {
+    if (type & AuthTypeUkey) {
         initUkeyAuth(index++);
     } else if (m_ukeyAuth != nullptr) {
         m_ukeyAuth->deleteLater();
         m_ukeyAuth = nullptr;
     }
     /* 指静脉 */
-    if (type & AuthenticationModule::AuthTypeFingerVein) {
+    if (type & AuthTypeFingerVein) {
         initFingerVeinAuth(index++);
     }
     /* 虹膜 */
-    if (type & AuthenticationModule::AuthTypeIris) {
+    if (type & AuthTypeIris) {
         initIrisAuth(index++);
     }
     /* PIN码 */
-    if (type & AuthenticationModule::AuthTypePIN) {
+    if (type & AuthTypePIN) {
         initPINAuth(index++);
     } else if (m_PINAuth != nullptr) {
         m_PINAuth->deleteLater();
         m_PINAuth = nullptr;
     }
     /* 密码 */
-    if (type & AuthenticationModule::AuthTypePassword) {
+    if (type & AuthTypePassword) {
         initPasswdAuth(index++);
     } else if (m_passwordAuth != nullptr) {
         m_passwordAuth->deleteLater();
@@ -293,12 +296,12 @@ void UserLoginWidget::initPasswdAuth(const int index)
     if (m_passwordAuth != nullptr) {
         return;
     }
-    m_passwordAuth = new AuthenticationModule(AuthenticationModule::AuthTypePassword, this);
+    m_passwordAuth = new AuthenticationModule(AuthTypePassword, this);
     m_passwordAuth->setCapsStatus(m_capslockMonitor->isCapslockOn());
     m_userLoginLayout->insertWidget(index, m_passwordAuth);
 
     connect(m_passwordAuth, &AuthenticationModule::activateAuthentication, this, [=] {
-        emit requestStartAuthentication(m_model->currentUser()->name(), AuthenticationModule::AuthTypePassword);
+        emit requestStartAuthentication(m_model->currentUser()->name(), AuthTypePassword);
     });
     connect(m_passwordAuth, &AuthenticationModule::requestAuthenticate, this, [=] {
         if (m_passwordAuth->lineEditText().isEmpty()) {
@@ -307,7 +310,7 @@ void UserLoginWidget::initPasswdAuth(const int index)
         m_passwordAuth->setAnimationState(true);
         m_passwordAuth->setEnabled(false);
         QString account = m_accountEdit->text().isEmpty() ? m_model->currentUser()->name() : m_accountEdit->text();
-        emit sendTokenToAuth(account, AuthenticationModule::AuthTypePassword, m_passwordAuth->lineEditText());
+        emit sendTokenToAuth(account, AuthTypePassword, m_passwordAuth->lineEditText());
     });
     connect(m_passwordAuth, &AuthenticationModule::requestShowKeyboardList, this, &UserLoginWidget::showKeyboardList);
     connect(m_passwordAuth, &AuthenticationModule::authFinished, this, &UserLoginWidget::checkAuthResult);
@@ -320,9 +323,8 @@ void UserLoginWidget::initPasswdAuth(const int index)
     m_registerFunctionIndexs["UserLoginPassword"] = FrameDataBind::Instance()->registerFunction("UserLoginPassword", passwordChanged);
     connect(m_passwordAuth, &AuthenticationModule::lineEditTextChanged, this, [=] (const QString &value) {
         FrameDataBind::Instance()->updateValue("UserLoginPassword", value);
-        if(value.length() > 0 || (m_ukeyAuth && (m_ukeyAuth->getAuthStatus() == AuthenticationModule::StatusCodeSuccess
-                                                 || m_ukeyAuth->getAuthStatus() == AuthenticationModule::StatusCodeEnded)))
-           m_lockButton->setEnabled(true);
+        if (value.length() > 0 || (m_ukeyAuth && (m_ukeyAuth->getAuthStatus() == StatusCodeSuccess || m_ukeyAuth->getAuthStatus() == StatusCodeEnded)))
+            m_lockButton->setEnabled(true);
         else if(m_ukeyAuth && m_ukeyAuth->lineEditText().isEmpty()) {
                m_lockButton->setEnabled(false);
         }
@@ -352,13 +354,13 @@ void UserLoginWidget::initFingerprintAuth(const int index)
     if (m_fingerprintAuth != nullptr) {
         return;
     }
-    m_fingerprintAuth = new AuthenticationModule(AuthenticationModule::AuthTypeFingerprint, this);
+    m_fingerprintAuth = new AuthenticationModule(AuthTypeFingerprint, this);
     //指纹验证第一次提示内容固定，其他系统根据后端发过来内容显示
     m_fingerprintAuth->setText(tr("Verify your fingerprint"));
     m_userLoginLayout->insertWidget(index, m_fingerprintAuth);
 
     connect(m_fingerprintAuth, &AuthenticationModule::activateAuthentication, this, [=] {
-        emit requestStartAuthentication(m_model->currentUser()->name(), AuthenticationModule::AuthTypeFingerprint);
+        emit requestStartAuthentication(m_model->currentUser()->name(), AuthTypeFingerprint);
     });
     connect(m_fingerprintAuth, &AuthenticationModule::authFinished, this, &UserLoginWidget::checkAuthResult);
 }
@@ -371,12 +373,12 @@ void UserLoginWidget::initFaceAuth(const int index)
     if (m_faceAuth != nullptr) {
         return;
     }
-    m_faceAuth = new AuthenticationModule(AuthenticationModule::AuthTypeFace, this);
+    m_faceAuth = new AuthenticationModule(AuthTypeFace, this);
     m_faceAuth->setText("Face ID");
     m_userLoginLayout->insertWidget(index, m_faceAuth);
 
     connect(m_faceAuth, &AuthenticationModule::activateAuthentication, this, [=] {
-        emit requestStartAuthentication(m_model->currentUser()->name(), AuthenticationModule::AuthTypeFace);
+        emit requestStartAuthentication(m_model->currentUser()->name(), AuthTypeFace);
     });
     connect(m_faceAuth, &AuthenticationModule::authFinished, this, &UserLoginWidget::checkAuthResult);
 }
@@ -398,12 +400,12 @@ void UserLoginWidget::initUkeyAuth(const int index)
     if (m_ukeyAuth != nullptr) {
         return;
     }
-    m_ukeyAuth = new AuthenticationModule(AuthenticationModule::AuthTypeUkey, this);
+    m_ukeyAuth = new AuthenticationModule(AuthTypeUkey, this);
     m_ukeyAuth->setCapsStatus(m_capslockMonitor->isCapslockOn());
     m_userLoginLayout->insertWidget(index, m_ukeyAuth);
 
     connect(m_ukeyAuth, &AuthenticationModule::activateAuthentication, this, [=] {
-        emit requestStartAuthentication(m_model->currentUser()->name(), AuthenticationModule::AuthTypeUkey);
+        emit requestStartAuthentication(m_model->currentUser()->name(), AuthTypeUkey);
     });
     connect(m_ukeyAuth, &AuthenticationModule::requestAuthenticate, this, [=] {
         if (m_ukeyAuth->lineEditText().isEmpty()) {
@@ -411,7 +413,7 @@ void UserLoginWidget::initUkeyAuth(const int index)
         }
         m_ukeyAuth->setAnimationState(true);
         m_ukeyAuth->setEnabled(false);
-        emit sendTokenToAuth(m_model->currentUser()->name(), AuthenticationModule::AuthTypeUkey, m_ukeyAuth->lineEditText());
+        emit sendTokenToAuth(m_model->currentUser()->name(), AuthTypeUkey, m_ukeyAuth->lineEditText());
     });
     connect(m_lockButton, &QPushButton::clicked, m_ukeyAuth, &AuthenticationModule::requestAuthenticate);
     connect(m_ukeyAuth, &AuthenticationModule::authFinished, this, &UserLoginWidget::checkAuthResult);
@@ -426,10 +428,9 @@ void UserLoginWidget::initUkeyAuth(const int index)
         }
         FrameDataBind::Instance()->updateValue("UserLoginUKey", value);
 
-        if (value.length() > 0 || (m_passwordAuth && (m_passwordAuth->getAuthStatus() == AuthenticationModule::StatusCodeSuccess
-                                                      || m_passwordAuth->getAuthStatus() == AuthenticationModule::StatusCodeEnded))) {
+        if (value.length() > 0 || (m_passwordAuth && (m_passwordAuth->getAuthStatus() == StatusCodeSuccess || m_passwordAuth->getAuthStatus() == StatusCodeEnded))) {
             m_lockButton->setEnabled(true);
-        } else if(m_passwordAuth && m_passwordAuth->lineEditText().isEmpty()) {
+        } else if (m_passwordAuth && m_passwordAuth->lineEditText().isEmpty()) {
             m_lockButton->setEnabled(false);
         }
     });
@@ -474,7 +475,7 @@ void UserLoginWidget::initPINAuth(const int index)
     if (m_PINAuth != nullptr) {
         return;
     }
-    m_PINAuth = new AuthenticationModule(AuthenticationModule::AuthTypePIN, this);
+    m_PINAuth = new AuthenticationModule(AuthTypePIN, this);
     m_userLoginLayout->insertWidget(index, m_PINAuth);
 
     std::function<void(QVariant)> PINChanged = std::bind(&UserLoginWidget::onOtherPagePINChanged, this, std::placeholders::_1);
@@ -483,7 +484,7 @@ void UserLoginWidget::initPINAuth(const int index)
         FrameDataBind::Instance()->updateValue("UserLoginPIN", value);
     });
     connect(m_PINAuth, &AuthenticationModule::activateAuthentication, this, [=] {
-        emit requestStartAuthentication(m_model->currentUser()->name(), AuthenticationModule::AuthTypePIN);
+        emit requestStartAuthentication(m_model->currentUser()->name(), AuthTypePIN);
     });
     connect(m_PINAuth, &AuthenticationModule::requestAuthenticate, this, [=] {
         qDebug() << "PIN:" << m_PINAuth->lineEditText();
@@ -493,7 +494,7 @@ void UserLoginWidget::initPINAuth(const int index)
         m_PINAuth->setAnimationState(true);
         m_PINAuth->setEnabled(false);
         QString account = m_accountEdit->text().isEmpty() ? m_model->currentUser()->name() : m_accountEdit->text();
-        emit sendTokenToAuth(account, AuthenticationModule::AuthTypePIN, m_PINAuth->lineEditText());
+        emit sendTokenToAuth(account, AuthTypePIN, m_PINAuth->lineEditText());
     });
     connect(m_lockButton, &QPushButton::clicked, m_PINAuth, &AuthenticationModule::requestAuthenticate);
     connect(m_PINAuth, &AuthenticationModule::authFinished, this, &UserLoginWidget::checkAuthResult);
@@ -507,52 +508,52 @@ void UserLoginWidget::initPINAuth(const int index)
  * @param status     认证结果
  * @param message    返回的结果文案（成功，失败，等）
  */
-void UserLoginWidget::updateAuthResult(const AuthenticationModule::AuthType &authType, const AuthenticationModule::AuthStatus &status, const QString &message)
+void UserLoginWidget::updateAuthResult(const int type, const int status, const QString &message)
 {
-    switch (authType) {
-    case AuthenticationModule::AuthTypeSingle:
+    switch (type) {
+    case AuthTypeSingle:
         if (m_passwordAuth != nullptr) {
-            m_passwordAuth->setAuthType(AuthenticationModule::AuthTypeSingle);
+            m_passwordAuth->setAuthType(AuthTypeSingle);
             m_passwordAuth->setAuthResult(status, message);
         }
         break;
-    case AuthenticationModule::AuthTypePassword:
+    case AuthTypePassword:
         if (m_passwordAuth != nullptr) {
             m_passwordAuth->setAuthResult(status, message);
         }
         break;
-    case AuthenticationModule::AuthTypeFingerprint:
+    case AuthTypeFingerprint:
         if (m_fingerprintAuth != nullptr) {
             m_fingerprintAuth->setAuthResult(status, message);
         }
         break;
-    case AuthenticationModule::AuthTypeFace:
+    case AuthTypeFace:
         if (m_faceAuth != nullptr) {
             m_faceAuth->setAuthResult(status, message);
         }
         break;
-    case AuthenticationModule::AuthTypeActiveDirectory:
+    case AuthTypeActiveDirectory:
         if (m_activeDirectoryAuth != nullptr) {
             m_activeDirectoryAuth->setAuthResult(status, message);
         }
         break;
-    case AuthenticationModule::AuthTypeUkey:
+    case AuthTypeUkey:
         if (m_ukeyAuth != nullptr) {
             m_ukeyAuth->setAuthResult(status, message);
         }
         break;
-    case AuthenticationModule::AuthTypeFingerVein:
+    case AuthTypeFingerVein:
         if (m_fingerVeinAuth != nullptr) {
             m_fingerVeinAuth->setAuthResult(status, message);
         }
         break;
-    case AuthenticationModule::AuthTypeIris:
+    case AuthTypeIris:
         if (m_irisAuth != nullptr) {
             m_irisAuth->setAuthResult(status, message);
         }
         break;
-    case AuthenticationModule::AuthTypeAll:
-        checkAuthResult(authType, status);
+    case AuthTypeAll:
+        checkAuthResult(type, status);
         break;
     default:
         break;
@@ -866,7 +867,7 @@ void UserLoginWidget::updateLimitsInfo(const QMap<int, User::LimitsInfo> *limits
     while (i != limitsInfo->end()) {
         limitsInfoTmpU = i.value();
         switch (i.key()) {
-        case AuthenticationModule::AuthTypePassword:
+        case AuthTypePassword:
             if (m_passwordAuth != nullptr) {
                 limitsInfoTmpA.locked = limitsInfoTmpU.locked;
                 limitsInfoTmpA.maxTries = limitsInfoTmpU.maxTries;
@@ -876,7 +877,7 @@ void UserLoginWidget::updateLimitsInfo(const QMap<int, User::LimitsInfo> *limits
                 m_passwordAuth->setLimitsInfo(limitsInfoTmpA);
             }
             break;
-        case AuthenticationModule::AuthTypeFingerprint:
+        case AuthTypeFingerprint:
             if (m_fingerprintAuth != nullptr) {
                 limitsInfoTmpA.locked = limitsInfoTmpU.locked;
                 limitsInfoTmpA.maxTries = limitsInfoTmpU.maxTries;
@@ -886,7 +887,7 @@ void UserLoginWidget::updateLimitsInfo(const QMap<int, User::LimitsInfo> *limits
                 m_fingerprintAuth->setLimitsInfo(limitsInfoTmpA);
             }
             break;
-        case AuthenticationModule::AuthTypeFace:
+        case AuthTypeFace:
             if (m_faceAuth != nullptr) {
                 limitsInfoTmpA.locked = limitsInfoTmpU.locked;
                 limitsInfoTmpA.maxTries = limitsInfoTmpU.maxTries;
@@ -896,7 +897,7 @@ void UserLoginWidget::updateLimitsInfo(const QMap<int, User::LimitsInfo> *limits
                 m_faceAuth->setLimitsInfo(limitsInfoTmpA);
             }
             break;
-        case AuthenticationModule::AuthTypeActiveDirectory:
+        case AuthTypeActiveDirectory:
             if (m_activeDirectoryAuth != nullptr) {
                 limitsInfoTmpA.locked = limitsInfoTmpU.locked;
                 limitsInfoTmpA.maxTries = limitsInfoTmpU.maxTries;
@@ -906,7 +907,7 @@ void UserLoginWidget::updateLimitsInfo(const QMap<int, User::LimitsInfo> *limits
                 m_activeDirectoryAuth->setLimitsInfo(limitsInfoTmpA);
             }
             break;
-        case AuthenticationModule::AuthTypeUkey:
+        case AuthTypeUkey:
             if (m_ukeyAuth != nullptr) {
                 limitsInfoTmpA.locked = limitsInfoTmpU.locked;
                 limitsInfoTmpA.maxTries = limitsInfoTmpU.maxTries;
@@ -916,7 +917,7 @@ void UserLoginWidget::updateLimitsInfo(const QMap<int, User::LimitsInfo> *limits
                 m_ukeyAuth->setLimitsInfo(limitsInfoTmpA);
             }
             break;
-        case AuthenticationModule::AuthTypeFingerVein:
+        case AuthTypeFingerVein:
             if (m_fingerVeinAuth != nullptr) {
                 limitsInfoTmpA.locked = limitsInfoTmpU.locked;
                 limitsInfoTmpA.maxTries = limitsInfoTmpU.maxTries;
@@ -926,7 +927,7 @@ void UserLoginWidget::updateLimitsInfo(const QMap<int, User::LimitsInfo> *limits
                 m_fingerVeinAuth->setLimitsInfo(limitsInfoTmpA);
             }
             break;
-        case AuthenticationModule::AuthTypeIris:
+        case AuthTypeIris:
             if (m_irisAuth != nullptr) {
                 limitsInfoTmpA.locked = limitsInfoTmpU.locked;
                 limitsInfoTmpA.maxTries = limitsInfoTmpU.maxTries;
@@ -936,7 +937,7 @@ void UserLoginWidget::updateLimitsInfo(const QMap<int, User::LimitsInfo> *limits
                 m_irisAuth->setLimitsInfo(limitsInfoTmpA);
             }
             break;
-        case AuthenticationModule::AuthTypePIN:
+        case AuthTypePIN:
             if (m_PINAuth != nullptr) {
                 limitsInfoTmpA.locked = limitsInfoTmpU.locked;
                 limitsInfoTmpA.maxTries = limitsInfoTmpU.maxTries;
@@ -1035,9 +1036,9 @@ void UserLoginWidget::updateClipPath()
  * @param type
  * @param succeed
  */
-void UserLoginWidget::checkAuthResult(const AuthType &type, const AuthStatus &status)
+void UserLoginWidget::checkAuthResult(const int type, const int status)
 {
-    if (type == AuthType::AuthTypeAll && status == AuthStatus::StatusCodeSuccess) {
+    if (type == AuthTypeAll && status == StatusCodeSuccess) {
         emit authFininshed(status);
     }
 }

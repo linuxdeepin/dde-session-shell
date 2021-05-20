@@ -1,3 +1,4 @@
+#include "authcommon.h"
 #include "sessionbasemodel.h"
 
 #include <QDebug>
@@ -7,6 +8,7 @@
 #define SessionManagerService "com.deepin.SessionManager"
 #define SessionManagerPath "/com/deepin/SessionManager"
 
+using namespace AuthCommon;
 using namespace com::deepin;
 DCORE_USE_NAMESPACE
 
@@ -553,7 +555,7 @@ void SessionBaseModel::updateFactorsInfo(const MFAInfoList &infoList)
         }
         emit authTypeChanged(m_authProperty.AuthType);
     } else {
-        if (m_currentUser->limitsInfo()->value(AuthenticationModule::AuthType::AuthTypePassword).locked) {
+        if (m_currentUser->limitsInfo()->value(AuthTypePassword).locked) {
             m_authProperty.AuthType = 1;
             emit authTypeChanged(1);
         } else {
@@ -572,12 +574,12 @@ void SessionBaseModel::updateFactorsInfo(const MFAInfoList &infoList)
  * @param status
  * @param result
  */
-void SessionBaseModel::updateAuthStatus(const AuthenticationModule::AuthType &authType, const AuthenticationModule::AuthStatus &status, const QString &result)
+void SessionBaseModel::updateAuthStatus(const int type, const int status, const QString &result)
 {
-    qInfo() << "Authentication Service status:" << authType << status << result;
+    qInfo() << "Authentication Service status:" << type << status << result;
     if (m_authProperty.MFAFlag) {
-        emit authStatusChanged(authType, status, result);
+        emit authStatusChanged(type, status, result);
     } else {
-        emit authStatusChanged(AuthenticationModule::AuthType::AuthTypeSingle, status, result);
+        emit authStatusChanged(AuthTypeSingle, status, result);
     }
 }

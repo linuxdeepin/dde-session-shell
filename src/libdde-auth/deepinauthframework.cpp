@@ -279,9 +279,7 @@ void DeepinAuthFramework::CreateAuthController(const QString &account, const int
     connect(authControllerInter, &AuthControllerInter::IsMFAChanged, this, &DeepinAuthFramework::MFAFlagChanged);
     connect(authControllerInter, &AuthControllerInter::PINLenChanged, this, &DeepinAuthFramework::PINLenChanged);
     connect(authControllerInter, &AuthControllerInter::PromptChanged, this, &DeepinAuthFramework::PromptChanged);
-    connect(authControllerInter, &AuthControllerInter::Status, this, [=] (int flag, int status, const QString &msg) {
-        emit AuthStatusChanged(AuthType(flag), AuthStatus(status), msg);
-    });
+    connect(authControllerInter, &AuthControllerInter::Status, this, &DeepinAuthFramework::AuthStatusChanged);
 
     emit MFAFlagChanged(authControllerInter->isMFA());
     emit FactorsInfoChanged(authControllerInter->factorsInfo());

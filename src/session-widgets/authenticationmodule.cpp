@@ -19,6 +19,7 @@
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
+#include "authcommon.h"
 #include "authenticationmodule.h"
 #include "dlineeditex.h"
 
@@ -31,7 +32,9 @@
 #include <QKeyEvent>
 #include <QTimer>
 
-AuthenticationModule::AuthenticationModule(const AuthType type, QWidget *parent)
+using namespace AuthCommon;
+
+AuthenticationModule::AuthenticationModule(const int type, QWidget *parent)
     : QWidget(parent)
     , m_authType(type)
     , m_authStatus(nullptr)
@@ -190,7 +193,7 @@ void AuthenticationModule::init()
  * @param status
  * @param result
  */
-void AuthenticationModule::setAuthResult(const AuthStatus &status, const QString &result)
+void AuthenticationModule::setAuthResult(const int status, const QString &result)
 {
     m_status = status;
     switch (status) {
@@ -453,7 +456,7 @@ void AuthenticationModule::setLimitsInfo(const LimitsInfo &info)
     if (info.locked && info.locked != m_limitsInfo->locked && info.unlockTime != m_limitsInfo->unlockTime) {
         m_limitsInfo->locked = info.locked;
         m_limitsInfo->unlockTime = info.unlockTime;
-        setAuthResult(AuthStatus::StatusCodeLocked, QString(""));
+        setAuthResult(StatusCodeLocked, QString(""));
         updateUnlockTime();
     }
     m_limitsInfo->maxTries = info.maxTries;
@@ -571,7 +574,7 @@ void AuthenticationModule::setKeyboardButtontext(const QString &text)
  *
  * @param authType
  */
-void AuthenticationModule::setAuthType(const AuthType authType)
+void AuthenticationModule::setAuthType(const int authType)
 {
     m_authType = authType;
 }

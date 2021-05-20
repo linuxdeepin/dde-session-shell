@@ -2,7 +2,6 @@
 #define SESSIONBASEMODEL_H
 
 #include "userinfo.h"
-#include "authenticationmodule.h"
 
 #include <types/mfainfolist.h>
 
@@ -13,7 +12,6 @@
 
 #include <com_deepin_sessionmanager.h>
 
-class AuthenticationModule;
 class SessionBaseModel : public QObject
 {
     Q_OBJECT
@@ -160,7 +158,7 @@ public slots:
     void updateSupportedMixAuthFlags(const int flags);
     void updateSupportedEncryptionType(const QString &type);
     /* com.deepin.daemon.Authenticate.Session */
-    void updateAuthStatus(const AuthenticationModule::AuthType &currentAuthType, const AuthenticationModule::AuthStatus &status, const QString &message);
+    void updateAuthStatus(const int type, const int status, const QString &message);
     void updateFactorsInfo(const MFAInfoList &info);
     void updateFuzzyMFA(const bool fuzzMFA);
     void updateMFAFlag(const bool MFAFlag);
@@ -203,7 +201,7 @@ signals:
     void clearServerLoginWidgetContent();
     void updateLockLimit(std::shared_ptr<User> user);
 
-    void authStatusChanged(const AuthenticationModule::AuthType &authType, const AuthenticationModule::AuthStatus &status, const QString &message);
+    void authStatusChanged(const int, const int, const QString &);
     void authTypeChanged(const int type);
 
 private:

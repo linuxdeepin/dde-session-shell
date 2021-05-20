@@ -1,3 +1,4 @@
+#include "authcommon.h"
 #include "lockworker.h"
 
 #include "sessionbasemodel.h"
@@ -18,6 +19,7 @@
 #define DOMAIN_BASE_UID 10000
 
 using namespace Auth;
+using namespace AuthCommon;
 DCORE_USE_NAMESPACE
 
 LockWorker::LockWorker(SessionBaseModel *const model, QObject *parent)
@@ -112,8 +114,8 @@ void LockWorker::initConnections()
     connect(m_authFramework, &DeepinAuthFramework::MFAFlagChanged, m_model, &SessionBaseModel::updateMFAFlag);
     connect(m_authFramework, &DeepinAuthFramework::PINLenChanged, m_model, &SessionBaseModel::updatePINLen);
     connect(m_authFramework, &DeepinAuthFramework::PromptChanged, m_model, &SessionBaseModel::updatePrompt);
-    connect(m_authFramework, &DeepinAuthFramework::AuthStatusChanged, this, [=](const AuthType &type, const AuthStatus &status, const QString &message) {
-        if (type == AuthType::AuthTypeAll && status == AuthStatus::StatusCodeSuccess) {
+    connect(m_authFramework, &DeepinAuthFramework::AuthStatusChanged, this, [=](const int type, const int status, const QString &message) {
+        if (type == AuthTypeAll && status == StatusCodeSuccess) {
             onUnlockFinished(true);
             destoryAuthentication(m_account);
             m_model->updateAuthStatus(type, status, message);
@@ -121,38 +123,38 @@ void LockWorker::initConnections()
             return;
         }
         if (m_model->getAuthProperty().MFAFlag) {
-            if (type != AuthType::AuthTypeAll && (status == AuthStatus::StatusCodeSuccess || status == AuthStatus::StatusCodeFailure
-                                                  || status == AuthStatus::StatusCodeTimeout || status == AuthStatus::StatusCodeError
-                                                  || status == AuthStatus::StatusCodeLocked )) {
+            if (type != AuthTypeAll
+                && (status == StatusCodeSuccess || status == StatusCodeFailure || status == StatusCodeTimeout
+                    || status == StatusCodeError || status == StatusCodeLocked)) {
                 endAuthentication(m_account, type);
             }
             QTimer::singleShot(100, this, [=] {
                 m_model->updateAuthStatus(type, status, message);
-                if (status == AuthStatus::StatusCodeLocked) {
+                if (status == StatusCodeLocked) {
                     endAuthentication(m_account, type);
                 }
             });
         } else {
-            if (type == AuthType::AuthTypeAll && status == AuthStatus::StatusCodePrompt) {
+            if (type == AuthTypeAll && status == StatusCodePrompt) {
                 if (!message.isEmpty()) {
                     m_model->updateAuthStatus(type, status, message);
                 }
             }
-            if (type == AuthType::AuthTypePassword) {
-                if (status == AuthStatus::StatusCodeSuccess || status == AuthStatus::StatusCodeFailure || status == AuthStatus::StatusCodeTimeout
-                    || status == AuthStatus::StatusCodeError || status == AuthStatus::StatusCodeLocked) {
+            if (type == AuthTypePassword) {
+                if (status == StatusCodeSuccess || status == StatusCodeFailure || status == StatusCodeTimeout
+                    || status == StatusCodeError || status == StatusCodeLocked) {
                     endAuthentication(m_account, m_model->getAuthProperty().MixAuthFlags);
                     QTimer::singleShot(100, this, [=] {
                         m_model->updateAuthStatus(type, status, message);
-                        if (status == AuthStatus::StatusCodeLocked) {
+                        if (status == StatusCodeLocked) {
                             endAuthentication(m_account, m_model->getAuthProperty().MixAuthFlags);
                         }
                     });
                 }
             }
-            if (type == AuthType::AuthTypeFingerprint) {
-                if (status == AuthStatus::StatusCodeSuccess || status == AuthStatus::StatusCodeFailure || status == AuthStatus::StatusCodeTimeout
-                    || status == AuthStatus::StatusCodeError || status == AuthStatus::StatusCodeLocked) {
+            if (type == AuthTypeFingerprint) {
+                if (status == StatusCodeSuccess || status == StatusCodeFailure || status == StatusCodeTimeout
+                    || status == StatusCodeError || status == StatusCodeLocked) {
                     endAuthentication(m_account, m_model->getAuthProperty().MixAuthFlags);
                     QTimer::singleShot(100, this, [=] {
                         m_model->updateAuthStatus(type, status, message);
@@ -161,7 +163,7 @@ void LockWorker::initConnections()
             }
         }
 
-        if(status == AuthStatus::StatusCodeSuccess && type != AuthType::AuthTypeAll
+        if(status == StatusCodeSuccess && type != AuthTypeAll
            && !m_resetSessionTimer->isActive() && m_model->getAuthProperty().MFAFlag && m_model->visible()){
             m_resetSessionTimer->start();
         }
