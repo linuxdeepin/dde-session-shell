@@ -73,6 +73,9 @@ void DLineEditEx::initAnimation()
  */
 void DLineEditEx::startAnimation()
 {
+    if (m_animation->state() == QAbstractAnimation::Running) {
+        return;
+    }
     m_loadSlider->show();
     m_loadSlider->resize(40, height());
     m_animation->setStartValue(QPoint(0 - 40, 0));
@@ -85,6 +88,9 @@ void DLineEditEx::startAnimation()
  */
 void DLineEditEx::stopAnimation()
 {
+    if (m_animation->state() == QAbstractAnimation::Stopped) {
+        return;
+    }
     m_loadSlider->hide();
     m_animation->stop();
 }
@@ -113,7 +119,7 @@ void DLineEditEx::paintEvent(QPaintEvent *event)
 
 bool DLineEditEx::eventFilter(QObject *watched, QEvent *event)
 {
-    Q_UNUSED(watched);
+    Q_UNUSED(watched)
     if(event->type() == QEvent::FocusIn){
         emit lineEditTextHasFocus(true);
     }else if(event->type() == QEvent::FocusOut){
