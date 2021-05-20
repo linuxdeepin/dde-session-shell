@@ -74,6 +74,7 @@ void UserLoginInfo::setUser(std::shared_ptr<User> user)
 void UserLoginInfo::initConnect()
 {
     if (m_model->isServerModel()) {
+        connect(this, &UserLoginInfo::updateLocale, m_userLoginWidget, &UserLoginWidget::updateAccoutLocale);
         connect(m_userLoginWidget, &UserLoginWidget::accountLineEditFinished, this, &UserLoginInfo::accountLineEditFinished);
         // connect(m_model, &SessionBaseModel::clearServerLoginWidgetContent, m_userLoginWidget, &UserLoginWidget::resetAllState);
     }

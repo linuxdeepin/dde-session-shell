@@ -105,6 +105,7 @@ public slots:
     void updateAuthType(SessionBaseModel::AuthType type);
     void unlockSuccessAni(); // obsolete
     void unlockFailedAni();  // obsolete
+    void updateAccoutLocale();
 
 protected:
     bool eventFilter(QObject *watched, QEvent *event) override;

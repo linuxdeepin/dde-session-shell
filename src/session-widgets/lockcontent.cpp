@@ -23,6 +23,7 @@ LockContent::LockContent(SessionBaseModel *const model, QWidget *parent)
     , m_wmInter(new com::deepin::wm("com.deepin.wm", "/com/deepin/wm", QDBusConnection::sessionBus(), this))
 {
     m_model->setCurrentModeState(SessionBaseModel::ModeStatus::PasswordMode);
+
     m_timeWidget = new TimeWidget();
     setCenterTopWidget(m_timeWidget);
     // 处理时间制跳转策略，获取到时间制再显示时间窗口
@@ -120,16 +121,17 @@ void LockContent::onCurrentUserChanged(std::shared_ptr<User> user)
 {
     if (user.get() == nullptr) return; // if dbus is async
 
-    // set user language
+    //如果是锁屏就用系统语言，如果是登陆界面就用用户语言
+    auto locale = qApp->applicationName() == "dde-lock" ? QLocale::system().name() : user->locale();
+    m_logoWidget->updateLocale(locale);
+    m_timeWidget->updateLocale(locale);
     qApp->removeTranslator(m_translator);
-    const QString locale { QLocale::system().name().split(".").first() };
-    m_translator->load("/usr/share/dde-session-shell/translations/dde-session-shell_" + QLocale(locale.isEmpty() ? "en_US" : locale).name());
+    m_translator->load("/usr/share/dde-session-shell/translations/dde-session-shell_"+ QLocale(locale).name());
     qApp->installTranslator(m_translator);
 
-    //如果是锁屏就用系统语言，如果是登陆界面就用用户语言
-    auto locale2 = qApp->applicationName() == "dde-lock" ? QLocale::system().name() : user->locale();
-    m_logoWidget->updateLocale(locale2);
-    m_timeWidget->updateLocale(locale2);
+    //服务器登录界面,更新了翻译,所以需要再次初始化accontLineEdit
+    if(qApp->applicationName() != "dde-lock" && m_model->isServerModel())
+        emit m_userLoginInfo->updateLocale();
 
     for (auto connect : m_currentUserConnects) {
         m_user.get()->disconnect(connect);
@@ -175,7 +177,7 @@ void LockContent::onCurrentUserChanged(std::shared_ptr<User> user)
         m_user->desktopBackgroundPath();
     });
 
-    m_logoWidget->updateLocale(locale2);
+    m_logoWidget->updateLocale(locale);
 }
 
 void LockContent::pushPasswordFrame()

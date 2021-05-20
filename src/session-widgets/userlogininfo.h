@@ -55,6 +55,7 @@ signals:
     void requestSetLayout(std::shared_ptr<User> user, const QString &value);
     void unlockActionFinish();
     void accountLineEditFinished(const QString &accountName);
+    void updateLocale();
 
     void requestStartAuthentication(const QString &account, const int authType);
     void sendTokenToAuth(const QString &account, const int authType, const QString &token);

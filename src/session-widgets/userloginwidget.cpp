@@ -294,7 +294,6 @@ void UserLoginWidget::initPasswdAuth(const int index)
         return;
     }
     m_passwordAuth = new AuthenticationModule(AuthenticationModule::AuthTypePassword, this);
-    m_passwordAuth->setLineEditInfo(tr("Password"), AuthenticationModule::PlaceHolderText);
     m_passwordAuth->setCapsStatus(m_capslockMonitor->isCapslockOn());
     m_userLoginLayout->insertWidget(index, m_passwordAuth);
 
@@ -1147,6 +1146,14 @@ void UserLoginWidget::unlockFailedAni()
     });
 
     m_aniTimer->start(15);
+}
+
+/**
+ * @brief 更新用户名的翻译
+ */
+void UserLoginWidget::updateAccoutLocale()
+{
+    m_accountEdit->setPlaceholderText(tr("Account"));
 }
 
 /**
