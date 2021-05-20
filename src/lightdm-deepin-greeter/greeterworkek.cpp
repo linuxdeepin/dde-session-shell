@@ -208,15 +208,8 @@ void GreeterWorkek::initConnections()
     connect(m_authFramework, &DeepinAuthFramework::MFAFlagChanged, m_model, &SessionBaseModel::updateMFAFlag);
     connect(m_authFramework, &DeepinAuthFramework::PINLenChanged, m_model, &SessionBaseModel::updatePINLen);
     connect(m_authFramework, &DeepinAuthFramework::PromptChanged, m_model, &SessionBaseModel::updatePrompt);
-    /* org.freedesktop.login1.Manager */
-    connect(m_login1Inter, &DBusLogin1Manager::PrepareForSleep, this, [=](bool isSleep){
-        if(!isSleep && !m_account.isEmpty()){
-            startAuthentication(m_account, m_model->getAuthProperty().AuthType);
-        }
-    });
-
     /* org.freedesktop.login1.Session */
-    connect(m_login1SessionSelf, &Login1SessionSelf::ActiveChanged, this, [=] (bool active) {
+    connect(m_login1SessionSelf, &Login1SessionSelf::ActiveChanged, this, [=](bool active) {
         if (m_account.isEmpty()) {
             return;
         }
@@ -230,6 +223,15 @@ void GreeterWorkek::initConnections()
         } else {
             destoryAuthentication(m_account);
         }
+    });
+    /* org.freedesktop.login1.Manager */
+    connect(m_login1Inter, &DBusLogin1Manager::PrepareForSleep, this, [=](bool isSleep) {
+        if (isSleep) {
+            destoryAuthentication(m_account);
+        } else {
+            createAuthentication(m_account);
+        }
+        // emit m_model->prepareForSleep(isSleep);
     });
     /* com.deepin.dde.LockService */
     connect(m_lockInter, &DBusLockService::UserChanged, this, [=] (const QString &json) {

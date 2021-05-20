@@ -188,11 +188,13 @@ void LockWorker::initConnections()
         }
     });
     /* org.freedesktop.login1.Manager */
-    connect(m_login1Inter, &DBusLogin1Manager::PrepareForSleep, m_model, &SessionBaseModel::prepareForSleep);
-    connect(m_login1Inter, &DBusLogin1Manager::PrepareForSleep, this, [=](bool isSleep){
-        if(!isSleep && !m_account.isEmpty()){
-            startAuthentication(m_account, m_model->getAuthProperty().AuthType);
+    connect(m_login1Inter, &DBusLogin1Manager::PrepareForSleep, this, [=](bool isSleep) {
+        if (isSleep) {
+            destoryAuthentication(m_account);
+        } else {
+            createAuthentication(m_account);
         }
+        emit m_model->prepareForSleep(isSleep);
     });
     /* model */
     connect(m_model, &SessionBaseModel::authTypeChanged, this, [=](const int type) {
