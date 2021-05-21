@@ -329,7 +329,8 @@ void SessionBaseModel::addUser(const QString &path)
         return;
     }
     std::shared_ptr<User> user;
-    if (path.startsWith("/")) {
+    uid_t uid = path.mid(QString(ACCOUNTS_DBUS_PREFIX).size()).toUInt();
+    if (uid < 10000) {
         user = std::make_shared<NativeUser>(path);
     } else {
         user = std::make_shared<ADDomainUser>(static_cast<uid_t>(path.toInt()));
