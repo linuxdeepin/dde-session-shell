@@ -14,7 +14,7 @@ QString userPwdName(__uid_t uid)
     /* Fetch passwd structure (contains first group ID for user) */
     pw = getpwuid(uid);
 
-    return QString().fromLocal8Bit(pw->pw_name);
+    return pw ? QString().fromLocal8Bit(pw->pw_name) : QString();
 }
 
 static bool checkUserIsNoPWGrp(User const *user)

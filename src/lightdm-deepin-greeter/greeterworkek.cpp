@@ -491,7 +491,7 @@ void GreeterWorkek::endAuthentication(const QString &account, const int authType
 void GreeterWorkek::checkAccount(const QString &account)
 {
     QString userPath = m_accountsInter->FindUserByName(account);
-    if (!userPath.startsWith("/")) {
+    if (!userPath.startsWith("/") && !account.startsWith("@")) {
         qWarning() << userPath;
         onDisplayErrorMsg(userPath);
         return;

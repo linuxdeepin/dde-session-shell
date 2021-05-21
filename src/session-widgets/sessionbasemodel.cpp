@@ -81,9 +81,10 @@ void SessionBaseModel::userAdd(std::shared_ptr<User> user)
 {
     // NOTE(zorowk): If there are duplicate uids, delete ADDomainUser first
     auto user_exist = findUserByUid(user->uid());
-    if (user_exist != nullptr) {
-        return;
-    }
+    if (user_exist != nullptr && user_exist->metaObject() == &ADDomainUser::staticMetaObject) {
+        userRemoved(user_exist);
+    };
+
     m_userList << user;
 
     emit onUserAdded(user);
@@ -364,7 +365,8 @@ void SessionBaseModel::updateUserList(const QStringList &list)
         if (m_users->contains(path)) {
             listTmp.removeAll(path);
         } else {
-            if (path.startsWith("/")) {
+            uid_t uid = path.mid(QString(ACCOUNTS_DBUS_PREFIX).size()).toUInt();
+            if (uid < 10000) {
                 user = std::make_shared<NativeUser>(path);
             } else {
                 user = std::make_shared<ADDomainUser>(static_cast<uid_t>(path.toInt()));
