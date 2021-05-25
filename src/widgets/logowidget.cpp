@@ -98,12 +98,13 @@ void LogoWidget::initUI()
 QString LogoWidget::getVersion()
 {
     QString version;
-    if (DSysInfo::isDeepin()) {
+    if (DSysInfo::uosType() == DSysInfo::UosServer) {
+        version = QString("%1").arg(DSysInfo::majorVersion());
+    } else if (DSysInfo::isDeepin()) {
         version = QString("%1 %2").arg(DSysInfo::majorVersion()).arg(DSysInfo::uosEditionName(m_locale));
     } else {
         version = QString("%1 %2").arg(DSysInfo::productVersion()).arg(DSysInfo::productTypeString());
     }
-
     return version;
 }
 
