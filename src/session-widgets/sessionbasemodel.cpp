@@ -37,6 +37,11 @@ SessionBaseModel::~SessionBaseModel()
         m_users->remove(key);
     }
     delete m_users;
+
+    for (const QString &key : m_loginedUsers->keys()) {
+        m_loginedUsers->remove(key);
+    }
+    delete m_loginedUsers;
 }
 
 std::shared_ptr<User> SessionBaseModel::findUserByUid(const uint uid) const
