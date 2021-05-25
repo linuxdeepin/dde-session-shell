@@ -191,7 +191,7 @@ void UserLoginWidget::initConnections()
     });
     /* 解锁按钮 */
     connect(m_lockButton, &DFloatingButton::clicked, this, [=] {
-        if (m_model->currentUser()->isNoPasswdGrp()) {
+        if (m_model->currentUser()->isNoPasswdGrp() || (m_accountEdit->isVisible() && !m_accountEdit->text().isEmpty())) {
             emit requestCheckAccount(m_model->currentUser()->name());
         }
     });
