@@ -70,8 +70,6 @@ void AuthSingle::initUI()
     pixmap.setDevicePixelRatio(devicePixelRatioF());
     m_capsStatus->setPixmap(pixmap);
     passwordLayout->addWidget(m_capsStatus, 1, Qt::AlignRight | Qt::AlignVCenter);
-    /* 认证状态 */
-    passwordLayout->addWidget(m_authStatus, 0, Qt::AlignRight | Qt::AlignVCenter);
 
     mainLayout->addWidget(m_lineEdit);
 }
@@ -83,16 +81,12 @@ void AuthSingle::initConnections()
 {
     /* 键盘布局按钮 */
     connect(m_keyboardButton, &QPushButton::clicked, this, &AuthSingle::requestShowKeyboardList);
-    /* 密码输入框 */
-    connect(m_lineEdit, &DLineEditEx::lineEditTextHasFocus, this, [this](const bool focus) {
-        if (focus) {
-            m_authStatus->hide();
-        } else {
-            m_authStatus->show();
-        }
-        emit focusChanged(focus);
+    /* 输入框 */
+    connect(m_lineEdit, &DLineEditEx::lineEditTextHasFocus, this, &AuthSingle::focusChanged);
+    connect(m_lineEdit, &DLineEditEx::textChanged, this, [this](const QString &text) {
+        m_lineEdit->setAlert(false);
+        emit lineEditTextChanged(text);
     });
-    connect(m_lineEdit, &DLineEditEx::textChanged, this, &AuthSingle::lineEditTextChanged);
     connect(m_lineEdit, &DLineEditEx::returnPressed, this, [this] {
         if (!m_lineEdit->text().isEmpty()) {
             setAnimationState(true);
@@ -129,51 +123,54 @@ void AuthSingle::setAuthResult(const int status, const QString &result)
     switch (status) {
     case StatusCodeSuccess:
         setAnimationState(false);
-        setAuthStatus(":/misc/images/login_check.svg");
         m_lineEdit->clear();
         m_lineEdit->setFocusPolicy(Qt::NoFocus);
         m_lineEdit->clearFocus();
+        m_lineEdit->setAlert(false);
         setLineEditInfo(result, PlaceHolderText);
         emit authFinished(StatusCodeSuccess);
         break;
     case StatusCodeFailure: {
         setAnimationState(false);
-        setAuthStatus(":/misc/images/login_wait.svg");
-        m_lineEdit->clear();
-        m_lineEdit->setFocusPolicy(Qt::StrongFocus);
-        m_lineEdit->setFocus();
-        setLineEditInfo(result, AlertText);
-        m_showPrompt = false;
-        emit authFinished(StatusCodeFailure);
-        emit activeAuth();
+        if (!m_limitsInfo->locked) {
+            m_lineEdit->clear();
+            m_lineEdit->setFocusPolicy(Qt::StrongFocus);
+            m_lineEdit->setFocus();
+            setLineEditInfo(result, AlertText);
+            emit activeAuth();
+        } else {
+            m_lineEdit->setAlert(false);
+        }
         break;
     }
     case StatusCodeCancel:
         setAnimationState(false);
-        setAuthStatus(":/misc/images/login_wait.svg");
         break;
     case StatusCodeTimeout:
         setAnimationState(false);
-        setAuthStatus(":/misc/images/login_wait.svg");
         setLineEditInfo(result, AlertText);
         break;
     case StatusCodeError:
         setAnimationState(false);
-        setAuthStatus(":/misc/images/login_wait.svg");
         setLineEditInfo(result, AlertText);
         break;
     case StatusCodeVerify:
         setAnimationState(true);
-        setAuthStatus(":/misc/images/login_spinner.svg");
         break;
     case StatusCodeException:
         setAnimationState(false);
-        setAuthStatus(":/misc/images/login_wait.svg");
         setLineEditInfo(result, AlertText);
         break;
     case StatusCodePrompt:
         setAnimationState(false);
-        setAuthStatus(":/misc/images/login_wait.svg");
+        if (!m_limitsInfo->locked) {
+            m_lineEdit->clear();
+            m_lineEdit->setFocusPolicy(Qt::StrongFocus);
+            m_lineEdit->setFocus();
+            setLineEditInfo(result, PlaceHolderText);
+        } else {
+            m_lineEdit->setAlert(false);
+        }
         m_lineEdit->clear();
         m_lineEdit->setFocusPolicy(Qt::StrongFocus);
         m_lineEdit->setFocus();
@@ -185,21 +182,17 @@ void AuthSingle::setAuthResult(const int status, const QString &result)
         break;
     case StatusCodeLocked:
         setAnimationState(false);
-        setAuthStatus(":/misc/images/login_lock.svg");
         m_lineEdit->clear();
         m_lineEdit->setFocusPolicy(Qt::NoFocus);
         m_lineEdit->clearFocus();
         break;
     case StatusCodeRecover:
         setAnimationState(false);
-        setAuthStatus(":/misc/images/login_wait.svg");
         break;
     case StatusCodeUnlocked:
-        setAuthStatus(":/misc/images/login_wait.svg");
         break;
     default:
         setAnimationState(false);
-        setAuthStatus(":/misc/images/login_wait.svg");
         setLineEditInfo(result, AlertText);
         qWarning() << "Error! The status of Password Auth is wrong!" << status << result;
         break;

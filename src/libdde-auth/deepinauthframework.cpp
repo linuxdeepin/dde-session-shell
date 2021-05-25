@@ -1,3 +1,4 @@
+#include "authcommon.h"
 #include "deepinauthframework.h"
 #include "interface/deepinauthinterface.h"
 #include "userinfo.h"
@@ -28,15 +29,20 @@
 #define AUTHRNTICATEINTERFACE "com.deepin.daemon.Authenticate.Session"
 #define OPENSSLNAME "libssl.so"
 
+using namespace AuthCommon;
+
 DeepinAuthFramework::DeepinAuthFramework(DeepinAuthInterface *interface, QObject *parent)
     : QObject(parent)
     , m_interface(interface)
     , m_authenticateInter(new AuthInter(AUTHRNTICATESERVICE, "/com/deepin/daemon/Authenticate", QDBusConnection::systemBus(), this))
     , m_PAMAuthThread(0)
     , m_authenticateControllers(new QMap<QString, AuthControllerInter *>())
+    , m_cancelAuth(false)
+    , m_waitToken(true)
 {
     connect(m_authenticateInter, &AuthInter::FrameworkStateChanged, this, &DeepinAuthFramework::FramworkStateChanged);
-    connect(m_authenticateInter, &AuthInter::LimitUpdated, this, [=] (const QString &value) {
+    connect(m_authenticateInter, &AuthInter::LimitUpdated, this, [=](const QString &value) {
+        qDebug() << "AuthInter::LimitUpdated:" << value;
         LimitedInfoChanged(m_authenticateInter->GetLimits(value));
     });
     connect(m_authenticateInter, &AuthInter::SupportedFlagsChanged, this, &DeepinAuthFramework::SupportedMixAuthFlagsChanged);
@@ -49,27 +55,34 @@ DeepinAuthFramework::~DeepinAuthFramework()
         m_authenticateControllers->remove(key);
     }
     delete m_authenticateControllers;
+
+    DestoryAuthenticate();
 }
 
 /**
- * @brief 开启认证服务
+ * @brief 创建一个 PAM 认证服务的线程，在线程中等待用户输入密码
  *
- * @param user
+ * @param account
  */
-void DeepinAuthFramework::Authenticate(const QString &account)
+void DeepinAuthFramework::CreateAuthenticate(const QString &account)
 {
+    qInfo() << "Create PAM authenticate thread:" << account;
     m_account = account;
-    if (m_PAMAuthThread != 0) {
-        pthread_cancel(m_PAMAuthThread);
-        pthread_join(m_PAMAuthThread, nullptr);
-        m_PAMAuthThread = 0;
-    }
+    DestoryAuthenticate();
+    m_cancelAuth = false;
     int rc = pthread_create(&m_PAMAuthThread, nullptr, &PAMAuthWorker, this);
+
     if (rc != 0) {
         qCritical() << "failed to create the authentication thread: %s" << strerror(errno);
     }
 }
 
+/**
+ * @brief 传入用户名
+ *
+ * @param arg   当前对象的指针
+ * @return void*
+ */
 void *DeepinAuthFramework::PAMAuthWorker(void *arg)
 {
     DeepinAuthFramework *authFramework = static_cast<DeepinAuthFramework *>(arg);
@@ -81,39 +94,42 @@ void *DeepinAuthFramework::PAMAuthWorker(void *arg)
     return nullptr;
 }
 
+/**
+ * @brief 执行 PAM 认证
+ *
+ * @param account
+ */
 void DeepinAuthFramework::PAMAuthentication(const QString &account)
 {
     pam_handle_t *m_pamHandle = nullptr;
     pam_conv conv = {PAMConversation, static_cast<void *>(this)};
     const char *serviceName = isDeepinAuth() ? PAM_SERVICE_DEEPIN_NAME : PAM_SERVICE_SYSTEM_NAME;
-    int ret = pam_start(serviceName, account.toLocal8Bit().data(), &conv, &m_pamHandle);
 
+    int ret = pam_start(serviceName, account.toLocal8Bit().data(), &conv, &m_pamHandle);
     if (ret != PAM_SUCCESS) {
-        qCritical() << "pam_start() failed: " << pam_strerror(m_pamHandle, ret);
+        qCritical() << "PAM start failed:" << pam_strerror(m_pamHandle, ret) << ret;
     }
 
     int rc = pam_authenticate(m_pamHandle, 0);
     if (rc != PAM_SUCCESS) {
-        qCritical() << "pam_authenticate() failed: " << pam_strerror(m_pamHandle, rc) << "####" << rc;
+        qWarning() << "PAM authenticate failed:" << pam_strerror(m_pamHandle, rc) << rc;
     }
 
     int re = pam_end(m_pamHandle, rc);
     if (re != PAM_SUCCESS) {
-        qCritical() << "pam_end() failed: " << pam_strerror(m_pamHandle, re);
+        qCritical() << "PAM end failed:" << pam_strerror(m_pamHandle, re) << re;
     }
-
-    RespondResult((rc == PAM_SUCCESS && re == PAM_SUCCESS) ? "success" : QString());
 
     system("xset dpms force on");
 }
 
 /**
- * @brief PAM 的回调函数
+ * @brief PAM 的回调函数，传入密码与各种异常处理
  *
  * @param num_msg
  * @param msg
  * @param resp
- * @param app_data
+ * @param app_data  当前对象指针
  * @return int
  */
 int DeepinAuthFramework::PAMConversation(int num_msg, const pam_message **msg, pam_response **resp, void *app_data)
@@ -136,51 +152,48 @@ int DeepinAuthFramework::PAMConversation(int num_msg, const pam_message **msg, p
 
     for (idx = 0; idx < num_msg; ++idx) {
         switch (PAM_MSG_MEMBER(msg, idx, msg_style)) {
+        case PAM_PROMPT_ECHO_ON:
         case PAM_PROMPT_ECHO_OFF: {
-            app_ptr->DisplayTextInfo(QString::fromLocal8Bit(PAM_MSG_MEMBER(msg, idx, msg)));
-
-            // while (app_ptr->m_isCondition) {
-            //     //取消验证时返回一般错误,退出等待输入密码的循环,然后退出验证线程
-            //     if (app_ptr->m_isCancel) {
-            //         return PAM_ABORT;
-            //     }
-            //     sleep(1);
-            // }
-
-            // app_ptr->m_isCondition = true;
+            qDebug() << "pam auth echo:" << PAM_MSG_MEMBER(msg, idx, msg);
+            app_ptr->UpdateAuthStatus(StatusCodePrompt, PAM_MSG_MEMBER(msg, idx, msg));
+            /* 等待用户输入密码 */
+            while (app_ptr->m_waitToken) {
+                if (app_ptr->m_cancelAuth) {
+                    app_ptr->m_cancelAuth = false;
+                    return PAM_ABORT;
+                }
+                sleep(1);
+            }
+            app_ptr->m_waitToken = true;
 
             if (!QPointer<DeepinAuthFramework>(app_ptr)) {
-                qDebug() << "pam: deepin auth framework is null";
+                qCritical() << "pam: deepin auth framework is null";
                 return PAM_CONV_ERR;
             }
 
-            QString password = app_ptr->RequestEchoOff(PAM_MSG_MEMBER(msg, idx, msg));
-            aresp[idx].resp = strdup(password.toLocal8Bit().data());
+            aresp[idx].resp = strdup(app_ptr->m_token.toLocal8Bit().data());
 
-            if (aresp[idx].resp == nullptr)
+            if (aresp[idx].resp == nullptr) {
                 goto fail;
+            }
 
             app_ptr->m_authType = AuthFlag::Password;
             aresp[idx].resp_retcode = PAM_SUCCESS;
             break;
         }
-
-        case PAM_PROMPT_ECHO_ON:
         case PAM_ERROR_MSG: {
-            qDebug() << "pam authagent error: " << PAM_MSG_MEMBER(msg, idx, msg);
-            app_ptr->DisplayErrorMsg(QString::fromLocal8Bit(PAM_MSG_MEMBER(msg, idx, msg)));
+            qDebug() << "pam auth error: " << PAM_MSG_MEMBER(msg, idx, msg);
+            app_ptr->UpdateAuthStatus(StatusCodeFailure, PAM_MSG_MEMBER(msg, idx, msg));
             app_ptr->m_authType = AuthFlag::Fingerprint;
             aresp[idx].resp_retcode = PAM_SUCCESS;
             break;
         }
-
         case PAM_TEXT_INFO: {
-            qDebug() << "pam authagent info: " << PAM_MSG_MEMBER(msg, idx, msg);
-            app_ptr->DisplayTextInfo(QString::fromLocal8Bit(PAM_MSG_MEMBER(msg, idx, msg)));
+            qDebug() << "pam auth info: " << PAM_MSG_MEMBER(msg, idx, msg);
+            app_ptr->UpdateAuthStatus(StatusCodeSuccess, PAM_MSG_MEMBER(msg, idx, msg));
             aresp[idx].resp_retcode = PAM_SUCCESS;
             break;
         }
-
         default:
             goto fail;
         }
@@ -198,32 +211,42 @@ fail:
     return PAM_CONV_ERR;
 }
 
-void DeepinAuthFramework::Responsed(const QString &password)
+/**
+ * @brief 传入用户输入的密码（密码、PIN 等）
+ *
+ * @param token
+ */
+void DeepinAuthFramework::SendToken(const QString &token)
 {
-    if (password == m_password) {
+    qInfo() << "Send token to PAM";
+    m_token = token;
+    m_waitToken = false;
+}
+
+/**
+ * @brief 更新 PAM 认证状态
+ *
+ * @param status
+ * @param message
+ */
+void DeepinAuthFramework::UpdateAuthStatus(const int status, const QString &message)
+{
+    emit AuthStatusChanged(AuthTypeSingle, status, message);
+}
+
+/**
+ * @brief 结束 PAM 认证服务
+ */
+void DeepinAuthFramework::DestoryAuthenticate()
+{
+    if (m_PAMAuthThread == 0) {
         return;
     }
-    m_password = password;
-}
-
-/**
- * @brief 显示错误信息
- *
- * @param msg
- */
-void DeepinAuthFramework::DisplayErrorMsg(const QString &msg)
-{
-    m_interface->onDisplayErrorMsg(msg);
-}
-
-/**
- * @brief 显示提示文案
- *
- * @param msg
- */
-void DeepinAuthFramework::DisplayTextInfo(const QString &msg)
-{
-    m_interface->onDisplayTextInfo(msg);
+    qInfo() << "Destory PAM authenticate thread";
+    m_cancelAuth = true;
+    pthread_cancel(m_PAMAuthThread);
+    pthread_join(m_PAMAuthThread, nullptr);
+    m_PAMAuthThread = 0;
 }
 
 void DeepinAuthFramework::initPublicKey(const QString &account)
@@ -238,23 +261,6 @@ void DeepinAuthFramework::initPublicKey(const QString &account)
     }
 
     m_pubkey = reply.argumentAt(2).toString().toUtf8();
-}
-
-/**
- * @brief 显示认证结果
- *
- * @param msg
- */
-void DeepinAuthFramework::RespondResult(const QString &msg)
-{
-    m_interface->onPasswordResult(msg);
-}
-
-const QString &DeepinAuthFramework::RequestEchoOff(const QString &msg)
-{
-    Q_UNUSED(msg);
-
-    return m_password;
 }
 
 /**
@@ -455,7 +461,7 @@ QString DeepinAuthFramework::GetPreOneKeyLogin(const int flag) const
  */
 int DeepinAuthFramework::GetFrameworkState() const
 {
-    return m_authenticateInter->frameworkState();
+    return m_authenticateInter->isValid() ? m_authenticateInter->frameworkState() : 1;
 }
 
 /**
@@ -476,7 +482,7 @@ QString DeepinAuthFramework::GetSupportedEncrypts() const
  */
 QString DeepinAuthFramework::GetLimitedInfo(const QString &account) const
 {
-    return m_authenticateInter->GetLimits(account);
+    return m_authenticateInter->isValid() ? m_authenticateInter->GetLimits(account) : QString("");
 }
 
 /**
@@ -561,18 +567,4 @@ QString DeepinAuthFramework::AuthSessionPath(const QString &account) const
         return QString();
     }
     return m_authenticateControllers->value(account)->path();
-}
-
-void DeepinAuthFramework::cancelAuthenticate()
-{
-    //    if (!m_authagent.isNull()) {
-    //        if (m_pamAuth != 0) {
-    //            //先取消上次验证请求
-    //            m_authagent->setCancelAuth(true);
-    //            pthread_cancel(m_pamAuth);
-    //            pthread_join(m_pamAuth, nullptr);
-    //            m_pamAuth = 0;
-    //        }
-        //    }
-    //}
 }

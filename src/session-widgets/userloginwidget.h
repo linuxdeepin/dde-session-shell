@@ -48,6 +48,7 @@ class KeyboardMonitor;
 class DPasswordEditEx;
 class DLineEditEx;
 class AuthenticationModule;
+class AuthSingle;
 
 class UserLoginWidget : public QWidget
 {
@@ -117,6 +118,7 @@ private:
     void initUI();
     void initConnections();
 
+    void initSingleAuth(const int index);
     void initPasswdAuth(const int index);
     void initFingerprintAuth(const int index);
     void initFaceAuth(const int index);
@@ -154,6 +156,7 @@ private:
     DLineEditEx *m_accountEdit;            // 用户名输入框
     DFloatingButton *m_lockButton;         // 解锁按钮
 
+    AuthSingle *m_singleAuth;
     AuthenticationModule *m_passwordAuth;        // 密码
     AuthenticationModule *m_fingerprintAuth;     // 指纹
     AuthenticationModule *m_faceAuth;            // 面容

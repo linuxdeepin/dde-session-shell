@@ -38,7 +38,7 @@ enum InputType {
  * 认证类型
  */
 enum AuthType {
-    AuthTypeSingle = 0,
+    AuthTypeNone = 0,                 // none
     AuthTypePassword = 1 << 0,        // 密码
     AuthTypeFingerprint = 1 << 1,     // 指纹
     AuthTypeFace = 1 << 2,            // 人脸
@@ -47,7 +47,8 @@ enum AuthType {
     AuthTypeFingerVein = 1 << 5,      // 指静脉
     AuthTypeIris = 1 << 6,            // 虹膜
     AuthTypePIN = 1 << 7,             // PIN
-    AuthTypeAll = -1
+    AuthTypeSingle = 1 << 30,         // 单因/PAM
+    AuthTypeAll = -1                  // all
 };
 
 /**

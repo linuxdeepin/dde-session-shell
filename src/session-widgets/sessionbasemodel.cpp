@@ -549,21 +549,22 @@ void SessionBaseModel::updatePrompt(const QString &prompt)
 void SessionBaseModel::updateFactorsInfo(const MFAInfoList &infoList)
 {
     m_authProperty.AuthType = 0;
-    if (m_authProperty.MFAFlag) {
-        for (const MFAInfo &info : infoList) {
-            m_authProperty.AuthType |= info.AuthType;
-        }
-        emit authTypeChanged(m_authProperty.AuthType);
-    } else {
-        if (m_currentUser->limitsInfo()->value(AuthTypePassword).locked) {
-            m_authProperty.AuthType = 1;
-            emit authTypeChanged(1);
-        } else {
+    switch (m_authProperty.FrameworkState) {
+    case 0:
+        if (m_authProperty.MFAFlag) {
             for (const MFAInfo &info : infoList) {
                 m_authProperty.AuthType |= info.AuthType;
             }
-            emit authTypeChanged(1);
+            emit authTypeChanged(m_authProperty.AuthType);
+        } else {
+            m_authProperty.AuthType = AuthTypeSingle;
+            emit authTypeChanged(AuthTypeSingle);
         }
+        break;
+    default:
+        m_authProperty.AuthType = AuthTypeSingle;
+        emit authTypeChanged(AuthTypeSingle);
+        break;
     }
 }
 
@@ -577,9 +578,16 @@ void SessionBaseModel::updateFactorsInfo(const MFAInfoList &infoList)
 void SessionBaseModel::updateAuthStatus(const int type, const int status, const QString &result)
 {
     qInfo() << "Authentication Service status:" << type << status << result;
-    if (m_authProperty.MFAFlag) {
-        emit authStatusChanged(type, status, result);
-    } else {
+    switch (m_authProperty.FrameworkState) {
+    case 0:
+        if (m_authProperty.MFAFlag) {
+            emit authStatusChanged(type, status, result);
+        } else {
+            emit authStatusChanged(AuthTypeSingle, status, result);
+        }
+        break;
+    default:
         emit authStatusChanged(AuthTypeSingle, status, result);
+        break;
     }
 }

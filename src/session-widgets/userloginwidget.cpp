@@ -20,6 +20,7 @@
  */
 
 #include "authcommon.h"
+#include "authsingle.h"
 #include "userloginwidget.h"
 
 #include "constants.h"
@@ -62,6 +63,7 @@ UserLoginWidget::UserLoginWidget(const SessionBaseModel *model, const WidgetType
     , m_loginStateLabel(new QLabel(m_nameWidget))
     , m_accountEdit(new DLineEditEx(this))
     , m_lockButton(new DFloatingButton(DStyle::SP_LockElement, this))
+    , m_singleAuth(nullptr)
     , m_passwordAuth(nullptr)
     , m_fingerprintAuth(nullptr)
     , m_faceAuth(nullptr)
@@ -213,6 +215,7 @@ void UserLoginWidget::initConnections()
 void UserLoginWidget::updateWidgetShowType(const int type)
 {
     int index = 3;
+
     /**
      * @brief 设置布局
      * 这里是按照显示顺序初始化的，如果后续布局改变或者新增认证方式，初始化顺序需要重新调整
@@ -264,6 +267,13 @@ void UserLoginWidget::updateWidgetShowType(const int type)
         m_passwordAuth->deleteLater();
         m_passwordAuth = nullptr;
     }
+    /* 单因子 */
+    if (type & AuthTypeSingle) {
+        initSingleAuth(index++);
+    } else if (m_singleAuth != nullptr) {
+        m_singleAuth->deleteLater();
+        m_singleAuth = nullptr;
+    }
 
     /**
      * @brief 设置焦点
@@ -282,10 +292,52 @@ void UserLoginWidget::updateWidgetShowType(const int type)
     if (m_PINAuth != nullptr) {
         setFocusProxy(m_PINAuth);
     }
+    if (m_singleAuth != nullptr) {
+        setFocusProxy(m_singleAuth);
+    }
     if (m_accountEdit->isVisible()) {
         setFocusProxy(m_accountEdit);
     }
     setFocus();
+}
+
+/**
+ * @brief 单因场景
+ */
+void UserLoginWidget::initSingleAuth(const int index)
+{
+    if (m_singleAuth != nullptr) {
+        return;
+    }
+    m_singleAuth = new AuthSingle(this);
+    m_singleAuth->setCapsStatus(m_capslockMonitor->isCapslockOn());
+    m_userLoginLayout->insertWidget(index, m_singleAuth);
+
+    connect(m_singleAuth, &AuthSingle::activeAuth, this, [this] {
+        emit requestStartAuthentication(m_model->currentUser()->name(), AuthTypeSingle);
+    });
+    connect(m_singleAuth, &AuthSingle::requestAuthenticate, this, [this] {
+        if (m_singleAuth->lineEditText().isEmpty()) {
+            return;
+        }
+        emit sendTokenToAuth(m_model->currentUser()->name(), AuthTypeSingle, m_singleAuth->lineEditText());
+    });
+    connect(m_singleAuth, &AuthSingle::requestShowKeyboardList, this, &UserLoginWidget::showKeyboardList);
+    connect(m_singleAuth, &AuthSingle::authFinished, this, [this](const bool status) {
+        checkAuthResult(AuthTypeAll, status);
+    });
+
+    connect(m_kbLayoutWidget, &KbLayoutWidget::setButtonClicked, m_singleAuth, &AuthSingle::setKeyboardButtonInfo);
+    connect(m_capslockMonitor, &KeyboardMonitor::capslockStatusChanged, m_singleAuth, &AuthSingle::setCapsStatus);
+    connect(m_lockButton, &QPushButton::clicked, m_singleAuth, &AuthSingle::requestAuthenticate);
+
+    /* 输入框数据同步（可能是密码或PIN） */
+    std::function<void(QVariant)> tokenChanged = std::bind(&UserLoginWidget::onOtherPagePasswordChanged, this, std::placeholders::_1);
+    m_registerFunctionIndexs["UserLoginToken"] = FrameDataBind::Instance()->registerFunction("UserLoginToken", tokenChanged);
+    connect(m_singleAuth, &AuthSingle::lineEditTextChanged, this, [=](const QString &value) {
+        FrameDataBind::Instance()->updateValue("UserLoginToken", value);
+    });
+    FrameDataBind::Instance()->refreshData("UserLoginToken");
 }
 
 /**
@@ -511,12 +563,6 @@ void UserLoginWidget::initPINAuth(const int index)
 void UserLoginWidget::updateAuthResult(const int type, const int status, const QString &message)
 {
     switch (type) {
-    case AuthTypeSingle:
-        if (m_passwordAuth != nullptr) {
-            m_passwordAuth->setAuthType(AuthTypeSingle);
-            m_passwordAuth->setAuthResult(status, message);
-        }
-        break;
     case AuthTypePassword:
         if (m_passwordAuth != nullptr) {
             m_passwordAuth->setAuthResult(status, message);
@@ -550,6 +596,11 @@ void UserLoginWidget::updateAuthResult(const int type, const int status, const Q
     case AuthTypeIris:
         if (m_irisAuth != nullptr) {
             m_irisAuth->setAuthResult(status, message);
+        }
+        break;
+    case AuthTypeSingle:
+        if (m_singleAuth != nullptr) {
+            m_singleAuth->setAuthResult(status, message);
         }
         break;
     case AuthTypeAll:
@@ -829,6 +880,9 @@ void UserLoginWidget::updateKeyboardList(const QStringList &list)
     if (m_passwordAuth != nullptr) {
         m_passwordAuth->setKeyboardButtonVisible(list.size() > 1 ? true : false);
     }
+    if (m_singleAuth != nullptr) {
+        m_singleAuth->setKeyboardButtonVisible(list.size() > 1 ? true : false);
+    }
 }
 
 /**
@@ -862,6 +916,7 @@ void UserLoginWidget::updateLimitsInfo(const QMap<int, User::LimitsInfo> *limits
 {
     AuthenticationModule::LimitsInfo limitsInfoTmpA;
     User::LimitsInfo limitsInfoTmpU;
+    LimitsInfo limitsInfoTmpC;
 
     QMap<int, User::LimitsInfo>::const_iterator i = limitsInfo->constBegin();
     while (i != limitsInfo->end()) {
@@ -875,6 +930,14 @@ void UserLoginWidget::updateLimitsInfo(const QMap<int, User::LimitsInfo> *limits
                 limitsInfoTmpA.unlockSecs = limitsInfoTmpU.unlockSecs;
                 limitsInfoTmpA.unlockTime = limitsInfoTmpU.unlockTime;
                 m_passwordAuth->setLimitsInfo(limitsInfoTmpA);
+            }
+            if (m_singleAuth != nullptr) {
+                limitsInfoTmpC.locked = limitsInfoTmpU.locked;
+                limitsInfoTmpC.maxTries = limitsInfoTmpU.maxTries;
+                limitsInfoTmpC.numFailures = limitsInfoTmpU.numFailures;
+                limitsInfoTmpC.unlockSecs = limitsInfoTmpU.unlockSecs;
+                limitsInfoTmpC.unlockTime = limitsInfoTmpU.unlockTime;
+                m_singleAuth->setLimitsInfo(limitsInfoTmpC);
             }
             break;
         case AuthTypeFingerprint:
@@ -970,6 +1033,9 @@ void UserLoginWidget::updateKeyboardInfo(const QString &text)
     m_kbLayoutWidget->setDefault(text);
     if (m_passwordAuth != nullptr) {
         m_passwordAuth->setKeyboardButtonInfo(text);
+    }
+    if (m_singleAuth != nullptr) {
+        m_singleAuth->setKeyboardButtonInfo(text);
     }
 }
 

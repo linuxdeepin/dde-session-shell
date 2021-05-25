@@ -45,6 +45,11 @@ public:
     explicit DeepinAuthFramework(DeepinAuthInterface *interface, QObject *parent = nullptr);
     ~DeepinAuthFramework();
 
+    /* Compatible with old authentication methods */
+    void CreateAuthenticate(const QString &account);
+    void SendToken(const QString &token);
+    void DestoryAuthenticate();
+
     /* com.deepin.daemon.Authenticate */
     int GetFrameworkState() const;
     int GetSupportedMixAuthFlags() const;
@@ -59,8 +64,6 @@ public:
     QString GetPrompt(const QString &account) const;
 
     QString AuthSessionPath(const QString &account) const;
-
-    void cancelAuthenticate();
 
 signals:
     /* com.deepin.daemon.Authenticate */
@@ -77,13 +80,6 @@ signals:
     void AuthStatusChanged(const int, const int, const QString &);
 
 public slots:
-    /* Compatible with old authentication methods */
-    void Authenticate(const QString &account);
-    void Responsed(const QString &password);
-    void DisplayErrorMsg(const QString &msg);
-    void DisplayTextInfo(const QString &msg);
-    void RespondResult(const QString &msg);
-    const QString &RequestEchoOff(const QString &msg);
     /* New authentication framework */
     void CreateAuthController(const QString &account, const int authType, const int encryptType);
     void DestoryAuthController(const QString &account);
@@ -97,6 +93,7 @@ private:
     static void *PAMAuthWorker(void *arg);
     void PAMAuthentication(const QString &account);
     static int PAMConversation(int num_msg, const struct pam_message **msg, struct pam_response **resp, void *app_data);
+    void UpdateAuthStatus(const int status, const QString &message);
 
     void initPublicKey(const QString &account);
 
@@ -105,9 +102,11 @@ private:
     AuthInter *m_authenticateInter;
     pthread_t m_PAMAuthThread;
     QString m_account;
+    QString m_token;
     AuthFlag m_authType;
-    QString m_password;
     QMap<QString, AuthControllerInter *> *m_authenticateControllers;
+    bool m_cancelAuth;
+    bool m_waitToken;
     const char * m_pubkey = nullptr;
 };
 

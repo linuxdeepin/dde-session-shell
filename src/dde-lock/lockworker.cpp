@@ -135,32 +135,7 @@ void LockWorker::initConnections()
                 }
             });
         } else {
-            if (type == AuthTypeAll && status == StatusCodePrompt) {
-                if (!message.isEmpty()) {
-                    m_model->updateAuthStatus(type, status, message);
-                }
-            }
-            if (type == AuthTypePassword) {
-                if (status == StatusCodeSuccess || status == StatusCodeFailure || status == StatusCodeTimeout
-                    || status == StatusCodeError || status == StatusCodeLocked) {
-                    endAuthentication(m_account, m_model->getAuthProperty().MixAuthFlags);
-                    QTimer::singleShot(100, this, [=] {
-                        m_model->updateAuthStatus(type, status, message);
-                        if (status == StatusCodeLocked) {
-                            endAuthentication(m_account, m_model->getAuthProperty().MixAuthFlags);
-                        }
-                    });
-                }
-            }
-            if (type == AuthTypeFingerprint) {
-                if (status == StatusCodeSuccess || status == StatusCodeFailure || status == StatusCodeTimeout
-                    || status == StatusCodeError || status == StatusCodeLocked) {
-                    endAuthentication(m_account, m_model->getAuthProperty().MixAuthFlags);
-                    QTimer::singleShot(100, this, [=] {
-                        m_model->updateAuthStatus(type, status, message);
-                    });
-                }
-            }
+            m_model->updateAuthStatus(type, status, message);
         }
 
         if(status == StatusCodeSuccess && type != AuthTypeAll
@@ -307,6 +282,11 @@ void LockWorker::switchToUser(std::shared_ptr<User> user)
     }
 }
 
+/**
+ * @brief 旧的认证接口，已废弃
+ *
+ * @param password
+ */
 void LockWorker::authUser(const QString &password)
 {
     QString userPath = m_accountsInter->FindUserByName(m_model->currentUser()->name());
@@ -315,8 +295,8 @@ void LockWorker::authUser(const QString &password)
         onDisplayErrorMsg(userPath);
         return;
     }
-    m_authFramework->Authenticate(m_model->currentUser()->name());
-    m_authFramework->Responsed(password);
+    m_authFramework->CreateAuthenticate(m_model->currentUser()->name());
+    m_authFramework->SendToken(password);
 }
 
 void LockWorker::enableZoneDetected(bool disable)
@@ -379,7 +359,8 @@ void LockWorker::createAuthentication(const QString &account)
         m_authFramework->CreateAuthController(account, m_authFramework->GetSupportedMixAuthFlags(), 0);
         break;
     default:
-        m_authFramework->Authenticate(account);
+        m_authFramework->CreateAuthenticate(account);
+        m_model->updateFactorsInfo(MFAInfoList());
         break;
     }
 }
@@ -391,7 +372,21 @@ void LockWorker::createAuthentication(const QString &account)
  */
 void LockWorker::destoryAuthentication(const QString &account)
 {
-    m_authFramework->DestoryAuthController(account);
+    qDebug() << "LockWorker::destoryAuthentication:" << account;
+    switch (m_model->getAuthProperty().FrameworkState) {
+    case 0:
+        if (m_model->getAuthProperty().MFAFlag) {
+            m_authFramework->DestoryAuthController(account);
+        } else {
+            m_authFramework->DestoryAuthController(account);
+            m_authFramework->DestoryAuthenticate();
+        }
+        break;
+    default:
+        m_authFramework->DestoryAuthenticate();
+        break;
+    }
+
 }
 
 /**
@@ -403,10 +398,17 @@ void LockWorker::destoryAuthentication(const QString &account)
  */
 void LockWorker::startAuthentication(const QString &account, const int authType)
 {
-    if (m_model->getAuthProperty().MFAFlag) {
-        m_authFramework->StartAuthentication(account, authType, -1);
-    } else {
-        m_authFramework->StartAuthentication(account, -1, -1);
+    switch (m_model->getAuthProperty().FrameworkState) {
+    case 0:
+        if (m_model->getAuthProperty().MFAFlag) {
+            m_authFramework->StartAuthentication(account, authType, -1);
+        } else {
+            m_authFramework->CreateAuthenticate(account);
+        }
+        break;
+    default:
+        m_authFramework->CreateAuthenticate(account);
+        break;
     }
     QTimer::singleShot(10, this, [=]  {
         m_model->updateLimitedInfo(m_authFramework->GetLimitedInfo(account));
@@ -427,11 +429,11 @@ void LockWorker::sendTokenToAuth(const QString &account, const int authType, con
         if (m_model->getAuthProperty().MFAFlag) {
             m_authFramework->SendTokenToAuth(account, authType, token);
         } else {
-            m_authFramework->SendTokenToAuth(account, -1, token);
+            m_authFramework->SendToken(token);
         }
         break;
     default:
-        m_authFramework->Responsed(token);
+        m_authFramework->SendToken(token);
         break;
     }
 }

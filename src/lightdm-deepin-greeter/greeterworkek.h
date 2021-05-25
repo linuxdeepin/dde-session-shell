@@ -60,8 +60,8 @@ private:
     void checkDBusServer(bool isvalid);
     void oneKeyLogin();
     void userAuthForLightdm(std::shared_ptr<User> user);
-    void prompt(QString text, QLightDM::Greeter::PromptType type);
-    void message(QString text, QLightDM::Greeter::MessageType type);
+    void showPrompt(const QString &text, const QLightDM::Greeter::PromptType type);
+    void showMessage(const QString &text, const QLightDM::Greeter::MessageType type);
     void authenticationComplete();
     void saveNumlockStatus(std::shared_ptr<User> user, const bool &on);
     void recoveryUserKBState(std::shared_ptr<User> user);

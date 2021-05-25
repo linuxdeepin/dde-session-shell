@@ -139,8 +139,8 @@ GreeterWorkek::~GreeterWorkek()
 void GreeterWorkek::initConnections()
 {
     /* greeter */
-    connect(m_greeter, &QLightDM::Greeter::showPrompt, this, &GreeterWorkek::prompt);
-    connect(m_greeter, &QLightDM::Greeter::showMessage, this, &GreeterWorkek::message);
+    connect(m_greeter, &QLightDM::Greeter::showPrompt, this, &GreeterWorkek::showPrompt);
+    connect(m_greeter, &QLightDM::Greeter::showMessage, this, &GreeterWorkek::showMessage);
     connect(m_greeter, &QLightDM::Greeter::authenticationComplete, this, &GreeterWorkek::authenticationComplete);
     /* com.deepin.daemon.Authenticate */
     connect(m_authFramework, &DeepinAuthFramework::FramworkStateChanged, m_model, &SessionBaseModel::updateFrameworkState);
@@ -169,32 +169,7 @@ void GreeterWorkek::initConnections()
                 }
             });
         } else {
-            if (type == AuthTypeAll && status == StatusCodePrompt) {
-                if (!message.isEmpty()) {
-                    m_model->updateAuthStatus(type, status, message);
-                }
-            }
-            if (type == AuthTypePassword) {
-                if (status == StatusCodeSuccess || status == StatusCodeFailure || status == StatusCodeTimeout
-                    || status == StatusCodeError || status == StatusCodeLocked) {
-                    endAuthentication(m_account, m_model->getAuthProperty().MixAuthFlags);
-                    QTimer::singleShot(100, this, [=] {
-                        m_model->updateAuthStatus(type, status, message);
-                        if (status == StatusCodeLocked) {
-                            endAuthentication(m_account, m_model->getAuthProperty().MixAuthFlags);
-                        }
-                    });
-                }
-            }
-            if (type == AuthTypeFingerprint) {
-                if (status == StatusCodeSuccess || status == StatusCodeFailure || status == StatusCodeTimeout
-                    || status == StatusCodeError || status == StatusCodeLocked) {
-                    endAuthentication(m_account, m_model->getAuthProperty().MixAuthFlags);
-                    QTimer::singleShot(100, this, [=] {
-                        m_model->updateAuthStatus(type, status, message);
-                    });
-                }
-            }
+            m_model->updateAuthStatus(type, status, message);
         }
 
         if (status == StatusCodeSuccess && type != AuthTypeAll
@@ -326,6 +301,11 @@ void GreeterWorkek::switchToUser(std::shared_ptr<User> user)
     }
 }
 
+/**
+ * @brief 旧的认证接口，已废弃
+ *
+ * @param password
+ */
 void GreeterWorkek::authUser(const QString &password)
 {
     if (m_authenticating)
@@ -409,6 +389,7 @@ void GreeterWorkek::createAuthentication(const QString &account)
         m_authFramework->SetAuthQuitFlag(account, DeepinAuthFramework::ManualQuit);
         break;
     default:
+        m_model->updateFactorsInfo(MFAInfoList());
         break;
     }
 }
@@ -420,7 +401,13 @@ void GreeterWorkek::createAuthentication(const QString &account)
  */
 void GreeterWorkek::destoryAuthentication(const QString &account)
 {
-    m_authFramework->DestoryAuthController(account);
+    switch (m_model->getAuthProperty().FrameworkState) {
+    case 0:
+        m_authFramework->DestoryAuthController(account);
+        break;
+    default:
+        break;
+    }
 }
 
 /**
@@ -437,16 +424,16 @@ void GreeterWorkek::startAuthentication(const QString &account, const int authTy
         if (m_model->getAuthProperty().MFAFlag) {
             m_authFramework->StartAuthentication(account, authType, -1);
         } else {
-            m_authFramework->StartAuthentication(account, -1, -1);
+            m_greeter->authenticate(account);
         }
-        QTimer::singleShot(10, this, [=] {
-            m_model->updateLimitedInfo(m_authFramework->GetLimitedInfo(account));
-        });
         break;
     default:
         m_greeter->authenticate(account);
         break;
     }
+    QTimer::singleShot(10, this, [=] {
+        m_model->updateLimitedInfo(m_authFramework->GetLimitedInfo(account));
+    });
 }
 
 /**
@@ -467,7 +454,7 @@ void GreeterWorkek::sendTokenToAuth(const QString &account, const int authType, 
         if (m_model->getAuthProperty().MFAFlag) {
             m_authFramework->SendTokenToAuth(account, authType, token);
         } else {
-            m_authFramework->SendTokenToAuth(account, -1, token);
+            m_greeter->respond(token);
         }
         break;
     default:
@@ -553,46 +540,44 @@ void GreeterWorkek::userAuthForLightdm(std::shared_ptr<User> user)
     }
 }
 
-void GreeterWorkek::prompt(QString text, QLightDM::Greeter::PromptType type)
+/**
+ * @brief 显示提示信息
+ *
+ * @param text
+ * @param type
+ */
+void GreeterWorkek::showPrompt(const QString &text, const QLightDM::Greeter::PromptType type)
 {
-    // Don't show password prompt from standard pam modules since
-    // we'll provide our own prompt or just not.
-    qWarning() << "pam prompt: " << text << type;
-
-    const QString msg = text.simplified() == "Please input Password" ? "" : text;
-
     switch (type) {
     case QLightDM::Greeter::PromptTypeSecret:
-        m_authenticating = false;
-        if (msg.isEmpty() && !m_password.isEmpty()) {
-            // m_greeter->respond(m_password);
-        } else {
-            emit m_model->authFaildMessage(text);
-        }
+        m_model->updateAuthStatus(AuthTypeSingle, StatusCodePrompt, text);
         break;
     case QLightDM::Greeter::PromptTypeQuestion:
-        emit m_model->authTipsMessage(text);
         break;
     }
 }
 
-// TODO(justforlxz): 错误信息应该存放在User类中, 切换用户后其他控件读取错误信息，而不是在这里分发。
-void GreeterWorkek::message(QString text, QLightDM::Greeter::MessageType type)
+/**
+ * @brief 显示认证成功/失败的信息
+ *
+ * @param text
+ * @param type
+ */
+void GreeterWorkek::showMessage(const QString &text, const QLightDM::Greeter::MessageType type)
 {
-    qWarning() << "pam message: " << text << type;
-
     switch (type) {
     case QLightDM::Greeter::MessageTypeInfo:
-        qWarning() << Q_FUNC_INFO << "lightdm greeter message type info: " << text.toUtf8() << QString(dgettext("fprintd", text.toUtf8()));
-        emit m_model->authFaildMessage(QString(dgettext("fprintd", text.toUtf8())));
+        m_model->updateAuthStatus(AuthTypeSingle, StatusCodeSuccess, text);
         break;
-
     case QLightDM::Greeter::MessageTypeError:
-        emit m_model->authFaildTipsMessage(QString(dgettext("fprintd", text.toUtf8())));
+        m_model->updateAuthStatus(AuthTypeSingle, StatusCodeFailure, text);
         break;
     }
 }
 
+/**
+ * @brief 认证完成
+ */
 void GreeterWorkek::authenticationComplete()
 {
     qInfo() << "authentication complete, authenticated " << m_greeter->isAuthenticated();
