@@ -292,6 +292,12 @@ void GreeterWorkek::switchToUser(std::shared_ptr<User> user)
     QJsonObject json;
     json["Uid"] = static_cast<int>(user->uid());
     json["Type"] = user->type();
+
+    if (user->uid() == INT_MAX) {
+        destoryAuthentication(m_account);
+        emit m_model->authTypeChanged(AuthType::AuthTypeNone);
+    }
+
     m_lockInter->SwitchToUser(QString(QJsonDocument(json).toJson(QJsonDocument::Compact))).waitForFinished();
 
     // just switch user

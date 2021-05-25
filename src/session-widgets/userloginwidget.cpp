@@ -274,6 +274,12 @@ void UserLoginWidget::updateWidgetShowType(const int type)
         m_singleAuth->deleteLater();
         m_singleAuth = nullptr;
     }
+    /* 账户 */
+    if (type == AuthTypeNone) {
+        if (m_accountEdit != nullptr && !m_accountEdit->text().isEmpty()) {
+            m_accountEdit->clear();
+        }
+    }
 
     /**
      * @brief 设置焦点
