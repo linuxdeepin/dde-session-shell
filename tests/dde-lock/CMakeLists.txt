@@ -1,8 +1,5 @@
 set(BIN_NAME dde-lock-test)
 
-# 用于测试覆盖率的编译条件
-set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -fprofile-arcs -ftest-coverage -lgcov")
-
 aux_source_directory(. LOCK_TEST)
 
 set(LOCK_TEST_SRCS
