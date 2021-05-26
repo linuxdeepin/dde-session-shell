@@ -354,7 +354,6 @@ void DeepinAuthFramework::SendTokenToAuth(const QString &account, const int auth
     }
     qInfo() << "Send token to authentication:" << account << authType;
 
-#if 0 // 加密暂时未使用
     void *handle = nullptr;
 
     if ((handle = dlopen(OPENSSLNAME, RTLD_NOW)) == nullptr) {
@@ -413,10 +412,7 @@ void DeepinAuthFramework::SendTokenToAuth(const QString &account, const int auth
     d_BIO_free(bio);
     dlclose(handle);
 
-    authControllerInter->SetToken(authType, QByteArray(dData, 128));
-#else
-    m_authenticateControllers->value(account)->SetToken(authType, token);
-#endif
+    m_authenticateControllers->value(account)->SetToken(authType, QByteArray(dData, 128));
 }
 
 /**

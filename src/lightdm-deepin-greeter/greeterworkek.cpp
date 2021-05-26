@@ -396,9 +396,12 @@ void GreeterWorkek::createAuthentication(const QString &account)
         m_account = account;
         m_greeter->authenticate(account);
     }
+#ifndef QT_DEBUG
     while (!m_greeter->inAuthentication()) {
         usleep(100);
     }
+#endif
+
     switch (m_model->getAuthProperty().FrameworkState) {
     case 0:
         m_authFramework->CreateAuthController(account, m_authFramework->GetSupportedMixAuthFlags(), 0);
