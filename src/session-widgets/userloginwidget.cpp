@@ -352,6 +352,7 @@ void UserLoginWidget::initSingleAuth(const int index)
 void UserLoginWidget::initPasswdAuth(const int index)
 {
     if (m_passwordAuth != nullptr) {
+        m_passwordAuth->setLineEditInfo(QString(""), AuthenticationModule::InputText);
         return;
     }
     m_passwordAuth = new AuthenticationModule(AuthTypePassword, this);
@@ -402,6 +403,7 @@ void UserLoginWidget::initPasswdAuth(const int index)
     });
     FrameDataBind::Instance()->refreshData("UserLoginPassword");
     m_passwordAuth->setKeyboardButtonVisible(m_keyboardList.size() > 1 ? true : false);
+    m_passwordAuth->setLineEditInfo(QString(""), AuthenticationModule::InputText);
 }
 
 /**
@@ -456,6 +458,7 @@ void UserLoginWidget::initActiveDirectoryAuth(const int index)
 void UserLoginWidget::initUkeyAuth(const int index)
 {
     if (m_ukeyAuth != nullptr) {
+        m_ukeyAuth->setLineEditInfo(QString(""), AuthenticationModule::InputText);
         return;
     }
     m_ukeyAuth = new AuthenticationModule(AuthTypeUkey, this);
@@ -505,6 +508,7 @@ void UserLoginWidget::initUkeyAuth(const int index)
         }
     });
     FrameDataBind::Instance()->refreshData("UserLoginUKey");
+    m_ukeyAuth->setLineEditInfo(QString(""), AuthenticationModule::InputText);
 }
 
 /**

@@ -498,6 +498,8 @@ void GreeterWorkek::checkAccount(const QString &account)
     if (user_ptr->isNoPasswdGrp()) {
         m_greeter->authenticate(account);
     } else {
+        m_resetSessionTimer->stop();
+        destoryAuthentication(account);
         createAuthentication(account);
     }
 }
