@@ -67,7 +67,7 @@ public:
 
 signals:
     /* com.deepin.daemon.Authenticate */
-    void LimitedInfoChanged(const QString &);
+    void LimitsInfoChanged(const QString &);
     void SupportedMixAuthFlagsChanged(const int);
     void FramworkStateChanged(const int);
     void SupportedEncryptsChanged(const QString &);

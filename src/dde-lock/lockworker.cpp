@@ -106,7 +106,11 @@ void LockWorker::initConnections()
     connect(m_loginedInter, &LoginedInter::UserListChanged, m_model, &SessionBaseModel::updateLoginedUserList);
     /* com.deepin.daemon.Authenticate */
     connect(m_authFramework, &DeepinAuthFramework::FramworkStateChanged, m_model, &SessionBaseModel::updateFrameworkState);
-    connect(m_authFramework, &DeepinAuthFramework::LimitedInfoChanged, m_model, &SessionBaseModel::updateLimitedInfo);
+    connect(m_authFramework, &DeepinAuthFramework::LimitsInfoChanged, this, [this](const QString &account) {
+        if (account == m_model->currentUser()->name()) {
+            m_model->updateLimitedInfo(m_authFramework->GetLimitedInfo(account));
+        }
+    });
     connect(m_authFramework, &DeepinAuthFramework::SupportedEncryptsChanged, m_model, &SessionBaseModel::updateSupportedEncryptionType);
     connect(m_authFramework, &DeepinAuthFramework::SupportedMixAuthFlagsChanged, m_model, &SessionBaseModel::updateSupportedMixAuthFlags);
     /* com.deepin.daemon.Authenticate.Session */

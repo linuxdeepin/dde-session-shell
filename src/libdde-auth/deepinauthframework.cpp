@@ -41,10 +41,7 @@ DeepinAuthFramework::DeepinAuthFramework(DeepinAuthInterface *interface, QObject
     , m_waitToken(true)
 {
     connect(m_authenticateInter, &AuthInter::FrameworkStateChanged, this, &DeepinAuthFramework::FramworkStateChanged);
-    connect(m_authenticateInter, &AuthInter::LimitUpdated, this, [=](const QString &value) {
-        qDebug() << "AuthInter::LimitUpdated:" << value;
-        LimitedInfoChanged(m_authenticateInter->GetLimits(value));
-    });
+    connect(m_authenticateInter, &AuthInter::LimitUpdated, this, &DeepinAuthFramework::LimitsInfoChanged);
     connect(m_authenticateInter, &AuthInter::SupportedFlagsChanged, this, &DeepinAuthFramework::SupportedMixAuthFlagsChanged);
     connect(m_authenticateInter, &AuthInter::SupportEncryptsChanged, this, &DeepinAuthFramework::SupportedEncryptsChanged);
 }
