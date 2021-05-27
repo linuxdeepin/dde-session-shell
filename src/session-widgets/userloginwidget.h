@@ -129,6 +129,7 @@ private:
     void initPINAuth(const int index);
 
     void onOtherPageFocusChanged(const QVariant &value);
+    void onOtherPageSingleChanged(const QVariant &value);
     void onOtherPageAccountChanged(const QVariant &value);
     void onOtherPagePINChanged(const QVariant &value);
     void onOtherPageUKeyChanged(const QVariant &value);

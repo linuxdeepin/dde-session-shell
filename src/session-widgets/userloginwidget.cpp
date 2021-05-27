@@ -338,7 +338,7 @@ void UserLoginWidget::initSingleAuth(const int index)
     connect(m_lockButton, &QPushButton::clicked, m_singleAuth, &AuthSingle::requestAuthenticate);
 
     /* 输入框数据同步（可能是密码或PIN） */
-    std::function<void(QVariant)> tokenChanged = std::bind(&UserLoginWidget::onOtherPagePasswordChanged, this, std::placeholders::_1);
+    std::function<void(QVariant)> tokenChanged = std::bind(&UserLoginWidget::onOtherPageSingleChanged, this, std::placeholders::_1);
     m_registerFunctionIndexs["UserLoginToken"] = FrameDataBind::Instance()->registerFunction("UserLoginToken", tokenChanged);
     connect(m_singleAuth, &AuthSingle::lineEditTextChanged, this, [=](const QString &value) {
         FrameDataBind::Instance()->updateValue("UserLoginToken", value);
@@ -697,6 +697,17 @@ void UserLoginWidget::ShutdownPrompt(SessionBaseModel::PowerAction action)
  */
 void UserLoginWidget::onOtherPageFocusChanged(const QVariant &value)
 {
+    Q_UNUSED(value)
+}
+
+/**
+ * @brief 单因场景下输入框中数据同步
+ *
+ * @param value
+ */
+void UserLoginWidget::onOtherPageSingleChanged(const QVariant &value)
+{
+    m_singleAuth->setLineEditInfo(value.toString(), AuthSingle::InputText);
 }
 
 void UserLoginWidget::updateLoginEditLocale(const QLocale &locale)
