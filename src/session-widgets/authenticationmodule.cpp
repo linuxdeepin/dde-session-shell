@@ -376,6 +376,7 @@ void AuthenticationModule::setAuthResult(const int status, const QString &result
             setAuthStatus(":/misc/images/login_wait.svg");
         }
         m_showPrompt = true;
+        emit activateAuthentication();
         break;
     default:
         setEnabled(false);
