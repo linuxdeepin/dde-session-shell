@@ -92,6 +92,7 @@ void AuthSingle::initConnections()
             setAnimationState(true);
             m_lineEdit->clearFocus();
             m_lineEdit->setFocusPolicy(Qt::NoFocus);
+            m_lineEdit->lineEdit()->setReadOnly(true);
             emit requestAuthenticate();
         }
     });
@@ -127,6 +128,7 @@ void AuthSingle::setAuthResult(const int status, const QString &result)
         m_lineEdit->setFocusPolicy(Qt::NoFocus);
         m_lineEdit->clearFocus();
         m_lineEdit->setAlert(false);
+        m_lineEdit->lineEdit()->setReadOnly(true);
         setLineEditInfo(result, PlaceHolderText);
         emit authFinished(StatusCodeSuccess);
         break;
@@ -136,6 +138,7 @@ void AuthSingle::setAuthResult(const int status, const QString &result)
             m_lineEdit->clear();
             m_lineEdit->setFocusPolicy(Qt::StrongFocus);
             m_lineEdit->setFocus();
+            m_lineEdit->lineEdit()->setReadOnly(false);
             setLineEditInfo(result, AlertText);
             emit activeAuth();
         } else {
@@ -167,6 +170,7 @@ void AuthSingle::setAuthResult(const int status, const QString &result)
             m_lineEdit->clear();
             m_lineEdit->setFocusPolicy(Qt::StrongFocus);
             m_lineEdit->setFocus();
+            m_lineEdit->lineEdit()->setReadOnly(false);
             setLineEditInfo(result, PlaceHolderText);
         } else {
             m_lineEdit->setAlert(false);
@@ -185,6 +189,7 @@ void AuthSingle::setAuthResult(const int status, const QString &result)
         m_lineEdit->clear();
         m_lineEdit->setFocusPolicy(Qt::NoFocus);
         m_lineEdit->clearFocus();
+        m_lineEdit->lineEdit()->setReadOnly(true);
         break;
     case StatusCodeRecover:
         setAnimationState(false);
