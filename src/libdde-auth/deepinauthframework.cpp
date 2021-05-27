@@ -66,7 +66,10 @@ DeepinAuthFramework::~DeepinAuthFramework()
  */
 void DeepinAuthFramework::CreateAuthenticate(const QString &account)
 {
-    qInfo() << "Create PAM authenticate thread:" << account;
+    if (account == m_account && m_PAMAuthThread != 0) {
+        return;
+    }
+    qInfo() << "Create PAM authenticate thread:" << account << m_PAMAuthThread;
     m_account = account;
     DestoryAuthenticate();
     m_cancelAuth = false;
@@ -108,18 +111,31 @@ void DeepinAuthFramework::PAMAuthentication(const QString &account)
     int ret = pam_start(serviceName, account.toLocal8Bit().data(), &conv, &m_pamHandle);
     if (ret != PAM_SUCCESS) {
         qCritical() << "PAM start failed:" << pam_strerror(m_pamHandle, ret) << ret;
+    } else {
+        qDebug() << "PAM start...";
     }
 
     int rc = pam_authenticate(m_pamHandle, 0);
     if (rc != PAM_SUCCESS) {
         qWarning() << "PAM authenticate failed:" << pam_strerror(m_pamHandle, rc) << rc;
+    } else {
+        qDebug() << "PAM authenticate finished.";
     }
 
     int re = pam_end(m_pamHandle, rc);
     if (re != PAM_SUCCESS) {
         qCritical() << "PAM end failed:" << pam_strerror(m_pamHandle, re) << re;
+    } else {
+        qDebug() << "PAM end...";
     }
 
+    if (rc == 0) {
+        UpdateAuthStatus(StatusCodeSuccess, m_message);
+    } else {
+        UpdateAuthStatus(StatusCodeFailure, m_message);
+    }
+
+    m_PAMAuthThread = 0;
     system("xset dpms force on");
 }
 
@@ -140,24 +156,29 @@ int DeepinAuthFramework::PAMConversation(int num_msg, const pam_message **msg, p
 
     QPointer<DeepinAuthFramework> isThreadAlive(app_ptr);
     if (!isThreadAlive) {
-        qDebug() << "pam: application is null";
+        qWarning() << "pam: application is null";
         return PAM_CONV_ERR;
     }
 
-    if (num_msg <= 0 || num_msg > PAM_MAX_NUM_MSG)
+    if (num_msg <= 0 || num_msg > PAM_MAX_NUM_MSG) {
+        qWarning() << "PAM_CONV_ERR :" << num_msg;
         return PAM_CONV_ERR;
+    }
 
-    if ((aresp = static_cast<struct pam_response *>(calloc(num_msg, sizeof(*aresp)))) == nullptr)
+    if ((aresp = static_cast<struct pam_response *>(calloc(static_cast<size_t>(num_msg), sizeof(*aresp)))) == nullptr) {
+        qWarning() << "PAM_BUF_ERR";
         return PAM_BUF_ERR;
+    }
 
     for (idx = 0; idx < num_msg; ++idx) {
         switch (PAM_MSG_MEMBER(msg, idx, msg_style)) {
         case PAM_PROMPT_ECHO_ON:
         case PAM_PROMPT_ECHO_OFF: {
             qDebug() << "pam auth echo:" << PAM_MSG_MEMBER(msg, idx, msg);
-            app_ptr->UpdateAuthStatus(StatusCodePrompt, PAM_MSG_MEMBER(msg, idx, msg));
+            app_ptr->UpdateAuthStatus(StatusCodePrompt, QString::fromLocal8Bit(PAM_MSG_MEMBER(msg, idx, msg)));
             /* 等待用户输入密码 */
             while (app_ptr->m_waitToken) {
+                qDebug() << "Waiting for the password...";
                 if (app_ptr->m_cancelAuth) {
                     app_ptr->m_cancelAuth = false;
                     return PAM_ABORT;
@@ -183,14 +204,14 @@ int DeepinAuthFramework::PAMConversation(int num_msg, const pam_message **msg, p
         }
         case PAM_ERROR_MSG: {
             qDebug() << "pam auth error: " << PAM_MSG_MEMBER(msg, idx, msg);
-            app_ptr->UpdateAuthStatus(StatusCodeFailure, PAM_MSG_MEMBER(msg, idx, msg));
+            app_ptr->m_message = QString::fromLocal8Bit(PAM_MSG_MEMBER(msg, idx, msg));
             app_ptr->m_authType = AuthFlag::Fingerprint;
             aresp[idx].resp_retcode = PAM_SUCCESS;
             break;
         }
         case PAM_TEXT_INFO: {
             qDebug() << "pam auth info: " << PAM_MSG_MEMBER(msg, idx, msg);
-            app_ptr->UpdateAuthStatus(StatusCodeSuccess, PAM_MSG_MEMBER(msg, idx, msg));
+            app_ptr->m_message = QString::fromLocal8Bit(PAM_MSG_MEMBER(msg, idx, msg));
             aresp[idx].resp_retcode = PAM_SUCCESS;
             break;
         }

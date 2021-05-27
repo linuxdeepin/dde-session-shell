@@ -102,6 +102,7 @@ private:
     AuthInter *m_authenticateInter;
     pthread_t m_PAMAuthThread;
     QString m_account;
+    QString m_message;
     QString m_token;
     AuthFlag m_authType;
     QMap<QString, AuthControllerInter *> *m_authenticateControllers;
