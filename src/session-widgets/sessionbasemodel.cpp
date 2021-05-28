@@ -88,8 +88,8 @@ void SessionBaseModel::userAdd(std::shared_ptr<User> user)
 {
     // NOTE(zorowk): If there are duplicate uids, delete ADDomainUser first
     auto user_exist = findUserByUid(user->uid());
-    if (user_exist != nullptr && user_exist->metaObject() == &ADDomainUser::staticMetaObject) {
-        userRemoved(user_exist);
+    if (user_exist != nullptr) {
+        return;
     };
 
     m_userList << user;

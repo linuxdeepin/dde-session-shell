@@ -61,6 +61,7 @@ LockWorker::LockWorker(SessionBaseModel *const model, QObject *parent)
         m_model->setIsServerModel(true);
         m_model->userAdd(user);
     }
+
     onUserAdded(ACCOUNTS_DBUS_PREFIX + QString::number(m_currentUserUid));
 
     /* com.deepin.daemon.Accounts */
