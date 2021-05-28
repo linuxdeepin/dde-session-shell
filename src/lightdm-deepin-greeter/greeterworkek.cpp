@@ -417,7 +417,7 @@ void GreeterWorkek::createAuthentication(const QString &account)
 #endif
     switch (m_model->getAuthProperty().FrameworkState) {
     case 0:
-        m_authFramework->CreateAuthController(account, m_authFramework->GetSupportedMixAuthFlags(), 0);
+        m_authFramework->CreateAuthController(account, m_authFramework->GetSupportedMixAuthFlags(), AppTypeLogin);
         m_authFramework->SetAuthQuitFlag(account, DeepinAuthFramework::ManualQuit);
         break;
     default:

@@ -22,6 +22,15 @@
 namespace AuthCommon {
 
 /**
+ * @brief The AppType enum
+ * 发起认证的应用类型
+ */
+enum AppType {
+    AppTypeLogin = 1, // 登录
+    AppTypeLock = 2   // 锁屏
+};
+
+/**
  * @brief The InputType enum
  * 认证信息输入设备的类型
  */
