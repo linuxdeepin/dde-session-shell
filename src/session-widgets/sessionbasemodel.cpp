@@ -549,6 +549,10 @@ void SessionBaseModel::updatePrompt(const QString &prompt)
 void SessionBaseModel::updateFactorsInfo(const MFAInfoList &infoList)
 {
     m_authProperty.AuthType = 0;
+    if (m_currentUser->uid() == INT_MAX) {
+        emit authTypeChanged(AuthTypeNone);
+        return;
+    }
     switch (m_authProperty.FrameworkState) {
     case 0:
         if (m_authProperty.MFAFlag) {
