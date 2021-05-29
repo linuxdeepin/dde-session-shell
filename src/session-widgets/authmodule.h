@@ -78,6 +78,7 @@ protected:
     LimitsInfo *m_limitsInfo; // 认证限制相关信息
     DLabel *m_authStatus;     // 认证状态图标
     QTimer *m_unlockTimer;    // 认证解锁定时器
+    QTimer *m_unlockTimerTmp; // 认证解锁定时器
 };
 
 #endif // AUTHMODULE_H

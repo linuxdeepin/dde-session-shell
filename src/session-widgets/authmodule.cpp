@@ -44,12 +44,16 @@ AuthModule::AuthModule(QWidget *parent)
     , m_showPrompt(true)
     , m_limitsInfo(new LimitsInfo())
     , m_unlockTimer(new QTimer(this))
+    , m_unlockTimerTmp(new QTimer(this))
 {
     m_limitsInfo->locked = false;
     m_limitsInfo->maxTries = 0;
     m_limitsInfo->numFailures = 0;
     m_limitsInfo->unlockSecs = 0;
     m_limitsInfo->unlockTime = QString("0001-01-01T00:00:00Z");
+
+    m_unlockTimer->setSingleShot(false);
+    m_unlockTimerTmp->setSingleShot(true);
 }
 
 AuthModule::~AuthModule()
@@ -112,6 +116,9 @@ void AuthModule::setLimitsInfo(const LimitsInfo &info)
 void AuthModule::updateUnlockTime()
 {
     if (QDateTime::fromString(m_limitsInfo->unlockTime, Qt::ISODateWithMs) <= QDateTime::currentDateTime()) {
+        m_integerMinutes = 0;
+        m_unlockTimerTmp->stop();
+        m_unlockTimer->stop();
         return;
     }
     uint intervalSeconds = QDateTime::fromString(m_limitsInfo->unlockTime, Qt::ISODateWithMs).toLocalTime().toTime_t()
@@ -119,9 +126,5 @@ void AuthModule::updateUnlockTime()
     uint remainderSeconds = intervalSeconds % 60;
     m_integerMinutes = (intervalSeconds - remainderSeconds) / 60 + 1;
     updateUnlockPrompt();
-    QTimer::singleShot(remainderSeconds * 1000, this, [=] {
-        m_integerMinutes--;
-        updateUnlockPrompt();
-        m_unlockTimer->start(60 * 1000);
-    });
+    m_unlockTimerTmp->start(static_cast<int>(remainderSeconds * 1000));
 }

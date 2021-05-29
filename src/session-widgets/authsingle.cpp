@@ -97,6 +97,16 @@ void AuthSingle::initConnections()
         }
     });
     /* 认证解锁时间 */
+    connect(m_unlockTimerTmp, &QTimer::timeout, this, [this] {
+        m_integerMinutes--;
+        if (m_integerMinutes <= 1) {
+            m_integerMinutes = 0;
+            m_unlockTimer->start(0);
+        } else {
+            updateUnlockPrompt();
+            m_unlockTimer->start(60 * 1000);
+        }
+    });
     connect(m_unlockTimer, &QTimer::timeout, this, [this] {
         if (m_integerMinutes > 0) {
             m_integerMinutes--;
@@ -134,15 +144,20 @@ void AuthSingle::setAuthResult(const int status, const QString &result)
         break;
     case StatusCodeFailure: {
         setAnimationState(false);
-        if (!m_limitsInfo->locked) {
+        if (m_limitsInfo->locked) {
+            m_lineEdit->clear();
+            m_lineEdit->setFocusPolicy(Qt::NoFocus);
+            m_lineEdit->clearFocus();
+            m_lineEdit->setAlert(false);
+            m_lineEdit->lineEdit()->setReadOnly(true);
+            setLineEditInfo(result, PlaceHolderText);
+        } else {
             m_lineEdit->clear();
             m_lineEdit->setFocusPolicy(Qt::StrongFocus);
             m_lineEdit->setFocus();
             m_lineEdit->lineEdit()->setReadOnly(false);
             setLineEditInfo(result, AlertText);
             emit activeAuth();
-        } else {
-            m_lineEdit->setAlert(false);
         }
         break;
     }
@@ -166,18 +181,10 @@ void AuthSingle::setAuthResult(const int status, const QString &result)
         break;
     case StatusCodePrompt:
         setAnimationState(false);
-        if (!m_limitsInfo->locked) {
-            m_lineEdit->clear();
-            m_lineEdit->setFocusPolicy(Qt::StrongFocus);
-            m_lineEdit->setFocus();
-            m_lineEdit->lineEdit()->setReadOnly(false);
-            setLineEditInfo(result, PlaceHolderText);
-        } else {
-            m_lineEdit->setAlert(false);
-        }
         m_lineEdit->clear();
         m_lineEdit->setFocusPolicy(Qt::StrongFocus);
         m_lineEdit->setFocus();
+        m_lineEdit->lineEdit()->setReadOnly(false);
         setLineEditInfo(result, PlaceHolderText);
         break;
     case StatusCodeStarted:
@@ -186,10 +193,6 @@ void AuthSingle::setAuthResult(const int status, const QString &result)
         break;
     case StatusCodeLocked:
         setAnimationState(false);
-        m_lineEdit->clear();
-        m_lineEdit->setFocusPolicy(Qt::NoFocus);
-        m_lineEdit->clearFocus();
-        m_lineEdit->lineEdit()->setReadOnly(true);
         break;
     case StatusCodeRecover:
         setAnimationState(false);
@@ -240,12 +243,11 @@ void AuthSingle::setCapsStatus(const bool isCapsOn)
  */
 void AuthSingle::setLimitsInfo(const LimitsInfo &info)
 {
-    if (info.locked && info.locked != m_limitsInfo->locked && info.unlockTime != m_limitsInfo->unlockTime) {
-        m_limitsInfo->locked = info.locked;
+    if (info.unlockTime != m_limitsInfo->unlockTime) {
         m_limitsInfo->unlockTime = info.unlockTime;
-        setAuthResult(StatusCodeLocked, QString(""));
         updateUnlockTime();
     }
+    m_limitsInfo->locked = info.locked;
     m_limitsInfo->maxTries = info.maxTries;
     m_limitsInfo->numFailures = info.numFailures;
     m_limitsInfo->unlockSecs = info.unlockSecs;
