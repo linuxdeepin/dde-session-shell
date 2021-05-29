@@ -46,10 +46,24 @@ AuthenticationModule::AuthenticationModule(const int type, QWidget *parent)
     , m_limitsInfo(new LimitsInfo())
     , m_status(StatusCodeStarted)
     , m_unlockTimer(new QTimer(this))
+    , m_unlockTimerTmp(new QTimer(this))
     , m_showPrompt(true)
 {
     init();
 
+    m_unlockTimer->setSingleShot(false);
+    m_unlockTimerTmp->setSingleShot(true);
+
+    connect(m_unlockTimerTmp, &QTimer::timeout, this, [this] {
+        m_integerMinutes--;
+        if (m_integerMinutes <= 1) {
+            m_integerMinutes = 0;
+            m_unlockTimer->start(0);
+        } else {
+            emit unlockTimeChanged();
+            m_unlockTimer->start(60 * 1000);
+        }
+    });
     connect(m_unlockTimer, &QTimer::timeout, this, [=] {
         if (m_integerMinutes > 0) {
             m_integerMinutes--;
@@ -234,7 +248,7 @@ void AuthenticationModule::setAuthResult(const int status, const QString &result
             setAnimationState(false);
             m_lineEdit->clear();
             m_lineEdit->setFocus();
-            if (m_authType == AuthTypePassword || m_authType == AuthTypeSingle) {
+            if (m_authType == AuthTypePassword) {
                 if (m_limitsInfo->maxTries - m_limitsInfo->numFailures > 1) {
                     setLineEditInfo(tr("Verification failed, %n chances left", "", static_cast<int>(m_limitsInfo->maxTries - m_limitsInfo->numFailures)), PlaceHolderText);
                 } else if (m_limitsInfo->maxTries - m_limitsInfo->numFailures == 1) {
@@ -243,8 +257,6 @@ void AuthenticationModule::setAuthResult(const int status, const QString &result
                 setLineEditInfo(tr("Wrong Password"), AlertText);
             } else if (m_authType == AuthTypeUkey) {
                 setLineEditInfo(tr("Wrong PIN"), AlertText);
-            } else {
-                setLineEditInfo(result, AlertText);
             }
         }
         if (m_authStatus != nullptr) {
@@ -360,6 +372,7 @@ void AuthenticationModule::setAuthResult(const int status, const QString &result
         }
         if (m_lineEdit != nullptr) {
             setAnimationState(false);
+            setLineEditInfo(tr("Please try again %n minute(s) later", "", static_cast<int>(m_integerMinutes)), PlaceHolderText);
         }
         if (m_authStatus != nullptr) {
             setAuthStatus(":/misc/images/login_lock.svg");
@@ -461,12 +474,16 @@ void AuthenticationModule::setCapsStatus(const bool isCapsOn)
  */
 void AuthenticationModule::setLimitsInfo(const LimitsInfo &info)
 {
-    if (info.locked && info.locked != m_limitsInfo->locked && info.unlockTime != m_limitsInfo->unlockTime) {
-        m_limitsInfo->locked = info.locked;
+    if (info.unlockTime != m_limitsInfo->unlockTime) {
         m_limitsInfo->unlockTime = info.unlockTime;
-        setAuthResult(StatusCodeLocked, QString(""));
         updateUnlockTime();
+        if (info.locked) {
+            setAuthResult(StatusCodeLocked, QString("Locked"));
+        } else {
+            setAuthResult(StatusCodeUnlocked, QString("Unlocked"));
+        }
     }
+    m_limitsInfo->locked = info.locked;
     m_limitsInfo->maxTries = info.maxTries;
     m_limitsInfo->numFailures = info.numFailures;
     m_limitsInfo->unlockSecs = info.unlockSecs;
@@ -578,16 +595,6 @@ void AuthenticationModule::setKeyboardButtontext(const QString &text)
 }
 
 /**
- * @brief 设置当前认证方式的类型。-- 仅供单因场景下特殊使用！
- *
- * @param authType
- */
-void AuthenticationModule::setAuthType(const int authType)
-{
-    m_authType = authType;
-}
-
-/**
  * @brief 设置动画执行状态  ---  后续可添加更多动画
  *
  * @param start
@@ -609,6 +616,9 @@ void AuthenticationModule::setAnimationState(const bool start)
 void AuthenticationModule::updateUnlockTime()
 {
     if (QDateTime::fromString(m_limitsInfo->unlockTime, Qt::ISODateWithMs) <= QDateTime::currentDateTime()) {
+        m_integerMinutes = 0;
+        m_unlockTimerTmp->stop();
+        m_unlockTimer->stop();
         return;
     }
     uint intervalSeconds = QDateTime::fromString(m_limitsInfo->unlockTime, Qt::ISODateWithMs).toLocalTime().toTime_t()
@@ -616,11 +626,7 @@ void AuthenticationModule::updateUnlockTime()
     uint remainderSeconds = intervalSeconds % 60;
     m_integerMinutes = (intervalSeconds - remainderSeconds) / 60 + 1;
     emit unlockTimeChanged();
-    QTimer::singleShot(remainderSeconds * 1000, this, [=] {
-        m_integerMinutes--;
-        emit unlockTimeChanged();
-        m_unlockTimer->start(60 * 1000);
-    });
+    m_unlockTimerTmp->start(static_cast<int>(remainderSeconds * 1000));
 }
 
 bool AuthenticationModule::eventFilter(QObject *watched, QEvent *event)

@@ -155,35 +155,42 @@ void GreeterWorkek::initConnections()
     connect(m_authFramework, &DeepinAuthFramework::SupportedMixAuthFlagsChanged, m_model, &SessionBaseModel::updateSupportedMixAuthFlags);
     /* com.deepin.daemon.Authenticate.Session */
     connect(m_authFramework, &DeepinAuthFramework::AuthStatusChanged, this, [=](const int type, const int status, const QString &message) {
-        if (type == AuthTypeAll && status == StatusCodeSuccess && m_model->getAuthProperty().FrameworkState == 0) {
-            if (m_greeter->inAuthentication()) {
-                m_greeter->respond(m_authFramework->AuthSessionPath(m_account) + QString(";") + m_password);
-            } else {
-                qWarning() << "The lightdm is not in authentication!";
-            }
-        }
         if (m_model->getAuthProperty().MFAFlag) {
-            if (type != AuthTypeAll
-                && (status == StatusCodeSuccess || status == StatusCodeFailure || status == StatusCodeTimeout
-                    || status == StatusCodeError || status == StatusCodeLocked)) {
-                endAuthentication(m_account, type);
-            }
-            QTimer::singleShot(100, this, [=] {
-                m_model->updateAuthStatus(type, status, message);
-                if (status == StatusCodeLocked) {
-                    endAuthentication(m_account, type);
+            if (type == AuthTypeAll && status == StatusCodeSuccess) {
+                m_resetSessionTimer->stop();
+                if (m_greeter->inAuthentication()) {
+                    m_greeter->respond(m_authFramework->AuthSessionPath(m_account) + QString(";") + m_password);
+                    m_model->updateAuthStatus(type, status, message);
+                } else {
+                    qWarning() << "The lightdm is not in authentication!";
                 }
-            });
+
+            } else if (type != AuthTypeAll) {
+                switch (status) {
+                case StatusCodeSuccess:
+                    m_resetSessionTimer->start();
+                    endAuthentication(m_account, type);
+                    m_model->updateAuthStatus(type, status, message);
+                    break;
+                case StatusCodeFailure:
+                case StatusCodeLocked:
+                    endAuthentication(m_account, type);
+                    QTimer::singleShot(10, this, [=] {
+                        m_model->updateAuthStatus(type, status, message);
+                    });
+                    break;
+                case StatusCodeTimeout:
+                case StatusCodeError:
+                    endAuthentication(m_account, type);
+                    m_model->updateAuthStatus(type, status, message);
+                    break;
+                default:
+                    m_model->updateAuthStatus(type, status, message);
+                    break;
+                }
+            }
         } else {
             m_model->updateAuthStatus(type, status, message);
-        }
-
-        if (status == StatusCodeSuccess && type != AuthTypeAll
-            && !m_resetSessionTimer->isActive() && m_model->getAuthProperty().MFAFlag
-            && !m_greeter->isAuthenticated()) {
-            m_resetSessionTimer->start();
-        } else if (status == StatusCodeSuccess && type == AuthTypeAll) {
-            m_resetSessionTimer->stop();
         }
     });
     connect(m_authFramework, &DeepinAuthFramework::FactorsInfoChanged, m_model, &SessionBaseModel::updateFactorsInfo);
@@ -321,6 +328,8 @@ void GreeterWorkek::switchToUser(std::shared_ptr<User> user)
     if (user->isLogin()) {
         // switch to user Xorg
         QProcess::startDetached("dde-switchtogreeter", QStringList() << user->name());
+    } else {
+        m_model->setCurrentUser(user);
     }
 }
 

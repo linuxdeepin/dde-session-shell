@@ -123,32 +123,38 @@ void LockWorker::initConnections()
     connect(m_authFramework, &DeepinAuthFramework::PINLenChanged, m_model, &SessionBaseModel::updatePINLen);
     connect(m_authFramework, &DeepinAuthFramework::PromptChanged, m_model, &SessionBaseModel::updatePrompt);
     connect(m_authFramework, &DeepinAuthFramework::AuthStatusChanged, this, [=](const int type, const int status, const QString &message) {
-        if (type == AuthTypeAll && status == StatusCodeSuccess) {
-            onUnlockFinished(true);
-            destoryAuthentication(m_account);
-            m_model->updateAuthStatus(type, status, message);
-            m_resetSessionTimer->stop();
-            return;
-        }
         if (m_model->getAuthProperty().MFAFlag) {
-            if (type != AuthTypeAll
-                && (status == StatusCodeSuccess || status == StatusCodeFailure || status == StatusCodeTimeout
-                    || status == StatusCodeError || status == StatusCodeLocked)) {
-                endAuthentication(m_account, type);
-            }
-            QTimer::singleShot(100, this, [=] {
+            if (type == AuthTypeAll && status == StatusCodeSuccess) {
                 m_model->updateAuthStatus(type, status, message);
-                if (status == StatusCodeLocked) {
+                destoryAuthentication(m_account);
+                onUnlockFinished(true);
+                m_resetSessionTimer->stop();
+            } else if (type != AuthTypeAll) {
+                switch (status) {
+                case StatusCodeSuccess:
+                    m_resetSessionTimer->start();
                     endAuthentication(m_account, type);
+                    m_model->updateAuthStatus(type, status, message);
+                    break;
+                case StatusCodeFailure:
+                case StatusCodeLocked:
+                    endAuthentication(m_account, type);
+                    QTimer::singleShot(10, this, [=]{
+                        m_model->updateAuthStatus(type, status, message);
+                    });
+                    break;
+                case StatusCodeTimeout:
+                case StatusCodeError:
+                    endAuthentication(m_account, type);
+                    m_model->updateAuthStatus(type, status, message);
+                    break;
+                default:
+                    m_model->updateAuthStatus(type, status, message);
+                    break;
                 }
-            });
+            }
         } else {
             m_model->updateAuthStatus(type, status, message);
-        }
-
-        if(status == StatusCodeSuccess && type != AuthTypeAll
-           && !m_resetSessionTimer->isActive() && m_model->getAuthProperty().MFAFlag && m_model->visible()){
-            m_resetSessionTimer->start();
         }
     });
     connect(m_authFramework, &DeepinAuthFramework::FactorsInfoChanged, m_model, &SessionBaseModel::updateFactorsInfo);

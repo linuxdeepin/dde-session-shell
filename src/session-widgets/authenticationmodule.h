@@ -57,7 +57,6 @@ public:
     int getAuthStatus() { return m_status; }
     void setKeyboardButtonVisible(const bool visible);
     void setKeyboardButtontext(const QString &text);
-    void setAuthType(const int authType);
 
 signals:
     void activateAuthentication();
@@ -102,6 +101,7 @@ private:
     LimitsInfo *m_limitsInfo;      // 认证限制信息
     int m_status;                  // 当前认证的认证状态
     QTimer *m_unlockTimer;         // 账户限制计时器
+    QTimer *m_unlockTimerTmp;      // 账户限制计时器
     uint m_integerMinutes;
     bool m_showPrompt;
     QString m_iconText;
