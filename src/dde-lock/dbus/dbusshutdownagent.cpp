@@ -48,11 +48,11 @@ void DBusShutdownAgent::Shutdown()
 {
     if (!canShowShutDown()) {
          //锁屏时允许关机
-        emit m_model->onRequirePowerAction(SessionBaseModel::PowerAction::RequireShutdown);
+        emit m_model->onRequirePowerAction(SessionBaseModel::PowerAction::RequireShutdown, false);
     } else {
         m_model->setCurrentModeState(SessionBaseModel::ModeStatus::ShutDownMode);
         m_model->setVisible(true);
-        emit m_model->onRequirePowerAction(SessionBaseModel::PowerAction::RequireShutdown);
+        emit m_model->onRequirePowerAction(SessionBaseModel::PowerAction::RequireShutdown, true);
     }
 }
 
@@ -60,11 +60,11 @@ void DBusShutdownAgent::Restart()
 {
     if (!canShowShutDown()) {
         //锁屏时允许重启
-        emit m_model->onRequirePowerAction(SessionBaseModel::PowerAction::RequireRestart);
+        emit m_model->onRequirePowerAction(SessionBaseModel::PowerAction::RequireRestart, false);
     } else {
         m_model->setCurrentModeState(SessionBaseModel::ModeStatus::ShutDownMode);
         m_model->setVisible(true);
-        emit m_model->onRequirePowerAction(SessionBaseModel::PowerAction::RequireRestart);
+        emit m_model->onRequirePowerAction(SessionBaseModel::PowerAction::RequireRestart, true);
     }
 }
 
@@ -76,7 +76,7 @@ void DBusShutdownAgent::Logout()
 
     m_model->setCurrentModeState(SessionBaseModel::ModeStatus::ShutDownMode);
     m_model->setVisible(true);
-    emit m_model->onRequirePowerAction(SessionBaseModel::PowerAction::RequireLogout);
+    emit m_model->onRequirePowerAction(SessionBaseModel::PowerAction::RequireLogout, true);
 }
 
 void DBusShutdownAgent::Suspend()

@@ -178,7 +178,7 @@ bool LockFrame::handlePoweroffKey()
     // 需要特殊处理：关机(0)和无任何操作(4)
     if (action == 0) {
         //锁屏时或显示关机界面时，需要确认是否关机
-        emit m_model->onRequirePowerAction(SessionBaseModel::PowerAction::RequireShutdown);
+        emit m_model->onRequirePowerAction(SessionBaseModel::PowerAction::RequireShutdown, false);
         return true;
     } else if (action == 4) {
         //初始化时，m_prePreparingSleep = false,m_preparingSleep = false
@@ -222,7 +222,7 @@ void LockFrame::showShutdown()
     show();
 }
 
-void LockFrame::shutdownInhibit(const SessionBaseModel::PowerAction action)
+void LockFrame::shutdownInhibit(const SessionBaseModel::PowerAction action, bool needConfirm)
 {
     //如果其他显示屏界面已经检查过是否允许关机，此显示屏上的界面不再显示，避免重复检查并触发信号
     if (m_model->isCheckedInhibit()) return;
@@ -243,7 +243,7 @@ void LockFrame::shutdownInhibit(const SessionBaseModel::PowerAction action)
     }
 
     //检查是否允许关机
-    m_warningContent->beforeInvokeAction();
+    m_warningContent->beforeInvokeAction(needConfirm);
 }
 
 void LockFrame::cancelShutdownInhibit()

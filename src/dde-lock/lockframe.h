@@ -66,7 +66,7 @@ public slots:
     void showUserList();
     void showLockScreen();
     void showShutdown();
-    void shutdownInhibit(const SessionBaseModel::PowerAction action);
+    void shutdownInhibit(const SessionBaseModel::PowerAction action, bool needConfirm);
     void cancelShutdownInhibit();
 
 protected:

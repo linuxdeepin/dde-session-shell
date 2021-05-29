@@ -175,7 +175,7 @@ signals:
     void authFinished(bool success);
     void switchUserFinished();
     void onPowerActionChanged(PowerAction poweraction);
-    void onRequirePowerAction(PowerAction poweraction);
+    void onRequirePowerAction(PowerAction poweraction, bool needConfirm);
     void onSessionKeyChanged(const QString &sessionKey);
     void onLogindUserChanged();
     void showUserList();
@@ -195,7 +195,7 @@ signals:
     void blackModeChanged(bool is_black);
     void HibernateModeChanged(bool is_hibernate); //休眠信号改变
     void prepareForSleep(bool is_Sleep);          //待机信号改变
-    void shutdownInhibit(const SessionBaseModel::PowerAction action);
+    void shutdownInhibit(const SessionBaseModel::PowerAction action, bool needConfirm);
     void cancelShutdownInhibit();
     void tipsShowed();
     void clearServerLoginWidgetContent();

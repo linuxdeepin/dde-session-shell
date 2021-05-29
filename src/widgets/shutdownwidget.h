@@ -53,7 +53,7 @@ public slots:
     void rightKeySwitch();
     void runSystemMonitor();
     void recoveryLayout();
-    void onRequirePowerAction(SessionBaseModel::PowerAction powerAction);
+    void onRequirePowerAction(SessionBaseModel::PowerAction powerAction, bool needConfirm);
     void setUserSwitchEnable(bool enable);
     void onEnable(const QString &gsettingsName, bool enable);
     void updateLocale(std::shared_ptr<User> user);

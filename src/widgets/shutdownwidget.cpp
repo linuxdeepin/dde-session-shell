@@ -70,37 +70,37 @@ void ShutdownWidget::initConnect()
 {
     connect(m_requireRestartButton, &RoundItemButton::clicked, this, [ = ] {
         m_currentSelectedBtn = m_requireRestartButton;
-        onRequirePowerAction(SessionBaseModel::PowerAction::RequireRestart);
+        onRequirePowerAction(SessionBaseModel::PowerAction::RequireRestart, false);
     });
     connect(m_requireShutdownButton, &RoundItemButton::clicked, this, [ = ] {
         m_currentSelectedBtn = m_requireShutdownButton;
-        onRequirePowerAction(SessionBaseModel::PowerAction::RequireShutdown);
+        onRequirePowerAction(SessionBaseModel::PowerAction::RequireShutdown, false);
     });
     connect(m_requireSuspendButton, &RoundItemButton::clicked, this, [ = ] {
         m_currentSelectedBtn = m_requireSuspendButton;
-        onRequirePowerAction(SessionBaseModel::PowerAction::RequireSuspend);
+        onRequirePowerAction(SessionBaseModel::PowerAction::RequireSuspend, false);
     });
     connect(m_requireHibernateButton, &RoundItemButton::clicked, this, [ = ] {
         m_currentSelectedBtn = m_requireHibernateButton;
-        onRequirePowerAction(SessionBaseModel::PowerAction::RequireHibernate);
+        onRequirePowerAction(SessionBaseModel::PowerAction::RequireHibernate, false);
     });
     connect(m_requireLockButton, &RoundItemButton::clicked, this, [ = ] {
         m_currentSelectedBtn = m_requireLockButton;
-        onRequirePowerAction(SessionBaseModel::PowerAction::RequireLock);
+        onRequirePowerAction(SessionBaseModel::PowerAction::RequireLock, false);
     });
     connect(m_requireSwitchUserBtn, &RoundItemButton::clicked, this, [ = ] {
         m_currentSelectedBtn = m_requireSwitchUserBtn;
-        onRequirePowerAction(SessionBaseModel::PowerAction::RequireSwitchUser);
+        onRequirePowerAction(SessionBaseModel::PowerAction::RequireSwitchUser, false);
     });
     if (m_requireSwitchSystemBtn) {
         connect(m_requireSwitchSystemBtn, &RoundItemButton::clicked, this, [ = ] {
             m_currentSelectedBtn = m_requireSwitchSystemBtn;
-            onRequirePowerAction(SessionBaseModel::PowerAction::RequireSwitchSystem);
+            onRequirePowerAction(SessionBaseModel::PowerAction::RequireSwitchSystem, false);
         });
     }
     connect(m_requireLogoutButton, &RoundItemButton::clicked, this, [ = ] {
         m_currentSelectedBtn = m_requireLogoutButton;
-        onRequirePowerAction(SessionBaseModel::PowerAction::RequireLogout);
+        onRequirePowerAction(SessionBaseModel::PowerAction::RequireLogout, false);
     });
 
     connect(GSettingWatcher::instance(), &GSettingWatcher::enableChanged, this, &ShutdownWidget::onEnable);
@@ -171,21 +171,21 @@ void ShutdownWidget::enterKeyPushed()
         return;
 
     if (m_currentSelectedBtn == m_requireShutdownButton)
-        onRequirePowerAction(SessionBaseModel::PowerAction::RequireShutdown);
+        onRequirePowerAction(SessionBaseModel::PowerAction::RequireShutdown, false);
     else if (m_currentSelectedBtn == m_requireRestartButton)
-        onRequirePowerAction(SessionBaseModel::PowerAction::RequireRestart);
+        onRequirePowerAction(SessionBaseModel::PowerAction::RequireRestart, false);
     else if (m_currentSelectedBtn == m_requireSuspendButton)
-        onRequirePowerAction(SessionBaseModel::PowerAction::RequireSuspend);
+        onRequirePowerAction(SessionBaseModel::PowerAction::RequireSuspend, false);
     else if (m_currentSelectedBtn == m_requireHibernateButton)
-        onRequirePowerAction(SessionBaseModel::PowerAction::RequireHibernate);
+        onRequirePowerAction(SessionBaseModel::PowerAction::RequireHibernate, false);
     else if (m_currentSelectedBtn == m_requireLockButton)
-        onRequirePowerAction(SessionBaseModel::PowerAction::RequireLock);
+        onRequirePowerAction(SessionBaseModel::PowerAction::RequireLock, false);
     else if (m_currentSelectedBtn == m_requireSwitchUserBtn)
-        onRequirePowerAction(SessionBaseModel::PowerAction::RequireSwitchUser);
+        onRequirePowerAction(SessionBaseModel::PowerAction::RequireSwitchUser, false);
     else if (m_currentSelectedBtn == m_requireSwitchSystemBtn)
-        onRequirePowerAction(SessionBaseModel::PowerAction::RequireSwitchSystem);
+        onRequirePowerAction(SessionBaseModel::PowerAction::RequireSwitchSystem, false);
     else if (m_currentSelectedBtn == m_requireLogoutButton)
-        onRequirePowerAction(SessionBaseModel::PowerAction::RequireLogout);
+        onRequirePowerAction(SessionBaseModel::PowerAction::RequireLogout, false);
 }
 
 void ShutdownWidget::enableHibernateBtn(bool enable)
@@ -437,7 +437,7 @@ void ShutdownWidget::recoveryLayout()
     setFocusPolicy(Qt::StrongFocus);
 }
 
-void ShutdownWidget::onRequirePowerAction(SessionBaseModel::PowerAction powerAction)
+void ShutdownWidget::onRequirePowerAction(SessionBaseModel::PowerAction powerAction, bool needConfirm)
 {
     //锁屏或关机模式时，需要确认是否关机或检查是否有阻止关机
     if (m_model->currentType() == SessionBaseModel::AuthType::LockType ||
@@ -450,7 +450,7 @@ void ShutdownWidget::onRequirePowerAction(SessionBaseModel::PowerAction powerAct
         case SessionBaseModel::PowerAction::RequireSuspend:
         case SessionBaseModel::PowerAction::RequireHibernate:
             m_model->setIsCheckedInhibit(false);
-            emit m_model->shutdownInhibit(powerAction);
+            emit m_model->shutdownInhibit(powerAction, needConfirm);
             break;
         default:
             m_model->setPowerAction(powerAction);

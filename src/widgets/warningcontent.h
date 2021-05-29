@@ -43,7 +43,7 @@ class WarningContent : public SessionBaseWindow
 public:
     explicit WarningContent(SessionBaseModel *const model, const SessionBaseModel::PowerAction action, QWidget *parent = nullptr);
     ~WarningContent();
-    void beforeInvokeAction();
+    void beforeInvokeAction(bool needConfirm);
     void setPowerAction(const SessionBaseModel::PowerAction action);
 
 protected:

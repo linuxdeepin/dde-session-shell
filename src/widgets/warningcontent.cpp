@@ -154,11 +154,15 @@ void WarningContent::doAccecpShutdownInhibit()
         emit m_model->cancelShutdownInhibit();
 }
 
-void WarningContent::beforeInvokeAction()
+void WarningContent::beforeInvokeAction(bool needConfirm)
 {
-    WarningView * old_warningView = m_warningView;
     const QList<InhibitWarnView::InhibitorData> inhibitors = listInhibitors(m_powerAction);
     const QList<std::shared_ptr<User>> &loginUsers = m_model->logindUser();
+
+    if (m_warningView != nullptr) {
+        m_warningView->deleteLater();
+        m_warningView = nullptr;
+    }
 
     // change ui
     if (!inhibitors.isEmpty()) {
@@ -222,11 +226,6 @@ void WarningContent::beforeInvokeAction()
         m_warningView->setFixedSize(getCenterContentSize());
         setCenterContent(m_warningView);
 
-        if (old_warningView) {
-            old_warningView->deleteLater();
-        }
-        old_warningView = m_warningView;
-
         connect(view, &InhibitWarnView::cancelled, this, &WarningContent::doCancelShutdownInhibit);
         connect(view, &InhibitWarnView::actionInvoked, this, &WarningContent::doAccecpShutdownInhibit);
 
@@ -257,18 +256,15 @@ void WarningContent::beforeInvokeAction()
         m_warningView->setFixedSize(getCenterContentSize());
         setCenterContent(m_warningView);
 
-        if (old_warningView) {
-            old_warningView->deleteLater();
-        }
-        old_warningView = m_warningView;
-
         connect(view, &MultiUsersWarningView::cancelled, this, &WarningContent::doCancelShutdownInhibit);
         connect(view, &MultiUsersWarningView::actionInvoked, this, &WarningContent::doAccecpShutdownInhibit);
 
         return;
     }
 
-    if (m_powerAction == SessionBaseModel::PowerAction::RequireShutdown || m_powerAction == SessionBaseModel::PowerAction::RequireRestart || m_powerAction == SessionBaseModel::PowerAction::RequireLogout) {
+    if (needConfirm && (m_powerAction == SessionBaseModel::PowerAction::RequireShutdown ||
+                        m_powerAction == SessionBaseModel::PowerAction::RequireRestart ||
+                        m_powerAction == SessionBaseModel::PowerAction::RequireLogout)) {
         InhibitWarnView *view = new InhibitWarnView(m_powerAction, this);
         view->setFocusPolicy(Qt::StrongFocus);
         setFocusPolicy(Qt::NoFocus);
@@ -286,11 +282,6 @@ void WarningContent::beforeInvokeAction()
         m_warningView = view;
         m_warningView->setFixedSize(getCenterContentSize());
         setCenterContent(m_warningView);
-
-        if (old_warningView) {
-            old_warningView->deleteLater();
-        }
-        old_warningView = m_warningView;
 
         connect(view, &InhibitWarnView::cancelled, this, &WarningContent::doCancelShutdownInhibit);
         connect(view, &InhibitWarnView::actionInvoked, this, &WarningContent::doAccecpShutdownInhibit);
