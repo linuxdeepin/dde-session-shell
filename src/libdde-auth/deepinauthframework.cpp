@@ -479,7 +479,11 @@ QString DeepinAuthFramework::GetPreOneKeyLogin(const int flag) const
  */
 int DeepinAuthFramework::GetFrameworkState() const
 {
-    return m_authenticateInter->isValid() ? m_authenticateInter->frameworkState() : 1;
+    if(!m_authenticateInter || !QDBusConnection::sessionBus().registerService(AUTHRNTICATESERVICE)){
+        return 1;
+    }
+
+    return m_authenticateInter->frameworkState();
 }
 
 /**
