@@ -34,6 +34,7 @@ LockWorker::LockWorker(SessionBaseModel *const model, QObject *parent)
     , m_switchosInterface(new HuaWeiSwitchOSInterface("com.huawei", "/com/huawei/switchos", QDBusConnection::sessionBus(), this))
     , m_accountsInter(new AccountsInter("com.deepin.daemon.Accounts", "/com/deepin/daemon/Accounts", QDBusConnection::systemBus(), this))
     , m_loginedInter(new LoginedInter("com.deepin.daemon.Accounts", "/com/deepin/daemon/Logined", QDBusConnection::systemBus(), this))
+    , m_xEventInter(new XEventInter("com.deepin.api.XEventMonitor","/com/deepin/api/XEventMonitor",QDBusConnection::sessionBus(), this))
 {
     m_accountsInter->setSync(false);
     m_currentUserUid = getuid();
@@ -88,6 +89,8 @@ LockWorker::LockWorker(SessionBaseModel *const model, QObject *parent)
         destoryAuthentication(m_account);
         createAuthentication(m_account);
     });
+
+    m_xEventInter->RegisterFullScreen();
 }
 
 LockWorker::~LockWorker()
@@ -178,6 +181,19 @@ void LockWorker::initConnections()
         }
         emit m_model->prepareForSleep(isSleep);
     });
+
+    connect(m_xEventInter, &XEventInter::CursorMove, this, [=] {
+        if(m_model->visible() && m_resetSessionTimer->isActive()){
+            m_resetSessionTimer->start();
+        }
+    });
+
+    connect(m_xEventInter, &XEventInter::KeyRelease, this, [=] {
+        if(m_model->visible() && m_resetSessionTimer->isActive()){
+            m_resetSessionTimer->start();
+        }
+    });
+
     /* model */
     connect(m_model, &SessionBaseModel::authTypeChanged, this, [=](const int type) {
         if (type > 0 && !m_model->currentUser()->limitsInfo()->value(type).locked) {

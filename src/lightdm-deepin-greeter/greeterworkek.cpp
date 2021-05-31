@@ -44,6 +44,7 @@ GreeterWorkek::GreeterWorkek(SessionBaseModel *const model, QObject *parent)
     , m_greeter(new QLightDM::Greeter(this))
     , m_authFramework(new DeepinAuthFramework(this, this))
     , m_lockInter(new DBusLockService(LOCKSERVICE_NAME, LOCKSERVICE_PATH, QDBusConnection::systemBus(), this))
+    , m_xEventInter(new XEventInter("com.deepin.api.XEventMonitor","/com/deepin/api/XEventMonitor",QDBusConnection::sessionBus(), this))
     , m_resetSessionTimer(new QTimer(this))
     , m_authenticating(false)
 {
@@ -127,6 +128,7 @@ GreeterWorkek::GreeterWorkek(SessionBaseModel *const model, QObject *parent)
          destoryAuthentication(m_account);
          createAuthentication(m_account);
     });
+    m_xEventInter->RegisterFullScreen();
 }
 
 GreeterWorkek::~GreeterWorkek()
@@ -225,6 +227,18 @@ void GreeterWorkek::initConnections()
             createAuthentication(account);
         }
         emit m_model->switchUserFinished();
+    });
+
+    connect(m_xEventInter, &XEventInter::CursorMove, this, [=] {
+        if(m_model->visible() && m_resetSessionTimer->isActive()){
+            m_resetSessionTimer->start();
+        }
+    });
+
+    connect(m_xEventInter, &XEventInter::KeyRelease, this, [=] {
+        if(m_model->visible() && m_resetSessionTimer->isActive()){
+            m_resetSessionTimer->start();
+        }
     });
     /* model */
     connect(m_model, &SessionBaseModel::authTypeChanged, this, [=](const int type) {

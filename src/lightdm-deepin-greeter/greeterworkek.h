@@ -12,7 +12,9 @@
 #include "sessionbasemodel.h"
 #include "interface/deepinauthinterface.h"
 #include <com_deepin_daemon_authenticate.h>
+#include <com_deepin_api_xeventmonitor.h>
 
+using XEventInter = com::deepin::api::XEventMonitor;
 using com::deepin::daemon::Authenticate;
 
 class GreeterWorkek : public Auth::AuthInterface, public DeepinAuthInterface
@@ -71,6 +73,7 @@ private:
     QLightDM::Greeter *m_greeter;
     DeepinAuthFramework *m_authFramework;
     DBusLockService *m_lockInter;
+    XEventInter *m_xEventInter;
     QTimer *m_resetSessionTimer;
     QString m_account;
     QString m_password;
