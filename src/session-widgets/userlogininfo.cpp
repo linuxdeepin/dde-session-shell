@@ -75,8 +75,6 @@ void UserLoginInfo::initConnect()
 {
     if (m_model->isServerModel()) {
         connect(this, &UserLoginInfo::updateLocale, m_userLoginWidget, &UserLoginWidget::updateAccoutLocale);
-        connect(m_userLoginWidget, &UserLoginWidget::accountLineEditFinished, this, &UserLoginInfo::accountLineEditFinished);
-        // connect(m_model, &SessionBaseModel::clearServerLoginWidgetContent, m_userLoginWidget, &UserLoginWidget::resetAllState);
     }
     connect(m_userLoginWidget, &UserLoginWidget::requestAuthUser, this, [ = ](const QString & account, const QString & password) {
         // if (!m_userLoginWidget->inputInfoCheck(m_model->isServerModel())) return;
@@ -205,7 +203,3 @@ void UserLoginInfo::updateLoginContent()
     }
 }
 
-void UserLoginInfo::updateUserLoginLocale(const QLocale &locale)
-{
-    m_userLoginWidget->updateLoginEditLocale(locale);
-}

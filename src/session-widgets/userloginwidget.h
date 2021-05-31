@@ -75,7 +75,6 @@ public:
     void ShutdownPrompt(SessionBaseModel::PowerAction action);
     bool inputInfoCheck(bool is_server = false);
     void prepareForSleep(bool isSleep);//待机信号
-    void updateLoginEditLocale(const QLocale &locale);
 
 signals:
     void requestStartAuthentication(const QString &account, const int authType);            // 开启某一种认证
@@ -87,7 +86,6 @@ signals:
     /////////////////////////////////////////////////////////////////////////
     void requestUserKBLayoutChanged(const QString &layout);
     void unlockActionFinish();
-    void accountLineEditFinished(const QString &accountName);
 
 public slots:
     void updateWidgetShowType(const int type);

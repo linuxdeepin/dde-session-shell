@@ -710,21 +710,6 @@ void UserLoginWidget::onOtherPageSingleChanged(const QVariant &value)
     m_singleAuth->setLineEditInfo(value.toString(), AuthSingle::InputText);
 }
 
-void UserLoginWidget::updateLoginEditLocale(const QLocale &locale)
-{
-    m_local = locale.name();
-    if ("en_US" == locale.name()) {
-        m_passwordEdit->lineEdit()->setPlaceholderText("Password");
-        m_accountEdit->lineEdit()->setPlaceholderText("Account");
-    } else {
-        QTranslator translator;
-        translator.load("/usr/share/dde-session-shell/translations/dde-session-shell_" + locale.name());
-        qApp->installTranslator(&translator);
-        m_passwordEdit->lineEdit()->setPlaceholderText(tr("Password"));
-        m_accountEdit->lineEdit()->setPlaceholderText(tr("Account"));
-    }
-}
-
 /**
  * @brief 用户名输入框数据同步
  *

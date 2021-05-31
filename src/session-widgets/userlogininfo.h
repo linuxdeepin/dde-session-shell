@@ -45,7 +45,6 @@ public:
     void abortConfirm(bool abort = true);
     void beforeUnlockAction(bool is_finish);
     void updateLoginContent();
-    void updateUserLoginLocale(const QLocale &locale);
 
 signals:
     void requestAuthUser(const QString &password);
@@ -54,7 +53,6 @@ signals:
     void hideUserFrameList();
     void requestSetLayout(std::shared_ptr<User> user, const QString &value);
     void unlockActionFinish();
-    void accountLineEditFinished(const QString &accountName);
     void updateLocale();
 
     void requestStartAuthentication(const QString &account, const int authType);

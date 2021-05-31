@@ -84,7 +84,6 @@ protected:
     MediaWidget *m_mediaWidget = nullptr;
     UserLoginInfo *m_userLoginInfo;
     com::deepin::wm *m_wmInter;
-    bool m_localeFlag = false;
 
     int m_failures = 0;
 };
