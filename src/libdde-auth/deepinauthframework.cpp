@@ -504,7 +504,7 @@ QString DeepinAuthFramework::GetSupportedEncrypts() const
  */
 QString DeepinAuthFramework::GetLimitedInfo(const QString &account) const
 {
-    return m_authenticateInter->isValid() ? m_authenticateInter->GetLimits(account) : QString("");
+    return m_authenticateInter->GetLimits(account);
 }
 
 /**
