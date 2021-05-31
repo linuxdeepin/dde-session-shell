@@ -280,7 +280,7 @@ void UserFrameList::updateLayout()
         m_rowCount = 1;
     }
 
-    int totalHeight = (UserFrameHeight + UserFrameSpaceing) * m_rowCount;
+    int totalHeight = (UserFrameHeight + UserFrameSpaceing) * m_rowCount - UserFrameSpaceing;
     int totalWidth = qMin((UserFrameWidth + UserFrameSpaceing) * m_colCount, (UserFrameWidth + UserFrameSpaceing) * m_loginWidgets.size());
 
     m_scrollArea->setFixedHeight(totalHeight);
