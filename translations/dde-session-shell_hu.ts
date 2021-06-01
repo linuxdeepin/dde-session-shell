@@ -1,65 +1,177 @@
 <?xml version="1.0" ?><!DOCTYPE TS><TS language="hu" version="2.1">
 <context>
-    <name>AuthenticationModule</name>
-    <message numerus="yes">
-        <location filename="../src/session-widgets/authenticationmodule.cpp" line="102"/>
-        <location filename="../src/session-widgets/authenticationmodule.cpp" line="146"/>
-        <location filename="../src/session-widgets/authenticationmodule.cpp" line="169"/>
-        <source>Please try again %n minute(s) later</source>
-        <translation><numerusform>Kérjük próbálja újra %n perc múlva</numerusform><numerusform>Kérjük próbálja újra %n perc múlva</numerusform></translation>
-    </message>
+    <name>AuthFingerprint</name>
     <message>
-        <location filename="../src/session-widgets/authenticationmodule.cpp" line="200"/>
-        <location filename="../src/session-widgets/authenticationmodule.cpp" line="203"/>
-        <source>Verification successful</source>
-        <translation>Az ellenőrzés sikeres</translation>
-    </message>
-    <message numerus="yes">
-        <location filename="../src/session-widgets/authenticationmodule.cpp" line="218"/>
-        <location filename="../src/session-widgets/authenticationmodule.cpp" line="220"/>
-        <location filename="../src/session-widgets/authenticationmodule.cpp" line="231"/>
-        <location filename="../src/session-widgets/authenticationmodule.cpp" line="233"/>
-        <source>Verification failed, %n chances left</source>
-        <translation><numerusform>Az ellenőrzés sikertelen, %n próbálkozása maradt</numerusform><numerusform>Az ellenőrzés sikertelen, %n próbálkozása maradt</numerusform></translation>
-    </message>
-    <message>
-        <location filename="../src/session-widgets/authenticationmodule.cpp" line="222"/>
-        <location filename="../src/session-widgets/authenticationmodule.cpp" line="235"/>
-        <source>Verification failed, only one chance left</source>
-        <translation>Az ellenőrzés sikertelen, csak egy próbálkozása maradt</translation>
-    </message>
-    <message>
-        <location filename="../src/session-widgets/authenticationmodule.cpp" line="237"/>
-        <source>Wrong Password</source>
-        <translation>Helytelen jelszó</translation>
-    </message>
-    <message>
-        <location filename="../src/session-widgets/authenticationmodule.cpp" line="239"/>
-        <source>Wrong PIN</source>
-        <translation>Helytelen PIN</translation>
-    </message>
-    <message>
-        <location filename="../src/session-widgets/authenticationmodule.cpp" line="309"/>
-        <source>UKey is required</source>
-        <translation>UKey szükséges</translation>
-    </message>
-    <message>
-        <location filename="../src/session-widgets/authenticationmodule.cpp" line="321"/>
+        <location filename="../src/session-widgets/authfingerprint.cpp" line="48"/>
+        <location filename="../src/session-widgets/authfingerprint.cpp" line="138"/>
         <source>Verify your fingerprint</source>
         <translation>Az Ön ujjlenyomatának ellenőrzése</translation>
     </message>
     <message>
-        <location filename="../src/session-widgets/authenticationmodule.cpp" line="328"/>
+        <location filename="../src/session-widgets/authfingerprint.cpp" line="89"/>
+        <source>Verification successful</source>
+        <translation>Az ellenőrzés sikeres</translation>
+    </message>
+    <message numerus="yes">
+        <location filename="../src/session-widgets/authfingerprint.cpp" line="97"/>
+        <source>Verification failed, %n chances left</source>
+        <translation type="unfinished"><numerusform></numerusform><numerusform></numerusform></translation>
+    </message>
+    <message>
+        <location filename="../src/session-widgets/authfingerprint.cpp" line="99"/>
+        <source>Verification failed, only one chance left</source>
+        <translation>Az ellenőrzés sikertelen, csak egy próbálkozása maradt</translation>
+    </message>
+    <message>
+        <location filename="../src/session-widgets/authfingerprint.cpp" line="150"/>
+        <source>Fingerprint locked, use password please</source>
+        <translation>Az ujjlenyomat zárolva, kérem használja a jelszavát</translation>
+    </message>
+    <message numerus="yes">
+        <location filename="../src/session-widgets/authfingerprint.cpp" line="210"/>
+        <source>Please try again %n minute(s) later</source>
+        <translation type="unfinished"><numerusform></numerusform><numerusform></numerusform></translation>
+    </message>
+</context>
+<context>
+    <name>AuthPassword</name>
+    <message>
+        <location filename="../src/session-widgets/authpassword.cpp" line="140"/>
+        <source>Verification successful</source>
+        <translation>Az ellenőrzés sikeres</translation>
+    </message>
+    <message numerus="yes">
+        <location filename="../src/session-widgets/authpassword.cpp" line="152"/>
+        <source>Verification failed, %n chances left</source>
+        <translation type="unfinished"><numerusform></numerusform><numerusform></numerusform></translation>
+    </message>
+    <message>
+        <location filename="../src/session-widgets/authpassword.cpp" line="154"/>
+        <source>Verification failed, only one chance left</source>
+        <translation>Az ellenőrzés sikertelen, csak egy próbálkozása maradt</translation>
+    </message>
+    <message>
+        <location filename="../src/session-widgets/authpassword.cpp" line="156"/>
+        <source>Wrong Password</source>
+        <translation>Helytelen jelszó</translation>
+    </message>
+    <message>
+        <location filename="../src/session-widgets/authpassword.cpp" line="188"/>
+        <source>Password</source>
+        <translation>Jelszó</translation>
+    </message>
+    <message numerus="yes">
+        <location filename="../src/session-widgets/authpassword.cpp" line="370"/>
+        <source>Please try again %n minute(s) later</source>
+        <translation type="unfinished"><numerusform></numerusform><numerusform></numerusform></translation>
+    </message>
+</context>
+<context>
+    <name>AuthSingle</name>
+    <message numerus="yes">
+        <location filename="../src/session-widgets/authsingle.cpp" line="356"/>
+        <source>Please try again %n minute(s) later</source>
+        <translation type="unfinished"><numerusform></numerusform><numerusform></numerusform></translation>
+    </message>
+</context>
+<context>
+    <name>AuthUKey</name>
+    <message>
+        <location filename="../src/session-widgets/authukey.cpp" line="123"/>
+        <source>Verification successful</source>
+        <translation>Az ellenőrzés sikeres</translation>
+    </message>
+    <message numerus="yes">
+        <location filename="../src/session-widgets/authukey.cpp" line="134"/>
+        <source>Verification failed, %n chances left</source>
+        <translation type="unfinished"><numerusform></numerusform><numerusform></numerusform></translation>
+    </message>
+    <message>
+        <location filename="../src/session-widgets/authukey.cpp" line="136"/>
+        <source>Verification failed, only one chance left</source>
+        <translation>Az ellenőrzés sikertelen, csak egy próbálkozása maradt</translation>
+    </message>
+    <message>
+        <location filename="../src/session-widgets/authukey.cpp" line="138"/>
+        <source>Wrong PIN</source>
+        <translation>Helytelen PIN</translation>
+    </message>
+    <message>
+        <location filename="../src/session-widgets/authukey.cpp" line="165"/>
+        <source>UKey is required</source>
+        <translation>UKey szükséges</translation>
+    </message>
+    <message>
+        <location filename="../src/session-widgets/authukey.cpp" line="171"/>
+        <source>Enter your PIN</source>
+        <translation>Adja meg a PIN kódját</translation>
+    </message>
+    <message numerus="yes">
+        <location filename="../src/session-widgets/authukey.cpp" line="351"/>
+        <source>Please try again %n minute(s) later</source>
+        <translation type="unfinished"><numerusform></numerusform><numerusform></numerusform></translation>
+    </message>
+</context>
+<context>
+    <name>AuthenticationModule</name>
+    <message numerus="yes">
+        <location filename="../src/session-widgets/authenticationmodule.cpp" line="126"/>
+        <location filename="../src/session-widgets/authenticationmodule.cpp" line="170"/>
+        <location filename="../src/session-widgets/authenticationmodule.cpp" line="193"/>
+        <location filename="../src/session-widgets/authenticationmodule.cpp" line="375"/>
+        <source>Please try again %n minute(s) later</source>
+        <translation><numerusform>Kérjük próbálja újra %n perc múlva</numerusform><numerusform>Kérjük próbálja újra %n perc múlva</numerusform></translation>
+    </message>
+    <message>
+        <location filename="../src/session-widgets/authenticationmodule.cpp" line="224"/>
+        <location filename="../src/session-widgets/authenticationmodule.cpp" line="227"/>
+        <source>Verification successful</source>
+        <translation>Az ellenőrzés sikeres</translation>
+    </message>
+    <message numerus="yes">
+        <location filename="../src/session-widgets/authenticationmodule.cpp" line="242"/>
+        <location filename="../src/session-widgets/authenticationmodule.cpp" line="253"/>
+        <source>Verification failed, %n chances left</source>
+        <translation><numerusform>Az ellenőrzés sikertelen, %n próbálkozása maradt</numerusform><numerusform>Az ellenőrzés sikertelen, %n próbálkozása maradt</numerusform></translation>
+    </message>
+    <message>
+        <location filename="../src/session-widgets/authenticationmodule.cpp" line="244"/>
+        <location filename="../src/session-widgets/authenticationmodule.cpp" line="255"/>
+        <source>Verification failed, only one chance left</source>
+        <translation>Az ellenőrzés sikertelen, csak egy próbálkozása maradt</translation>
+    </message>
+    <message>
+        <location filename="../src/session-widgets/authenticationmodule.cpp" line="257"/>
+        <source>Wrong Password</source>
+        <translation>Helytelen jelszó</translation>
+    </message>
+    <message>
+        <location filename="../src/session-widgets/authenticationmodule.cpp" line="259"/>
+        <source>Wrong PIN</source>
+        <translation>Helytelen PIN</translation>
+    </message>
+    <message>
+        <location filename="../src/session-widgets/authenticationmodule.cpp" line="329"/>
+        <source>UKey is required</source>
+        <translation>UKey szükséges</translation>
+    </message>
+    <message>
+        <location filename="../src/session-widgets/authenticationmodule.cpp" line="341"/>
+        <source>Verify your fingerprint</source>
+        <translation>Az Ön ujjlenyomatának ellenőrzése</translation>
+    </message>
+    <message>
+        <location filename="../src/session-widgets/authenticationmodule.cpp" line="348"/>
         <source>Password</source>
         <translation>Jelszó</translation>
     </message>
     <message>
-        <location filename="../src/session-widgets/authenticationmodule.cpp" line="330"/>
+        <location filename="../src/session-widgets/authenticationmodule.cpp" line="350"/>
         <source>Enter your PIN</source>
         <translation>Adja meg a PIN kódját</translation>
     </message>
     <message>
-        <location filename="../src/session-widgets/authenticationmodule.cpp" line="351"/>
+        <location filename="../src/session-widgets/authenticationmodule.cpp" line="371"/>
         <source>Fingerprint locked, use password please</source>
         <translation>Az ujjlenyomat zárolva, kérem használja a jelszavát</translation>
     </message>
@@ -169,12 +281,12 @@
 <context>
     <name>GreeterWorkek</name>
     <message>
-        <location filename="../src/lightdm-deepin-greeter/greeterworkek.cpp" line="559"/>
+        <location filename="../src/lightdm-deepin-greeter/greeterworkek.cpp" line="629"/>
         <source>Wrong Password</source>
         <translation>Helytelen jelszó</translation>
     </message>
     <message>
-        <location filename="../src/lightdm-deepin-greeter/greeterworkek.cpp" line="563"/>
+        <location filename="../src/lightdm-deepin-greeter/greeterworkek.cpp" line="633"/>
         <source>The account or password is not correct. Please enter again.</source>
         <translation>A fióknév vagy a jelszó helytelen. Kérjük próbálja újra.</translation>
     </message>
@@ -191,12 +303,12 @@
 <context>
     <name>LockContent</name>
     <message>
-        <location filename="../src/session-widgets/lockcontent.cpp" line="403"/>
+        <location filename="../src/session-widgets/lockcontent.cpp" line="390"/>
         <source>Lock Screen</source>
         <translation>Képernyő zárolása</translation>
     </message>
     <message>
-        <location filename="../src/session-widgets/lockcontent.cpp" line="407"/>
+        <location filename="../src/session-widgets/lockcontent.cpp" line="394"/>
         <source>Failed to lock screen</source>
         <translation>A képernyő zárolása sikertelen</translation>
     </message>
@@ -204,12 +316,12 @@
 <context>
     <name>LockWorker</name>
     <message>
-        <location filename="../src/dde-lock/lockworker.cpp" line="443"/>
+        <location filename="../src/dde-lock/lockworker.cpp" line="522"/>
         <source>Fingerprint verification timed out, please enter your password manually</source>
         <translation>Ujjlenyomat azonosítás időtúllépése, kérjük adja meg a jelszót kézzel</translation>
     </message>
     <message>
-        <location filename="../src/dde-lock/lockworker.cpp" line="461"/>
+        <location filename="../src/dde-lock/lockworker.cpp" line="540"/>
         <source>Failed to match fingerprint</source>
         <translation>Ujjlenyomatok nem egyeznek</translation>
     </message>
@@ -293,24 +405,18 @@
 <context>
     <name>UserLoginWidget</name>
     <message>
-        <location filename="../src/session-widgets/userloginwidget.cpp" line="147"/>
-        <location filename="../src/session-widgets/userloginwidget.cpp" line="647"/>
+        <location filename="../src/session-widgets/userloginwidget.cpp" line="152"/>
+        <location filename="../src/session-widgets/userloginwidget.cpp" line="1229"/>
         <source>Account</source>
         <translation>Felhasználói fiók</translation>
     </message>
     <message>
-        <location filename="../src/session-widgets/userloginwidget.cpp" line="297"/>
-        <location filename="../src/session-widgets/userloginwidget.cpp" line="646"/>
-        <source>Password</source>
-        <translation>Jelszó</translation>
-    </message>
-    <message>
-        <location filename="../src/session-widgets/userloginwidget.cpp" line="356"/>
+        <location filename="../src/session-widgets/userloginwidget.cpp" line="419"/>
         <source>Verify your fingerprint</source>
         <translation>Az Ön ujjlenyomatának ellenőrzése</translation>
     </message>
     <message numerus="yes">
-        <location filename="../src/session-widgets/userloginwidget.cpp" line="768"/>
+        <location filename="../src/session-widgets/userloginwidget.cpp" line="832"/>
         <source>Please try again %n minute(s) later</source>
         <translation><numerusform>Kérjük próbálja újra %n perc múlva</numerusform><numerusform>Kérjük próbálja újra %n perc múlva</numerusform></translation>
     </message>
@@ -318,81 +424,81 @@
 <context>
     <name>WarningContent</name>
     <message>
-        <location filename="../src/widgets/warningcontent.cpp" line="172"/>
+        <location filename="../src/widgets/warningcontent.cpp" line="176"/>
         <source>The programs are preventing the computer from shutting down, and forcing shut down may cause data loss.</source>
         <translation>A futó programok megakadályozzák a számítógép leállítását, és a kikapcsolás kényszerítése adatvesztést okozhat.</translation>
     </message>
     <message>
-        <location filename="../src/widgets/warningcontent.cpp" line="173"/>
-        <location filename="../src/widgets/warningcontent.cpp" line="178"/>
+        <location filename="../src/widgets/warningcontent.cpp" line="177"/>
         <location filename="../src/widgets/warningcontent.cpp" line="182"/>
         <location filename="../src/widgets/warningcontent.cpp" line="186"/>
         <location filename="../src/widgets/warningcontent.cpp" line="190"/>
+        <location filename="../src/widgets/warningcontent.cpp" line="194"/>
         <source>To close the program, click Cancel, and then close the program.</source>
         <translation>A program bezárásához kattintson a Mégsem gombra, majd zárja be a programot.</translation>
     </message>
     <message>
-        <location filename="../src/widgets/warningcontent.cpp" line="177"/>
+        <location filename="../src/widgets/warningcontent.cpp" line="181"/>
         <source>The programs are preventing the computer from reboot, and forcing reboot may cause data loss.</source>
         <translation>A futó programok megakadályozzák a számítógép újraindítását, és az újraindítás kényszerítése adatvesztést okozhat.</translation>
     </message>
     <message>
-        <location filename="../src/widgets/warningcontent.cpp" line="181"/>
+        <location filename="../src/widgets/warningcontent.cpp" line="185"/>
         <source>The programs are preventing the computer from suspend, and forcing suspend may cause data loss.</source>
         <translation>A futó programok megakadályozzák a számítógép alvó állapotba való lépését, és az alvó állapot kényszerítése adatvesztést okozhat.</translation>
     </message>
     <message>
-        <location filename="../src/widgets/warningcontent.cpp" line="185"/>
+        <location filename="../src/widgets/warningcontent.cpp" line="189"/>
         <source>The programs are preventing the computer from hibernate, and forcing hibernate may cause data loss.</source>
         <translation>A futó programok megakadályozzák a számítógép hibernálását, és a hibernálás kényszerítése adatvesztést okozhat.</translation>
     </message>
     <message>
-        <location filename="../src/widgets/warningcontent.cpp" line="189"/>
+        <location filename="../src/widgets/warningcontent.cpp" line="193"/>
         <source>The programs are preventing the computer from log out, and forcing log out may cause data loss.</source>
         <translation>A futó programok megakadályozzák a számítógép kijelentkezését, és a kijelentkezés kényszerítése adatvesztést okozhat.</translation>
     </message>
     <message>
-        <location filename="../src/widgets/warningcontent.cpp" line="205"/>
-        <location filename="../src/widgets/warningcontent.cpp" line="252"/>
-        <location filename="../src/widgets/warningcontent.cpp" line="276"/>
+        <location filename="../src/widgets/warningcontent.cpp" line="209"/>
+        <location filename="../src/widgets/warningcontent.cpp" line="251"/>
+        <location filename="../src/widgets/warningcontent.cpp" line="272"/>
         <source>Shut down</source>
         <translation>Leállítás</translation>
     </message>
     <message>
-        <location filename="../src/widgets/warningcontent.cpp" line="208"/>
-        <location filename="../src/widgets/warningcontent.cpp" line="254"/>
-        <location filename="../src/widgets/warningcontent.cpp" line="279"/>
+        <location filename="../src/widgets/warningcontent.cpp" line="212"/>
+        <location filename="../src/widgets/warningcontent.cpp" line="253"/>
+        <location filename="../src/widgets/warningcontent.cpp" line="275"/>
         <source>Reboot</source>
         <translation>Újraindítás</translation>
     </message>
     <message>
-        <location filename="../src/widgets/warningcontent.cpp" line="211"/>
+        <location filename="../src/widgets/warningcontent.cpp" line="215"/>
         <source>Suspend</source>
         <translation>Alvó állapot</translation>
     </message>
     <message>
-        <location filename="../src/widgets/warningcontent.cpp" line="214"/>
+        <location filename="../src/widgets/warningcontent.cpp" line="218"/>
         <source>Hibernate</source>
         <translation>Hibernálás</translation>
     </message>
     <message>
-        <location filename="../src/widgets/warningcontent.cpp" line="217"/>
-        <location filename="../src/widgets/warningcontent.cpp" line="282"/>
+        <location filename="../src/widgets/warningcontent.cpp" line="221"/>
+        <location filename="../src/widgets/warningcontent.cpp" line="278"/>
         <source>Log out</source>
         <translation>Kijelentkezés</translation>
     </message>
     <message>
-        <location filename="../src/widgets/warningcontent.cpp" line="277"/>
+        <location filename="../src/widgets/warningcontent.cpp" line="273"/>
         <source>Are you sure you want to shut down?</source>
         <translation>Biztosan le akarja állítani?</translation>
     </message>
     <message>
-        <location filename="../src/widgets/warningcontent.cpp" line="280"/>
+        <location filename="../src/widgets/warningcontent.cpp" line="276"/>
         <source>Are you sure you want to reboot?</source>
         <translation>Biztosan újra akarja indítani?</translation>
     </message>
     <message>
-        <location filename="../src/widgets/warningcontent.cpp" line="283"/>
+        <location filename="../src/widgets/warningcontent.cpp" line="279"/>
         <source>Are you sure you want to log out?</source>
         <translation>Biztosan ki akar jelentkezni?</translation>
     </message>

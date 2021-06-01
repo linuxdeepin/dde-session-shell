@@ -1,65 +1,177 @@
 <?xml version="1.0" ?><!DOCTYPE TS><TS language="zh_CN" version="2.1">
 <context>
-    <name>AuthenticationModule</name>
-    <message numerus="yes">
-        <location filename="../src/session-widgets/authenticationmodule.cpp" line="102"/>
-        <location filename="../src/session-widgets/authenticationmodule.cpp" line="146"/>
-        <location filename="../src/session-widgets/authenticationmodule.cpp" line="169"/>
-        <source>Please try again %n minute(s) later</source>
-        <translation><numerusform>请%n分钟后再试</numerusform></translation>
-    </message>
+    <name>AuthFingerprint</name>
     <message>
-        <location filename="../src/session-widgets/authenticationmodule.cpp" line="200"/>
-        <location filename="../src/session-widgets/authenticationmodule.cpp" line="203"/>
-        <source>Verification successful</source>
-        <translation>验证成功</translation>
-    </message>
-    <message numerus="yes">
-        <location filename="../src/session-widgets/authenticationmodule.cpp" line="218"/>
-        <location filename="../src/session-widgets/authenticationmodule.cpp" line="220"/>
-        <location filename="../src/session-widgets/authenticationmodule.cpp" line="231"/>
-        <location filename="../src/session-widgets/authenticationmodule.cpp" line="233"/>
-        <source>Verification failed, %n chances left</source>
-        <translation><numerusform>验证失败，您还可以尝试%n次</numerusform></translation>
-    </message>
-    <message>
-        <location filename="../src/session-widgets/authenticationmodule.cpp" line="222"/>
-        <location filename="../src/session-widgets/authenticationmodule.cpp" line="235"/>
-        <source>Verification failed, only one chance left</source>
-        <translation>验证失败，您还可以尝试1次</translation>
-    </message>
-    <message>
-        <location filename="../src/session-widgets/authenticationmodule.cpp" line="237"/>
-        <source>Wrong Password</source>
-        <translation>密码错误</translation>
-    </message>
-    <message>
-        <location filename="../src/session-widgets/authenticationmodule.cpp" line="239"/>
-        <source>Wrong PIN</source>
-        <translation>PIN错误</translation>
-    </message>
-    <message>
-        <location filename="../src/session-widgets/authenticationmodule.cpp" line="309"/>
-        <source>UKey is required</source>
-        <translation>需要使用UKEY认证</translation>
-    </message>
-    <message>
-        <location filename="../src/session-widgets/authenticationmodule.cpp" line="321"/>
+        <location filename="../src/session-widgets/authfingerprint.cpp" line="48"/>
+        <location filename="../src/session-widgets/authfingerprint.cpp" line="138"/>
         <source>Verify your fingerprint</source>
         <translation>请验证指纹</translation>
     </message>
     <message>
-        <location filename="../src/session-widgets/authenticationmodule.cpp" line="328"/>
+        <location filename="../src/session-widgets/authfingerprint.cpp" line="89"/>
+        <source>Verification successful</source>
+        <translation>验证成功</translation>
+    </message>
+    <message numerus="yes">
+        <location filename="../src/session-widgets/authfingerprint.cpp" line="97"/>
+        <source>Verification failed, %n chances left</source>
+        <translation><numerusform>验证失败，您还可以尝试%n次</numerusform></translation>
+    </message>
+    <message>
+        <location filename="../src/session-widgets/authfingerprint.cpp" line="99"/>
+        <source>Verification failed, only one chance left</source>
+        <translation>验证失败，您还可以尝试1次</translation>
+    </message>
+    <message>
+        <location filename="../src/session-widgets/authfingerprint.cpp" line="150"/>
+        <source>Fingerprint locked, use password please</source>
+        <translation>指纹已锁定，请输入密码</translation>
+    </message>
+    <message numerus="yes">
+        <location filename="../src/session-widgets/authfingerprint.cpp" line="210"/>
+        <source>Please try again %n minute(s) later</source>
+        <translation><numerusform>请%n分钟后再试</numerusform></translation>
+    </message>
+</context>
+<context>
+    <name>AuthPassword</name>
+    <message>
+        <location filename="../src/session-widgets/authpassword.cpp" line="140"/>
+        <source>Verification successful</source>
+        <translation>验证成功</translation>
+    </message>
+    <message numerus="yes">
+        <location filename="../src/session-widgets/authpassword.cpp" line="152"/>
+        <source>Verification failed, %n chances left</source>
+        <translation><numerusform>验证失败，您还可以尝试%n次</numerusform></translation>
+    </message>
+    <message>
+        <location filename="../src/session-widgets/authpassword.cpp" line="154"/>
+        <source>Verification failed, only one chance left</source>
+        <translation>验证失败，您还可以尝试1次</translation>
+    </message>
+    <message>
+        <location filename="../src/session-widgets/authpassword.cpp" line="156"/>
+        <source>Wrong Password</source>
+        <translation>密码错误</translation>
+    </message>
+    <message>
+        <location filename="../src/session-widgets/authpassword.cpp" line="188"/>
+        <source>Password</source>
+        <translation>请输入密码</translation>
+    </message>
+    <message numerus="yes">
+        <location filename="../src/session-widgets/authpassword.cpp" line="370"/>
+        <source>Please try again %n minute(s) later</source>
+        <translation><numerusform>请%n分钟后再试</numerusform></translation>
+    </message>
+</context>
+<context>
+    <name>AuthSingle</name>
+    <message numerus="yes">
+        <location filename="../src/session-widgets/authsingle.cpp" line="356"/>
+        <source>Please try again %n minute(s) later</source>
+        <translation><numerusform>请%n分钟后再试</numerusform></translation>
+    </message>
+</context>
+<context>
+    <name>AuthUKey</name>
+    <message>
+        <location filename="../src/session-widgets/authukey.cpp" line="123"/>
+        <source>Verification successful</source>
+        <translation>验证成功</translation>
+    </message>
+    <message numerus="yes">
+        <location filename="../src/session-widgets/authukey.cpp" line="134"/>
+        <source>Verification failed, %n chances left</source>
+        <translation><numerusform>验证失败，您还可以尝试%n次</numerusform></translation>
+    </message>
+    <message>
+        <location filename="../src/session-widgets/authukey.cpp" line="136"/>
+        <source>Verification failed, only one chance left</source>
+        <translation>验证失败，您还可以尝试1次</translation>
+    </message>
+    <message>
+        <location filename="../src/session-widgets/authukey.cpp" line="138"/>
+        <source>Wrong PIN</source>
+        <translation>PIN错误</translation>
+    </message>
+    <message>
+        <location filename="../src/session-widgets/authukey.cpp" line="165"/>
+        <source>UKey is required</source>
+        <translation>需要使用UKEY认证</translation>
+    </message>
+    <message>
+        <location filename="../src/session-widgets/authukey.cpp" line="171"/>
+        <source>Enter your PIN</source>
+        <translation>识别到UKEY，需要输入PIN</translation>
+    </message>
+    <message numerus="yes">
+        <location filename="../src/session-widgets/authukey.cpp" line="351"/>
+        <source>Please try again %n minute(s) later</source>
+        <translation><numerusform>请%n分钟后再试</numerusform></translation>
+    </message>
+</context>
+<context>
+    <name>AuthenticationModule</name>
+    <message numerus="yes">
+        <location filename="../src/session-widgets/authenticationmodule.cpp" line="126"/>
+        <location filename="../src/session-widgets/authenticationmodule.cpp" line="170"/>
+        <location filename="../src/session-widgets/authenticationmodule.cpp" line="193"/>
+        <location filename="../src/session-widgets/authenticationmodule.cpp" line="375"/>
+        <source>Please try again %n minute(s) later</source>
+        <translation><numerusform>请%n分钟后再试</numerusform></translation>
+    </message>
+    <message>
+        <location filename="../src/session-widgets/authenticationmodule.cpp" line="224"/>
+        <location filename="../src/session-widgets/authenticationmodule.cpp" line="227"/>
+        <source>Verification successful</source>
+        <translation>验证成功</translation>
+    </message>
+    <message numerus="yes">
+        <location filename="../src/session-widgets/authenticationmodule.cpp" line="242"/>
+        <location filename="../src/session-widgets/authenticationmodule.cpp" line="253"/>
+        <source>Verification failed, %n chances left</source>
+        <translation><numerusform>验证失败，您还可以尝试%n次</numerusform></translation>
+    </message>
+    <message>
+        <location filename="../src/session-widgets/authenticationmodule.cpp" line="244"/>
+        <location filename="../src/session-widgets/authenticationmodule.cpp" line="255"/>
+        <source>Verification failed, only one chance left</source>
+        <translation>验证失败，您还可以尝试1次</translation>
+    </message>
+    <message>
+        <location filename="../src/session-widgets/authenticationmodule.cpp" line="257"/>
+        <source>Wrong Password</source>
+        <translation>密码错误</translation>
+    </message>
+    <message>
+        <location filename="../src/session-widgets/authenticationmodule.cpp" line="259"/>
+        <source>Wrong PIN</source>
+        <translation>PIN错误</translation>
+    </message>
+    <message>
+        <location filename="../src/session-widgets/authenticationmodule.cpp" line="329"/>
+        <source>UKey is required</source>
+        <translation>需要使用UKEY认证</translation>
+    </message>
+    <message>
+        <location filename="../src/session-widgets/authenticationmodule.cpp" line="341"/>
+        <source>Verify your fingerprint</source>
+        <translation>请验证指纹</translation>
+    </message>
+    <message>
+        <location filename="../src/session-widgets/authenticationmodule.cpp" line="348"/>
         <source>Password</source>
         <translation>请输入密码</translation>
     </message>
     <message>
-        <location filename="../src/session-widgets/authenticationmodule.cpp" line="330"/>
+        <location filename="../src/session-widgets/authenticationmodule.cpp" line="350"/>
         <source>Enter your PIN</source>
         <translation>识别到UKEY，需要输入PIN</translation>
     </message>
     <message>
-        <location filename="../src/session-widgets/authenticationmodule.cpp" line="351"/>
+        <location filename="../src/session-widgets/authenticationmodule.cpp" line="371"/>
         <source>Fingerprint locked, use password please</source>
         <translation>指纹已锁定，请输入密码</translation>
     </message>
@@ -169,12 +281,12 @@
 <context>
     <name>GreeterWorkek</name>
     <message>
-        <location filename="../src/lightdm-deepin-greeter/greeterworkek.cpp" line="559"/>
+        <location filename="../src/lightdm-deepin-greeter/greeterworkek.cpp" line="629"/>
         <source>Wrong Password</source>
         <translation>密码错误</translation>
     </message>
     <message>
-        <location filename="../src/lightdm-deepin-greeter/greeterworkek.cpp" line="563"/>
+        <location filename="../src/lightdm-deepin-greeter/greeterworkek.cpp" line="633"/>
         <source>The account or password is not correct. Please enter again.</source>
         <translation>帐户或密码不正确，请重新输入。</translation>
     </message>
@@ -191,12 +303,12 @@
 <context>
     <name>LockContent</name>
     <message>
-        <location filename="../src/session-widgets/lockcontent.cpp" line="403"/>
+        <location filename="../src/session-widgets/lockcontent.cpp" line="390"/>
         <source>Lock Screen</source>
         <translation>锁屏</translation>
     </message>
     <message>
-        <location filename="../src/session-widgets/lockcontent.cpp" line="407"/>
+        <location filename="../src/session-widgets/lockcontent.cpp" line="394"/>
         <source>Failed to lock screen</source>
         <translation>锁屏失败</translation>
     </message>
@@ -204,12 +316,12 @@
 <context>
     <name>LockWorker</name>
     <message>
-        <location filename="../src/dde-lock/lockworker.cpp" line="443"/>
+        <location filename="../src/dde-lock/lockworker.cpp" line="522"/>
         <source>Fingerprint verification timed out, please enter your password manually</source>
         <translation>指纹密码验证超时，请手动输入密码</translation>
     </message>
     <message>
-        <location filename="../src/dde-lock/lockworker.cpp" line="461"/>
+        <location filename="../src/dde-lock/lockworker.cpp" line="540"/>
         <source>Failed to match fingerprint</source>
         <translation>指纹解锁失败</translation>
     </message>
@@ -293,24 +405,18 @@
 <context>
     <name>UserLoginWidget</name>
     <message>
-        <location filename="../src/session-widgets/userloginwidget.cpp" line="147"/>
-        <location filename="../src/session-widgets/userloginwidget.cpp" line="647"/>
+        <location filename="../src/session-widgets/userloginwidget.cpp" line="152"/>
+        <location filename="../src/session-widgets/userloginwidget.cpp" line="1229"/>
         <source>Account</source>
         <translation>帐户</translation>
     </message>
     <message>
-        <location filename="../src/session-widgets/userloginwidget.cpp" line="297"/>
-        <location filename="../src/session-widgets/userloginwidget.cpp" line="646"/>
-        <source>Password</source>
-        <translation>密码</translation>
-    </message>
-    <message>
-        <location filename="../src/session-widgets/userloginwidget.cpp" line="356"/>
+        <location filename="../src/session-widgets/userloginwidget.cpp" line="419"/>
         <source>Verify your fingerprint</source>
         <translation>请验证指纹</translation>
     </message>
     <message numerus="yes">
-        <location filename="../src/session-widgets/userloginwidget.cpp" line="768"/>
+        <location filename="../src/session-widgets/userloginwidget.cpp" line="832"/>
         <source>Please try again %n minute(s) later</source>
         <translation><numerusform>请%n分钟后再试</numerusform></translation>
     </message>
@@ -318,81 +424,81 @@
 <context>
     <name>WarningContent</name>
     <message>
-        <location filename="../src/widgets/warningcontent.cpp" line="172"/>
+        <location filename="../src/widgets/warningcontent.cpp" line="176"/>
         <source>The programs are preventing the computer from shutting down, and forcing shut down may cause data loss.</source>
         <translation>以上程序阻止关机，强制关机可能会导致其数据丢失。</translation>
     </message>
     <message>
-        <location filename="../src/widgets/warningcontent.cpp" line="173"/>
-        <location filename="../src/widgets/warningcontent.cpp" line="178"/>
+        <location filename="../src/widgets/warningcontent.cpp" line="177"/>
         <location filename="../src/widgets/warningcontent.cpp" line="182"/>
         <location filename="../src/widgets/warningcontent.cpp" line="186"/>
         <location filename="../src/widgets/warningcontent.cpp" line="190"/>
+        <location filename="../src/widgets/warningcontent.cpp" line="194"/>
         <source>To close the program, click Cancel, and then close the program.</source>
         <translation>您可以点击“取消”然后关闭这些程序。</translation>
     </message>
     <message>
-        <location filename="../src/widgets/warningcontent.cpp" line="177"/>
+        <location filename="../src/widgets/warningcontent.cpp" line="181"/>
         <source>The programs are preventing the computer from reboot, and forcing reboot may cause data loss.</source>
         <translation>以上程序阻止重启，强制重启可能会导致其数据丢失。</translation>
     </message>
     <message>
-        <location filename="../src/widgets/warningcontent.cpp" line="181"/>
+        <location filename="../src/widgets/warningcontent.cpp" line="185"/>
         <source>The programs are preventing the computer from suspend, and forcing suspend may cause data loss.</source>
         <translation>以上程序阻止待机，强制待机可能会导致其数据丢失。</translation>
     </message>
     <message>
-        <location filename="../src/widgets/warningcontent.cpp" line="185"/>
+        <location filename="../src/widgets/warningcontent.cpp" line="189"/>
         <source>The programs are preventing the computer from hibernate, and forcing hibernate may cause data loss.</source>
         <translation>以上程序阻止休眠，强制休眠可能会导致其数据丢失。</translation>
     </message>
     <message>
-        <location filename="../src/widgets/warningcontent.cpp" line="189"/>
+        <location filename="../src/widgets/warningcontent.cpp" line="193"/>
         <source>The programs are preventing the computer from log out, and forcing log out may cause data loss.</source>
         <translation>以上程序阻止注销，强制注销可能会导致其数据丢失。</translation>
     </message>
     <message>
-        <location filename="../src/widgets/warningcontent.cpp" line="205"/>
-        <location filename="../src/widgets/warningcontent.cpp" line="252"/>
-        <location filename="../src/widgets/warningcontent.cpp" line="276"/>
+        <location filename="../src/widgets/warningcontent.cpp" line="209"/>
+        <location filename="../src/widgets/warningcontent.cpp" line="251"/>
+        <location filename="../src/widgets/warningcontent.cpp" line="272"/>
         <source>Shut down</source>
         <translation>关机</translation>
     </message>
     <message>
-        <location filename="../src/widgets/warningcontent.cpp" line="208"/>
-        <location filename="../src/widgets/warningcontent.cpp" line="254"/>
-        <location filename="../src/widgets/warningcontent.cpp" line="279"/>
+        <location filename="../src/widgets/warningcontent.cpp" line="212"/>
+        <location filename="../src/widgets/warningcontent.cpp" line="253"/>
+        <location filename="../src/widgets/warningcontent.cpp" line="275"/>
         <source>Reboot</source>
         <translation>重启</translation>
     </message>
     <message>
-        <location filename="../src/widgets/warningcontent.cpp" line="211"/>
+        <location filename="../src/widgets/warningcontent.cpp" line="215"/>
         <source>Suspend</source>
         <translation>待机</translation>
     </message>
     <message>
-        <location filename="../src/widgets/warningcontent.cpp" line="214"/>
+        <location filename="../src/widgets/warningcontent.cpp" line="218"/>
         <source>Hibernate</source>
         <translation>休眠</translation>
     </message>
     <message>
-        <location filename="../src/widgets/warningcontent.cpp" line="217"/>
-        <location filename="../src/widgets/warningcontent.cpp" line="282"/>
+        <location filename="../src/widgets/warningcontent.cpp" line="221"/>
+        <location filename="../src/widgets/warningcontent.cpp" line="278"/>
         <source>Log out</source>
         <translation>注销</translation>
     </message>
     <message>
-        <location filename="../src/widgets/warningcontent.cpp" line="277"/>
+        <location filename="../src/widgets/warningcontent.cpp" line="273"/>
         <source>Are you sure you want to shut down?</source>
         <translation>您确定要关机吗？</translation>
     </message>
     <message>
-        <location filename="../src/widgets/warningcontent.cpp" line="280"/>
+        <location filename="../src/widgets/warningcontent.cpp" line="276"/>
         <source>Are you sure you want to reboot?</source>
         <translation>您确定要重启吗？</translation>
     </message>
     <message>
-        <location filename="../src/widgets/warningcontent.cpp" line="283"/>
+        <location filename="../src/widgets/warningcontent.cpp" line="279"/>
         <source>Are you sure you want to log out?</source>
         <translation>您确定要注销吗？</translation>
     </message>
