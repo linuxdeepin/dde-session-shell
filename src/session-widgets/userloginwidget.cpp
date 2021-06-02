@@ -1113,6 +1113,11 @@ void UserLoginWidget::checkAuthResult(const int type, const int status)
     if (type == AuthTypeAll && status == StatusCodeSuccess) {
         emit authFininshed(status);
     }
+    if (type == AuthTypePassword && status == StatusCodeSuccess) {
+        if (m_fingerprintAuth != nullptr) {
+            m_fingerprintAuth->setText(tr("Verify your fingerprint"));
+        }
+    }
 }
 
 /**
