@@ -155,6 +155,9 @@ void LockWorker::initConnections()
             }
         } else {
             m_model->updateAuthStatus(type, status, message);
+
+            if(status == StatusCodeSuccess)
+                onUnlockFinished(true);
         }
     });
     connect(m_authFramework, &DeepinAuthFramework::FactorsInfoChanged, m_model, &SessionBaseModel::updateFactorsInfo);
