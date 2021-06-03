@@ -53,6 +53,15 @@ DLineEditEx::DLineEditEx(QWidget *parent)
     , m_animation(new QPropertyAnimation(m_loadSlider, "pos", m_loadSlider))
 {
     initAnimation();
+
+#if 0 // FIXME:不生效,改为在eventFilter过滤InputMethodQuery事件
+    // 在锁屏或登录界面，输入类型的控件不要唤出输入法
+    setAttribute(Qt::WA_InputMethodEnabled, false);
+    this->lineEdit()->setAttribute(Qt::WA_InputMethodEnabled, false);
+#endif
+
+    this->lineEdit()->installEventFilter(this);
+    this->installEventFilter(this);
 }
 
 /**
@@ -124,6 +133,11 @@ bool DLineEditEx::eventFilter(QObject *watched, QEvent *event)
         emit lineEditTextHasFocus(true);
     }else if(event->type() == QEvent::FocusOut){
         emit lineEditTextHasFocus(false);
+    }
+
+    // 禁止输入法
+    if ((watched == this || watched == this->lineEdit()) && event->type() == QEvent::InputMethodQuery) {
+        return true;
     }
 
     return QWidget::eventFilter(watched,event);
