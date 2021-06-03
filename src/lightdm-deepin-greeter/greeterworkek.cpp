@@ -200,15 +200,15 @@ void GreeterWorkek::initConnections()
     connect(m_authFramework, &DeepinAuthFramework::PromptChanged, m_model, &SessionBaseModel::updatePrompt);
     /* org.freedesktop.login1.Session */
     connect(m_login1SessionSelf, &Login1SessionSelf::ActiveChanged, this, [=](bool active) {
-        if (m_account.isEmpty()) {
+        if (m_model->currentUser() == nullptr || m_model->currentUser()->name().isEmpty()) {
             return;
         }
         if (active) {
             if (!m_model->isServerModel() && !m_model->currentUser()->isNoPasswdGrp()) {
-                createAuthentication(m_account);
+                createAuthentication(m_model->currentUser()->name());
             }
             if (!m_model->isServerModel() && m_model->currentUser()->isNoPasswdGrp() && m_model->currentUser()->automaticLogin()) {
-                m_greeter->authenticate(m_account);
+                m_greeter->authenticate(m_model->currentUser()->name());
             }
         } else {
             destoryAuthentication(m_account);
