@@ -42,7 +42,19 @@
 #include <DGuiApplicationHelper>
 #include <unistd.h>
 
+#include <com_deepin_daemon_display.h>
+
+using DisplayInter = com::deepin::daemon::Display;
+
 DGUI_USE_NAMESPACE
+
+#define MERGE_MODE      1
+
+static QString getLocalFile(const QString &file)
+{
+    const QUrl url(file);
+    return url.isLocalFile() ? url.toLocalFile() : url.url();
+}
 
 FullscreenBackground::FullscreenBackground(QWidget *parent)
     : QWidget(parent)
@@ -61,7 +73,21 @@ FullscreenBackground::FullscreenBackground(QWidget *parent)
 
     installEventFilter(this);
 
+    DisplayInter * m_displayInter = new DisplayInter("com.deepin.daemon.Display", "/com/deepin/daemon/Display", QDBusConnection::sessionBus(), this);
+    m_wmInter = new WMInter("com.deepin.wm", "/com/deepin/wm", QDBusConnection::sessionBus(), this);
+
+
+    connect(m_wmInter, &WMInter::WorkspaceSwitched, this, &FullscreenBackground::updateWMBackground);
+    connect(m_wmInter, &WMInter::WorkspaceBackgroundChanged, this, &FullscreenBackground::updateWMBackground);
+    connect(m_displayInter, &DisplayInter::DisplayModeChanged, this, &FullscreenBackground::updateWMBackground);
+    connect(m_displayInter, &DisplayInter::PrimaryChanged, this, &FullscreenBackground::updateWMBackground);
+    connect(m_displayInter, &DisplayInter::DisplayModeChanged, this, [=](uchar) {
+        m_displayMode = m_displayInter->GetRealDisplayMode();
+    });
+
     connect(m_fadeOutAni, &QVariantAnimation::valueChanged, this, static_cast<void (FullscreenBackground::*)()>(&FullscreenBackground::update));
+
+    m_displayMode = m_displayInter->GetRealDisplayMode();
 }
 
 FullscreenBackground::~FullscreenBackground()
@@ -117,6 +143,26 @@ void FullscreenBackground::updateBackground(const QString &file)
     }
 
     updateBlurBackground(bg_path);
+}
+
+void FullscreenBackground::updateWMBackground()
+{
+    QString screenName = qApp->primaryScreen()->name();
+
+    if (m_displayMode != MERGE_MODE) {
+        QWidget *parentWidget =qobject_cast<QWidget *>(parent());
+        QDesktopWidget *desktopwidget = QApplication::desktop();
+        int screenIndex = desktopwidget->screenNumber(parentWidget);
+        QList<QScreen *> screens = qApp->screens();
+        screenName = screens[screenIndex]->name();
+    }
+
+    auto path = getLocalFile(m_wmInter->GetCurrentWorkspaceBackgroundForMonitor(screenName));
+    if(m_wmBackgroundPath == path) return;
+    if(!path.isEmpty()){
+        m_wmBackgroundPath = path;
+        updateBackground(path);
+    }
 }
 
 void FullscreenBackground::updateBlurBackground(const QString &file)
