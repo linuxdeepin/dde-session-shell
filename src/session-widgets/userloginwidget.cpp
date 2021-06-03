@@ -197,7 +197,7 @@ void UserLoginWidget::initConnections()
     /* 解锁按钮 */
     connect(m_lockButton, &DFloatingButton::clicked, this, [=] {
         if (m_model->currentUser()->isNoPasswdGrp() || (m_passwordAuth == nullptr && m_ukeyAuth == nullptr && m_singleAuth == nullptr)) {
-            emit requestCheckAccount(m_model->currentUser()->name());
+            emit requestCheckAccount(m_model->currentUser()->name().isEmpty() ? m_accountEdit->text() : m_model->currentUser()->name());
         }
     });
     /* 键盘布局菜单 */
