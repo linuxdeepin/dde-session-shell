@@ -344,6 +344,8 @@ void UserLoginWidget::initSingleAuth(const int index)
         FrameDataBind::Instance()->updateValue("UserLoginToken", value);
     });
     FrameDataBind::Instance()->refreshData("UserLoginToken");
+
+    m_lockButton->setEnabled(true);
 }
 
 /**
