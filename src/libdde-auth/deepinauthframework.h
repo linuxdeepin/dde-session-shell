@@ -11,19 +11,17 @@
 using AuthInter = com::deepin::daemon::Authenticate;
 using AuthControllerInter = com::deepin::daemon::authenticate::Session;
 
-typedef void *(* FUNC_BIO_S_MEM)(); // 定义函数指针类型的别名
-typedef void *(* FUNC_BIO_NEW)(void *); // 定义函数指针类型的别名
-typedef int (* FUNC_BIO_PUTS)(void *,const char *); // 定义函数指针类型，返回类型是整形的别名
-typedef void* (* PEM_READ_BIO_RSA_PUBKEY)(void *, void *,void *,void *); // 定义函数指针类型。有四个void*参数的别名
-typedef void* (* PEM_READ_BIO_RSAPUBLICKEY)(void *, void *,void *,void *); // 定义函数指针类型的有四个void*参数的别名
-typedef void* (* RSA_PUBLIC_ENCRYPT)(int flen, const unsigned char *from,unsigned char *to, void *rsa, int padding); // 定义函数指针类型且有多个参数的的别名
-//typedef int (* FUNC_RSA_SIZE)(void *);
-typedef void (* FUNC_RSA_FREE)(void *);// 定义函数指针类型的别名
-typedef void *d_RSA; // 定义结构体类型的别名
+using FUNC_BIO_S_MEM = void *(*)();
+using FUNC_BIO_NEW = void *(*)(void *);
+using FUNC_BIO_PUTS = int (*)(void *, const char *);
+using FUNC_PEM_READ_BIO_RSA_PUBKEY = void *(*)(void *, void *, void *, void *);
+using FUNC_PEM_READ_BIO_RSAPUBLICKEY = void *(*)(void *, void *, void *, void *);
+using FUNC_RSA_PUBLIC_ENCRYPT = void *(*)(int flen, const unsigned char *from, unsigned char *to, void *rsa, int padding);
+using FUNC_RSA_SIZE = int (*)(void *);
+using FUNC_RSA_FREE = void (*)(void *);
 
 class DeepinAuthInterface;
 class QThread;
-class User;
 class DeepinAuthFramework : public QObject
 {
     Q_OBJECT
@@ -64,6 +62,7 @@ public:
     QString GetPrompt(const QString &account) const;
 
     QString AuthSessionPath(const QString &account) const;
+    void setEncryption(const int type, const ArrayInt method);
 
 signals:
     /* com.deepin.daemon.Authenticate */
@@ -81,7 +80,7 @@ signals:
 
 public slots:
     /* New authentication framework */
-    void CreateAuthController(const QString &account, const int authType, const int encryptType);
+    void CreateAuthController(const QString &account, const int authType, const int appType);
     void DestoryAuthController(const QString &account);
     void StartAuthentication(const QString &account, const int authType, const int timeout);
     void EndAuthentication(const QString &account, const int authType);
@@ -95,7 +94,7 @@ private:
     static int PAMConversation(int num_msg, const struct pam_message **msg, struct pam_response **resp, void *app_data);
     void UpdateAuthStatus(const int status, const QString &message);
 
-    void initPublicKey(const QString &account);
+    void initEncryptionService();
 
 private:
     DeepinAuthInterface *m_interface;
@@ -104,11 +103,26 @@ private:
     QString m_account;
     QString m_message;
     QString m_token;
+    int m_encryptType;
+    QString m_publicKey;
+    ArrayInt m_encryptMethod;
     AuthFlag m_authType;
     QMap<QString, AuthControllerInter *> *m_authenticateControllers;
     bool m_cancelAuth;
     bool m_waitToken;
-    const char * m_pubkey = nullptr;
+
+    void *m_encryptionHandle;
+    FUNC_BIO_NEW m_F_BIO_new;
+    FUNC_BIO_PUTS m_F_BIO_puts;
+    FUNC_BIO_S_MEM m_F_BIO_s_mem;
+    FUNC_PEM_READ_BIO_RSAPUBLICKEY m_F_PEM_read_bio_RSAPublicKey;
+    FUNC_PEM_READ_BIO_RSA_PUBKEY m_F_PEM_read_bio_RSA_PUBKEY;
+    FUNC_RSA_FREE m_F_RSA_free;
+    FUNC_RSA_FREE m_F_BIO_free;
+    FUNC_RSA_PUBLIC_ENCRYPT m_F_RSA_public_encrypt;
+    FUNC_RSA_SIZE m_F_RSA_size;
+    void *m_BIO;
+    void *m_RSA;
 };
 
 #endif // DEEPINAUTHFRAMEWORK_H

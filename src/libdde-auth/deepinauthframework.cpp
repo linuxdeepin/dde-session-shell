@@ -1,15 +1,19 @@
-#include "authcommon.h"
 #include "deepinauthframework.h"
+
+#include "authcommon.h"
 #include "interface/deepinauthinterface.h"
-#include "userinfo.h"
+#include "public_func.h"
+
+#include <dlfcn.h>
 
 #include <QThread>
 #include <QTimer>
-#include <unistd.h>
-#include <pwd.h>
+
 #include <grp.h>
-#include <signal.h>
+#include <pwd.h>
 #include <security/pam_appl.h>
+#include <signal.h>
+#include <unistd.h>
 
 #ifdef PAM_SUN_CODEBASE
 #define PAM_MSG_MEMBER(msg, n, member) ((*(msg))[(n)].member)
@@ -19,10 +23,6 @@
 
 #define PAM_SERVICE_SYSTEM_NAME "password-auth"
 #define PAM_SERVICE_DEEPIN_NAME "common-auth"
-
-//dlopen
-#include <dlfcn.h>
-
 #define PKCS1_HEADER "-----BEGIN RSA PUBLIC KEY-----"
 #define PKCS8_HEADER "-----BEGIN PUBLIC KEY-----"
 #define AUTHRNTICATESERVICE "com.deepin.daemon.Authenticate"
@@ -39,11 +39,17 @@ DeepinAuthFramework::DeepinAuthFramework(DeepinAuthInterface *interface, QObject
     , m_authenticateControllers(new QMap<QString, AuthControllerInter *>())
     , m_cancelAuth(false)
     , m_waitToken(true)
+    , m_encryptionHandle(nullptr)
+    , m_BIO(nullptr)
+    , m_RSA(nullptr)
 {
     connect(m_authenticateInter, &AuthInter::FrameworkStateChanged, this, &DeepinAuthFramework::FramworkStateChanged);
     connect(m_authenticateInter, &AuthInter::LimitUpdated, this, &DeepinAuthFramework::LimitsInfoChanged);
     connect(m_authenticateInter, &AuthInter::SupportedFlagsChanged, this, &DeepinAuthFramework::SupportedMixAuthFlagsChanged);
     connect(m_authenticateInter, &AuthInter::SupportEncryptsChanged, this, &DeepinAuthFramework::SupportedEncryptsChanged);
+
+    /* 暂时将加密方式固定，后续有修改再调整 */
+    setEncryption(0, {1});
 }
 
 DeepinAuthFramework::~DeepinAuthFramework()
@@ -267,18 +273,45 @@ void DeepinAuthFramework::DestoryAuthenticate()
     m_PAMAuthThread = 0;
 }
 
-void DeepinAuthFramework::initPublicKey(const QString &account)
+/**
+ * @brief 设置加密类型和加密方式
+ *
+ * @param type
+ * @param method
+ */
+void DeepinAuthFramework::setEncryption(const int type, ArrayInt method)
 {
-    QVector<int> encryptMethod = {1};
-    QDBusInterface ifc(AUTHRNTICATESERVICE, AuthSessionPath(account), AUTHRNTICATEINTERFACE, QDBusConnection::systemBus(), nullptr);
-    QDBusPendingReply<int, QVector<int>, QString> reply = ifc.call("EncryptKey", 0, QVariant::fromValue(encryptMethod));
-    reply.waitForFinished();
+    m_encryptType = type;
+    m_encryptMethod = method;
+}
 
-    if (reply.isError()) {
-        qInfo() << AuthSessionPath(account) << "Authenticate EncryptKey interface error msg:" << reply.error().message();
+/**
+ * @brief 初始化加密服务
+ */
+void DeepinAuthFramework::initEncryptionService()
+{
+    if ((m_encryptionHandle = dlopen(OPENSSLNAME, RTLD_NOW)) == nullptr) {
+        qCritical() << "Failed to load" << OPENSSLNAME;
+        return;
     }
+    m_F_BIO_new = reinterpret_cast<FUNC_BIO_NEW>(dlsym(m_encryptionHandle, "BIO_new"));
+    m_F_BIO_puts = reinterpret_cast<FUNC_BIO_PUTS>(dlsym(m_encryptionHandle, "BIO_puts"));
+    m_F_BIO_s_mem = reinterpret_cast<FUNC_BIO_S_MEM>(dlsym(m_encryptionHandle, "BIO_s_mem"));
+    m_F_PEM_read_bio_RSAPublicKey = reinterpret_cast<FUNC_PEM_READ_BIO_RSAPUBLICKEY>(dlsym(m_encryptionHandle, "PEM_read_bio_RSAPublicKey"));
+    m_F_PEM_read_bio_RSA_PUBKEY = reinterpret_cast<FUNC_PEM_READ_BIO_RSA_PUBKEY>(dlsym(m_encryptionHandle, "PEM_read_bio_RSA_PUBKEY"));
+    m_F_RSA_public_encrypt = reinterpret_cast<FUNC_RSA_PUBLIC_ENCRYPT>(dlsym(m_encryptionHandle, "RSA_public_encrypt"));
+    m_F_RSA_size = reinterpret_cast<FUNC_RSA_SIZE>(dlsym(m_encryptionHandle, "RSA_size"));
+    m_F_RSA_free = reinterpret_cast<FUNC_RSA_FREE>(dlsym(m_encryptionHandle, "RSA_free"));
+    m_F_BIO_free = reinterpret_cast<FUNC_RSA_FREE>(dlsym(m_encryptionHandle, "BIO_free"));
 
-    m_pubkey = reply.argumentAt(2).toString().toUtf8();
+    m_BIO = m_F_BIO_new(m_F_BIO_s_mem());
+    m_F_BIO_puts(m_BIO, m_publicKey.toLatin1().data());
+
+    if (strncmp(m_publicKey.toLatin1().data(), PKCS8_HEADER, strlen(PKCS8_HEADER)) == 0) {
+        m_RSA = m_F_PEM_read_bio_RSA_PUBKEY(m_BIO, nullptr, nullptr, nullptr);
+    } else if (strncmp(m_publicKey.toLatin1().data(), PKCS1_HEADER, strlen(PKCS1_HEADER)) == 0) {
+        m_RSA = m_F_PEM_read_bio_RSAPublicKey(m_BIO, nullptr, nullptr, nullptr);
+    }
 }
 
 /**
@@ -297,7 +330,7 @@ void DeepinAuthFramework::CreateAuthController(const QString &account, const int
     const QString authControllerInterPath = m_authenticateInter->Authenticate(account, authType, appType);
     AuthControllerInter *authControllerInter = new AuthControllerInter("com.deepin.daemon.Authenticate", authControllerInterPath, QDBusConnection::systemBus(), this);
     m_authenticateControllers->insert(account, authControllerInter);
-    // authControllerInter->EncryptKey(); // TODO 获取公钥
+
     connect(authControllerInter, &AuthControllerInter::FactorsInfoChanged, this, &DeepinAuthFramework::FactorsInfoChanged);
     connect(authControllerInter, &AuthControllerInter::IsFuzzyMFAChanged, this, &DeepinAuthFramework::FuzzyMFAChanged);
     connect(authControllerInter, &AuthControllerInter::IsMFAChanged, this, &DeepinAuthFramework::MFAFlagChanged);
@@ -311,7 +344,21 @@ void DeepinAuthFramework::CreateAuthController(const QString &account, const int
     emit PINLenChanged(authControllerInter->pINLen());
     emit PromptChanged(authControllerInter->prompt());
 
-    // initPublicKey(account);
+    int encryptType;
+    ArrayInt encryptMethod;
+    QDBusReply<int> reply = authControllerInter->EncryptKey(m_encryptType, m_encryptMethod, encryptMethod, m_publicKey);
+    encryptType = reply.value();
+    if (encryptType != m_encryptType || encryptMethod != m_encryptMethod) {
+        qWarning() << "The current encryption method is not supported, use the default encryption method.";
+        m_encryptType = encryptType;
+        m_encryptMethod = encryptMethod;
+    }
+    if (m_publicKey.isEmpty()) {
+        qCritical() << "Failed to get the public key!";
+        return;
+    }
+
+    initEncryptionService();
 }
 
 /**
@@ -329,6 +376,10 @@ void DeepinAuthFramework::DestoryAuthController(const QString &account)
     authControllerInter->End(-1);
     authControllerInter->Quit();
     m_authenticateControllers->remove(account);
+
+    m_F_RSA_free(m_RSA);
+    m_F_BIO_free(m_BIO);
+    dlclose(m_encryptionHandle);
 }
 
 /**
@@ -376,65 +427,12 @@ void DeepinAuthFramework::SendTokenToAuth(const QString &account, const int auth
     }
     qInfo() << "Send token to authentication:" << account << authType;
 
-    void *handle = nullptr;
+    int size = m_F_RSA_size(m_RSA);
+    char *ciphertext = new char[static_cast<unsigned long>(size)];
+    m_F_RSA_public_encrypt(token.length(), reinterpret_cast<unsigned char *>(token.toLatin1().data()), reinterpret_cast<unsigned char *>(ciphertext), m_RSA, 1);
 
-    if ((handle = dlopen(OPENSSLNAME, RTLD_NOW)) == nullptr) {
-        printf("dlopen - %sn", dlerror());
-        exit(-1);
-    }
-
-    FUNC_BIO_S_MEM d_BIO_s_mem = (FUNC_BIO_S_MEM)dlsym(handle, "BIO_s_mem");
-
-    FUNC_BIO_NEW d_BIO_new = (FUNC_BIO_NEW)dlsym(handle, "BIO_new");
-
-    FUNC_BIO_PUTS d_BIO_puts = (FUNC_BIO_PUTS)dlsym(handle, "BIO_puts");
-
-    PEM_READ_BIO_RSAPUBLICKEY d_PEM_read_bio_RSAPublicKey = (PEM_READ_BIO_RSAPUBLICKEY)dlsym(handle, "PEM_read_bio_RSAPublicKey");
-
-    PEM_READ_BIO_RSA_PUBKEY d_PEM_read_bio_RSA_PUBKEY = (PEM_READ_BIO_RSA_PUBKEY)dlsym(handle, "PEM_read_bio_RSA_PUBKEY");
-
-    RSA_PUBLIC_ENCRYPT d_RSA_public_encrypt = (RSA_PUBLIC_ENCRYPT)dlsym(handle, "RSA_public_encrypt");
-
-    //FUNC_RSA_SIZE d_RSA_size = (FUNC_RSA_SIZE)dlsym(handle, "RSA_size");
-
-    FUNC_RSA_FREE d_RSA_free = (FUNC_RSA_FREE)dlsym(handle, "RSA_free");
-
-    FUNC_RSA_FREE d_BIO_free = (FUNC_RSA_FREE)dlsym(handle, "BIO_free");
-
-    void *bio = d_BIO_new(d_BIO_s_mem());
-    if (nullptr == bio)
-        qDebug() << "==========bio is null";
-
-    while (!QString(m_pubkey).startsWith("-----BEGIN")) {
-        qDebug() << "m_pubkey is error pubkey:" << m_pubkey;
-        initPublicKey(account);
-    }
-
-    const char *pubKey = m_pubkey;
-
-    d_BIO_puts(bio, pubKey);
-
-    d_RSA d_rsa = nullptr;
-
-    if (0 == strncmp(pubKey, PKCS8_HEADER, strlen(PKCS8_HEADER))) {
-        d_rsa = d_PEM_read_bio_RSA_PUBKEY(bio, nullptr, nullptr, nullptr);
-    } else if (0 == strncmp(pubKey, PKCS1_HEADER, strlen(PKCS1_HEADER))) {
-        d_rsa = d_PEM_read_bio_RSAPublicKey(bio, nullptr, nullptr, nullptr);
-    }
-
-    if (d_rsa == nullptr) {
-        qWarning() << "d_rsa is nullptr. pubkey:\n"
-                   << pubKey;
-        return;
-    }
-    char dData[128];
-    d_RSA_public_encrypt(token.length(), (unsigned char *)token.toLatin1().data(), (unsigned char *)dData, d_rsa, 1);
-
-    d_RSA_free(d_rsa);
-    d_BIO_free(bio);
-    dlclose(handle);
-
-    m_authenticateControllers->value(account)->SetToken(authType, QByteArray(dData, 128));
+    m_authenticateControllers->value(account)->SetToken(authType, QByteArray(ciphertext, size));
+    delete[] ciphertext;
 }
 
 /**
@@ -479,7 +477,7 @@ QString DeepinAuthFramework::GetPreOneKeyLogin(const int flag) const
  */
 int DeepinAuthFramework::GetFrameworkState() const
 {
-    if(!m_authenticateInter || !QDBusConnection::sessionBus().registerService(AUTHRNTICATESERVICE)){
+    if (!m_authenticateInter || !QDBusConnection::sessionBus().registerService(AUTHRNTICATESERVICE)) {
         return 1;
     }
 
