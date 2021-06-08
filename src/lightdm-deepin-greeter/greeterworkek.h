@@ -77,7 +77,7 @@ private:
     QTimer *m_resetSessionTimer;
     QString m_account;
     QString m_password;
-    bool m_authenticating;
+    bool m_retryAuth;
 };
 
 #endif  // GREETERWORKEK_H

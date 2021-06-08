@@ -44,9 +44,8 @@ GreeterWorkek::GreeterWorkek(SessionBaseModel *const model, QObject *parent)
     , m_greeter(new QLightDM::Greeter(this))
     , m_authFramework(new DeepinAuthFramework(this, this))
     , m_lockInter(new DBusLockService(LOCKSERVICE_NAME, LOCKSERVICE_PATH, QDBusConnection::systemBus(), this))
-    , m_xEventInter(new XEventInter("com.deepin.api.XEventMonitor","/com/deepin/api/XEventMonitor",QDBusConnection::sessionBus(), this))
+    , m_xEventInter(new XEventInter("com.deepin.api.XEventMonitor", "/com/deepin/api/XEventMonitor", QDBusConnection::sessionBus(), this))
     , m_resetSessionTimer(new QTimer(this))
-    , m_authenticating(false)
 {
     if (!isConnectSync()) {
         qWarning() << "greeter connect fail !!!";
@@ -351,11 +350,6 @@ void GreeterWorkek::switchToUser(std::shared_ptr<User> user)
  */
 void GreeterWorkek::authUser(const QString &password)
 {
-    if (m_authenticating)
-        return;
-
-    m_authenticating = true;
-
     // auth interface
     std::shared_ptr<User> user = m_model->currentUser();
     m_password = password;
@@ -613,8 +607,10 @@ void GreeterWorkek::userAuthForLightdm(std::shared_ptr<User> user)
  */
 void GreeterWorkek::showPrompt(const QString &text, const QLightDM::Greeter::PromptType type)
 {
+    qDebug() << "GreeterWorkek::showPrompt:" << text << type;
     switch (type) {
     case QLightDM::Greeter::PromptTypeSecret:
+        m_retryAuth = true;
         m_model->updateAuthStatus(AuthTypeSingle, StatusCodePrompt, text);
         break;
     case QLightDM::Greeter::PromptTypeQuestion:
@@ -630,11 +626,17 @@ void GreeterWorkek::showPrompt(const QString &text, const QLightDM::Greeter::Pro
  */
 void GreeterWorkek::showMessage(const QString &text, const QLightDM::Greeter::MessageType type)
 {
+    qDebug() << "GreeterWorkek::showMessage:" << text << type;
     switch (type) {
     case QLightDM::Greeter::MessageTypeInfo:
         m_model->updateAuthStatus(AuthTypeSingle, StatusCodeSuccess, text);
         break;
     case QLightDM::Greeter::MessageTypeError:
+        if (m_retryAuth && m_model->getAuthProperty().MFAFlag) {
+            m_model->updateMFAFlag(false);
+            m_model->setAuthType(AuthTypeSingle);
+        }
+        m_retryAuth = false;
         m_model->updateAuthStatus(AuthTypeSingle, StatusCodeFailure, text);
         break;
     }
@@ -645,27 +647,13 @@ void GreeterWorkek::showMessage(const QString &text, const QLightDM::Greeter::Me
  */
 void GreeterWorkek::authenticationComplete()
 {
-    qInfo() << "authentication complete, authenticated " << m_greeter->isAuthenticated();
+    qInfo() << "authentication complete, authenticated " << m_greeter->isAuthenticated() << m_retryAuth;
 
     if (!m_greeter->isAuthenticated()) {
-        // m_authenticating = false;
-        // if (m_password.isEmpty()) {
-        //     resetLightdmAuth(m_model->currentUser(), 100, false);
-        //     return;
-        // }
-
-        // m_password.clear();
-
-        if (m_model->currentUser()->type() == User::Native) {
-            emit m_model->authFaildTipsMessage(tr("Wrong Password"));
+        if (m_retryAuth && !m_model->getAuthProperty().MFAFlag) {
+            showMessage(tr("Wrong Password"), QLightDM::Greeter::MessageTypeError);
+            m_greeter->authenticate(m_account);
         }
-
-        if (m_model->currentUser()->type() == User::ADDomain) {
-            emit m_model->authFaildTipsMessage(tr("The account or password is not correct. Please enter again."));
-        }
-
-        // resetLightdmAuth(m_model->currentUser(), 100, false);
-
         return;
     }
 
@@ -686,14 +674,13 @@ void GreeterWorkek::authenticationComplete()
 
     qInfo() << "start session = " << m_model->sessionKey();
 
-    auto startSessionSync = [=] () {
+    auto startSessionSync = [=]() {
         QJsonObject json;
         json["Uid"] = static_cast<int>(m_model->currentUser()->uid());
         json["Type"] = m_model->currentUser()->type();
         m_lockInter->SwitchToUser(QString(QJsonDocument(json).toJson(QJsonDocument::Compact))).waitForFinished();
 
         m_greeter->startSessionSync(m_model->sessionKey());
-        m_authenticating = false;
     };
 
     // NOTE(kirigaya): It is not necessary to display the login animation.
@@ -742,7 +729,6 @@ void GreeterWorkek::onDisplayErrorMsg(const QString &msg)
 
 void GreeterWorkek::onDisplayTextInfo(const QString &msg)
 {
-    //m_authenticating = false;
     emit m_model->authFaildMessage(msg);
 }
 

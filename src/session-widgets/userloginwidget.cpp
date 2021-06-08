@@ -277,15 +277,12 @@ void UserLoginWidget::updateWidgetShowType(const int type)
         m_singleAuth = nullptr;
     }
     /* 账户 */
-    if ((type == AuthTypeNone && !m_model->currentUser()->isNoPasswdGrp()) || m_model->isServerModel()) {
-        m_accountEdit->clear();
-        m_accountEdit->show();
-        m_nameLabel->hide();
-    } else {
-        m_accountEdit->hide();
-        m_nameLabel->show();
+    if (type == AuthTypeNone) {
         if (m_model->currentUser()->isNoPasswdGrp()) {
             m_lockButton->setEnabled(true);
+        } else {
+            m_accountEdit->show();
+            m_nameLabel->hide();
         }
     }
     updateGeometry();
@@ -366,7 +363,7 @@ void UserLoginWidget::initSingleAuth(const int index)
     });
     connect(m_singleAuth, &AuthSingle::requestShowKeyboardList, this, &UserLoginWidget::showKeyboardList);
     connect(m_singleAuth, &AuthSingle::authFinished, this, [this](const bool status) {
-        checkAuthResult(AuthTypeAll, status);
+        checkAuthResult(AuthTypeSingle, status);
     });
 
     connect(m_kbLayoutWidget, &KbLayoutWidget::setButtonClicked, m_singleAuth, &AuthSingle::setKeyboardButtonInfo);
@@ -1148,9 +1145,6 @@ void UserLoginWidget::updateClipPath()
  */
 void UserLoginWidget::checkAuthResult(const int type, const int status)
 {
-    if (type == AuthTypeAll && status == StatusCodeSuccess) {
-        emit authFininshed(status);
-    }
     if (type == AuthTypePassword && status == StatusCodeSuccess) {
         if (m_fingerprintAuth != nullptr && m_fingerprintAuth->getAuthStatus() == StatusCodeFailure) {
             m_fingerprintAuth->setText(tr("Verify your fingerprint"));

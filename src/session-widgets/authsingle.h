@@ -62,6 +62,7 @@ private:
     DLabel *m_numLockStatus;       // 数字键盘状态
     DLineEditEx *m_lineEdit;       // 输入框
     DPushButton *m_keyboardButton; // 键盘布局按钮
+    bool m_retryAuth;              // 认证重试标志位
 };
 
 #endif // AUTHSINGLE_H
