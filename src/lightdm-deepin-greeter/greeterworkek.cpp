@@ -230,8 +230,11 @@ void GreeterWorkek::initConnections()
         m_model->setCurrentUser(json);
         std::shared_ptr<User> user_ptr = m_model->currentUser();
         const QString &account = user_ptr->name();
-        if (!user_ptr.get()->isLogin()) {
+        if (!user_ptr.get()->isLogin() && !user_ptr.get()->isNoPasswdGrp()) {
             createAuthentication(account);
+        }
+        if (user_ptr.get()->isNoPasswdGrp()) {
+            emit m_model->authTypeChanged(AuthTypeNone);
         }
         emit m_model->switchUserFinished();
     });
