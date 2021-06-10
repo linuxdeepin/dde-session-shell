@@ -297,9 +297,13 @@ void GreeterWorkek::doPowerAction(const SessionBaseModel::PowerAction action)
         m_login1Inter->Reboot(true);
         break;
     case SessionBaseModel::PowerAction::RequireSuspend:
+        if (m_model->currentModeState() != SessionBaseModel::ModeStatus::PasswordMode)
+            m_model->setCurrentModeState(SessionBaseModel::ModeStatus::PasswordMode);
         m_login1Inter->Suspend(true);
         break;
     case SessionBaseModel::PowerAction::RequireHibernate:
+        if (m_model->currentModeState() != SessionBaseModel::ModeStatus::PasswordMode)
+            m_model->setCurrentModeState(SessionBaseModel::ModeStatus::PasswordMode);
         m_login1Inter->Hibernate(true);
         break;
     default:
