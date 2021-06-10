@@ -111,7 +111,7 @@ void DLineEditEx::stopAnimation()
  */
 void DLineEditEx::paintEvent(QPaintEvent *event)
 {
-    if (lineEdit()->alignment() == Qt::AlignCenter
+    if (lineEdit()->hasFocus() && lineEdit()->alignment() == Qt::AlignCenter
         && !lineEdit()->placeholderText().isEmpty() && lineEdit()->text().isEmpty()) {
         QPainter pa(this);
         QPalette pal = palette();
