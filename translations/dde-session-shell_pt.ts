@@ -15,7 +15,7 @@
     <message numerus="yes">
         <location filename="../src/session-widgets/authfingerprint.cpp" line="97"/>
         <source>Verification failed, %n chances left</source>
-        <translation type="unfinished"><numerusform></numerusform><numerusform></numerusform></translation>
+        <translation><numerusform>A verificação falhou, %n tentativa restante</numerusform><numerusform>A verificação falhou, %n tentativas restantes</numerusform></translation>
     </message>
     <message>
         <location filename="../src/session-widgets/authfingerprint.cpp" line="99"/>
@@ -30,7 +30,7 @@
     <message numerus="yes">
         <location filename="../src/session-widgets/authfingerprint.cpp" line="210"/>
         <source>Please try again %n minute(s) later</source>
-        <translation type="unfinished"><numerusform></numerusform><numerusform></numerusform></translation>
+        <translation><numerusform>Tentar novamente %n minuto mais tarde</numerusform><numerusform>Tentar novamente %n minutos mais tarde</numerusform></translation>
     </message>
 </context>
 <context>
@@ -43,7 +43,7 @@
     <message numerus="yes">
         <location filename="../src/session-widgets/authpassword.cpp" line="152"/>
         <source>Verification failed, %n chances left</source>
-        <translation type="unfinished"><numerusform></numerusform><numerusform></numerusform></translation>
+        <translation><numerusform>A verificação falhou, %n tentativa restante</numerusform><numerusform>A verificação falhou, %n tentativas restantes</numerusform></translation>
     </message>
     <message>
         <location filename="../src/session-widgets/authpassword.cpp" line="154"/>
@@ -63,7 +63,7 @@
     <message numerus="yes">
         <location filename="../src/session-widgets/authpassword.cpp" line="370"/>
         <source>Please try again %n minute(s) later</source>
-        <translation type="unfinished"><numerusform></numerusform><numerusform></numerusform></translation>
+        <translation><numerusform>Tentar novamente %n minuto mais tarde</numerusform><numerusform>Tentar novamente %n minutos mais tarde</numerusform></translation>
     </message>
 </context>
 <context>
@@ -71,7 +71,7 @@
     <message numerus="yes">
         <location filename="../src/session-widgets/authsingle.cpp" line="356"/>
         <source>Please try again %n minute(s) later</source>
-        <translation type="unfinished"><numerusform></numerusform><numerusform></numerusform></translation>
+        <translation><numerusform>Tentar novamente %n minuto mais tarde</numerusform><numerusform>Tentar novamente %n minutos mais tarde</numerusform></translation>
     </message>
 </context>
 <context>
@@ -84,7 +84,7 @@
     <message numerus="yes">
         <location filename="../src/session-widgets/authukey.cpp" line="134"/>
         <source>Verification failed, %n chances left</source>
-        <translation type="unfinished"><numerusform></numerusform><numerusform></numerusform></translation>
+        <translation><numerusform>A verificação falhou, %n tentativa restante</numerusform><numerusform>A verificação falhou, %n tentativas restantes</numerusform></translation>
     </message>
     <message>
         <location filename="../src/session-widgets/authukey.cpp" line="136"/>
@@ -109,7 +109,7 @@
     <message numerus="yes">
         <location filename="../src/session-widgets/authukey.cpp" line="351"/>
         <source>Please try again %n minute(s) later</source>
-        <translation type="unfinished"><numerusform></numerusform><numerusform></numerusform></translation>
+        <translation><numerusform>Tentar novamente %n minuto mais tarde</numerusform><numerusform>Tentar novamente %n minutos mais tarde</numerusform></translation>
     </message>
 </context>
 <context>
@@ -281,12 +281,17 @@
 <context>
     <name>GreeterWorkek</name>
     <message>
-        <location filename="../src/lightdm-deepin-greeter/greeterworkek.cpp" line="629"/>
+        <location filename="../src/lightdm-deepin-greeter/greeterworkek.cpp" line="515"/>
+        <source>Wrong account</source>
+        <translation type="unfinished"/>
+    </message>
+    <message>
+        <location filename="../src/lightdm-deepin-greeter/greeterworkek.cpp" line="626"/>
         <source>Wrong Password</source>
         <translation>Palavra-passe incorreta</translation>
     </message>
     <message>
-        <location filename="../src/lightdm-deepin-greeter/greeterworkek.cpp" line="633"/>
+        <location filename="../src/lightdm-deepin-greeter/greeterworkek.cpp" line="630"/>
         <source>The account or password is not correct. Please enter again.</source>
         <translation>A conta ou a palavra-passe não estão corretas. Por favor, insira novamente.</translation>
     </message>
@@ -316,12 +321,12 @@
 <context>
     <name>LockWorker</name>
     <message>
-        <location filename="../src/dde-lock/lockworker.cpp" line="522"/>
+        <location filename="../src/dde-lock/lockworker.cpp" line="525"/>
         <source>Fingerprint verification timed out, please enter your password manually</source>
         <translation>A verificação da impressão digital expirou, insira manualmente a sua palavra-passe</translation>
     </message>
     <message>
-        <location filename="../src/dde-lock/lockworker.cpp" line="540"/>
+        <location filename="../src/dde-lock/lockworker.cpp" line="543"/>
         <source>Failed to match fingerprint</source>
         <translation>A impressão digital não coincide</translation>
     </message>
@@ -406,17 +411,18 @@
     <name>UserLoginWidget</name>
     <message>
         <location filename="../src/session-widgets/userloginwidget.cpp" line="152"/>
-        <location filename="../src/session-widgets/userloginwidget.cpp" line="1229"/>
+        <location filename="../src/session-widgets/userloginwidget.cpp" line="1236"/>
         <source>Account</source>
         <translation>Conta</translation>
     </message>
     <message>
-        <location filename="../src/session-widgets/userloginwidget.cpp" line="419"/>
+        <location filename="../src/session-widgets/userloginwidget.cpp" line="421"/>
+        <location filename="../src/session-widgets/userloginwidget.cpp" line="1120"/>
         <source>Verify your fingerprint</source>
         <translation>Verifique a impressão digital</translation>
     </message>
     <message numerus="yes">
-        <location filename="../src/session-widgets/userloginwidget.cpp" line="832"/>
+        <location filename="../src/session-widgets/userloginwidget.cpp" line="834"/>
         <source>Please try again %n minute(s) later</source>
         <translation><numerusform>Tentar novamente %n minuto(s) mais tarde</numerusform><numerusform>Tentar novamente %n minuto(s) mais tarde</numerusform></translation>
     </message>

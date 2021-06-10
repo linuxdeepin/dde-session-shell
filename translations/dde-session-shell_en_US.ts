@@ -310,12 +310,17 @@
 <context>
     <name>GreeterWorkek</name>
     <message>
-        <location filename="../src/lightdm-deepin-greeter/greeterworkek.cpp" line="629"/>
+        <location filename="../src/lightdm-deepin-greeter/greeterworkek.cpp" line="515"/>
+        <source>Wrong account</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../src/lightdm-deepin-greeter/greeterworkek.cpp" line="626"/>
         <source>Wrong Password</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../src/lightdm-deepin-greeter/greeterworkek.cpp" line="633"/>
+        <location filename="../src/lightdm-deepin-greeter/greeterworkek.cpp" line="630"/>
         <source>The account or password is not correct. Please enter again.</source>
         <translation type="unfinished"></translation>
     </message>
@@ -345,12 +350,12 @@
 <context>
     <name>LockWorker</name>
     <message>
-        <location filename="../src/dde-lock/lockworker.cpp" line="522"/>
+        <location filename="../src/dde-lock/lockworker.cpp" line="525"/>
         <source>Fingerprint verification timed out, please enter your password manually</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../src/dde-lock/lockworker.cpp" line="540"/>
+        <location filename="../src/dde-lock/lockworker.cpp" line="543"/>
         <source>Failed to match fingerprint</source>
         <translation type="unfinished"></translation>
     </message>
@@ -435,17 +440,18 @@
     <name>UserLoginWidget</name>
     <message>
         <location filename="../src/session-widgets/userloginwidget.cpp" line="152"/>
-        <location filename="../src/session-widgets/userloginwidget.cpp" line="1229"/>
+        <location filename="../src/session-widgets/userloginwidget.cpp" line="1236"/>
         <source>Account</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../src/session-widgets/userloginwidget.cpp" line="419"/>
+        <location filename="../src/session-widgets/userloginwidget.cpp" line="421"/>
+        <location filename="../src/session-widgets/userloginwidget.cpp" line="1120"/>
         <source>Verify your fingerprint</source>
         <translation type="unfinished"></translation>
     </message>
     <message numerus="yes">
-        <location filename="../src/session-widgets/userloginwidget.cpp" line="832"/>
+        <location filename="../src/session-widgets/userloginwidget.cpp" line="834"/>
         <source>Please try again %n minute(s) later</source>
         <translation type="unfinished">
             <numerusform></numerusform>

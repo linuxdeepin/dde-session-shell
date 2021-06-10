@@ -281,12 +281,17 @@
 <context>
     <name>GreeterWorkek</name>
     <message>
-        <location filename="../src/lightdm-deepin-greeter/greeterworkek.cpp" line="629"/>
+        <location filename="../src/lightdm-deepin-greeter/greeterworkek.cpp" line="515"/>
+        <source>Wrong account</source>
+        <translation type="unfinished"/>
+    </message>
+    <message>
+        <location filename="../src/lightdm-deepin-greeter/greeterworkek.cpp" line="626"/>
         <source>Wrong Password</source>
         <translation>Contraseña incorrecta</translation>
     </message>
     <message>
-        <location filename="../src/lightdm-deepin-greeter/greeterworkek.cpp" line="633"/>
+        <location filename="../src/lightdm-deepin-greeter/greeterworkek.cpp" line="630"/>
         <source>The account or password is not correct. Please enter again.</source>
         <translation>La cuenta o la contraseña no son correctas. Escriba de nuevo los datos.</translation>
     </message>
@@ -316,12 +321,12 @@
 <context>
     <name>LockWorker</name>
     <message>
-        <location filename="../src/dde-lock/lockworker.cpp" line="522"/>
+        <location filename="../src/dde-lock/lockworker.cpp" line="525"/>
         <source>Fingerprint verification timed out, please enter your password manually</source>
         <translation>Tiempo de verificación de huella dactilar agotado, escriba su contraseña</translation>
     </message>
     <message>
-        <location filename="../src/dde-lock/lockworker.cpp" line="540"/>
+        <location filename="../src/dde-lock/lockworker.cpp" line="543"/>
         <source>Failed to match fingerprint</source>
         <translation>La comprobación dactilar falló</translation>
     </message>
@@ -406,17 +411,18 @@
     <name>UserLoginWidget</name>
     <message>
         <location filename="../src/session-widgets/userloginwidget.cpp" line="152"/>
-        <location filename="../src/session-widgets/userloginwidget.cpp" line="1229"/>
+        <location filename="../src/session-widgets/userloginwidget.cpp" line="1236"/>
         <source>Account</source>
         <translation>Cuenta</translation>
     </message>
     <message>
-        <location filename="../src/session-widgets/userloginwidget.cpp" line="419"/>
+        <location filename="../src/session-widgets/userloginwidget.cpp" line="421"/>
+        <location filename="../src/session-widgets/userloginwidget.cpp" line="1120"/>
         <source>Verify your fingerprint</source>
         <translation>Verifique su huella dactilar</translation>
     </message>
     <message numerus="yes">
-        <location filename="../src/session-widgets/userloginwidget.cpp" line="832"/>
+        <location filename="../src/session-widgets/userloginwidget.cpp" line="834"/>
         <source>Please try again %n minute(s) later</source>
         <translation><numerusform>Vuelva a intentarlo en %n minuto</numerusform><numerusform>Vuelva a intentarlo en %n minutos</numerusform></translation>
     </message>
