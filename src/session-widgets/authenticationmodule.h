@@ -54,7 +54,7 @@ public:
     ~AuthenticationModule();
 
     QString lineEditText() const;
-    int getAuthStatus() { return m_status; }
+    int getAuthStatus() const { return m_status; }
     void setKeyboardButtonVisible(const bool visible);
     void setKeyboardButtontext(const QString &text);
 

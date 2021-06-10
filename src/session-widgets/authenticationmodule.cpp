@@ -216,9 +216,9 @@ void AuthenticationModule::init()
  */
 void AuthenticationModule::setAuthResult(const int status, const QString &result)
 {
-    m_status = status;
     switch (status) {
     case StatusCodeSuccess:
+        m_status = status;
         setEnabled(false);
         if (m_textLabel != nullptr) {
             m_textLabel->setText(tr("Verification successful"));
@@ -236,6 +236,7 @@ void AuthenticationModule::setAuthResult(const int status, const QString &result
         emit requestChangeFocus();
         break;
     case StatusCodeFailure:
+        m_status = status;
         setEnabled(true);
         if (m_textLabel != nullptr) {
             if (m_limitsInfo->maxTries - m_limitsInfo->numFailures > 1) {
@@ -366,6 +367,7 @@ void AuthenticationModule::setAuthResult(const int status, const QString &result
         }
         break;
     case StatusCodeLocked:
+        m_status = status;
         setEnabled(false);
         if (m_textLabel != nullptr) {
             m_textLabel->setText(tr("Fingerprint locked, use password please"));

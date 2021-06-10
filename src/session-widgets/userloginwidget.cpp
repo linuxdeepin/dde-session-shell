@@ -384,7 +384,7 @@ void UserLoginWidget::initPasswdAuth(const int index)
     m_registerFunctionIndexs["UserLoginPassword"] = FrameDataBind::Instance()->registerFunction("UserLoginPassword", passwordChanged);
     connect(m_passwordAuth, &AuthenticationModule::lineEditTextChanged, this, [=] (const QString &value) {
         FrameDataBind::Instance()->updateValue("UserLoginPassword", value);
-        if (value.length() > 0 || (m_ukeyAuth && (m_ukeyAuth->getAuthStatus() == StatusCodeSuccess || m_ukeyAuth->getAuthStatus() == StatusCodeEnded)))
+        if (value.length() > 0 || (m_ukeyAuth && (m_ukeyAuth->getAuthStatus() == StatusCodeSuccess)))
             m_lockButton->setEnabled(true);
         else if(m_ukeyAuth && m_ukeyAuth->lineEditText().isEmpty()) {
                m_lockButton->setEnabled(false);
@@ -491,7 +491,7 @@ void UserLoginWidget::initUkeyAuth(const int index)
         }
         FrameDataBind::Instance()->updateValue("UserLoginUKey", value);
 
-        if (value.length() > 0 || (m_passwordAuth && (m_passwordAuth->getAuthStatus() == StatusCodeSuccess || m_passwordAuth->getAuthStatus() == StatusCodeEnded))) {
+        if (value.length() > 0 || (m_passwordAuth && (m_passwordAuth->getAuthStatus() == StatusCodeSuccess))) {
             m_lockButton->setEnabled(true);
         } else if (m_passwordAuth && m_passwordAuth->lineEditText().isEmpty()) {
             m_lockButton->setEnabled(false);
@@ -1116,7 +1116,7 @@ void UserLoginWidget::checkAuthResult(const int type, const int status)
         emit authFininshed(status);
     }
     if (type == AuthTypePassword && status == StatusCodeSuccess) {
-        if (m_fingerprintAuth != nullptr) {
+        if (m_fingerprintAuth != nullptr && m_fingerprintAuth->getAuthStatus() == StatusCodeFailure) {
             m_fingerprintAuth->setText(tr("Verify your fingerprint"));
         }
     }
