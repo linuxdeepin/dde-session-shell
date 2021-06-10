@@ -150,7 +150,11 @@ void AuthSingle::setAuthResult(const int status, const QString &result)
             m_lineEdit->clearFocus();
             m_lineEdit->setAlert(false);
             m_lineEdit->lineEdit()->setReadOnly(true);
-            setLineEditInfo(result, PlaceHolderText);
+            if (m_integerMinutes > 1) {
+                setLineEditInfo(tr("Please try again %n minutes later", "", static_cast<int>(m_integerMinutes)), PlaceHolderText);
+            } else {
+                setLineEditInfo(tr("Please try again %n minute later", "", static_cast<int>(m_integerMinutes)), PlaceHolderText);
+            }
         } else {
             m_lineEdit->clear();
             m_lineEdit->setFocusPolicy(Qt::StrongFocus);
@@ -352,8 +356,10 @@ QString AuthSingle::lineEditText() const
  */
 void AuthSingle::updateUnlockPrompt()
 {
-    if (m_integerMinutes > 0) {
-        m_lineEdit->setPlaceholderText(tr("Please try again %n minute(s) later", "", static_cast<int>(m_integerMinutes)));
+    if (m_integerMinutes == 1) {
+        m_lineEdit->setPlaceholderText(tr("Please try again %n minute later", "", static_cast<int>(m_integerMinutes)));
+    } else if (m_integerMinutes > 1) {
+        m_lineEdit->setPlaceholderText(tr("Please try again %n minutes later", "", static_cast<int>(m_integerMinutes)));
     } else {
         QTimer::singleShot(1000, this, [this] {
             emit activeAuth();
