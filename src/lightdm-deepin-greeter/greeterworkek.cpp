@@ -512,6 +512,7 @@ void GreeterWorkek::checkAccount(const QString &account)
     QString userPath = m_accountsInter->FindUserByName(account);
     if (!userPath.startsWith("/") && !account.startsWith("@")) {
         qWarning() << userPath;
+        userPath = tr("Wrong account");
         onDisplayErrorMsg(userPath);
         return;
     }
