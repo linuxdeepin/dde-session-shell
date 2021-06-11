@@ -126,9 +126,6 @@ void AuthSingle::initConnections()
  */
 void AuthSingle::setAuthResult(const int status, const QString &result)
 {
-    if (status == m_status) {
-        return;
-    }
     m_status = status;
 
     switch (status) {
