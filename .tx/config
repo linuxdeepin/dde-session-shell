@@ -5,6 +5,6 @@ mode = developer
 
 [deepin-desktop-environment.dde-session-shell]
 file_filter = translations/dde-session-shell_<lang>.ts
-source_file = translations/dde-session-shell_en_US.ts
-source_lang = en_US
+source_file = translations/dde-session-shell_en.ts
+source_lang = en
 type = QT
