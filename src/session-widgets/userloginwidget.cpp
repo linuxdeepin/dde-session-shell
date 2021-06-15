@@ -280,7 +280,7 @@ void UserLoginWidget::updateWidgetShowType(const int type)
             m_accountEdit->clear();
         }
     }
-
+    updateGeometry();
     /**
      * @brief 设置焦点
      * 优先级: 用户名输入框 > PIN码输入框 > 密码输入框 > 解锁按钮
