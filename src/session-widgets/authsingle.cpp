@@ -19,11 +19,13 @@
 * along with this program.  If not, see <http://www.gnu.org/licenses/>.
 */
 
-#include "authcommon.h"
 #include "authsingle.h"
+
+#include "authcommon.h"
 #include "dlineeditex.h"
 
 #include <DHiDPIHelper>
+
 #include <QKeyEvent>
 #include <QTimer>
 
@@ -147,7 +149,11 @@ void AuthSingle::setAuthResult(const int status, const QString &result)
             m_lineEdit->clearFocus();
             m_lineEdit->setAlert(false);
             m_lineEdit->lineEdit()->setReadOnly(true);
-            setLineEditInfo(tr("Please try again %n minute(s) later", "", static_cast<int>(m_integerMinutes)), PlaceHolderText);
+            if (m_integerMinutes == 1) {
+                setLineEditInfo(tr("Please try again 1 minute later"), PlaceHolderText);
+            } else {
+                setLineEditInfo(tr("Please try again %n minutes later", "", static_cast<int>(m_integerMinutes)), PlaceHolderText);
+            }
         } else {
             m_lineEdit->clear();
             m_lineEdit->setFocusPolicy(Qt::StrongFocus);
@@ -349,8 +355,10 @@ QString AuthSingle::lineEditText() const
  */
 void AuthSingle::updateUnlockPrompt()
 {
-    if (m_integerMinutes > 0) {
-        m_lineEdit->setPlaceholderText(tr("Please try again %n minute(s) later", "", static_cast<int>(m_integerMinutes)));
+    if (m_integerMinutes == 1) {
+        m_lineEdit->setPlaceholderText(tr("Please try again 1 minute later"));
+    } else if (m_integerMinutes > 1) {
+        m_lineEdit->setPlaceholderText(tr("Please try again %n minutes later", "", static_cast<int>(m_integerMinutes)));
     } else {
         QTimer::singleShot(1000, this, [this] {
             emit activeAuth();

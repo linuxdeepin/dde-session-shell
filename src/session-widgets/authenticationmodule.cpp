@@ -19,8 +19,9 @@
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-#include "authcommon.h"
 #include "authenticationmodule.h"
+
+#include "authcommon.h"
 #include "dlineeditex.h"
 
 #include <DFontSizeManager>
@@ -189,8 +190,10 @@ void AuthenticationModule::init()
         mainLayout->addWidget(m_authStatus, 0, Qt::AlignRight | Qt::AlignVCenter);
         /* 解锁时间 */
         connect(this, &AuthenticationModule::unlockTimeChanged, this, [=] {
-            if (m_integerMinutes > 0) {
-                m_textLabel->setText(tr("Please try again %n minute(s) later", "", static_cast<int>(m_integerMinutes)));
+            if (m_integerMinutes == 1) {
+                m_textLabel->setText(tr("Please try again 1 minute later"));
+            } else if (m_integerMinutes > 1) {
+                m_textLabel->setText(tr("Please try again %n minutes later", "", static_cast<int>(m_integerMinutes)));
             } else {
                 QTimer::singleShot(1000, this, [=] {
                     emit activateAuthentication();
@@ -374,7 +377,11 @@ void AuthenticationModule::setAuthResult(const int status, const QString &result
         }
         if (m_lineEdit != nullptr) {
             setAnimationState(false);
-            setLineEditInfo(tr("Please try again %n minute(s) later", "", static_cast<int>(m_integerMinutes)), PlaceHolderText);
+            if (m_integerMinutes == 1) {
+                setLineEditInfo(tr("Please try again 1 minute later"), PlaceHolderText);
+            } else {
+                setLineEditInfo(tr("Please try again %n minutes later", "", static_cast<int>(m_integerMinutes)), PlaceHolderText);
+            }
         }
         if (m_authStatus != nullptr) {
             setAuthStatus(":/misc/images/login_lock.svg");
@@ -538,8 +545,11 @@ void AuthenticationModule::setLineEditInfo(const QString &text, const TextType t
  */
 QString AuthenticationModule::lineEditText() const
 {
-    if(m_lineEdit != nullptr)
+    if (m_lineEdit != nullptr) {
         return m_lineEdit->text();
+    } else {
+        return QString();
+    }
 }
 
 /**
