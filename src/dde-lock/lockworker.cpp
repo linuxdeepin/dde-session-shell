@@ -132,12 +132,16 @@ void LockWorker::initConnections()
             } else if (type != AuthTypeAll) {
                 switch (status) {
                 case StatusCodeSuccess:
+                    if (m_model->currentModeState() != SessionBaseModel::ModeStatus::PasswordMode)
+                        m_model->setCurrentModeState(SessionBaseModel::ModeStatus::PasswordMode);
                     m_resetSessionTimer->start();
                     endAuthentication(m_account, type);
                     m_model->updateAuthStatus(type, status, message);
                     break;
                 case StatusCodeFailure:
                 case StatusCodeLocked:
+                    if (m_model->currentModeState() != SessionBaseModel::ModeStatus::PasswordMode)
+                        m_model->setCurrentModeState(SessionBaseModel::ModeStatus::PasswordMode);
                     endAuthentication(m_account, type);
                     QTimer::singleShot(10, this, [=]{
                         m_model->updateAuthStatus(type, status, message);
@@ -154,6 +158,8 @@ void LockWorker::initConnections()
                 }
             }
         } else {
+            if (m_model->currentModeState() != SessionBaseModel::ModeStatus::PasswordMode && (status == StatusCodeSuccess || status == StatusCodeFailure))
+                m_model->setCurrentModeState(SessionBaseModel::ModeStatus::PasswordMode);
             m_model->updateAuthStatus(type, status, message);
 
             if(status == StatusCodeSuccess)
