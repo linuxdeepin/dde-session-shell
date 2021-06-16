@@ -238,8 +238,6 @@ void LockWorker::initConnections()
         if (status == SessionBaseModel::ModeStatus::PowerMode || status == SessionBaseModel::ModeStatus::ShutDownMode) {
             checkPowerInfo();
         }
-        if (status == SessionBaseModel::ModeStatus::PasswordMode && m_model->visible())
-            createAuthentication(m_model->currentUser()->name());
     });
 }
 
@@ -382,8 +380,6 @@ void LockWorker::onPasswordResult(const QString &msg)
  */
 void LockWorker::createAuthentication(const QString &account)
 {
-    if (SessionBaseModel::ShutDownMode == m_model->currentModeState())
-        return;
     QString userPath = m_accountsInter->FindUserByName(account);
     if (!userPath.startsWith("/")) {
         qWarning() << userPath;
