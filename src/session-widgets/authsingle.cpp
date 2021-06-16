@@ -246,14 +246,12 @@ void AuthSingle::setCapsStatus(const bool isCapsOn)
  */
 void AuthSingle::setLimitsInfo(const LimitsInfo &info)
 {
-    if (info.unlockTime != m_limitsInfo->unlockTime) {
-        m_limitsInfo->unlockTime = info.unlockTime;
-        updateUnlockTime();
-    }
+    m_limitsInfo->unlockTime = info.unlockTime;
     m_limitsInfo->locked = info.locked;
     m_limitsInfo->maxTries = info.maxTries;
     m_limitsInfo->numFailures = info.numFailures;
     m_limitsInfo->unlockSecs = info.unlockSecs;
+    updateUnlockTime();
 }
 
 /**

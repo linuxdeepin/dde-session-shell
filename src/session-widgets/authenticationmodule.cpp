@@ -483,19 +483,15 @@ void AuthenticationModule::setCapsStatus(const bool isCapsOn)
  */
 void AuthenticationModule::setLimitsInfo(const LimitsInfo &info)
 {
-    if (info.unlockTime != m_limitsInfo->unlockTime) {
-        m_limitsInfo->unlockTime = info.unlockTime;
-        updateUnlockTime();
-        if (info.locked) {
-            setAuthResult(StatusCodeLocked, QString("Locked"));
-        } else {
-            setAuthResult(StatusCodeUnlocked, QString("Unlocked"));
-        }
-    }
+    m_limitsInfo->unlockTime = info.unlockTime;
     m_limitsInfo->locked = info.locked;
     m_limitsInfo->maxTries = info.maxTries;
     m_limitsInfo->numFailures = info.numFailures;
     m_limitsInfo->unlockSecs = info.unlockSecs;
+    updateUnlockTime();
+    if (info.locked) {
+        setAuthResult(StatusCodeLocked, QString("Locked"));
+    }
 }
 
 /**
