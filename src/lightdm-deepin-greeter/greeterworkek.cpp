@@ -415,23 +415,21 @@ void GreeterWorkek::onUserAdded(const QString &user)
  */
 void GreeterWorkek::createAuthentication(const QString &account)
 {
-    if (m_account == account) {
-        if (!m_greeter->inAuthentication()) {
-            m_greeter->authenticate(account);
-        }
-    } else {
-        m_account = account;
-        m_greeter->authenticate(account);
-    }
+    m_account = account;
     switch (m_model->getAuthProperty().FrameworkState) {
     case 0:
-        sleep(1);
         m_authFramework->CreateAuthController(account, m_authFramework->GetSupportedMixAuthFlags(), AppTypeLogin);
         m_authFramework->SetAuthQuitFlag(account, DeepinAuthFramework::ManualQuit);
         break;
     default:
         m_model->updateFactorsInfo(MFAInfoList());
         break;
+    }
+    if (m_model->getAuthProperty().MFAFlag) {
+        if (!m_authFramework->SetPrivilegesEnable(account, QString("/usr/sbin/lightdm"))) {
+            qWarning() << "Failed to set privileges!";
+        }
+        m_greeter->authenticate(account);
     }
 }
 
@@ -444,6 +442,7 @@ void GreeterWorkek::destoryAuthentication(const QString &account)
 {
     switch (m_model->getAuthProperty().FrameworkState) {
     case 0:
+        m_authFramework->SetPrivilegesDisable(account);
         m_authFramework->DestoryAuthController(account);
         break;
     default:

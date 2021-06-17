@@ -562,6 +562,34 @@ QString DeepinAuthFramework::GetPrompt(const QString &account) const
 }
 
 /**
+ * @brief 设置进程 path 仅开启密码认证 --- lightdm
+ *
+ * @param account
+ * @param path
+ * @return
+ */
+bool DeepinAuthFramework::SetPrivilegesEnable(const QString &account, const QString &path)
+{
+    if (!m_authenticateControllers->contains(account)) {
+        return false;
+    }
+    return m_authenticateControllers->value(account)->PrivilegesEnable(path);
+}
+
+/**
+ * @brief 取消 lightdm 仅开启密码认证的限制
+ *
+ * @param account
+ */
+void DeepinAuthFramework::SetPrivilegesDisable(const QString &account)
+{
+    if (!m_authenticateControllers->contains(account)) {
+        return;
+    }
+    m_authenticateControllers->value(account)->PrivilegesDisable();
+}
+
+/**
  * @brief 获取多因子信息，返回结构体数组，包含多因子认证所有信息。
  *
  * @param account

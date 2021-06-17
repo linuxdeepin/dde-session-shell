@@ -60,6 +60,8 @@ public:
     int GetPINLen(const QString &account) const;
     MFAInfoList GetFactorsInfo(const QString &account) const;
     QString GetPrompt(const QString &account) const;
+    bool SetPrivilegesEnable(const QString &account, const QString &path);
+    void SetPrivilegesDisable(const QString &account);
 
     QString AuthSessionPath(const QString &account) const;
     void setEncryption(const int type, const ArrayInt method);
