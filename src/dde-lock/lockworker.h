@@ -23,7 +23,7 @@
 using AccountsInter = com::deepin::daemon::Accounts;
 using UserInter = com::deepin::daemon::accounts::User;
 using LoginedInter = com::deepin::daemon::Logined;
-using SessionManager = com::deepin::SessionManager;
+using SessionManagerInter = com::deepin::SessionManager;
 using XEventInter = com::deepin::api::XEventMonitor;
 
 class SessionBaseModel;
@@ -53,6 +53,7 @@ public slots:
     void sendTokenToAuth(const QString &account, const int authType, const QString &token);
 
     void switchToUser(std::shared_ptr<User> user) override;
+    void setLocked(const bool locked);
 
 private:
     void initConnections();
@@ -75,7 +76,7 @@ private:
     QTimer *m_resetSessionTimer;
     QString m_password;
     QMap<std::shared_ptr<User>, bool> m_lockUser;
-    SessionManager *m_sessionManager;
+    SessionManagerInter *m_sessionManagerInter;
     HuaWeiSwitchOSInterface *m_switchosInterface = nullptr;
     bool m_canAuthenticate = false;
     AccountsInter *m_accountsInter;

@@ -380,7 +380,7 @@ void LockContent::tryGrabKeyboard()
 
     if (m_failures == 15) {
         qDebug() << "Trying grabkeyboard has exceeded the upper limit. dde-lock will quit.";
-        m_model->setLocked(false);
+        emit requestSetLocked(false);
 
         DDBusSender()
                 .service("org.freedesktop.Notifications")

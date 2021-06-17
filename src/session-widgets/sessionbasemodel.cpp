@@ -14,7 +14,6 @@ DCORE_USE_NAMESPACE
 
 SessionBaseModel::SessionBaseModel(AuthType type, QObject *parent)
     : QObject(parent)
-    , m_sessionManagerInter(nullptr)
     , m_hasSwap(false)
     , m_visible(false)
     , m_isServerModel(false)
@@ -27,10 +26,6 @@ SessionBaseModel::SessionBaseModel(AuthType type, QObject *parent)
     , m_users(new QMap<QString, std::shared_ptr<User>>())
     , m_loginedUsers(new QMap<QString, std::shared_ptr<User>>())
 {
-    if (m_currentType == LockType || m_currentType == UnknowAuthType) {
-        m_sessionManagerInter = new SessionManager(SessionManagerService, SessionManagerPath, QDBusConnection::sessionBus(), this);
-        m_sessionManagerInter->setSync(false);
-    }
 }
 
 SessionBaseModel::~SessionBaseModel()
@@ -90,7 +85,7 @@ void SessionBaseModel::userAdd(std::shared_ptr<User> user)
     auto user_exist = findUserByUid(user->uid());
     if (user_exist != nullptr) {
         return;
-    };
+    }
 
     m_userList << user;
 
@@ -228,23 +223,6 @@ void SessionBaseModel::setVisible(const bool visible)
     }
     m_visible = visible;
 
-#ifndef QT_DEBUG
-    if (m_sessionManagerInter && m_currentType == LockType && m_currentModeState != ShutDownMode) {
-        /** FIXME
-         * 在执行待机操作时，后端监听的是这里设置的“Locked”，当设置为“true”时，后端认为锁屏完全起来了，执行冻结进程等接下来的操作；
-         * 但是锁屏界面的显示“show”监听的是“visibleChanged”，这个信号发出后，在性能较差的机型上（arm），前端需要更长的时间来使锁屏界面显示出来，
-         * 导致后端收到了“Locked=true”的信号时，锁屏界面还没有完全起来。
-         * 唤醒时，锁屏接着待机前的步骤努力显示界面，但由于桌面界面在待机前一直在，不存在创建的过程，所以唤醒时直接就显示了，
-         * 而这时候锁屏还在处理信号跟其它进程抢占CPU资源努力显示界面中。
-         * 故增加这个延时，在待机前多给锁屏一点时间去处理显示界面的信号，尽量保证执行待机时，锁屏界面显示完成。
-         * 建议后端修改监听信号或前端修改这块逻辑。
-         */
-        QTimer::singleShot(200, this, [=] {
-            m_sessionManagerInter->SetLocked(m_visible);
-        });
-    }
-#endif
-
     //根据界面显示还是隐藏设置是否加载虚拟键盘
     setHasVirtualKB(m_visible);
 
@@ -285,16 +263,6 @@ void SessionBaseModel::setAbortConfirm(bool abortConfirm)
 {
     m_abortConfirm = abortConfirm;
     emit abortConfirmChanged(abortConfirm);
-}
-
-/**
- * @brief SessionBaseModel::setLocked
- * @param lock
- * 设置锁屏状态，后端会监听此属性，来做真正的锁屏，已经响应的处理
- */
-void SessionBaseModel::setLocked(bool lock)
-{
-    if (m_sessionManagerInter) m_sessionManagerInter->SetLocked(lock);
 }
 
 void SessionBaseModel::setIsLockNoPassword(bool LockNoPassword)

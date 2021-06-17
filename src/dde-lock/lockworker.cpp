@@ -30,7 +30,7 @@ LockWorker::LockWorker(SessionBaseModel *const model, QObject *parent)
     , m_lockInter(new DBusLockService("com.deepin.dde.LockService", "/com/deepin/dde/LockService", QDBusConnection::systemBus(), this))
     , m_hotZoneInter(new DBusHotzone("com.deepin.daemon.Zone", "/com/deepin/daemon/Zone", QDBusConnection::sessionBus(), this))
     , m_resetSessionTimer(new QTimer(this))
-    , m_sessionManager(new SessionManager("com.deepin.SessionManager", "/com/deepin/SessionManager", QDBusConnection::sessionBus(), this))
+    , m_sessionManagerInter(new SessionManagerInter("com.deepin.SessionManager", "/com/deepin/SessionManager", QDBusConnection::sessionBus(), this))
     , m_switchosInterface(new HuaWeiSwitchOSInterface("com.huawei", "/com/huawei/switchos", QDBusConnection::sessionBus(), this))
     , m_accountsInter(new AccountsInter("com.deepin.daemon.Accounts", "/com/deepin/daemon/Accounts", QDBusConnection::systemBus(), this))
     , m_loginedInter(new LoginedInter("com.deepin.daemon.Accounts", "/com/deepin/daemon/Logined", QDBusConnection::systemBus(), this))
@@ -38,7 +38,7 @@ LockWorker::LockWorker(SessionBaseModel *const model, QObject *parent)
 {
     m_accountsInter->setSync(false);
     m_currentUserUid = getuid();
-    m_sessionManager->setSync(false);
+    m_sessionManagerInter->setSync(false);
 
     initConnections();
 
@@ -174,7 +174,7 @@ void LockWorker::initConnections()
     });
     connect(m_lockInter, &DBusLockService::Event, this, &LockWorker::lockServiceEvent);
     /* com.deepin.SessionManager */
-    connect(m_sessionManager, &SessionManager::Unlock, this, [=] {
+    connect(m_sessionManagerInter, &SessionManagerInter::Unlock, this, [=] {
         m_authenticating = false;
         m_password.clear();
         emit m_model->authFinished(true);
@@ -233,6 +233,7 @@ void LockWorker::initConnections()
             m_resetSessionTimer->stop();
             destoryAuthentication(m_account);
         }
+        setLocked(visible);
     });
     connect(m_model, &SessionBaseModel::onStatusChanged, this, [=] (SessionBaseModel::ModeStatus status) {
         if (status == SessionBaseModel::ModeStatus::PowerMode || status == SessionBaseModel::ModeStatus::ShutDownMode) {
@@ -248,41 +249,41 @@ void LockWorker::doPowerAction(const SessionBaseModel::PowerAction action)
         m_model->setIsBlackModel(true);
         m_model->setCurrentModeState(SessionBaseModel::ModeStatus::PasswordMode);
         QTimer::singleShot(0, this, [=] {
-            m_sessionManager->RequestSuspend();
+            m_sessionManagerInter->RequestSuspend();
         });
         break;
     case SessionBaseModel::PowerAction::RequireHibernate:
         m_model->setIsBlackModel(true);
         m_model->setCurrentModeState(SessionBaseModel::ModeStatus::PasswordMode);
         QTimer::singleShot(0, this, [=] {
-            m_sessionManager->RequestHibernate();
+            m_sessionManagerInter->RequestHibernate();
         });
         break;
     case SessionBaseModel::PowerAction::RequireRestart:
         if (m_model->currentModeState() == SessionBaseModel::ModeStatus::ShutDownMode) {
-            m_sessionManager->RequestReboot();
+            m_sessionManagerInter->RequestReboot();
         } else {
             m_model->setCurrentModeState(SessionBaseModel::ModeStatus::ConfirmPasswordMode);
         }
         return;
     case SessionBaseModel::PowerAction::RequireShutdown:
         if (m_model->currentModeState() == SessionBaseModel::ModeStatus::ShutDownMode) {
-            m_sessionManager->RequestShutdown();
+            m_sessionManagerInter->RequestShutdown();
         } else {
             m_model->setCurrentModeState(SessionBaseModel::ModeStatus::ConfirmPasswordMode);
         }
         return;
     case SessionBaseModel::PowerAction::RequireLock:
-        m_model->setLocked(true);
+        m_sessionManagerInter->SetLocked(true);
         m_model->setCurrentModeState(SessionBaseModel::ModeStatus::PasswordMode);
         // m_authFramework->AuthenticateByUser(m_model->currentUser());
         break;
     case SessionBaseModel::PowerAction::RequireLogout:
-        m_sessionManager->RequestLogout();
+        m_sessionManagerInter->RequestLogout();
         return;
     case SessionBaseModel::PowerAction::RequireSwitchSystem:
         m_switchosInterface->setOsFlag(!m_switchosInterface->getOsFlag());
-        QTimer::singleShot(200, this, [=] { m_sessionManager->RequestReboot(); });
+        QTimer::singleShot(200, this, [=] { m_sessionManagerInter->RequestReboot(); });
         break;
     case SessionBaseModel::PowerAction::RequireSwitchUser:
         m_model->setCurrentModeState(SessionBaseModel::ModeStatus::UserMode);
@@ -314,6 +315,33 @@ void LockWorker::switchToUser(std::shared_ptr<User> user)
     } else {
         QProcess::startDetached("dde-switchtogreeter", QStringList());
     }
+}
+
+/**
+ * @brief 设置 Locked 的状态
+ *
+ * @param locked
+ */
+void LockWorker::setLocked(const bool locked)
+{
+#ifndef QT_DEBUG
+    if (m_model->currentModeState() != SessionBaseModel::ShutDownMode) {
+        /** FIXME
+         * 在执行待机操作时，后端监听的是这里设置的“Locked”，当设置为“true”时，后端认为锁屏完全起来了，执行冻结进程等接下来的操作；
+         * 但是锁屏界面的显示“show”监听的是“visibleChanged”，这个信号发出后，在性能较差的机型上（arm），前端需要更长的时间来使锁屏界面显示出来，
+         * 导致后端收到了“Locked=true”的信号时，锁屏界面还没有完全起来。
+         * 唤醒时，锁屏接着待机前的步骤努力显示界面，但由于桌面界面在待机前一直在，不存在创建的过程，所以唤醒时直接就显示了，
+         * 而这时候锁屏还在处理信号跟其它进程抢占CPU资源努力显示界面中。
+         * 故增加这个延时，在待机前多给锁屏一点时间去处理显示界面的信号，尽量保证执行待机时，锁屏界面显示完成。
+         * 建议后端修改监听信号或前端修改这块逻辑。
+         */
+        QTimer::singleShot(200, this, [=] {
+            m_sessionManagerInter->SetLocked(locked);
+        });
+    }
+#else
+    Q_UNUSED(locked)
+#endif
 }
 
 /**
@@ -579,12 +607,12 @@ void LockWorker::onUnlockFinished(bool unlocked)
     switch (m_model->powerAction()) {
     case SessionBaseModel::PowerAction::RequireRestart:
         if (unlocked) {
-            m_sessionManager->RequestReboot();
+            m_sessionManagerInter->RequestReboot();
         }
         break;
     case SessionBaseModel::PowerAction::RequireShutdown:
         if (unlocked) {
-            m_sessionManager->RequestShutdown();
+            m_sessionManagerInter->RequestShutdown();
         }
         break;
     default:

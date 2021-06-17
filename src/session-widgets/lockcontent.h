@@ -32,6 +32,7 @@ public:
     void updateDesktopBackgroundPath(const QString &path);
 
 signals:
+    void requestSetLocked(const bool);
     void requestBackground(const QString &path);
     void requestAuthUser(const QString &password);
     void requestSwitchToUser(std::shared_ptr<User> user);

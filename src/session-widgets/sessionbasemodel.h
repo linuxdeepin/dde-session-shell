@@ -9,9 +9,6 @@
 #include <memory>
 
 #include <DSysInfo>
-
-#include <com_deepin_sessionmanager.h>
-
 class SessionBaseModel : public QObject
 {
     Q_OBJECT
@@ -120,7 +117,6 @@ public:
 
     inline bool abortConfim() const { return m_abortConfirm; }
     void setAbortConfirm(bool abortConfirm);
-    void setLocked(bool lock);
 
     inline bool isLockNoPassword() const { return m_isLockNoPassword; }
     void setIsLockNoPassword(bool LockNoPassword);
@@ -205,7 +201,6 @@ signals:
     void authTypeChanged(const int type);
 
 private:
-    com::deepin::SessionManager *m_sessionManagerInter;
     bool m_hasSwap;
     bool m_visible = false;
     bool m_isServerModel;
