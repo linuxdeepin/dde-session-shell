@@ -108,9 +108,9 @@ protected:
     bool eventFilter(QObject *watched, QEvent *event) override;
     void resizeEvent(QResizeEvent *event) override;
     void mousePressEvent(QMouseEvent *event) override;
-    void keyReleaseEvent(QKeyEvent *event) override;
     void focusOutEvent(QFocusEvent *event) override;
     void paintEvent(QPaintEvent *event) override;
+    void showEvent(QShowEvent *event) override;
 
 private:
     void initUI();

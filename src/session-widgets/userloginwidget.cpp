@@ -281,30 +281,6 @@ void UserLoginWidget::updateWidgetShowType(const int type)
         }
     }
     updateGeometry();
-    /**
-     * @brief 设置焦点
-     * 优先级: 用户名输入框 > PIN码输入框 > 密码输入框 > 解锁按钮
-     * 这里的优先级是根据布局来的，如果后续布局改变或者新增认证方式，焦点需要重新调整
-     */
-    if (m_lockButton->isVisible() && m_lockButton->isEnabled()) {
-        setFocusProxy(m_lockButton);
-    }
-    if (m_passwordAuth != nullptr) {
-        setFocusProxy(m_passwordAuth);
-    }
-    if (m_ukeyAuth != nullptr) {
-        setFocusProxy(m_ukeyAuth);
-    }
-    if (m_PINAuth != nullptr) {
-        setFocusProxy(m_PINAuth);
-    }
-    if (m_singleAuth != nullptr) {
-        setFocusProxy(m_singleAuth);
-    }
-    if (m_accountEdit->isVisible()) {
-        setFocusProxy(m_accountEdit);
-    }
-    setFocus();
 }
 
 /**
@@ -1258,24 +1234,6 @@ bool UserLoginWidget::eventFilter(QObject *watched, QEvent *event)
     return QObject::eventFilter(watched, event);
 }
 
-/**
- * @brief 键盘事件
- *
- * @param event
- */
-void UserLoginWidget::keyReleaseEvent(QKeyEvent *event)
-{
-    switch (event->key()) {
-    case Qt::Key_Return:
-    case Qt::Key_Enter:
-        if (m_lockButton->isEnabled()) {
-            // emit m_lockButton->clicked();
-        }
-        break;
-    }
-    QWidget::keyReleaseEvent(event);
-}
-
 void UserLoginWidget::focusOutEvent(QFocusEvent *event)
 {
     QWidget::focusOutEvent(event);
@@ -1313,4 +1271,35 @@ void UserLoginWidget::paintEvent(QPaintEvent *event)
     painter.drawRoundedRect(QRect(width() / 2 - 46, rect().bottom() - 4, 92, 4), 2, 2);
 
     QWidget::paintEvent(event);
+}
+
+void UserLoginWidget::showEvent(QShowEvent *event)
+{
+    QWidget::showEvent(event);
+
+    /**
+     * @brief 设置焦点
+     * 优先级: 用户名输入框 > PIN码输入框 > 密码输入框 > 解锁按钮
+     * 这里的优先级是根据布局来的，如果后续布局改变或者新增认证方式，焦点需要重新调整
+     */
+    //设置登录按钮为默认焦点
+    if (m_lockButton->isVisible() && m_lockButton->isEnabled()){
+        setFocusProxy(m_lockButton);
+    }
+    if (m_passwordAuth != nullptr) {
+        setFocusProxy(m_passwordAuth);
+    }
+    if (m_ukeyAuth != nullptr) {
+        setFocusProxy(m_ukeyAuth);
+    }
+    if (m_PINAuth != nullptr) {
+        setFocusProxy(m_PINAuth);
+    }
+    if (m_singleAuth != nullptr) {
+        setFocusProxy(m_singleAuth);
+    }
+    if (m_accountEdit->isVisible()) {
+        setFocusProxy(m_accountEdit);
+    }
+    setFocus();
 }

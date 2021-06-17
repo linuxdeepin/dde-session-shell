@@ -229,6 +229,8 @@ void FullscreenBackground::setContent(QWidget *const w)
     m_content->setParent(this);
     m_content->raise();
     m_content->move(0, 0);
+    m_content->setFocus();
+    setFocusProxy(m_content);
 }
 
 void FullscreenBackground::setIsBlackMode(bool is_black)
