@@ -193,6 +193,8 @@ private:
     QString m_local;
     QStringList m_keyboardList;
     QString m_keyboardInfo;
+
+    QList<QWidget *> m_widgetsList;
 };
 
 #endif // USERLOGINWIDGET_H
