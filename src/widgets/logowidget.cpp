@@ -89,6 +89,12 @@ void LogoWidget::initUI()
     m_logoVersionLabel->setFont(font);
 
     QString systemVersion = getVersion();
+
+    if(DSysInfo::UosEdition::UosEducation == DSysInfo::uosEditionType()) {  //教育版登录界面不要显示系统版本号（和Logo冲突）
+      //systemVersion = "";
+      return;
+    }
+
     m_logoVersionLabel->setText(systemVersion);
     logoLayout->addWidget(m_logoVersionLabel, 1, Qt::AlignTop | Qt::AlignLeft);
 
