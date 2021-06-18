@@ -281,6 +281,32 @@ void UserLoginWidget::updateWidgetShowType(const int type)
         }
     }
     updateGeometry();
+
+    /**
+     * @brief 设置焦点
+     * 优先级: 用户名输入框 > PIN码输入框 > 密码输入框 > 解锁按钮
+     * 这里的优先级是根据布局来的，如果后续布局改变或者新增认证方式，焦点需要重新调整
+     */
+    //设置登录按钮为默认焦点
+    if (m_lockButton->isVisible() && m_lockButton->isEnabled()){
+        setFocusProxy(m_lockButton);
+    }
+    if (m_passwordAuth != nullptr) {
+        setFocusProxy(m_passwordAuth);
+    }
+    if (m_ukeyAuth != nullptr) {
+        setFocusProxy(m_ukeyAuth);
+    }
+    if (m_PINAuth != nullptr) {
+        setFocusProxy(m_PINAuth);
+    }
+    if (m_singleAuth != nullptr) {
+        setFocusProxy(m_singleAuth);
+    }
+    if (m_accountEdit->isVisible()) {
+        setFocusProxy(m_accountEdit);
+    }
+    setFocus();
 }
 
 /**
