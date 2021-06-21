@@ -502,7 +502,7 @@ void ShutdownWidget::keyPressEvent(QKeyEvent *event)
         break;
     }
 
-    QFrame::keyReleaseEvent(event);
+    QFrame::keyPressEvent(event);
 }
 
 bool ShutdownWidget::event(QEvent *e)
@@ -518,6 +518,9 @@ bool ShutdownWidget::event(QEvent *e)
             m_index = 0;
         }
         m_frameDataBind->updateValue("ShutdownWidget", m_index);
+        m_btnList.at(m_index)->updateState(RoundItemButton::Checked);
+    } else if (e->type() == QEvent::FocusOut) {
+        m_btnList.at(m_index)->updateState(RoundItemButton::Normal);
     }
 
     return QFrame::event(e);
