@@ -277,9 +277,15 @@ void UserLoginWidget::updateWidgetShowType(const int type)
         m_singleAuth = nullptr;
     }
     /* 账户 */
-    if (type == AuthTypeNone) {
-        if (m_accountEdit != nullptr && !m_accountEdit->text().isEmpty()) {
-            m_accountEdit->clear();
+    if ((type == AuthTypeNone && !m_model->currentUser()->isNoPasswdGrp()) || m_model->isServerModel()) {
+        m_accountEdit->clear();
+        m_accountEdit->show();
+        m_nameLabel->hide();
+    } else {
+        m_accountEdit->hide();
+        m_nameLabel->show();
+        if (m_model->currentUser()->isNoPasswdGrp()) {
+            m_lockButton->setEnabled(true);
         }
     }
     updateGeometry();

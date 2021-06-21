@@ -130,8 +130,13 @@ public:
     inline bool isCheckedInhibit() const { return m_isCheckedInhibit; }
     void setIsCheckedInhibit(bool checked);
 
+    inline bool isActiveDirectoryDomain() const { return m_isActiveDirectoryDomain; };
+    void setActiveDirectoryEnabled(const bool enable);
+
     inline const QList<std::shared_ptr<User>> getUserList() const { return m_users->values(); }
+
     inline const AuthProperty &getAuthProperty() const { return m_authProperty; }
+    void setAuthType(const int type);
 
 signals:
     /* com.deepin.daemon.Accounts */
@@ -212,6 +217,7 @@ private:
     bool m_isBlackMode;
     bool m_isHibernateMode;
     bool m_isLock = false;
+    bool m_isActiveDirectoryDomain;
     int m_userListSize = 0;
     AuthType m_currentType;
     QList<std::shared_ptr<User>> m_userList;

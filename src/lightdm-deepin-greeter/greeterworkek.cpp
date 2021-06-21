@@ -58,6 +58,8 @@ GreeterWorkek::GreeterWorkek(SessionBaseModel *const model, QObject *parent)
     m_model->setAlwaysShowUserSwitchButton(switchUserButtonValue == "always");
     m_model->setAllowShowUserSwitchButton(switchUserButtonValue == "ondemand");
 
+    m_model->setActiveDirectoryEnabled(valueByQSettings<bool>("", "loginPromptInput", false));
+
     {
         initDBus();
         initData();
@@ -68,11 +70,11 @@ GreeterWorkek::GreeterWorkek(SessionBaseModel *const model, QObject *parent)
         checkDBusServer(m_accountsInter->isValid());
     }
 
-    if (DSysInfo::deepinType() == DSysInfo::DeepinServer || valueByQSettings<bool>("", "loginPromptInput", false)) {
+    if (DSysInfo::deepinType() == DSysInfo::DeepinServer || m_model->isActiveDirectoryDomain()) {
         std::shared_ptr<User> user = std::make_shared<ADDomainUser>(INT_MAX);
         static_cast<ADDomainUser *>(user.get())->setUserDisplayName("...");
         static_cast<ADDomainUser *>(user.get())->setIsServerUser(true);
-        m_model->setIsServerModel(true);
+        m_model->setIsServerModel(DSysInfo::deepinType() == DSysInfo::DeepinServer || !m_model->isActiveDirectoryDomain());
         m_model->userAdd(user);
         m_model->setCurrentUser(user);
     } else {
@@ -321,15 +323,11 @@ void GreeterWorkek::doPowerAction(const SessionBaseModel::PowerAction action)
 
 void GreeterWorkek::switchToUser(std::shared_ptr<User> user)
 {
+    qInfo() << "switch user from" << m_account << " to " << user->name() << user->uid() << user->isLogin();
+
     if (user->uid() == INT_MAX) {
-        emit m_model->authTypeChanged(AuthType::AuthTypeNone);
+        m_model->setAuthType(AuthTypeNone);
     }
-
-    if (user->name() == m_account) {
-        return;
-    }
-
-    qInfo() << "switch user from" << m_account << " to " << user->name() << user->isLogin();
 
     QJsonObject json;
     json["Uid"] = static_cast<int>(user->uid());
@@ -378,7 +376,13 @@ void GreeterWorkek::authUser(const QString &password)
 
 void GreeterWorkek::onUserAdded(const QString &user)
 {
-    std::shared_ptr<NativeUser> user_ptr(new NativeUser(user));
+    std::shared_ptr<User> user_ptr;
+    const uid_t uid = user.midRef(QString("/com/deepin/daemon/Accounts/User").size()).toUInt();
+    if (uid < 10000) {
+        user_ptr = std::make_shared<NativeUser>(user);
+    } else {
+        user_ptr = std::make_shared<ADDomainUser>(uid);
+    }
 
     if (!user_ptr->isUserIsvalid())
         return;
@@ -416,6 +420,10 @@ void GreeterWorkek::onUserAdded(const QString &user)
 void GreeterWorkek::createAuthentication(const QString &account)
 {
     m_account = account;
+    if (account.isEmpty()) {
+        m_model->setAuthType(AuthTypeNone);
+        return;
+    }
     switch (m_model->getAuthProperty().FrameworkState) {
     case 0:
         m_authFramework->CreateAuthController(account, m_authFramework->GetSupportedMixAuthFlags(), AppTypeLogin);
@@ -522,13 +530,27 @@ void GreeterWorkek::endAuthentication(const QString &account, const int authType
 void GreeterWorkek::checkAccount(const QString &account)
 {
     QString userPath = m_accountsInter->FindUserByName(account);
-    if (!userPath.startsWith("/") && !account.startsWith("@")) {
-        qWarning() << userPath;
-        userPath = tr("Wrong account");
-        onDisplayErrorMsg(userPath);
-        return;
+    std::shared_ptr<User> user_ptr;
+    if (!userPath.startsWith("/")) {
+        if (account.startsWith("@")) {
+            user_ptr = std::make_shared<ADDomainUser>(INT_MAX - 1);
+            dynamic_cast<ADDomainUser *>(user_ptr.get())->setUserName(account);
+            dynamic_cast<ADDomainUser *>(user_ptr.get())->setUserDisplayName(account.midRef(QString("@").size()).toString());
+        } else {
+            qWarning() << userPath;
+            userPath = tr("Wrong account");
+            onDisplayErrorMsg(userPath);
+            return;
+        }
+    } else {
+        const uid_t uid = userPath.midRef(QString("/com/deepin/daemon/Accounts/User").size()).toUInt();
+        if (uid < 10000) {
+            user_ptr = std::make_shared<NativeUser>(userPath);
+        } else {
+            user_ptr = std::make_shared<ADDomainUser>(uid);
+        }
     }
-    std::shared_ptr<User> user_ptr = std::make_shared<NativeUser>(userPath);
+
     m_model->setCurrentUser(user_ptr);
     if (user_ptr->isNoPasswdGrp()) {
         m_greeter->authenticate(account);

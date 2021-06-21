@@ -293,6 +293,30 @@ void SessionBaseModel::setIsCheckedInhibit(bool checked)
 }
 
 /**
+ * @brief 域状态
+ *
+ * @param enable
+ */
+void SessionBaseModel::setActiveDirectoryEnabled(const bool enable)
+{
+    if (enable == m_isActiveDirectoryDomain) {
+        return;
+    }
+    m_isActiveDirectoryDomain = enable;
+}
+
+/**
+ * @brief 认证类型
+ *
+ * @param type
+ */
+void SessionBaseModel::setAuthType(const int type)
+{
+    m_authProperty.AuthType = type;
+    emit authTypeChanged(type);
+}
+
+/**
  * @brief 新增用户
  *
  * @param path 用户路径或 Uid

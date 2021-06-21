@@ -177,12 +177,6 @@ void AuthInterface::onLoginUserListChanged(const QString &list)
             std::shared_ptr<User> u(new ADDomainUser(uid));
             u->setisLogind(true);
 
-            struct passwd *pws;
-            pws = getpwuid(uid);
-
-            static_cast<ADDomainUser *>(u.get())->setUserDisplayName(pws->pw_name);
-            static_cast<ADDomainUser *>(u.get())->setUserName(pws->pw_name);
-
             if (uid == m_currentUserUid && m_model->currentUser().get() == nullptr) {
                 m_model->setCurrentUser(u);
             }
@@ -194,20 +188,8 @@ void AuthInterface::onLoginUserListChanged(const QString &list)
     QList<std::shared_ptr<User>> uList = m_model->userList();
     for (auto it = uList.begin(); it != uList.end();) {
         std::shared_ptr<User> user = *it;
-
-        auto find_it =
-            std::find_if(m_loginUserList.begin(), m_loginUserList.end(),
-                         [=] (const uint find_uid) { return find_uid == user->uid(); });
-
-        if (find_it == m_loginUserList.end() &&
-            (user->type() == User::ADDomain && user->uid() != INT_MAX)) {
-            m_model->userRemoved(user);
-            it = uList.erase(it);
-        }
-        else {
-            user->setisLogind(isLogined(user->uid()));
-            ++it;
-        }
+        user->setisLogind(isLogined(user->uid()));
+        ++it;
     }
 
     if(m_model->isServerModel())

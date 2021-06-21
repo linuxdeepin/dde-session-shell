@@ -77,6 +77,7 @@ public:
     virtual bool isDoMainUser() const { return m_isServer; }
     virtual bool is24HourFormat() const { return true; }
     virtual bool automaticLogin() const { return false; }
+    virtual UserInter *getUserInter() const { return nullptr; }
 
     void setisLogind(bool isLogind);
     virtual void setCurrentLayout(const QString &layout) { Q_UNUSED(layout); }
@@ -120,7 +121,7 @@ class NativeUser : public User
 
 public:
     NativeUser(const QString &path, QObject *parent = nullptr);
-    UserInter *getUserInter() { return m_userInter; }
+    UserInter *getUserInter() const override { return m_userInter; }
 
     void setCurrentLayout(const QString &currentKBLayout) override;
     UserType type() const override { return Native; }
@@ -169,6 +170,9 @@ public:
     void setUserInter(UserInter *user_inter);
     void setUid(uid_t uid);
     void setIsServerUser(bool is_server);
+    void setAvatar(const QString &path);
+
+    UserInter *getUserInter() const override { return m_userInter; }
 
     QString displayName() const override;
     UserType type() const override { return ADDomain; }
@@ -177,8 +181,9 @@ public:
     QString desktopBackgroundPath() const override;
 
 private:
+    QString m_avatar;
     QString m_displayName;
-    UserInter *m_userInter = nullptr;
+    UserInter *m_userInter;
 };
 
 #endif // USERINFO_H

@@ -89,8 +89,8 @@ void UserLoginInfo::initConnect()
             auto user = dynamic_cast<NativeUser *>(m_model->findUserByName(account).get());
             auto current_user = m_model->currentUser();
 
-            static_cast<ADDomainUser *>(m_model->currentUser().get())->setUserName(account);
-            static_cast<ADDomainUser *>(m_model->currentUser().get())->setUserInter(nullptr);
+            // static_cast<ADDomainUser *>(m_model->currentUser().get())->setUserName(account);
+            // static_cast<ADDomainUser *>(m_model->currentUser().get())->setUserInter(nullptr);
             if (user != nullptr) {
                 static_cast<ADDomainUser *>(m_model->currentUser().get())->setUserInter(user->getUserInter());
             }
@@ -202,4 +202,3 @@ void UserLoginInfo::updateLoginContent()
         }
     }
 }
-

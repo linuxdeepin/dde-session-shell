@@ -49,21 +49,20 @@ LockWorker::LockWorker(SessionBaseModel *const model, QObject *parent)
     m_model->setAlwaysShowUserSwitchButton(switchUserButtonValue == "always");
     m_model->setAllowShowUserSwitchButton(switchUserButtonValue == "ondemand");
 
+    m_model->setActiveDirectoryEnabled(valueByQSettings<bool>("", "loginPromptInput", false));
+
     {
         initDBus();
         initData();
     }
 
-    // init ADDomain User
-    if (DSysInfo::deepinType() == DSysInfo::DeepinServer || valueByQSettings<bool>("", "loginPromptInput", false)) {
+    if (DSysInfo::deepinType() == DSysInfo::DeepinServer || m_model->isActiveDirectoryDomain()) {
         std::shared_ptr<User> user = std::make_shared<ADDomainUser>(INT_MAX);
         static_cast<ADDomainUser *>(user.get())->setUserDisplayName("...");
         static_cast<ADDomainUser *>(user.get())->setIsServerUser(true);
-        m_model->setIsServerModel(true);
+        m_model->setIsServerModel(DSysInfo::deepinType() == DSysInfo::DeepinServer || !m_model->isActiveDirectoryDomain());
         m_model->userAdd(user);
     }
-
-    onUserAdded(ACCOUNTS_DBUS_PREFIX + QString::number(m_currentUserUid));
 
     /* com.deepin.daemon.Accounts */
     m_model->updateUserList(m_accountsInter->userList());
@@ -512,12 +511,11 @@ void LockWorker::endAuthentication(const QString &account, const int authType)
 void LockWorker::onUserAdded(const QString &user)
 {
     std::shared_ptr<User> user_ptr = nullptr;
-    uid_t uid = user.mid(QString(ACCOUNTS_DBUS_PREFIX).size()).toUInt();
+    uid_t uid = user.midRef(QString(ACCOUNTS_DBUS_PREFIX).size()).toUInt();
     if (uid < DOMAIN_BASE_UID) {
         user_ptr = std::make_shared<NativeUser>(user);
     } else {
         user_ptr = std::make_shared<ADDomainUser>(uid);
-        qobject_cast<ADDomainUser *>(user_ptr.get())->setUserName(userPwdName(uid));
     }
 
     if (!user_ptr->isUserIsvalid())

@@ -127,15 +127,7 @@ void LockContent::onCurrentUserChanged(std::shared_ptr<User> user)
 
     m_user = user;
 
-    std::shared_ptr<NativeUser> nativeUser = std::dynamic_pointer_cast<NativeUser>(user);
-    UserInter *userInter = nullptr;
-    if (!nativeUser) {
-        m_timeWidget->setVisible(true);
-        qDebug() << "trans to NativeUser user failed, user:" << user->metaObject()->className();
-    } else {
-        userInter = nativeUser->getUserInter();
-    }
-
+    UserInter *userInter = user->getUserInter();
     m_currentUserConnects << connect(user.get(), &User::greeterBackgroundPathChanged, this, &LockContent::updateGreeterBackgroundPath, Qt::UniqueConnection)
                           << connect(user.get(), &User::desktopBackgroundPathChanged, this, &LockContent::updateDesktopBackgroundPath, Qt::UniqueConnection)
                           << connect(user.get(), &User::use24HourFormatChanged, this, &LockContent::updateTimeFormat, Qt::UniqueConnection)

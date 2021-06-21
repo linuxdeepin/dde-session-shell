@@ -277,6 +277,7 @@ NativeUser::NativeUser(const QString &path, QObject *parent)
     m_uid = path.mid(QString(ACCOUNTS_DBUS_PREFIX).size()).toUInt();
     m_userName = userPwdName(m_uid);
     m_noPasswdGrp = checkUserIsNoPWGrp(this);
+    m_automaticLogin = m_userInter->automaticLogin();
 
     configAccountInfo(DDESESSIONCC::CONFIG_FILE + m_userName);
     setPath(path);
@@ -403,13 +404,21 @@ void NativeUser::updateAutomaticLogin(const bool autoLoginState)
 
 ADDomainUser::ADDomainUser(uid_t uid, QObject *parent)
     : User(parent)
+    , m_userInter(new UserInter("com.deepin.daemon.Accounts", "/com/deepin/daemon/Accounts/User" + QString::number(uid), QDBusConnection::systemBus(), this))
 {
     m_uid = uid;
+
+    connect(m_userInter, &UserInter::FullNameChanged, this, &ADDomainUser::setUserDisplayName);
+    connect(m_userInter, &UserInter::UserNameChanged, this, &ADDomainUser::setUserName);
+    connect(m_userInter, &UserInter::IconFileChanged, this, &ADDomainUser::setAvatar);
+
+    m_avatar = m_userInter->iconFile();
+    m_displayName = m_userInter->fullName();
+    m_userName = m_userInter->userName();
 }
 
 ADDomainUser::~ADDomainUser()
 {
-    delete m_userInter;
 }
 
 void ADDomainUser::setUserDisplayName(const QString &name)
@@ -459,6 +468,19 @@ void ADDomainUser::setIsServerUser(bool is_server)
     m_isServer = is_server;
 }
 
+void ADDomainUser::setAvatar(const QString &path)
+{
+    if (path == m_avatar) {
+        return;
+    }
+    if (!path.isEmpty() && QFile(path).exists() && QFile(path).size() && QImageReader(path).canRead()) {
+        m_avatar = path;
+    } else {
+        m_avatar = QString(":/img/default_avatar.svg");
+    }
+    emit avatarChanged(path);
+}
+
 QString ADDomainUser::displayName() const
 {
     return m_displayName.isEmpty() ? m_userName : m_displayName;
@@ -466,7 +488,11 @@ QString ADDomainUser::displayName() const
 
 QString ADDomainUser::avatarPath() const
 {
-    return QString(":/img/default_avatar.svg");
+    if (!m_avatar.isEmpty() && QFile(m_avatar).exists() && QFile(m_avatar).size() && QImageReader(m_avatar).canRead()) {
+        return m_avatar;
+    } else {
+        return QString(":/img/default_avatar.svg");
+    }
 }
 
 QString ADDomainUser::greeterBackgroundPath() const
