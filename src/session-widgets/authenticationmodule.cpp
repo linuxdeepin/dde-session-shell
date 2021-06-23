@@ -123,8 +123,10 @@ void AuthenticationModule::init()
         connect(m_lineEdit, &DLineEditEx::returnPressed, this, &AuthenticationModule::requestAuthenticate);
         /* 解锁时间 */
         connect(this, &AuthenticationModule::unlockTimeChanged, this, [=] {
-            if (m_integerMinutes > 0) {
-                m_lineEdit->setPlaceholderText(tr("Please try again %n minute(s) later", "", static_cast<int>(m_integerMinutes)));
+            if (m_integerMinutes == 1) {
+                m_lineEdit->setPlaceholderText(tr("Please try again 1 minute later"));
+            } else if (m_integerMinutes > 1) {
+                m_lineEdit->setPlaceholderText(tr("Please try again %n minutes later", "", static_cast<int>(m_integerMinutes)));
             } else {
                 QTimer::singleShot(1000, this, [=] {
                     emit activateAuthentication();
@@ -167,8 +169,10 @@ void AuthenticationModule::init()
 
         /* 解锁时间 */
         connect(this, &AuthenticationModule::unlockTimeChanged, this, [=] {
-            if (m_integerMinutes > 0) {
-                m_lineEdit->setPlaceholderText(tr("Please try again %n minute(s) later", "", static_cast<int>(m_integerMinutes)));
+            if (m_integerMinutes == 1) {
+                m_lineEdit->setPlaceholderText(tr("Please try again 1 minute later"));
+            } else if (m_integerMinutes > 1) {
+                m_lineEdit->setPlaceholderText(tr("Please try again %n minutes later", "", static_cast<int>(m_integerMinutes)));
             } else {
                 QTimer::singleShot(500, this, [=] {
                     emit activateAuthentication();
