@@ -324,24 +324,21 @@ void UserLoginWidget::updateWidgetShowType(const int type)
                   << m_fingerVeinAuth
                   << m_irisAuth
                   << m_PINAuth
-                  << m_passwordAuth;
+                  << m_passwordAuth
+                  << m_singleAuth
+                  << m_lockButton;
 
-    QWidget *w = nullptr;
     for (int i = 0; i < m_widgetsList.size(); i++) {
         if (m_widgetsList[i]) {
-            w = m_widgetsList[i];
             for (int j = i + 1; j < m_widgetsList.size(); j++) {
                 if (m_widgetsList[j]) {
-                    w = m_widgetsList[j];
                     setTabOrder(m_widgetsList[i]->focusProxy(), m_widgetsList[j]->focusProxy());
-                    i = j + 1;
+                    i = j - 1;
                     break;
                 }
             }
         }
     }
-
-    if (w) setTabOrder(w->focusProxy(), m_lockButton);
 
     setFocus();
 }
@@ -385,8 +382,6 @@ void UserLoginWidget::initSingleAuth(const int index)
     FrameDataBind::Instance()->refreshData("UserLoginToken");
 
     m_lockButton->setEnabled(true);
-
-    setTabOrder(m_singleAuth->focusProxy(), m_lockButton);
 }
 
 /**
