@@ -375,8 +375,7 @@ void DeepinAuthFramework::DestoryAuthController(const QString &account)
     AuthControllerInter *authControllerInter = m_authenticateControllers->value(account);
     authControllerInter->End(-1);
     authControllerInter->Quit();
-    authControllerInter->disconnect();
-    authControllerInter->deleteLater();
+    delete authControllerInter;
     m_authenticateControllers->remove(account);
 
     m_F_RSA_free(m_RSA);
