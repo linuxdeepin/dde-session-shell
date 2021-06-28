@@ -194,6 +194,9 @@ void UserLoginWidget::initConnections()
             emit requestCheckAccount(m_accountEdit->text());
         }
     });
+    connect(m_accountEdit, &DLineEditEx::editingFinished, this, [=] {
+        emit m_accountEdit->returnPressed();
+    });
     /* 解锁按钮 */
     connect(m_lockButton, &DFloatingButton::clicked, this, [=] {
         if (m_model->currentUser()->isNoPasswordLogin()) {

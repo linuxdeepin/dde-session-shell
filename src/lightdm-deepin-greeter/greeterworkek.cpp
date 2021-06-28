@@ -361,6 +361,7 @@ void GreeterWorkek::switchToUser(std::shared_ptr<User> user)
     // just switch user
     if (user->isLogin()) {
         // switch to user Xorg
+        m_greeter->authenticate();
         QProcess::startDetached("dde-switchtogreeter", QStringList() << user->name());
     } else {
         m_model->updateAuthStatus(AuthTypeAll, StatusCodeCancel, "Cancel");
@@ -516,6 +517,9 @@ void GreeterWorkek::endAuthentication(const QString &account, const int authType
 void GreeterWorkek::checkAccount(const QString &account)
 {
     qDebug() << "GreeterWorkek::checkAccount:" << account;
+    if (m_greeter->authenticationUser() == account) {
+        return;
+    }
     const QString userPath = m_accountsInter->FindUserByName(account);
     std::shared_ptr<User> user_ptr;
     if (!userPath.startsWith("/")) {
@@ -526,6 +530,8 @@ void GreeterWorkek::checkAccount(const QString &account)
         } else {
             qWarning() << userPath;
             onDisplayErrorMsg(tr("Wrong account"));
+            m_model->setAuthType(AuthTypeNone);
+            m_greeter->authenticate();
             return;
         }
     } else {
