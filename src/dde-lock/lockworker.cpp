@@ -309,6 +309,8 @@ void LockWorker::switchToUser(std::shared_ptr<User> user)
     json["Type"] = user->type();
     m_lockInter->SwitchToUser(QString(QJsonDocument(json).toJson(QJsonDocument::Compact))).waitForFinished();
 
+    destoryAuthentication(m_account);
+
     if (user->isLogin()) {
         QProcess::startDetached("dde-switchtogreeter", QStringList() << user->name());
     } else {
