@@ -379,6 +379,7 @@ void UserLoginWidget::initSingleAuth(const int index)
     FrameDataBind::Instance()->refreshData("UserLoginToken");
 
     m_lockButton->setEnabled(true);
+    m_singleAuth->setKeyboardButtonVisible(m_keyboardList.size() > 1 ? true : false);
 }
 
 /**
