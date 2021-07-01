@@ -50,7 +50,7 @@ LockFrame::LockFrame(SessionBaseModel *const model, QWidget *parent)
         auto user = model->currentUser();
         if (user != nullptr) {
             //默认刷新清晰的锁屏背景，避免因为获取虚化背景过慢而引起的白屏问题
-            updateBackground(QPixmap(user->greeterBackgroundPath()));
+            updateBackground(QPixmap(user->greeterBackground()));
         }
     });
 

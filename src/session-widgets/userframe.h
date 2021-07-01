@@ -28,8 +28,8 @@ protected:
     void keyPressEvent(QKeyEvent *event) Q_DECL_OVERRIDE;
 
 public slots:
-    void userAdded(std::shared_ptr<User> user);
-    void userRemoved(const uint uid);
+    void userAdded(const std::shared_ptr<User> user);
+    void userRemoved(const std::shared_ptr<User> user);
     void expansion(bool expansion);
     void refreshPosition();
     void onUserClicked();

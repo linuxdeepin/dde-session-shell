@@ -59,8 +59,8 @@ protected:
 private:
     void initUI();
     void handlerBeforeAddUser(std::shared_ptr<User> user);
-    void addUser(std::shared_ptr<User> user);
-    void removeUser(const uint uid);
+    void addUser(const std::shared_ptr<User> user);
+    void removeUser(const std::shared_ptr<User> user);
     void onUserClicked();
     void switchNextUser();
     void switchPreviousUser();

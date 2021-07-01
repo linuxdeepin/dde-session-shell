@@ -28,8 +28,8 @@ void UserFrame::setModel(SessionBaseModel *model)
 {
     m_model = model;
 
-    connect(model, &SessionBaseModel::onUserAdded, this, &UserFrame::userAdded);
-    connect(model, &SessionBaseModel::onUserRemoved, this, &UserFrame::userRemoved);
+    connect(model, &SessionBaseModel::userAdded, this, &UserFrame::userAdded);
+    connect(model, &SessionBaseModel::userRemoved, this, &UserFrame::userRemoved);
 
     QList<std::shared_ptr<User>> userList = m_model->userList();
 
@@ -90,7 +90,7 @@ void UserFrame::keyPressEvent(QKeyEvent *event)
     return QWidget::keyPressEvent(event);
 }
 
-void UserFrame::userAdded(std::shared_ptr<User> user)
+void UserFrame::userAdded(const std::shared_ptr<User> user)
 {
     UserButton *button = new UserButton(user, this);
     m_userBtns[user->uid()] = button;
@@ -100,10 +100,10 @@ void UserFrame::userAdded(std::shared_ptr<User> user)
     refreshPosition();
 }
 
-void UserFrame::userRemoved(const uint uid)
+void UserFrame::userRemoved(const std::shared_ptr<User> user)
 {
-    UserButton *button = m_userBtns[uid];
-    m_userBtns.remove(uid);
+    UserButton *button = m_userBtns[user->uid()];
+    m_userBtns.remove(user->uid());
     button->deleteLater();
 
     refreshPosition();

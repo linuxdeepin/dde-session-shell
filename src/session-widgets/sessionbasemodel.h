@@ -69,19 +69,15 @@ public:
     ~SessionBaseModel();
 
     inline AuthType currentType() const { return m_currentType; }
+
     inline std::shared_ptr<User> currentUser() const { return m_currentUser; }
     inline std::shared_ptr<User> lastLogoutUser() const { return m_lastLogoutUser; }
 
+    inline QList<std::shared_ptr<User>> loginedUserList() const { return m_loginedUsers->values(); }
+    inline QList<std::shared_ptr<User>> userList() const { return m_users->values(); }
+
     std::shared_ptr<User> findUserByUid(const uint uid) const;
     std::shared_ptr<User> findUserByName(const QString &name) const;
-    const QList<std::shared_ptr<User>> userList() const { return m_userList; }
-    const QList<std::shared_ptr<User>> logindUser();
-
-    void userAdd(std::shared_ptr<User> user);
-    void userRemoved(std::shared_ptr<User> user);
-    void setCurrentUser(std::shared_ptr<User> user);
-    void setCurrentUser(const QString &userJson);
-    void setLastLogoutUser(const std::shared_ptr<User> &lastLogoutUser);
 
     inline QString sessionKey() const { return m_sessionKey; }
     void setSessionKey(const QString &sessionKey);
@@ -130,7 +126,7 @@ public:
     inline bool isCheckedInhibit() const { return m_isCheckedInhibit; }
     void setIsCheckedInhibit(bool checked);
 
-    inline bool isActiveDirectoryDomain() const { return m_isActiveDirectoryDomain; };
+    inline bool isActiveDirectoryDomain() const { return m_isActiveDirectoryDomain; }
     void setActiveDirectoryEnabled(const bool enable);
 
     inline const QList<std::shared_ptr<User>> getUserList() const { return m_users->values(); }
@@ -140,18 +136,25 @@ public:
 
 signals:
     /* com.deepin.daemon.Accounts */
-    void userAdded(std::shared_ptr<const User>);
-    void userRemoved(std::shared_ptr<const User>);
+    void currentUserChanged(const std::shared_ptr<User>);
+    void userAdded(const std::shared_ptr<User>);
+    void userRemoved(const std::shared_ptr<User>);
     void userListChanged(const QList<std::shared_ptr<User>>);
+    void loginedUserListChanged(const QList<std::shared_ptr<User>>);
     /* others */
     void visibleChanged(const bool);
 
 public slots:
     /* com.deepin.daemon.Accounts */
     void addUser(const QString &path);
+    void addUser(const std::shared_ptr<User> user);
     void removeUser(const QString &path);
+    void removeUser(const std::shared_ptr<User> user);
+    void updateCurrentUser(const QString &userJson);
+    void updateCurrentUser(const std::shared_ptr<User> user);
     void updateUserList(const QStringList &list);
-    void updateLastLogoutUser(const int uid);
+    void updateLastLogoutUser(const uid_t uid);
+    void updateLastLogoutUser(const std::shared_ptr<User> lastLogoutUser);
     void updateLoginedUserList(const QString &list);
     /* com.deepin.daemon.Authenticate */
     void updateLimitedInfo(const QString &info);
@@ -167,9 +170,6 @@ public slots:
     void updatePrompt(const QString &prompt);
 
 signals:
-    void onUserAdded(std::shared_ptr<User> user);
-    void onUserRemoved(const uint uid);
-    void currentUserChanged(std::shared_ptr<User> user);
     void authTipsMessage(const QString &message, AuthFaildType type = KEYBOARD);
     void authFaildMessage(const QString &message, AuthFaildType type = KEYBOARD);
     void authFaildTipsMessage(const QString &message, AuthFaildType type = KEYBOARD);
@@ -178,7 +178,6 @@ signals:
     void onPowerActionChanged(PowerAction poweraction);
     void onRequirePowerAction(PowerAction poweraction, bool needConfirm);
     void onSessionKeyChanged(const QString &sessionKey);
-    void onLogindUserChanged();
     void showUserList();
     void showLockScreen();
     void showShutdown();
@@ -200,7 +199,6 @@ signals:
     void cancelShutdownInhibit();
     void tipsShowed();
     void clearServerLoginWidgetContent();
-    void updateLockLimit(std::shared_ptr<User> user);
 
     void authStatusChanged(const int, const int, const QString &);
     void authTypeChanged(const int type);

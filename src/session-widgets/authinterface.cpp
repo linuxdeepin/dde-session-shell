@@ -33,10 +33,10 @@ static std::pair<bool, qint64> checkIsPartitionType(const QStringList &list)
 AuthInterface::AuthInterface(SessionBaseModel *const model, QObject *parent)
     : QObject(parent)
     , m_model(model)
-    , m_accountsInter(new AccountsInter(ACCOUNT_DBUS_SERVICE, ACCOUNT_DBUS_PATH, QDBusConnection::systemBus(), this))
-    , m_loginedInter(new LoginedInter(ACCOUNT_DBUS_SERVICE, "/com/deepin/daemon/Logined", QDBusConnection::systemBus(), this))
+    , m_accountsInter(new AccountsInter("com.deepin.daemon.Accounts", "/com/deepin/daemon/Accounts", QDBusConnection::systemBus(), this))
+    , m_loginedInter(new LoginedInter("com.deepin.daemon.Accounts", "/com/deepin/daemon/Logined", QDBusConnection::systemBus(), this))
     , m_login1Inter(new DBusLogin1Manager("org.freedesktop.login1", "/org/freedesktop/login1", QDBusConnection::systemBus(), this))
-    , m_powerManagerInter(new PowerManagerInter("com.deepin.daemon.PowerManager","/com/deepin/daemon/PowerManager", QDBusConnection::systemBus(), this))
+    , m_powerManagerInter(new PowerManagerInter("com.deepin.daemon.PowerManager", "/com/deepin/daemon/PowerManager", QDBusConnection::systemBus(), this))
     , m_authenticateInter(new Authenticate("com.deepin.daemon.Authenticate", "/com/deepin/daemon/Authenticate", QDBusConnection::systemBus(), this))
     , m_lastLogoutUid(0)
     , m_loginUserList(0)
@@ -56,7 +56,7 @@ AuthInterface::AuthInterface(SessionBaseModel *const model, QObject *parent)
 
 void AuthInterface::setLayout(std::shared_ptr<User> user, const QString &layout)
 {
-    user->setCurrentLayout(layout);
+    user->setKeyboardLayout(layout);
 }
 
 void AuthInterface::onUserListChanged(const QStringList &list)
@@ -88,8 +88,8 @@ void AuthInterface::onUserListChanged(const QStringList &list)
 void AuthInterface::onUserAdded(const QString &user)
 {
     std::shared_ptr<User> user_ptr(new NativeUser(user));
-    user_ptr->setisLogind(isLogined(user_ptr->uid()));
-    m_model->userAdd(user_ptr);
+    user_ptr->updateLoginStatus(isLogined(user_ptr->uid()));
+    m_model->addUser(user_ptr);
 }
 
 void AuthInterface::onUserRemove(const QString &user)
@@ -98,7 +98,7 @@ void AuthInterface::onUserRemove(const QString &user)
 
     for (auto u : list) {
         if (u->path() == user && u->type() == User::Native) {
-            m_model->userRemoved(u);
+            m_model->removeUser(u);
             break;
         }
     }
@@ -127,11 +127,6 @@ void AuthInterface::initDBus()
 
     connect(m_loginedInter, &LoginedInter::LastLogoutUserChanged, this, &AuthInterface::onLastLogoutUserChanged);
     connect(m_loginedInter, &LoginedInter::UserListChanged, this, &AuthInterface::onLoginUserListChanged);
-
-    connect(m_authenticateInter, &Authenticate::LimitUpdated, this, [this] (const QString& name) {
-        auto user = m_model->findUserByName(name);
-        updateLockLimit(user);
-    });
 }
 
 void AuthInterface::onLastLogoutUserChanged(uint uid)
@@ -141,12 +136,12 @@ void AuthInterface::onLastLogoutUserChanged(uint uid)
     QList<std::shared_ptr<User>> userList = m_model->userList();
     for (auto it = userList.constBegin(); it != userList.constEnd(); ++it) {
         if ((*it)->uid() == uid) {
-            m_model->setLastLogoutUser((*it));
+            m_model->updateLastLogoutUser((*it));
             return;
         }
     }
 
-    m_model->setLastLogoutUser(std::shared_ptr<User>(nullptr));
+    m_model->updateLastLogoutUser(std::shared_ptr<User>(nullptr));
 }
 
 void AuthInterface::onLoginUserListChanged(const QString &list)
@@ -175,12 +170,12 @@ void AuthInterface::onLoginUserListChanged(const QString &list)
         if (haveDisplay && find_it == availableUidList.end()) {
             // init addoman user
             std::shared_ptr<User> u(new ADDomainUser(uid));
-            u->setisLogind(true);
+            u->updateLoginStatus(true);
 
             if (uid == m_currentUserUid && m_model->currentUser().get() == nullptr) {
-                m_model->setCurrentUser(u);
+                m_model->updateCurrentUser(u);
             }
-            m_model->userAdd(u);
+            m_model->addUser(u);
             availableUidList.push_back(uid);
         }
     }
@@ -188,12 +183,13 @@ void AuthInterface::onLoginUserListChanged(const QString &list)
     QList<std::shared_ptr<User>> uList = m_model->userList();
     for (auto it = uList.begin(); it != uList.end();) {
         std::shared_ptr<User> user = *it;
-        user->setisLogind(isLogined(user->uid()));
+        user->updateLoginStatus(isLogined(user->uid()));
         ++it;
     }
 
-    if(m_model->isServerModel())
-        emit m_model->userListLoginedChanged(m_model->logindUser());
+    if (m_model->isServerModel()) {
+        emit m_model->userListLoginedChanged(m_model->loginedUserList());
+    }
 }
 
 bool AuthInterface::checkHaveDisplay(const QJsonArray &array)
@@ -218,37 +214,6 @@ QVariant AuthInterface::getGSettings(const QString& node, const QString& key)
         value = m_gsettings->get(key);
     }
     return value;
-}
-
-void AuthInterface::updateLockLimit(std::shared_ptr<User> user)
-{
-    if (user == nullptr)
-        return;
-
-    QDBusPendingCall call = m_authenticateInter->GetLimits(user->name());
-    QDBusPendingCallWatcher *watcher = new QDBusPendingCallWatcher(call, this);
-    connect(watcher, &QDBusPendingCallWatcher::finished, [ = ] {
-        if (!call.isError()) {
-            QDBusReply<QString> reply = call.reply();
-            QJsonArray arr = QJsonDocument::fromJson(reply.value().toUtf8()).array();
-            for (QJsonValue val : arr) {
-               QJsonObject obj = val.toObject();
-               if (obj["type"].toString() == "password") {
-                   bool is_lock = obj["locked"].toBool();
-                   // cur_time 当前时间，interval_time 间隔时间，rest_time 除分钟外多余的秒数，lock_time 分钟数
-                   uint cur_time = QDateTime::currentDateTime().toTime_t();
-                   uint interval_time = timeFromString(obj["unlockTime"].toString()) - cur_time;
-                   uint rest_time = interval_time % 60;
-                   uint lock_time = (interval_time + 59) / 60;
-                   user->updateLockLimit(is_lock, lock_time, rest_time);
-               }
-            }
-        } else {
-            qWarning() << "get Limits error: " << call.error().message();
-        }
-
-        watcher->deleteLater();
-    });
 }
 
 bool AuthInterface::isLogined(uint uid)

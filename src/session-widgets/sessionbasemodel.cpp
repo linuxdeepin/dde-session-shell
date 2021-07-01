@@ -9,7 +9,6 @@
 #define SessionManagerPath "/com/deepin/SessionManager"
 
 using namespace AuthCommon;
-using namespace com::deepin;
 DCORE_USE_NAMESPACE
 
 SessionBaseModel::SessionBaseModel(AuthType type, QObject *parent)
@@ -43,117 +42,26 @@ SessionBaseModel::~SessionBaseModel()
 
 std::shared_ptr<User> SessionBaseModel::findUserByUid(const uint uid) const
 {
-    for (auto user : m_userList) {
+    for (auto user : m_users->values()) {
         if (user->uid() == uid) {
             return user;
         }
     }
-
-    // qDebug() << "Wrong, you shouldn't be here!";
     return std::shared_ptr<User>(nullptr);
 }
 
 std::shared_ptr<User> SessionBaseModel::findUserByName(const QString &name) const
 {
-    if (name.isEmpty()) return std::shared_ptr<User>(nullptr);
+    if (name.isEmpty()) {
+        return std::shared_ptr<User>(nullptr);
+    }
 
-    for (auto user : m_userList) {
+    for (auto user : m_users->values()) {
         if (user->name() == name) {
             return user;
         }
     }
-
-    // qDebug() << "Wrong, you shouldn't be here!";
     return std::shared_ptr<User>(nullptr);
-}
-
-const QList<std::shared_ptr<User> > SessionBaseModel::logindUser()
-{
-    QList<std::shared_ptr<User>> userList;
-    for (auto user : m_userList) {
-        if (user->isLogin()) {
-            userList << user;
-        }
-    }
-
-    return userList;
-}
-
-void SessionBaseModel::userAdd(std::shared_ptr<User> user)
-{
-    // NOTE(zorowk): If there are duplicate uids, delete ADDomainUser first
-    auto user_exist = findUserByUid(user->uid());
-    if (user_exist != nullptr) {
-        return;
-    }
-
-    m_userList << user;
-
-    emit onUserAdded(user);
-    emit onUserListChanged(m_userList);
-}
-
-void SessionBaseModel::userRemoved(std::shared_ptr<User> user)
-{
-    if(user == nullptr) return;
-
-    emit onUserRemoved(user->uid());
-
-    m_userList.removeOne(user);
-    emit onUserListChanged(m_userList);
-
-    // NOTE(justforlxz): If the current user is deleted, switch to the
-    // first unlogin user. If it does not exist, switch to the first login user.
-    if (user == m_currentUser) {
-        QList<std::shared_ptr<User>> logindUserList;
-        QList<std::shared_ptr<User>> unloginUserList;
-        for (auto it = m_userList.cbegin(); it != m_userList.cend(); ++it) {
-            if ((*it)->isLogin()) {
-                logindUserList << (*it);
-            }
-            else {
-                unloginUserList << (*it);
-            }
-        }
-
-        if (unloginUserList.isEmpty()) {
-            if (!logindUserList.isEmpty()) {
-                setCurrentUser(logindUserList.first());
-            }
-        }
-        else {
-            setCurrentUser(unloginUserList.first());
-        }
-    }
-}
-
-void SessionBaseModel::setCurrentUser(std::shared_ptr<User> user)
-{
-    if (m_currentUser != nullptr && m_currentUser->uid() == user->uid()) {
-        return;
-    }
-    m_currentUser = user;
-    emit currentUserChanged(user);
-}
-
-/**
- * @brief 设置当前用户
- *
- * @param userJson
- */
-void SessionBaseModel::setCurrentUser(const QString &userJson)
-{
-    const QJsonObject userObj = QJsonDocument::fromJson(userJson.toUtf8()).object();
-    const uid_t uid = static_cast<uid_t>(userObj["Uid"].toInt());
-    std::shared_ptr<User> user_ptr = findUserByUid(uid);
-    if (user_ptr != nullptr) {
-        setCurrentUser(user_ptr);
-    }
-}
-
-void SessionBaseModel::setLastLogoutUser(const std::shared_ptr<User> &lastLogoutUser)
-{
-    m_lastLogoutUser = lastLogoutUser;
 }
 
 void SessionBaseModel::setSessionKey(const QString &sessionKey)
@@ -326,13 +234,25 @@ void SessionBaseModel::addUser(const QString &path)
     if (m_users->contains(path)) {
         return;
     }
-    std::shared_ptr<User> user;
-    uid_t uid = path.mid(QString(ACCOUNTS_DBUS_PREFIX).size()).toUInt();
-    if (uid < 10000) {
-        user = std::make_shared<NativeUser>(path);
-    } else {
-        user = std::make_shared<ADDomainUser>(static_cast<uid_t>(path.toInt()));
+    qDebug() << "SessionBaseModel::addUser:" << path;
+    std::shared_ptr<NativeUser> user(new NativeUser(path));
+    m_users->insert(path, user);
+    emit userAdded(user);
+}
+
+/**
+ * @brief 新增用户
+ *
+ * @param user
+ */
+void SessionBaseModel::addUser(const std::shared_ptr<User> user)
+{
+    const QList<std::shared_ptr<User>> userList = m_users->values();
+    if (userList.contains(user)) {
+        return;
     }
+    qDebug() << "SessionBaseModel::addUser:" << user->name() << user->uid();
+    const QString path = user->path().isEmpty() ? QString::number(user->uid()) : user->path();
     m_users->insert(path, user);
     emit userAdded(user);
 }
@@ -347,8 +267,78 @@ void SessionBaseModel::removeUser(const QString &path)
     if (!m_users->contains(path)) {
         return;
     }
+    const std::shared_ptr<User> user = m_users->value(path);
     m_users->remove(path);
-    emit userRemoved(m_users->value(path));
+    emit userRemoved(user);
+}
+
+/**
+ * @brief 删除用户
+ *
+ * @param user
+ */
+void SessionBaseModel::removeUser(const std::shared_ptr<User> user)
+{
+    const QList<std::shared_ptr<User>> userList = m_users->values();
+    if (!userList.contains(user)) {
+        return;
+    }
+    qDebug() << "SessionBaseModel::removeUser:" << user->name() << user->uid();
+    const QString path = user->path().isEmpty() ? QString::number(user->uid()) : user->path();
+    m_users->remove(path);
+    emit userRemoved(user);
+}
+
+/**
+ * @brief 保存当前用户信息
+ *
+ * @param userJson
+ */
+void SessionBaseModel::updateCurrentUser(const QString &userJson)
+{
+    qDebug() << "SessionBaseModel::updateCurrentUser:" << userJson;
+    std::shared_ptr<User> user_ptr;
+    QJsonParseError jsonParseError;
+    const QJsonDocument userDoc = QJsonDocument::fromJson(userJson.toUtf8(), &jsonParseError);
+    if (jsonParseError.error != QJsonParseError::NoError || userDoc.isEmpty()) {
+        qWarning() << "Failed to obtain user information from dbus!";
+        user_ptr = std::make_shared<User>();
+    } else {
+        const QJsonObject userObj = userDoc.object();
+        const uid_t uid = static_cast<uid_t>(userObj["Uid"].toInt());
+        user_ptr = findUserByUid(uid);
+        if (user_ptr == nullptr) {
+            const int type = userObj["Type"].toInt();
+            switch (type) {
+            case User::Native:
+                user_ptr = std::make_shared<NativeUser>(uid);
+                break;
+            case User::ADDomain:
+                user_ptr = std::make_shared<ADDomainUser>(uid);
+                break;
+            case User::Default:
+            default:
+                user_ptr = std::make_shared<User>();
+                break;
+            }
+        }
+    }
+    updateCurrentUser(user_ptr);
+}
+
+/**
+ * @brief 保存当前用户信息
+ *
+ * @param user
+ */
+void SessionBaseModel::updateCurrentUser(const std::shared_ptr<User> user)
+{
+    qDebug() << "SessionBaseModel::updateCurrentUser:" << user->name();
+    if (m_currentUser && m_currentUser == user) {
+        return;
+    }
+    m_currentUser = user;
+    emit currentUserChanged(user);
 }
 
 /**
@@ -359,34 +349,46 @@ void SessionBaseModel::removeUser(const QString &path)
 void SessionBaseModel::updateUserList(const QStringList &list)
 {
     QStringList listTmp = m_users->keys();
-    std::shared_ptr<User> user;
     for (const QString &path : list) {
         if (m_users->contains(path)) {
             listTmp.removeAll(path);
         } else {
-            uid_t uid = path.mid(QString(ACCOUNTS_DBUS_PREFIX).size()).toUInt();
-            if (uid < 10000) {
-                user = std::make_shared<NativeUser>(path);
-            } else {
-                user = std::make_shared<ADDomainUser>(static_cast<uid_t>(path.toInt()));
-            }
+            std::shared_ptr<NativeUser> user(new NativeUser(path));
             m_users->insert(path, user);
         }
     }
-    for (const QString &path : listTmp) {
+    for (const QString &path : qAsConst(listTmp)) {
         m_users->remove(path);
     }
     emit userListChanged(m_users->values());
 }
 
 /**
- * @brief 更新上一个登录用户的 uid
+ * @brief 更新上一个登录用户
  *
- * @param id
+ * @param uid
  */
-void SessionBaseModel::updateLastLogoutUser(const int uid)
+void SessionBaseModel::updateLastLogoutUser(const uid_t uid)
 {
-    // TODO
+    for (const std::shared_ptr<User> &user : m_users->values()) {
+        if (uid == user->uid()) {
+            updateLastLogoutUser(user);
+            break;
+        }
+    }
+}
+
+/**
+ * @brief 设置上一个登录的用户
+ *
+ * @param lastLogoutUser
+ */
+void SessionBaseModel::updateLastLogoutUser(const std::shared_ptr<User> lastLogoutUser)
+{
+    if (m_lastLogoutUser && m_lastLogoutUser == lastLogoutUser) {
+        return;
+    }
+    m_lastLogoutUser = lastLogoutUser;
 }
 
 /**
@@ -396,40 +398,37 @@ void SessionBaseModel::updateLastLogoutUser(const int uid)
  */
 void SessionBaseModel::updateLoginedUserList(const QString &list)
 {
-    std::shared_ptr<User> user_ptr;
+    qDebug() << "SessionBaseModel::updateLoginedUserList:" << list;
     QList<QString> loginedUsersTmp = m_loginedUsers->keys();
-    const QJsonDocument loginedUserListDoc = QJsonDocument::fromJson(list.toUtf8());
-    const QJsonArray loginedUserListArr = loginedUserListDoc.array();
-    for (const QJsonValue &loginedUserStr : loginedUserListArr) {
-        const QJsonObject loginedUserListObj = loginedUserStr.toObject();
-        const int uid = loginedUserListObj["Uid"].toInt();
-        const QString path = QString("/com/deepin/daemon/Accounts/User") + QString::number(uid);
-        if (!m_loginedUsers->contains(QString::number(uid)) && !m_loginedUsers->contains(path)) {
-            if (uid > 10000) {
-                user_ptr = std::make_shared<ADDomainUser>(uid);
-                m_loginedUsers->insert(QString::number(uid), user_ptr);
-            } else {
-                user_ptr = std::make_shared<NativeUser>(path);
-                m_loginedUsers->insert(path, user_ptr);
+    QJsonParseError jsonParseError;
+    const QJsonDocument loginedUserListDoc = QJsonDocument::fromJson(list.toUtf8(), &jsonParseError);
+    if (jsonParseError.error != QJsonParseError::NoError) {
+        qWarning() << "The logined user list is wrong!";
+        return;
+    }
+    const QJsonObject loginedUserListDocObj = loginedUserListDoc.object();
+    for (const QString &loginedUserListDocKey : loginedUserListDocObj.keys()) {
+        const QJsonArray loginedUserListArr = loginedUserListDocObj.value(loginedUserListDocKey).toArray();
+        for (const QJsonValue &loginedUserStr : loginedUserListArr) {
+            const QJsonObject loginedUserListObj = loginedUserStr.toObject();
+            const int uid = loginedUserListObj["Uid"].toInt();
+            if (uid != 0 && uid < 1000) {
+                break; // 排除非正常用户的 uid
             }
-            user_ptr->setisLogind(true);
-        } else if (m_loginedUsers->contains(QString::number(uid))) {
-            loginedUsersTmp.removeAll(QString::number(uid));
-        } else if (m_loginedUsers->contains(path)) {
-            loginedUsersTmp.removeAll(path);
+            const QString path = QString("/com/deepin/daemon/Accounts/User") + QString::number(uid);
+            if (!m_loginedUsers->contains(path)) {
+                m_loginedUsers->insert(path, m_users->value(path));
+                m_users->value(path)->updateLoginStatus(true);
+            } else {
+                loginedUsersTmp.removeAll(path);
+            }
         }
     }
-    for (const QString &path : loginedUsersTmp) {
+    for (const QString &path : qAsConst(loginedUsersTmp)) {
         m_loginedUsers->remove(path);
+        m_users->value(path)->updateLoginStatus(false);
     }
-    /* 更新所有用户的登录状态 */
-    for (const QString &path : m_loginedUsers->keys()) {
-        if (m_users->contains(path)) {
-            m_users->value(path)->setisLogind(true);
-        } else {
-            m_users->value(path)->setisLogind(false);
-        }
-    }
+    emit loginedUserListChanged(m_loginedUsers->values());
 }
 
 /**

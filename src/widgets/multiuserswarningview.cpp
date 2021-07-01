@@ -116,7 +116,7 @@ void MultiUsersWarningView::setUsers(QList<std::shared_ptr<User>> users)
         QListWidgetItem * item = new QListWidgetItem;
         m_userList->addItem(item);
 
-        QString icon = getUserIcon(user->avatarPath());
+        QString icon = getUserIcon(user->avatar());
         m_userList->setItemWidget(item, new UserListItem(icon, user->name()));
     }
 }

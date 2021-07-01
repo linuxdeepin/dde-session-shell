@@ -100,8 +100,8 @@ void UserFrameList::setModel(SessionBaseModel *model)
 {
     m_model = model;
 
-    connect(model, &SessionBaseModel::onUserAdded, this, &UserFrameList::handlerBeforeAddUser);
-    connect(model, &SessionBaseModel::onUserRemoved, this, &UserFrameList::removeUser);
+    connect(model, &SessionBaseModel::userAdded, this, &UserFrameList::handlerBeforeAddUser);
+    connect(model, &SessionBaseModel::userRemoved, this, &UserFrameList::removeUser);
 
     QList<std::shared_ptr<User>> userList = m_model->userList();
     for (auto user : userList) {
@@ -119,12 +119,13 @@ void UserFrameList::setFixedSize(const QSize &size)
 void UserFrameList::handlerBeforeAddUser(std::shared_ptr<User> user)
 {
     if (m_model->isServerModel()) {
-        if (user->isLogin() || user->isDoMainUser()) addUser(user);
-        connect(user.get(), &User::logindChanged, this, [ = ](bool is_login) {
+        if (user->isLogin() || user->type() == User::Default)
+            addUser(user);
+        connect(user.get(), &User::loginStatusChanged, this, [=](bool is_login) {
             if (is_login) {
                 addUser(user);
             } else {
-                removeUser(user->uid());
+                removeUser(user);
             }
         });
     } else {
@@ -133,17 +134,17 @@ void UserFrameList::handlerBeforeAddUser(std::shared_ptr<User> user)
 }
 
 //创建用户窗体
-void UserFrameList::addUser(std::shared_ptr<User> user)
+void UserFrameList::addUser(const std::shared_ptr<User> user)
 {
     UserLoginWidget *widget = new UserLoginWidget(m_model, UserLoginWidget::UserListType, m_centerWidget);
-    widget->updateAvatar(user->avatarPath());
+    widget->updateAvatar(user->avatar());
     widget->updateName(user->displayName());
     widget->updateLoginState(user->isLogin());
 
     connect(widget, &UserLoginWidget::clicked, this, &UserFrameList::onUserClicked);
     connect(user.get(), &User::displayNameChanged, widget, &UserLoginWidget::updateName);
     connect(user.get(), &User::avatarChanged, widget, &UserLoginWidget::updateAvatar);
-    connect(user.get(), &User::logindChanged, widget, &UserLoginWidget::updateLoginState);
+    connect(user.get(), &User::loginStatusChanged, widget, &UserLoginWidget::updateLoginState);
 
     widget->setSelected(m_model->currentUser()->uid() == user->uid());
     widget->setUid(user->uid());
@@ -161,10 +162,10 @@ void UserFrameList::addUser(std::shared_ptr<User> user)
 }
 
 //删除用户
-void UserFrameList::removeUser(const uint uid)
+void UserFrameList::removeUser(const std::shared_ptr<User> user)
 {
     foreach (auto w, m_loginWidgets) {
-        if (w->uid() == uid) {
+        if (w->uid() == user->uid()) {
             m_loginWidgets.removeOne(w);
             w->deleteLater();
             break;
@@ -183,7 +184,7 @@ void UserFrameList::onUserClicked()
 
     currentSelectedUser = widget;
     for (int i = 0; i != m_loginWidgets.size(); ++i) {
-        if (m_loginWidgets[i]->getSelected()) {
+        if (m_loginWidgets[i]->isSelected()) {
             m_loginWidgets[i]->setFastSelected(false);
         }
     }
@@ -196,7 +197,7 @@ void UserFrameList::onUserClicked()
 void UserFrameList::switchNextUser()
 {
     for (int i = 0; i != m_loginWidgets.size(); ++i) {
-        if (m_loginWidgets[i]->getSelected()) {
+        if (m_loginWidgets[i]->isSelected()) {
             m_loginWidgets[i]->setSelected(false);
             if (i == (m_loginWidgets.size() - 1)) {
                 currentSelectedUser = m_loginWidgets.first();
@@ -233,7 +234,7 @@ void UserFrameList::switchNextUser()
 void UserFrameList::switchPreviousUser()
 {
     for (int i = 0; i != m_loginWidgets.size(); ++i) {
-        if (m_loginWidgets[i]->getSelected()) {
+        if (m_loginWidgets[i]->isSelected()) {
             m_loginWidgets[i]->setSelected(false);
             if (i == 0) {
                 currentSelectedUser = m_loginWidgets.last();
@@ -333,7 +334,7 @@ void UserFrameList::keyPressEvent(QKeyEvent *event)
     case Qt::Key_Return:
     case Qt::Key_Enter:
         for (auto it = m_loginWidgets.constBegin(); it != m_loginWidgets.constEnd(); ++it) {
-            if ((*it)->getSelected()) {
+            if ((*it)->isSelected()) {
                 emit(*it)->clicked();
                 break;
             }
@@ -350,7 +351,7 @@ void UserFrameList::keyPressEvent(QKeyEvent *event)
 
 void UserFrameList::focusInEvent(QFocusEvent *event)
 {
-    Q_UNUSED(event);
+    Q_UNUSED(event)
     if (currentSelectedUser != nullptr) {
         currentSelectedUser->setSelected(true);
     }
@@ -358,7 +359,7 @@ void UserFrameList::focusInEvent(QFocusEvent *event)
 
 void UserFrameList::focusOutEvent(QFocusEvent *event)
 {
-    Q_UNUSED(event);
+    Q_UNUSED(event)
     if (currentSelectedUser != nullptr)
         currentSelectedUser->setSelected(false);
 }

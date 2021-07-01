@@ -1,23 +1,129 @@
+/*
+* Copyright (C) 2021 ~ 2021 Uniontech Software Technology Co.,Ltd.
+*
+* Author:     Zhang Qipeng <zhangqipeng@uniontech.com>
+*
+* Maintainer: Zhang Qipeng <zhangqipeng@uniontech.com>
+*
+* This program is free software: you can redistribute it and/or modify
+* it under the terms of the GNU General Public License as published by
+* the Free Software Foundation, either version 3 of the License, or
+* any later version.
+*
+* This program is distributed in the hope that it will be useful,
+* but WITHOUT ANY WARRANTY; without even the implied warranty of
+* MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+* GNU General Public License for more details.
+*
+* You should have received a copy of the GNU General Public License
+* along with this program.  If not, see <http://www.gnu.org/licenses/>.
+*/
+
 #include "userinfo.h"
+
 #include "constants.h"
 
-#include <unistd.h>
-#include <pwd.h>
 #include <grp.h>
+#include <memory>
+#include <pwd.h>
+#include <unistd.h>
 
-QString userPwdName(__uid_t uid)
+#define DEFAULT_AVATAR ":/img/default_avatar.svg"
+#define DEFAULT_BACKGROUND "/usr/share/backgrounds/default_background.jpg"
+
+User::User(QObject *parent)
+    : QObject(parent)
+    , m_isAutomaticLogin(false)
+    , m_isLogin(false)
+    , m_isNoPasswordLogin(false)
+    , m_isPasswordValid(false)
+    , m_isUse24HourFormat(false)
+    , m_shortDateFormat(3)
+    , m_shortTimeFormat(1)
+    , m_weekdayFormat(0)
+    , m_uid(INT_MAX)
+    , m_avatar(DEFAULT_AVATAR)
+    , m_greeterBackground(DEFAULT_BACKGROUND)
+    , m_locale(getenv("LANG"))
+    , m_name("...")
+    , m_desktopBackgrounds(DEFAULT_BACKGROUND)
+    , m_limitsInfo(new QMap<int, LimitsInfo>())
 {
-    //服务器版root用户的uid为0,需要特殊处理
-    if (uid < 1000 && uid != 0) return QString();
-
-    struct passwd *pw = nullptr;
-    /* Fetch passwd structure (contains first group ID for user) */
-    pw = getpwuid(uid);
-
-    return pw ? QString().fromLocal8Bit(pw->pw_name) : QString();
 }
 
-static bool checkUserIsNoPWGrp(User const *user)
+User::User(const User &user)
+    : QObject(user.parent())
+    , m_limitsInfo(new QMap<int, LimitsInfo>())
+{
+    m_isAutomaticLogin = user.m_isAutomaticLogin;
+    m_isLogin = user.m_isLogin;
+    m_isNoPasswordLogin = user.m_isNoPasswordLogin;
+    m_isPasswordValid = user.m_isPasswordValid;
+    m_isUse24HourFormat = user.m_isUse24HourFormat;
+
+    m_shortDateFormat = user.m_shortDateFormat;
+    m_shortTimeFormat = user.m_shortTimeFormat;
+    m_weekdayFormat = user.m_weekdayFormat;
+
+    m_uid = user.m_uid;
+    m_avatar = user.m_avatar;
+    m_desktopBackgrounds = user.m_desktopBackgrounds;
+    m_fullName = user.m_fullName;
+    m_greeterBackground = user.m_greeterBackground;
+    m_keyboardLayout = user.m_keyboardLayout;
+    m_locale = user.m_locale;
+    m_name = user.m_name;
+    m_keyboardLayoutList = user.m_keyboardLayoutList;
+    *m_limitsInfo = *user.m_limitsInfo;
+}
+
+User::~User()
+{
+    delete m_limitsInfo;
+}
+
+bool User::operator==(const User &user) const
+{
+    return user.uid() == m_uid && user.name() == m_name;
+}
+
+/**
+ * @brief 更新登录状态
+ *
+ * @param isLogin
+ */
+void User::updateLoginStatus(const bool isLogin)
+{
+    if (isLogin == m_isLogin) {
+        return;
+    }
+    m_isLogin = isLogin;
+    emit loginStatusChanged(isLogin);
+}
+
+/**
+ * @brief 更新账户限制信息
+ *
+ * @param info
+ */
+void User::updateLimitsInfo(const QString &info)
+{
+    LimitsInfo limitsInfoTmp;
+    const QJsonDocument limitsInfoDoc = QJsonDocument::fromJson(info.toUtf8());
+    const QJsonArray limitsInfoArr = limitsInfoDoc.array();
+    for (const QJsonValue &limitsInfoStr : limitsInfoArr) {
+        const QJsonObject limitsInfoObj = limitsInfoStr.toObject();
+        limitsInfoTmp.unlockSecs = limitsInfoObj["unlockSecs"].toVariant().toUInt();
+        limitsInfoTmp.maxTries = limitsInfoObj["maxTries"].toVariant().toUInt();
+        limitsInfoTmp.numFailures = limitsInfoObj["numFailures"].toVariant().toUInt();
+        limitsInfoTmp.locked = limitsInfoObj["locked"].toBool();
+        limitsInfoTmp.unlockTime = limitsInfoObj["unlockTime"].toString();
+        m_limitsInfo->insert(limitsInfoObj["flag"].toInt(), limitsInfoTmp);
+    }
+    emit limitsInfoChanged(m_limitsInfo);
+}
+
+bool User::checkUserIsNoPWGrp(const User *user) const
 {
     if (user->type() == User::ADDomain) {
         return false;
@@ -58,253 +164,375 @@ static bool checkUserIsNoPWGrp(User const *user)
     return false;
 }
 
-static const QString toLocalFile(const QString &path)
+QString User::toLocalFile(const QString &path) const
 {
     QUrl url(path);
 
     if (url.isLocalFile()) {
         return url.path();
+    } else {
+        return url.url();
     }
-
-    return url.url();
 }
 
-User::User(QObject *parent)
-    : QObject(parent)
-    , m_isLogind(false)
-    , m_locale(getenv("LANG"))
-    , m_lockTimer(new QTimer)
-    , m_limitsInfo(new QMap<int, LimitsInfo>())
-
+QString User::userPwdName(const uid_t uid) const
 {
-    m_lockTimer->setInterval(1000 * 60);
-    m_lockTimer->setSingleShot(false);
-    connect(m_lockTimer.get(), &QTimer::timeout, this, &User::onLockTimeOut);
-}
+    //服务器版root用户的uid为0,需要特殊处理
+    if (uid < 1000 && uid != 0)
+        return QString();
 
-User::User(const User &user)
-    : QObject(user.parent())
-    , m_lockLimit(user.m_lockLimit)
-    , m_isLogind(user.m_isLogind)
-    , m_uid(user.m_uid)
-    , m_userName(user.m_userName)
-    , m_locale(user.m_locale)
-    , m_lockTimer(user.m_lockTimer)
-    , m_limitsInfo(new QMap<int, LimitsInfo>())
-{
+    struct passwd *pw = nullptr;
+    /* Fetch passwd structure (contains first group ID for user) */
+    pw = getpwuid(uid);
 
-}
-
-User::~User()
-{
-    delete m_limitsInfo;
-}
-
-bool User::operator==(const User &user) const
-{
-    return type() == user.type() &&
-           m_uid == user.m_uid;
-}
-
-void User::setLocale(const QString &locale)
-{
-    if (m_locale == locale) return;
-
-    m_locale = locale;
-
-    emit localeChanged(locale);
-}
-
-bool User::isNoPasswdGrp() const
-{
-    return checkUserIsNoPWGrp(this);
-}
-
-bool User::isUserIsvalid() const
-{
-    return true;
-}
-
-void User::setisLogind(bool isLogind)
-{
-    if (m_isLogind == isLogind) {
-        return;
-    }
-
-    m_isLogind = isLogind;
-
-    emit logindChanged(isLogind);
-}
-
-void User::setPath(const QString &path)
-{
-    if (m_path == path) return;
-
-    m_path = path;
-}
-
-void User::onLockTimeOut()
-{
-    m_lockLimit.lockTime--;
-
-    // 如果之前计时器读完秒，即间隔为所读秒数，则设置间隔为分钟
-    if (m_lockTimer->interval() != 60)
-        m_lockTimer->setInterval(1000 * 60);
-
-    if (m_lockLimit.lockTime == 1)
-        m_lockTimer->setInterval(1000 * 62);
-
-    if(m_lockLimit.lockTime == 0) {
-        m_lockLimit.isLock = false;
-        m_lockTimer->stop();
-        emit lockLimitFinished(false);
-    }
-
-    emit lockChanged(m_lockLimit.isLock);
-}
-
-/**
- * @brief 更新账户限制信息
- *
- * @param info
- */
-void User::updateLimitsInfo(const QString &info)
-{
-    LimitsInfo limitsInfoTmp;
-    const QJsonDocument limitsInfoDoc = QJsonDocument::fromJson(info.toUtf8());
-    const QJsonArray limitsInfoArr = limitsInfoDoc.array();
-    for (const QJsonValue &limitsInfoStr : limitsInfoArr) {
-        const QJsonObject limitsInfoObj = limitsInfoStr.toObject();
-        limitsInfoTmp.unlockSecs = limitsInfoObj["unlockSecs"].toVariant().toUInt();
-        limitsInfoTmp.maxTries = limitsInfoObj["maxTries"].toVariant().toUInt();
-        limitsInfoTmp.numFailures = limitsInfoObj["numFailures"].toVariant().toUInt();
-        limitsInfoTmp.locked = limitsInfoObj["locked"].toBool();
-        limitsInfoTmp.unlockTime = limitsInfoObj["unlockTime"].toString();
-        m_limitsInfo->insert(limitsInfoObj["flag"].toInt(), limitsInfoTmp);
-    }
-    emit limitsInfoChanged(m_limitsInfo);
-}
-
-void User::updateLockLimit(bool is_lock, uint lock_time, uint rest_second)
-{
-    m_lockLimit.lockTime = lock_time;
-    m_lockLimit.isLock = is_lock;
-
-    if (m_lockTimer->isActive()) {
-         m_lockTimer->stop();
-    }
-
-    if (m_lockLimit.isLock) {
-        //若锁定时间有整数分钟外的秒数，则计时器先读完秒，再设置间隔为分钟
-        if (rest_second != 0) {
-            m_lockTimer->setInterval(1000* (int(rest_second)));
-        }
-        m_lockTimer->start();
-    }
-
-    emit lockChanged(m_lockLimit.isLock);
+    return pw ? QString().fromLocal8Bit(pw->pw_name) : QString();
 }
 
 NativeUser::NativeUser(const QString &path, QObject *parent)
     : User(parent)
-    , m_userInter(new UserInter(ACCOUNT_DBUS_SERVICE, path, QDBusConnection::systemBus(), this))
+    , m_path(path)
+    , m_userInter(new UserInter("com.deepin.daemon.Accounts", path, QDBusConnection::systemBus(), this))
 {
-    m_userInter->setSync(false);
-
-    connect(m_userInter, &UserInter::AutomaticLoginChanged, this, &NativeUser::updateAutomaticLogin);
-
-    connect(m_userInter, &UserInter::IconFileChanged, this, [ = ](const QString & avatar) {
-        m_avatar = avatar;
-        emit avatarChanged(avatar);
-    });
-
-    connect(m_userInter, &UserInter::FullNameChanged, this, [ = ](const QString & fullname) {
-        m_fullName = fullname;
-        emit displayNameChanged(fullname.isEmpty() ? m_userName : fullname);
-    });
-
-    connect(m_userInter, &UserInter::UserNameChanged, this, [ = ](const QString & user_name) {
-        m_userName = user_name;
-        emit displayNameChanged(m_fullName.isEmpty() ? m_userName : m_fullName);
-    });
-
-    connect(m_userInter, &UserInter::UidChanged, this, [ = ](const QString & uid) {
-        m_uid = uid.toUInt();
-    });
-
-    connect(m_userInter, &UserInter::DesktopBackgroundsChanged, this, [ = ] (const QStringList & paths) {
-        QSettings settings(DDESESSIONCC::CONFIG_FILE + m_userName, QSettings::IniFormat);
-        settings.beginGroup("User");
-
-        int index = settings.value("Workspace").toInt();
-        //刚安装的系统中返回的Workspace为0
-        index = index <= 0 ? 1 : index;
-        if (paths.size() >= index && index > 0) {
-            m_desktopBackground = toLocalFile(paths.at(index - 1));
-            emit desktopBackgroundPathChanged(m_desktopBackground);
-        } else {
-            qDebug() << "DesktopBackgroundsChanged get error index:" << index << ", paths:" << paths;
-        }
-    });
-
-    connect(m_userInter, &UserInter::GreeterBackgroundChanged, this, [ = ](const QString & path) {
-        m_greeterBackground = toLocalFile(path);
-        emit greeterBackgroundPathChanged(m_greeterBackground);
-    });
-
-    connect(m_userInter, &UserInter::PasswordStatusChanged, this, [ = ](const QString& status){
-        m_noPasswdGrp = (status == "NP" || checkUserIsNoPWGrp(this));
-    });
-
-    //监听用户时制改变信号,并发送信号让界面刷新
-    connect(m_userInter, &UserInter::Use24HourFormatChanged, this, [ = ](bool is24HourFormat) {
-        m_is24HourFormat = is24HourFormat;
-        emit use24HourFormatChanged(m_is24HourFormat);
-    });
-
-    connect(m_userInter, &UserInter::LocaleChanged, this, &NativeUser::setLocale);
-    connect(m_userInter, &UserInter::HistoryLayoutChanged, this, &NativeUser::kbLayoutListChanged);
-    connect(m_userInter, &UserInter::LayoutChanged, this, &NativeUser::currentKBLayoutChanged);
-    connect(m_userInter, &UserInter::NoPasswdLoginChanged, this, &NativeUser::noPasswdLoginChanged);
-
-    m_userInter->automaticLogin();
-    m_userInter->userName();
-    m_userInter->locale();
-    m_userInter->passwordStatus();
-    m_userInter->fullName();
-
-    // intercept account dbus path uid
-    m_uid = path.mid(QString(ACCOUNTS_DBUS_PREFIX).size()).toUInt();
-    m_userName = userPwdName(m_uid);
-    m_noPasswdGrp = checkUserIsNoPWGrp(this);
-    m_automaticLogin = m_userInter->automaticLogin();
-
-    configAccountInfo(DDESESSIONCC::CONFIG_FILE + m_userName);
-    setPath(path);
+    initConnections();
+    initData();
+    initConfiguration(DDESESSIONCC::CONFIG_FILE + m_name);
 }
 
-void NativeUser::configAccountInfo(const QString &account_config)
+NativeUser::NativeUser(const uid_t &uid, QObject *parent)
+    : User(parent)
+    , m_path("/com/deepin/daemon/Accounts/User" + QString::number(uid))
+    , m_userInter(new UserInter("com.deepin.daemon.Accounts", m_path, QDBusConnection::systemBus(), this))
 {
-    QSettings settings(account_config, QSettings::IniFormat);
+    initConnections();
+    initData();
+    initConfiguration(DDESESSIONCC::CONFIG_FILE + m_name);
+}
+
+NativeUser::NativeUser(const NativeUser &user)
+    : User(user)
+{
+    m_path = user.m_path;
+    m_userInter = new UserInter("com.deepin.daemon.Accounts", m_path, QDBusConnection::systemBus(), this);
+    initConnections();
+}
+
+void NativeUser::initConnections()
+{
+    connect(m_userInter, &UserInter::AutomaticLoginChanged, this, &NativeUser::updateAutomaticLogin);
+    connect(m_userInter, &UserInter::DesktopBackgroundsChanged, this, &NativeUser::updateDesktopBackgrounds);
+    connect(m_userInter, &UserInter::FullNameChanged, this, &NativeUser::updateFullName);
+    connect(m_userInter, &UserInter::GreeterBackgroundChanged, this, &NativeUser::updateGreeterBackground);
+    connect(m_userInter, &UserInter::HistoryLayoutChanged, this, &NativeUser::updateKeyboardLayoutList);
+    connect(m_userInter, &UserInter::IconFileChanged, this, &NativeUser::updateAvatar);
+    connect(m_userInter, &UserInter::LayoutChanged, this, &NativeUser::updateKeyboardLayout);
+    connect(m_userInter, &UserInter::LocaleChanged, this, &NativeUser::updateLocale);
+    connect(m_userInter, &UserInter::NoPasswdLoginChanged, this, &NativeUser::updateNoPasswordLogin);
+    connect(m_userInter, &UserInter::PasswordStatusChanged, this, &NativeUser::updatePasswordStatus);
+    connect(m_userInter, &UserInter::ShortDateFormatChanged, this, &NativeUser::updateShortDateFormat);
+    connect(m_userInter, &UserInter::ShortTimeFormatChanged, this, &NativeUser::updateShortTimeFormat);
+    connect(m_userInter, &UserInter::WeekdayFormatChanged, this, &NativeUser::updateWeekdayFormat);
+    connect(m_userInter, &UserInter::UidChanged, this, &NativeUser::updateUid);
+    connect(m_userInter, &UserInter::UserNameChanged, this, &NativeUser::updateName);
+    connect(m_userInter, &UserInter::Use24HourFormatChanged, this, &NativeUser::updateUse24HourFormat);
+}
+
+void NativeUser::initData()
+{
+    m_isAutomaticLogin = m_userInter->automaticLogin();
+    m_isNoPasswordLogin = m_userInter->noPasswdLogin();
+    m_isPasswordValid = m_userInter->passwordStatus() == "P" ? true : false;
+    m_isUse24HourFormat = m_userInter->use24HourFormat();
+
+    m_shortDateFormat = m_userInter->shortDateFormat();
+    m_shortTimeFormat = m_userInter->shortTimeFormat();
+    m_weekdayFormat = m_userInter->weekdayFormat();
+
+    const QString avatarPath = m_userInter->iconFile();
+    if (!avatarPath.isEmpty() && QFile(avatarPath).exists() && QFile(avatarPath).size() && QImageReader(avatarPath).canRead()) {
+        m_avatar = avatarPath;
+    }
+    m_fullName = m_userInter->fullName();
+    m_greeterBackground = m_userInter->greeterBackground();
+    m_keyboardLayout = m_userInter->layout();
+    m_locale = m_userInter->locale();
+    m_name = m_userInter->userName();
+    m_desktopBackgrounds = m_userInter->desktopBackgrounds();
+    m_keyboardLayoutList = m_userInter->historyLayout();
+    m_uid = m_userInter->uid().toUInt();
+}
+
+/**
+ * @brief unnecessary
+ *
+ * @param config
+ */
+void NativeUser::initConfiguration(const QString &config)
+{
+    QSettings settings(config, QSettings::IniFormat);
     settings.beginGroup("User");
 
     m_avatar = settings.value("Icon").toString();
     m_greeterBackground = toLocalFile(settings.value("GreeterBackground").toString());
     m_locale = settings.value("Locale").toString();
-    //初始化时读取用户的配置文件中设置的时制格式
-    m_is24HourFormat = settings.value("Use24HourFormat").toBool();
+    m_isUse24HourFormat = settings.value("Use24HourFormat").toBool();
 
     //QSettings中分号为结束符，分号后面的数据不会被读取，因此使用QFile直接读取桌面背景图片路径
-    QStringList desktopBackgrounds = readDesktopBackgroundPath(account_config);
+    QStringList desktopBackgrounds = readDesktopBackgroundPath(config);
 
     int index = settings.value("Workspace").toInt();
     //刚安装的系统中返回的Workspace为0
     index = index <= 0 ? 1 : index;
     if (desktopBackgrounds.size() >= index && index > 0) {
-        m_desktopBackground = toLocalFile(desktopBackgrounds.at(index - 1));
+        // m_desktopBackgrounds = toLocalFile(desktopBackgrounds.at(index - 1));
     } else {
         qDebug() << "configAccountInfo get error index:" << index << ", backgrounds:" << desktopBackgrounds;
     }
+}
+
+/**
+ * @brief 设置键盘布局
+ *
+ * @param keyboard
+ */
+void NativeUser::setKeyboardLayout(const QString &keyboard)
+{
+    m_userInter->SetLayout(keyboard);
+}
+
+/**
+ * @brief 更新头像
+ *
+ * @param path
+ */
+void NativeUser::updateAvatar(const QString &path)
+{
+    if (path == m_avatar) {
+        return;
+    }
+    if (!path.isEmpty() && QFile(path).exists() && QFile(path).size() && QImageReader(path).canRead()) {
+        m_avatar = path;
+    } else {
+        m_avatar = DEFAULT_AVATAR;
+    }
+    emit avatarChanged(path);
+}
+
+/**
+ * @brief 更新账户自动登录状态
+ *
+ * @param autoLoginState
+ */
+void NativeUser::updateAutomaticLogin(const bool autoLoginState)
+{
+    if (autoLoginState == m_isAutomaticLogin) {
+        return;
+    }
+    m_isAutomaticLogin = autoLoginState;
+    emit autoLoginStatusChanged(autoLoginState);
+}
+
+/**
+ * @brief 更新桌面背景
+ *
+ * @param backgrounds
+ */
+void NativeUser::updateDesktopBackgrounds(const QStringList &backgrounds)
+{
+    QSettings settings(DDESESSIONCC::CONFIG_FILE + m_name, QSettings::IniFormat);
+    settings.beginGroup("User");
+
+    int index = settings.value("Workspace").toInt();
+    //刚安装的系统中返回的Workspace为0
+    index = index <= 0 ? 1 : index;
+    if (backgrounds.size() >= index && index > 0) {
+        // m_desktopBackgrounds = toLocalFile(backgrounds.at(index - 1));
+        // emit desktopBackgroundChanged(m_desktopBackgrounds);
+    } else {
+        qDebug() << "DesktopBackgroundsChanged get error index:" << index << ", paths:" << backgrounds;
+    }
+}
+
+/**
+ * @brief 更新用户全名
+ *
+ * @param name
+ */
+void NativeUser::updateFullName(const QString &fullName)
+{
+    if (fullName == m_fullName) {
+        return;
+    }
+    m_fullName = fullName;
+    emit displayNameChanged(fullName);
+}
+
+/**
+ * @brief 更新登录背景
+ *
+ * @param path
+ */
+void NativeUser::updateGreeterBackground(const QString &path)
+{
+    const QString pathTmp = toLocalFile(path);
+    if (pathTmp == m_greeterBackground) {
+        return;
+    }
+    m_greeterBackground = pathTmp;
+    emit greeterBackgroundChanged(pathTmp);
+}
+
+/**
+ * @brief 更新键盘布局
+ *
+ * @param keyboard
+ */
+void NativeUser::updateKeyboardLayout(const QString &keyboardLayout)
+{
+    if (keyboardLayout == m_keyboardLayout) {
+        return;
+    }
+    m_keyboardLayout = keyboardLayout;
+    emit keyboardLayoutChanged(keyboardLayout);
+}
+
+/**
+ * @brief 更新键盘布局列表
+ *
+ * @param list
+ */
+void NativeUser::updateKeyboardLayoutList(const QStringList &keyboardLayoutList)
+{
+    if (keyboardLayoutList == m_keyboardLayoutList) {
+        return;
+    }
+    m_keyboardLayoutList = keyboardLayoutList;
+    emit keyboardLayoutListChanged(keyboardLayoutList);
+}
+
+/**
+ * @brief 更新语言环境
+ *
+ * @param locale
+ */
+void NativeUser::updateLocale(const QString &locale)
+{
+    if (locale == m_locale) {
+        return;
+    }
+    m_locale = locale;
+    emit localeChanged(locale);
+}
+
+/**
+ * @brief 更新用户名
+ *
+ * @param name
+ */
+void NativeUser::updateName(const QString &name)
+{
+    if (name == m_name) {
+        return;
+    }
+    m_name = name;
+    emit displayNameChanged(m_fullName.isEmpty() ? name : m_fullName);
+}
+
+/**
+ * @brief 更新无密码登录状态
+ *
+ * @param isNoPasswdLogin
+ */
+void NativeUser::updateNoPasswordLogin(const bool isNoPasswordLogin)
+{
+    if (isNoPasswordLogin == m_isNoPasswordLogin) {
+        return;
+    }
+    m_isNoPasswordLogin = isNoPasswordLogin;
+    emit noPasswordLoginChanged(isNoPasswordLogin);
+}
+
+/**
+ * @brief 更新密码状态，用户是否设置了密码
+ *
+ * @param status 有密码：P 无密码：NP
+ */
+void NativeUser::updatePasswordStatus(const QString &status)
+{
+    const bool isPasswordValidTmp = status == "P" ? true : false;
+    if (isPasswordValidTmp == m_isPasswordValid) {
+        return;
+    }
+    m_isPasswordValid = isPasswordValidTmp;
+}
+
+/**
+ * @brief NativeUser::updateShortDateFormat
+ *
+ * @param format
+ */
+void NativeUser::updateShortDateFormat(const int format)
+{
+    if (format == m_shortDateFormat) {
+        return;
+    }
+    m_shortDateFormat = format;
+    emit shortDateFormatChanged(format);
+}
+
+/**
+ * @brief 更新短时间格式
+ *
+ * @param format
+ */
+void NativeUser::updateShortTimeFormat(const int format)
+{
+    if (format == m_shortTimeFormat) {
+        return;
+    }
+    m_shortTimeFormat = format;
+    emit shortTimeFormatChanged(format);
+}
+
+/**
+ * @brief 更新星期格式
+ *
+ * @param format
+ */
+void NativeUser::updateWeekdayFormat(const int format)
+{
+    if (format == m_weekdayFormat) {
+        return;
+    }
+    m_weekdayFormat = format;
+    emit weekdayFormatChanged(format);
+}
+
+/**
+ * @brief 更新用户 uid
+ *
+ * @param uid
+ */
+void NativeUser::updateUid(const QString &uid)
+{
+    const uid_t uidTmp = uid.toUInt();
+    if (uidTmp == m_uid) {
+        return;
+    }
+    m_uid = uidTmp;
+}
+
+/**
+ * @brief 更新24小时制
+ *
+ * @param is24HourFormat
+ */
+void NativeUser::updateUse24HourFormat(const bool is24HourFormat)
+{
+    if (is24HourFormat == m_isUse24HourFormat) {
+        return;
+    }
+    m_isUse24HourFormat = is24HourFormat;
+    emit use24HourFormatChanged(is24HourFormat);
 }
 
 QStringList NativeUser::readDesktopBackgroundPath(const QString &path)
@@ -317,7 +545,7 @@ QStringList NativeUser::readDesktopBackgroundPath(const QString &path)
             while (!read.atEnd()) {
                 QString line = read.readLine();
                 if (line.contains("DesktopBackgrounds=", Qt::CaseInsensitive)) {
-                    QString paths = line.section('=',1);
+                    QString paths = line.section('=', 1);
                     desktopBackgrounds << paths.split(";");
                 }
             }
@@ -329,180 +557,34 @@ QStringList NativeUser::readDesktopBackgroundPath(const QString &path)
     return desktopBackgrounds;
 }
 
-void NativeUser::setCurrentLayout(const QString &layout)
-{
-    m_userInter->SetLayout(layout);
-}
-
-QString NativeUser::displayName() const
-{
-    return m_fullName.isEmpty() ? m_userName : m_fullName;
-}
-
-QString NativeUser::avatarPath() const
-{
-    m_userInter->iconFile();
-    return m_avatar;
-}
-
-QString NativeUser::greeterBackgroundPath() const
-{
-    m_userInter->greeterBackground();
-    return m_greeterBackground;
-}
-
-QString NativeUser::desktopBackgroundPath() const
-{
-    m_userInter->desktopBackgrounds();
-    return m_desktopBackground;
-}
-
-QStringList NativeUser::kbLayoutList()
-{
-    return m_userInter->historyLayout();
-}
-
-QString NativeUser::currentKBLayout()
-{
-    return m_userInter->layout();
-}
-
-bool NativeUser::isNoPasswdGrp() const
-{
-    return m_noPasswdGrp;
-}
-
-bool NativeUser::isUserIsvalid() const
-{
-    //无效用户的时候m_userInter是有效的
-    return m_userInter->isValid();
-}
-
-bool NativeUser::is24HourFormat() const
-{
-    if(!isUserIsvalid() || m_isServer)
-        return true;
-
-    //先触发后端刷新取用户时制信号,并返回当前已经取到的时制格式
-    m_userInter->use24HourFormat();
-    return m_is24HourFormat;
-}
-
 /**
- * @brief 更新账户自动登录状态
- *
- * @param autoLoginState
+ * @brief 域管账户。当域管账户在第一次认证时，用这个特殊的类保存相关信息，
+ * 一旦登录一次后，account服务中就会保存域管账户相关的信息，后续就可以当作本地用户处理。
+ * 这个类仅在域管账户第一次登录时使用，如果后续有其它类型的远程账户（第一次登录时系统中无用户信息），
+ * 可以参考这个类的实现再抽象出一个 RemoteUser。
+ * @param uid 用户的 uid
+ * @param parent
  */
-void NativeUser::updateAutomaticLogin(const bool autoLoginState)
-{
-    if (autoLoginState == m_automaticLogin) {
-        return;
-    }
-    m_automaticLogin = autoLoginState;
-    emit autoLoginStateChanged(autoLoginState);
-}
-
 ADDomainUser::ADDomainUser(uid_t uid, QObject *parent)
     : User(parent)
-    , m_userInter(new UserInter("com.deepin.daemon.Accounts", "/com/deepin/daemon/Accounts/User" + QString::number(uid), QDBusConnection::systemBus(), this))
 {
     m_uid = uid;
-
-    connect(m_userInter, &UserInter::FullNameChanged, this, &ADDomainUser::setUserDisplayName);
-    connect(m_userInter, &UserInter::UserNameChanged, this, &ADDomainUser::setUserName);
-    connect(m_userInter, &UserInter::IconFileChanged, this, &ADDomainUser::setAvatar);
-
-    m_avatar = m_userInter->iconFile();
-    m_displayName = m_userInter->fullName();
-    m_userName = m_userInter->userName();
 }
 
-ADDomainUser::~ADDomainUser()
+void ADDomainUser::setFullName(const QString &fullName)
 {
-}
-
-void ADDomainUser::setUserDisplayName(const QString &name)
-{
-    if (m_displayName == name) {
+    if (fullName == m_fullName) {
         return;
     }
-
-    m_displayName = name;
-
-    emit displayNameChanged(name);
+    m_fullName = fullName;
+    emit displayNameChanged(fullName);
 }
 
-void ADDomainUser::setUserName(const QString &name)
+void ADDomainUser::setName(const QString &name)
 {
-    if (m_userName == name) {
+    if (m_name == name) {
         return;
     }
-
-    m_userName = name;
-}
-
-void ADDomainUser::setUserInter(UserInter *user_inter)
-{
-    if (m_userInter == user_inter) {
-        return;
-    }
-
-    m_userInter = user_inter;
-}
-
-void ADDomainUser::setUid(uid_t uid)
-{
-    if (m_uid == uid) {
-        return;
-    }
-
-    m_uid = uid;
-}
-
-void ADDomainUser::setIsServerUser(bool is_server)
-{
-    if (m_isServer == is_server) {
-        return;
-    }
-
-    m_isServer = is_server;
-}
-
-void ADDomainUser::setAvatar(const QString &path)
-{
-    if (path == m_avatar) {
-        return;
-    }
-    if (!path.isEmpty() && QFile(path).exists() && QFile(path).size() && QImageReader(path).canRead()) {
-        m_avatar = path;
-    } else {
-        m_avatar = QString(":/img/default_avatar.svg");
-    }
-    emit avatarChanged(path);
-}
-
-QString ADDomainUser::displayName() const
-{
-    return m_displayName.isEmpty() ? m_userName : m_displayName;
-}
-
-QString ADDomainUser::avatarPath() const
-{
-    if (!m_avatar.isEmpty() && QFile(m_avatar).exists() && QFile(m_avatar).size() && QImageReader(m_avatar).canRead()) {
-        return m_avatar;
-    } else {
-        return QString(":/img/default_avatar.svg");
-    }
-}
-
-QString ADDomainUser::greeterBackgroundPath() const
-{
-    QFileInfo background_info(DEFAULT_BACKGROUND);
-    return background_info.canonicalFilePath();
-}
-
-QString ADDomainUser::desktopBackgroundPath() const
-{
-    QFileInfo background_info(DEFAULT_BACKGROUND);
-    return background_info.canonicalFilePath();
+    m_name = name;
+    emit displayNameChanged(m_fullName.isEmpty() ? name : m_fullName);
 }

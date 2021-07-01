@@ -49,24 +49,21 @@ void UserLoginInfo::setUser(std::shared_ptr<User> user)
 
     m_currentUserConnects.clear();
     m_currentUserConnects << connect(user.get(), &User::limitsInfoChanged, m_userLoginWidget, &UserLoginWidget::updateLimitsInfo);
-    m_currentUserConnects << connect(user.get(), &User::lockChanged, this, &UserLoginInfo::userLockChanged);
-    m_currentUserConnects << connect(user.get(), &User::lockLimitFinished, m_model, &SessionBaseModel::lockLimitFinished);
-    m_currentUserConnects << connect(user.get(), &User::lockLimitFinished, this, &UserLoginInfo::userLockChanged);
     m_currentUserConnects << connect(user.get(), &User::avatarChanged, m_userLoginWidget, &UserLoginWidget::updateAvatar);
     m_currentUserConnects << connect(user.get(), &User::displayNameChanged, m_userLoginWidget, &UserLoginWidget::updateName);
-    m_currentUserConnects << connect(user.get(), &User::kbLayoutListChanged, m_userLoginWidget, &UserLoginWidget::updateKeyboardList, Qt::UniqueConnection);
-    m_currentUserConnects << connect(user.get(), &User::currentKBLayoutChanged, m_userLoginWidget, &UserLoginWidget::updateKeyboardInfo, Qt::UniqueConnection);
-    m_currentUserConnects << connect(user.get(), &User::noPasswdLoginChanged, this, &UserLoginInfo::updateLoginContent); // TODO
+    m_currentUserConnects << connect(user.get(), &User::keyboardLayoutListChanged, m_userLoginWidget, &UserLoginWidget::updateKeyboardList, Qt::UniqueConnection);
+    m_currentUserConnects << connect(user.get(), &User::keyboardLayoutChanged, m_userLoginWidget, &UserLoginWidget::updateKeyboardInfo, Qt::UniqueConnection);
+    m_currentUserConnects << connect(user.get(), &User::noPasswordLoginChanged, this, &UserLoginInfo::updateLoginContent); // TODO
 
     m_user = user;
 
     m_userLoginWidget->updateName(user->displayName());
-    m_userLoginWidget->updateAvatar(user->avatarPath());
+    m_userLoginWidget->updateAvatar(user->avatar());
     m_userLoginWidget->updateAuthType(m_model->currentType());
     // m_userLoginWidget->updateIsLockNoPassword(m_model->isLockNoPassword());
     // m_userLoginWidget->disablePassword(user.get()->isLock(), user->lockTime());
-    m_userLoginWidget->updateKeyboardList(user->kbLayoutList());
-    m_userLoginWidget->updateKeyboardInfo(user->currentKBLayout());
+    m_userLoginWidget->updateKeyboardList(user->keyboardLayoutList());
+    m_userLoginWidget->updateKeyboardInfo(user->keyboardLayout());
 
     updateLoginContent();
 }
@@ -80,24 +77,24 @@ void UserLoginInfo::initConnect()
         // if (!m_userLoginWidget->inputInfoCheck(m_model->isServerModel())) return;
 
         //当前锁定不需要密码和当前用户不需要密码登录则直接进入系统
-        if (m_model->isLockNoPassword() && m_model->currentUser()->isNoPasswdGrp()) {
+        if (m_model->isLockNoPassword() && m_model->currentUser()->isNoPasswordLogin()) {
             emit m_model->authFinished(true);
             return;
         }
 
-        if (m_model->isServerModel() && m_model->currentUser()->isDoMainUser()) {
+        if (m_model->isServerModel() && m_model->currentUser()->type() == User::ADDomain) {
             auto user = dynamic_cast<NativeUser *>(m_model->findUserByName(account).get());
             auto current_user = m_model->currentUser();
 
             // static_cast<ADDomainUser *>(m_model->currentUser().get())->setUserName(account);
             // static_cast<ADDomainUser *>(m_model->currentUser().get())->setUserInter(nullptr);
             if (user != nullptr) {
-                static_cast<ADDomainUser *>(m_model->currentUser().get())->setUserInter(user->getUserInter());
+                // static_cast<ADDomainUser *>(m_model->currentUser().get())->setUserInter(user->userInter());
             }
         }
         // emit requestAuthUser(password);
     });
-    connect(m_model, &SessionBaseModel::authFaildMessage, m_userLoginWidget, &UserLoginWidget::setFaildMessage);
+    // connect(m_model, &SessionBaseModel::authFaildMessage, m_userLoginWidget, &UserLoginWidget::setFaildMessage);
     connect(m_model, &SessionBaseModel::authFaildTipsMessage, m_userLoginWidget, &UserLoginWidget::setFaildTipMessage);
     connect(m_userLoginWidget, &UserLoginWidget::requestUserKBLayoutChanged, this, [=] (const QString &value) {
         emit requestSetLayout(m_user, value);
@@ -195,7 +192,7 @@ void UserLoginInfo::updateLoginContent()
     if (m_model->currentUser()->uid() == INT_MAX) {
         // m_userLoginWidget->setWidgetShowType(UserLoginWidget::IDAndPasswordType);
     } else {
-        if (m_user->isNoPasswdGrp()) {
+        if (m_user->isNoPasswordLogin()) {
             // m_userLoginWidget->setWidgetShowType(UserLoginWidget::NoPasswordType);
         } else {
             // m_userLoginWidget->setWidgetShowType(UserLoginWidget::NormalType);

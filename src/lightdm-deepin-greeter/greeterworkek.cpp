@@ -70,12 +70,9 @@ GreeterWorkek::GreeterWorkek(SessionBaseModel *const model, QObject *parent)
     }
 
     if (DSysInfo::deepinType() == DSysInfo::DeepinServer || m_model->isActiveDirectoryDomain()) {
-        std::shared_ptr<User> user = std::make_shared<ADDomainUser>(INT_MAX);
-        static_cast<ADDomainUser *>(user.get())->setUserDisplayName("...");
-        static_cast<ADDomainUser *>(user.get())->setIsServerUser(true);
+        std::shared_ptr<User> user(new User());
         m_model->setIsServerModel(DSysInfo::deepinType() == DSysInfo::DeepinServer || !m_model->isActiveDirectoryDomain());
-        m_model->userAdd(user);
-        m_model->setCurrentUser(user);
+        m_model->addUser(user);
     } else {
         connect(m_login1Inter, &DBusLogin1Manager::SessionRemoved, this, [=] {
             // lockservice sometimes fails to call on olar server
@@ -86,12 +83,10 @@ GreeterWorkek::GreeterWorkek(SessionBaseModel *const model, QObject *parent)
                 const QJsonObject obj = QJsonDocument::fromJson(replay.value().toUtf8()).object();
                 auto user_ptr = m_model->findUserByUid(static_cast<uint>(obj["Uid"].toInt()));
 
-                m_model->setCurrentUser(user_ptr);
-                // userAuthForLightdm(user_ptr);
+                m_model->updateCurrentUser(user_ptr);
             }
         });
     }
-    m_model->setCurrentUser(m_lockInter->CurrentUser());
 
     /* com.deepin.daemon.Accounts */
     m_model->updateUserList(m_accountsInter->userList());
@@ -145,6 +140,12 @@ void GreeterWorkek::initConnections()
     connect(m_greeter, &QLightDM::Greeter::showPrompt, this, &GreeterWorkek::showPrompt);
     connect(m_greeter, &QLightDM::Greeter::showMessage, this, &GreeterWorkek::showMessage);
     connect(m_greeter, &QLightDM::Greeter::authenticationComplete, this, &GreeterWorkek::authenticationComplete);
+    /* com.deepin.daemon.Accounts */
+    connect(m_accountsInter, &AccountsInter::UserAdded, m_model, static_cast<void (SessionBaseModel::*)(const QString &)>(&SessionBaseModel::addUser));
+    connect(m_accountsInter, &AccountsInter::UserDeleted, m_model, static_cast<void (SessionBaseModel::*)(const QString &)>(&SessionBaseModel::removeUser));
+    connect(m_accountsInter, &AccountsInter::UserListChanged, m_model, &SessionBaseModel::updateUserList);
+    connect(m_loginedInter, &LoginedInter::LastLogoutUserChanged, m_model, static_cast<void (SessionBaseModel::*)(const uid_t)>(&SessionBaseModel::updateLastLogoutUser));
+    connect(m_loginedInter, &LoginedInter::UserListChanged, m_model, &SessionBaseModel::updateLoginedUserList);
     /* com.deepin.daemon.Authenticate */
     connect(m_authFramework, &DeepinAuthFramework::FramworkStateChanged, m_model, &SessionBaseModel::updateFrameworkState);
     connect(m_authFramework, &DeepinAuthFramework::LimitsInfoChanged, this, [this](const QString &account) {
@@ -211,10 +212,10 @@ void GreeterWorkek::initConnections()
             return;
         }
         if (active) {
-            if (!m_model->isServerModel() && !m_model->currentUser()->isNoPasswdGrp()) {
+            if (!m_model->isServerModel() && !m_model->currentUser()->isNoPasswordLogin()) {
                 createAuthentication(m_model->currentUser()->name());
             }
-            if (!m_model->isServerModel() && m_model->currentUser()->isNoPasswdGrp() && m_model->currentUser()->automaticLogin()) {
+            if (!m_model->isServerModel() && m_model->currentUser()->isNoPasswordLogin() && m_model->currentUser()->isAutomaticLogin()) {
                 m_greeter->authenticate(m_model->currentUser()->name());
             }
         } else {
@@ -234,13 +235,13 @@ void GreeterWorkek::initConnections()
     connect(m_lockInter, &DBusLockService::UserChanged, this, [=] (const QString &json) {
         m_resetSessionTimer->stop();
         destoryAuthentication(m_account);
-        m_model->setCurrentUser(json);
+        m_model->updateCurrentUser(json);
         std::shared_ptr<User> user_ptr = m_model->currentUser();
         const QString &account = user_ptr->name();
-        if (!user_ptr.get()->isLogin() && !user_ptr.get()->isNoPasswdGrp()) {
+        if (!user_ptr.get()->isLogin() && !user_ptr.get()->isNoPasswordLogin()) {
             createAuthentication(account);
         }
-        if (user_ptr.get()->isNoPasswdGrp()) {
+        if (user_ptr.get()->isNoPasswordLogin()) {
             emit m_model->authTypeChanged(AuthTypeNone);
         }
         emit m_model->switchUserFinished();
@@ -277,10 +278,10 @@ void GreeterWorkek::initConnections()
     connect(m_model, &SessionBaseModel::currentUserChanged, this, &GreeterWorkek::recoveryUserKBState);
     connect(m_model, &SessionBaseModel::visibleChanged, this, [=] (bool visible) {
         if (visible) {
-            if (!m_model->isServerModel() && !m_model->currentUser()->isNoPasswdGrp()) {
+            if (!m_model->isServerModel() && !m_model->currentUser()->isNoPasswordLogin()) {
                 createAuthentication(m_model->currentUser()->name());
             }
-            if (!m_model->isServerModel() && m_model->currentUser()->isNoPasswdGrp() && m_model->currentUser()->automaticLogin()) {
+            if (!m_model->isServerModel() && m_model->currentUser()->isNoPasswordLogin() && m_model->currentUser()->isAutomaticLogin()) {
                 m_greeter->authenticate(m_model->currentUser()->name());
             }
         } else {
@@ -339,7 +340,7 @@ void GreeterWorkek::switchToUser(std::shared_ptr<User> user)
         // switch to user Xorg
         QProcess::startDetached("dde-switchtogreeter", QStringList() << user->name());
     } else {
-        m_model->setCurrentUser(user);
+        m_model->updateCurrentUser(user);
     }
 }
 
@@ -378,32 +379,25 @@ void GreeterWorkek::onUserAdded(const QString &user)
         user_ptr = std::make_shared<ADDomainUser>(uid);
     }
 
-    if (!user_ptr->isUserIsvalid())
+    if (!user_ptr->isUserValid())
         return;
-    user_ptr->setisLogind(isLogined(user_ptr->uid()));
+    user_ptr->updateLoginStatus(isLogined(user_ptr->uid()));
 
     if (m_model->currentUser().get() == nullptr) {
         if (m_model->userList().isEmpty() || m_model->userList().first()->type() == User::ADDomain) {
-            m_model->setCurrentUser(user_ptr);
+            m_model->updateCurrentUser(user_ptr);
         }
     }
 
     if (!user_ptr->isLogin() && user_ptr->uid() == m_currentUserUid && !m_model->isServerModel()) {
-        m_model->setCurrentUser(user_ptr);
-        // userAuthForLightdm(user_ptr);
+        m_model->updateCurrentUser(user_ptr);
     }
 
     if (user_ptr->uid() == m_lastLogoutUid) {
-        m_model->setLastLogoutUser(user_ptr);
+        m_model->updateLastLogoutUser(user_ptr);
     }
 
-    connect(user_ptr->getUserInter(), &UserInter::UserNameChanged, this, [=] {
-        if (!user_ptr->isNoPasswdGrp()) {
-            updateLockLimit(user_ptr);
-        }
-    });
-
-    m_model->userAdd(user_ptr);
+    m_model->addUser(user_ptr);
 }
 
 /**
@@ -528,8 +522,8 @@ void GreeterWorkek::checkAccount(const QString &account)
     if (!userPath.startsWith("/")) {
         if (account.startsWith("@")) {
             user_ptr = std::make_shared<ADDomainUser>(INT_MAX - 1);
-            dynamic_cast<ADDomainUser *>(user_ptr.get())->setUserName(account);
-            dynamic_cast<ADDomainUser *>(user_ptr.get())->setUserDisplayName(account.midRef(QString("@").size()).toString());
+            dynamic_cast<ADDomainUser *>(user_ptr.get())->setName(account);
+            dynamic_cast<ADDomainUser *>(user_ptr.get())->setFullName(account.midRef(QString("@").size()).toString());
         } else {
             qWarning() << userPath;
             userPath = tr("Wrong account");
@@ -544,9 +538,8 @@ void GreeterWorkek::checkAccount(const QString &account)
             user_ptr = std::make_shared<ADDomainUser>(uid);
         }
     }
-
-    m_model->setCurrentUser(user_ptr);
-    if (user_ptr->isNoPasswdGrp()) {
+    m_model->updateCurrentUser(user_ptr);
+    if (user_ptr->isNoPasswordLogin()) {
         m_greeter->authenticate(account);
     } else {
         m_resetSessionTimer->stop();
@@ -580,7 +573,7 @@ void GreeterWorkek::oneKeyLogin()
 
             auto user_ptr = m_model->findUserByName(reply.value());
             if (user_ptr.get() != nullptr && reply.isValid()) {
-                m_model->setCurrentUser(user_ptr);
+                m_model->updateCurrentUser(user_ptr);
                 userAuthForLightdm(user_ptr);
             }
         } else {
@@ -593,7 +586,7 @@ void GreeterWorkek::oneKeyLogin()
 
 void GreeterWorkek::userAuthForLightdm(std::shared_ptr<User> user)
 {
-    if (user.get() != nullptr && !user->isNoPasswdGrp()) {
+    if (user.get() != nullptr && !user->isNoPasswordLogin()) {
         //后端需要大约600ms时间去释放指纹设备
         resetLightdmAuth(user, 100, true);
     }
@@ -683,10 +676,6 @@ void GreeterWorkek::authenticationComplete()
         m_greeter->startSessionSync(m_model->sessionKey());
     };
 
-    // NOTE(kirigaya): It is not necessary to display the login animation.
-    connect(m_model->currentUser().get(), &User::desktopBackgroundPathChanged, this, &GreeterWorkek::requestUpdateBackground);
-    m_model->currentUser()->desktopBackgroundPath();
-
 #ifndef DISABLE_LOGIN_ANI
     QTimer::singleShot(1000, this, startSessionSync);
 #else
@@ -743,10 +732,6 @@ void GreeterWorkek::onPasswordResult(const QString &msg)
 
 void GreeterWorkek::resetLightdmAuth(std::shared_ptr<User> user, int delay_time, bool is_respond)
 {
-    if (user->isLock()) {
-        return;
-    }
-
     QTimer::singleShot(delay_time, this, [=] {
         // m_greeter->authenticate(user->name());
         // m_authFramework->AuthenticateByUser(user);

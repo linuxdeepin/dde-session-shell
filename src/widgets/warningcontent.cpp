@@ -157,7 +157,7 @@ void WarningContent::doAccecpShutdownInhibit()
 void WarningContent::beforeInvokeAction(bool needConfirm)
 {
     const QList<InhibitWarnView::InhibitorData> inhibitors = listInhibitors(m_powerAction);
-    const QList<std::shared_ptr<User>> &loginUsers = m_model->logindUser();
+    const QList<std::shared_ptr<User>> &loginUsers = m_model->loginedUserList();
 
     if (m_warningView != nullptr) {
         m_warningView->deleteLater();

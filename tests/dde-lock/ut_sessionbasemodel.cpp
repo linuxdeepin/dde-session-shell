@@ -29,7 +29,7 @@ TEST_F(UT_SessionBaseModel, init)
     std::shared_ptr<NativeUser> nativeUser(new NativeUser("/com/deepin/daemon/Accounts/User"+QString::number((getuid()))));
     ASSERT_TRUE(m_sessionBaseModel);
     EXPECT_EQ(m_sessionBaseModel->currentType(), SessionBaseModel::AuthType::LockType);
-    m_sessionBaseModel->setCurrentUser(nativeUser);
+    m_sessionBaseModel->updateCurrentUser(nativeUser);
     EXPECT_EQ(m_sessionBaseModel->currentUser(), nativeUser);
 
     SessionBaseModel::PowerAction poweraction = m_sessionBaseModel->powerAction();

@@ -62,19 +62,19 @@ public:
 
     explicit UserLoginWidget(const SessionBaseModel *model, const WidgetType widgetType = LoginType, QWidget *parent = nullptr);
     ~UserLoginWidget() override;
-    void disablePassword(bool disable, uint lockTime = 0);
-    void setFaildMessage(const QString &message, SessionBaseModel::AuthFaildType type = SessionBaseModel::KEYBOARD);
+
+    void setWidgetType(const int type) { Q_UNUSED(type) }             // TODO
+    void setUser(const std::shared_ptr<User> user) { Q_UNUSED(user) } // TODO
+
     void setFaildTipMessage(const QString &message);
 
+    inline bool isSelected() const { return m_isSelected; }
     void setSelected(bool isSelected);
-    inline bool getSelected() const { return m_isSelected; }
     void setFastSelected(bool isSelected);
 
     void setUid(const uint uid);
     inline uint uid() const { return m_uid; }
     void ShutdownPrompt(SessionBaseModel::PowerAction action);
-    bool inputInfoCheck(bool is_server = false);
-    void prepareForSleep(bool isSleep);//待机信号
 
 signals:
     void requestStartAuthentication(const QString &account, const int authType);            // 开启某一种认证

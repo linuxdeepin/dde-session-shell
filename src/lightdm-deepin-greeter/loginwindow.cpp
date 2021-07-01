@@ -41,7 +41,8 @@ LoginWindow::LoginWindow(SessionBaseModel *const model, QWidget *parent)
     QTimer::singleShot(0, this, [ = ] {
         auto user = model->currentUser();
         //默认刷新清晰的锁屏背景，避免因为获取虚化背景过慢而引起的白屏问题
-        if (user != nullptr) updateBackground(QPixmap(user->greeterBackgroundPath()));
+        if (user != nullptr)
+            updateBackground(QPixmap(user->greeterBackground()));
     });
 
     setContent(m_loginContent);

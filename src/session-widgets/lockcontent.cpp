@@ -86,7 +86,7 @@ LockContent::LockContent(SessionBaseModel *const model, QWidget *parent)
     };
 
     connect(model, &SessionBaseModel::hasVirtualKBChanged, this, initVirtualKB, Qt::QueuedConnection);
-    connect(model, &SessionBaseModel::onUserListChanged, this, &LockContent::onUserListChanged);
+    connect(model, &SessionBaseModel::userListChanged, this, &LockContent::onUserListChanged);
     connect(model, &SessionBaseModel::userListLoginedChanged, this, &LockContent::onUserListChanged);
     connect(model, &SessionBaseModel::authFinished, this, &LockContent::restoreMode);
     connect(model, &SessionBaseModel::switchUserFinished, this, [ = ] {
@@ -97,7 +97,7 @@ LockContent::LockContent(SessionBaseModel *const model, QWidget *parent)
 
     QTimer::singleShot(0, this, [ = ] {
         onCurrentUserChanged(model->currentUser());
-        onUserListChanged(model->isServerModel() ? model->logindUser() : model->userList());
+        onUserListChanged(model->isServerModel() ? model->loginedUserList() : model->userList());
     });
 
     connect(m_wmInter, &__wm::WorkspaceSwitched, this, &LockContent::currentWorkspaceChanged);
@@ -127,32 +127,19 @@ void LockContent::onCurrentUserChanged(std::shared_ptr<User> user)
 
     m_user = user;
 
-    UserInter *userInter = user->getUserInter();
-    m_currentUserConnects << connect(user.get(), &User::greeterBackgroundPathChanged, this, &LockContent::updateGreeterBackgroundPath, Qt::UniqueConnection)
-                          << connect(user.get(), &User::desktopBackgroundPathChanged, this, &LockContent::updateDesktopBackgroundPath, Qt::UniqueConnection)
+    m_currentUserConnects << connect(user.get(), &User::greeterBackgroundChanged, this, &LockContent::updateGreeterBackgroundPath, Qt::UniqueConnection)
+                          << connect(user.get(), &User::desktopBackgroundChanged, this, &LockContent::updateDesktopBackgroundPath, Qt::UniqueConnection)
                           << connect(user.get(), &User::use24HourFormatChanged, this, &LockContent::updateTimeFormat, Qt::UniqueConnection)
-                          << connect(userInter, &UserInter::WeekdayFormatChanged, m_timeWidget, &TimeWidget::setWeekdayFormatType)
-                          << connect(userInter, &UserInter::ShortDateFormatChanged, m_timeWidget, &TimeWidget::setShortDateFormat)
-                          << connect(userInter, &UserInter::ShortTimeFormatChanged, m_timeWidget, &TimeWidget::setShortTimeFormat);
+                          << connect(user.get(), &User::weekdayFormatChanged, m_timeWidget, &TimeWidget::setWeekdayFormatType)
+                          << connect(user.get(), &User::shortDateFormatChanged, m_timeWidget, &TimeWidget::setShortDateFormat)
+                          << connect(user.get(), &User::shortTimeFormatChanged, m_timeWidget, &TimeWidget::setShortTimeFormat);
 
     //lixin
     m_userLoginInfo->setUser(user);
 
     //TODO: refresh blur image
     QTimer::singleShot(0, this, [ = ] {
-        if (userInter) {
-            userInter->weekdayFormat();
-            userInter->shortDateFormat();
-            userInter->shortTimeFormat();
-        }
-
-        // 异步刷新界面时间格式
-        user->is24HourFormat();
-        updateTimeFormat(user->is24HourFormat());
-
-        //获取用户后，刷新界面背景图片
-        m_user->greeterBackgroundPath();
-        m_user->desktopBackgroundPath();
+        updateTimeFormat(user->isUse24HourFormat());
     });
 
     m_logoWidget->updateLocale(locale);
@@ -215,7 +202,7 @@ void LockContent::onStatusChanged(SessionBaseModel::ModeStatus status)
     refreshLayout(status);
 
     if(m_model->isServerModel())
-        onUserListChanged(m_model->logindUser());
+        onUserListChanged(m_model->loginedUserList());
     switch (status) {
     case SessionBaseModel::ModeStatus::PasswordMode:
         pushPasswordFrame();
@@ -345,7 +332,7 @@ void LockContent::onUserListChanged(QList<std::shared_ptr<User> > list)
     bool haveLogindUser = true;
 
     if (m_model->isServerModel() && m_model->currentType() == SessionBaseModel::LightdmType) {
-        haveLogindUser = !m_model->logindUser().isEmpty();
+        haveLogindUser = !m_model->loginedUserList().isEmpty();
     }
 
     bool enable = (alwaysShowUserSwitchButton ||
@@ -440,11 +427,7 @@ void LockContent::refreshBackground(SessionBaseModel::ModeStatus status)
     //根据当前状态刷新不同的背景
     auto user = m_model->currentUser();
     if (user != nullptr) {
-        if (status == SessionBaseModel::ModeStatus::ShutDownMode) {
-            emit requestBackground(user->desktopBackgroundPath());
-        } else {
-            emit requestBackground(user->greeterBackgroundPath());
-        }
+        emit requestBackground(user->greeterBackground());
     }
 }
 

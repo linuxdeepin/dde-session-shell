@@ -138,7 +138,7 @@ void FullscreenBackground::updateBackground(const QString &file)
         bg_path = "/usr/share/wallpapers/deepin/desktop.jpg";
 
         if (!QFile::exists (bg_path)) {
-            bg_path = DEFAULT_BACKGROUND;
+            bg_path = "/usr/share/backgrounds/default_background.jpg";
         }
     }
 
@@ -176,7 +176,7 @@ void FullscreenBackground::updateBlurBackground(const QString &file)
             QString blur_image = reply.value();
 
             if (!isPicture (blur_image)) {
-                 blur_image = DEFAULT_BACKGROUND;
+                blur_image = "/usr/share/backgrounds/default_background.jpg";
             }
 
             updateBackground(QPixmap(blur_image));

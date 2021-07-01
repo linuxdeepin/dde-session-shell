@@ -57,11 +57,9 @@ LockWorker::LockWorker(SessionBaseModel *const model, QObject *parent)
     }
 
     if (DSysInfo::deepinType() == DSysInfo::DeepinServer || m_model->isActiveDirectoryDomain()) {
-        std::shared_ptr<User> user = std::make_shared<ADDomainUser>(INT_MAX);
-        static_cast<ADDomainUser *>(user.get())->setUserDisplayName("...");
-        static_cast<ADDomainUser *>(user.get())->setIsServerUser(true);
+        std::shared_ptr<User> user(new User());
         m_model->setIsServerModel(DSysInfo::deepinType() == DSysInfo::DeepinServer || !m_model->isActiveDirectoryDomain());
-        m_model->userAdd(user);
+        m_model->addUser(user);
     }
 
     /* com.deepin.daemon.Accounts */
@@ -102,10 +100,10 @@ LockWorker::~LockWorker()
 void LockWorker::initConnections()
 {
     /* com.deepin.daemon.Accounts */
-    connect(m_accountsInter, &AccountsInter::UserAdded, m_model, &SessionBaseModel::addUser);
-    connect(m_accountsInter, &AccountsInter::UserDeleted, m_model, &SessionBaseModel::removeUser);
+    connect(m_accountsInter, &AccountsInter::UserAdded, m_model, static_cast<void (SessionBaseModel::*)(const QString &)>(&SessionBaseModel::addUser));
+    connect(m_accountsInter, &AccountsInter::UserDeleted, m_model, static_cast<void (SessionBaseModel::*)(const QString &)>(&SessionBaseModel::removeUser));
     connect(m_accountsInter, &AccountsInter::UserListChanged, m_model, &SessionBaseModel::updateUserList);
-    connect(m_loginedInter, &LoginedInter::LastLogoutUserChanged, m_model, &SessionBaseModel::updateLastLogoutUser);
+    connect(m_loginedInter, &LoginedInter::LastLogoutUserChanged, m_model, static_cast<void (SessionBaseModel::*)(const uid_t)>(&SessionBaseModel::updateLastLogoutUser));
     connect(m_loginedInter, &LoginedInter::UserListChanged, m_model, &SessionBaseModel::updateLoginedUserList);
     /* com.deepin.daemon.Authenticate */
     connect(m_authFramework, &DeepinAuthFramework::FramworkStateChanged, m_model, &SessionBaseModel::updateFrameworkState);
@@ -233,12 +231,6 @@ void LockWorker::initConnections()
         }
     });
     connect(m_model, &SessionBaseModel::onPowerActionChanged, this, &LockWorker::doPowerAction);
-    connect(m_model, &SessionBaseModel::lockLimitFinished, this, [=] {
-        auto user = m_model->currentUser();
-        if (user != nullptr && !user->isLock()) {
-            m_password.clear();
-        }
-    });
     connect(m_model, &SessionBaseModel::visibleChanged, this, [=] (bool visible) {
         if (visible) {
             createAuthentication(m_model->currentUser()->name());
@@ -534,20 +526,20 @@ void LockWorker::onUserAdded(const QString &user)
         user_ptr = std::make_shared<ADDomainUser>(uid);
     }
 
-    if (!user_ptr->isUserIsvalid())
+    if (!user_ptr->isUserValid())
         return;
 
-    user_ptr->setisLogind(isLogined(user_ptr->uid()));
+    user_ptr->updateLoginStatus(isLogined(user_ptr->uid()));
 
     if (user_ptr->uid() == m_currentUserUid) {
-        m_model->setCurrentUser(user_ptr);
+        m_model->updateCurrentUser(user_ptr);
     }
 
     if (user_ptr->uid() == m_lastLogoutUid) {
-        m_model->setLastLogoutUser(user_ptr);
+        m_model->updateCurrentUser(user_ptr);
     }
 
-    m_model->userAdd(user_ptr);
+    m_model->addUser(user_ptr);
 }
 
 void LockWorker::lockServiceEvent(quint32 eventType, quint32 pid, const QString &username, const QString &message)

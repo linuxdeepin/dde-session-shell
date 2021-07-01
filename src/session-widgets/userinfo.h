@@ -1,38 +1,45 @@
+/*
+* Copyright (C) 2021 ~ 2021 Uniontech Software Technology Co.,Ltd.
+*
+* Author:     Zhang Qipeng <zhangqipeng@uniontech.com>
+*
+* Maintainer: Zhang Qipeng <zhangqipeng@uniontech.com>
+*
+* This program is free software: you can redistribute it and/or modify
+* it under the terms of the GNU General Public License as published by
+* the Free Software Foundation, either version 3 of the License, or
+* any later version.
+*
+* This program is distributed in the hope that it will be useful,
+* but WITHOUT ANY WARRANTY; without even the implied warranty of
+* MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+* GNU General Public License for more details.
+*
+* You should have received a copy of the GNU General Public License
+* along with this program.  If not, see <http://www.gnu.org/licenses/>.
+*/
+
 #ifndef USERINFO_H
 #define USERINFO_H
 
-#include <QObject>
-#include <com_deepin_daemon_accounts_user.h>
-#include <com_deepin_daemon_authenticate.h>
-#include <memory>
-#include "public_func.h"
 #include "constants.h"
+#include "public_func.h"
 
-#define ACCOUNT_DBUS_SERVICE "com.deepin.daemon.Accounts"
-#define ACCOUNT_DBUS_PATH "/com/deepin/daemon/Accounts"
-#define DEFAULT_BACKGROUND "/usr/share/backgrounds/default_background.jpg"
+#include <QObject>
+
+#include <com_deepin_daemon_accounts_user.h>
 
 using UserInter = com::deepin::daemon::accounts::User;
-using com::deepin::daemon::Authenticate;
-
-QString userPwdName(__uid_t uid);
 
 class User : public QObject
 {
     Q_OBJECT
-
 public:
-    enum UserType
-    {
+    enum UserType {
         Native,
         ADDomain,
+        Default
     };
-
-    struct lockLimit {
-        uint lockTime; //当前的锁定时间
-        bool isLock = false; //当前锁定状态
-        bool isFinished = false;
-    } m_lockLimit;
 
     struct LimitsInfo {
         bool locked;        // 账户锁定状态 --- true: 锁定  false: 解锁
@@ -42,148 +49,138 @@ public:
         QString unlockTime; // 解锁时间（本地时间）
     };
 
-    explicit User(QObject *parent);
-    User(const User &user);
-    ~User();
+    explicit User(QObject *parent = nullptr);
+    explicit User(const User &user);
+    virtual ~User() override;
+
+    bool operator==(const User &user) const;
+
+    inline bool isAutomaticLogin() const { return m_isAutomaticLogin; }
+    inline bool isPasswordValid() const { return m_isPasswordValid; }
+    inline bool isLogin() const { return m_isLogin; }
+    inline bool isNoPasswordLogin() const { return m_isNoPasswordLogin || !m_isPasswordValid; }
+    virtual inline bool isUserValid() const { return false; }
+    inline bool isUse24HourFormat() const { return m_isUse24HourFormat; }
+
+    inline int shortDateFormat() const { return m_shortDateFormat; }
+    inline int shortTimeFormat() const { return m_shortTimeFormat; }
+    inline int weekdayFormat() const { return m_weekdayFormat; }
+
+    virtual inline int type() const { return Default; }
+    inline QMap<int, LimitsInfo> *limitsInfo() const { return m_limitsInfo; }
+    inline QString avatar() const { return m_avatar; }
+    inline QString displayName() const { return m_fullName.isEmpty() ? m_name : m_fullName; }
+    inline QString fullName() const { return m_fullName; }
+    inline QString greeterBackground() const { return m_greeterBackground; }
+    inline QString keyboardLayout() const { return m_keyboardLayout; }
+    inline QString locale() const { return m_locale; }
+    inline QString name() const { return m_name; }
+    virtual inline QString path() const { return QString(); }
+    inline QStringList desktopBackgrounds() const { return m_desktopBackgrounds; }
+    inline QStringList keyboardLayoutList() const { return m_keyboardLayoutList; }
+    inline uid_t uid() const { return m_uid; }
+
+    void updateLimitsInfo(const QString &info);
+    void updateLoginStatus(const bool isLogin);
+
+    virtual void setKeyboardLayout(const QString &keyboard) { Q_UNUSED(keyboard) }
 
 signals:
-    void displayNameChanged(const QString &displayname) const;
-    void logindChanged(bool islogind) const;
-    void avatarChanged(const QString &avatar) const;
-    void greeterBackgroundPathChanged(const QString &path) const;
-    void desktopBackgroundPathChanged(const QString &path) const;
-    void localeChanged(const QString &locale) const;
-    void kbLayoutListChanged(const QStringList &list);
-    void currentKBLayoutChanged(const QString &layout);
-    void lockChanged(bool lock);
-    void lockLimitFinished(bool lock);
-    void noPasswdLoginChanged(bool no_passw);
-    void use24HourFormatChanged(bool use24);
-
+    void avatarChanged(const QString &);
+    void autoLoginStatusChanged(const bool);
+    void desktopBackgroundChanged(const QString &);
+    void displayNameChanged(const QString &);
+    void greeterBackgroundChanged(const QString &);
+    void keyboardLayoutChanged(const QString &);
+    void keyboardLayoutListChanged(const QStringList &);
     void limitsInfoChanged(const QMap<int, LimitsInfo> *);
-
-public:
-    bool operator==(const User &user) const;
-    const QString name() const { return m_userName; }
-
-    bool isLogin() const { return m_isLogind; }
-    uid_t uid() const { return m_uid; }
-
-    const QString locale() const { return m_locale; }
-    void setLocale(const QString &locale);
-
-    virtual bool isNoPasswdGrp() const;
-    virtual bool isUserIsvalid() const;
-    virtual bool isDoMainUser() const { return m_isServer; }
-    virtual bool is24HourFormat() const { return true; }
-    virtual bool automaticLogin() const { return false; }
-    virtual UserInter *getUserInter() const { return nullptr; }
-
-    void setisLogind(bool isLogind);
-    virtual void setCurrentLayout(const QString &layout) { Q_UNUSED(layout); }
-
-    void setPath(const QString &path);
-    const QString path() const { return m_path; }
-
-    void updateLockLimit(bool is_lock, uint lock_time, uint rest_second = 0);
-    uint lockTime() const { return m_lockLimit.lockTime; }
-    bool isLock() const { return m_lockLimit.isLock; }
-
-    virtual UserType type() const = 0;
-    virtual QString displayName() const { return m_userName; }
-    virtual QString avatarPath() const = 0;
-    virtual QString greeterBackgroundPath() const = 0;
-    virtual QString desktopBackgroundPath() const = 0;
-    virtual QStringList kbLayoutList() { return QStringList(); }
-    virtual QString currentKBLayout() { return QString(); }
-    void onLockTimeOut();
-
-    inline QMap<int, LimitsInfo> *limitsInfo() const { return m_limitsInfo; }
-    void updateLimitsInfo(const QString &info);
+    void localeChanged(const QString &locale);
+    void loginStatusChanged(const bool);
+    void noPasswordLoginChanged(const bool);
+    void shortDateFormatChanged(const int);
+    void shortTimeFormatChanged(const int);
+    void weekdayFormatChanged(const int);
+    void use24HourFormatChanged(const bool);
 
 protected:
-    bool m_isLogind;
-    bool m_isServer = false;
-    bool m_noPasswdGrp = true;
+    bool checkUserIsNoPWGrp(const User *user) const;
+    QString toLocalFile(const QString &path) const;
+    QString userPwdName(const uid_t uid) const;
 
-    uid_t m_uid = INT_MAX;
-    QString m_userName;
-    QString m_fullName;
-    QString m_locale;
-    QString m_path;
-    std::shared_ptr<QTimer> m_lockTimer;
-    QMap<int, LimitsInfo> *m_limitsInfo;
+protected:
+    bool m_isAutomaticLogin;             // 自动登录
+    bool m_isLogin;                      // 登录状态
+    bool m_isNoPasswordLogin;            // 无密码登录
+    bool m_isPasswordValid;              // 用户是否设置密码
+    bool m_isUse24HourFormat;            // 24小时制
+    int m_shortDateFormat;               // 短日期格式
+    int m_shortTimeFormat;               // 短时间格式
+    int m_weekdayFormat;                 // 星期显示格式
+    uid_t m_uid;                         // 用户 uid
+    QString m_avatar;                    // 用户头像
+    QString m_fullName;                  // 用户全名
+    QString m_greeterBackground;         // 登录/锁屏界面背景
+    QString m_keyboardLayout;            // 键盘布局
+    QString m_locale;                    // 语言环境
+    QString m_name;                      // 用户名
+    QStringList m_desktopBackgrounds;    // 桌面背景（不同工作区壁纸不同，故是个 List）
+    QStringList m_keyboardLayoutList;    // 键盘布局列表
+    QMap<int, LimitsInfo> *m_limitsInfo; // 认证限制信息
 };
 
 class NativeUser : public User
 {
     Q_OBJECT
-
 public:
-    NativeUser(const QString &path, QObject *parent = nullptr);
-    UserInter *getUserInter() const override { return m_userInter; }
+    explicit NativeUser(const QString &path, QObject *parent = nullptr);
+    explicit NativeUser(const uid_t &uid, QObject *parent = nullptr);
+    explicit NativeUser(const NativeUser &user);
 
-    void setCurrentLayout(const QString &currentKBLayout) override;
-    UserType type() const override { return Native; }
-    QString displayName() const override;
-    QString avatarPath() const override;
-    QString greeterBackgroundPath() const override;
-    QString desktopBackgroundPath() const override;
-    QStringList kbLayoutList() override;
-    QString currentKBLayout() override;
-    bool isNoPasswdGrp() const override;
-    bool isUserIsvalid() const override;
-    bool is24HourFormat() const override;
+    inline bool isUserValid() const override { return m_userInter->isValid(); }
 
-    bool automaticLogin() const override { return m_automaticLogin;}
+    inline int type() const override { return Native; }
+    inline QString path() const override { return m_path; }
 
-signals:
-    void autoLoginStateChanged(const bool);
+    void setKeyboardLayout(const QString &keyboard) override;
 
 private slots:
+    void updateAvatar(const QString &path);
     void updateAutomaticLogin(const bool autoLoginState);
+    void updateDesktopBackgrounds(const QStringList &backgrounds);
+    void updateFullName(const QString &fullName);
+    void updateGreeterBackground(const QString &path);
+    void updateKeyboardLayout(const QString &keyboardLayout);
+    void updateKeyboardLayoutList(const QStringList &keyboardLayoutList);
+    void updateLocale(const QString &locale);
+    void updateName(const QString &name);
+    void updateNoPasswordLogin(const bool isNoPasswordLogin);
+    void updatePasswordStatus(const QString &status);
+    void updateShortDateFormat(const int format);
+    void updateShortTimeFormat(const int format);
+    void updateWeekdayFormat(const int format);
+    void updateUid(const QString &uid);
+    void updateUse24HourFormat(const bool is24HourFormat);
 
 private:
-    void configAccountInfo(const QString& account_config);
+    void initConnections();
+    void initData();
+    void initConfiguration(const QString &config);
     QStringList readDesktopBackgroundPath(const QString &path);
 
 private:
+    QString m_path;
     UserInter *m_userInter;
-
-    QString m_avatar;
-    QString m_greeterBackground;
-    QString m_desktopBackground;
-    bool m_is24HourFormat;
-    bool m_automaticLogin;
 };
 
 class ADDomainUser : public User
 {
     Q_OBJECT
-
 public:
     ADDomainUser(uid_t uid, QObject *parent = nullptr);
-    ~ADDomainUser();
 
-    void setUserDisplayName(const QString &name);
-    void setUserName(const QString &name);
-    void setUserInter(UserInter *user_inter);
-    void setUid(uid_t uid);
-    void setIsServerUser(bool is_server);
-    void setAvatar(const QString &path);
-
-    UserInter *getUserInter() const override { return m_userInter; }
-
-    QString displayName() const override;
-    UserType type() const override { return ADDomain; }
-    QString avatarPath() const override;
-    QString greeterBackgroundPath() const override;
-    QString desktopBackgroundPath() const override;
-
-private:
-    QString m_avatar;
-    QString m_displayName;
-    UserInter *m_userInter;
+    inline int type() const override { return ADDomain; }
+    void setFullName(const QString &fullName);
+    void setName(const QString &name);
 };
 
 #endif // USERINFO_H

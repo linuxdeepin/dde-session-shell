@@ -196,7 +196,7 @@ void UserLoginWidget::initConnections()
     });
     /* 解锁按钮 */
     connect(m_lockButton, &DFloatingButton::clicked, this, [=] {
-        if (m_model->currentUser()->isNoPasswdGrp()) {
+        if (m_model->currentUser()->isNoPasswordLogin()) {
             emit requestCheckAccount(m_model->currentUser()->name());
         } else if (m_passwordAuth == nullptr && m_ukeyAuth == nullptr && m_singleAuth == nullptr) {
             emit m_accountEdit->returnPressed();
@@ -278,7 +278,7 @@ void UserLoginWidget::updateWidgetShowType(const int type)
     }
     /* 账户 */
     if (type == AuthTypeNone) {
-        if (m_model->currentUser()->isNoPasswdGrp()) {
+        if (m_model->currentUser()->isNoPasswordLogin()) {
             m_lockButton->setEnabled(true);
         } else {
             m_accountEdit->show();
@@ -608,6 +608,7 @@ void UserLoginWidget::initPINAuth(const int index)
  */
 void UserLoginWidget::updateAuthResult(const int type, const int status, const QString &message)
 {
+    qDebug() << "UserLoginWidget::updateAuthResult:" << type << status << message;
     switch (type) {
     case AuthTypePassword:
         if (m_passwordAuth != nullptr) {
@@ -669,19 +670,6 @@ void UserLoginWidget::updateAvatar(const QString &path)
     }
 
     m_userAvatar->setIcon(path);
-}
-
-//密码连续输入错误5次，设置提示信息
-void UserLoginWidget::setFaildMessage(const QString &message, SessionBaseModel::AuthFaildType type)
-{
-    if (!message.isEmpty()) {
-        // m_passwordEdit->setPlaceholderText(message);
-        if (type == SessionBaseModel::KEYBOARD) {
-            // m_passwordEdit->hideLoadSlider();
-        } else {
-            // m_passwordEdit->hideAlertMessage();
-        }
-    }
 }
 
 /**
@@ -837,39 +825,6 @@ void UserLoginWidget::updateKeyboardListPosition()
     m_kbLayoutBorder->move(point.x(), point.y());
     m_kbLayoutBorder->setArrowX(15);
     updateClipPath();
-}
-
-/**
- * @brief 输入5次错误密码后，显示提示信息，并更新各个输入框禁用状态
- *
- * @param disable
- * @param lockTime
- */
-void UserLoginWidget::disablePassword(bool disable, uint lockTime)
-{
-    m_isLock = disable;
-
-    //    if (m_accountEdit->isVisible()) {
-    //        m_accountEdit->setDisabled(disable);
-    //    }
-    //    m_passwordAuth->setDisabled(disable);
-
-    if (disable) {
-        if ("en_US" == m_local) {
-            if (lockTime > 1) {
-                setFaildMessage(QString("Please try again %1 minutes later").arg(int(lockTime)));
-            } else {
-                setFaildMessage(QString("Please try again %1 minute later").arg(int(lockTime)));
-            }
-        } else {
-            QTranslator translator;
-            translator.load("/usr/share/dde-session-shell/translations/dde-session-shell_" + m_local);
-            qApp->installTranslator(&translator);
-            setFaildMessage(tr("Please try again %n minute(s) later", "", int(lockTime)));
-        }
-    } else {
-        // m_passwordEdit->setFocus();
-    }
 }
 
 /**

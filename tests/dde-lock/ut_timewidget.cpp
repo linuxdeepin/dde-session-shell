@@ -25,8 +25,8 @@ void UT_TimeWidget::TearDown()
 TEST_F(UT_TimeWidget, init)
 {
     std::shared_ptr<NativeUser> nativeUser(new NativeUser("/com/deepin/daemon/Accounts/User"+QString::number((getuid()))));
-    bool format = nativeUser->is24HourFormat();
-    nativeUser->getUserInter()->Use24HourFormatChanged(!format);
+    bool format = nativeUser->isUse24HourFormat();
+    // nativeUser->userInter()->Use24HourFormatChanged(!format);
     timeWidget->set24HourFormat(!format);
     EXPECT_EQ(timeWidget->get24HourFormat(), !format);
 
