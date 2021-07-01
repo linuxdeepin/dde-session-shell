@@ -84,9 +84,7 @@ private:
     SessionBaseModel *m_model;
     LockContent *m_lockContent;
     WarningContent *m_warningContent;
-    bool m_preparingSleep;
-    bool m_prePreparingSleep;
-    long m_preparingSleepTime;
+    bool m_enablePowerOffKey;
 };
 
 #endif // LOCKFRAME

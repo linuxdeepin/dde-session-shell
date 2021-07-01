@@ -41,8 +41,7 @@ LockFrame::LockFrame(SessionBaseModel *const model, QWidget *parent)
     , m_model(model)
     , m_lockContent(new LockContent(model))
     , m_warningContent(nullptr)
-    , m_preparingSleep(false)
-    , m_prePreparingSleep(false)
+    , m_enablePowerOffKey(false)
 {
     updateBackground(m_model->currentUser()->greeterBackground());
 
@@ -62,13 +61,16 @@ LockFrame::LockFrame(SessionBaseModel *const model, QWidget *parent)
     connect(model, &SessionBaseModel::shutdownInhibit, this, &LockFrame::shutdownInhibit);
     connect(model, &SessionBaseModel::cancelShutdownInhibit, this, &LockFrame::cancelShutdownInhibit);
     connect(model, &SessionBaseModel::prepareForSleep, this, [ = ](bool isSleep) {
-        //初始化时，m_prePreparingSleep = false,m_preparingSleep = false
-        //开始待机时，isSleep为true,那么m_prePreparingSleep = false,m_preparingSleep = true
-        //待机唤醒后，isSleep为false,那么m_prePreparingSleep = true,m_preparingSleep = false
-        m_prePreparingSleep = m_preparingSleep;
-        m_preparingSleep = isSleep;
-        //记录待机和唤醒时间
-        m_preparingSleepTime = QDateTime::currentDateTime().toMSecsSinceEpoch();
+        //不管是待机还是唤醒均不响应电源按键信号
+        m_enablePowerOffKey = false;
+
+        //唤醒1秒后才响应电源按键信号，避免待机唤醒时响应信号，将界面切换到关机选项
+        if (!isSleep) {
+            QTimer::singleShot(1000, this, [ = ] {
+                m_enablePowerOffKey = true;
+            });
+        }
+
         //待机时由锁屏提供假黑屏，唤醒时显示正常界面
         model->setIsBlackModel(isSleep);
 
@@ -90,6 +92,11 @@ LockFrame::LockFrame(SessionBaseModel *const model, QWidget *parent)
             Q_EMIT requestEnableHotzone(true);
             hide();
         }
+    });
+
+    //程序启动1秒后才响应电源按键信号，避免第一次待机唤醒启动锁屏程序后响应信号，将界面切换到关机选项
+    QTimer::singleShot(1000, this, [ = ] {
+        m_enablePowerOffKey = true;
     });
 }
 
@@ -180,21 +187,10 @@ bool LockFrame::handlePoweroffKey()
         emit m_model->onRequirePowerAction(SessionBaseModel::PowerAction::RequireShutdown, false);
         return true;
     } else if (action == 4) {
-        //初始化时，m_prePreparingSleep = false,m_preparingSleep = false
-        //开始待机时，isSleep为true,那么m_prePreparingSleep = false,m_preparingSleep = true
-        //待机唤醒后，isSleep为false,那么m_prePreparingSleep = true,m_preparingSleep = false
-
-        // 先检查当前是不是准备待机
-        if (!m_preparingSleep) {
-            //有些机器使用电源唤醒时，除了会唤醒机器外还会发送按键消息，会将锁屏界面切换成电源选项界面,增加唤醒时500毫秒时间检测
-            //如果系统刚唤醒 ，则500毫秒内不响应电源按钮事件
-            if (m_prePreparingSleep && QDateTime::currentDateTime().toMSecsSinceEpoch() - m_preparingSleepTime < 500) {
-                return true;
-            }
-            //无任何操作时，如果是锁定时显示小关机界面，否则显示全屏大关机界面
-            if (m_model->currentModeState() != SessionBaseModel::ModeStatus::ShutDownMode) {
-                m_model->setCurrentModeState(SessionBaseModel::ModeStatus::PowerMode);
-            }
+        // 先检查当前是否允许响应电源按键
+        if (m_enablePowerOffKey && m_model->currentModeState() != SessionBaseModel::ModeStatus::ShutDownMode) {
+            //无任何操作时，如果是锁定时显示小关机界面
+            m_model->setCurrentModeState(SessionBaseModel::ModeStatus::PowerMode);
         }
         return true;
     }
