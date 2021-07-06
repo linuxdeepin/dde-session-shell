@@ -13,7 +13,8 @@ cmake ../
 make -j16
 
 cd tests/
-./lightdm-deepin-greeter/lightdm-deepin-greeter-test && ./dde-lock/dde-lock-test
+./lightdm-deepin-greeter/lightdm-deepin-greeter-test --gtest_output=xml:dde_test_report_lightdm-deepin-greeter.xml
+./dde-lock/dde-lock-test --gtest_output=xml:dde_test_report_dde-lock.xml
 
 lcov -c -d ./ -o coverage.info
 lcov -r coverage.info "*/tests/*" "*/usr/include*"  "*.h" "*build/*" "*/dbus/*" "*/xcb/*" -o final.info
