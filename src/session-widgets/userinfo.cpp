@@ -38,6 +38,8 @@ User::User(QObject *parent)
     , m_isNoPasswordLogin(false)
     , m_isPasswordValid(false)
     , m_isUse24HourFormat(false)
+    , m_expiredDayLeft(0)
+    , m_expiredStatus(ExpiredNormal)
     , m_shortDateFormat(3)
     , m_shortTimeFormat(1)
     , m_weekdayFormat(0)
@@ -61,6 +63,8 @@ User::User(const User &user)
     m_isPasswordValid = user.m_isPasswordValid;
     m_isUse24HourFormat = user.m_isUse24HourFormat;
 
+    m_expiredDayLeft = user.m_expiredDayLeft;
+    m_expiredStatus = user.m_expiredStatus;
     m_shortDateFormat = user.m_shortDateFormat;
     m_shortTimeFormat = user.m_shortTimeFormat;
     m_weekdayFormat = user.m_weekdayFormat;
@@ -243,6 +247,7 @@ void NativeUser::initData()
     m_isPasswordValid = m_userInter->passwordStatus() == "P" ? true : false;
     m_isUse24HourFormat = m_userInter->use24HourFormat();
 
+    m_expiredStatus = m_userInter->PasswordExpiredInfo(m_expiredDayLeft).value();
     m_shortDateFormat = m_userInter->shortDateFormat();
     m_shortTimeFormat = m_userInter->shortTimeFormat();
     m_weekdayFormat = m_userInter->weekdayFormat();
@@ -449,6 +454,14 @@ void NativeUser::updateNoPasswordLogin(const bool isNoPasswordLogin)
     }
     m_isNoPasswordLogin = isNoPasswordLogin;
     emit noPasswordLoginChanged(isNoPasswordLogin);
+}
+
+/**
+ * @brief 更新账户的密码过期信息
+ */
+void NativeUser::updatePasswordExpiredInfo()
+{
+    m_expiredStatus = m_userInter->PasswordExpiredInfo(m_expiredDayLeft).value();
 }
 
 /**

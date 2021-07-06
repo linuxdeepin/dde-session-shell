@@ -41,6 +41,11 @@ public:
         Default
     };
 
+    enum ExpiredStatus {
+        ExpiredNormal,
+        ExpiredSoon,
+        ExpiredAlready
+    };
     struct LimitsInfo {
         bool locked;        // 账户锁定状态 --- true: 锁定  false: 解锁
         uint maxTries;      // 最大重试次数
@@ -62,6 +67,8 @@ public:
     virtual inline bool isUserValid() const { return false; }
     inline bool isUse24HourFormat() const { return m_isUse24HourFormat; }
 
+    inline int expiredDayLeft() const { return m_expiredDayLeft; }
+    inline int expiredStatus() const { return m_expiredStatus; }
     inline int shortDateFormat() const { return m_shortDateFormat; }
     inline int shortTimeFormat() const { return m_shortTimeFormat; }
     inline int weekdayFormat() const { return m_weekdayFormat; }
@@ -84,6 +91,7 @@ public:
     void updateLoginStatus(const bool isLogin);
 
     virtual void setKeyboardLayout(const QString &keyboard) { Q_UNUSED(keyboard) }
+    virtual void updatePasswordExpiredInfo() { }
 
 signals:
     void avatarChanged(const QString &);
@@ -113,6 +121,8 @@ protected:
     bool m_isNoPasswordLogin;            // 无密码登录
     bool m_isPasswordValid;              // 用户是否设置密码
     bool m_isUse24HourFormat;            // 24小时制
+    int m_expiredDayLeft;                // 密码过期剩余天数
+    int m_expiredStatus;                 // 密码过期状态
     int m_shortDateFormat;               // 短日期格式
     int m_shortTimeFormat;               // 短时间格式
     int m_weekdayFormat;                 // 星期显示格式
@@ -142,6 +152,8 @@ public:
     inline QString path() const override { return m_path; }
 
     void setKeyboardLayout(const QString &keyboard) override;
+
+    void updatePasswordExpiredInfo() override;
 
 private slots:
     void updateAvatar(const QString &path);

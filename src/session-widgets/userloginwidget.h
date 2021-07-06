@@ -160,6 +160,7 @@ private:
     QLabel *m_nameLabel;                   // 用户名
     QLabel *m_loginStateLabel;             // 用户登录状态
     DLineEditEx *m_accountEdit;            // 用户名输入框
+    QLabel *m_expiredStatusLabel;          // 密码过期提示
     DFloatingButton *m_lockButton;         // 解锁按钮
 
     AuthSingle *m_singleAuth;

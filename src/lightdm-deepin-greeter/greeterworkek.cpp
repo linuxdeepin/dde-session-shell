@@ -408,6 +408,8 @@ void GreeterWorkek::createAuthentication(const QString &account)
         m_model->setAuthType(AuthTypeNone);
         return;
     }
+    std::shared_ptr<User> user_ptr = m_model->findUserByName(account);
+    user_ptr->updatePasswordExpiredInfo();
     switch (m_model->getAuthProperty().FrameworkState) {
     case 0:
         m_authFramework->CreateAuthController(account, m_authFramework->GetSupportedMixAuthFlags(), AppTypeLogin);

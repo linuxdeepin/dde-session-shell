@@ -63,6 +63,7 @@ UserLoginWidget::UserLoginWidget(const SessionBaseModel *model, const WidgetType
     , m_nameLabel(new QLabel(m_nameWidget))
     , m_loginStateLabel(new QLabel(m_nameWidget))
     , m_accountEdit(new DLineEditEx(this))
+    , m_expiredStatusLabel(new QLabel(this))
     , m_lockButton(new DFloatingButton(DStyle::SP_LockElement, this))
     , m_singleAuth(nullptr)
     , m_passwordAuth(nullptr)
@@ -173,6 +174,11 @@ void UserLoginWidget::initUI()
     } else {
         m_userLoginLayout->addSpacing(20);
     }
+    /* 密码过期提示 */
+    m_expiredStatusLabel->setWordWrap(true);
+    m_expiredStatusLabel->setAlignment(Qt::AlignHCenter);
+    m_userLoginLayout->addWidget(m_expiredStatusLabel, 0, Qt::AlignHCenter);
+    m_expiredStatusLabel->hide();
     /* 解锁图标 */
     m_userLoginLayout->addWidget(m_lockButton, 0, Qt::AlignHCenter);
     /* 模糊背景 */
@@ -304,6 +310,24 @@ void UserLoginWidget::updateWidgetShowType(const int type)
             m_nameLabel->hide();
         }
     }
+    /* 密码过期提示 */
+    switch (m_model->currentUser()->expiredStatus()) {
+    case User::ExpiredNormal:
+        m_expiredStatusLabel->clear();
+        m_expiredStatusLabel->hide();
+        break;
+    case User::ExpiredSoon:
+        m_expiredStatusLabel->setText(tr("Your password will expire in %n days, please change it timely", "", m_model->currentUser()->expiredDayLeft()));
+        m_expiredStatusLabel->show();
+        break;
+    case User::ExpiredAlready:
+        m_expiredStatusLabel->setText(tr("Password expired, please change"));
+        m_expiredStatusLabel->show();
+        break;
+    default:
+        break;
+    }
+
     updateGeometry();
 
     /**
@@ -888,7 +912,11 @@ void UserLoginWidget::updateBlurEffectGeometry()
     QRect rect = layout()->geometry();
     rect.setTop(rect.top() + m_userAvatar->height() / 2);
     if (m_widgetType == LoginType) {
-        rect.setBottom(rect.bottom() - m_lockButton->height() - layout()->spacing());
+        if (m_model->currentUser()->expiredStatus() && !m_expiredStatusLabel->text().isEmpty()) {
+            rect.setBottom(rect.bottom() - m_lockButton->height() - m_expiredStatusLabel->height() - layout()->spacing() * 2);
+        } else {
+            rect.setBottom(rect.bottom() - m_lockButton->height() - layout()->spacing());
+        }
     } else {
         rect.setBottom(rect.bottom() - 15);
     }
