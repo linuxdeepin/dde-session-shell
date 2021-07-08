@@ -42,10 +42,6 @@
 #include <DGuiApplicationHelper>
 #include <unistd.h>
 
-#include <com_deepin_daemon_display.h>
-
-using DisplayInter = com::deepin::daemon::Display;
-
 DGUI_USE_NAMESPACE
 
 #define MERGE_MODE      1
@@ -60,30 +56,27 @@ FullscreenBackground::FullscreenBackground(QWidget *parent)
     : QWidget(parent)
     , m_fadeOutAni(new QVariantAnimation(this))
     , m_imageEffectInter(new ImageEffectInter("com.deepin.daemon.ImageEffect", "/com/deepin/daemon/ImageEffect", QDBusConnection::systemBus(), this))
+    , m_displayInter(new DisplayInter("com.deepin.daemon.Display", "/com/deepin/daemon/Display", QDBusConnection::sessionBus(), this))
+    , m_wmInter(new WMInter("com.deepin.wm", "/com/deepin/wm", QDBusConnection::sessionBus(), this))
     , m_originalCursor(cursor())
 {
 #ifndef QT_DEBUG
     setWindowFlags(Qt::WindowStaysOnTopHint | Qt::X11BypassWindowManagerHint);
 #endif
-
     m_fadeOutAni->setEasingCurve(QEasingCurve::InOutCubic);
     m_fadeOutAni->setDuration(2000);
-    m_fadeOutAni->setStartValue(1.0);
-    m_fadeOutAni->setEndValue(0.0);
+    m_fadeOutAni->setStartValue(0.0);
+    m_fadeOutAni->setEndValue(1.0);
 
     installEventFilter(this);
 
-    DisplayInter * m_displayInter = new DisplayInter("com.deepin.daemon.Display", "/com/deepin/daemon/Display", QDBusConnection::sessionBus(), this);
-    m_wmInter = new WMInter("com.deepin.wm", "/com/deepin/wm", QDBusConnection::sessionBus(), this);
-
-
     connect(m_wmInter, &WMInter::WorkspaceSwitched, this, &FullscreenBackground::updateWMBackground);
     connect(m_wmInter, &WMInter::WorkspaceBackgroundChanged, this, &FullscreenBackground::updateWMBackground);
-    connect(m_displayInter, &DisplayInter::DisplayModeChanged, this, &FullscreenBackground::updateWMBackground);
-    connect(m_displayInter, &DisplayInter::PrimaryChanged, this, &FullscreenBackground::updateWMBackground);
     connect(m_displayInter, &DisplayInter::DisplayModeChanged, this, [=](uchar) {
         m_displayMode = m_displayInter->GetRealDisplayMode();
     });
+    connect(m_displayInter, &DisplayInter::DisplayModeChanged, this, &FullscreenBackground::updateWMBackground);
+    connect(m_displayInter, &DisplayInter::PrimaryChanged, this, &FullscreenBackground::updateWMBackground);
 
     connect(m_fadeOutAni, &QVariantAnimation::valueChanged, this, static_cast<void (FullscreenBackground::*)()>(&FullscreenBackground::update));
 
@@ -92,6 +85,73 @@ FullscreenBackground::FullscreenBackground(QWidget *parent)
 
 FullscreenBackground::~FullscreenBackground()
 {
+}
+
+void FullscreenBackground::updateBackground(const QString &path)
+{
+    qDebug() << "FullscreenBackground::updateBackground:" << path;
+    if (isPicture(path)) {
+        m_background = QPixmap(path);
+        updateBlurBackground(path);
+    } else {
+        QSharedMemory memory(path);
+        if (memory.attach()) {
+            QPixmap image;
+            image.loadFromData(static_cast<const unsigned char *>(memory.data()), static_cast<unsigned>(memory.size()));
+            m_background = image;
+            memory.detach();
+        } else {
+            QString filePath = "/usr/share/wallpapers/deepin/desktop.jpg";
+            if (!isPicture(filePath)) {
+                filePath = "/usr/share/backgrounds/default_background.jpg";
+            }
+            m_background = QPixmap(filePath);
+            updateBlurBackground(path);
+        }
+    }
+    m_backgroundCache = pixmapHandle(m_background);
+}
+
+void FullscreenBackground::updateBlurBackground(const QString &path)
+{
+    QDBusPendingCall call = m_imageEffectInter->Get("", path);
+    QDBusPendingCallWatcher *watcher = new QDBusPendingCallWatcher(call, this);
+    connect(watcher, &QDBusPendingCallWatcher::finished, [=] {
+        if (!call.isError()) {
+            QDBusReply<QString> reply = call.reply();
+            QString path = reply.value();
+            if (!isPicture(path)) {
+                path = "/usr/share/backgrounds/default_background.jpg";
+            }
+            m_blurBackground = QPixmap(path);
+            m_blurBackgroundCache = pixmapHandle(m_blurBackground);
+            m_fadeOutAni->start();
+        } else {
+            qWarning() << "get blur background image error: " << call.error().message();
+        }
+        watcher->deleteLater();
+    });
+}
+
+void FullscreenBackground::updateWMBackground()
+{
+    QString screenName = qApp->primaryScreen()->name();
+
+    if (m_displayMode != MERGE_MODE) {
+        QWidget *parentWidget = qobject_cast<QWidget *>(parent());
+        QDesktopWidget *desktopwidget = QApplication::desktop();
+        int screenIndex = desktopwidget->screenNumber(parentWidget);
+        QList<QScreen *> screens = qApp->screens();
+        screenName = screens[screenIndex]->name();
+    }
+
+    QString path = getLocalFile(m_wmInter->GetCurrentWorkspaceBackgroundForMonitor(screenName));
+    if (m_wmBackgroundPath == path)
+        return;
+    if (!path.isEmpty()) {
+        m_wmBackgroundPath = path;
+        updateBackground(path);
+    }
 }
 
 bool FullscreenBackground::contentVisible() const
@@ -103,91 +163,6 @@ void FullscreenBackground::enableEnterEvent(bool enable)
 {
     m_enableEnterEvent = enable;
 }
-
-void FullscreenBackground::updateBackground(const QPixmap &background)
-{
-    // show old background fade out
-    m_fakeBackground = m_background;
-    m_background = background;
-
-    m_backgroundCache = pixmapHandle(m_background);
-    m_fakeBackgroundCache = pixmapHandle(m_fakeBackground);
-
-    m_fadeOutAni->start();
-}
-
-bool FullscreenBackground::isPicture(const QString &file)
-{
-    return QFile::exists (file) && QFile (file).size() && QImageReader (file).canRead() ;
-}
-
-void FullscreenBackground::updateBackground(const QString &file)
-{
-    QString bg_path = file;
-    if (!isPicture(file)) {
-        QSharedMemory memory(file);
-        if (memory.attach()) {
-            QPixmap image;
-            image.loadFromData (static_cast<const unsigned char *>(memory.data()), static_cast<unsigned>(memory.size()));
-            updateBackground(image);
-            memory.detach();
-
-            return;
-        }
-
-        bg_path = "/usr/share/wallpapers/deepin/desktop.jpg";
-
-        if (!QFile::exists (bg_path)) {
-            bg_path = "/usr/share/backgrounds/default_background.jpg";
-        }
-    }
-
-    updateBlurBackground(bg_path);
-}
-
-void FullscreenBackground::updateWMBackground()
-{
-    QString screenName = qApp->primaryScreen()->name();
-
-    if (m_displayMode != MERGE_MODE) {
-        QWidget *parentWidget =qobject_cast<QWidget *>(parent());
-        QDesktopWidget *desktopwidget = QApplication::desktop();
-        int screenIndex = desktopwidget->screenNumber(parentWidget);
-        QList<QScreen *> screens = qApp->screens();
-        screenName = screens[screenIndex]->name();
-    }
-
-    auto path = getLocalFile(m_wmInter->GetCurrentWorkspaceBackgroundForMonitor(screenName));
-    if(m_wmBackgroundPath == path) return;
-    if(!path.isEmpty()){
-        m_wmBackgroundPath = path;
-        updateBackground(path);
-    }
-}
-
-void FullscreenBackground::updateBlurBackground(const QString &file)
-{
-    QDBusPendingCall call = m_imageEffectInter->Get("", file);
-    QDBusPendingCallWatcher *watcher = new QDBusPendingCallWatcher(call, this);
-    connect(watcher, &QDBusPendingCallWatcher::finished, [ = ] {
-        if (!call.isError())
-        {
-            QDBusReply<QString> reply = call.reply();
-            QString blur_image = reply.value();
-
-            if (!isPicture (blur_image)) {
-                blur_image = "/usr/share/backgrounds/default_background.jpg";
-            }
-
-            updateBackground(QPixmap(blur_image));
-        } else {
-            qWarning() << "get blur background image error: " << call.error().message();
-        }
-
-        watcher->deleteLater();
-    });
-}
-
 
 void FullscreenBackground::setScreen(QScreen *screen)
 {
@@ -224,7 +199,6 @@ void FullscreenBackground::setContentVisible(bool contentVisible)
 
 void FullscreenBackground::setContent(QWidget *const w)
 {
-    //Q_ASSERT(m_content.isNull());
     m_content = w;
     m_content->setParent(this);
     m_content->raise();
@@ -263,10 +237,16 @@ void FullscreenBackground::setIsBlackMode(bool is_black)
     update();
 }
 
-void FullscreenBackground::setIsHibernateMode(){
+void FullscreenBackground::setIsHibernateMode()
+{
     updateGeometry();
     m_content->show();
     emit contentVisibleChanged(true);
+}
+
+bool FullscreenBackground::isPicture(const QString &file)
+{
+    return QFile::exists(file) && QFile(file).size() && QImageReader(file).canRead();
 }
 
 void FullscreenBackground::paintEvent(QPaintEvent *e)
@@ -278,22 +258,18 @@ void FullscreenBackground::paintEvent(QPaintEvent *e)
     const double currentAniValue = m_fadeOutAni->currentValue().toDouble();
 
     const QRect trueRect(QPoint(0, 0), QSize(size() * devicePixelRatioF()));
-
     if (!m_isBlackMode) {
         if (!m_background.isNull()) {
-            // tr is need redraw rect, sourceRect need correct upper left corner
+            painter.setOpacity(1);
             painter.drawPixmap(trueRect,
                                m_backgroundCache,
                                QRect(trueRect.topLeft(), trueRect.size() * m_backgroundCache.devicePixelRatioF()));
         }
-
-        if (!m_fakeBackground.isNull()) {
-            // draw background
+        if (!m_blurBackground.isNull()) {
             painter.setOpacity(currentAniValue);
             painter.drawPixmap(trueRect,
-                               m_fakeBackgroundCache,
-                               QRect(trueRect.topLeft(), trueRect.size() * m_fakeBackgroundCache.devicePixelRatioF()));
-            painter.setOpacity(1);
+                               m_blurBackgroundCache,
+                               QRect(trueRect.topLeft(), trueRect.size() * m_blurBackgroundCache.devicePixelRatioF()));
         }
     } else {
         painter.fillRect(trueRect, Qt::black);
@@ -318,9 +294,11 @@ void FullscreenBackground::leaveEvent(QEvent *event)
 void FullscreenBackground::resizeEvent(QResizeEvent *event)
 {
     m_content->resize(size());
-    updateBackground(m_background);
 
-    return QWidget::resizeEvent(event);
+    m_backgroundCache = pixmapHandle(m_background);
+    m_blurBackgroundCache = pixmapHandle(m_blurBackground);
+
+    QWidget::resizeEvent(event);
 }
 
 void FullscreenBackground::mouseMoveEvent(QMouseEvent *event)

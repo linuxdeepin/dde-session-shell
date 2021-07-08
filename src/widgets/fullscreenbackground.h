@@ -26,17 +26,19 @@
 #ifndef FULLSCREENBACKGROUND_H
 #define FULLSCREENBACKGROUND_H
 
-#include <QWidget>
-#include <QPointer>
-#include <QTimer>
 #include <QFrame>
 #include <QGraphicsOpacityEffect>
+#include <QPointer>
+#include <QTimer>
 #include <QVariantAnimation>
+#include <QWidget>
 
+#include <com_deepin_daemon_display.h>
 #include <com_deepin_daemon_imageeffect.h>
 #include <com_deepin_wm.h>
 
 using ImageEffectInter = com::deepin::daemon::ImageEffect;
+using DisplayInter = com::deepin::daemon::Display;
 using WMInter = com::deepin::wm;
 
 class FullscreenBackground : public QWidget
@@ -56,8 +58,8 @@ public:
     void enableEnterEvent(bool enable);
 
 public slots:
-    void updateBackground(const QPixmap &background);
-    void updateBackground(const QString &file = QString());
+    void updateBackground(const QString &path);
+    void updateBlurBackground(const QString &path);
     void updateWMBackground();
     void setScreen(QScreen *screen);
     void setContentVisible(bool contentVisible);
@@ -84,20 +86,17 @@ private:
 private:
     void updateScreen(QScreen *screen);
     void updateGeometry();
-    void updateBlurBackground(const QString &file);
     bool isPicture(const QString &file);
-    using QWidget::setGeometry;
-    using QWidget::resize;
-    using QWidget::move;
 
     QPixmap m_background;
-    QPixmap m_fakeBackground;
     QPixmap m_backgroundCache;
-    QPixmap m_fakeBackgroundCache;
+    QPixmap m_blurBackground;
+    QPixmap m_blurBackgroundCache;
     QPointer<QWidget> m_content;
     QVariantAnimation *m_fadeOutAni;
     QScreen *m_screen = nullptr;
-    ImageEffectInter *m_imageEffectInter = nullptr;
+    ImageEffectInter *m_imageEffectInter;
+    DisplayInter *m_displayInter;
     WMInter *m_wmInter;
     QString m_wmBackgroundPath;
     bool m_primaryShowFinished = false;

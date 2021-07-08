@@ -70,7 +70,6 @@ protected:
     void updateWallpaper(const QString &path);
     void refreshBackground(SessionBaseModel::ModeStatus status);
     void refreshLayout(SessionBaseModel::ModeStatus status);
-    void updateUserLoginInfoLocale(const QLocale &locale){};
 
 protected:
     SessionBaseModel *m_model;
