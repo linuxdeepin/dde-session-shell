@@ -57,11 +57,10 @@ public slots:
 
 private:
     void initConnections();
-    void doPowerAction(const SessionBaseModel::PowerAction action);
+    void initData();
+    void initConfiguration();
 
-    void onUserAdded(const QString &user) override;
-    // void saveNumlockStatus(std::shared_ptr<User> user, const bool &on);
-    // void recoveryUserKBState(std::shared_ptr<User> user);
+    void doPowerAction(const SessionBaseModel::PowerAction action);
 
     // lock
     void lockServiceEvent(quint32 eventType, quint32 pid, const QString &username, const QString &message);

@@ -36,40 +36,15 @@ LockWorker::LockWorker(SessionBaseModel *const model, QObject *parent)
     , m_loginedInter(new LoginedInter("com.deepin.daemon.Accounts", "/com/deepin/daemon/Logined", QDBusConnection::systemBus(), this))
     , m_xEventInter(new XEventInter("com.deepin.api.XEventMonitor","/com/deepin/api/XEventMonitor",QDBusConnection::sessionBus(), this))
 {
-    m_accountsInter->setSync(false);
-    m_currentUserUid = getuid();
-    m_sessionManagerInter->setSync(false);
-
     initConnections();
-
-    const bool &LockNoPasswordValue = valueByQSettings<bool>("", "lockNoPassword", false);
-    m_model->setIsLockNoPassword(LockNoPasswordValue);
-
-    const QString &switchUserButtonValue = valueByQSettings<QString>("Lock", "showSwitchUserButton", "ondemand");
-    m_model->setAlwaysShowUserSwitchButton(switchUserButtonValue == "always");
-    m_model->setAllowShowUserSwitchButton(switchUserButtonValue == "ondemand");
-
-    m_model->setActiveDirectoryEnabled(valueByQSettings<bool>("", "loginPromptInput", false));
-
-    {
-        initDBus();
-        initData();
-    }
+    initData();
+    initConfiguration();
 
     if (DSysInfo::deepinType() == DSysInfo::DeepinServer || m_model->isActiveDirectoryDomain()) {
         std::shared_ptr<User> user(new User());
         m_model->setIsServerModel(DSysInfo::deepinType() == DSysInfo::DeepinServer || !m_model->isActiveDirectoryDomain());
         m_model->addUser(user);
     }
-
-    /* com.deepin.daemon.Accounts */
-    m_model->updateUserList(m_accountsInter->userList());
-    m_model->updateLoginedUserList(m_loginedInter->userList());
-    m_model->updateLimitedInfo(m_authFramework->GetLimitedInfo(m_model->currentUser()->name()));
-    /* com.deepin.daemon.Authenticate */
-    m_model->updateFrameworkState(m_authFramework->GetFrameworkState());
-    m_model->updateSupportedEncryptionType(m_authFramework->GetSupportedEncrypts());
-    m_model->updateSupportedMixAuthFlags(m_authFramework->GetSupportedMixAuthFlags());
 
     m_resetSessionTimer->setInterval(15000);
     if (QGSettings::isSchemaInstalled("com.deepin.dde.session-shell")) {
@@ -179,7 +154,8 @@ void LockWorker::initConnections()
     });
     connect(m_authFramework, &DeepinAuthFramework::FactorsInfoChanged, m_model, &SessionBaseModel::updateFactorsInfo);
     /* com.deepin.dde.LockService */
-    connect(m_lockInter, &DBusLockService::UserChanged, this, [=] (const QString &json) {
+    connect(m_lockInter, &DBusLockService::UserChanged, this, [=](const QString &json) {
+        qDebug() << "DBusLockService::UserChanged:" << json;
         emit m_model->switchUserFinished();
         m_resetSessionTimer->stop();
     });
@@ -191,7 +167,8 @@ void LockWorker::initConnections()
         emit m_model->authFinished(true);
     });
     /* org.freedesktop.login1.Session */
-    connect(m_login1SessionSelf, &Login1SessionSelf::ActiveChanged, this, [=] (bool active) {
+    connect(m_login1SessionSelf, &Login1SessionSelf::ActiveChanged, this, [=](bool active) {
+        qDebug() << "DBusLockService::ActiveChanged:" << active;
         if (active) {
             createAuthentication(m_account);
         } else {
@@ -245,6 +222,35 @@ void LockWorker::initConnections()
             checkPowerInfo();
         }
     });
+}
+
+void LockWorker::initData()
+{
+    /* com.deepin.daemon.Accounts */
+    m_model->updateUserList(m_accountsInter->userList());
+    m_model->updateLastLogoutUser(m_loginedInter->lastLogoutUser());
+    m_model->updateLoginedUserList(m_loginedInter->userList());
+    /* com.deepin.dde.LockService */
+    m_model->updateCurrentUser(m_lockInter->CurrentUser());
+    /* com.deepin.daemon.Authenticate */
+    m_model->updateFrameworkState(m_authFramework->GetFrameworkState());
+    m_model->updateSupportedEncryptionType(m_authFramework->GetSupportedEncrypts());
+    m_model->updateSupportedMixAuthFlags(m_authFramework->GetSupportedMixAuthFlags());
+    m_model->updateLimitedInfo(m_authFramework->GetLimitedInfo(m_model->currentUser()->name()));
+}
+
+void LockWorker::initConfiguration()
+{
+    const bool &LockNoPasswordValue = valueByQSettings<bool>("", "lockNoPassword", false);
+    m_model->setIsLockNoPassword(LockNoPasswordValue);
+
+    const QString &switchUserButtonValue = valueByQSettings<QString>("Lock", "showSwitchUserButton", "ondemand");
+    m_model->setAlwaysShowUserSwitchButton(switchUserButtonValue == "always");
+    m_model->setAllowShowUserSwitchButton(switchUserButtonValue == "ondemand");
+
+    m_model->setActiveDirectoryEnabled(valueByQSettings<bool>("", "loginPromptInput", false));
+
+    checkPowerInfo();
 }
 
 void LockWorker::doPowerAction(const SessionBaseModel::PowerAction action)
@@ -514,32 +520,6 @@ void LockWorker::sendTokenToAuth(const QString &account, const int authType, con
 void LockWorker::endAuthentication(const QString &account, const int authType)
 {
     m_authFramework->EndAuthentication(account, authType);
-}
-
-void LockWorker::onUserAdded(const QString &user)
-{
-    std::shared_ptr<User> user_ptr = nullptr;
-    uid_t uid = user.midRef(QString(ACCOUNTS_DBUS_PREFIX).size()).toUInt();
-    if (uid < DOMAIN_BASE_UID) {
-        user_ptr = std::make_shared<NativeUser>(user);
-    } else {
-        user_ptr = std::make_shared<ADDomainUser>(uid);
-    }
-
-    if (!user_ptr->isUserValid())
-        return;
-
-    user_ptr->updateLoginStatus(isLogined(user_ptr->uid()));
-
-    if (user_ptr->uid() == m_currentUserUid) {
-        m_model->updateCurrentUser(user_ptr);
-    }
-
-    if (user_ptr->uid() == m_lastLogoutUid) {
-        m_model->updateCurrentUser(user_ptr);
-    }
-
-    m_model->addUser(user_ptr);
 }
 
 void LockWorker::lockServiceEvent(quint32 eventType, quint32 pid, const QString &username, const QString &message)

@@ -11,7 +11,6 @@
 
 #include <com_deepin_system_systempower.h>
 
-
 #define LOCKSERVICE_PATH "/com/deepin/dde/LockService"
 #define LOCKSERVICE_NAME "com.deepin.dde.LockService"
 
@@ -19,8 +18,6 @@ using PowerInter = com::deepin::system::Power;
 using namespace Auth;
 using namespace AuthCommon;
 DCORE_USE_NAMESPACE
-
-const QString AuthenticateService("com.deepin.daemon.Authenticate");
 
 class UserNumlockSettings
 {
@@ -47,27 +44,18 @@ GreeterWorkek::GreeterWorkek(SessionBaseModel *const model, QObject *parent)
     , m_xEventInter(new XEventInter("com.deepin.api.XEventMonitor", "/com/deepin/api/XEventMonitor", QDBusConnection::sessionBus(), this))
     , m_resetSessionTimer(new QTimer(this))
 {
-    if (!isConnectSync()) {
-        qWarning() << "greeter connect fail !!!";
+#ifndef QT_DEBUG
+    if (!m_greeter->connectSync()) {
+        qCritical() << "greeter connect fail !!!";
+        exit(1);
     }
+#endif
+
+    checkDBusServer(m_accountsInter->isValid());
 
     initConnections();
-
-    const QString &switchUserButtonValue {valueByQSettings<QString>("Lock", "showSwitchUserButton", "ondemand")};
-    m_model->setAlwaysShowUserSwitchButton(switchUserButtonValue == "always");
-    m_model->setAllowShowUserSwitchButton(switchUserButtonValue == "ondemand");
-
-    m_model->setActiveDirectoryEnabled(valueByQSettings<bool>("", "loginPromptInput", false));
-
-    {
-        initDBus();
-        initData();
-
-        if (QFile::exists("/etc/deepin/no_suspend"))
-            m_model->setCanSleep(false);
-
-        checkDBusServer(m_accountsInter->isValid());
-    }
+    initData();
+    initConfiguration();
 
     if (DSysInfo::deepinType() == DSysInfo::DeepinServer || m_model->isActiveDirectoryDomain()) {
         std::shared_ptr<User> user(new User());
@@ -86,26 +74,6 @@ GreeterWorkek::GreeterWorkek(SessionBaseModel *const model, QObject *parent)
                 m_model->updateCurrentUser(user_ptr);
             }
         });
-    }
-
-    /* com.deepin.daemon.Accounts */
-    m_model->updateUserList(m_accountsInter->userList());
-    m_model->updateLoginedUserList(m_loginedInter->userList());
-    m_model->updateLimitedInfo(m_authFramework->GetLimitedInfo(m_model->currentUser()->name()));
-    /* com.deepin.daemon.Authenticate */
-    m_model->updateFrameworkState(m_authFramework->GetFrameworkState());
-    m_model->updateSupportedEncryptionType(m_authFramework->GetSupportedEncrypts());
-    m_model->updateSupportedMixAuthFlags(m_authFramework->GetSupportedMixAuthFlags());
-
-    //当这个配置不存在是，如果是不是笔记本就打开小键盘，否则就关闭小键盘 0关闭键盘 1打开键盘 2默认值（用来判断是不是有这个key）
-    if (m_model->currentUser() != nullptr && UserNumlockSettings(m_model->currentUser()->name()).get(2) == 2) {
-        PowerInter powerInter("com.deepin.system.Power", "/com/deepin/system/Power", QDBusConnection::systemBus(), this);
-        if (powerInter.hasBattery()) {
-            saveNumlockStatus(m_model->currentUser(), 0);
-        } else {
-            saveNumlockStatus(m_model->currentUser(), 1);
-        }
-        recoveryUserKBState(m_model->currentUser());
     }
 
     //认证超时重启
@@ -129,9 +97,6 @@ GreeterWorkek::GreeterWorkek(SessionBaseModel *const model, QObject *parent)
 
 GreeterWorkek::~GreeterWorkek()
 {
-    delete m_greeter;
-    delete m_authFramework;
-    delete m_lockInter;
 }
 
 void GreeterWorkek::initConnections()
@@ -208,6 +173,7 @@ void GreeterWorkek::initConnections()
     connect(m_authFramework, &DeepinAuthFramework::PromptChanged, m_model, &SessionBaseModel::updatePrompt);
     /* org.freedesktop.login1.Session */
     connect(m_login1SessionSelf, &Login1SessionSelf::ActiveChanged, this, [=](bool active) {
+        qDebug() << "DBusLockService::ActiveChanged:" << active;
         if (m_model->currentUser() == nullptr || m_model->currentUser()->name().isEmpty()) {
             return;
         }
@@ -232,7 +198,8 @@ void GreeterWorkek::initConnections()
         // emit m_model->prepareForSleep(isSleep);
     });
     /* com.deepin.dde.LockService */
-    connect(m_lockInter, &DBusLockService::UserChanged, this, [=] (const QString &json) {
+    connect(m_lockInter, &DBusLockService::UserChanged, this, [=](const QString &json) {
+        qDebug() << "DBusLockService::UserChanged:" << json;
         m_resetSessionTimer->stop();
         destoryAuthentication(m_account);
         m_model->updateCurrentUser(json);
@@ -293,6 +260,47 @@ void GreeterWorkek::initConnections()
         saveNumlockStatus(m_model->currentUser(), on);
     });
 
+}
+
+void GreeterWorkek::initData()
+{
+    /* com.deepin.daemon.Accounts */
+    m_model->updateUserList(m_accountsInter->userList());
+    m_model->updateLastLogoutUser(m_loginedInter->lastLogoutUser());
+    m_model->updateLoginedUserList(m_loginedInter->userList());
+    /* com.deepin.dde.LockService */
+    m_model->updateCurrentUser(m_lockInter->CurrentUser());
+    /* com.deepin.daemon.Authenticate */
+    m_model->updateFrameworkState(m_authFramework->GetFrameworkState());
+    m_model->updateSupportedEncryptionType(m_authFramework->GetSupportedEncrypts());
+    m_model->updateSupportedMixAuthFlags(m_authFramework->GetSupportedMixAuthFlags());
+    m_model->updateLimitedInfo(m_authFramework->GetLimitedInfo(m_model->currentUser()->name()));
+}
+
+void GreeterWorkek::initConfiguration()
+{
+    const QString &switchUserButtonValue {valueByQSettings<QString>("Lock", "showSwitchUserButton", "ondemand")};
+    m_model->setAlwaysShowUserSwitchButton(switchUserButtonValue == "always");
+    m_model->setAllowShowUserSwitchButton(switchUserButtonValue == "ondemand");
+
+    m_model->setActiveDirectoryEnabled(valueByQSettings<bool>("", "loginPromptInput", false));
+
+    checkPowerInfo();
+
+    if (QFile::exists("/etc/deepin/no_suspend")) {
+        m_model->setCanSleep(false);
+    }
+
+    //当这个配置不存在是，如果是不是笔记本就打开小键盘，否则就关闭小键盘 0关闭键盘 1打开键盘 2默认值（用来判断是不是有这个key）
+    if (m_model->currentUser() != nullptr && UserNumlockSettings(m_model->currentUser()->name()).get(2) == 2) {
+        PowerInter powerInter("com.deepin.system.Power", "/com/deepin/system/Power", QDBusConnection::systemBus(), this);
+        if (powerInter.hasBattery()) {
+            saveNumlockStatus(m_model->currentUser(), 0);
+        } else {
+            saveNumlockStatus(m_model->currentUser(), 1);
+        }
+        recoveryUserKBState(m_model->currentUser());
+    }
 }
 
 void GreeterWorkek::doPowerAction(const SessionBaseModel::PowerAction action)
@@ -367,37 +375,6 @@ void GreeterWorkek::authUser(const QString &password)
             m_greeter->authenticate(user->name());
         }
     }
-}
-
-void GreeterWorkek::onUserAdded(const QString &user)
-{
-    std::shared_ptr<User> user_ptr;
-    const uid_t uid = user.midRef(QString("/com/deepin/daemon/Accounts/User").size()).toUInt();
-    if (uid < 10000) {
-        user_ptr = std::make_shared<NativeUser>(user);
-    } else {
-        user_ptr = std::make_shared<ADDomainUser>(uid);
-    }
-
-    if (!user_ptr->isUserValid())
-        return;
-    user_ptr->updateLoginStatus(isLogined(user_ptr->uid()));
-
-    if (m_model->currentUser().get() == nullptr) {
-        if (m_model->userList().isEmpty() || m_model->userList().first()->type() == User::ADDomain) {
-            m_model->updateCurrentUser(user_ptr);
-        }
-    }
-
-    if (!user_ptr->isLogin() && user_ptr->uid() == m_currentUserUid && !m_model->isServerModel()) {
-        m_model->updateCurrentUser(user_ptr);
-    }
-
-    if (user_ptr->uid() == m_lastLogoutUid) {
-        m_model->updateLastLogoutUser(user_ptr);
-    }
-
-    m_model->addUser(user_ptr);
 }
 
 /**
@@ -481,14 +458,13 @@ void GreeterWorkek::startAuthentication(const QString &account, const int authTy
  */
 void GreeterWorkek::sendTokenToAuth(const QString &account, const int authType, const QString &token)
 {
-    //密码输入类型
-    if(authType == 1)
-      m_password = token;
-
     switch (m_model->getAuthProperty().FrameworkState) {
     case 0:
         if (m_model->getAuthProperty().MFAFlag) {
             m_authFramework->SendTokenToAuth(account, authType, token);
+            if (authType == AuthTypePassword) {
+                m_password = token; // 用于解锁密钥环
+            }
         } else {
             m_greeter->respond(token);
         }
@@ -517,7 +493,7 @@ void GreeterWorkek::endAuthentication(const QString &account, const int authType
  */
 void GreeterWorkek::checkAccount(const QString &account)
 {
-    QString userPath = m_accountsInter->FindUserByName(account);
+    const QString userPath = m_accountsInter->FindUserByName(account);
     std::shared_ptr<User> user_ptr;
     if (!userPath.startsWith("/")) {
         if (account.startsWith("@")) {
@@ -526,17 +502,11 @@ void GreeterWorkek::checkAccount(const QString &account)
             dynamic_cast<ADDomainUser *>(user_ptr.get())->setFullName(account.midRef(QString("@").size()).toString());
         } else {
             qWarning() << userPath;
-            userPath = tr("Wrong account");
-            onDisplayErrorMsg(userPath);
+            onDisplayErrorMsg(tr("Wrong account"));
             return;
         }
     } else {
-        const uid_t uid = userPath.midRef(QString("/com/deepin/daemon/Accounts/User").size()).toUInt();
-        if (uid < 10000) {
-            user_ptr = std::make_shared<NativeUser>(userPath);
-        } else {
-            user_ptr = std::make_shared<ADDomainUser>(uid);
-        }
+        user_ptr = std::make_shared<NativeUser>(userPath);
     }
     m_model->updateCurrentUser(user_ptr);
     if (user_ptr->isNoPasswordLogin()) {

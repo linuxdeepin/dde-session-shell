@@ -228,12 +228,7 @@ int main(int argc, char* argv[])
     DLogManager::registerConsoleAppender();
 
     SessionBaseModel *model = new SessionBaseModel(SessionBaseModel::AuthType::LightdmType);
-    GreeterWorkek *worker = new GreeterWorkek(model); //
-
-#ifndef QT_DEBUG
-    if (!worker->isConnectSync())
-        return 0;
-#endif
+    GreeterWorkek *worker = new GreeterWorkek(model);
 
     if(model->currentUser()) {
         QTranslator translator;

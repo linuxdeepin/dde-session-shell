@@ -32,8 +32,6 @@ public:
     ~GreeterWorkek();
 
     void switchToUser(std::shared_ptr<User> user) override;
-    void onUserAdded(const QString &user) override;
-    bool isConnectSync() {return m_greeter->connectSync();}
 
     /* Old authentication methods */
     void onDisplayErrorMsg(const QString &msg) override;
@@ -57,6 +55,9 @@ public slots:
 
 private:
     void initConnections();
+    void initData();
+    void initConfiguration();
+
     void doPowerAction(const SessionBaseModel::PowerAction action);
 
     void checkDBusServer(bool isvalid);
