@@ -1106,6 +1106,20 @@ void UserLoginWidget::checkAuthResult(const int type, const int status)
             m_fingerprintAuth->setText(tr("Verify your fingerprint"));
         }
     }
+    if (status == StatusCodeCancel) {
+        if (m_ukeyAuth != nullptr) {
+            m_ukeyAuth->setAuthResult(StatusCodeCancel, "Cancel");
+        }
+        if (m_passwordAuth != nullptr) {
+            m_passwordAuth->setAuthResult(StatusCodeCancel, "Cancel");
+        }
+        if (m_fingerprintAuth != nullptr) {
+            m_fingerprintAuth->setAuthResult(StatusCodeCancel, "Cancel");
+        }
+        if (m_singleAuth != nullptr) {
+            m_singleAuth->setAuthResult(StatusCodeCancel, "Cancel");
+        }
+    }
 }
 
 /**

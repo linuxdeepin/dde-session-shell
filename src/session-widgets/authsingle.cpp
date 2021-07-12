@@ -169,6 +169,8 @@ void AuthSingle::setAuthResult(const int status, const QString &result)
     }
     case StatusCodeCancel:
         setAnimationState(false);
+        m_lineEdit->setAlert(false);
+        m_lineEdit->hideAlertMessage();
         break;
     case StatusCodeTimeout:
         setAnimationState(false);

@@ -57,7 +57,8 @@ LockWorker::LockWorker(SessionBaseModel *const model, QObject *parent)
     }
 
     m_resetSessionTimer->setSingleShot(true);
-    connect(m_resetSessionTimer,&QTimer::timeout,this,[ = ]{
+    connect(m_resetSessionTimer, &QTimer::timeout, this, [=] {
+        endAuthentication(m_account, AuthTypeAll);
         destoryAuthentication(m_account);
         createAuthentication(m_account);
     });
@@ -95,13 +96,24 @@ void LockWorker::initConnections()
     connect(m_authFramework, &DeepinAuthFramework::PINLenChanged, m_model, &SessionBaseModel::updatePINLen);
     connect(m_authFramework, &DeepinAuthFramework::PromptChanged, m_model, &SessionBaseModel::updatePrompt);
     connect(m_authFramework, &DeepinAuthFramework::AuthStatusChanged, this, [=](const int type, const int status, const QString &message) {
+        qDebug() << "DeepinAuthFramework::AuthStatusChanged:" << type << status << message << m_model->getAuthProperty().MFAFlag;
         if (m_model->getAuthProperty().MFAFlag) {
-            if (type == AuthTypeAll && status == StatusCodeSuccess) {
-                m_model->updateAuthStatus(type, status, message);
-                destoryAuthentication(m_account);
-                onUnlockFinished(true);
-                m_resetSessionTimer->stop();
-            } else if (type != AuthTypeAll) {
+            if (type == AuthTypeAll) {
+                switch (status) {
+                case StatusCodeSuccess:
+                    m_model->updateAuthStatus(type, status, message);
+                    destoryAuthentication(m_account);
+                    onUnlockFinished(true);
+                    m_resetSessionTimer->stop();
+                    break;
+                case StatusCodeCancel:
+                    m_model->updateAuthStatus(type, status, message);
+                    destoryAuthentication(m_account);
+                    break;
+                default:
+                    break;
+                }
+            } else {
                 switch (status) {
                 case StatusCodeSuccess:
                     if (m_model->currentModeState() != SessionBaseModel::ModeStatus::PasswordMode
@@ -109,7 +121,6 @@ void LockWorker::initConnections()
                         m_model->setCurrentModeState(SessionBaseModel::ModeStatus::PasswordMode);
                     }
                     m_resetSessionTimer->start();
-                    endAuthentication(m_account, type);
                     m_model->updateAuthStatus(type, status, message);
                     break;
                 case StatusCodeFailure:
@@ -148,6 +159,9 @@ void LockWorker::initConnections()
                     m_model->setCurrentModeState(SessionBaseModel::ModeStatus::PasswordMode);
                 }
                 break;
+            case StatusCodeCancel:
+                destoryAuthentication(m_account);
+                break;
             }
             m_model->updateAuthStatus(type, status, message);
         }
@@ -172,13 +186,14 @@ void LockWorker::initConnections()
         if (active) {
             createAuthentication(m_account);
         } else {
+            endAuthentication(m_account, AuthTypeAll);
             destoryAuthentication(m_account);
         }
     });
     /* org.freedesktop.login1.Manager */
     connect(m_login1Inter, &DBusLogin1Manager::PrepareForSleep, this, [=](bool isSleep) {
         if (isSleep) {
-            destoryAuthentication(m_account);
+            endAuthentication(m_account, AuthTypeAll);
         } else {
             createAuthentication(m_account);
         }
@@ -213,7 +228,7 @@ void LockWorker::initConnections()
             createAuthentication(m_model->currentUser()->name());
         } else {
             m_resetSessionTimer->stop();
-            destoryAuthentication(m_account);
+            endAuthentication(m_account, AuthTypeAll);
         }
         setLocked(visible);
     });
@@ -312,16 +327,14 @@ void LockWorker::switchToUser(std::shared_ptr<User> user)
     if (user->name() == m_account) {
         return;
     }
-
     qInfo() << "switch user from" << m_account << " to " << user->name() << user->isLogin();
+    endAuthentication(m_account, AuthTypeAll);
 
     // if type is lock, switch to greeter
     QJsonObject json;
     json["Uid"] = static_cast<int>(user->uid());
     json["Type"] = user->type();
     m_lockInter->SwitchToUser(QString(QJsonDocument(json).toJson(QJsonDocument::Compact))).waitForFinished();
-
-    destoryAuthentication(m_account);
 
     if (user->isLogin()) {
         QProcess::startDetached("dde-switchtogreeter", QStringList() << user->name());
@@ -421,6 +434,7 @@ void LockWorker::onPasswordResult(const QString &msg)
  */
 void LockWorker::createAuthentication(const QString &account)
 {
+    qDebug() << "LockWorker::createAuthentication:" << account;
     QString userPath = m_accountsInter->FindUserByName(account);
     if (!userPath.startsWith("/")) {
         qWarning() << userPath;
@@ -459,7 +473,6 @@ void LockWorker::destoryAuthentication(const QString &account)
         m_authFramework->DestoryAuthenticate();
         break;
     }
-
 }
 
 /**
@@ -471,6 +484,7 @@ void LockWorker::destoryAuthentication(const QString &account)
  */
 void LockWorker::startAuthentication(const QString &account, const int authType)
 {
+    qDebug() << "LockWorker::startAuthentication:" << account << authType;
     switch (m_model->getAuthProperty().FrameworkState) {
     case 0:
         if (m_model->getAuthProperty().MFAFlag) {
@@ -497,6 +511,7 @@ void LockWorker::startAuthentication(const QString &account, const int authType)
  */
 void LockWorker::sendTokenToAuth(const QString &account, const int authType, const QString &token)
 {
+    qDebug() << "LockWorker::sendTokenToAuth:" << account << authType;
     switch (m_model->getAuthProperty().FrameworkState) {
     case 0:
         if (m_model->getAuthProperty().MFAFlag) {
@@ -519,6 +534,7 @@ void LockWorker::sendTokenToAuth(const QString &account, const int authType, con
  */
 void LockWorker::endAuthentication(const QString &account, const int authType)
 {
+    qDebug() << "LockWorker::endAuthentication:" << account << authType;
     m_authFramework->EndAuthentication(account, authType);
 }
 

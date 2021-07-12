@@ -326,8 +326,8 @@ void DeepinAuthFramework::CreateAuthController(const QString &account, const int
     if (m_authenticateControllers->contains(account) && m_authenticateControllers->value(account)->isValid()) {
         return;
     }
-    qInfo() << "Create Authenticate Session:" << account << authType << appType;
     const QString authControllerInterPath = m_authenticateInter->Authenticate(account, authType, appType);
+    qInfo() << "Create Authenticate Session:" << account << authType << appType << authControllerInterPath;
     AuthControllerInter *authControllerInter = new AuthControllerInter("com.deepin.daemon.Authenticate", authControllerInterPath, QDBusConnection::systemBus(), this);
     m_authenticateControllers->insert(account, authControllerInter);
 
@@ -371,11 +371,10 @@ void DeepinAuthFramework::DestoryAuthController(const QString &account)
     if (!m_authenticateControllers->contains(account)) {
         return;
     }
-    qInfo() << "Destory Authenticate Sesssion:" << account;
     AuthControllerInter *authControllerInter = m_authenticateControllers->value(account);
-    authControllerInter->End(-1);
+    qInfo() << "Destory Authenticate Sesssion:" << account << authControllerInter->path();
     authControllerInter->Quit();
-    delete authControllerInter;
+    authControllerInter->deleteLater();
     m_authenticateControllers->remove(account);
 
     m_F_RSA_free(m_RSA);

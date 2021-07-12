@@ -88,9 +88,11 @@ GreeterWorkek::GreeterWorkek(SessionBaseModel *const model, QObject *parent)
     }
 
     m_resetSessionTimer->setSingleShot(true);
-    connect(m_resetSessionTimer,&QTimer::timeout,this,[ = ]{
-         destoryAuthentication(m_account);
-         createAuthentication(m_account);
+    connect(m_resetSessionTimer, &QTimer::timeout, this, [=] {
+        endAuthentication(m_account, AuthTypeAll);
+        m_model->updateAuthStatus(AuthTypeAll, StatusCodeCancel, "Cancel");
+        destoryAuthentication(m_account);
+        createAuthentication(m_account);
     });
     m_xEventInter->RegisterFullScreen();
 }
@@ -122,23 +124,32 @@ void GreeterWorkek::initConnections()
     connect(m_authFramework, &DeepinAuthFramework::SupportedMixAuthFlagsChanged, m_model, &SessionBaseModel::updateSupportedMixAuthFlags);
     /* com.deepin.daemon.Authenticate.Session */
     connect(m_authFramework, &DeepinAuthFramework::AuthStatusChanged, this, [=](const int type, const int status, const QString &message) {
+        qDebug() << "DeepinAuthFramework::AuthStatusChanged:" << type << status << message;
         if (m_model->getAuthProperty().MFAFlag) {
-            if (type == AuthTypeAll && status == StatusCodeSuccess) {
-                m_resetSessionTimer->stop();
-                if (m_greeter->inAuthentication()) {
-                    m_greeter->respond(m_authFramework->AuthSessionPath(m_account) + QString(";") + m_password);
+            if (type == AuthTypeAll) {
+                switch (status) {
+                case StatusCodeSuccess:
                     m_model->updateAuthStatus(type, status, message);
-                } else {
-                    qWarning() << "The lightdm is not in authentication!";
+                    m_resetSessionTimer->stop();
+                    if (m_greeter->inAuthentication()) {
+                        m_greeter->respond(m_authFramework->AuthSessionPath(m_account) + QString(";") + m_password);
+                    } else {
+                        qWarning() << "The lightdm is not in authentication!";
+                    }
+                    break;
+                case StatusCodeCancel:
+                    m_model->updateAuthStatus(type, status, message);
+                    destoryAuthentication(m_account);
+                    break;
+                default:
+                    break;
                 }
-
-            } else if (type != AuthTypeAll) {
+            } else {
                 switch (status) {
                 case StatusCodeSuccess:
                     if (m_model->currentModeState() != SessionBaseModel::ModeStatus::PasswordMode)
                         m_model->setCurrentModeState(SessionBaseModel::ModeStatus::PasswordMode);
                     m_resetSessionTimer->start();
-                    endAuthentication(m_account, type);
                     m_model->updateAuthStatus(type, status, message);
                     break;
                 case StatusCodeFailure:
@@ -152,8 +163,8 @@ void GreeterWorkek::initConnections()
                     break;
                 case StatusCodeTimeout:
                 case StatusCodeError:
-                    endAuthentication(m_account, type);
                     m_model->updateAuthStatus(type, status, message);
+                    endAuthentication(m_account, type);
                     break;
                 default:
                     m_model->updateAuthStatus(type, status, message);
@@ -185,23 +196,22 @@ void GreeterWorkek::initConnections()
                 m_greeter->authenticate(m_model->currentUser()->name());
             }
         } else {
+            endAuthentication(m_account, AuthTypeAll);
             destoryAuthentication(m_account);
         }
     });
     /* org.freedesktop.login1.Manager */
     connect(m_login1Inter, &DBusLogin1Manager::PrepareForSleep, this, [=](bool isSleep) {
         if (isSleep) {
-            destoryAuthentication(m_account);
+            endAuthentication(m_account, AuthTypeAll);
         } else {
             createAuthentication(m_account);
         }
-        // emit m_model->prepareForSleep(isSleep);
     });
     /* com.deepin.dde.LockService */
     connect(m_lockInter, &DBusLockService::UserChanged, this, [=](const QString &json) {
         qDebug() << "DBusLockService::UserChanged:" << json;
         m_resetSessionTimer->stop();
-        destoryAuthentication(m_account);
         m_model->updateCurrentUser(json);
         std::shared_ptr<User> user_ptr = m_model->currentUser();
         const QString &account = user_ptr->name();
@@ -210,6 +220,7 @@ void GreeterWorkek::initConnections()
         }
         if (user_ptr.get()->isNoPasswordLogin()) {
             emit m_model->authTypeChanged(AuthTypeNone);
+            m_account = account;
         }
         emit m_model->switchUserFinished();
     });
@@ -331,7 +342,11 @@ void GreeterWorkek::doPowerAction(const SessionBaseModel::PowerAction action)
 
 void GreeterWorkek::switchToUser(std::shared_ptr<User> user)
 {
+    if (user->name() == m_account) {
+        return;
+    }
     qInfo() << "switch user from" << m_account << " to " << user->name() << user->uid() << user->isLogin();
+    endAuthentication(m_account, AuthTypeAll);
 
     if (user->uid() == INT_MAX) {
         m_model->setAuthType(AuthTypeNone);
@@ -348,6 +363,8 @@ void GreeterWorkek::switchToUser(std::shared_ptr<User> user)
         // switch to user Xorg
         QProcess::startDetached("dde-switchtogreeter", QStringList() << user->name());
     } else {
+        m_model->updateAuthStatus(AuthTypeAll, StatusCodeCancel, "Cancel");
+        destoryAuthentication(m_account);
         m_model->updateCurrentUser(user);
     }
 }
@@ -384,6 +401,7 @@ void GreeterWorkek::authUser(const QString &password)
  */
 void GreeterWorkek::createAuthentication(const QString &account)
 {
+    qDebug() << "GreeterWorkek::createAuthentication:" << account;
     m_account = account;
     if (account.isEmpty()) {
         m_model->setAuthType(AuthTypeNone);
@@ -413,6 +431,7 @@ void GreeterWorkek::createAuthentication(const QString &account)
  */
 void GreeterWorkek::destoryAuthentication(const QString &account)
 {
+    qDebug() << "GreeterWorkek::destoryAuthentication:" << account;
     switch (m_model->getAuthProperty().FrameworkState) {
     case 0:
         m_authFramework->SetPrivilegesDisable(account);
@@ -432,6 +451,7 @@ void GreeterWorkek::destoryAuthentication(const QString &account)
  */
 void GreeterWorkek::startAuthentication(const QString &account, const int authType)
 {
+    qDebug() << "GreeterWorkek::startAuthentication:" << authType;
     switch (m_model->getAuthProperty().FrameworkState) {
     case 0:
         if (m_model->getAuthProperty().MFAFlag) {
@@ -458,6 +478,7 @@ void GreeterWorkek::startAuthentication(const QString &account, const int authTy
  */
 void GreeterWorkek::sendTokenToAuth(const QString &account, const int authType, const QString &token)
 {
+    qDebug() << "GreeterWorkek::sendTokenToAuth:" << account << authType;
     switch (m_model->getAuthProperty().FrameworkState) {
     case 0:
         if (m_model->getAuthProperty().MFAFlag) {
@@ -483,6 +504,7 @@ void GreeterWorkek::sendTokenToAuth(const QString &account, const int authType, 
  */
 void GreeterWorkek::endAuthentication(const QString &account, const int authType)
 {
+    qDebug() << "GreeterWorkek::endAuthentication:" << account << authType;
     m_authFramework->EndAuthentication(account, authType);
 }
 
@@ -493,6 +515,7 @@ void GreeterWorkek::endAuthentication(const QString &account, const int authType
  */
 void GreeterWorkek::checkAccount(const QString &account)
 {
+    qDebug() << "GreeterWorkek::checkAccount:" << account;
     const QString userPath = m_accountsInter->FindUserByName(account);
     std::shared_ptr<User> user_ptr;
     if (!userPath.startsWith("/")) {
@@ -513,7 +536,9 @@ void GreeterWorkek::checkAccount(const QString &account)
         m_greeter->authenticate(account);
     } else {
         m_resetSessionTimer->stop();
-        destoryAuthentication(account);
+        endAuthentication(m_account, AuthTypeAll);
+        m_model->updateAuthStatus(AuthTypeAll, StatusCodeCancel, "Cancel");
+        destoryAuthentication(m_account);
         createAuthentication(account);
     }
 }
@@ -651,6 +676,7 @@ void GreeterWorkek::authenticationComplete()
 #else
     startSessionSync();
 #endif
+    endAuthentication(m_account, AuthTypeAll);
     destoryAuthentication(m_account);
 }
 
