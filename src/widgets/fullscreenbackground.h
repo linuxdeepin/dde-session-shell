@@ -26,20 +26,11 @@
 #ifndef FULLSCREENBACKGROUND_H
 #define FULLSCREENBACKGROUND_H
 
-#include <QFrame>
-#include <QGraphicsOpacityEffect>
-#include <QPointer>
-#include <QTimer>
-#include <QVariantAnimation>
 #include <QWidget>
 
-#include <com_deepin_daemon_display.h>
 #include <com_deepin_daemon_imageeffect.h>
-#include <com_deepin_wm.h>
 
 using ImageEffectInter = com::deepin::daemon::ImageEffect;
-using DisplayInter = com::deepin::daemon::Display;
-using WMInter = com::deepin::wm;
 
 class FullscreenBackground : public QWidget
 {
@@ -47,20 +38,15 @@ class FullscreenBackground : public QWidget
     Q_PROPERTY(bool contentVisible READ contentVisible WRITE setContentVisible NOTIFY contentVisibleChanged)
 
 public:
-    enum DisplayMode {
-        CopyMode = 1,
-        ExpandMode = 2
-    };
-
     explicit FullscreenBackground(QWidget *parent = nullptr);
     ~FullscreenBackground();
+
     bool contentVisible() const;
     void enableEnterEvent(bool enable);
 
 public slots:
     void updateBackground(const QString &path);
     void updateBlurBackground(const QString &path);
-    void updateWMBackground();
     void setScreen(QScreen *screen);
     void setContentVisible(bool contentVisible);
     void setIsBlackMode(bool is_black);
@@ -70,7 +56,7 @@ signals:
     void contentVisibleChanged(bool contentVisible);
 
 protected:
-    void setContent(QWidget * const w);
+    void setContent(QWidget *const w);
     void keyPressEvent(QKeyEvent *e) Q_DECL_OVERRIDE;
     void showEvent(QShowEvent *event) override;
     bool eventFilter(QObject *watched, QEvent *e) override;
@@ -82,30 +68,26 @@ private:
     void leaveEvent(QEvent *event) Q_DECL_OVERRIDE;
     void mouseMoveEvent(QMouseEvent *event) Q_DECL_OVERRIDE;
     const QPixmap pixmapHandle(const QPixmap &pixmap);
-
-private:
     void updateScreen(QScreen *screen);
     void updateGeometry();
     bool isPicture(const QString &file);
+    QString getLocalFile(const QString &file);
 
-    QPixmap m_background;
-    QPixmap m_backgroundCache;
-    QPixmap m_blurBackground;
-    QPixmap m_blurBackgroundCache;
+private:
+    QPixmap m_background;                 // 高清背景
+    QPixmap m_backgroundCache;            // 高清背景缓存
+    QPixmap m_blurBackground;             // 模糊背景
+    QPixmap m_blurBackgroundCache;        // 模糊背景缓存
+    QVariantAnimation *m_fadeOutAni;      // 背景动画
+    ImageEffectInter *m_imageEffectInter; // 获取模糊背景服务
+
     QPointer<QWidget> m_content;
-    QVariantAnimation *m_fadeOutAni;
     QScreen *m_screen = nullptr;
-    ImageEffectInter *m_imageEffectInter;
-    DisplayInter *m_displayInter;
-    WMInter *m_wmInter;
-    QString m_wmBackgroundPath;
     bool m_primaryShowFinished = false;
     bool m_isBlackMode = false;
-    bool m_isHibernateMode = false;
     bool m_enableEnterEvent = true;
     QCursor m_originalCursor;
     bool m_blackModeContentVisible = true;
-    int m_displayMode;
 };
 
 #endif // FULLSCREENBACKGROUND_H

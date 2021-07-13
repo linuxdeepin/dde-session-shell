@@ -25,39 +25,21 @@
 
 #include "fullscreenbackground.h"
 
-#include "userinfo.h"
-#include "framedatabind.h"
-
-#include <QApplication>
-#include <QScreen>
-#include <QDesktopWidget>
-#include <QPainter>
-#include <QDebug>
-#include <QUrl>
-#include <QFileInfo>
-#include <QKeyEvent>
-#include <QCryptographicHash>
-#include <QWindow>
-#include <QDir>
 #include <DGuiApplicationHelper>
-#include <unistd.h>
+
+#include <QDebug>
+#include <QImageReader>
+#include <QKeyEvent>
+#include <QPainter>
+#include <QScreen>
+#include <QWindow>
 
 DGUI_USE_NAMESPACE
-
-#define MERGE_MODE      1
-
-static QString getLocalFile(const QString &file)
-{
-    const QUrl url(file);
-    return url.isLocalFile() ? url.toLocalFile() : url.url();
-}
 
 FullscreenBackground::FullscreenBackground(QWidget *parent)
     : QWidget(parent)
     , m_fadeOutAni(new QVariantAnimation(this))
     , m_imageEffectInter(new ImageEffectInter("com.deepin.daemon.ImageEffect", "/com/deepin/daemon/ImageEffect", QDBusConnection::systemBus(), this))
-    , m_displayInter(new DisplayInter("com.deepin.daemon.Display", "/com/deepin/daemon/Display", QDBusConnection::sessionBus(), this))
-    , m_wmInter(new WMInter("com.deepin.wm", "/com/deepin/wm", QDBusConnection::sessionBus(), this))
     , m_originalCursor(cursor())
 {
 #ifndef QT_DEBUG
@@ -70,17 +52,7 @@ FullscreenBackground::FullscreenBackground(QWidget *parent)
 
     installEventFilter(this);
 
-    connect(m_wmInter, &WMInter::WorkspaceSwitched, this, &FullscreenBackground::updateWMBackground);
-    connect(m_wmInter, &WMInter::WorkspaceBackgroundChanged, this, &FullscreenBackground::updateWMBackground);
-    connect(m_displayInter, &DisplayInter::DisplayModeChanged, this, [=](uchar) {
-        m_displayMode = m_displayInter->GetRealDisplayMode();
-    });
-    connect(m_displayInter, &DisplayInter::DisplayModeChanged, this, &FullscreenBackground::updateWMBackground);
-    connect(m_displayInter, &DisplayInter::PrimaryChanged, this, &FullscreenBackground::updateWMBackground);
-
     connect(m_fadeOutAni, &QVariantAnimation::valueChanged, this, static_cast<void (FullscreenBackground::*)()>(&FullscreenBackground::update));
-
-    m_displayMode = m_displayInter->GetRealDisplayMode();
 }
 
 FullscreenBackground::~FullscreenBackground()
@@ -133,27 +105,6 @@ void FullscreenBackground::updateBlurBackground(const QString &path)
     });
 }
 
-void FullscreenBackground::updateWMBackground()
-{
-    QString screenName = qApp->primaryScreen()->name();
-
-    if (m_displayMode != MERGE_MODE) {
-        QWidget *parentWidget = qobject_cast<QWidget *>(parent());
-        QDesktopWidget *desktopwidget = QApplication::desktop();
-        int screenIndex = desktopwidget->screenNumber(parentWidget);
-        QList<QScreen *> screens = qApp->screens();
-        screenName = screens[screenIndex]->name();
-    }
-
-    QString path = getLocalFile(m_wmInter->GetCurrentWorkspaceBackgroundForMonitor(screenName));
-    if (m_wmBackgroundPath == path)
-        return;
-    if (!path.isEmpty()) {
-        m_wmBackgroundPath = path;
-        updateBackground(path);
-    }
-}
-
 bool FullscreenBackground::contentVisible() const
 {
     return m_content && m_content->isVisible();
@@ -167,12 +118,12 @@ void FullscreenBackground::enableEnterEvent(bool enable)
 void FullscreenBackground::setScreen(QScreen *screen)
 {
     QScreen *primary_screen = QGuiApplication::primaryScreen();
-    if(primary_screen == screen && !m_isBlackMode) {
+    if (primary_screen == screen && !m_isBlackMode) {
         m_content->show();
         m_primaryShowFinished = true;
         emit contentVisibleChanged(true);
     } else {
-        QTimer::singleShot(1000, this, [ = ] {
+        QTimer::singleShot(1000, this, [=] {
             m_primaryShowFinished = true;
             setMouseTracking(true);
         });
@@ -209,12 +160,12 @@ void FullscreenBackground::setContent(QWidget *const w)
 
 void FullscreenBackground::setIsBlackMode(bool is_black)
 {
-    if(m_isBlackMode == is_black) return;
+    if (m_isBlackMode == is_black) return;
 
     if (is_black) {
         //黑屏的同时隐藏鼠标
         setCursor(Qt::BlankCursor);
-    } else  {
+    } else {
         //唤醒后显示鼠标
         setCursor(m_originalCursor);
     }
@@ -249,6 +200,12 @@ bool FullscreenBackground::isPicture(const QString &file)
     return QFile::exists(file) && QFile(file).size() && QImageReader(file).canRead();
 }
 
+QString FullscreenBackground::getLocalFile(const QString &file)
+{
+    const QUrl url(file);
+    return url.isLocalFile() ? url.toLocalFile() : url.url();
+}
+
 void FullscreenBackground::paintEvent(QPaintEvent *e)
 {
     QWidget::paintEvent(e);
@@ -278,7 +235,7 @@ void FullscreenBackground::paintEvent(QPaintEvent *e)
 
 void FullscreenBackground::enterEvent(QEvent *event)
 {
-    if(m_primaryShowFinished && m_enableEnterEvent) {
+    if (m_primaryShowFinished && m_enableEnterEvent) {
         m_content->show();
         emit contentVisibleChanged(true);
     }
@@ -301,6 +258,11 @@ void FullscreenBackground::resizeEvent(QResizeEvent *event)
     QWidget::resizeEvent(event);
 }
 
+/**
+ * @brief 鼠标移动触发这个事件，可能需要配合setMouseTracking(true)使用
+ *
+ * @param event
+ */
 void FullscreenBackground::mouseMoveEvent(QMouseEvent *event)
 {
     if (!m_isBlackMode) {
@@ -317,9 +279,12 @@ void FullscreenBackground::keyPressEvent(QKeyEvent *e)
 
     switch (e->key()) {
 #ifdef QT_DEBUG
-    case Qt::Key_Escape:        qApp->quit();       break;
+    case Qt::Key_Escape:
+        qApp->quit();
+        break;
 #endif
-    default:;
+    default:
+        break;
     }
 }
 
@@ -345,7 +310,7 @@ void FullscreenBackground::showEvent(QShowEvent *event)
 
 const QPixmap FullscreenBackground::pixmapHandle(const QPixmap &pixmap)
 {
-    const QSize trueSize { size() *devicePixelRatioF() };
+    const QSize trueSize {size() * devicePixelRatioF()};
     QPixmap pix;
     if (!pixmap.isNull())
         pix = pixmap.scaled(trueSize, Qt::KeepAspectRatioByExpanding, Qt::FastTransformation);
