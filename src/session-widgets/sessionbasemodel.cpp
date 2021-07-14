@@ -303,26 +303,14 @@ void SessionBaseModel::updateCurrentUser(const QString &userJson)
     QJsonParseError jsonParseError;
     const QJsonDocument userDoc = QJsonDocument::fromJson(userJson.toUtf8(), &jsonParseError);
     if (jsonParseError.error != QJsonParseError::NoError || userDoc.isEmpty()) {
-        qWarning() << "Failed to obtain user information from dbus!";
-        user_ptr = std::make_shared<User>();
+        qWarning() << "Failed to obtain current user information from LockService!";
+        user_ptr = m_lastLogoutUser ? m_lastLogoutUser : m_users->first();
     } else {
         const QJsonObject userObj = userDoc.object();
-        const uid_t uid = static_cast<uid_t>(userObj["Uid"].toInt());
-        user_ptr = findUserByUid(uid);
+        const QString &name = userObj["Name"].toString();
+        user_ptr = findUserByName(name);
         if (user_ptr == nullptr) {
-            const int type = userObj["Type"].toInt();
-            switch (type) {
-            case User::Native:
-                user_ptr = std::make_shared<NativeUser>(uid);
-                break;
-            case User::ADDomain:
-                user_ptr = std::make_shared<ADDomainUser>(uid);
-                break;
-            case User::Default:
-            default:
-                user_ptr = std::make_shared<User>();
-                break;
-            }
+            user_ptr = m_lastLogoutUser ? m_lastLogoutUser : m_users->first();
         }
     }
     updateCurrentUser(user_ptr);
@@ -350,6 +338,7 @@ void SessionBaseModel::updateCurrentUser(const std::shared_ptr<User> user)
  */
 void SessionBaseModel::updateUserList(const QStringList &list)
 {
+    qDebug() << "SessionBaseModel::updateUserList:" << list;
     QStringList listTmp = m_users->keys();
     for (const QString &path : list) {
         if (m_users->contains(path)) {
@@ -372,6 +361,7 @@ void SessionBaseModel::updateUserList(const QStringList &list)
  */
 void SessionBaseModel::updateLastLogoutUser(const uid_t uid)
 {
+    qDebug() << "SessionBaseModel::updateLastLogoutUser:" << uid;
     for (const std::shared_ptr<User> &user : m_users->values()) {
         if (uid == user->uid()) {
             updateLastLogoutUser(user);
@@ -387,6 +377,7 @@ void SessionBaseModel::updateLastLogoutUser(const uid_t uid)
  */
 void SessionBaseModel::updateLastLogoutUser(const std::shared_ptr<User> lastLogoutUser)
 {
+    qDebug() << "SessionBaseModel::updateLastLogoutUser:" << lastLogoutUser->name() << lastLogoutUser->uid();
     if (m_lastLogoutUser && m_lastLogoutUser == lastLogoutUser) {
         return;
     }
@@ -414,8 +405,9 @@ void SessionBaseModel::updateLoginedUserList(const QString &list)
         for (const QJsonValue &loginedUserStr : loginedUserListArr) {
             const QJsonObject loginedUserListObj = loginedUserStr.toObject();
             const int uid = loginedUserListObj["Uid"].toInt();
-            if (uid != 0 && uid < 1000) {
-                break; // 排除非正常用户的 uid
+            const QString &desktop = loginedUserListObj["Desktop"].toString();
+            if ((uid != 0 && uid < 1000) || desktop.isEmpty()) {
+                continue; // 排除非正常登录用户
             }
             const QString path = QString("/com/deepin/daemon/Accounts/User") + QString::number(uid);
             if (!m_loginedUsers->contains(path)) {
@@ -433,6 +425,7 @@ void SessionBaseModel::updateLoginedUserList(const QString &list)
         m_loginedUsers->remove(path);
         m_users->value(path)->updateLoginStatus(false);
     }
+    qInfo() << "Logined users:" << m_loginedUsers->keys();
     emit loginedUserListChanged(m_loginedUsers->values());
 }
 

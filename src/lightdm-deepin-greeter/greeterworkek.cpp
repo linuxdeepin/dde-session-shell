@@ -61,8 +61,12 @@ GreeterWorkek::GreeterWorkek(SessionBaseModel *const model, QObject *parent)
         std::shared_ptr<User> user(new User());
         m_model->setIsServerModel(DSysInfo::deepinType() == DSysInfo::DeepinServer || !m_model->isActiveDirectoryDomain());
         m_model->addUser(user);
+        if (DSysInfo::deepinType() == DSysInfo::DeepinServer) {
+            m_model->updateCurrentUser(user);
+        }
     } else {
         connect(m_login1Inter, &DBusLogin1Manager::SessionRemoved, this, [=] {
+            qDebug() << "DBusLogin1Manager::SessionRemoved";
             // lockservice sometimes fails to call on olar server
             QDBusPendingReply<QString> replay = m_lockInter->CurrentUser();
             replay.waitForFinished();
@@ -184,7 +188,7 @@ void GreeterWorkek::initConnections()
     connect(m_authFramework, &DeepinAuthFramework::PromptChanged, m_model, &SessionBaseModel::updatePrompt);
     /* org.freedesktop.login1.Session */
     connect(m_login1SessionSelf, &Login1SessionSelf::ActiveChanged, this, [=](bool active) {
-        qDebug() << "DBusLockService::ActiveChanged:" << active;
+        qDebug() << "Login1SessionSelf::ActiveChanged:" << active;
         if (m_model->currentUser() == nullptr || m_model->currentUser()->name().isEmpty()) {
             return;
         }
@@ -267,10 +271,9 @@ void GreeterWorkek::initConnections()
         }
     });
     /* others */
-    connect(KeyboardMonitor::instance(), &KeyboardMonitor::numlockStatusChanged, this, [=] (bool on) {
+    connect(KeyboardMonitor::instance(), &KeyboardMonitor::numlockStatusChanged, this, [=](bool on) {
         saveNumlockStatus(m_model->currentUser(), on);
     });
-
 }
 
 void GreeterWorkek::initData()
@@ -353,9 +356,9 @@ void GreeterWorkek::switchToUser(std::shared_ptr<User> user)
     }
 
     QJsonObject json;
-    json["Uid"] = static_cast<int>(user->uid());
+    json["Name"] = user->name();
     json["Type"] = user->type();
-
+    json["Uid"] = static_cast<int>(user->uid());
     m_lockInter->SwitchToUser(QString(QJsonDocument(json).toJson(QJsonDocument::Compact))).waitForFinished();
 
     // just switch user
@@ -409,7 +412,9 @@ void GreeterWorkek::createAuthentication(const QString &account)
         return;
     }
     std::shared_ptr<User> user_ptr = m_model->findUserByName(account);
-    user_ptr->updatePasswordExpiredInfo();
+    if (user_ptr) {
+        user_ptr->updatePasswordExpiredInfo();
+    }
     switch (m_model->getAuthProperty().FrameworkState) {
     case 0:
         m_authFramework->CreateAuthController(account, m_authFramework->GetSupportedMixAuthFlags(), AppTypeLogin);
@@ -454,7 +459,7 @@ void GreeterWorkek::destoryAuthentication(const QString &account)
  */
 void GreeterWorkek::startAuthentication(const QString &account, const int authType)
 {
-    qDebug() << "GreeterWorkek::startAuthentication:" << authType;
+    qDebug() << "GreeterWorkek::startAuthentication:" << account << authType;
     switch (m_model->getAuthProperty().FrameworkState) {
     case 0:
         if (m_model->getAuthProperty().MFAFlag) {
@@ -672,8 +677,9 @@ void GreeterWorkek::authenticationComplete()
 
     auto startSessionSync = [=]() {
         QJsonObject json;
-        json["Uid"] = static_cast<int>(m_model->currentUser()->uid());
+        json["Name"] = m_model->currentUser()->name();
         json["Type"] = m_model->currentUser()->type();
+        json["Uid"] = static_cast<int>(m_model->currentUser()->uid());
         m_lockInter->SwitchToUser(QString(QJsonDocument(json).toJson(QJsonDocument::Compact))).waitForFinished();
 
         m_greeter->startSessionSync(m_model->sessionKey());
