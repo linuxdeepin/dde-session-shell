@@ -57,11 +57,11 @@
     <name>AuthSingle</name>
     <message>
         <source>Please try again 1 minute later</source>
-        <translation type="unfinished"/>
+        <translation>Ju lutemi, riprovoni pas 1 minute</translation>
     </message>
     <message numerus="yes">
         <source>Please try again %n minutes later</source>
-        <translation type="unfinished"><numerusform></numerusform><numerusform></numerusform></translation>
+        <translation><numerusform>Ju lutemi, riprovoni pas %n minute</numerusform><numerusform>Ju lutemi, riprovoni pas %n minutash</numerusform></translation>
     </message>
 </context>
 <context>
@@ -97,10 +97,6 @@
 </context>
 <context>
     <name>AuthenticationModule</name>
-    <message numerus="yes">
-        <source>Please try again %n minute(s) later</source>
-        <translation><numerusform>Ju lutemi, riprovoni %n minutë më vonë</numerusform><numerusform>Ju lutemi, riprovoni %n minuta më vonë</numerusform></translation>
-    </message>
     <message>
         <source>Verification successful</source>
         <translation>Verifikim i suksesshëm</translation>
@@ -143,11 +139,11 @@
     </message>
     <message>
         <source>Please try again 1 minute later</source>
-        <translation type="unfinished"/>
+        <translation>Ju lutemi, riprovoni pas 1 minute</translation>
     </message>
     <message numerus="yes">
         <source>Please try again %n minutes later</source>
-        <translation type="unfinished"><numerusform></numerusform><numerusform></numerusform></translation>
+        <translation><numerusform>Ju lutemi, riprovoni pas %n minute</numerusform><numerusform>Ju lutemi, riprovoni pas %n minutash</numerusform></translation>
     </message>
 </context>
 <context>
@@ -228,12 +224,8 @@
         <translation>Llogari e gabuar</translation>
     </message>
     <message>
-        <source>Wrong Password</source>
-        <translation>Fjalëkalim i Gabuar</translation>
-    </message>
-    <message>
-        <source>The account or password is not correct. Please enter again.</source>
-        <translation>Llogaria ose fjalëkalimi s’është i saktë. Ju lutemi, rijepeni.</translation>
+        <source>Wrong password</source>
+        <translation>Fjalëkalim i gabuar</translation>
     </message>
 </context>
 <context>

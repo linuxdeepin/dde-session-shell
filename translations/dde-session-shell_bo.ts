@@ -11,7 +11,7 @@
     </message>
     <message numerus="yes">
         <source>Verification failed, %n chances left</source>
-        <translation type="unfinished"><numerusform></numerusform></translation>
+        <translation><numerusform>ར་སྤྲོད་ཐུབ་མ་སོང་། ཁྱེད་ཀྱིས་ད་དུང་ལྟ་ཚོད་%nབྱེད་ཆོག</numerusform></translation>
     </message>
     <message>
         <source>Verification failed, only one chance left</source>
@@ -23,7 +23,7 @@
     </message>
     <message numerus="yes">
         <source>Please try again %n minute(s) later</source>
-        <translation type="unfinished"><numerusform></numerusform></translation>
+        <translation><numerusform>སྐར་མ་ %n རྗེས་ཡང་བསྐྱར་(གཅིག) ཚོད་ལྟ་བྱེད།</numerusform></translation>
     </message>
 </context>
 <context>
@@ -34,7 +34,7 @@
     </message>
     <message numerus="yes">
         <source>Verification failed, %n chances left</source>
-        <translation type="unfinished"><numerusform></numerusform></translation>
+        <translation><numerusform>ར་སྤྲོད་ཐུབ་མ་སོང་། ཁྱེད་ཀྱིས་ད་དུང་ལྟ་ཚོད་%nབྱེད་ཆོག</numerusform></translation>
     </message>
     <message>
         <source>Verification failed, only one chance left</source>
@@ -50,18 +50,18 @@
     </message>
     <message numerus="yes">
         <source>Please try again %n minute(s) later</source>
-        <translation type="unfinished"><numerusform></numerusform></translation>
+        <translation><numerusform>སྐར་མ་%nརྗེས་ཡང་བསྐྱར་(གཅིག)ཚོད་ལྟ་བྱེད།</numerusform></translation>
     </message>
 </context>
 <context>
     <name>AuthSingle</name>
     <message>
         <source>Please try again 1 minute later</source>
-        <translation type="unfinished"/>
+        <translation>སྐར་མ་1རྗེས་ཡང་བསྐྱར་ཚོད་ལྟ་བྱེད།</translation>
     </message>
     <message numerus="yes">
         <source>Please try again %n minutes later</source>
-        <translation type="unfinished"><numerusform></numerusform></translation>
+        <translation><numerusform>སྐར་མ་%nརྗེས་ཡང་བསྐྱར་ཚོད་ལྟ་བྱེད།</numerusform></translation>
     </message>
 </context>
 <context>
@@ -72,7 +72,7 @@
     </message>
     <message numerus="yes">
         <source>Verification failed, %n chances left</source>
-        <translation type="unfinished"><numerusform></numerusform></translation>
+        <translation><numerusform>ར་སྤྲོད་ཐུབ་མ་སོང་། ཁྱེད་ཀྱིས་ད་དུང་ལྟ་ཚོད་%nབྱེད་ཆོག</numerusform></translation>
     </message>
     <message>
         <source>Verification failed, only one chance left</source>
@@ -92,15 +92,11 @@
     </message>
     <message numerus="yes">
         <source>Please try again %n minute(s) later</source>
-        <translation type="unfinished"><numerusform></numerusform></translation>
+        <translation><numerusform>སྐར་མ་%nརྗེས་ཡང་བསྐྱར་(གཅིག)ཚོད་ལྟ་བྱེད།</numerusform></translation>
     </message>
 </context>
 <context>
     <name>AuthenticationModule</name>
-    <message numerus="yes">
-        <source>Please try again %n minute(s) later</source>
-        <translation><numerusform>སྐར་མ་%nརྗེས་ཡང་བསྐྱར་ཚོད་ལྟ་བྱེད།</numerusform></translation>
-    </message>
     <message>
         <source>Verification successful</source>
         <translation>ར་འཕྲོད་པ།</translation>
@@ -143,11 +139,11 @@
     </message>
     <message>
         <source>Please try again 1 minute later</source>
-        <translation type="unfinished"/>
+        <translation>སྐར་མ་1རྗེས་ཡང་བསྐྱར་ཚོད་ལྟ་བྱེད།</translation>
     </message>
     <message numerus="yes">
         <source>Please try again %n minutes later</source>
-        <translation type="unfinished"><numerusform></numerusform></translation>
+        <translation><numerusform>སྐར་མ་%nརྗེས་ཡང་བསྐྱར་ཚོད་ལྟ་བྱེད།</numerusform></translation>
     </message>
 </context>
 <context>
@@ -225,15 +221,11 @@
     <name>GreeterWorkek</name>
     <message>
         <source>Wrong account</source>
-        <translation type="unfinished"/>
+        <translation>རྩིས་ཁྲ་ནོར་བ།</translation>
     </message>
     <message>
-        <source>Wrong Password</source>
+        <source>Wrong password</source>
         <translation>གསང་ཨང་ནོར་འདུག</translation>
-    </message>
-    <message>
-        <source>The account or password is not correct. Please enter again.</source>
-        <translation>རྩིས་ཁྲའམ་གསང་ཨང་ནོར་འདུག ཡང་བསྐྱར་ནང་འཇུག་བྱེད་རོགས།</translation>
     </message>
 </context>
 <context>

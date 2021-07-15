@@ -57,11 +57,11 @@
     <name>AuthSingle</name>
     <message>
         <source>Please try again 1 minute later</source>
-        <translation type="unfinished"/>
+        <translation>Tentar novamente 1 minuto depois</translation>
     </message>
     <message numerus="yes">
         <source>Please try again %n minutes later</source>
-        <translation type="unfinished"><numerusform></numerusform><numerusform></numerusform></translation>
+        <translation><numerusform>Tentar novamente %n minuto depois</numerusform><numerusform>Tentar novamente %n minutos depois</numerusform></translation>
     </message>
 </context>
 <context>
@@ -97,10 +97,6 @@
 </context>
 <context>
     <name>AuthenticationModule</name>
-    <message numerus="yes">
-        <source>Please try again %n minute(s) later</source>
-        <translation><numerusform>Tentar novamente %n minuto mais tarde</numerusform><numerusform>Tentar novamente %n minutos mais tarde</numerusform></translation>
-    </message>
     <message>
         <source>Verification successful</source>
         <translation>Verificação bem sucedida</translation>
@@ -143,11 +139,11 @@
     </message>
     <message>
         <source>Please try again 1 minute later</source>
-        <translation type="unfinished"/>
+        <translation>Tentar novamente 1 minuto depois</translation>
     </message>
     <message numerus="yes">
         <source>Please try again %n minutes later</source>
-        <translation type="unfinished"><numerusform></numerusform><numerusform></numerusform></translation>
+        <translation><numerusform>Tentar novamente %n minuto depois</numerusform><numerusform>Tentar novamente %n minutos depois</numerusform></translation>
     </message>
 </context>
 <context>
@@ -228,12 +224,8 @@
         <translation>Conta incorreta</translation>
     </message>
     <message>
-        <source>Wrong Password</source>
+        <source>Wrong password</source>
         <translation>Palavra-passe incorreta</translation>
-    </message>
-    <message>
-        <source>The account or password is not correct. Please enter again.</source>
-        <translation>A conta ou a palavra-passe não estão corretas. Por favor, insira novamente.</translation>
     </message>
 </context>
 <context>
