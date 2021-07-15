@@ -419,16 +419,16 @@ void GreeterWorkek::createAuthentication(const QString &account)
     case 0:
         m_authFramework->CreateAuthController(account, m_authFramework->GetSupportedMixAuthFlags(), AppTypeLogin);
         m_authFramework->SetAuthQuitFlag(account, DeepinAuthFramework::ManualQuit);
+        if (m_model->getAuthProperty().MFAFlag) {
+            if (!m_authFramework->SetPrivilegesEnable(account, QString("/usr/sbin/lightdm"))) {
+                qWarning() << "Failed to set privileges!";
+            }
+            m_greeter->authenticate(account);
+        }
         break;
     default:
         m_model->updateFactorsInfo(MFAInfoList());
         break;
-    }
-    if (m_model->getAuthProperty().MFAFlag) {
-        if (!m_authFramework->SetPrivilegesEnable(account, QString("/usr/sbin/lightdm"))) {
-            qWarning() << "Failed to set privileges!";
-        }
-        m_greeter->authenticate(account);
     }
 }
 
@@ -442,7 +442,6 @@ void GreeterWorkek::destoryAuthentication(const QString &account)
     qDebug() << "GreeterWorkek::destoryAuthentication:" << account;
     switch (m_model->getAuthProperty().FrameworkState) {
     case 0:
-        m_authFramework->SetPrivilegesDisable(account);
         m_authFramework->DestoryAuthController(account);
         break;
     default:
@@ -513,7 +512,16 @@ void GreeterWorkek::sendTokenToAuth(const QString &account, const int authType, 
 void GreeterWorkek::endAuthentication(const QString &account, const int authType)
 {
     qDebug() << "GreeterWorkek::endAuthentication:" << account << authType;
-    m_authFramework->EndAuthentication(account, authType);
+    switch (m_model->getAuthProperty().FrameworkState) {
+    case 0:
+        if (authType == AuthTypeAll) {
+            m_authFramework->SetPrivilegesDisable(account);
+        }
+        m_authFramework->EndAuthentication(account, authType);
+        break;
+    default:
+        break;
+    }
 }
 
 /**

@@ -536,7 +536,13 @@ void LockWorker::sendTokenToAuth(const QString &account, const int authType, con
 void LockWorker::endAuthentication(const QString &account, const int authType)
 {
     qDebug() << "LockWorker::endAuthentication:" << account << authType;
-    m_authFramework->EndAuthentication(account, authType);
+    switch (m_model->getAuthProperty().FrameworkState) {
+    case 0:
+        m_authFramework->EndAuthentication(account, authType);
+        break;
+    default:
+        break;
+    }
 }
 
 void LockWorker::lockServiceEvent(quint32 eventType, quint32 pid, const QString &username, const QString &message)
