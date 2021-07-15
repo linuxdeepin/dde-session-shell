@@ -83,9 +83,10 @@ void LogoWidget::initUI()
     pe.setColor(QPalette::WindowText, Qt::white);
     m_logoVersionLabel->setPalette(pe);
 #endif
-    //设置版本号的默认字体
+    //由于有些字体不支持一些语言，会造成切换语言后登录界面和锁屏界面版本信息大小不一致
+    //设置版本信息的默认字体为系统的默认字体以便于支持更多语言
     QFont font(m_logoVersionLabel->font());
-    font.setFamily("Noto Sans CJK SC-Thin");
+    font.setFamily("Sans Serif");
     m_logoVersionLabel->setFont(font);
 
     QString systemVersion = getVersion();
