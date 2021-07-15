@@ -70,9 +70,6 @@ void UserLoginInfo::setUser(std::shared_ptr<User> user)
 
 void UserLoginInfo::initConnect()
 {
-    if (m_model->isServerModel()) {
-        connect(this, &UserLoginInfo::updateLocale, m_userLoginWidget, &UserLoginWidget::updateAccoutLocale);
-    }
     connect(m_userLoginWidget, &UserLoginWidget::requestAuthUser, this, [ = ](const QString & account, const QString & password) {
         // if (!m_userLoginWidget->inputInfoCheck(m_model->isServerModel())) return;
 
@@ -132,6 +129,11 @@ void UserLoginInfo::initConnect()
     connect(m_model, &SessionBaseModel::currentUserChanged, this, [=] (std::shared_ptr<User> user){
        connect(user.get(), &User::limitsInfoChanged, m_userLoginWidget, &UserLoginWidget::updateLimitsInfo);
     });
+}
+
+void UserLoginInfo::updateLocale()
+{
+    m_userLoginWidget->updateAccoutLocale();
 }
 
 void UserLoginInfo::abortConfirm(bool abort)

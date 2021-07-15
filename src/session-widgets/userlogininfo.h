@@ -39,6 +39,7 @@ public:
     explicit UserLoginInfo(SessionBaseModel *model, QObject *parent = nullptr);
     void initConnect();
     void setUser(std::shared_ptr<User> user);
+    void updateLocale();
     UserLoginWidget *getUserLoginWidget();
     UserFrameList *getUserFrameList();
     void hideKBLayout();
@@ -53,7 +54,6 @@ signals:
     void hideUserFrameList();
     void requestSetLayout(std::shared_ptr<User> user, const QString &value);
     void unlockActionFinish();
-    void updateLocale();
 
     void requestStartAuthentication(const QString &account, const int authType);
     void sendTokenToAuth(const QString &account, const int authType, const QString &token);

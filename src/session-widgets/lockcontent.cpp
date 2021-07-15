@@ -116,8 +116,9 @@ void LockContent::onCurrentUserChanged(std::shared_ptr<User> user)
     qApp->installTranslator(m_translator);
 
     //服务器登录界面,更新了翻译,所以需要再次初始化accontLineEdit
-    if(qApp->applicationName() != "dde-lock" && m_model->isServerModel())
-        emit m_userLoginInfo->updateLocale();
+    if (qApp->applicationName() != "dde-lock") {
+        m_userLoginInfo->updateLocale();
+    }
 
     for (auto connect : m_currentUserConnects) {
         m_user.get()->disconnect(connect);
