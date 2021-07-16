@@ -411,6 +411,7 @@ void GreeterWorkek::createAuthentication(const QString &account)
         m_model->setAuthType(AuthTypeNone);
         return;
     }
+    m_retryAuth = false;
     std::shared_ptr<User> user_ptr = m_model->findUserByName(account);
     if (user_ptr) {
         user_ptr->updatePasswordExpiredInfo();
