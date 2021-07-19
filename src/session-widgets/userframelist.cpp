@@ -33,18 +33,11 @@
 #include <QScrollBar>
 #include <QScroller>
 
-const int UserFrameHeight = 174;
-const int UserFrameWidth = 226;
-const int UserFrameSpaceing = 40;
-
 UserFrameList::UserFrameList(QWidget *parent)
     : QWidget(parent)
     , m_scrollArea(new QScrollArea(this))
     , m_frameDataBind(FrameDataBind::Instance())
 {
-    setGeometry(0, 0, 280, 280);                           // 设置用户列表窗口默认大小和相对父窗口的位置
-    setMinimumSize(228, 146);                              // 设置用户列表窗口的最小尺寸（仅有一个用户情况下的窗口大小）
-    setMaximumSize(1330, 360);                             // 设置用户列表窗口的最大尺寸（ 2 * 5 )
     setSizePolicy(QSizePolicy::Fixed, QSizePolicy::Fixed); // 设置窗口的大小策略为 Fixed，不受父窗口缩放影响
 
     setFocusPolicy(Qt::StrongFocus);
@@ -74,14 +67,6 @@ void UserFrameList::initUI()
     m_flowLayout->setFlow(QListView::LeftToRight);
     m_flowLayout->setContentsMargins(10, 10, 10, 10);
     m_flowLayout->setSpacing(40);
-
-    // setVerticalScrollBarPolicy(Qt::ScrollBarAsNeeded);
-    // setHorizontalScrollBarPolicy(Qt::ScrollBarAlwaysOff);
-    // setFrameStyle(QFrame::Box);
-    // setFocusPolicy(Qt::NoFocus);
-    // setAlignment(Qt::AlignCenter);
-    // m_centerWidget->setAutoFillBackground(false);
-    // viewport()->setAutoFillBackground(false);
 
     m_scrollArea->setWidget(m_centerWidget);
     m_scrollArea->setWidgetResizable(true);
@@ -281,7 +266,7 @@ void UserFrameList::updateLayout()
         m_rowCount = 1;
     }
 
-    int totalHeight = (UserFrameHeight + UserFrameSpaceing) * m_rowCount - UserFrameSpaceing;
+    int totalHeight = (UserFrameHeight + UserFrameSpaceing) * m_rowCount;
     int totalWidth = qMin((UserFrameWidth + UserFrameSpaceing) * m_colCount, (UserFrameWidth + UserFrameSpaceing) * m_loginWidgets.size());
 
     m_scrollArea->setFixedHeight(totalHeight);

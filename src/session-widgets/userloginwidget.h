@@ -50,6 +50,12 @@ class DLineEditEx;
 class AuthenticationModule;
 class AuthSingle;
 
+//按UI设置提供的大小设置用户界面尺寸
+const int UserFrameHeight = 167;
+const int UserFrameWidth = 226;
+const int UserFrameSpaceing = 40;
+const int UserNameHeight = 42;
+
 class UserLoginWidget : public QWidget
 {
     Q_OBJECT

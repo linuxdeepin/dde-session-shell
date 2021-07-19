@@ -46,8 +46,9 @@
 using namespace AuthCommon;
 
 static const int BlurRectRadius = 15;
-static const int WidgetsSpacing = 10;
-static const int Margins = 16;
+static const int LeftRightMargins = 16;
+static const int NameSpace = 8;
+
 static const QColor shutdownColor(QColor(247, 68, 68));
 static const QColor disableColor(QColor(114, 114, 114));
 
@@ -82,8 +83,12 @@ UserLoginWidget::UserLoginWidget(const SessionBaseModel *model, const WidgetType
     , m_isAlertMessageShow(false)
     , m_aniTimer(new QTimer(this))
 {
-    setGeometry(0, 0, 280, 280);                           // 设置本窗口默认大小和相对父窗口的位置
-    setMinimumSize(228, 146);                              // 设置本窗口的最小大小（参考用户列表模式下的最小大小）
+    if (widgetType == LoginType) {
+        setMaximumWidth(280);                             // 设置本窗口的最大宽度（参考登录模式下的最大宽度）
+        setMinimumSize(UserFrameWidth, UserFrameHeight);  // 登录类型时，界面需要根据多因等调整界面大小，最小尺寸按无密码框等部件设置大小
+    } else {
+        setFixedSize(UserFrameWidth, UserFrameHeight); //用户列表类型时，不需要显示密码框等部件，只显示图标和用户名，按固定大小设置界面尺寸
+    }
     setSizePolicy(QSizePolicy::Fixed, QSizePolicy::Fixed); // 大小策略设置为fixed，使本窗口不受父窗口布局管理器的拉伸效果
     setFocusPolicy(Qt::NoFocus);
 
@@ -97,7 +102,6 @@ UserLoginWidget::UserLoginWidget(const SessionBaseModel *model, const WidgetType
     m_accountEdit->hide();
 
     if (m_widgetType == LoginType) {
-        setMaximumWidth(280); // 设置本窗口的最大宽度（参考登录模式下的最大宽度）
         m_userAvatar->setAvatarSize(UserAvatar::AvatarLargeSize);
         m_loginStateLabel->hide();
         if (m_model->currentType() == SessionBaseModel::LightdmType && m_model->isServerModel()) {
@@ -105,7 +109,6 @@ UserLoginWidget::UserLoginWidget(const SessionBaseModel *model, const WidgetType
             m_nameLabel->hide();
         }
     } else {
-        setMaximumWidth(228); // 设置本窗口的最大宽度（参考用户列表模式下的最大宽度）
         m_userAvatar->setAvatarSize(UserAvatar::AvatarSmallSize);
         m_lockButton->hide();
     }
@@ -124,7 +127,11 @@ UserLoginWidget::~UserLoginWidget()
  */
 void UserLoginWidget::initUI()
 {
-    m_userLoginLayout->setContentsMargins(10, 0, 10, 0);
+    if (m_widgetType == LoginType) {
+        m_userLoginLayout->setContentsMargins(10, 0, 10, 0);
+    } else {
+        m_userLoginLayout->setContentsMargins(LeftRightMargins, 0, LeftRightMargins, 0);
+    }
     m_userLoginLayout->setSpacing(10);
     /* 头像 */
     m_userAvatar->setFocusPolicy(Qt::NoFocus);
@@ -132,18 +139,27 @@ void UserLoginWidget::initUI()
     /* 用户名 */
     QHBoxLayout *nameLayout = new QHBoxLayout(m_nameWidget);
     nameLayout->setContentsMargins(0, 0, 0, 0);
-    nameLayout->setSpacing(5);
+    nameLayout->setSpacing(NameSpace);
     QPixmap pixmap = DHiDPIHelper::loadNxPixmap(":/misc/images/select.svg");
     pixmap.setDevicePixelRatio(devicePixelRatioF());
     m_loginStateLabel->setPixmap(pixmap);
-    nameLayout->addWidget(m_loginStateLabel, 0, Qt::AlignRight);
+    nameLayout->addWidget(m_loginStateLabel, 0, Qt::AlignVCenter | Qt::AlignRight);
+    //设置内容居中显示
+    m_nameLabel->setAlignment(Qt::AlignCenter);
     m_nameLabel->setTextFormat(Qt::TextFormat::PlainText);
+    //LoginType模式时让界面自动适应字体，UserListType模式时字体自动适应界面
+    if (m_widgetType == LoginType) {
+        m_nameLabel->setSizePolicy(QSizePolicy::Expanding, QSizePolicy::Expanding);
+    } else {
+        m_nameLabel->setSizePolicy(QSizePolicy::Expanding, QSizePolicy::Fixed);
+        m_nameLabel->setFixedHeight(UserNameHeight);
+    }
     DFontSizeManager::instance()->bind(m_nameLabel, DFontSizeManager::T2);
     QPalette palette = m_nameLabel->palette();
     palette.setColor(QPalette::WindowText, Qt::white);
     m_nameLabel->setPalette(palette);
-    nameLayout->addWidget(m_nameLabel, 1, Qt::AlignLeft);
-    m_userLoginLayout->addWidget(m_nameWidget, 0, Qt::AlignCenter);
+    nameLayout->addWidget(m_nameLabel);
+    m_userLoginLayout->addWidget(m_nameWidget);
     /* 用户名输入框 */
     m_accountEdit->setContextMenuPolicy(Qt::NoContextMenu);
     m_accountEdit->lineEdit()->setAlignment(Qt::AlignCenter);
@@ -1179,6 +1195,20 @@ void UserLoginWidget::updateNameLabel(const QFont &font)
         m_nameLabel->setText(str);
     } else {
         m_nameLabel->setText(m_name);
+    }
+
+    //LoginType模式时让界面自动适应字体，UserListType模式时字体自动适应界面
+    if (m_widgetType == LoginType) {
+        m_nameLabel->adjustSize();
+    } else {
+        int margin = m_nameLabel->margin();
+        QFont tmpFont(m_nameLabel->font());
+        int fontHeightTmp = m_nameLabel->rect().height() - margin * 2;
+        while (QFontMetrics(tmpFont).boundingRect(m_nameLabel->text()).height() > fontHeightTmp && tmpFont.pixelSize() > 6) {
+            tmpFont.setPixelSize(tmpFont.pixelSize() - 1);
+        }
+        m_nameLabel->setFont(tmpFont);
+        m_nameLabel->update();
     }
 }
 
