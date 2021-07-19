@@ -59,6 +59,7 @@ private:
     void initConfiguration();
 
     void doPowerAction(const SessionBaseModel::PowerAction action);
+    void setCurrentUser(const std::shared_ptr<User> user);
 
     void checkDBusServer(bool isvalid);
     void oneKeyLogin();

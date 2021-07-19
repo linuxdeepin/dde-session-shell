@@ -61,6 +61,7 @@ private:
     void initConfiguration();
 
     void doPowerAction(const SessionBaseModel::PowerAction action);
+    void setCurrentUser(const std::shared_ptr<User> user);
 
     // lock
     void lockServiceEvent(quint32 eventType, quint32 pid, const QString &username, const QString &message);

@@ -219,9 +219,6 @@ void GreeterWorkek::initConnections()
         m_model->updateCurrentUser(json);
         std::shared_ptr<User> user_ptr = m_model->currentUser();
         const QString &account = user_ptr->name();
-        if (!user_ptr.get()->isLogin() && !user_ptr.get()->isNoPasswordLogin()) {
-            createAuthentication(account);
-        }
         if (user_ptr.get()->isNoPasswordLogin()) {
             emit m_model->authTypeChanged(AuthTypeNone);
             m_account = account;
@@ -343,6 +340,20 @@ void GreeterWorkek::doPowerAction(const SessionBaseModel::PowerAction action)
     m_model->setPowerAction(SessionBaseModel::PowerAction::None);
 }
 
+/**
+ * @brief 将当前用户的信息保存到 LockService 服务
+ *
+ * @param user
+ */
+void GreeterWorkek::setCurrentUser(const std::shared_ptr<User> user)
+{
+    QJsonObject json;
+    json["Name"] = user->name();
+    json["Type"] = user->type();
+    json["Uid"] = static_cast<int>(user->uid());
+    m_lockInter->SwitchToUser(QString(QJsonDocument(json).toJson(QJsonDocument::Compact))).waitForFinished();
+}
+
 void GreeterWorkek::switchToUser(std::shared_ptr<User> user)
 {
     if (user->name() == m_account) {
@@ -354,22 +365,17 @@ void GreeterWorkek::switchToUser(std::shared_ptr<User> user)
     if (user->uid() == INT_MAX) {
         m_model->setAuthType(AuthTypeNone);
     }
-
-    QJsonObject json;
-    json["Name"] = user->name();
-    json["Type"] = user->type();
-    json["Uid"] = static_cast<int>(user->uid());
-    m_lockInter->SwitchToUser(QString(QJsonDocument(json).toJson(QJsonDocument::Compact))).waitForFinished();
-
-    // just switch user
-    if (user->isLogin()) {
-        // switch to user Xorg
+    setCurrentUser(user);
+    if (user->isLogin()) { // switch to user Xorg
         m_greeter->authenticate();
         QProcess::startDetached("dde-switchtogreeter", QStringList() << user->name());
     } else {
         m_model->updateAuthStatus(AuthTypeAll, StatusCodeCancel, "Cancel");
         destoryAuthentication(m_account);
         m_model->updateCurrentUser(user);
+        if (!user->isNoPasswordLogin()) {
+            createAuthentication(user->name());
+        }
     }
 }
 
@@ -685,12 +691,7 @@ void GreeterWorkek::authenticationComplete()
     qInfo() << "start session = " << m_model->sessionKey();
 
     auto startSessionSync = [=]() {
-        QJsonObject json;
-        json["Name"] = m_model->currentUser()->name();
-        json["Type"] = m_model->currentUser()->type();
-        json["Uid"] = static_cast<int>(m_model->currentUser()->uid());
-        m_lockInter->SwitchToUser(QString(QJsonDocument(json).toJson(QJsonDocument::Compact))).waitForFinished();
-
+        setCurrentUser(m_model->currentUser());
         m_greeter->startSessionSync(m_model->sessionKey());
     };
 

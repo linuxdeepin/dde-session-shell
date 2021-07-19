@@ -322,6 +322,20 @@ void LockWorker::doPowerAction(const SessionBaseModel::PowerAction action)
     m_model->setPowerAction(SessionBaseModel::PowerAction::None);
 }
 
+/**
+ * @brief 将当前用户的信息保存到 LockService 服务
+ *
+ * @param user
+ */
+void LockWorker::setCurrentUser(const std::shared_ptr<User> user)
+{
+    QJsonObject json;
+    json["Name"] = user->name();
+    json["Type"] = user->type();
+    json["Uid"] = static_cast<int>(user->uid());
+    m_lockInter->SwitchToUser(QString(QJsonDocument(json).toJson(QJsonDocument::Compact))).waitForFinished();
+}
+
 void LockWorker::switchToUser(std::shared_ptr<User> user)
 {
     if (user->name() == m_account) {
@@ -329,14 +343,7 @@ void LockWorker::switchToUser(std::shared_ptr<User> user)
     }
     qInfo() << "switch user from" << m_account << " to " << user->name() << user->isLogin();
     endAuthentication(m_account, AuthTypeAll);
-
-    // if type is lock, switch to greeter
-    QJsonObject json;
-    json["Name"] = user->name();
-    json["Type"] = user->type();
-    json["Uid"] = static_cast<int>(user->uid());
-    m_lockInter->SwitchToUser(QString(QJsonDocument(json).toJson(QJsonDocument::Compact))).waitForFinished();
-
+    setCurrentUser(user);
     if (user->isLogin()) {
         QProcess::startDetached("dde-switchtogreeter", QStringList() << user->name());
     } else {
