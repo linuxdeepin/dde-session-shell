@@ -128,6 +128,11 @@ void LockContent::onCurrentUserChanged(std::shared_ptr<User> user)
 
     m_user = user;
 
+    m_timeWidget->set24HourFormat(user->isUse24HourFormat());
+    m_timeWidget->setWeekdayFormatType(user->weekdayFormat());
+    m_timeWidget->setShortDateFormat(user->shortDateFormat());
+    m_timeWidget->setShortTimeFormat(user->shortTimeFormat());
+
     m_currentUserConnects << connect(user.get(), &User::greeterBackgroundChanged, this, &LockContent::updateGreeterBackgroundPath, Qt::UniqueConnection)
                           << connect(user.get(), &User::desktopBackgroundChanged, this, &LockContent::updateDesktopBackgroundPath, Qt::UniqueConnection)
                           << connect(user.get(), &User::use24HourFormatChanged, this, &LockContent::updateTimeFormat, Qt::UniqueConnection)
