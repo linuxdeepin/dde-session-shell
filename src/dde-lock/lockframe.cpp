@@ -226,7 +226,7 @@ void LockFrame::shutdownInhibit(const SessionBaseModel::PowerAction action, bool
         m_warningContent = new WarningContent(m_model, action, this);
     else
         m_warningContent->setPowerAction(action);
-    m_warningContent->setFixedSize(size());
+    m_warningContent->resize(size());
     setContent(m_warningContent);
 
     //多屏状态下，当前界面显示内容时才显示提示界面

@@ -155,7 +155,7 @@ void LockContent::pushPasswordFrame()
 {
     auto current_user = m_model->currentUser();
 
-    setCenterContent(m_userLoginInfo->getUserLoginWidget());
+    setCenterContent(m_userLoginInfo->getUserLoginWidget(), false);
 
     // hide keyboardlayout widget
     // m_userLoginInfo->hideKBLayout();
@@ -265,7 +265,7 @@ void LockContent::resizeEvent(QResizeEvent *event)
         }
     });
 
-    return QFrame::resizeEvent(event);
+    return SessionBaseWindow::resizeEvent(event);
 }
 
 void LockContent::restoreMode()

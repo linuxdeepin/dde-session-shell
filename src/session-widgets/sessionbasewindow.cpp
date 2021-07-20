@@ -20,6 +20,7 @@ SessionBaseWindow::SessionBaseWindow(QWidget *parent)
     , m_leftBottomWidget(nullptr)
     , m_centerBottomWidget(nullptr)
     , m_rightBottomWidget(nullptr)
+    , m_responseResizeEvent(true)
 {
     initUI();
 }
@@ -53,11 +54,12 @@ void SessionBaseWindow::setRightBottomWidget(QWidget * const widget)
     m_rightBottomWidget = widget;
 }
 
-void SessionBaseWindow::setCenterContent(QWidget * const widget)
+void SessionBaseWindow::setCenterContent(QWidget * const widget, bool responseResizeEvent)
 {
     if (m_centerWidget == widget)
         return;
 
+    m_responseResizeEvent = responseResizeEvent;
     if (m_centerWidget != nullptr) {
         m_centerLayout->removeWidget(m_centerWidget);
         m_centerWidget->hide();
@@ -151,6 +153,14 @@ QSize SessionBaseWindow::getCenterContentSize()
     }
 
     return QSize(w, h);
+}
+
+void SessionBaseWindow::resizeEvent(QResizeEvent *event)
+{
+    if (m_centerWidget && m_responseResizeEvent)
+        m_centerWidget->setFixedSize(getCenterContentSize());
+
+    QFrame::resizeEvent(event);
 }
 
 void SessionBaseWindow::setTopFrameVisible(bool visible)

@@ -12,13 +12,14 @@ public:
     virtual void setLeftBottomWidget(QWidget *const widget) final;
     virtual void setCenterBottomWidget(QWidget *const widget) final;
     virtual void setRightBottomWidget(QWidget *const widget) final;
-    virtual void setCenterContent(QWidget *const widget) final;
+    virtual void setCenterContent(QWidget *const widget, bool responseResizeEvent = true) final;
     virtual void setCenterTopWidget(QWidget *const widget) final;
     QSize getCenterContentSize();
 
 protected:
     void setTopFrameVisible(bool visible);
     void setBottomFrameVisible(bool visible);
+    void resizeEvent(QResizeEvent *event) Q_DECL_OVERRIDE;
 
 private:
     void initUI();
@@ -38,6 +39,7 @@ private:
     QWidget *m_leftBottomWidget;
     QWidget *m_centerBottomWidget;
     QWidget *m_rightBottomWidget;
+    bool m_responseResizeEvent;
 };
 
 #endif // SESSIONBASEWINDOW_H
