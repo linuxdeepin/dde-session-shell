@@ -40,6 +40,7 @@ DeepinAuthFramework::DeepinAuthFramework(DeepinAuthInterface *interface, QObject
     , m_cancelAuth(false)
     , m_waitToken(true)
     , m_encryptionHandle(nullptr)
+    , m_AES(new AES_KEY)
     , m_BIO(nullptr)
     , m_RSA(nullptr)
 {
@@ -58,6 +59,7 @@ DeepinAuthFramework::~DeepinAuthFramework()
         m_authenticateControllers->remove(key);
     }
     delete m_authenticateControllers;
+    delete m_AES;
 
     DestoryAuthenticate();
 }
@@ -294,6 +296,8 @@ void DeepinAuthFramework::initEncryptionService()
         qCritical() << "Failed to load" << OPENSSLNAME;
         return;
     }
+    m_F_AES_cbc_encrypt = reinterpret_cast<FUNC_AES_CBC_ENCRYPT>(dlsym(m_encryptionHandle, "AES_cbc_encrypt"));
+    m_F_AES_set_encrypt_key = reinterpret_cast<FUNC_AES_SET_ENCRYPT_KEY>(dlsym(m_encryptionHandle, "AES_set_encrypt_key"));
     m_F_BIO_new = reinterpret_cast<FUNC_BIO_NEW>(dlsym(m_encryptionHandle, "BIO_new"));
     m_F_BIO_puts = reinterpret_cast<FUNC_BIO_PUTS>(dlsym(m_encryptionHandle, "BIO_puts"));
     m_F_BIO_s_mem = reinterpret_cast<FUNC_BIO_S_MEM>(dlsym(m_encryptionHandle, "BIO_s_mem"));
@@ -312,6 +316,25 @@ void DeepinAuthFramework::initEncryptionService()
     } else if (strncmp(m_publicKey.toLatin1().data(), PKCS1_HEADER, strlen(PKCS1_HEADER)) == 0) {
         m_RSA = m_F_PEM_read_bio_RSAPublicKey(m_BIO, nullptr, nullptr, nullptr);
     }
+
+    /* 生成对称加密的密钥 */
+    srand(static_cast<unsigned int>(time(nullptr)));
+    int randNum = (10000000 + rand() % 10000000) % 100000000;
+    m_symmetricKey = QString::number(randNum) + QString::number(randNum);
+}
+
+/**
+ * @brief 加密对称加密的密钥并发送给认证服务
+ *
+ * @param account
+ */
+void DeepinAuthFramework::encryptSymmtricKey(const QString &account)
+{
+    int size = m_F_RSA_size(m_RSA);
+    char *ciphertext = new char[static_cast<unsigned long>(size)];
+    m_F_RSA_public_encrypt(m_symmetricKey.length(), reinterpret_cast<unsigned char *>(m_symmetricKey.toLatin1().data()), reinterpret_cast<unsigned char *>(ciphertext), m_RSA, 1);
+    m_authenticateControllers->value(account)->SetSymmetricKey(QByteArray(ciphertext, size));
+    delete[] ciphertext;
 }
 
 /**
@@ -359,6 +382,7 @@ void DeepinAuthFramework::CreateAuthController(const QString &account, const int
     }
 
     initEncryptionService();
+    encryptSymmtricKey(account);
 }
 
 /**
@@ -427,12 +451,27 @@ void DeepinAuthFramework::SendTokenToAuth(const QString &account, const int auth
     }
     qInfo() << "Send token to authentication:" << account << authType;
 
-    int size = m_F_RSA_size(m_RSA);
-    char *ciphertext = new char[static_cast<unsigned long>(size)];
-    m_F_RSA_public_encrypt(token.length(), reinterpret_cast<unsigned char *>(token.toLatin1().data()), reinterpret_cast<unsigned char *>(ciphertext), m_RSA, 1);
-
-    m_authenticateControllers->value(account)->SetToken(authType, QByteArray(ciphertext, size));
+    const int tokenSize = token.size();
+    const int padding = AES_BLOCK_SIZE - tokenSize % AES_BLOCK_SIZE;
+    const int blockCount = token.length() / AES_BLOCK_SIZE + 1;
+    const int bufferSize = blockCount * AES_BLOCK_SIZE;
+    char *tokenBuffer = new char[static_cast<size_t>(bufferSize)];
+    memset(tokenBuffer, padding, static_cast<size_t>(bufferSize));
+    memcpy(tokenBuffer, token.toLatin1().data(), static_cast<size_t>(tokenSize));
+    char *ciphertext = new char[static_cast<size_t>(bufferSize)];
+    memset(ciphertext, 0, static_cast<size_t>(bufferSize));
+    int ret = m_F_AES_set_encrypt_key(reinterpret_cast<unsigned char *>(m_symmetricKey.toLatin1().data()), m_symmetricKey.length() * 8, m_AES);
+    if (ret < 0) {
+        qCritical() << "Failed to set symmetric key!";
+        return;
+    }
+    unsigned char *iv = new unsigned char[AES_BLOCK_SIZE];
+    memset(iv, 0, AES_BLOCK_SIZE);
+    m_F_AES_cbc_encrypt(reinterpret_cast<unsigned char *>(tokenBuffer), reinterpret_cast<unsigned char *>(ciphertext), static_cast<size_t>(bufferSize), m_AES, iv, AES_ENCRYPT);
+    m_authenticateControllers->value(account)->SetToken(authType, QByteArray(ciphertext, bufferSize));
+    delete[] tokenBuffer;
     delete[] ciphertext;
+    delete[] iv;
 }
 
 /**

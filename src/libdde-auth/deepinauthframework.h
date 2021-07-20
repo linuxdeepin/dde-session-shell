@@ -7,10 +7,13 @@
 #include <com_deepin_daemon_authenticate.h>
 #include <com_deepin_daemon_authenticate_session2.h>
 #include <memory>
+#include <openssl/aes.h>
 
 using AuthInter = com::deepin::daemon::Authenticate;
 using AuthControllerInter = com::deepin::daemon::authenticate::Session;
 
+using FUNC_AES_CBC_ENCRYPT = void (*)(const unsigned char *in, unsigned char *out, size_t length, const void *aes, unsigned char *ivec, const int enc);
+using FUNC_AES_SET_ENCRYPT_KEY = int (*)(const unsigned char *userKey, const int bits, void *aes);
 using FUNC_BIO_S_MEM = void *(*)();
 using FUNC_BIO_NEW = void *(*)(void *);
 using FUNC_BIO_PUTS = int (*)(void *, const char *);
@@ -97,6 +100,7 @@ private:
     void UpdateAuthStatus(const int status, const QString &message);
 
     void initEncryptionService();
+    void encryptSymmtricKey(const QString &account);
 
 private:
     DeepinAuthInterface *m_interface;
@@ -107,6 +111,7 @@ private:
     QString m_token;
     int m_encryptType;
     QString m_publicKey;
+    QString m_symmetricKey;
     ArrayInt m_encryptMethod;
     AuthFlag m_authType;
     QMap<QString, AuthControllerInter *> *m_authenticateControllers;
@@ -114,6 +119,8 @@ private:
     bool m_waitToken;
 
     void *m_encryptionHandle;
+    FUNC_AES_CBC_ENCRYPT m_F_AES_cbc_encrypt;
+    FUNC_AES_SET_ENCRYPT_KEY m_F_AES_set_encrypt_key;
     FUNC_BIO_NEW m_F_BIO_new;
     FUNC_BIO_PUTS m_F_BIO_puts;
     FUNC_BIO_S_MEM m_F_BIO_s_mem;
@@ -123,6 +130,7 @@ private:
     FUNC_RSA_FREE m_F_BIO_free;
     FUNC_RSA_PUBLIC_ENCRYPT m_F_RSA_public_encrypt;
     FUNC_RSA_SIZE m_F_RSA_size;
+    AES_KEY *m_AES;
     void *m_BIO;
     void *m_RSA;
 };
