@@ -252,12 +252,15 @@ void NativeUser::initData()
     m_shortTimeFormat = m_userInter->shortTimeFormat();
     m_weekdayFormat = m_userInter->weekdayFormat();
 
-    const QString avatarPath = m_userInter->iconFile();
+    const QString avatarPath = toLocalFile(m_userInter->iconFile());
     if (!avatarPath.isEmpty() && QFile(avatarPath).exists() && QFile(avatarPath).size() && QImageReader(avatarPath).canRead()) {
         m_avatar = avatarPath;
     }
     m_fullName = m_userInter->fullName();
-    m_greeterBackground = m_userInter->greeterBackground();
+    const QString backgroundPath = toLocalFile(m_userInter->greeterBackground());
+    if (!backgroundPath.isEmpty() && QFile(backgroundPath).exists() && QFile(backgroundPath).size() && QImageReader(backgroundPath).canRead()) {
+        m_greeterBackground = backgroundPath;
+    }
     m_keyboardLayout = m_userInter->layout();
     m_locale = m_userInter->locale();
     m_name = m_userInter->userName();
@@ -275,11 +278,6 @@ void NativeUser::initConfiguration(const QString &config)
 {
     QSettings settings(config, QSettings::IniFormat);
     settings.beginGroup("User");
-
-    m_avatar = settings.value("Icon").toString();
-    m_greeterBackground = toLocalFile(settings.value("GreeterBackground").toString());
-    m_locale = settings.value("Locale").toString();
-    m_isUse24HourFormat = settings.value("Use24HourFormat").toBool();
 
     //QSettings中分号为结束符，分号后面的数据不会被读取，因此使用QFile直接读取桌面背景图片路径
     QStringList desktopBackgrounds = readDesktopBackgroundPath(config);
@@ -311,7 +309,8 @@ void NativeUser::setKeyboardLayout(const QString &keyboard)
  */
 void NativeUser::updateAvatar(const QString &path)
 {
-    if (path == m_avatar) {
+    const QString pathTmp = toLocalFile(path);
+    if (pathTmp == m_avatar) {
         return;
     }
     if (!path.isEmpty() && QFile(path).exists() && QFile(path).size() && QImageReader(path).canRead()) {
