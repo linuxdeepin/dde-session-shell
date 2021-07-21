@@ -304,9 +304,11 @@ void AuthSingle::setNumLockStatus(const QString &path)
  */
 void AuthSingle::setKeyboardButtonInfo(const QString &text)
 {
-    if (!m_keyboardButton->isVisible()) {
+    static QString currentText;
+    if (currentText == text)
         return;
-    }
+
+    currentText = text;
     QString tmpText = text;
     tmpText = tmpText.split(";").first();
     /* special mark in Japanese */
