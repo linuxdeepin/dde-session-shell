@@ -363,6 +363,7 @@ void GreeterWorkek::switchToUser(std::shared_ptr<User> user)
     endAuthentication(m_account, AuthTypeAll);
 
     if (user->uid() == INT_MAX) {
+        m_greeter->authenticate();
         m_model->setAuthType(AuthTypeNone);
     }
     setCurrentUser(user);
