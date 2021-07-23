@@ -145,8 +145,6 @@ void UserLoginWidget::initUI()
     pixmap.setDevicePixelRatio(devicePixelRatioF());
     m_loginStateLabel->setPixmap(pixmap);
     nameLayout->addWidget(m_loginStateLabel, 0, Qt::AlignVCenter | Qt::AlignRight);
-    //设置内容居中显示
-    m_nameLabel->setAlignment(Qt::AlignCenter);
     m_nameLabel->setTextFormat(Qt::TextFormat::PlainText);
     //LoginType模式时让界面自动适应字体，UserListType模式时字体自动适应界面
     if (m_widgetType == LoginType) {
@@ -159,8 +157,8 @@ void UserLoginWidget::initUI()
     QPalette palette = m_nameLabel->palette();
     palette.setColor(QPalette::WindowText, Qt::white);
     m_nameLabel->setPalette(palette);
-    nameLayout->addWidget(m_nameLabel);
-    m_userLoginLayout->addWidget(m_nameWidget);
+    nameLayout->addWidget(m_nameLabel, 1, Qt::AlignVCenter | Qt::AlignLeft);
+    m_userLoginLayout->addWidget(m_nameWidget, 0, Qt::AlignHCenter);
     /* 用户名输入框 */
     m_accountEdit->setContextMenuPolicy(Qt::NoContextMenu);
     m_accountEdit->lineEdit()->setAlignment(Qt::AlignCenter);
