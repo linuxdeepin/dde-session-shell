@@ -47,6 +47,7 @@ protected:
 
 private:
     void initUI();
+    QPixmap loadSystemLogo();
     QString getVersion();
 
 private:

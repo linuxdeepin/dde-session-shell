@@ -51,7 +51,8 @@ LogoWidget::LogoWidget(QWidget *parent)
     , m_logoVersionLabel(new DLabel(this))
 {
     setObjectName("LogoWidget");
-
+    //设置QSizePolicy为固定高度,以保证右边版本号内容顶部能和图片对齐
+    setSizePolicy(QSizePolicy::Expanding, QSizePolicy::Fixed);
     m_locale = QLocale::system().name();
 
     initUI();
@@ -69,15 +70,16 @@ void LogoWidget::initUI()
 
     /* logo */
     m_logoLabel->setObjectName("Logo");
-    m_logoLabel->setPixmap([]() -> QPixmap {
-        const QPixmap &p = systemLogo(QSize());
-        const bool result = p.width() < PIXMAP_WIDTH && p.height() < PIXMAP_HEIGHT;
-        return result ? p : systemLogo(QSize(PIXMAP_WIDTH, PIXMAP_HEIGHT));
-    }());
+    QPixmap pixmap = loadSystemLogo();
+    m_logoLabel->setPixmap(pixmap);
     logoLayout->addWidget(m_logoLabel, 0, Qt::AlignBottom | Qt::AlignLeft);
 
     /* version */
     m_logoVersionLabel->setObjectName("LogoVersion");
+    //设置版本号显示部件自动拉伸,以保证高度和图标高度一致
+    m_logoVersionLabel->setSizePolicy(QSizePolicy::Expanding, QSizePolicy::Expanding);
+    //设置版本号在左上角显示,以保证内容顶部和图标顶部对齐
+    m_logoVersionLabel->setAlignment(Qt::AlignTop | Qt::AlignLeft);
 #ifdef SHENWEI_PLATFORM
     QPalette pe;
     pe.setColor(QPalette::WindowText, Qt::white);
@@ -87,19 +89,28 @@ void LogoWidget::initUI()
     //设置版本信息的默认字体为系统的默认字体以便于支持更多语言
     QFont font(m_logoVersionLabel->font());
     font.setFamily("Sans Serif");
+    font.setPixelSize(m_logoLabel->height() / 2);
     m_logoVersionLabel->setFont(font);
-
-    QString systemVersion = getVersion();
 
     if(DSysInfo::UosEdition::UosEducation == DSysInfo::uosEditionType()) {  //教育版登录界面不要显示系统版本号（和Logo冲突）
       //systemVersion = "";
       return;
     }
 
-    m_logoVersionLabel->setText(systemVersion);
-    logoLayout->addWidget(m_logoVersionLabel, 1, Qt::AlignTop | Qt::AlignLeft);
+    m_logoVersionLabel->setText(getVersion());
+    logoLayout->addWidget(m_logoVersionLabel);
 
     updateStyle(":/skin/login.qss", m_logoVersionLabel);
+
+    //设置最高高度为Logo的高度,以保证右边版本号内容顶部能和图片对齐
+    setFixedHeight(pixmap.height());
+}
+
+QPixmap LogoWidget::loadSystemLogo()
+{
+    const QPixmap &p = systemLogo(QSize());
+    const bool result = p.width() < PIXMAP_WIDTH && p.height() < PIXMAP_HEIGHT;
+    return result ? p : systemLogo(QSize(PIXMAP_WIDTH, PIXMAP_HEIGHT));
 }
 
 QString LogoWidget::getVersion()
@@ -133,8 +144,7 @@ void LogoWidget::resizeEvent(QResizeEvent *event)
      * 当系统名称图标比较大时，版本信息也会比较大，这里有待优化。
      */
     QFont font(m_logoVersionLabel->font());
-    int fontSize = m_logoLabel->height() / 2;
-    font.setPixelSize(fontSize);
+    font.setPixelSize(m_logoLabel->height() / 2);
     m_logoVersionLabel->setFont(font);
 
     QFrame::resizeEvent(event);
