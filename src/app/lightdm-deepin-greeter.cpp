@@ -178,6 +178,48 @@ static void set_auto_QT_SCALE_FACTOR() {
     }
 }
 
+static void init()
+{
+    SessionBaseModel *model = new SessionBaseModel(SessionBaseModel::AuthType::LightdmType);
+    GreeterWorkek *worker = new GreeterWorkek(model);
+
+    if (model->currentUser()) {
+        QTranslator translator;
+        translator.load("/usr/share/dde-session-shell/translations/dde-session-shell_" + model->currentUser()->locale().split(".").first());
+        DApplication::installTranslator(&translator);
+    }
+
+    QObject::connect(model, &SessionBaseModel::authFinished, model, [=](bool is_success) {
+        if (is_success)
+            set_rootwindow_cursor();
+    });
+
+    PropertyGroup *property_group = new PropertyGroup(worker);
+
+    property_group->addProperty("contentVisible");
+
+    auto createFrame = [&](QScreen *screen, int count) -> QWidget * {
+        LoginWindow *loginFrame = new LoginWindow(model);
+        loginFrame->setScreen(screen, count <= 0);
+        property_group->addObject(loginFrame);
+        QObject::connect(loginFrame, &LoginWindow::requestSwitchToUser, worker, &GreeterWorkek::switchToUser);
+        // QObject::connect(loginFrame, &LoginWindow::requestAuthUser, worker, &GreeterWorkek::authUser);
+        QObject::connect(loginFrame, &LoginWindow::requestSetLayout, worker, &GreeterWorkek::setLayout);
+        QObject::connect(worker, &GreeterWorkek::requestUpdateBackground, loginFrame, static_cast<void (LoginWindow::*)(const QString &)>(&LoginWindow::updateBackground));
+        QObject::connect(loginFrame, &LoginWindow::destroyed, property_group, &PropertyGroup::removeObject);
+
+        QObject::connect(loginFrame, &LoginWindow::requestCheckAccount, worker, &GreeterWorkek::checkAccount);
+        QObject::connect(loginFrame, &LoginWindow::requestStartAuthentication, worker, &GreeterWorkek::startAuthentication);
+        QObject::connect(loginFrame, &LoginWindow::sendTokenToAuth, worker, &GreeterWorkek::sendTokenToAuth);
+        loginFrame->show();
+        return loginFrame;
+    };
+
+    MultiScreenManager multi_screen_manager;
+    multi_screen_manager.register_for_mutil_screen(createFrame);
+    QObject::connect(model, &SessionBaseModel::visibleChanged, &multi_screen_manager, &MultiScreenManager::startRaiseContentFrame);
+}
+
 int main(int argc, char* argv[])
 {
     //for qt5platform-plugins load DPlatformIntegration or DPlatformIntegrationParent
@@ -227,44 +269,19 @@ int main(int argc, char* argv[])
 
     DLogManager::registerConsoleAppender();
 
-    SessionBaseModel *model = new SessionBaseModel(SessionBaseModel::AuthType::LightdmType);
-    GreeterWorkek *worker = new GreeterWorkek(model);
-
-    if(model->currentUser()) {
-        QTranslator translator;
-        translator.load("/usr/share/dde-session-shell/translations/dde-session-shell_" + model->currentUser()->locale().split(".").first());
-        a.installTranslator(&translator);
+    const QString serviceName = "com.deepin.daemon.Accounts";
+    QDBusConnectionInterface *interface = QDBusConnection::systemBus().interface();
+    if (interface->isServiceRegistered(serviceName)) {
+        init();
+    } else {
+        qWarning() << "Accounts service is not registered!";
+        QDBusServiceWatcher *serviceWatcher = new QDBusServiceWatcher(serviceName, QDBusConnection::systemBus());
+        QObject::connect(serviceWatcher, &QDBusServiceWatcher::serviceRegistered, &a, [serviceWatcher](const QString &service) {
+            qInfo() << "Accounts service is ready" << service;
+            init();
+            serviceWatcher->deleteLater();
+        });
     }
-
-    QObject::connect(model, &SessionBaseModel::authFinished, model, [ = ] (bool is_success) {
-        if (is_success)
-            set_rootwindow_cursor();
-    });
-
-    PropertyGroup *property_group = new PropertyGroup(worker);
-
-    property_group->addProperty("contentVisible");
-
-    auto createFrame = [&] (QScreen *screen, int count) -> QWidget* {
-        LoginWindow *loginFrame = new LoginWindow(model);
-        loginFrame->setScreen(screen, count <= 0);
-        property_group->addObject(loginFrame);
-        QObject::connect(loginFrame, &LoginWindow::requestSwitchToUser, worker, &GreeterWorkek::switchToUser);
-        // QObject::connect(loginFrame, &LoginWindow::requestAuthUser, worker, &GreeterWorkek::authUser);
-        QObject::connect(loginFrame, &LoginWindow::requestSetLayout, worker, &GreeterWorkek::setLayout);
-        QObject::connect(worker, &GreeterWorkek::requestUpdateBackground, loginFrame, static_cast<void (LoginWindow::*)(const QString &)>(&LoginWindow::updateBackground));
-        QObject::connect(loginFrame, &LoginWindow::destroyed, property_group, &PropertyGroup::removeObject);
-
-        QObject::connect(loginFrame, &LoginWindow::requestCheckAccount, worker, &GreeterWorkek::checkAccount);
-        QObject::connect(loginFrame, &LoginWindow::requestStartAuthentication, worker, &GreeterWorkek::startAuthentication);
-        QObject::connect(loginFrame, &LoginWindow::sendTokenToAuth, worker, &GreeterWorkek::sendTokenToAuth);
-        loginFrame->show();
-        return loginFrame;
-    };
-
-    MultiScreenManager multi_screen_manager;
-    multi_screen_manager.register_for_mutil_screen(createFrame);
-    QObject::connect(model, &SessionBaseModel::visibleChanged, &multi_screen_manager, &MultiScreenManager::startRaiseContentFrame);
 
     return a.exec();
 }
