@@ -44,7 +44,8 @@ Provides: lightdm-greeter
 Recommends: onboard
 Conflicts: dde-workspace,
  deepin-notifications,
- dde-session-ui (<< 5.0.0)
+ dde-session-ui (<< 5.0.0),
+ dde-preload
 Replaces: deepin-notifications
 Breaks: dde-workspace
 Description: deepin desktop-environment - dde-session-shell module
