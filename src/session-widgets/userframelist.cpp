@@ -348,3 +348,10 @@ void UserFrameList::focusOutEvent(QFocusEvent *event)
     if (currentSelectedUser != nullptr)
         currentSelectedUser->setSelected(false);
 }
+
+void UserFrameList::resizeEvent(QResizeEvent *event)
+{
+    updateLayout();
+
+    QWidget::resizeEvent(event);
+}
