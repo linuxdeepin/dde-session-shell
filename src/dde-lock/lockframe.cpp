@@ -153,6 +153,12 @@ bool LockFrame::event(QEvent *event)
     return FullscreenBackground::event(event);
 }
 
+void LockFrame::resizeEvent(QResizeEvent *event)
+{
+    m_lockContent->resize(size());
+    FullscreenBackground::resizeEvent(event);
+}
+
 bool LockFrame::handlePoweroffKey()
 {
     QDBusInterface powerInter("com.deepin.daemon.Power","/com/deepin/daemon/Power","com.deepin.daemon.Power");
