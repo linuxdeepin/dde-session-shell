@@ -100,7 +100,7 @@ QList<InhibitWarnView::InhibitorData> WarningContent::listInhibitors(const Sessi
                     if (connection.interface()->isServiceRegistered(inhibitor.who)) {
 
                         QDBusInterface ifc(inhibitor.who, "/com/deepin/InhibitHint", "com.deepin.InhibitHint", connection);
-                        QDBusMessage msg = ifc.call("Get", getenv("LANG"), inhibitor.why);
+                        QDBusMessage msg = ifc.call("Get", qgetenv("LANG"), inhibitor.why);
                         if (msg.type() == QDBusMessage::ReplyMessage) {
                             InhibitHint inhibitHint = qdbus_cast<InhibitHint>(msg.arguments().at(0).value<QDBusArgument>());
 
