@@ -363,7 +363,7 @@ void NativeUser::updateFullName(const QString &fullName)
         return;
     }
     m_fullName = fullName;
-    emit displayNameChanged(fullName);
+    emit displayNameChanged(m_fullName.isEmpty() ? m_name : m_fullName);
 }
 
 /**
@@ -577,7 +577,7 @@ void ADDomainUser::setFullName(const QString &fullName)
         return;
     }
     m_fullName = fullName;
-    emit displayNameChanged(fullName);
+    emit displayNameChanged(m_fullName.isEmpty() ? m_name : m_fullName);
 }
 
 void ADDomainUser::setName(const QString &name)
