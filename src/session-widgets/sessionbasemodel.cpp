@@ -238,6 +238,7 @@ void SessionBaseModel::addUser(const QString &path)
     std::shared_ptr<NativeUser> user(new NativeUser(path));
     m_users->insert(path, user);
     emit userAdded(user);
+    emit userListChanged(m_users->values());
 }
 
 /**
@@ -270,6 +271,7 @@ void SessionBaseModel::removeUser(const QString &path)
     const std::shared_ptr<User> user = m_users->value(path);
     m_users->remove(path);
     emit userRemoved(user);
+    emit userListChanged(m_users->values());
 }
 
 /**
@@ -417,6 +419,9 @@ void SessionBaseModel::updateLoginedUserList(const QString &list)
             }
             const QString path = QString("/com/deepin/daemon/Accounts/User") + QString::number(uid);
             if (!m_loginedUsers->contains(path)) {
+                // 对于通过自定义窗口输入的账户(域账户), 此时账户还没添加进来，导致下面m_users->value(path)为空指针，调用会导致程序奔溃
+                // 因此在登录时，对于新增的账户，调用addUser先将账户添加进来，然后再去更新对应账户的登录状态
+                addUser(path);
                 m_loginedUsers->insert(path, m_users->value(path));
                 m_users->value(path)->updateLoginStatus(true);
             } else {
