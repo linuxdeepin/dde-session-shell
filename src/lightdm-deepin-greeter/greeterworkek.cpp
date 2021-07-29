@@ -161,7 +161,8 @@ void GreeterWorkek::initConnections()
                     if (m_model->currentModeState() != SessionBaseModel::ModeStatus::PasswordMode)
                         m_model->setCurrentModeState(SessionBaseModel::ModeStatus::PasswordMode);
                     endAuthentication(m_account, type);
-                    QTimer::singleShot(10, this, [=] {
+                    // TODO: 信号时序问题,考虑优化,Bug 89056
+                    QTimer::singleShot(50, this, [=] {
                         m_model->updateAuthStatus(type, status, message);
                     });
                     break;
