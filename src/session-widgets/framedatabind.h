@@ -14,6 +14,7 @@ public:
     int registerFunction(const QString &flag, std::function<void (QVariant)> function);
     void unRegisterFunction(const QString &flag, int index);
 
+    QVariant getValue(const QString &flag) const;
     void updateValue(const QString &flag, const QVariant &value);
 
     void refreshData(const QString &flag);

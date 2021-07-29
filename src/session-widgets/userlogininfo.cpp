@@ -38,6 +38,8 @@ UserLoginInfo::UserLoginInfo(SessionBaseModel *model, QObject *parent)
     , m_userFrameList(new UserFrameList)
 {
     m_userFrameList->setModel(model);
+    /* 初始化验证界面 */
+    m_userLoginWidget->updateWidgetShowType(model->getAuthProperty().AuthType);
     initConnect();
 }
 
@@ -60,6 +62,11 @@ void UserLoginInfo::setUser(std::shared_ptr<User> user)
     m_userLoginWidget->updateName(user->displayName());
     m_userLoginWidget->updateAvatar(user->avatar());
     m_userLoginWidget->updateAuthType(m_model->currentType());
+    /* 初始化锁定信息 */
+    m_userLoginWidget->updateLimitsInfo(user->limitsInfo());
+    /* 初始化验证状态*/
+    m_userLoginWidget->updateAuthStatus();
+
     // m_userLoginWidget->updateIsLockNoPassword(m_model->isLockNoPassword());
     // m_userLoginWidget->disablePassword(user.get()->isLock(), user->lockTime());
     m_userLoginWidget->updateKeyboardList(user->keyboardLayoutList());

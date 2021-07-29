@@ -47,6 +47,15 @@ void FrameDataBind::unRegisterFunction(const QString &flag, int index)
     }
 }
 
+QVariant FrameDataBind::getValue(const QString &flag) const
+{
+    if (m_datas.contains(flag)) {
+        return m_datas[flag];
+    } else {
+        return QVariant();
+    }
+}
+
 void FrameDataBind::updateValue(const QString &flag, const QVariant &value)
 {
     m_datas[flag] = value;

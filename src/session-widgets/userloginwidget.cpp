@@ -299,7 +299,7 @@ void UserLoginWidget::updateWidgetShowType(const int type)
     if (type == AuthTypeNone) {
         if (m_model->currentUser()->isNoPasswordLogin()) {
             m_lockButton->setEnabled(true);
-        } else {
+        } else if (m_model->isServerModel()) {
             m_accountEdit->show();
             m_nameLabel->hide();
         }
@@ -634,41 +634,57 @@ void UserLoginWidget::updateAuthResult(const int type, const int status, const Q
     case AuthTypePassword:
         if (m_passwordAuth != nullptr) {
             m_passwordAuth->setAuthResult(status, message);
+            FrameDataBind::Instance()->updateValue("PasswordAuthStatus", status);
+            FrameDataBind::Instance()->updateValue("PasswordAuthMsg", message);
         }
         break;
     case AuthTypeFingerprint:
         if (m_fingerprintAuth != nullptr) {
             m_fingerprintAuth->setAuthResult(status, message);
+            FrameDataBind::Instance()->updateValue("FingerprintAuthStatus", status);
+            FrameDataBind::Instance()->updateValue("FingerprintAuthMsg", message);
         }
         break;
     case AuthTypeFace:
         if (m_faceAuth != nullptr) {
             m_faceAuth->setAuthResult(status, message);
+            FrameDataBind::Instance()->updateValue("FaceAuthStatus", status);
+            FrameDataBind::Instance()->updateValue("FaceAuthMsg", message);
         }
         break;
     case AuthTypeActiveDirectory:
         if (m_activeDirectoryAuth != nullptr) {
             m_activeDirectoryAuth->setAuthResult(status, message);
+            FrameDataBind::Instance()->updateValue("ActiveDirectoryAuthStatus", status);
+            FrameDataBind::Instance()->updateValue("ActiveDirectoryAuthMsg", message);
         }
         break;
     case AuthTypeUkey:
         if (m_ukeyAuth != nullptr) {
             m_ukeyAuth->setAuthResult(status, message);
+            FrameDataBind::Instance()->updateValue("UKeyAuthStatus", status);
+            FrameDataBind::Instance()->updateValue("UKeyAuthMsg", message);
         }
         break;
     case AuthTypeFingerVein:
         if (m_fingerVeinAuth != nullptr) {
             m_fingerVeinAuth->setAuthResult(status, message);
+            FrameDataBind::Instance()->updateValue("FingerVeinAuthStatus", status);
+            FrameDataBind::Instance()->updateValue("FingerVeinAuthMsg", message);
         }
         break;
     case AuthTypeIris:
         if (m_irisAuth != nullptr) {
             m_irisAuth->setAuthResult(status, message);
+            FrameDataBind::Instance()->updateValue("IrisAuthStatus", status);
+            FrameDataBind::Instance()->updateValue("IrisAuthMsg", message);
         }
         break;
     case AuthTypeSingle:
         if (m_singleAuth != nullptr) {
             m_singleAuth->setAuthResult(status, message);
+            FrameDataBind::Instance()->updateValue("SingleAuthStatus", status);
+            FrameDataBind::Instance()->updateValue("SingleAuthMsg", message);
         }
         break;
     case AuthTypeAll:
@@ -1033,6 +1049,73 @@ void UserLoginWidget::updateLimitsInfo(const QMap<int, User::LimitsInfo> *limits
             break;
         }
         ++i;
+    }
+}
+
+void UserLoginWidget::updateAuthStatus()
+{
+    if (m_singleAuth != nullptr) {
+        QVariant authStatus = FrameDataBind::Instance()->getValue("SingleAuthStatus");
+        QVariant authMsg = FrameDataBind::Instance()->getValue("SingleAuthMsg");
+        if (!authStatus.isNull() && !authMsg.isNull()) {
+            m_singleAuth->setAuthResult(authStatus.toInt(), authMsg.toString());
+        }
+    }
+
+    if (m_passwordAuth != nullptr) {
+        QVariant authStatus = FrameDataBind::Instance()->getValue("PasswordAuthStatus");
+        QVariant authMsg = FrameDataBind::Instance()->getValue("PasswordAuthMsg");
+        if (!authStatus.isNull() && !authMsg.isNull()) {
+            m_passwordAuth->setAuthResult(authStatus.toInt(), authMsg.toString());
+        }
+    }
+
+    if (m_fingerprintAuth != nullptr) {
+        QVariant authStatus = FrameDataBind::Instance()->getValue("FingerprintAuthStatus");
+        QVariant authMsg = FrameDataBind::Instance()->getValue("FingerprintAuthMsg");
+        if (authStatus.isDetached() && !authMsg.isNull()) {
+            m_fingerprintAuth->setAuthResult(authStatus.toInt(), authMsg.toString());
+        }
+    }
+
+    if (m_faceAuth != nullptr) {
+        QVariant authStatus = FrameDataBind::Instance()->getValue("FaceAuthStatus");
+        QVariant authMsg = FrameDataBind::Instance()->getValue("FaceAuthMsg");
+        if (!authStatus.isNull() && !authMsg.isNull()) {
+            m_faceAuth->setAuthResult(authStatus.toInt(), authMsg.toString());
+        }
+    }
+
+    if (m_ukeyAuth != nullptr) {
+        QVariant authStatus = FrameDataBind::Instance()->getValue("UKeyAuthStatus");
+        QVariant authMsg = FrameDataBind::Instance()->getValue("UKeyAuthMsg");
+        if (!authStatus.isNull() && !authMsg.isNull()) {
+            m_ukeyAuth->setAuthResult(authStatus.toInt(), authMsg.toString());
+        }
+    }
+
+    if (m_fingerVeinAuth != nullptr) {
+        QVariant authStatus = FrameDataBind::Instance()->getValue("FingerVeinAuthStatus");
+        QVariant authMsg = FrameDataBind::Instance()->getValue("FingerVeinAuthMsg");
+        if (!authStatus.isNull() && !authMsg.isNull()) {
+            m_fingerVeinAuth->setAuthResult(authStatus.toInt(), authMsg.toString());
+        }
+    }
+
+    if (m_irisAuth != nullptr) {
+        QVariant authStatus = FrameDataBind::Instance()->getValue("FrisAuthStatus");
+        QVariant authMsg = FrameDataBind::Instance()->getValue("IrisVeinAuthMsg");
+        if (!authStatus.isNull() && !authMsg.isNull()) {
+            m_irisAuth->setAuthResult(authStatus.toInt(), authMsg.toString());
+        }
+    }
+
+    if (m_PINAuth != nullptr) {
+        QVariant authStatus = FrameDataBind::Instance()->getValue("PINAuthStatus");
+        QVariant authMsg = FrameDataBind::Instance()->getValue("PINAuthMsg");
+        if (!authStatus.isNull() && !authMsg.isNull()) {
+            m_PINAuth->setAuthResult(authStatus.toInt(), authMsg.toString());
+        }
     }
 }
 
