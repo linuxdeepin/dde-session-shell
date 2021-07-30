@@ -32,6 +32,7 @@
         </key>
         <key name='switchuser' type='i'>
             <default>1</default>
+            <range min="0" max="2"/>
             <summary>switchuser</summary>
             <description>
                 0: always show switch user button
