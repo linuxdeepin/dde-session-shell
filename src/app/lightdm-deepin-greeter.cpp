@@ -245,9 +245,9 @@ int main(int argc, char* argv[])
 
     property_group->addProperty("contentVisible");
 
-    auto createFrame = [&] (QScreen *screen) -> QWidget* {
+    auto createFrame = [&] (QScreen *screen, int count) -> QWidget* {
         LoginWindow *loginFrame = new LoginWindow(model);
-        loginFrame->setScreen(screen);
+        loginFrame->setScreen(screen, count <= 0);
         property_group->addObject(loginFrame);
         QObject::connect(loginFrame, &LoginWindow::requestSwitchToUser, worker, &GreeterWorkek::switchToUser);
         // QObject::connect(loginFrame, &LoginWindow::requestAuthUser, worker, &GreeterWorkek::authUser);
@@ -258,14 +258,13 @@ int main(int argc, char* argv[])
         QObject::connect(loginFrame, &LoginWindow::requestCheckAccount, worker, &GreeterWorkek::checkAccount);
         QObject::connect(loginFrame, &LoginWindow::requestStartAuthentication, worker, &GreeterWorkek::startAuthentication);
         QObject::connect(loginFrame, &LoginWindow::sendTokenToAuth, worker, &GreeterWorkek::sendTokenToAuth);
-        QObject::connect(model, &SessionBaseModel::visibleChanged, loginFrame, &LoginWindow::setVisible);
+        loginFrame->show();
         return loginFrame;
     };
 
     MultiScreenManager multi_screen_manager;
     multi_screen_manager.register_for_mutil_screen(createFrame);
     QObject::connect(model, &SessionBaseModel::visibleChanged, &multi_screen_manager, &MultiScreenManager::startRaiseContentFrame);
-    model->setVisible(true);
 
     return a.exec();
 }

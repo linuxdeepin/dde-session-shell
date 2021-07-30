@@ -138,7 +138,8 @@ int main(int argc, char *argv[])
     shutdownAgent.setModel(model);
     DBusShutdownFrontService shutdownServices(&shutdownAgent);
 
-    auto createFrame = [&] (QScreen *screen) -> QWidget* {
+    auto createFrame = [&] (QScreen *screen, int count) -> QWidget* {
+        Q_UNUSED(count);
         LockFrame *lockFrame = new LockFrame(model);
         lockFrame->setScreen(screen);
         property_group->addObject(lockFrame);

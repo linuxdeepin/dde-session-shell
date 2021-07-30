@@ -47,7 +47,7 @@ public:
 public slots:
     void updateBackground(const QString &path);
     void updateBlurBackground(const QString &path);
-    void setScreen(QScreen *screen);
+    void setScreen(QScreen *screen, bool isVisible = true);
     void setContentVisible(bool contentVisible);
     void setIsBlackMode(bool is_black);
     void setIsHibernateMode();

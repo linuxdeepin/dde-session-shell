@@ -20,7 +20,7 @@ MultiScreenManager::MultiScreenManager(QObject *parent)
     connect(m_raiseContentFrameTimer, &QTimer::timeout, this, &MultiScreenManager::raiseContentFrame);
 }
 
-void MultiScreenManager::register_for_mutil_screen(std::function<QWidget *(QScreen *)> function)
+void MultiScreenManager::register_for_mutil_screen(std::function<QWidget *(QScreen *, int)> function)
 {
     m_registerFunction = function;
 
@@ -41,7 +41,7 @@ void MultiScreenManager::onScreenAdded(QScreen *screen)
         return;
     }
 
-    m_frames[screen] = m_registerFunction(screen);
+    m_frames[screen] = m_registerFunction(screen, m_frames.size());
 
     startRaiseContentFrame();
 }

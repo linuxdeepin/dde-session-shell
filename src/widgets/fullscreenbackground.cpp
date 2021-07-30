@@ -115,10 +115,10 @@ void FullscreenBackground::enableEnterEvent(bool enable)
     m_enableEnterEvent = enable;
 }
 
-void FullscreenBackground::setScreen(QScreen *screen)
+void FullscreenBackground::setScreen(QScreen *screen, bool isVisible)
 {
     QScreen *primary_screen = QGuiApplication::primaryScreen();
-    if (primary_screen == screen && !m_isBlackMode) {
+    if (primary_screen == screen && !m_isBlackMode && isVisible) {
         m_content->show();
         m_primaryShowFinished = true;
         emit contentVisibleChanged(true);

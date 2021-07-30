@@ -14,7 +14,7 @@ class MultiScreenManager : public QObject
 public:
     explicit MultiScreenManager(QObject *parent = nullptr);
 
-    void register_for_mutil_screen(std::function<QWidget* (QScreen *)> function);
+    void register_for_mutil_screen(std::function<QWidget* (QScreen *, int)> function);
     void startRaiseContentFrame();
 
 private:
@@ -23,7 +23,7 @@ private:
     void raiseContentFrame();
 
 private:
-    std::function<QWidget* (QScreen *)> m_registerFunction;
+    std::function<QWidget* (QScreen *, int)> m_registerFunction;
     QMap<QScreen*, QWidget*> m_frames;
     QTimer *m_raiseContentFrameTimer;
 };
