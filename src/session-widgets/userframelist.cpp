@@ -48,7 +48,7 @@ UserFrameList::UserFrameList(QWidget *parent)
     QScroller::grabGesture(m_scrollArea->viewport(), QScroller::LeftMouseButtonGesture);
     QScroller *scroller = QScroller::scroller(m_scrollArea->viewport());
     QScrollerProperties sp;
-    sp.setScrollMetric(QScrollerProperties::VerticalOvershootPolicy, QScrollerProperties::OvershootAlwaysOff);
+    sp.setScrollMetric(QScrollerProperties::VerticalOvershootPolicy, QScrollerProperties::OvershootWhenScrollable);
     scroller->setScrollerProperties(sp);
 
     std::function<void(QVariant)> function = std::bind(&UserFrameList::onOtherPageChanged, this, std::placeholders::_1);
