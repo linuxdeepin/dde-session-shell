@@ -224,8 +224,8 @@ void LockWorker::initConnections()
         }
     });
     connect(m_model, &SessionBaseModel::onPowerActionChanged, this, &LockWorker::doPowerAction);
-    connect(m_model, &SessionBaseModel::visibleChanged, this, [=] (bool visible) {
-        if (visible) {
+    connect(m_model, &SessionBaseModel::visibleChanged, this, [=](bool visible) {
+        if (visible && m_model->currentModeState() != SessionBaseModel::ShutDownMode) {
             createAuthentication(m_model->currentUser()->name());
         } else {
             m_resetSessionTimer->stop();
@@ -233,7 +233,7 @@ void LockWorker::initConnections()
         }
         setLocked(visible);
     });
-    connect(m_model, &SessionBaseModel::onStatusChanged, this, [=] (SessionBaseModel::ModeStatus status) {
+    connect(m_model, &SessionBaseModel::onStatusChanged, this, [=](SessionBaseModel::ModeStatus status) {
         if (status == SessionBaseModel::ModeStatus::PowerMode || status == SessionBaseModel::ModeStatus::ShutDownMode) {
             checkPowerInfo();
         }
@@ -303,7 +303,7 @@ void LockWorker::doPowerAction(const SessionBaseModel::PowerAction action)
     case SessionBaseModel::PowerAction::RequireLock:
         m_sessionManagerInter->SetLocked(true);
         m_model->setCurrentModeState(SessionBaseModel::ModeStatus::PasswordMode);
-        // m_authFramework->AuthenticateByUser(m_model->currentUser());
+        createAuthentication(m_model->currentUser()->name());
         break;
     case SessionBaseModel::PowerAction::RequireLogout:
         m_sessionManagerInter->RequestLogout();
@@ -314,7 +314,7 @@ void LockWorker::doPowerAction(const SessionBaseModel::PowerAction action)
         break;
     case SessionBaseModel::PowerAction::RequireSwitchUser:
         m_model->setCurrentModeState(SessionBaseModel::ModeStatus::UserMode);
-        // m_authFramework->AuthenticateByUser(m_model->currentUser());
+        createAuthentication(m_model->currentUser()->name());
         break;
     default:
         break;
@@ -485,7 +485,7 @@ void LockWorker::destoryAuthentication(const QString &account)
 }
 
 /**
- * @brief 开启认证服务    -- 作为接口提供给上层，屏蔽底层细节
+ * @brief 开启认证服务    -- 作为接口提供给上层，隐藏底层细节
  *
  * @param account   账户
  * @param authType  认证类型（可传入一种或多种）
@@ -506,7 +506,7 @@ void LockWorker::startAuthentication(const QString &account, const int authType)
         m_authFramework->CreateAuthenticate(account);
         break;
     }
-    QTimer::singleShot(10, this, [=]  {
+    QTimer::singleShot(10, this, [=] {
         m_model->updateLimitedInfo(m_authFramework->GetLimitedInfo(account));
     });
 }
