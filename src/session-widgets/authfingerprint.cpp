@@ -214,6 +214,7 @@ void AuthFingerprint::updateUnlockPrompt()
         });
         qInfo() << "Waiting authentication service...";
     }
+    update();
 }
 
 void AuthFingerprint::mouseReleaseEvent(QMouseEvent *event)

@@ -355,6 +355,7 @@ void AuthUKey::updateUnlockPrompt()
         });
         qInfo() << "Waiting authentication service...";
     }
+    update();
 }
 
 bool AuthUKey::eventFilter(QObject *watched, QEvent *event)

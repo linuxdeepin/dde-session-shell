@@ -371,6 +371,7 @@ void AuthSingle::updateUnlockPrompt()
         });
         qInfo() << "Waiting authentication service...";
     }
+    update();
 }
 
 bool AuthSingle::eventFilter(QObject *watched, QEvent *event)

@@ -374,6 +374,7 @@ void AuthPassword::updateUnlockPrompt()
         });
         qInfo() << "Waiting authentication service...";
     }
+    update();
 }
 
 bool AuthPassword::eventFilter(QObject *watched, QEvent *event)
