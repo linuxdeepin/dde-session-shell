@@ -78,6 +78,7 @@ void DeepinAuthFramework::CreateAuthenticate(const QString &account)
     m_account = account;
     DestoryAuthenticate();
     m_cancelAuth = false;
+    m_waitToken = true;
     int rc = pthread_create(&m_PAMAuthThread, nullptr, &PAMAuthWorker, this);
 
     if (rc != 0) {
@@ -244,6 +245,9 @@ fail:
  */
 void DeepinAuthFramework::SendToken(const QString &token)
 {
+    if (!m_waitToken) {
+        return;
+    }
     qInfo() << "Send token to PAM";
     m_token = token;
     m_waitToken = false;
