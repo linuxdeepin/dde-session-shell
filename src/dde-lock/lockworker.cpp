@@ -185,7 +185,7 @@ void LockWorker::initConnections()
     connect(m_login1SessionSelf, &Login1SessionSelf::ActiveChanged, this, [=](bool active) {
         qDebug() << "DBusLockService::ActiveChanged:" << active;
         if (active) {
-            createAuthentication(m_account);
+            createAuthentication(m_model->currentUser()->name());
         } else {
             endAuthentication(m_account, AuthTypeAll);
             destoryAuthentication(m_account);
@@ -193,10 +193,12 @@ void LockWorker::initConnections()
     });
     /* org.freedesktop.login1.Manager */
     connect(m_login1Inter, &DBusLogin1Manager::PrepareForSleep, this, [=](bool isSleep) {
+        qDebug() << "DBusLogin1Manager::PrepareForSleep:" << isSleep;
         if (isSleep) {
             endAuthentication(m_account, AuthTypeAll);
+            destoryAuthentication(m_account);
         } else {
-            createAuthentication(m_account);
+            createAuthentication(m_model->currentUser()->name());
         }
         emit m_model->prepareForSleep(isSleep);
     });

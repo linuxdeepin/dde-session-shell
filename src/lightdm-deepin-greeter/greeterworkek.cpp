@@ -207,10 +207,12 @@ void GreeterWorkek::initConnections()
     });
     /* org.freedesktop.login1.Manager */
     connect(m_login1Inter, &DBusLogin1Manager::PrepareForSleep, this, [=](bool isSleep) {
+        qDebug() << "DBusLogin1Manager::PrepareForSleep:" << isSleep;
         if (isSleep) {
             endAuthentication(m_account, AuthTypeAll);
+            destoryAuthentication(m_account);
         } else {
-            createAuthentication(m_account);
+            createAuthentication(m_model->currentUser()->name());
         }
     });
     /* com.deepin.dde.LockService */
