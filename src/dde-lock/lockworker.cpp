@@ -40,9 +40,9 @@ LockWorker::LockWorker(SessionBaseModel *const model, QObject *parent)
     initData();
     initConfiguration();
 
-    if (DSysInfo::deepinType() == DSysInfo::DeepinServer || m_model->isActiveDirectoryDomain()) {
+    if (DSysInfo::deepinType() == DSysInfo::DeepinServer || m_model->allowShowCustomUser()) {
         std::shared_ptr<User> user(new User());
-        m_model->setIsServerModel(DSysInfo::deepinType() == DSysInfo::DeepinServer || !m_model->isActiveDirectoryDomain());
+        m_model->setIsServerModel(DSysInfo::deepinType() == DSysInfo::DeepinServer);
         m_model->addUser(user);
     }
 
@@ -264,7 +264,9 @@ void LockWorker::initConfiguration()
     m_model->setAlwaysShowUserSwitchButton(switchUserButtonValue == "always");
     m_model->setAllowShowUserSwitchButton(switchUserButtonValue == "ondemand");
 
-    m_model->setActiveDirectoryEnabled(valueByQSettings<bool>("", "loginPromptInput", false));
+    QDBusInterface ifc("com.deepin.udcp.iam", "/com/deepin/udcp/iam", "com.deepin.udcp.iam", QDBusConnection::systemBus(), this);
+    const bool allowShowCustomUser = valueByQSettings<bool>("", "loginPromptInput", false) || ifc.property("Enable").toBool();
+    m_model->setAllowShowCustomUser(allowShowCustomUser);
 
     checkPowerInfo();
 }

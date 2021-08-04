@@ -201,16 +201,16 @@ void SessionBaseModel::setIsCheckedInhibit(bool checked)
 }
 
 /**
- * @brief 域状态
+ * @brief 显示自定义用户
  *
- * @param enable
+ * @param allowShowCustomUser
  */
-void SessionBaseModel::setActiveDirectoryEnabled(const bool enable)
+void SessionBaseModel::setAllowShowCustomUser(const bool allowShowCustomUser)
 {
-    if (enable == m_isActiveDirectoryDomain) {
+    if (allowShowCustomUser == m_allowShowCustomUser) {
         return;
     }
-    m_isActiveDirectoryDomain = enable;
+    m_allowShowCustomUser = allowShowCustomUser;
 }
 
 /**

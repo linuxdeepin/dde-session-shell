@@ -126,8 +126,8 @@ public:
     inline bool isCheckedInhibit() const { return m_isCheckedInhibit; }
     void setIsCheckedInhibit(bool checked);
 
-    inline bool isActiveDirectoryDomain() const { return m_isActiveDirectoryDomain; }
-    void setActiveDirectoryEnabled(const bool enable);
+    inline bool allowShowCustomUser() const { return m_allowShowCustomUser; }
+    void setAllowShowCustomUser(const bool allowShowCustomUser);
 
     inline const QList<std::shared_ptr<User>> getUserList() const { return m_users->values(); }
 
@@ -215,7 +215,7 @@ private:
     bool m_isBlackMode;
     bool m_isHibernateMode;
     bool m_isLock = false;
-    bool m_isActiveDirectoryDomain;
+    bool m_allowShowCustomUser;
     int m_userListSize = 0;
     AuthType m_currentType;
     QList<std::shared_ptr<User>> m_userList;
