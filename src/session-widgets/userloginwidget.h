@@ -101,6 +101,7 @@ public slots:
     void updateName(const QString &name);
     void updateLimitsInfo(const QMap<int, User::LimitsInfo> *limitsInfo);
     void updateAuthStatus();
+    void clearAuthStatus();
     void updateLoginState(const bool loginState);
     void updateKeyboardInfo(const QString &text);
     void updateKeyboardList(const QStringList &list);

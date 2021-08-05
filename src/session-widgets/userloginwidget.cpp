@@ -1152,6 +1152,26 @@ void UserLoginWidget::updateAuthStatus()
     }
 }
 
+void UserLoginWidget::clearAuthStatus()
+{
+    FrameDataBind::Instance()->clearValue("PasswordAuthStatus");
+    FrameDataBind::Instance()->clearValue("PasswordAuthMsg");
+    FrameDataBind::Instance()->clearValue("FingerprintAuthStatus");
+    FrameDataBind::Instance()->clearValue("FingerprintAuthMsg");
+    FrameDataBind::Instance()->clearValue("FaceAuthStatus");
+    FrameDataBind::Instance()->clearValue("FaceAuthMsg");
+    FrameDataBind::Instance()->clearValue("ActiveDirectoryAuthStatus");
+    FrameDataBind::Instance()->clearValue("ActiveDirectoryAuthMsg");
+    FrameDataBind::Instance()->clearValue("UKeyAuthStatus");
+    FrameDataBind::Instance()->clearValue("UKeyAuthMsg");
+    FrameDataBind::Instance()->clearValue("FingerVeinAuthStatus");
+    FrameDataBind::Instance()->clearValue("FingerVeinAuthMsg");
+    FrameDataBind::Instance()->clearValue("IrisAuthStatus");
+    FrameDataBind::Instance()->clearValue("IrisAuthMsg");
+    FrameDataBind::Instance()->clearValue("SingleAuthStatus");
+    FrameDataBind::Instance()->clearValue("SingleAuthMsg");
+}
+
 /**
  * @brief 设置当前键盘布局
  *

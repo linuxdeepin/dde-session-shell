@@ -63,6 +63,13 @@ void FrameDataBind::updateValue(const QString &flag, const QVariant &value)
     refreshData(flag);
 }
 
+void FrameDataBind::clearValue(const QString &flag)
+{
+    if (m_datas.contains(flag)) {
+        m_datas.remove(flag);
+    }
+}
+
 void FrameDataBind::refreshData(const QString &flag)
 {
     QList<std::function<void (QVariant)>> functions = m_registerList[flag].values();

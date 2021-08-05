@@ -16,6 +16,7 @@ public:
 
     QVariant getValue(const QString &flag) const;
     void updateValue(const QString &flag, const QVariant &value);
+    void clearValue(const QString &flag);
 
     void refreshData(const QString &flag);
 

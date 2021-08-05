@@ -57,6 +57,10 @@ void UserLoginInfo::setUser(std::shared_ptr<User> user)
     m_currentUserConnects << connect(user.get(), &User::keyboardLayoutChanged, m_userLoginWidget, &UserLoginWidget::updateKeyboardInfo, Qt::UniqueConnection);
     m_currentUserConnects << connect(user.get(), &User::noPasswordLoginChanged, this, &UserLoginInfo::updateLoginContent); // TODO
 
+    //需要清除上一个用户的验证状态数据
+    if (m_user != nullptr && m_user != user) {
+        m_userLoginWidget->clearAuthStatus();
+    }
     m_user = user;
 
     m_userLoginWidget->updateName(user->displayName());
