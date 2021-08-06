@@ -40,12 +40,6 @@ LockWorker::LockWorker(SessionBaseModel *const model, QObject *parent)
     initData();
     initConfiguration();
 
-    if (DSysInfo::deepinType() == DSysInfo::DeepinServer || m_model->allowShowCustomUser()) {
-        std::shared_ptr<User> user(new User());
-        m_model->setIsServerModel(DSysInfo::deepinType() == DSysInfo::DeepinServer);
-        m_model->addUser(user);
-    }
-
     m_resetSessionTimer->setInterval(15000);
     if (QGSettings::isSchemaInstalled("com.deepin.dde.session-shell")) {
          QGSettings gsetting("com.deepin.dde.session-shell", "/com/deepin/dde/session-shell/", this);
@@ -248,8 +242,22 @@ void LockWorker::initData()
     m_model->updateUserList(m_accountsInter->userList());
     m_model->updateLastLogoutUser(m_loginedInter->lastLogoutUser());
     m_model->updateLoginedUserList(m_loginedInter->userList());
+
+    /* com.deepin.udcp.iam */
+    QDBusInterface ifc("com.deepin.udcp.iam", "/com/deepin/udcp/iam", "com.deepin.udcp.iam", QDBusConnection::systemBus(), this);
+    const bool allowShowCustomUser = valueByQSettings<bool>("", "loginPromptInput", false) || ifc.property("Enable").toBool();
+    m_model->setAllowShowCustomUser(allowShowCustomUser);
+
+    /* init server user or custom user */
+    if (DSysInfo::deepinType() == DSysInfo::DeepinServer || m_model->allowShowCustomUser()) {
+        std::shared_ptr<User> user(new User());
+        m_model->setIsServerModel(DSysInfo::deepinType() == DSysInfo::DeepinServer);
+        m_model->addUser(user);
+    }
+
     /* com.deepin.dde.LockService */
     m_model->updateCurrentUser(m_lockInter->CurrentUser());
+
     /* com.deepin.daemon.Authenticate */
     m_model->updateFrameworkState(m_authFramework->GetFrameworkState());
     m_model->updateSupportedEncryptionType(m_authFramework->GetSupportedEncrypts());
@@ -264,10 +272,6 @@ void LockWorker::initConfiguration()
 
     m_model->setAlwaysShowUserSwitchButton(getGSettings("","switchuser").toInt() == AuthInterface::Always);
     m_model->setAllowShowUserSwitchButton(getGSettings("","switchuser").toInt() == AuthInterface::Ondemand);
-
-    QDBusInterface ifc("com.deepin.udcp.iam", "/com/deepin/udcp/iam", "com.deepin.udcp.iam", QDBusConnection::systemBus(), this);
-    const bool allowShowCustomUser = valueByQSettings<bool>("", "loginPromptInput", false) || ifc.property("Enable").toBool();
-    m_model->setAllowShowCustomUser(allowShowCustomUser);
 
     checkPowerInfo();
 }
