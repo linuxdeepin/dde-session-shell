@@ -262,9 +262,8 @@ void LockWorker::initConfiguration()
     const bool &LockNoPasswordValue = valueByQSettings<bool>("", "lockNoPassword", false);
     m_model->setIsLockNoPassword(LockNoPasswordValue);
 
-    const QString &switchUserButtonValue = valueByQSettings<QString>("Lock", "showSwitchUserButton", "ondemand");
-    m_model->setAlwaysShowUserSwitchButton(switchUserButtonValue == "always");
-    m_model->setAllowShowUserSwitchButton(switchUserButtonValue == "ondemand");
+    m_model->setAlwaysShowUserSwitchButton(getGSettings("","switchuser").toInt() == AuthInterface::Always);
+    m_model->setAllowShowUserSwitchButton(getGSettings("","switchuser").toInt() == AuthInterface::Ondemand);
 
     QDBusInterface ifc("com.deepin.udcp.iam", "/com/deepin/udcp/iam", "com.deepin.udcp.iam", QDBusConnection::systemBus(), this);
     const bool allowShowCustomUser = valueByQSettings<bool>("", "loginPromptInput", false) || ifc.property("Enable").toBool();
