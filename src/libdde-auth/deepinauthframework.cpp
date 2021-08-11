@@ -467,6 +467,8 @@ void DeepinAuthFramework::SendTokenToAuth(const QString &account, const int auth
     int ret = m_F_AES_set_encrypt_key(reinterpret_cast<unsigned char *>(m_symmetricKey.toLatin1().data()), m_symmetricKey.length() * 8, m_AES);
     if (ret < 0) {
         qCritical() << "Failed to set symmetric key!";
+        delete[] tokenBuffer;
+        delete[] ciphertext;
         return;
     }
     unsigned char *iv = new unsigned char[AES_BLOCK_SIZE];
