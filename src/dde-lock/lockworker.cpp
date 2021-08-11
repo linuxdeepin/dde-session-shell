@@ -234,6 +234,13 @@ void LockWorker::initConnections()
             checkPowerInfo();
         }
     });
+    connect(m_dbusInter,&DBusObjectInter::NameOwnerChanged, this , [=](const QString &name, const QString &oldOwner, const QString &newOwner) {
+        if (name == "com.deepin.daemon.Authenticate" && newOwner!= "" && m_model->visible() && m_sessionManagerInter->locked()) {
+            m_resetSessionTimer->stop();
+            endAuthentication(m_account, AuthTypeAll);
+            createAuthentication(m_model->currentUser()->name());
+        }
+    });
 }
 
 void LockWorker::initData()

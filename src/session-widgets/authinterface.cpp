@@ -38,6 +38,7 @@ AuthInterface::AuthInterface(SessionBaseModel *const model, QObject *parent)
     , m_login1Inter(new DBusLogin1Manager("org.freedesktop.login1", "/org/freedesktop/login1", QDBusConnection::systemBus(), this))
     , m_powerManagerInter(new PowerManagerInter("com.deepin.daemon.PowerManager", "/com/deepin/daemon/PowerManager", QDBusConnection::systemBus(), this))
     , m_authenticateInter(new Authenticate("com.deepin.daemon.Authenticate", "/com/deepin/daemon/Authenticate", QDBusConnection::systemBus(), this))
+    , m_dbusInter(new DBusObjectInter("org.freedesktop.DBus", "/org/freedesktop/DBus", QDBusConnection::systemBus(), this))
     , m_lastLogoutUid(0)
     , m_loginUserList(0)
 {
