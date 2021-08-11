@@ -180,6 +180,8 @@ bool KeyboardPlantformX11::isNumlockOn()
     bool result;
     unsigned int n = 0;
     static Display* d = QX11Info::display();
+    if (!d)
+        return false;
 
     XkbGetIndicatorState(d, XkbUseCoreKbd, &n);
     result = (n & 0x02) != 0;
@@ -190,6 +192,8 @@ bool KeyboardPlantformX11::isNumlockOn()
 bool KeyboardPlantformX11::setNumlockStatus(const bool &on)
 {
     Display* d = QX11Info::display();
+    if (!d)
+        return false;
 
     XKeyboardState x;
     XGetKeyboardControl(d, &x);

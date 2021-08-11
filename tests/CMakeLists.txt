@@ -1,5 +1,6 @@
 find_package(Qt5 COMPONENTS Test DBus REQUIRED)
 find_package(GTest REQUIRED)
+ADD_COMPILE_OPTIONS(-fno-access-control)
 
 # 用于测试覆盖率的编译条件
 set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -fprofile-arcs -ftest-coverage -lgcov")

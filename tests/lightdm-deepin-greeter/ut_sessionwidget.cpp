@@ -23,6 +23,13 @@ public:
 
 TEST_F(TstSessionWidget, coverage_main)
 {
-    ASSERT_NE(m_sessionwidget, nullptr);
+//    ASSERT_NE(m_sessionwidget, nullptr);
+    m_sessionwidget->show();
+    m_sessionwidget->sessionCount();
+//    m_sessionwidget->keyPressEvent(new QKeyEvent(QEvent::KeyPress, Qt::Key_Enter, Qt::NoModifier));
+//    m_sessionwidget->keyPressEvent(new QKeyEvent(QEvent::KeyPress, Qt::Key_Left, Qt::NoModifier));
+//    m_sessionwidget->keyPressEvent(new QKeyEvent(QEvent::KeyPress, Qt::Key_Right, Qt::NoModifier));
+//    m_sessionwidget->keyPressEvent(new QKeyEvent(QEvent::KeyPress, Qt::Key_Escape, Qt::NoModifier));
+
 }
 

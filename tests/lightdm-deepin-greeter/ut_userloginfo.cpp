@@ -2,6 +2,7 @@
 #include <QTest>
 #include <pwd.h>
 #include <QDebug>
+#include <greeterworkek.h>
 
 #include "userlogininfo.h"
 #include "sessionbasemodel.h"
@@ -18,11 +19,13 @@ protected:
     SessionBaseModel *m_sessionBaseModel;
     UserLoginInfo *m_userLoginInfo;
     LockContent *m_lockContent;
+    GreeterWorkek *m_greeterWorker;
 };
 
 void UT_UserLoginInfo::SetUp()
 {
     m_sessionBaseModel = new SessionBaseModel(SessionBaseModel::AuthType::LightdmType);
+    m_greeterWorker = new GreeterWorkek(m_sessionBaseModel);
     m_lockContent = new LockContent(m_sessionBaseModel);
     m_userLoginInfo = new UserLoginInfo(m_sessionBaseModel);
     m_userLoginInfo->getUserFrameList()->setModel(m_sessionBaseModel);

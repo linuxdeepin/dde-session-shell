@@ -15,7 +15,9 @@ protected:
 
 void UT_UserloginWidget::SetUp()
 {
-    // m_userloginwidget = new UserLoginWidget();
+    SessionBaseModel *mode = new SessionBaseModel(SessionBaseModel::AuthType::LightdmType);
+    m_userloginwidget = new UserLoginWidget(mode);
+
 }
 void UT_UserloginWidget::TearDown()
 {
@@ -26,6 +28,11 @@ void UT_UserloginWidget::TearDown()
 
 TEST_F(UT_UserloginWidget, init)
 {
+    m_userloginwidget->initFingerprintAuth(0);
+    m_userloginwidget->initFaceAuth(0);
+    m_userloginwidget->initUkeyAuth(0);
+    m_userloginwidget->initFingerVeinAuth(0);
+    m_userloginwidget->initPINAuth(0);
 //    EXPECT_TRUE(m_userloginwidget);
 
 //    std::shared_ptr<NativeUser> nativeUser(new NativeUser("/com/deepin/daemon/Accounts/User"+QString::number((getuid()))));
