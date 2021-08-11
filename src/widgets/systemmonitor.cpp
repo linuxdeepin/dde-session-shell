@@ -39,6 +39,7 @@ SystemMonitor::SystemMonitor(QWidget *parent) : QWidget(parent)
     m_state = Leave;
 
     m_icon = new QWidget;
+    m_icon->setAccessibleName("IconWidget");
     m_icon->installEventFilter(this);
     m_icon->setFixedSize(24, 24);
 

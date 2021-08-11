@@ -128,6 +128,15 @@ UserLoginWidget::~UserLoginWidget()
  */
 void UserLoginWidget::initUI()
 {
+    m_nameWidget->setAccessibleName("NameWidget");
+    m_nameLabel->setAccessibleName("NameLabel");
+    m_userAvatar->setAccessibleName("UserAvatar");
+    m_loginStateLabel->setAccessibleName("LoginStateLabel");
+    m_accountEdit->setAccessibleName("AccountEdit");
+    m_expiredStatusLabel->setAccessibleName("ExpiredStatusLabel");
+    m_lockButton->setAccessibleName("LockButton");
+    m_blurEffectWidget->setAccessibleName("BlurEffectWidget");
+
     if (m_widgetType == LoginType) {
         m_userLoginLayout->setContentsMargins(10, 0, 10, 0);
     } else {
@@ -186,13 +195,16 @@ void UserLoginWidget::initUI()
     m_blurEffectWidget->setBlurRectYRadius(BlurRectRadius);
     /* 键盘布局菜单 */
     m_kbLayoutBorder = new DArrowRectangle(DArrowRectangle::ArrowTop);
+    m_kbLayoutBorder->setAccessibleName("KeyboardLayoutBorder");
     m_kbLayoutWidget = new KbLayoutWidget(QStringList());
+    m_kbLayoutWidget->setAccessibleName("KeyboardWidget");
     m_kbLayoutBorder->setContent(m_kbLayoutWidget);
     m_kbLayoutBorder->setBackgroundColor(QColor(102, 102, 102)); //255*0.2
     m_kbLayoutBorder->setBorderColor(QColor(0, 0, 0, 0));
     m_kbLayoutBorder->setBorderWidth(0);
     m_kbLayoutBorder->setContentsMargins(0, 0, 0, 0);
     m_kbLayoutClip = new Dtk::Widget::DClipEffectWidget(m_kbLayoutBorder);
+    m_kbLayoutClip->setAccessibleName("KeyboardLayoutClip");
     updateClipPath();
 }
 
@@ -397,6 +409,7 @@ void UserLoginWidget::initSingleAuth(const int index)
         return;
     }
     m_singleAuth = new AuthSingle(this);
+    m_singleAuth->setAccessibleName("SingleAuth");
     m_singleAuth->setCapsStatus(m_capslockMonitor->isCapslockOn());
     m_userLoginLayout->insertWidget(index, m_singleAuth);
 

@@ -45,6 +45,7 @@ void LoginTipsWindow::initUI()
 
     // 提示内容布局
     m_content = new QLabel();
+    m_content->setAccessibleName("ContentLabel");
     m_content->setWordWrap(true);
     QPalette t_palette = m_content->palette();
     t_palette.setColor(QPalette::WindowText, Qt::white);
@@ -60,6 +61,7 @@ void LoginTipsWindow::initUI()
 
     // 提示标题布局
     m_tipLabel = new QLabel();
+    m_tipLabel->setAccessibleName("TipLabel");
     m_tipLabel->setAlignment(Qt::AlignHCenter);
     QPalette palette = m_tipLabel->palette();
     palette.setColor(QPalette::WindowText, Qt::white);

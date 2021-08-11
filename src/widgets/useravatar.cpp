@@ -42,6 +42,7 @@ UserAvatar::UserAvatar(QWidget *parent, bool deleteable) :
 
     m_iconLabel = new QLabel(this);
     m_iconLabel->setObjectName("UserAvatar");
+    m_iconLabel->setAccessibleName("UserAvatar");
 
     mainLayout->addWidget(m_iconLabel, 0, Qt::AlignCenter);
 

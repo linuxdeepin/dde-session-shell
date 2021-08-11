@@ -96,6 +96,9 @@ void RoundItemButton::initConnect()
 }
 
 void RoundItemButton::initUI() {
+    m_itemIcon->setAccessibleName("ItemIconLabel");
+    m_itemText->setAccessibleName("ItemTextLabel");
+
     m_itemIcon->setFocusPolicy(Qt::NoFocus);
     m_itemIcon->setFixedSize(75, 75);
     m_itemIcon->installEventFilter(this);

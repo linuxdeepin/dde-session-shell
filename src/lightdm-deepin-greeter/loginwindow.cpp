@@ -35,7 +35,7 @@ LoginWindow::LoginWindow(SessionBaseModel *const model, QWidget *parent)
     , m_model(model)
 {
     updateBackground(m_model->currentUser()->greeterBackground());
-
+    m_loginContent->setAccessibleName("LoginContent");
     setContent(m_loginContent);
     m_loginContent->hide();
 

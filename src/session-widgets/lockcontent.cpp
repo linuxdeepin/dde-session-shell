@@ -25,17 +25,21 @@ LockContent::LockContent(SessionBaseModel *const model, QWidget *parent)
     m_model->setCurrentModeState(SessionBaseModel::ModeStatus::PasswordMode);
 
     m_timeWidget = new TimeWidget();
+    m_timeWidget->setAccessibleName("TimeWidget");
     setCenterTopWidget(m_timeWidget);
     // 处理时间制跳转策略，获取到时间制再显示时间窗口
     m_timeWidget->setVisible(false);
 
     m_shutdownFrame = new ShutdownWidget;
+    m_shutdownFrame->setAccessibleName("ShutdownFrame");
     m_shutdownFrame->setModel(model);
 
     m_logoWidget = new LogoWidget;
+    m_logoWidget->setAccessibleName("LogoWidget");
     setLeftBottomWidget(m_logoWidget);
 
     m_controlWidget = new ControlWidget;
+    m_controlWidget->setAccessibleName("ControlWidget");
     setRightBottomWidget(m_controlWidget);
 
     switch (model->currentType()) {
@@ -191,6 +195,7 @@ void LockContent::setMPRISEnable(const bool state)
 {
     if (!m_mediaWidget) {
         m_mediaWidget = new MediaWidget;
+        m_mediaWidget->setAccessibleName("MediaWidget");
         m_mediaWidget->initMediaPlayer();
     }
 

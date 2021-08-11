@@ -29,6 +29,7 @@
 #include "sessionbasemodel.h"
 #include "propertygroup.h"
 #include "multiscreenmanager.h"
+#include "accessibilitycheckerex.h"
 
 #include <DApplication>
 #include <QtCore/QTranslator>
@@ -37,7 +38,6 @@
 #include <DLog>
 #include <DGuiApplicationHelper>
 #include <DPlatformTheme>
-
 #include <cstdlib>
 
 #include <X11/Xlib.h>
@@ -282,6 +282,13 @@ int main(int argc, char* argv[])
             serviceWatcher->deleteLater();
         });
     }
+
+#if defined(DSS_CHECK_ACCESSIBILITY) && defined(QT_DEBUG)
+    AccessibilityCheckerEx checker;
+    checker.addIgnoreName("KeyboardLayoutFrame");
+    checker.setOutputFormat(DAccessibilityChecker::FullFormat);
+    checker.start();
+#endif
 
     return a.exec();
 }

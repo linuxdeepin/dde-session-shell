@@ -62,6 +62,7 @@ UserFrameList::UserFrameList(QWidget *parent)
 void UserFrameList::initUI()
 {
     m_centerWidget = new QWidget;
+    m_centerWidget->setAccessibleName("CenterWidget");
 
     m_flowLayout = new DFlowLayout(m_centerWidget);
     m_flowLayout->setFlow(QListView::LeftToRight);
@@ -76,6 +77,7 @@ void UserFrameList::initUI()
     m_scrollArea->setFocusPolicy(Qt::NoFocus);
     m_centerWidget->setAutoFillBackground(false);
     m_scrollArea->viewport()->setAutoFillBackground(false);
+    m_scrollArea->setAccessibleName("ScrollArea");
     QVBoxLayout *mainLayout = new QVBoxLayout(this);
     mainLayout->addWidget(m_scrollArea, 0, Qt::AlignCenter);
 }
@@ -125,6 +127,7 @@ void UserFrameList::addUser(const std::shared_ptr<User> user)
     widget->updateAvatar(user->avatar());
     widget->updateName(user->displayName());
     widget->updateLoginState(user->isLogin());
+    widget->setAccessibleName("UserLoginWidget");
 
     connect(widget, &UserLoginWidget::clicked, this, &UserFrameList::onUserClicked);
     connect(user.get(), &User::displayNameChanged, widget, &UserLoginWidget::updateName);

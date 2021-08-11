@@ -38,6 +38,7 @@ MediaWidget::MediaWidget(QWidget *parent) : QWidget(parent)
 void MediaWidget::initUI()
 {
     m_dmprisWidget = new DMPRISControl;
+    m_dmprisWidget->setAccessibleName("MPRISWidget");
     m_dmprisWidget->setFixedWidth(200);
     m_dmprisWidget->setPictureVisible(false);
 

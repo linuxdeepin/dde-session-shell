@@ -55,6 +55,7 @@ void ControlWidget::initUI()
     m_mainLayout = new QHBoxLayout;
 
     m_virtualKBBtn = new DFloatingButton(this);
+    m_virtualKBBtn->setAccessibleName("VirtualKeyboardBtn");
     m_virtualKBBtn->setIcon(QIcon::fromTheme(":/img/screen_keyboard_normal.svg"));
     m_virtualKBBtn->hide();
     m_virtualKBBtn->setIconSize(BUTTON_ICON_SIZE);
@@ -64,6 +65,7 @@ void ControlWidget::initUI()
     m_virtualKBBtn->installEventFilter(this);
 
     m_switchUserBtn = new DFloatingButton(this);
+    m_switchUserBtn->setAccessibleName("SwitchUserBtn");
     m_switchUserBtn->setIcon(QIcon::fromTheme(":/img/bottom_actions/userswitch_normal.svg"));
     m_switchUserBtn->setIconSize(BUTTON_ICON_SIZE);
     m_switchUserBtn->setFixedSize(BUTTON_SIZE);
@@ -72,6 +74,7 @@ void ControlWidget::initUI()
     m_switchUserBtn->installEventFilter(this);
 
     m_powerBtn = new DFloatingButton(this);
+    m_powerBtn->setAccessibleName("PowerBtn");
     m_powerBtn->setIcon(QIcon(":/img/bottom_actions/shutdown_normal.svg"));
     m_powerBtn->setIconSize(BUTTON_ICON_SIZE);
     m_powerBtn->setFixedSize(BUTTON_SIZE);
@@ -164,12 +167,14 @@ void ControlWidget::setSessionSwitchEnable(const bool visible)
 
     if (!m_tipWidget) {
         m_tipWidget = new QWidget;
+        m_tipWidget->setAccessibleName("TipWidget");
         m_mainLayout->insertWidget(1, m_tipWidget);
         m_mainLayout->setAlignment(m_tipWidget, Qt::AlignCenter);
     }
 
     if (!m_sessionTip) {
         m_sessionTip = new QLabel(m_tipWidget);
+        m_sessionTip->setAccessibleName("SessionTip");
         m_sessionTip->setAlignment(Qt::AlignHCenter | Qt::AlignVCenter);
         m_sessionTip->installEventFilter(this);
 

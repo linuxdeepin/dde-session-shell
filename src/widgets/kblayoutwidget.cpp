@@ -37,11 +37,13 @@ LayoutButton::LayoutButton(QString text, QWidget *parent)
 
     m_text = text;
     m_iconLabel = new QLabel(this);
+    m_iconLabel->setAccessibleName("IconLabel");
     QPixmap pix = loadPixmap(":/img/keyboard_select.png");
     m_iconLabel->setPixmap(pix);
     m_iconLabel->setMinimumSize(pix.size());
     m_textLabel = new QLabel;
     m_textLabel->setObjectName("LayoutTextLabel");
+    m_textLabel->setAccessibleName("LayoutTextLabel");
     m_textLabel->setText(text);
     m_iconLabel->hide();
 
@@ -237,11 +239,13 @@ void KbLayoutWidget::setDefault(const QString &layout)
 void KbLayoutWidget::addButton(const QString &button)
 {
     LayoutButton* itemButton = new LayoutButton(button);
+    itemButton->setAccessibleName("LayoutItemButton");
     m_layoutButtons.append(itemButton);
     itemButton->setFixedSize(widget_width, DDESESSIONCC::LAYOUTBUTTON_HEIGHT);
 
     QFrame *borderFrame = new QFrame;
     borderFrame->setObjectName("LayoutBorderFrame");
+    borderFrame->setAccessibleName("LayoutBorderFrame");
     QVBoxLayout* borderLayout = new QVBoxLayout;
     borderLayout->setContentsMargins(0, 0, 0, 0);
     borderLayout->setSpacing(0);

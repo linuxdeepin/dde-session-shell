@@ -38,8 +38,10 @@ UserLoginInfo::UserLoginInfo(SessionBaseModel *model, QObject *parent)
     , m_userFrameList(new UserFrameList)
 {
     m_userFrameList->setModel(model);
+    m_userFrameList->setAccessibleName("UserFrameList");
     /* 初始化验证界面 */
     m_userLoginWidget->updateWidgetShowType(model->getAuthProperty().AuthType);
+    m_userLoginWidget->setAccessibleName("UserLoginWidget");
     initConnect();
 }
 

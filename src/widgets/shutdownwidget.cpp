@@ -204,6 +204,7 @@ void ShutdownWidget::initUI()
     m_requireShutdownButton = new RoundItemButton(this);
     m_requireShutdownButton->setFocusPolicy(Qt::NoFocus);
     m_requireShutdownButton->setObjectName("RequireShutDownButton");
+    m_requireShutdownButton->setAccessibleName("RequireShutDownButton");
     m_requireShutdownButton->setAutoExclusive(true);
     updateTr(m_requireShutdownButton, "Shut down");
     GSettingWatcher::instance()->bind("systemShutdown", m_requireShutdownButton);  // GSettings配置项
@@ -211,18 +212,21 @@ void ShutdownWidget::initUI()
     m_requireRestartButton = new RoundItemButton(tr("Reboot"), this);
     m_requireRestartButton->setFocusPolicy(Qt::NoFocus);
     m_requireRestartButton->setObjectName("RequireRestartButton");
+    m_requireRestartButton->setAccessibleName("RequireRestartButton");
     m_requireRestartButton->setAutoExclusive(true);
     updateTr(m_requireRestartButton, "Reboot");
 
     m_requireSuspendButton = new RoundItemButton(tr("Suspend"), this);
     m_requireSuspendButton->setFocusPolicy(Qt::NoFocus);
     m_requireSuspendButton->setObjectName("RequireSuspendButton");
+    m_requireSuspendButton->setAccessibleName("RequireSuspendButton");
     m_requireSuspendButton->setAutoExclusive(true);
     updateTr(m_requireSuspendButton, "Suspend");
     GSettingWatcher::instance()->bind("systemSuspend", m_requireSuspendButton);  // GSettings配置项
 
     m_requireHibernateButton = new RoundItemButton(tr("Hibernate"), this);
     m_requireHibernateButton->setFocusPolicy(Qt::NoFocus);
+    m_requireHibernateButton->setAccessibleName("RequireHibernateButton");
     m_requireHibernateButton->setObjectName("RequireHibernateButton");
     m_requireHibernateButton->setAutoExclusive(true);
     updateTr(m_requireHibernateButton, "Hibernate");
@@ -230,6 +234,7 @@ void ShutdownWidget::initUI()
 
     m_requireLockButton = new RoundItemButton(tr("Lock"));
     m_requireLockButton->setFocusPolicy(Qt::NoFocus);
+    m_requireLockButton->setAccessibleName("RequireLockButton");
     m_requireLockButton->setObjectName("RequireLockButton");
     m_requireLockButton->setAutoExclusive(true);
     updateTr(m_requireLockButton, "Lock");
@@ -237,12 +242,14 @@ void ShutdownWidget::initUI()
 
     m_requireLogoutButton = new RoundItemButton(tr("Log out"));
     m_requireLogoutButton->setFocusPolicy(Qt::NoFocus);
+    m_requireLogoutButton->setAccessibleName("RequireLogoutButton");
     m_requireLogoutButton->setObjectName("RequireLogoutButton");
     m_requireLogoutButton->setAutoExclusive(true);
     updateTr(m_requireLogoutButton, "Log out");
 
     m_requireSwitchUserBtn = new RoundItemButton(tr("Switch user"));
     m_requireSwitchUserBtn->setFocusPolicy(Qt::NoFocus);
+    m_requireSwitchUserBtn->setAccessibleName("RequireSwitchUserButton");
     m_requireSwitchUserBtn->setObjectName("RequireSwitchUserButton");
     m_requireSwitchUserBtn->setAutoExclusive(true);
     updateTr(m_requireSwitchUserBtn, "Switch user");
@@ -250,6 +257,7 @@ void ShutdownWidget::initUI()
 
     if (m_switchosInterface->isDualOsSwitchAvail()) {
         m_requireSwitchSystemBtn = new RoundItemButton(tr("Switch system"));
+        m_requireSwitchSystemBtn->setAccessibleName("SwitchSystemButton");
         m_requireSwitchSystemBtn->setFocusPolicy(Qt::NoFocus);
         m_requireSwitchSystemBtn->setObjectName("RequireSwitchSystemButton");
         m_requireSwitchSystemBtn->setAutoExclusive(true);
@@ -284,6 +292,7 @@ void ShutdownWidget::initUI()
     m_shutdownLayout->addStretch(0);
 
     m_shutdownFrame = new QFrame;
+    m_shutdownFrame->setAccessibleName("ShutdownFrame");
     m_shutdownFrame->setLayout(m_shutdownLayout);
 
     m_actionLayout = new QVBoxLayout;
@@ -298,6 +307,7 @@ void ShutdownWidget::initUI()
         QFile file("/usr/bin/deepin-system-monitor");
         if (file.exists()) {
             m_systemMonitor = new SystemMonitor;
+            m_systemMonitor->setAccessibleName("SystemMonitor");
             m_systemMonitor->setSizePolicy(QSizePolicy::Fixed, QSizePolicy::Fixed);
             m_systemMonitor->setFocusPolicy(Qt::NoFocus);
             setFocusPolicy(Qt::StrongFocus);
@@ -307,6 +317,7 @@ void ShutdownWidget::initUI()
     }
 
     m_actionFrame = new QFrame;
+    m_actionFrame->setAccessibleName("ActionFrame");
     m_actionFrame->setSizePolicy(QSizePolicy::Minimum, QSizePolicy::Minimum);
     m_actionFrame->setFocusPolicy(Qt::NoFocus);
     m_actionFrame->setLayout(m_actionLayout);

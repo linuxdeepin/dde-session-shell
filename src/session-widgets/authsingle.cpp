@@ -53,6 +53,7 @@ void AuthSingle::initUI()
     mainLayout->setSpacing(0);
     mainLayout->setContentsMargins(0, 0, 0, 0);
 
+    m_lineEdit->setAccessibleName("LineEdit");
     m_lineEdit->setClearButtonEnabled(false);
     m_lineEdit->setEchoMode(QLineEdit::Password);
     m_lineEdit->setContextMenuPolicy(Qt::NoContextMenu);
@@ -62,6 +63,7 @@ void AuthSingle::initUI()
     passwordLayout->setContentsMargins(0, 0, 10, 0);
     passwordLayout->setSpacing(5);
     /* 键盘布局按钮 */
+    m_keyboardButton->setAccessibleName("KeyboardButton");
     m_keyboardButton->setContentsMargins(0, 0, 0, 0);
     m_keyboardButton->setFocusPolicy(Qt::NoFocus);
     m_keyboardButton->setCursor(Qt::ArrowCursor);
@@ -70,6 +72,7 @@ void AuthSingle::initUI()
     /* 大小写状态 */
     QPixmap pixmap = DHiDPIHelper::loadNxPixmap(":/misc/images/caps_lock.svg");
     pixmap.setDevicePixelRatio(devicePixelRatioF());
+    m_capsStatus->setAccessibleName("CapsStatusLabel");
     m_capsStatus->setPixmap(pixmap);
     passwordLayout->addWidget(m_capsStatus, 1, Qt::AlignRight | Qt::AlignVCenter);
 

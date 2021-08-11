@@ -19,7 +19,8 @@ HEADERS += \
     $$PWD/dbus/dbuslockfront.h \
     $$PWD/dbus/dbusmediaplayer2.h \
     $$PWD/public_func.h \
-    $$PWD/multiscreenmanager.h
+    $$PWD/multiscreenmanager.h \
+    $$PWD/accessibilitycheckerex.h
 
 SOURCES += \
     $$PWD/util_updateui.cpp \
@@ -37,7 +38,8 @@ SOURCES += \
     $$PWD/dbus/dbuslockfront.cpp \
     $$PWD/dbus/dbusmediaplayer2.cpp \
     $$PWD/public_func.cpp \
-    $$PWD/multiscreenmanager.cpp
+    $$PWD/multiscreenmanager.cpp \
+    $$PWD/accessibilitycheckerex.cpp
 
 DISTFILES += \
     $$PWD/dbus/com.deepin.daemon.Zone.xml

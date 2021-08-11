@@ -31,17 +31,18 @@
 #include "dbusshutdownagent.h"
 #include "dbusshutdownfrontservice.h"
 #include "multiscreenmanager.h"
-
+#include "accessibilitycheckerex.h"
 #include "lockcontent.h"
 #include "lockworker.h"
 #include "sessionbasemodel.h"
 #include "propertygroup.h"
 
-#include <QDBusInterface>
+#include <DApplication>
 #include <DGuiApplicationHelper>
 #include <DPlatformTheme>
 
-#include <dapplication.h>
+#include <QDBusInterface>
+
 #include <unistd.h>
 
 DCORE_USE_NAMESPACE
@@ -164,6 +165,13 @@ int main(int argc, char *argv[])
 
     MultiScreenManager multi_screen_manager;
     multi_screen_manager.register_for_mutil_screen(createFrame);
+
+#if defined(DSS_CHECK_ACCESSIBILITY) && defined(QT_DEBUG)
+    AccessibilityCheckerEx checker;
+    checker.addIgnoreName("KeyboardLayoutFrame");
+    checker.setOutputFormat(DAccessibilityChecker::FullFormat);
+    checker.start();
+#endif
 
     QObject::connect(model, &SessionBaseModel::visibleChanged, &multi_screen_manager, &MultiScreenManager::startRaiseContentFrame);
 

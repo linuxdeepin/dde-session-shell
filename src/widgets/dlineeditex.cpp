@@ -71,6 +71,7 @@ void DLineEditEx::initAnimation()
 {
     m_loadSlider->setGeometry(0, -40, 40, height());
     m_loadSlider->setLoadSliderColor(QColor(255, 255, 255, 90));
+    m_loadSlider->setAccessibleName("LoadSlider");
     m_animation->setDuration(1000);
     m_animation->setLoopCount(-1);
     m_animation->setEasingCurve(QEasingCurve::Linear);

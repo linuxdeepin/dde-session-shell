@@ -51,6 +51,7 @@ LogoWidget::LogoWidget(QWidget *parent)
     , m_logoVersionLabel(new DLabel(this))
 {
     setObjectName("LogoWidget");
+    m_logoLabel->setAccessibleName("LogoLabel");
     //设置QSizePolicy为固定高度,以保证右边版本号内容顶部能和图片对齐
     setSizePolicy(QSizePolicy::Expanding, QSizePolicy::Fixed);
     m_locale = QLocale::system().name();

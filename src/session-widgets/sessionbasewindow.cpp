@@ -94,6 +94,7 @@ void SessionBaseWindow::initUI()
     m_centerTopLayout->setSpacing(0);
 
     m_centerTopFrame = new QFrame;
+    m_centerTopFrame->setAccessibleName("CenterTopFrame");
     m_centerTopFrame->setLayout(m_centerTopLayout);
     m_centerTopFrame->setFixedHeight(132);
     m_centerTopFrame->setAutoFillBackground(false);
@@ -103,6 +104,7 @@ void SessionBaseWindow::initUI()
     m_centerLayout->setSpacing(0);
 
     m_centerFrame = new QFrame;
+    m_centerFrame->setAccessibleName("CenterFrame");
     m_centerFrame->setLayout(m_centerLayout);
     m_centerFrame->setAutoFillBackground(false);
 
@@ -125,6 +127,7 @@ void SessionBaseWindow::initUI()
     bottomLayout->addLayout(m_rightBottomLayout, 1);
 
     m_bottomFrame = new QFrame;
+    m_bottomFrame->setAccessibleName("BottomFrame");
     m_bottomFrame->setLayout(bottomLayout);
     m_bottomFrame->setFixedHeight(132);
     m_bottomFrame->setAutoFillBackground(false);

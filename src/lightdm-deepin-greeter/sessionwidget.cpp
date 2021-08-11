@@ -303,6 +303,7 @@ void SessionWidget::loadSessionList()
 
         qDebug() << "found session: " << session_name << session_icon;
         RoundItemButton *sbtn = new RoundItemButton(session_name, this);
+        sbtn->setAccessibleName("RoundItemButton");
         sbtn->setFixedSize(SessionButtonWidth, SessionButtonHeight);
         sbtn->setAutoExclusive(true);
         sbtn->setProperty("normalIcon", normalIcon);
