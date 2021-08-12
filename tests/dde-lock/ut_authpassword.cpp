@@ -1,8 +1,9 @@
 #include "authpassword.h"
 
-#include <gtest/gtest.h>
-#include <QTest>
 #include <QPaintEvent>
+#include <QTest>
+
+#include <gtest/gtest.h>
 
 class UT_AuthPassword : public testing::Test
 {
@@ -16,20 +17,18 @@ protected:
 void UT_AuthPassword::SetUp()
 {
     m_widget = new AuthPassword();
-
 }
 void UT_AuthPassword::TearDown()
 {
     delete m_widget;
 }
 
-
 TEST_F(UT_AuthPassword, init)
 {
     m_widget->setLimitsInfo(LimitsInfo());
 
     QString str;
-    for (int i = 0 ; i < 13; i++) {
+    for (int i = 0; i < 13; i++) {
         m_widget->setAuthResult(i, str);
     }
 
@@ -37,7 +36,7 @@ TEST_F(UT_AuthPassword, init)
     m_widget->setLineEditInfo("", AuthModule::InputText);
     m_widget->setLineEditInfo("", AuthModule::PlaceHolderText);
 
-//    m_widget->setNumLockState("");
+    //    m_widget->setNumLockState("");
     m_widget->setKeyboardButtonInfo("");
     m_widget->setKeyboardButtonVisible(true);
     m_widget->lineEditText();

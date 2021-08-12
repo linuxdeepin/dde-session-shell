@@ -20,7 +20,7 @@ lcov -c -d dde-lock/ -o coverage_dde-lock.info # 收集 dde-lock 单元测试数
 
 lightdm-deepin-greeter/lightdm-deepin-greeter-test --gtest_output=xml:dde_test_report_lightdm-deepin-greeter.xml # 执行编译后的测试文件并生成测试用例数据报告
 mv asan.log* asan_lightdm-deepin-greeter.log # 收集 lightdm-deepin-greeter 内存泄漏数据
-lcov -c -d lightdm-deepin-greeter/ -o coverage_lightdm-deepin-greeter.info # 收集 dde-lock 单元测试数据
+lcov -c -d lightdm-deepin-greeter/ -o coverage_lightdm-deepin-greeter.info # 收集 lightdm-deepin-greeter 单元测试数据
 
 lcov -a init.info -a coverage_dde-lock.info -a coverage_lightdm-deepin-greeter.info -o coverage_total.info # 将单元测试数据汇总
 lcov -r coverage_total.info "*/tests/*" "*/usr/include*"  "*.h" "*build/*" "*/dbus/*" "*/xcb/*" -o final.info # 过滤不需要的信息

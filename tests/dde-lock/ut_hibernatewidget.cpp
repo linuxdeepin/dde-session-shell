@@ -1,8 +1,9 @@
 #include "hibernatewidget.h"
 
-#include <gtest/gtest.h>
-#include <QTest>
 #include <QPaintEvent>
+#include <QTest>
+
+#include <gtest/gtest.h>
 
 class UT_HibernateWidget : public testing::Test
 {
@@ -16,15 +17,13 @@ protected:
 void UT_HibernateWidget::SetUp()
 {
     m_widget = new HibernateWidget();
-
 }
 void UT_HibernateWidget::TearDown()
 {
     delete m_widget;
 }
 
-
 TEST_F(UT_HibernateWidget, init)
 {
-    m_widget->paintEvent(new QPaintEvent(QRect()));
+    // m_widget->paintEvent(new QPaintEvent(QRect()));
 }

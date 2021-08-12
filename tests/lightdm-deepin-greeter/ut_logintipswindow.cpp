@@ -1,43 +1,40 @@
-#include <gtest/gtest.h>
-
-#include <QTest>
-#include <QLabel>
-#include <QSignalSpy>
-#include <QPushButton>
-
 #include "logintipswindow.h"
+
+#include <QLabel>
+#include <QPushButton>
+#include <QSignalSpy>
+#include <QTest>
+
+#include <gtest/gtest.h>
 
 class UT_LoginTipsWindow : public testing::Test
 {
 public:
-    void SetUp() override
-    {
-        loginTipsWindow = new LoginTipsWindow();
-    }
-    void TearDown() override
-    {
-        delete loginTipsWindow;
-        loginTipsWindow = nullptr;
-    }
+    void SetUp() override;
+    void TearDown() override;
+
 public:
-    LoginTipsWindow *loginTipsWindow = nullptr;
+    LoginTipsWindow *m_loginTipsWindow;
 };
 
-TEST_F(UT_LoginTipsWindow, coverage_main)
+void UT_LoginTipsWindow::SetUp()
 {
-    ASSERT_NE(loginTipsWindow, nullptr);
+    m_loginTipsWindow = new LoginTipsWindow();
 }
 
-TEST_F(UT_LoginTipsWindow, coverage_isValid)
+void UT_LoginTipsWindow::TearDown()
 {
-    loginTipsWindow->isValid();
+    delete m_loginTipsWindow;
+}
+
+TEST_F(UT_LoginTipsWindow, BasicTest)
+{
+    ASSERT_NE(m_loginTipsWindow, nullptr);
+    m_loginTipsWindow->isValid();
 }
 
 TEST_F(UT_LoginTipsWindow, buttonClicked)
 {
-    QPushButton button1;
-    QSignalSpy spy(&button1, SIGNAL(clicked()));
-    QPushButton *button = loginTipsWindow->findChild<QPushButton *>("RequireSureButton");
+    QPushButton *button = m_loginTipsWindow->findChild<QPushButton *>("RequireSureButton");
     QTest::mouseClick(button, Qt::MouseButton::LeftButton, Qt::KeyboardModifier::NoModifier, QPoint(0, 0));
-
 }

@@ -1,50 +1,41 @@
-#include "lockcontent.h"
+#include "logincontent.h"
 #include "sessionbasemodel.h"
 
 #include <gtest/gtest.h>
 
-class UT_LockContent : public testing::Test
+class UT_LoginContent : public testing::Test
 {
 protected:
     void SetUp() override;
     void TearDown() override;
 
     SessionBaseModel *m_model;
-    LockContent *m_content;
+    LoginContent *m_content;
 };
 
-void UT_LockContent::SetUp()
+void UT_LoginContent::SetUp()
 {
-    m_model = new SessionBaseModel(SessionBaseModel::AuthType::LockType);
+    m_model = new SessionBaseModel(SessionBaseModel::LightdmType);
     std::shared_ptr<User> user_ptr(new User);
     m_model->updateCurrentUser(user_ptr);
 
-    m_content = new LockContent(m_model);
+    m_content = new LoginContent(m_model);
 }
 
-void UT_LockContent::TearDown()
+void UT_LoginContent::TearDown()
 {
     delete m_content;
-    delete m_model;
 }
 
-TEST_F(UT_LockContent, BasicTest)
+TEST_F(UT_LoginContent, BasicTest)
 {
     m_content->onCurrentUserChanged(m_model->currentUser());
-    m_content->pushPasswordFrame();
-    m_content->pushUserFrame();
-    m_content->pushShutdownFrame();
-    m_content->setMPRISEnable(true);
-    m_content->beforeUnlockAction(false);
+    m_content->pushSessionFrame();
+    m_content->pushTipsFrame();
+    m_content->popTipsFrame();
 }
 
-TEST_F(UT_LockContent, BackgroundTest)
-{
-    m_content->updateDesktopBackgroundPath("/usr/share/backgrounds/default_background.jpg");
-    m_content->updateGreeterBackgroundPath("/usr/share/backgrounds/default_background.jpg");
-}
-
-TEST_F(UT_LockContent, ModeTest)
+TEST_F(UT_LoginContent, ModeTest)
 {
     m_content->onStatusChanged(SessionBaseModel::NoStatus);
     m_content->onStatusChanged(SessionBaseModel::PowerMode);

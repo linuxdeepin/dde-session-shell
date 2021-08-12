@@ -1,11 +1,11 @@
 #include "rounditembutton.h"
-#include "lockframe.h"
-#include "lockworker.h"
 #include "shutdownwidget.h"
+
+#include <DIconButton>
 
 #include <QSignalSpy>
 #include <QTest>
-#include <DIconButton>
+
 #include <gtest/gtest.h>
 
 DWIDGET_USE_NAMESPACE
