@@ -1,7 +1,6 @@
 #include "deepinauthframework.h"
 
 #include "authcommon.h"
-#include "interface/deepinauthinterface.h"
 #include "public_func.h"
 
 #include <dlfcn.h>
@@ -31,9 +30,8 @@
 
 using namespace AuthCommon;
 
-DeepinAuthFramework::DeepinAuthFramework(DeepinAuthInterface *interface, QObject *parent)
+DeepinAuthFramework::DeepinAuthFramework(QObject *parent)
     : QObject(parent)
-    , m_interface(interface)
     , m_authenticateInter(new AuthInter(AUTHRNTICATESERVICE, "/com/deepin/daemon/Authenticate", QDBusConnection::systemBus(), this))
     , m_PAMAuthThread(0)
     , m_authenticateControllers(new QMap<QString, AuthControllerInter *>())
