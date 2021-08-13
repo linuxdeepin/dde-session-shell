@@ -24,6 +24,7 @@
  */
 
 #include "fullscreenbackground.h"
+#include "sessionbasemodel.h"
 
 #include <DGuiApplicationHelper>
 
@@ -36,10 +37,11 @@
 
 DGUI_USE_NAMESPACE
 
-FullscreenBackground::FullscreenBackground(QWidget *parent)
+FullscreenBackground::FullscreenBackground(SessionBaseModel *model, QWidget *parent)
     : QWidget(parent)
     , m_fadeOutAni(new QVariantAnimation(this))
     , m_imageEffectInter(new ImageEffectInter("com.deepin.daemon.ImageEffect", "/com/deepin/daemon/ImageEffect", QDBusConnection::systemBus(), this))
+    , m_model(model)
     , m_originalCursor(cursor())
 {
 #ifndef QT_DEBUG
@@ -235,7 +237,7 @@ void FullscreenBackground::paintEvent(QPaintEvent *e)
 
 void FullscreenBackground::enterEvent(QEvent *event)
 {
-    if (m_primaryShowFinished && m_enableEnterEvent) {
+    if (m_primaryShowFinished && m_enableEnterEvent && m_model->visible()) {
         m_content->show();
         emit contentVisibleChanged(true);
     }
@@ -265,7 +267,7 @@ void FullscreenBackground::resizeEvent(QResizeEvent *event)
  */
 void FullscreenBackground::mouseMoveEvent(QMouseEvent *event)
 {
-    if (!m_isBlackMode) {
+    if (!m_isBlackMode && m_model->visible()) {
         m_content->show();
         emit contentVisibleChanged(true);
     }

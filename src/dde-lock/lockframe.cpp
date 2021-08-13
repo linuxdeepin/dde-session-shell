@@ -37,7 +37,7 @@
 #include <QGSettings>
 
 LockFrame::LockFrame(SessionBaseModel *const model, QWidget *parent)
-    : FullscreenBackground(parent)
+    : FullscreenBackground(model, parent)
     , m_model(model)
     , m_lockContent(new LockContent(model))
     , m_warningContent(nullptr)

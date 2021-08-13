@@ -32,13 +32,14 @@
 
 using ImageEffectInter = com::deepin::daemon::ImageEffect;
 
+class SessionBaseModel;
 class FullscreenBackground : public QWidget
 {
     Q_OBJECT
     Q_PROPERTY(bool contentVisible READ contentVisible WRITE setContentVisible NOTIFY contentVisibleChanged)
 
 public:
-    explicit FullscreenBackground(QWidget *parent = nullptr);
+    explicit FullscreenBackground(SessionBaseModel *model, QWidget *parent = nullptr);
     ~FullscreenBackground();
 
     bool contentVisible() const;
@@ -83,6 +84,7 @@ private:
 
     QPointer<QWidget> m_content;
     QScreen *m_screen = nullptr;
+    SessionBaseModel *m_model = nullptr;
     bool m_primaryShowFinished = false;
     bool m_isBlackMode = false;
     bool m_enableEnterEvent = true;

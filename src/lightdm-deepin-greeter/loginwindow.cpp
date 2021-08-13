@@ -30,7 +30,7 @@
 #include <QWindow>
 
 LoginWindow::LoginWindow(SessionBaseModel *const model, QWidget *parent)
-    : FullscreenBackground(parent)
+    : FullscreenBackground(model, parent)
     , m_loginContent(new LoginContent(model, this))
     , m_model(model)
 {

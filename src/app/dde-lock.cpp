@@ -139,9 +139,8 @@ int main(int argc, char *argv[])
     DBusShutdownFrontService shutdownServices(&shutdownAgent);
 
     auto createFrame = [&] (QScreen *screen, int count) -> QWidget* {
-        Q_UNUSED(count);
         LockFrame *lockFrame = new LockFrame(model);
-        lockFrame->setScreen(screen);
+        lockFrame->setScreen(screen, count <= 0);
         property_group->addObject(lockFrame);
         QObject::connect(lockFrame, &LockFrame::requestSetLocked, worker, &LockWorker::setLocked);
         QObject::connect(lockFrame, &LockFrame::requestSwitchToUser, worker, &LockWorker::switchToUser);
