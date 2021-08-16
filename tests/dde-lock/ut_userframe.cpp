@@ -21,6 +21,7 @@ void UT_UserFrame::SetUp()
 void UT_UserFrame::TearDown()
 {
     delete m_userFrame;
+    delete m_model;
 }
 
 TEST_F(UT_UserFrame, basic)

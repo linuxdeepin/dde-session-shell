@@ -30,23 +30,8 @@ TEST_F(UT_ControlWidget, init)
     controlWidget->setSessionSwitchEnable(true);
     controlWidget->chooseToSession("");
     controlWidget->chooseToSession("aaaa");
-    controlWidget->showTips();
-    controlWidget->hideTips();
     controlWidget->rightKeySwitch();
 
     controlWidget->rightKeySwitch();
-    controlWidget->keyReleaseEvent(new QKeyEvent(QEvent::KeyRelease, Qt::Key_Left, Qt::NoModifier));
     controlWidget->leftKeySwitch();
-    controlWidget->keyReleaseEvent(new QKeyEvent(QEvent::KeyRelease, Qt::Key_Right, Qt::NoModifier));
-    controlWidget->keyReleaseEvent(new QKeyEvent(QEvent::KeyRelease, Qt::Key_Exit, Qt::NoModifier));
-
-    controlWidget->focusInEvent(nullptr);
-    controlWidget->focusInEvent(nullptr);
-    controlWidget->focusOutEvent(nullptr);
-    controlWidget->focusOutEvent(nullptr);
-
-    controlWidget->eventFilter(controlWidget->m_sessionBtn, new QEvent(QEvent::Enter));
-    controlWidget->eventFilter(controlWidget->m_sessionBtn, new QEvent(QEvent::Leave));
-    controlWidget->eventFilter(controlWidget->m_sessionTip, new QEvent(QEvent::Resize));
-
 }

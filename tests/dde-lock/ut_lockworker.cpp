@@ -38,9 +38,8 @@ TEST_F(UT_LockWorker, worker)
 
 TEST_F(UT_LockWorker, auth)
 {
-    m_worker->authUser("uos");
-    m_worker->createAuthentication("uos");
-    m_worker->startAuthentication("uos", 0);
+    // m_worker->createAuthentication("uos");
+    // m_worker->startAuthentication("uos", 0);
     m_worker->sendTokenToAuth("uos", 0, "123");
     m_worker->endAuthentication("uos", 0);
     m_worker->destoryAuthentication("uos");
