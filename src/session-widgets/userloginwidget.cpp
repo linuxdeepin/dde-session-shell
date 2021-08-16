@@ -84,6 +84,7 @@ UserLoginWidget::UserLoginWidget(const SessionBaseModel *model, const WidgetType
     , m_isAlertMessageShow(false)
     , m_aniTimer(new QTimer(this))
 {
+    setAccessibleName("UserLoginWidget");
     if (widgetType == LoginType) {
         setMaximumWidth(280);                             // 设置本窗口的最大宽度（参考登录模式下的最大宽度）
         setMinimumSize(UserFrameWidth, UserFrameHeight);  // 登录类型时，界面需要根据多因等调整界面大小，最小尺寸按无密码框等部件设置大小
@@ -135,7 +136,6 @@ void UserLoginWidget::initUI()
     m_accountEdit->setAccessibleName("AccountEdit");
     m_expiredStatusLabel->setAccessibleName("ExpiredStatusLabel");
     m_lockButton->setAccessibleName("LockButton");
-    m_blurEffectWidget->setAccessibleName("BlurEffectWidget");
 
     if (m_widgetType == LoginType) {
         m_userLoginLayout->setContentsMargins(10, 0, 10, 0);
