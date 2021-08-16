@@ -18,13 +18,11 @@
 #include <com_deepin_daemon_accounts_user.h>
 #include <com_deepin_daemon_logined.h>
 #include <com_deepin_sessionmanager.h>
-#include <com_deepin_api_xeventmonitor.h>
 
 using AccountsInter = com::deepin::daemon::Accounts;
 using UserInter = com::deepin::daemon::accounts::User;
 using LoginedInter = com::deepin::daemon::Logined;
 using SessionManagerInter = com::deepin::SessionManager;
-using XEventInter = com::deepin::api::XEventMonitor;
 
 class SessionBaseModel;
 class LockWorker : public Auth::AuthInterface
@@ -54,6 +52,7 @@ public slots:
 
     void switchToUser(std::shared_ptr<User> user) override;
     void setLocked(const bool locked);
+    void restartResetSessionTimer();
 
 private:
     void initConnections();
@@ -81,7 +80,6 @@ private:
     bool m_canAuthenticate = false;
     AccountsInter *m_accountsInter;
     LoginedInter *m_loginedInter;
-    XEventInter *m_xEventInter;
     QString m_account;
 };
 

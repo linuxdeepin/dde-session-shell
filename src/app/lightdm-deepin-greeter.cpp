@@ -30,6 +30,7 @@
 #include "propertygroup.h"
 #include "multiscreenmanager.h"
 #include "accessibilitycheckerex.h"
+#include "appeventfilter.h"
 
 #include <DApplication>
 #include <QtCore/QTranslator>
@@ -178,10 +179,11 @@ static void set_auto_QT_SCALE_FACTOR() {
     }
 }
 
-static void init()
+static void init(const AppEventFilter &appEventFilter)
 {
     SessionBaseModel *model = new SessionBaseModel(SessionBaseModel::AuthType::LightdmType);
     GreeterWorkek *worker = new GreeterWorkek(model);
+    QObject::connect(&appEventFilter, &AppEventFilter::userIsActive, worker, &GreeterWorkek::restartResetSessionTimer);
 
     if (model->currentUser()) {
         QTranslator translator;
@@ -243,6 +245,10 @@ int main(int argc, char* argv[])
     // crash catch
     init_sig_crash();
 
+    //注册全局事件过滤器
+    AppEventFilter appEventFilter;
+    a.installEventFilter(&appEventFilter);
+
     DPalette pa = DGuiApplicationHelper::instance()->standardPalette(DGuiApplicationHelper::LightType);
     pa.setColor(QPalette::Normal, DPalette::WindowText, QColor("#FFFFFF"));
     pa.setColor(QPalette::Normal, DPalette::Text, QColor("#FFFFFF"));
@@ -272,13 +278,13 @@ int main(int argc, char* argv[])
     const QString serviceName = "com.deepin.daemon.Accounts";
     QDBusConnectionInterface *interface = QDBusConnection::systemBus().interface();
     if (interface->isServiceRegistered(serviceName)) {
-        init();
+        init(appEventFilter);
     } else {
         qWarning() << "Accounts service is not registered!";
         QDBusServiceWatcher *serviceWatcher = new QDBusServiceWatcher(serviceName, QDBusConnection::systemBus());
-        QObject::connect(serviceWatcher, &QDBusServiceWatcher::serviceRegistered, &a, [serviceWatcher](const QString &service) {
+        QObject::connect(serviceWatcher, &QDBusServiceWatcher::serviceRegistered, &a, [&](const QString &service) {
             qInfo() << "Accounts service is ready" << service;
-            init();
+            init(appEventFilter);
             serviceWatcher->deleteLater();
         });
     }
