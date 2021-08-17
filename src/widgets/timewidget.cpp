@@ -38,7 +38,7 @@ const QStringList shortTimeFormat = { "h:mm", "hh:mm"};
 
 TimeWidget::TimeWidget(QWidget *parent)
     : QWidget(parent)
-    , m_use24HourFormat(false)
+    , m_use24HourFormat(true)
 {
     QFont timeFont;
     timeFont.setFamily("Noto Sans CJK SC-Thin");
