@@ -164,9 +164,6 @@ void AuthSingle::setAuthResult(const int status, const QString &result)
             m_lineEdit->setFocus();
             m_lineEdit->lineEdit()->setReadOnly(false);
             setLineEditInfo(result, AlertText);
-            if (m_retryAuth) {
-                emit activeAuth();
-            }
         }
         break;
     }

@@ -46,8 +46,9 @@ public:
         ExpiredSoon,
         ExpiredAlready
     };
+
     struct LimitsInfo {
-        bool locked;        // 账户锁定状态 --- true: 锁定  false: 解锁
+        bool locked;        // 认证锁定状态 --- true: 锁定  false: 解锁
         uint maxTries;      // 最大重试次数
         uint numFailures;   // 失败次数，一直累加
         uint unlockSecs;    // 本次锁定总解锁时间（秒），不会随着时间推移减少
@@ -75,6 +76,7 @@ public:
 
     virtual inline int type() const { return Default; }
     inline QMap<int, LimitsInfo> *limitsInfo() const { return m_limitsInfo; }
+    inline LimitsInfo limitsInfo(const int type) const { return m_limitsInfo->value(type); }
     inline QString avatar() const { return m_avatar; }
     inline QString displayName() const { return m_fullName.isEmpty() ? m_name : m_fullName; }
     inline QString fullName() const { return m_fullName; }

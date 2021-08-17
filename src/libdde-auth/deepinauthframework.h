@@ -33,14 +33,6 @@ public:
     };
     Q_ENUM(AuthQuitFlag)
 
-    enum AuthFlag {
-        Password = 1 << 0,
-        Fingerprint = 1 << 1,
-        Face = 1 << 2,
-        ActiveDirectory = 1 << 3
-    };
-    Q_ENUM(AuthFlag)
-
     explicit DeepinAuthFramework(QObject *parent = nullptr);
     ~DeepinAuthFramework();
 
@@ -110,7 +102,6 @@ private:
     QString m_publicKey;
     QString m_symmetricKey;
     ArrayInt m_encryptMethod;
-    AuthFlag m_authType;
     QMap<QString, AuthControllerInter *> *m_authenticateControllers;
     bool m_cancelAuth;
     bool m_waitToken;

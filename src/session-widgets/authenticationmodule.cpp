@@ -272,7 +272,6 @@ void AuthenticationModule::setAuthResult(const int status, const QString &result
         }
         m_showPrompt = false;
         emit authFinished(m_authType, StatusCodeFailure);
-        emit activateAuthentication(); // TODO retry times
         break;
     case StatusCodeCancel:
         setEnabled(true);

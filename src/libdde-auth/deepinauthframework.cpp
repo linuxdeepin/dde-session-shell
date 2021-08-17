@@ -122,6 +122,7 @@ void DeepinAuthFramework::PAMAuthentication(const QString &account)
     int rc = pam_authenticate(m_pamHandle, 0);
     if (rc != PAM_SUCCESS) {
         qWarning() << "PAM authenticate failed:" << pam_strerror(m_pamHandle, rc) << rc;
+        if (m_message.isEmpty()) m_message = pam_strerror(m_pamHandle, rc);
     } else {
         qDebug() << "PAM authenticate finished.";
     }
@@ -173,13 +174,13 @@ int DeepinAuthFramework::PAMConversation(int num_msg, const pam_message **msg, p
         qWarning() << "PAM_BUF_ERR";
         return PAM_BUF_ERR;
     }
-
+    const QString message = QString::fromLocal8Bit(PAM_MSG_MEMBER(msg, idx, msg));
     for (idx = 0; idx < num_msg; ++idx) {
         switch (PAM_MSG_MEMBER(msg, idx, msg_style)) {
         case PAM_PROMPT_ECHO_ON:
         case PAM_PROMPT_ECHO_OFF: {
-            qDebug() << "pam auth echo:" << PAM_MSG_MEMBER(msg, idx, msg);
-            app_ptr->UpdateAuthStatus(StatusCodePrompt, QString::fromLocal8Bit(PAM_MSG_MEMBER(msg, idx, msg)));
+            qDebug() << "pam auth echo:" << message;
+            app_ptr->UpdateAuthStatus(StatusCodePrompt, message);
             /* 等待用户输入密码 */
             while (app_ptr->m_waitToken) {
                 qDebug() << "Waiting for the password...";
@@ -202,20 +203,20 @@ int DeepinAuthFramework::PAMConversation(int num_msg, const pam_message **msg, p
                 goto fail;
             }
 
-            app_ptr->m_authType = AuthFlag::Password;
             aresp[idx].resp_retcode = PAM_SUCCESS;
             break;
         }
         case PAM_ERROR_MSG: {
-            qDebug() << "pam auth error: " << PAM_MSG_MEMBER(msg, idx, msg);
-            app_ptr->m_message = QString::fromLocal8Bit(PAM_MSG_MEMBER(msg, idx, msg));
-            app_ptr->m_authType = AuthFlag::Fingerprint;
+            qDebug() << "pam auth error: " << message;
+            app_ptr->m_message = message;
+            app_ptr->UpdateAuthStatus(StatusCodeFailure, message);
             aresp[idx].resp_retcode = PAM_SUCCESS;
             break;
         }
         case PAM_TEXT_INFO: {
-            qDebug() << "pam auth info: " << PAM_MSG_MEMBER(msg, idx, msg);
-            app_ptr->m_message = QString::fromLocal8Bit(PAM_MSG_MEMBER(msg, idx, msg));
+            qDebug() << "pam auth info: " << message;
+            app_ptr->m_message = message;
+            app_ptr->UpdateAuthStatus(StatusCodePrompt, message);
             aresp[idx].resp_retcode = PAM_SUCCESS;
             break;
         }

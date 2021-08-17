@@ -132,6 +132,17 @@ void GreeterWorkek::initConnections()
                     m_model->updateAuthStatus(type, status, message);
                     break;
                 case StatusCodeFailure:
+                    if (m_model->currentModeState() != SessionBaseModel::ModeStatus::PasswordMode) {
+                        m_model->setCurrentModeState(SessionBaseModel::ModeStatus::PasswordMode);
+                    }
+                    m_model->updateAuthStatus(type, status, message);
+                    endAuthentication(m_account, type);
+                    if (!m_model->currentUser()->limitsInfo(type).locked) {
+                        QTimer::singleShot(50, this, [=] {
+                            startAuthentication(m_account, type);
+                        });
+                    }
+                    break;
                 case StatusCodeLocked:
                     if (m_model->currentModeState() != SessionBaseModel::ModeStatus::PasswordMode)
                         m_model->setCurrentModeState(SessionBaseModel::ModeStatus::PasswordMode);
@@ -655,17 +666,20 @@ void GreeterWorkek::showMessage(const QString &text, const QLightDM::Greeter::Me
  */
 void GreeterWorkek::authenticationComplete()
 {
-    qInfo() << "authentication complete, authenticated " << m_greeter->isAuthenticated() << m_retryAuth;
+    const bool result = m_greeter->isAuthenticated();
+    qInfo() << "Authentication result:" << result << m_retryAuth;
 
-    if (!m_greeter->isAuthenticated()) {
+    if (!result) {
         if (m_retryAuth && !m_model->getAuthProperty().MFAFlag) {
             showMessage(tr("Wrong Password"), QLightDM::Greeter::MessageTypeError);
-            m_greeter->authenticate(m_account);
+        }
+        if (!m_model->currentUser()->limitsInfo(AuthTypePassword).locked) {
+            m_greeter->authenticate(m_model->currentUser()->name());
         }
         return;
     }
 
-    emit m_model->authFinished(m_greeter->isAuthenticated());
+    emit m_model->authFinished(result);
 
     m_password.clear();
 

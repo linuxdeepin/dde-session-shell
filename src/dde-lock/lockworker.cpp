@@ -115,6 +115,20 @@ void LockWorker::initConnections()
                     m_model->updateAuthStatus(type, status, message);
                     break;
                 case StatusCodeFailure:
+                    if (m_model->currentModeState() != SessionBaseModel::ModeStatus::PasswordMode
+                        && m_model->currentModeState() != SessionBaseModel::ModeStatus::ConfirmPasswordMode) {
+                        m_model->setCurrentModeState(SessionBaseModel::ModeStatus::PasswordMode);
+                    }
+                    endAuthentication(m_account, type);
+                    if (!m_model->currentUser()->limitsInfo(type).locked) {
+                        QTimer::singleShot(50, this, [=] {
+                            startAuthentication(m_account, type);
+                        });
+                    }
+                    QTimer::singleShot(50, this, [=] {
+                        m_model->updateAuthStatus(type, status, message);
+                    });
+                    break;
                 case StatusCodeLocked:
                     if (m_model->currentModeState() != SessionBaseModel::ModeStatus::PasswordMode
                         && m_model->currentModeState() != SessionBaseModel::ModeStatus::ConfirmPasswordMode) {
@@ -139,6 +153,7 @@ void LockWorker::initConnections()
         } else {
             switch (status) {
             case StatusCodeSuccess:
+                m_model->updateAuthStatus(type, status, message);
                 onUnlockFinished(true);
                 if (m_model->currentModeState() != SessionBaseModel::ModeStatus::PasswordMode
                     && m_model->currentModeState() != SessionBaseModel::ModeStatus::ConfirmPasswordMode) {
@@ -146,16 +161,23 @@ void LockWorker::initConnections()
                 }
                 break;
             case StatusCodeFailure:
+                m_model->updateAuthStatus(type, status, message);
                 if (m_model->currentModeState() != SessionBaseModel::ModeStatus::PasswordMode
                     && m_model->currentModeState() != SessionBaseModel::ModeStatus::ConfirmPasswordMode) {
                     m_model->setCurrentModeState(SessionBaseModel::ModeStatus::PasswordMode);
                 }
+                if (!m_model->currentUser()->limitsInfo(AuthTypePassword).locked) {
+                    startAuthentication(m_account, type);
+                }
                 break;
             case StatusCodeCancel:
+                m_model->updateAuthStatus(type, status, message);
                 destoryAuthentication(m_account);
                 break;
+            default:
+                m_model->updateAuthStatus(type, status, message);
+                break;
             }
-            m_model->updateAuthStatus(type, status, message);
         }
     });
     connect(m_authFramework, &DeepinAuthFramework::FactorsInfoChanged, m_model, &SessionBaseModel::updateFactorsInfo);
