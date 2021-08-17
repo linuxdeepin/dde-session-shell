@@ -2,7 +2,12 @@
 
 set -e 
 
+CONFIG_DIR=/var/lib/lightdm/.config/deepin
+
 if [ "$1" = "configure" ];then
+	[ -d $CONFIG_DIR ] || mkdir -p $CONFIG_DIR
+	chown lightdm:lightdm $CONFIG_DIR
+
 	update-alternatives --install /usr/share/xgreeters/lightdm-greeter.desktop \
 	lightdm-greeter /usr/share/xgreeters/lightdm-deepin-greeter.desktop 90
 fi
