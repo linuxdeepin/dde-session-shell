@@ -19,39 +19,38 @@
 * along with this program.  If not, see <http://www.gnu.org/licenses/>.
 */
 
-#ifndef AUTHPASSWORD_H
-#define AUTHPASSWORD_H
+#ifndef AUTHSINGLE_H
+#define AUTHSINGLE_H
 
-#include "authmodule.h"
+#include "auth_module.h"
 
-#include <DLabel>
+#include <DIconButton>
 #include <DPushButton>
 
 class DLineEditEx;
-DWIDGET_USE_NAMESPACE
-
-class AuthPassword : public AuthModule
+class AuthSingle : public AuthModule
 {
     Q_OBJECT
 public:
-    explicit AuthPassword(QWidget *parent = nullptr);
+    explicit AuthSingle(QWidget *parent = nullptr);
+
+    void reset();
     QString lineEditText() const;
+
+    void setAnimationStatus(const bool start) override;
+    void setAuthStatus(const int status, const QString &result) override;
+    void setCapsLockVisible(const bool on);
+    void setKeyboardButtonInfo(const QString &text);
+    void setKeyboardButtonVisible(const bool visible);
+    void setLimitsInfo(const LimitsInfo &info) override;
+    void setLineEditEnabled(const bool enable);
+    void setLineEditInfo(const QString &text, const TextType type);
+    void setPasswordHint(const QString &hint);
 
 signals:
     void focusChanged(const bool);
     void lineEditTextChanged(const QString &); // 数据同步
-    void requestChangeFocus();                 // 切换焦点
     void requestShowKeyboardList();            // 显示键盘布局列表
-
-public slots:
-    void setAuthResult(const int status, const QString &result) override;
-    void setAnimationState(const bool start) override;
-    void setCapsStatus(const bool isCapsOn);
-    void setLimitsInfo(const LimitsInfo &info) override;
-    void setLineEditInfo(const QString &text, const TextType type);
-    void setNumLockState(const QString &path);
-    void setKeyboardButtonInfo(const QString &text);
-    void setKeyboardButtonVisible(const bool visible);
 
 protected:
     bool eventFilter(QObject *watched, QEvent *event) override;
@@ -59,13 +58,17 @@ protected:
 private:
     void initUI();
     void initConnections();
-    void updateUnlockPrompt() override;
+
+    void updateUnlockPrompt();
+    void showPasswordHint();
+    void setPasswordHintBtnVisible(const bool isVisible);
 
 private:
-    DLabel *m_capsStatus;          // 大小写状态
-    DLabel *m_numLockStatus;       // 数字键盘状态
-    DLineEditEx *m_lineEdit;       // 密码输入框
-    DPushButton *m_keyboardButton; // 键盘布局按钮
+    DLabel *m_capsLock;             // 大小写状态
+    DLineEditEx *m_lineEdit;        // 输入框
+    DPushButton *m_keyboardBtn;     // 键盘布局按钮
+    DIconButton *m_passwordHintBtn; // 密码提示按钮
+    QString m_passwordHint;         // 密码提示
 };
 
-#endif // AUTHPASSWORD_H
+#endif // AUTHSINGLE_H

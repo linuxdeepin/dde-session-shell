@@ -55,6 +55,7 @@ public slots:
     void switchToUser(std::shared_ptr<User> user) override;
     void setLocked(const bool locked);
     void restartResetSessionTimer();
+    void onAuthFinished();
 
 private:
     void initConnections();

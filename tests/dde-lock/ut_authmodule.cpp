@@ -1,4 +1,4 @@
-#include "authmodule.h"
+#include "auth_module.h"
 
 #include <gtest/gtest.h>
 
@@ -25,8 +25,8 @@ TEST_F(UT_AuthModule, BasicTest)
 {
     m_authModule->authStatus();
     m_authModule->authType();
-    m_authModule->setAnimationState(false);
-    m_authModule->setAuthResult(0, "test");
+    m_authModule->setAnimationStatus(false);
+    m_authModule->setAuthStatus(0, "test");
     // m_authModule->setAuthStatus("");
     m_authModule->setLimitsInfo(LimitsInfo());
 }

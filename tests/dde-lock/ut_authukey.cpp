@@ -1,5 +1,5 @@
 #include "authcommon.h"
-#include "authukey.h"
+#include "auth_ukey.h"
 
 #include <QPaintEvent>
 #include <QTest>
@@ -32,32 +32,32 @@ TEST_F(UT_AuthUKey, BasicTest)
 
 TEST_F(UT_AuthUKey, AuthResultTest)
 {
-    m_authUkey->setAuthResult(13, "test");
-    m_authUkey->setAuthResult(AuthCommon::StatusCodeSuccess, "Success");
-    m_authUkey->setAuthResult(AuthCommon::StatusCodeFailure, "Failure");
-    m_authUkey->setAuthResult(AuthCommon::StatusCodeCancel, "Cancel");
-    m_authUkey->setAuthResult(AuthCommon::StatusCodeTimeout, "Timeout");
-    m_authUkey->setAuthResult(AuthCommon::StatusCodeError, "Error");
-    m_authUkey->setAuthResult(AuthCommon::StatusCodeVerify, "Verif");
-    m_authUkey->setAuthResult(AuthCommon::StatusCodeException, "Exception");
-    m_authUkey->setAuthResult(AuthCommon::StatusCodePrompt, "Prompt");
-    m_authUkey->setAuthResult(AuthCommon::StatusCodeStarted, "Started");
-    m_authUkey->setAuthResult(AuthCommon::StatusCodeEnded, "Ended");
-    m_authUkey->setAuthResult(AuthCommon::StatusCodeLocked, "Locked");
-    m_authUkey->setAuthResult(AuthCommon::StatusCodeRecover, "Recover");
-    m_authUkey->setAuthResult(AuthCommon::StatusCodeUnlocked, "Unlocked");
+    m_authUkey->setAuthStatus(13, "test");
+    m_authUkey->setAuthStatus(AuthCommon::StatusCodeSuccess, "Success");
+    m_authUkey->setAuthStatus(AuthCommon::StatusCodeFailure, "Failure");
+    m_authUkey->setAuthStatus(AuthCommon::StatusCodeCancel, "Cancel");
+    m_authUkey->setAuthStatus(AuthCommon::StatusCodeTimeout, "Timeout");
+    m_authUkey->setAuthStatus(AuthCommon::StatusCodeError, "Error");
+    m_authUkey->setAuthStatus(AuthCommon::StatusCodeVerify, "Verif");
+    m_authUkey->setAuthStatus(AuthCommon::StatusCodeException, "Exception");
+    m_authUkey->setAuthStatus(AuthCommon::StatusCodePrompt, "Prompt");
+    m_authUkey->setAuthStatus(AuthCommon::StatusCodeStarted, "Started");
+    m_authUkey->setAuthStatus(AuthCommon::StatusCodeEnded, "Ended");
+    m_authUkey->setAuthStatus(AuthCommon::StatusCodeLocked, "Locked");
+    m_authUkey->setAuthStatus(AuthCommon::StatusCodeRecover, "Recover");
+    m_authUkey->setAuthStatus(AuthCommon::StatusCodeUnlocked, "Unlocked");
 }
 
 TEST_F(UT_AuthUKey, CapsStatusTest)
 {
-    m_authUkey->setCapsStatus(true);
-    m_authUkey->setCapsStatus(false);
+    m_authUkey->setCapsLockVisible(true);
+    m_authUkey->setCapsLockVisible(false);
 }
 
 TEST_F(UT_AuthUKey, AnimationStateTest)
 {
-    m_authUkey->setAnimationState(true);
-    m_authUkey->setAnimationState(false);
+    m_authUkey->setAnimationStatus(true);
+    m_authUkey->setAnimationStatus(false);
 }
 
 TEST_F(UT_AuthUKey, LineEditInfoTest)
@@ -65,15 +65,4 @@ TEST_F(UT_AuthUKey, LineEditInfoTest)
     m_authUkey->setLineEditInfo("Alert", AuthModule::AlertText);
     m_authUkey->setLineEditInfo("Input", AuthModule::InputText);
     m_authUkey->setLineEditInfo("PlaceHolder", AuthModule::PlaceHolderText);
-}
-
-TEST_F(UT_AuthUKey, NumLockStatusTest)
-{
-    m_authUkey->setNumLockStatus("");
-}
-
-TEST_F(UT_AuthUKey, KeyboardButtonTest)
-{
-    m_authUkey->setKeyboardButtonVisible(true);
-    m_authUkey->setKeyboardButtonInfo("cn;");
 }

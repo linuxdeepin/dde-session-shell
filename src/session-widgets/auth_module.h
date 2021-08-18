@@ -23,7 +23,18 @@
 #define AUTHMODULE_H
 
 #include <DLabel>
+
 #include <QWidget>
+
+#define CAPS_LOCK QStringLiteral(":/misc/images/caps_lock.svg")
+#define LOGIN_CHECK QStringLiteral(":/misc/images/login_check.svg")
+#define LOGIN_LOCK QStringLiteral(":/misc/images/login_lock.svg")
+#define LOGIN_WAIT QStringLiteral(":/misc/images/login_wait.svg")
+#define LOGIN_SPINNER QStringLiteral(":/misc/images/login_spinner.svg")
+#define PASSWORD_HINT QStringLiteral(":/misc/images/password_hint.svg")
+#define AUTH_LOCK QStringLiteral(":/misc/images/unlock/unlock_1.svg")
+
+#define UnionID_Auth QStringLiteral(":/misc/images/auth/UnionID.svg")
 
 DWIDGET_USE_NAMESPACE
 
@@ -51,22 +62,24 @@ public:
     explicit AuthModule(QWidget *parent = nullptr);
     ~AuthModule() override;
 
-    inline int authStatus() const { return m_status; }
     inline int authType() const { return m_type; }
+    inline int authStatus() const { return m_status; }
 
-    virtual void setAnimationState(const bool start);
-    virtual void setAuthResult(const int status, const QString &result);
-    void setAuthStatus(const QString &path);
+    virtual void setAnimationStatus(const bool start);
+    virtual void setAuthStatus(const int status, const QString &result);
+    void setAuthStatusStyle(const QString &path);
     virtual void setLimitsInfo(const LimitsInfo &info);
 
 signals:
-    void activeAuth();
+    void activeAuth(const int);
     void authFinished(const int);
     void requestAuthenticate();
     void unlockTimeChanged();
 
 protected:
-    virtual void updateUnlockPrompt() { }
+    void initConnections();
+    virtual void doAnimation() { }
+    virtual void updateUnlockPrompt();
     void updateUnlockTime();
 
 protected:
@@ -77,6 +90,7 @@ protected:
     uint m_integerMinutes;    // 认证剩余解锁的整数分钟
     LimitsInfo *m_limitsInfo; // 认证限制相关信息
     DLabel *m_authStatus;     // 认证状态图标
+    QTimer *m_aniTimer;       // 动画执行定时器
     QTimer *m_unlockTimer;    // 认证解锁定时器
     QTimer *m_unlockTimerTmp; // 认证解锁定时器
 };

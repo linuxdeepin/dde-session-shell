@@ -233,6 +233,7 @@ void NativeUser::initConnections()
     connect(m_userInter, &UserInter::NoPasswdLoginChanged, this, &NativeUser::updateNoPasswordLogin);
     connect(m_userInter, &UserInter::PasswordHintChanged, this, &NativeUser::updatePasswordHint);
     connect(m_userInter, &UserInter::PasswordStatusChanged, this, &NativeUser::updatePasswordStatus);
+    connect(m_userInter, &UserInter::PasswordHintChanged, this, &NativeUser::updatePasswordHint);
     connect(m_userInter, &UserInter::ShortDateFormatChanged, this, &NativeUser::updateShortDateFormat);
     connect(m_userInter, &UserInter::ShortTimeFormatChanged, this, &NativeUser::updateShortTimeFormat);
     connect(m_userInter, &UserInter::WeekdayFormatChanged, this, &NativeUser::updateWeekdayFormat);

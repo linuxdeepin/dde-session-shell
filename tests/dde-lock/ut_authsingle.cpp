@@ -1,5 +1,5 @@
 #include "authcommon.h"
-#include "authsingle.h"
+#include "auth_single.h"
 
 #include <gtest/gtest.h>
 
@@ -30,32 +30,32 @@ TEST_F(UT_AuthSingle, basic)
 
 TEST_F(UT_AuthSingle, AuthResultTest)
 {
-    m_authSingle->setAuthResult(INT_MAX, "default");
-    m_authSingle->setAuthResult(AuthCommon::StatusCodeSuccess, "Success");
-    m_authSingle->setAuthResult(AuthCommon::StatusCodeFailure, "Failure");
-    m_authSingle->setAuthResult(AuthCommon::StatusCodeCancel, "Cancel");
-    m_authSingle->setAuthResult(AuthCommon::StatusCodeTimeout, "Timeout");
-    m_authSingle->setAuthResult(AuthCommon::StatusCodeError, "Error");
-    m_authSingle->setAuthResult(AuthCommon::StatusCodeVerify, "Verify");
-    m_authSingle->setAuthResult(AuthCommon::StatusCodeException, "Exception");
-    m_authSingle->setAuthResult(AuthCommon::StatusCodePrompt, "Prompt");
-    m_authSingle->setAuthResult(AuthCommon::StatusCodeStarted, "Started");
-    m_authSingle->setAuthResult(AuthCommon::StatusCodeEnded, "Ended");
-    m_authSingle->setAuthResult(AuthCommon::StatusCodeLocked, "Locked");
-    m_authSingle->setAuthResult(AuthCommon::StatusCodeRecover, "Recover");
-    m_authSingle->setAuthResult(AuthCommon::StatusCodeUnlocked, "Unlocked");
+    m_authSingle->setAuthStatus(INT_MAX, "default");
+    m_authSingle->setAuthStatus(AuthCommon::StatusCodeSuccess, "Success");
+    m_authSingle->setAuthStatus(AuthCommon::StatusCodeFailure, "Failure");
+    m_authSingle->setAuthStatus(AuthCommon::StatusCodeCancel, "Cancel");
+    m_authSingle->setAuthStatus(AuthCommon::StatusCodeTimeout, "Timeout");
+    m_authSingle->setAuthStatus(AuthCommon::StatusCodeError, "Error");
+    m_authSingle->setAuthStatus(AuthCommon::StatusCodeVerify, "Verify");
+    m_authSingle->setAuthStatus(AuthCommon::StatusCodeException, "Exception");
+    m_authSingle->setAuthStatus(AuthCommon::StatusCodePrompt, "Prompt");
+    m_authSingle->setAuthStatus(AuthCommon::StatusCodeStarted, "Started");
+    m_authSingle->setAuthStatus(AuthCommon::StatusCodeEnded, "Ended");
+    m_authSingle->setAuthStatus(AuthCommon::StatusCodeLocked, "Locked");
+    m_authSingle->setAuthStatus(AuthCommon::StatusCodeRecover, "Recover");
+    m_authSingle->setAuthStatus(AuthCommon::StatusCodeUnlocked, "Unlocked");
 }
 
 TEST_F(UT_AuthSingle, CapsStatusTest)
 {
-    m_authSingle->setCapsStatus(true);
-    m_authSingle->setCapsStatus(false);
+    m_authSingle->setCapsLockVisible(true);
+    m_authSingle->setCapsLockVisible(false);
 }
 
 TEST_F(UT_AuthSingle, AnimationStateTest)
 {
-    m_authSingle->setAnimationState(true);
-    m_authSingle->setAnimationState(false);
+    m_authSingle->setAnimationStatus(true);
+    m_authSingle->setAnimationStatus(false);
 }
 
 TEST_F(UT_AuthSingle, LineEditInfoTest)
@@ -63,11 +63,6 @@ TEST_F(UT_AuthSingle, LineEditInfoTest)
     m_authSingle->setLineEditInfo("Alert", AuthModule::AlertText);
     m_authSingle->setLineEditInfo("Input", AuthModule::InputText);
     m_authSingle->setLineEditInfo("PlaceHolder", AuthModule::PlaceHolderText);
-}
-
-TEST_F(UT_AuthSingle, NumLockStatusTest)
-{
-    // m_authSingle->setNumLockStatus("");
 }
 
 TEST_F(UT_AuthSingle, KeyboardButtonTest)

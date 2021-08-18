@@ -6,6 +6,23 @@
     <file>misc/images/login_spinner.svg</file>
     <file>misc/images/login_wait.svg</file>
     <file>misc/images/password_hint.svg</file>
+    <file>misc/images/retry.svg</file>
     <file>misc/images/select.svg</file>
+    <file>misc/images/auth/face.svg</file>
+    <file>misc/images/auth/fingerprint.svg</file>
+    <file>misc/images/auth/iris.svg</file>
+    <file>misc/images/auth/password.svg</file>
+    <file>misc/images/auth/ukey.svg</file>
+    <file>misc/images/auth/UnionID.svg</file>
+    <file>misc/images/unlock/unlock_1.svg</file>
+    <file>misc/images/unlock/unlock_2.svg</file>
+    <file>misc/images/unlock/unlock_3.svg</file>
+    <file>misc/images/unlock/unlock_4.svg</file>
+    <file>misc/images/unlock/unlock_5.svg</file>
+    <file>misc/images/unlock/unlock_6.svg</file>
+    <file>misc/images/unlock/unlock_7.svg</file>
+    <file>misc/images/unlock/unlock_8.svg</file>
+    <file>misc/images/unlock/unlock_9.svg</file>
+    <file>misc/images/unlock/unlock_10.svg</file>
 </qresource>
 </RCC>

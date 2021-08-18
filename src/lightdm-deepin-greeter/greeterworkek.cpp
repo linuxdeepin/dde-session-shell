@@ -169,6 +169,18 @@ void GreeterWorkek::initConnections()
             if (m_model->currentModeState() != SessionBaseModel::ModeStatus::PasswordMode && (status == StatusCodeSuccess || status == StatusCodeFailure))
                 m_model->setCurrentModeState(SessionBaseModel::ModeStatus::PasswordMode);
             m_model->updateAuthStatus(type, status, message);
+            switch (status) {
+            case StatusCodeSuccess:
+                break;
+            case StatusCodeFailure:
+                endAuthentication(m_account, type);
+                if (!m_model->currentUser()->limitsInfo(type).locked) {
+                    QTimer::singleShot(50, this, [=] {
+                        startAuthentication(m_account, type);
+                    });
+                }
+                break;
+            }
         }
     });
     connect(m_authFramework, &DeepinAuthFramework::FactorsInfoChanged, m_model, &SessionBaseModel::updateFactorsInfo);
@@ -219,7 +231,9 @@ void GreeterWorkek::initConnections()
     });
     /* model */
     connect(m_model, &SessionBaseModel::authTypeChanged, this, [=](const int type) {
-        if (type > 0 && !m_model->currentUser()->limitsInfo()->value(type).locked) {
+        if (m_model->getAuthProperty().FrameworkState && !m_model->getAuthProperty().MFAFlag) {
+            m_model->updateLimitedInfo(m_authFramework->GetLimitedInfo(m_account));
+        } else if (type > 0 && !m_model->currentUser()->limitsInfo()->value(type).locked) {
             startAuthentication(m_account, m_model->getAuthProperty().AuthType);
         } else {
             QTimer::singleShot(10, this, [=] {
@@ -228,18 +242,11 @@ void GreeterWorkek::initConnections()
         }
     });
     connect(m_model, &SessionBaseModel::onPowerActionChanged, this, &GreeterWorkek::doPowerAction);
-    connect(m_model, &SessionBaseModel::lockLimitFinished, this, [=] {
-        if (!m_greeter->inAuthentication()) {
-            m_greeter->authenticate(m_account);
-        }
-        startAuthentication(m_account, m_model->getAuthProperty().AuthType);
-    });
     connect(m_model, &SessionBaseModel::currentUserChanged, this, &GreeterWorkek::recoveryUserKBState);
     connect(m_model, &SessionBaseModel::visibleChanged, this, [=] (bool visible) {
         if (visible) {
-            // 当用户开启无密码登录，密码过期后，应该创建认证服务，提示用户修改密码，否则会造成当前用户无法登录
             if (!m_model->isServerModel() && (!m_model->currentUser()->isNoPasswordLogin()
-                || (m_model->currentUser()->expiredStatus() == User::ExpiredAlready))) {
+                || m_model->currentUser()->expiredStatus() == User::ExpiredAlready)) {
                 createAuthentication(m_model->currentUser()->name());
             }
         } else {
@@ -440,12 +447,10 @@ void GreeterWorkek::createAuthentication(const QString &account)
     case Available:
         m_authFramework->CreateAuthController(account, m_authFramework->GetSupportedMixAuthFlags(), AppTypeLogin);
         m_authFramework->SetAuthQuitFlag(account, DeepinAuthFramework::ManualQuit);
-        if (m_model->getAuthProperty().MFAFlag) {
-            if (!m_authFramework->SetPrivilegesEnable(account, QString("/usr/sbin/lightdm"))) {
-                qWarning() << "Failed to set privileges!";
-            }
-            m_greeter->authenticate(account);
+        if (!m_authFramework->SetPrivilegesEnable(account, QString("/usr/sbin/lightdm"))) {
+            qWarning() << "Failed to set privileges!";
         }
+        m_greeter->authenticate(account);
         break;
     default:
         m_model->updateFactorsInfo(MFAInfoList());
@@ -482,11 +487,7 @@ void GreeterWorkek::startAuthentication(const QString &account, const int authTy
     qDebug() << "GreeterWorkek::startAuthentication:" << account << authType;
     switch (m_model->getAuthProperty().FrameworkState) {
     case Available:
-        if (m_model->getAuthProperty().MFAFlag) {
-            m_authFramework->StartAuthentication(account, authType, -1);
-        } else {
-            m_greeter->authenticate(account);
-        }
+        m_authFramework->StartAuthentication(account, authType, -1);
         break;
     default:
         m_greeter->authenticate(account);
@@ -509,13 +510,9 @@ void GreeterWorkek::sendTokenToAuth(const QString &account, const int authType, 
     qDebug() << "GreeterWorkek::sendTokenToAuth:" << account << authType;
     switch (m_model->getAuthProperty().FrameworkState) {
     case Available:
-        if (m_model->getAuthProperty().MFAFlag) {
-            m_authFramework->SendTokenToAuth(account, authType, token);
-            if (authType == AuthTypePassword) {
-                m_password = token; // 用于解锁密钥环
-            }
-        } else {
-            m_greeter->respond(token);
+        m_authFramework->SendTokenToAuth(account, authType, token);
+        if (authType == AuthTypePassword) {
+            m_password = token; // 用于解锁密钥环
         }
         break;
     default:
@@ -711,7 +708,7 @@ void GreeterWorkek::authenticationComplete()
         return;
     }
 
-    emit m_model->authFinished(result);
+    emit m_model->authFinished(true);
 
     m_password.clear();
 
@@ -740,6 +737,16 @@ void GreeterWorkek::authenticationComplete()
 #endif
     endAuthentication(m_account, AuthTypeAll);
     destoryAuthentication(m_account);
+}
+
+void GreeterWorkek::onAuthFinished()
+{
+    qDebug() << "GreeterWorkek::onAuthFinished";
+    if (m_greeter->inAuthentication()) {
+        m_greeter->respond(m_authFramework->AuthSessionPath(m_account) + QString(";") + m_password);
+    } else {
+        qWarning() << "The lightdm is not in authentication!";
+    }
 }
 
 void GreeterWorkek::saveNumlockStatus(std::shared_ptr<User> user, const bool &on)

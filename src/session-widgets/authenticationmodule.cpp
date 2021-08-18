@@ -125,7 +125,7 @@ void AuthenticationModule::init()
         connect(m_passwordHintBtn, &DIconButton::clicked, this, [this] {
             m_lineEdit->showAlertMessage(m_passwordHint, this, 3000);
         });
-        connect(m_lineEdit, &DLineEditEx::lineEditTextHasFocus, this, [this](const bool value) {
+        connect(m_lineEdit, &DLineEditEx::focusChanged, this, [this](const bool value) {
             if (value) {
                 m_authStatus->hide();
             } else {
@@ -172,7 +172,7 @@ void AuthenticationModule::init()
         PINLayout->addWidget(m_authStatus, 0, Qt::AlignRight | Qt::AlignVCenter);
         mainLayout->addWidget(m_lineEdit);
 
-        connect(m_lineEdit, &DLineEditEx::lineEditTextHasFocus, this, [this](const bool value) {
+        connect(m_lineEdit, &DLineEditEx::focusChanged, this, [this](const bool value) {
             if (value) {
                 m_authStatus->hide();
             } else {

@@ -51,6 +51,7 @@ public slots:
 
     void checkAccount(const QString &account);
     void restartResetSessionTimer();
+    void onAuthFinished();
 
 private:
     void initConnections();

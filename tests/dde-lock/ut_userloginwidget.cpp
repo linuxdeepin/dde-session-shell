@@ -22,7 +22,8 @@ protected:
 void UT_UserloginWidget::SetUp()
 {
     m_mode = new SessionBaseModel(SessionBaseModel::AuthType::LightdmType);
-    m_userloginwidget = new UserLoginWidget(m_mode);
+    m_userloginwidget = new UserLoginWidget();
+    m_userloginwidget->setModel(m_mode);
 }
 void UT_UserloginWidget::TearDown()
 {

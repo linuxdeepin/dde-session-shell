@@ -41,6 +41,8 @@ signals:
 
     void requestStartAuthentication(const QString &account, const int authType);
     void sendTokenToAuth(const QString &account, const int authType, const QString &token);
+    void requestEndAuthentication(const QString &account, const int authType);
+    void authFinished();
 
     void requestCheckAccount(const QString &account);
 

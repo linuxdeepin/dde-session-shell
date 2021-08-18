@@ -19,20 +19,24 @@
 * along with this program.  If not, see <http://www.gnu.org/licenses/>.
 */
 
-#ifndef AUTHFINGERPRINT_H
-#define AUTHFINGERPRINT_H
+#ifndef AUTHIRIS_H
+#define AUTHIRIS_H
 
-#include "authmodule.h"
+#include "auth_module.h"
 
-class AuthFingerprint : public AuthModule
+#define Iris_Auth QStringLiteral(":/misc/images/auth/iris.svg")
+
+class AuthIris : public AuthModule
 {
     Q_OBJECT
 public:
-    explicit AuthFingerprint(QWidget *parent = nullptr);
+    explicit AuthIris(QWidget *parent = nullptr);
+
+    void reset();
 
 public slots:
-    void setAuthResult(const int status, const QString &result) override;
-    void setAnimationState(const bool start) override;
+    void setAuthStatus(const int state, const QString &result) override;
+    void setAnimationStatus(const bool start) override;
     void setLimitsInfo(const LimitsInfo &info) override;
 
 protected:
@@ -42,9 +46,11 @@ private:
     void initUI();
     void initConnections();
     void updateUnlockPrompt() override;
+    void doAnimation() override;
 
 private:
+    int m_aniIndex;
     DLabel *m_textLabel;
 };
 
-#endif // AUTHFINGERPRINT_H
+#endif // AUTHIRIS_H

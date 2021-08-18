@@ -19,8 +19,9 @@
 * along with this program.  If not, see <http://www.gnu.org/licenses/>.
 */
 
+#include "auth_fingerprint.h"
+
 #include "authcommon.h"
-#include "authfingerprint.h"
 
 #include <QHBoxLayout>
 #include <QKeyEvent>
@@ -32,6 +33,11 @@ AuthFingerprint::AuthFingerprint(QWidget *parent)
     : AuthModule(parent)
     , m_textLabel(new DLabel(this))
 {
+    setObjectName(QStringLiteral("AuthFingerprint"));
+    setAccessibleName(QStringLiteral("AuthFingerprint"));
+
+    m_type = AuthTypeFingerprint;
+
     initUI();
     initConnections();
 }
@@ -49,6 +55,7 @@ void AuthFingerprint::initUI()
     mainLayout->addWidget(m_textLabel, 1, Qt::AlignHCenter | Qt::AlignVCenter);
     /* 认证状态 */
     m_authStatus = new DLabel(this);
+    setAuthStatusStyle(LOGIN_WAIT);
     mainLayout->addWidget(m_authStatus, 0, Qt::AlignRight | Qt::AlignVCenter);
 }
 
@@ -57,16 +64,15 @@ void AuthFingerprint::initUI()
  */
 void AuthFingerprint::initConnections()
 {
-    /* 解锁时间 */
-    connect(m_unlockTimer, &QTimer::timeout, this, [this] {
-        if (m_integerMinutes > 0) {
-            m_integerMinutes--;
-        }
-        if (m_integerMinutes == 0) {
-            m_unlockTimer->stop();
-        }
-        updateUnlockPrompt();
-    });
+    AuthModule::initConnections();
+}
+
+/**
+ * @brief AuthFingerprint::reset
+ */
+void AuthFingerprint::reset()
+{
+    m_textLabel->setText(tr("Verify your fingerprint"));
 }
 
 /**
@@ -75,23 +81,21 @@ void AuthFingerprint::initConnections()
  * @param status
  * @param result
  */
-void AuthFingerprint::setAuthResult(const int status, const QString &result)
+void AuthFingerprint::setAuthStatus(const int state, const QString &result)
 {
-    if (status == m_status) {
-        return;
-    }
-    m_status = status;
-
-    switch (status) {
+    qDebug() << "AuthFingerprint::setAuthResult:" << state << result;
+    m_status = state;
+    switch (state) {
     case StatusCodeSuccess:
-        setAnimationState(false);
-        setAuthStatus(":/misc/images/login_check.svg");
+        setAnimationStatus(false);
+        setAuthStatusStyle(LOGIN_CHECK);
         m_textLabel->setText(tr("Verification successful"));
         m_showPrompt = true;
+        emit authFinished(state);
         break;
     case StatusCodeFailure: {
-        setAnimationState(false);
-        setAuthStatus(":/misc/images/login_wait.svg");
+        setAnimationStatus(false);
+        setAuthStatusStyle(LOGIN_WAIT);
         const int leftTimes = static_cast<int>(m_limitsInfo->maxTries - m_limitsInfo->numFailures);
         if (leftTimes > 1) {
             m_textLabel->setText(tr("Verification failed, %n chances left", "", leftTimes));
@@ -99,78 +103,66 @@ void AuthFingerprint::setAuthResult(const int status, const QString &result)
             m_textLabel->setText(tr("Verification failed, only one chance left"));
         }
         m_showPrompt = false;
-        emit activeAuth();
+        emit authFinished(state);
         break;
     }
     case StatusCodeCancel:
-        setAnimationState(false);
-        setAuthStatus(":/misc/images/login_wait.svg");
-        // m_textLabel->setText(result);
+        setAnimationStatus(false);
+        setAuthStatusStyle(LOGIN_WAIT);
         m_showPrompt = true;
         break;
     case StatusCodeTimeout:
-        setAnimationState(false);
-        setAuthStatus(":/misc/images/login_wait.svg");
+        setAnimationStatus(false);
+        setAuthStatusStyle(LOGIN_WAIT);
         m_textLabel->setText(result);
-        m_showPrompt = true;
         break;
     case StatusCodeError:
-        setAnimationState(false);
-        setAuthStatus(":/misc/images/login_wait.svg");
+        setAnimationStatus(false);
+        setAuthStatusStyle(LOGIN_WAIT);
         m_textLabel->setText(result);
-        m_showPrompt = true;
         break;
     case StatusCodeVerify:
-        setAnimationState(true);
-        setAuthStatus(":/misc/images/login_spinner.svg");
+        setAnimationStatus(true);
+        setAuthStatusStyle(LOGIN_SPINNER);
         m_textLabel->setText(result);
         break;
     case StatusCodeException:
-        setAnimationState(false);
-        setAuthStatus(":/misc/images/login_wait.svg");
+        setAnimationStatus(false);
+        setAuthStatusStyle(LOGIN_WAIT);
         m_textLabel->setText(result);
-        m_showPrompt = true;
         break;
     case StatusCodePrompt:
-        setAnimationState(false);
-        setAuthStatus(":/misc/images/login_wait.svg");
+        setAnimationStatus(false);
+        setAuthStatusStyle(LOGIN_WAIT);
         if (m_showPrompt) {
             m_textLabel->setText(tr("Verify your fingerprint"));
         }
         break;
     case StatusCodeStarted:
-        // m_textLabel->setText(result);
         break;
     case StatusCodeEnded:
-        // m_textLabel->setText(result);
         break;
     case StatusCodeLocked:
-        setAnimationState(false);
-        setAuthStatus(":/misc/images/login_lock.svg");
+        setAnimationStatus(false);
+        setAuthStatusStyle(LOGIN_LOCK);
         m_textLabel->setText(tr("Fingerprint locked, use password please"));
-        m_showPrompt = true;
         break;
     case StatusCodeRecover:
-        setAnimationState(false);
-        setAuthStatus(":/misc/images/login_wait.svg");
-        // m_textLabel->setText(result);
-        m_showPrompt = true;
+        setAnimationStatus(false);
+        setAuthStatusStyle(LOGIN_WAIT);
         break;
     case StatusCodeUnlocked:
-        setAnimationState(false);
-        setAuthStatus(":/misc/images/login_wait.svg");
-        // m_textLabel->setText(result);
-        m_showPrompt = true;
+        setAnimationStatus(false);
+        setAuthStatusStyle(LOGIN_WAIT);
         break;
     default:
-        setAnimationState(false);
-        setAuthStatus(":/misc/images/login_wait.svg");
+        setAnimationStatus(false);
+        setAuthStatusStyle(LOGIN_WAIT);
         m_textLabel->setText(result);
-        qWarning() << "Error! The status of Fingerprint Auth is wrong!" << status << result;
+        qWarning() << "Error! The status of Fingerprint Auth is wrong!" << state << result;
         break;
     }
     update();
-
 }
 
 /**
@@ -178,7 +170,7 @@ void AuthFingerprint::setAuthResult(const int status, const QString &result)
  *
  * @param start
  */
-void AuthFingerprint::setAnimationState(const bool start)
+void AuthFingerprint::setAnimationStatus(const bool start)
 {
     Q_UNUSED(start)
 }
@@ -190,15 +182,8 @@ void AuthFingerprint::setAnimationState(const bool start)
  */
 void AuthFingerprint::setLimitsInfo(const LimitsInfo &info)
 {
-    if (info.locked && info.locked != m_limitsInfo->locked && info.unlockTime != m_limitsInfo->unlockTime) {
-        m_limitsInfo->locked = info.locked;
-        m_limitsInfo->unlockTime = info.unlockTime;
-        setAuthResult(StatusCodeLocked, QString(""));
-        updateUnlockTime();
-    }
-    m_limitsInfo->maxTries = info.maxTries;
-    m_limitsInfo->numFailures = info.numFailures;
-    m_limitsInfo->unlockSecs = info.unlockSecs;
+    qDebug() << "AuthFingerprint::setLimitsInfo" << info.unlockTime;
+    AuthModule::setLimitsInfo(info);
 }
 
 /**
@@ -206,11 +191,14 @@ void AuthFingerprint::setLimitsInfo(const LimitsInfo &info)
  */
 void AuthFingerprint::updateUnlockPrompt()
 {
-    if (m_integerMinutes > 0) {
+    AuthModule::updateUnlockPrompt();
+    if (m_integerMinutes == 1) {
+        m_textLabel->setText(tr("Please try again 1 minute later"));
+    } else if (m_integerMinutes > 1) {
         m_textLabel->setText(tr("Please try again %n minute(s) later", "", static_cast<int>(m_integerMinutes)));
     } else {
-        QTimer::singleShot(1000, this, [=] {
-            emit activeAuth();
+        QTimer::singleShot(1000, this, [this] {
+            emit activeAuth(m_type);
         });
         qInfo() << "Waiting authentication service...";
     }
@@ -220,7 +208,7 @@ void AuthFingerprint::updateUnlockPrompt()
 void AuthFingerprint::mouseReleaseEvent(QMouseEvent *event)
 {
     if (event->button() == Qt::LeftButton) {
-        emit activeAuth();
+        emit activeAuth(m_type);
     }
     QWidget::mouseReleaseEvent(event);
 }

@@ -19,10 +19,12 @@
 * along with this program.  If not, see <http://www.gnu.org/licenses/>.
 */
 
+#include "auth_module.h"
+
 #include "authcommon.h"
-#include "authmodule.h"
 
 #include <DHiDPIHelper>
+
 #include <QDateTime>
 #include <QTimer>
 
@@ -40,9 +42,10 @@ void LimitsInfo::operator=(const LimitsInfo &info)
 AuthModule::AuthModule(QWidget *parent)
     : QWidget(parent)
     , m_status(StatusCodeSuccess)
-    , m_type(AuthTypeSingle)
+    , m_type(AuthTypeNone)
     , m_showPrompt(true)
     , m_limitsInfo(new LimitsInfo())
+    , m_aniTimer(new QTimer(this))
     , m_unlockTimer(new QTimer(this))
     , m_unlockTimerTmp(new QTimer(this))
 {
@@ -62,11 +65,39 @@ AuthModule::~AuthModule()
 }
 
 /**
+ * @brief 初始化信号连接
+ */
+void AuthModule::initConnections()
+{
+    /* 认证解锁时间 */
+    connect(m_unlockTimerTmp, &QTimer::timeout, this, [this] {
+        m_integerMinutes--;
+        if (m_integerMinutes <= 1) {
+            m_integerMinutes = 0;
+            m_unlockTimer->start(0);
+        } else {
+            updateUnlockPrompt();
+            m_unlockTimer->start(60 * 1000);
+        }
+    });
+    connect(m_unlockTimer, &QTimer::timeout, this, [this] {
+        if (m_integerMinutes > 0) {
+            m_integerMinutes--;
+        } else {
+            m_unlockTimer->stop();
+        }
+        updateUnlockPrompt();
+    });
+    /* 解锁动画 */
+    connect(m_aniTimer, &QTimer::timeout, this, &AuthModule::doAnimation);
+}
+
+/**
  * @brief 设置认证动画状态，由派生类重载，自定义动画样式。
  *
  * @param start
  */
-void AuthModule::setAnimationState(const bool start)
+void AuthModule::setAnimationStatus(const bool start)
 {
     Q_UNUSED(start)
 }
@@ -77,7 +108,7 @@ void AuthModule::setAnimationState(const bool start)
  * @param status
  * @param result
  */
-void AuthModule::setAuthResult(const int status, const QString &result)
+void AuthModule::setAuthStatus(const int status, const QString &result)
 {
     Q_UNUSED(status)
     Q_UNUSED(result)
@@ -88,13 +119,8 @@ void AuthModule::setAuthResult(const int status, const QString &result)
  *
  * @param path
  */
-void AuthModule::setAuthStatus(const QString &path)
+void AuthModule::setAuthStatusStyle(const QString &path)
 {
-    static QString tmpPath;
-    if (path == tmpPath) {
-        return;
-    }
-    tmpPath = path;
     QPixmap pixmap = DHiDPIHelper::loadNxPixmap(path);
     pixmap.setDevicePixelRatio(devicePixelRatioF());
     m_authStatus->setPixmap(pixmap);
@@ -108,6 +134,15 @@ void AuthModule::setAuthStatus(const QString &path)
 void AuthModule::setLimitsInfo(const LimitsInfo &info)
 {
     *m_limitsInfo = info;
+    updateUnlockTime();
+}
+
+/**
+ * @brief 更新认证剩余解锁时间提示
+ */
+void AuthModule::updateUnlockPrompt()
+{
+    qInfo() << m_type << "has" << m_integerMinutes << "minutes left to unlock.";
 }
 
 /**

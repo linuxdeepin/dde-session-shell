@@ -220,6 +220,7 @@ void SessionBaseModel::setAllowShowCustomUser(const bool allowShowCustomUser)
  */
 void SessionBaseModel::setAuthType(const int type)
 {
+    qDebug() << Q_FUNC_INFO << type;
     m_authProperty.AuthType = type;
     emit authTypeChanged(type);
 }
@@ -545,6 +546,7 @@ void SessionBaseModel::updatePrompt(const QString &prompt)
  */
 void SessionBaseModel::updateFactorsInfo(const MFAInfoList &infoList)
 {
+    qDebug() << Q_FUNC_INFO << infoList;
     m_authProperty.AuthType = AuthTypeNone;
     if (m_currentUser->uid() == INT_MAX) {
         emit authTypeChanged(AuthTypeNone);

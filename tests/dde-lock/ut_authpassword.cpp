@@ -1,4 +1,4 @@
-#include "authpassword.h"
+#include "auth_password.h"
 
 #include <QPaintEvent>
 #include <QTest>
@@ -29,7 +29,7 @@ TEST_F(UT_AuthPassword, init)
 
     QString str;
     for (int i = 0; i < 13; i++) {
-        m_widget->setAuthResult(i, str);
+        m_widget->setAuthStatus(i, str);
     }
 
     m_widget->setLineEditInfo("", AuthModule::AlertText);
@@ -40,5 +40,5 @@ TEST_F(UT_AuthPassword, init)
     m_widget->setKeyboardButtonInfo("");
     m_widget->setKeyboardButtonVisible(true);
     m_widget->lineEditText();
-    m_widget->updateUnlockPrompt();
+    // m_widget->updateUnlockPrompt();
 }

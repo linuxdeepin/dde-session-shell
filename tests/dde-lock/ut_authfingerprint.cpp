@@ -1,5 +1,5 @@
 #include "authcommon.h"
-#include "authfingerprint.h"
+#include "auth_fingerprint.h"
 
 #include <QTest>
 
@@ -26,26 +26,26 @@ void UT_AuthFingerprint::TearDown()
 
 TEST_F(UT_AuthFingerprint, BasicTest)
 {
-    m_authFingerprint->setAuthResult(0, "test");
-    m_authFingerprint->setAnimationState(true);
+    m_authFingerprint->setAuthStatus(0, "test");
+    m_authFingerprint->setAnimationStatus(true);
     m_authFingerprint->setLimitsInfo(LimitsInfo());
     QTest::mouseRelease(m_authFingerprint, Qt::MouseButton::RightButton, Qt::KeyboardModifier::NoModifier, QPoint(0, 0));
 }
 
 TEST_F(UT_AuthFingerprint, AuthResultTest)
 {
-    m_authFingerprint->setAuthResult(INT_MAX, "default");
-    m_authFingerprint->setAuthResult(AuthCommon::StatusCodeSuccess, "Success");
-    m_authFingerprint->setAuthResult(AuthCommon::StatusCodeFailure, "Failure");
-    m_authFingerprint->setAuthResult(AuthCommon::StatusCodeCancel, "Cancel");
-    m_authFingerprint->setAuthResult(AuthCommon::StatusCodeTimeout, "Timeout");
-    m_authFingerprint->setAuthResult(AuthCommon::StatusCodeError, "Error");
-    m_authFingerprint->setAuthResult(AuthCommon::StatusCodeVerify, "Verify");
-    m_authFingerprint->setAuthResult(AuthCommon::StatusCodeException, "Exception");
-    m_authFingerprint->setAuthResult(AuthCommon::StatusCodePrompt, "Prompt");
-    m_authFingerprint->setAuthResult(AuthCommon::StatusCodeStarted, "Started");
-    m_authFingerprint->setAuthResult(AuthCommon::StatusCodeEnded, "Ended");
-    m_authFingerprint->setAuthResult(AuthCommon::StatusCodeLocked, "Locked");
-    m_authFingerprint->setAuthResult(AuthCommon::StatusCodeRecover, "Recover");
-    m_authFingerprint->setAuthResult(AuthCommon::StatusCodeUnlocked, "Unlocked");
+    m_authFingerprint->setAuthStatus(INT_MAX, "default");
+    m_authFingerprint->setAuthStatus(AuthCommon::StatusCodeSuccess, "Success");
+    m_authFingerprint->setAuthStatus(AuthCommon::StatusCodeFailure, "Failure");
+    m_authFingerprint->setAuthStatus(AuthCommon::StatusCodeCancel, "Cancel");
+    m_authFingerprint->setAuthStatus(AuthCommon::StatusCodeTimeout, "Timeout");
+    m_authFingerprint->setAuthStatus(AuthCommon::StatusCodeError, "Error");
+    m_authFingerprint->setAuthStatus(AuthCommon::StatusCodeVerify, "Verify");
+    m_authFingerprint->setAuthStatus(AuthCommon::StatusCodeException, "Exception");
+    m_authFingerprint->setAuthStatus(AuthCommon::StatusCodePrompt, "Prompt");
+    m_authFingerprint->setAuthStatus(AuthCommon::StatusCodeStarted, "Started");
+    m_authFingerprint->setAuthStatus(AuthCommon::StatusCodeEnded, "Ended");
+    m_authFingerprint->setAuthStatus(AuthCommon::StatusCodeLocked, "Locked");
+    m_authFingerprint->setAuthStatus(AuthCommon::StatusCodeRecover, "Recover");
+    m_authFingerprint->setAuthStatus(AuthCommon::StatusCodeUnlocked, "Unlocked");
 }

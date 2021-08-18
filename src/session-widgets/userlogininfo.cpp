@@ -20,11 +20,14 @@
  */
 
 #include "userlogininfo.h"
-#include "userinfo.h"
-#include "userloginwidget.h"
+
+#include "constants.h"
 #include "sessionbasemodel.h"
 #include "userframelist.h"
-#include "constants.h"
+#include "userinfo.h"
+#include "userloginwidget.h"
+
+#include <QDebug>
 #include <QKeyEvent>
 
 /**
@@ -34,14 +37,13 @@
 UserLoginInfo::UserLoginInfo(SessionBaseModel *model, QObject *parent)
     : QObject(parent)
     , m_model(model)
-    , m_userLoginWidget(new UserLoginWidget(model))
+    , m_userLoginWidget(new UserLoginWidget)
     , m_userFrameList(new UserFrameList)
 {
     m_userFrameList->setModel(model);
+    m_userLoginWidget->setModel(model);
     /* 初始化验证界面 */
     m_userLoginWidget->updateWidgetShowType(model->getAuthProperty().AuthType);
-    m_userLoginWidget->updateLimitsInfo(m_model->currentUser()->limitsInfo());
-    m_userLoginWidget->setAccessibleName("UserLoginWidget");
     initConnect();
 }
 
@@ -57,8 +59,7 @@ void UserLoginInfo::setUser(std::shared_ptr<User> user)
     m_currentUserConnects << connect(user.get(), &User::displayNameChanged, m_userLoginWidget, &UserLoginWidget::updateName);
     m_currentUserConnects << connect(user.get(), &User::keyboardLayoutListChanged, m_userLoginWidget, &UserLoginWidget::updateKeyboardList, Qt::UniqueConnection);
     m_currentUserConnects << connect(user.get(), &User::keyboardLayoutChanged, m_userLoginWidget, &UserLoginWidget::updateKeyboardInfo, Qt::UniqueConnection);
-    m_currentUserConnects << connect(user.get(), &User::noPasswordLoginChanged, this, &UserLoginInfo::updateLoginContent); // TODO
-    m_currentUserConnects << connect(user.get(), &User::passwordHintChanged, m_userLoginWidget, &UserLoginWidget::setPasswordHint);
+    m_currentUserConnects << connect(user.get(), &User::passwordHintChanged, m_userLoginWidget, &UserLoginWidget::setPasswordHint, Qt::UniqueConnection);
 
     //需要清除上一个用户的验证状态数据
     if (m_user != nullptr && m_user != user) {
@@ -79,8 +80,6 @@ void UserLoginInfo::setUser(std::shared_ptr<User> user)
     // m_userLoginWidget->disablePassword(user.get()->isLock(), user->lockTime());
     m_userLoginWidget->updateKeyboardList(user->keyboardLayoutList());
     m_userLoginWidget->updateKeyboardInfo(user->keyboardLayout());
-
-    updateLoginContent();
 }
 
 void UserLoginInfo::initConnect()
@@ -141,9 +140,6 @@ void UserLoginInfo::initConnect()
 
     /* m_mode */
     connect(m_model->currentUser().get(), &User::limitsInfoChanged, m_userLoginWidget, &UserLoginWidget::updateLimitsInfo);
-    connect(m_model, &SessionBaseModel::currentUserChanged, this, [=] (std::shared_ptr<User> user){
-       connect(user.get(), &User::limitsInfoChanged, m_userLoginWidget, &UserLoginWidget::updateLimitsInfo);
-    });
 }
 
 void UserLoginInfo::updateLocale()
@@ -153,6 +149,7 @@ void UserLoginInfo::updateLocale()
 
 void UserLoginInfo::abortConfirm(bool abort)
 {
+    qDebug() << "UserLoginInfo::abortConfirm:" << abort;
     if (!abort) {
         m_model->setPowerAction(SessionBaseModel::PowerAction::None);
     }
@@ -180,18 +177,9 @@ UserFrameList *UserLoginInfo::getUserFrameList()
     return m_userFrameList;
 }
 
-void UserLoginInfo::hideKBLayout()
-{
-    // m_userLoginWidget->hideKBLayout();
-}
-
-void UserLoginInfo::userLockChanged(bool disable)
-{
-     // m_userLoginWidget->disablePassword(disable, m_user->lockTime());
-}
-
 void UserLoginInfo::receiveSwitchUser(std::shared_ptr<User> user)
 {
+    qDebug() << "UserLoginInfo::receiveSwitchUser:" << user->name() << m_user->name();
     if (m_user != user) {
         // m_userLoginWidget->clearPassWord();
 
@@ -201,18 +189,4 @@ void UserLoginInfo::receiveSwitchUser(std::shared_ptr<User> user)
     }
 
     emit requestSwitchUser(user);
-}
-
-void UserLoginInfo::updateLoginContent()
-{
-    //在INT_MAX的切换用户时输入用户名，其他用户直接显示用户名
-    if (m_model->currentUser()->uid() == INT_MAX) {
-        // m_userLoginWidget->setWidgetShowType(UserLoginWidget::IDAndPasswordType);
-    } else {
-        if (m_user->isNoPasswordLogin()) {
-            // m_userLoginWidget->setWidgetShowType(UserLoginWidget::NoPasswordType);
-        } else {
-            // m_userLoginWidget->setWidgetShowType(UserLoginWidget::NormalType);
-        }
-    }
 }

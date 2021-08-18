@@ -51,9 +51,6 @@ class DLineEditEx : public DLineEdit
 public:
     DLineEditEx(QWidget *parent = nullptr);
 
-signals:
-    void lineEditTextHasFocus(bool focous);
-
 public slots:
     void startAnimation();
     void stopAnimation();

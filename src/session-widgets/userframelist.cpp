@@ -33,6 +33,9 @@
 #include <QScrollBar>
 #include <QScroller>
 
+const int UserFrameWidth = 226;
+const int UserFrameHeight = 167;
+
 UserFrameList::UserFrameList(QWidget *parent)
     : QWidget(parent)
     , m_scrollArea(new QScrollArea(this))
@@ -124,7 +127,7 @@ void UserFrameList::handlerBeforeAddUser(std::shared_ptr<User> user)
 //创建用户窗体
 void UserFrameList::addUser(const std::shared_ptr<User> user)
 {
-    UserLoginWidget *widget = new UserLoginWidget(m_model, UserLoginWidget::UserListType, m_centerWidget);
+    UserLoginWidget *widget = new UserLoginWidget(UserLoginWidget::UserListType, m_centerWidget);
     widget->updateAvatar(user->avatar());
     widget->updateName(user->displayName());
     widget->updateLoginState(user->isLogin());

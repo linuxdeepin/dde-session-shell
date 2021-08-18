@@ -218,7 +218,9 @@ void LockWorker::initConnections()
     });
     /* model */
     connect(m_model, &SessionBaseModel::authTypeChanged, this, [=](const int type) {
-        if (type > 0 && !m_model->currentUser()->limitsInfo()->value(type).locked) {
+        if (m_model->getAuthProperty().FrameworkState && !m_model->getAuthProperty().MFAFlag) {
+            m_model->updateLimitedInfo(m_authFramework->GetLimitedInfo(m_account));
+        } else if (type > 0 && !m_model->currentUser()->limitsInfo()->value(type).locked) {
             startAuthentication(m_account, m_model->getAuthProperty().AuthType);
         } else {
             QTimer::singleShot(10, this, [=] {
@@ -230,9 +232,10 @@ void LockWorker::initConnections()
     connect(m_model, &SessionBaseModel::visibleChanged, this, [=](bool visible) {
         if (visible && m_model->currentModeState() != SessionBaseModel::ShutDownMode) {
             createAuthentication(m_model->currentUser()->name());
-        } else {
+        } else if (!visible) {
             m_resetSessionTimer->stop();
             endAuthentication(m_account, AuthTypeAll);
+            destoryAuthentication(m_model->currentUser()->name());
         }
         setLocked(visible);
     });
@@ -634,6 +637,12 @@ void LockWorker::lockServiceEvent(quint32 eventType, quint32 pid, const QString 
     default:
         break;
     }
+}
+
+void LockWorker::onAuthFinished()
+{
+    m_model->setVisible(false);
+    onUnlockFinished(true);
 }
 
 void LockWorker::onUnlockFinished(bool unlocked)

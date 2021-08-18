@@ -69,6 +69,12 @@ LoginWindow::LoginWindow(SessionBaseModel *const model, QWidget *parent)
     connect(m_loginContent, &LockContent::requestCheckAccount, this, &LoginWindow::requestCheckAccount);
     connect(m_loginContent, &LockContent::requestStartAuthentication, this, &LoginWindow::requestStartAuthentication);
     connect(m_loginContent, &LockContent::sendTokenToAuth, this, &LoginWindow::sendTokenToAuth);
+    connect(m_loginContent, &LockContent::requestEndAuthentication, this, &LoginWindow::requestEndAuthentication);
+    connect(m_loginContent, &LockContent::authFinished, this, [this]{
+        enableEnterEvent(true);
+        m_loginContent->hide();
+        emit authFinished();
+    });
     connect(model, &SessionBaseModel::blackModeChanged, this, &FullscreenBackground::setIsBlackMode);
 }
 

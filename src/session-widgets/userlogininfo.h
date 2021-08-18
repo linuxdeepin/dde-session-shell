@@ -42,7 +42,6 @@ public:
     void updateLocale();
     UserLoginWidget *getUserLoginWidget();
     UserFrameList *getUserFrameList();
-    void hideKBLayout();
     void abortConfirm(bool abort = true);
     void beforeUnlockAction(bool is_finish);
     void updateLoginContent();
@@ -61,7 +60,6 @@ signals:
     void requestCheckAccount(const QString &account);
 
 private:
-    void userLockChanged(bool disable);
     void receiveSwitchUser(std::shared_ptr<User> user);
 
 private:
