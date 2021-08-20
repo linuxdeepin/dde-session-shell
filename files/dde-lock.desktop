@@ -2,7 +2,7 @@
 Name=Deepin Lock
 Comment=Deepin Lock
 Encoding=UTF-8
-Exec=/usr/bin/dde-lock -l
+Exec=/usr/bin/dde-lock
 NoDisplay=true
 OnlyShowIn=Deepin
 Type=Application

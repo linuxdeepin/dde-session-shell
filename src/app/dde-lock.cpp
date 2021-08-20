@@ -135,6 +135,13 @@ int main(int argc, char *argv[])
     QObject::connect(&appEventFilter, &AppEventFilter::userIsActive, worker, &LockWorker::restartResetSessionTimer);
     PropertyGroup *property_group = new PropertyGroup(worker);
 
+    if (worker->isLocked()) {
+        //如果当前Session被锁定，则启动dde-lock时直接进入锁屏状态
+        //兼容在desktop文件中添加-l启动参数来解决杀掉dde-lock后启动器无法打开的问题,BUG91126
+        //同时避免在desktop文件中添加-l启动参数在正常启动时就直接进入锁屏而无法调用任务栏关机按钮中接口的问题,BUG92030
+        showLockScreen = true;
+    }
+
     property_group->addProperty("contentVisible");
 
     DBusLockAgent lockAgent;

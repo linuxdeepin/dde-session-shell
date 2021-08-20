@@ -456,6 +456,11 @@ void LockWorker::onPasswordResult(const QString &msg)
     }
 }
 
+bool LockWorker::isLocked()
+{
+    return m_sessionManagerInter->locked();
+}
+
 /**
  * @brief 创建认证服务
  * 有用户时，通过dbus发过来的user信息创建认证服务，类服务器模式下通过用户输入的用户创建认证服务

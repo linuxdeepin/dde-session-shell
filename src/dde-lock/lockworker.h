@@ -39,6 +39,8 @@ public:
     void onDisplayErrorMsg(const QString &msg) override;
     void onDisplayTextInfo(const QString &msg) override;
     void onPasswordResult(const QString &msg) override;
+    //获取当前Session是否被锁定
+    bool isLocked();
 
 public slots:
     /* Old authentication methods */
