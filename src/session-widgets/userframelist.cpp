@@ -63,12 +63,14 @@ UserFrameList::UserFrameList(QWidget *parent)
 void UserFrameList::initUI()
 {
     m_centerWidget = new QWidget;
+    m_centerWidget->setAccessibleName("UserFrameListCenterWidget");
 
     m_flowLayout = new DFlowLayout(m_centerWidget);
     m_flowLayout->setFlow(QListView::LeftToRight);
     m_flowLayout->setContentsMargins(10, 10, 10, 10);
     m_flowLayout->setSpacing(40);
 
+    m_scrollArea->setAccessibleName("UserFrameListCenterWidget");
     m_scrollArea->setWidget(m_centerWidget);
     m_scrollArea->setWidgetResizable(true);
     m_scrollArea->setVerticalScrollBarPolicy(Qt::ScrollBarAsNeeded);

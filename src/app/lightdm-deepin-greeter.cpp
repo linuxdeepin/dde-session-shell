@@ -295,7 +295,8 @@ int main(int argc, char* argv[])
 
 #if defined(DSS_CHECK_ACCESSIBILITY) && defined(QT_DEBUG)
     AccessibilityCheckerEx checker;
-    checker.addIgnoreName("KeyboardLayoutFrame");
+    checker.addIgnoreClasses(QStringList()
+                          << "Dtk::Widget::DBlurEffectWidget");
     checker.setOutputFormat(DAccessibilityChecker::FullFormat);
     checker.start();
 #endif

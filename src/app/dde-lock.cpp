@@ -184,7 +184,9 @@ int main(int argc, char *argv[])
 
 #if defined(DSS_CHECK_ACCESSIBILITY) && defined(QT_DEBUG)
     AccessibilityCheckerEx checker;
-    checker.addIgnoreName("KeyboardLayoutFrame");
+    //Dtk::Widget::DBlurEffectWidget 添加accessibleName、objectName都会检查出内存泄露，原因不知
+    checker.addIgnoreClasses(QStringList()
+                          << "Dtk::Widget::DBlurEffectWidget");
     checker.setOutputFormat(DAccessibilityChecker::FullFormat);
     checker.start();
 #endif

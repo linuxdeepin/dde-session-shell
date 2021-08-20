@@ -39,6 +39,7 @@ LoginTipsWindow::LoginTipsWindow(QWidget *parent)
 
 void LoginTipsWindow::initUI()
 {
+    setAccessibleName("LoginTipsWindow");
     m_mainLayout = new QHBoxLayout(this);
 
     QVBoxLayout *vLayout = new QVBoxLayout(this);

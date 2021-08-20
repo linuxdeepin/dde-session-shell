@@ -71,6 +71,7 @@ SessionWidget::SessionWidget(QWidget *parent)
     setSizePolicy(QSizePolicy::Expanding, QSizePolicy::Expanding);
     loadSessionList();
     setFocusPolicy(Qt::StrongFocus);
+    setAccessibleName("SessionWidget");
 
     std::function<void (QVariant)> function = std::bind(&SessionWidget::onOtherPageChanged, this, std::placeholders::_1);
     int index = m_frameDataBind->registerFunction("SessionWidget", function);

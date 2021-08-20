@@ -59,7 +59,7 @@ DLineEditEx::DLineEditEx(QWidget *parent)
     setAttribute(Qt::WA_InputMethodEnabled, false);
     this->lineEdit()->setAttribute(Qt::WA_InputMethodEnabled, false);
 #endif
-
+    setAccessibleName("LineEditEx");
     this->lineEdit()->installEventFilter(this);
     this->installEventFilter(this);
 }

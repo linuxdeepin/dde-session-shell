@@ -48,6 +48,7 @@ LockFrame::LockFrame(SessionBaseModel *const model, QWidget *parent)
 {
     updateBackground(m_model->currentUser()->greeterBackground());
 
+    setAccessibleName("LockFrame");
     m_lockContent->setAccessibleName("LockContent");
     m_lockContent->hide();
     setContent(m_lockContent);

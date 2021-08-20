@@ -125,7 +125,7 @@ KbLayoutWidget::KbLayoutWidget(QStringList buttons, QWidget *parent)
 }
 
 void KbLayoutWidget::initUI() {
-    setObjectName("KeyboardLayoutFrame");
+    setProperty("CheckAccessibleName", false);
     setVerticalScrollBarPolicy(Qt::ScrollBarAlwaysOff);
     this->setHorizontalScrollBarPolicy(Qt::ScrollBarAlwaysOff);
     setSelectionMode(QAbstractItemView::NoSelection);

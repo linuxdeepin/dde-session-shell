@@ -42,6 +42,7 @@ void VirtualKBInstance::init()
             int xid = atoi(output.trimmed().toStdString().c_str());
             QWindow * w = QWindow::fromWinId(xid);
             m_virtualKBWidget = QWidget::createWindowContainer(w);
+            m_virtualKBWidget->setAccessibleName("VirtualKBWidget");
             m_virtualKBWidget->setFixedSize(600, 200);
             m_virtualKBWidget->hide();
 

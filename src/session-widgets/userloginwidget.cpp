@@ -439,6 +439,7 @@ void UserLoginWidget::initPasswdAuth(const int index)
         return;
     }
     m_passwordAuth = new AuthenticationModule(AuthTypePassword, this);
+    m_passwordAuth->setAccessibleName("PasswordAuth");
     m_passwordAuth->setCapsStatus(m_capslockMonitor->isCapslockOn());
     m_passwordAuth->setPasswordHint(m_model->currentUser()->passwordHint());
     m_userLoginLayout->insertWidget(index, m_passwordAuth);
@@ -500,6 +501,7 @@ void UserLoginWidget::initFingerprintAuth(const int index)
         return;
     }
     m_fingerprintAuth = new AuthenticationModule(AuthTypeFingerprint, this);
+    m_fingerprintAuth->setAccessibleName("FingerPrintAuth");
     //指纹验证第一次提示内容固定，其他系统根据后端发过来内容显示
     m_fingerprintAuth->setText(tr("Verify your fingerprint"));
     m_userLoginLayout->insertWidget(index, m_fingerprintAuth);
@@ -547,6 +549,7 @@ void UserLoginWidget::initUkeyAuth(const int index)
         return;
     }
     m_ukeyAuth = new AuthenticationModule(AuthTypeUkey, this);
+    m_ukeyAuth->setAccessibleName("UkeyAuth");
     m_ukeyAuth->setCapsStatus(m_capslockMonitor->isCapslockOn());
     m_userLoginLayout->insertWidget(index, m_ukeyAuth);
 
@@ -623,6 +626,7 @@ void UserLoginWidget::initPINAuth(const int index)
         return;
     }
     m_PINAuth = new AuthenticationModule(AuthTypePIN, this);
+    m_PINAuth->setAccessibleName("PINAuth");
     m_userLoginLayout->insertWidget(index, m_PINAuth);
 
     std::function<void(QVariant)> PINChanged = std::bind(&UserLoginWidget::onOtherPagePINChanged, this, std::placeholders::_1);

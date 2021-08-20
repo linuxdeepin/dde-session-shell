@@ -98,6 +98,7 @@ void AuthenticationModule::init()
         passwordLayout->setSpacing(5);
         /* 键盘布局按钮 */
         m_keyboardButton = new QPushButton(m_lineEdit);
+        m_keyboardButton->setAccessibleName("KeyboardButton");
         m_keyboardButton->setContentsMargins(0, 0, 0, 0);
         m_keyboardButton->setFocusPolicy(Qt::NoFocus);
         m_keyboardButton->setCursor(Qt::ArrowCursor);
@@ -105,6 +106,7 @@ void AuthenticationModule::init()
         passwordLayout->addWidget(m_keyboardButton, 0, Qt::AlignLeft | Qt::AlignVCenter);
         /* 大小写状态 */
         m_capsStatus = new DLabel(m_lineEdit);
+        m_capsStatus->setAccessibleName("CapStatus");
         passwordLayout->addWidget(m_capsStatus, 1, Qt::AlignRight | Qt::AlignVCenter);
         /* 密码提示 */
         m_passwordHintBtn = new DIconButton(m_lineEdit);
@@ -116,6 +118,7 @@ void AuthenticationModule::init()
         passwordLayout->addWidget(m_passwordHintBtn, 0, Qt::AlignRight | Qt::AlignVCenter);
         /* 认证状态 */
         m_authStatus = new DLabel(m_lineEdit);
+        m_authStatus->setAccessibleName("AuthStatus");
         passwordLayout->addWidget(m_authStatus, 0, Qt::AlignRight | Qt::AlignVCenter);
         mainLayout->addWidget(m_lineEdit);
         connect(m_keyboardButton, &QPushButton::clicked, this, &AuthenticationModule::requestShowKeyboardList);
@@ -161,9 +164,11 @@ void AuthenticationModule::init()
         PINLayout->setSpacing(5);
         /* 大小写状态 */
         m_capsStatus = new DLabel(m_lineEdit);
+        m_capsStatus->setAccessibleName("CapsStatus");
         PINLayout->addWidget(m_capsStatus, 1, Qt::AlignRight | Qt::AlignVCenter);
         /* 认证状态 */
         m_authStatus = new DLabel(m_lineEdit);
+        m_authStatus->setAccessibleName("AuthStatus");
         PINLayout->addWidget(m_authStatus, 0, Qt::AlignRight | Qt::AlignVCenter);
         mainLayout->addWidget(m_lineEdit);
 
@@ -200,8 +205,10 @@ void AuthenticationModule::init()
     case AuthTypeIris: {
         mainLayout->setContentsMargins(27, 0, 10, 0);
         m_textLabel = new DLabel(this);
+        m_textLabel->setAccessibleName("TextLable");
         mainLayout->addWidget(m_textLabel, 1, Qt::AlignHCenter | Qt::AlignVCenter);
         m_authStatus = new DLabel(this);
+        m_authStatus->setAccessibleName("AuthStatus");
         mainLayout->addWidget(m_authStatus, 0, Qt::AlignRight | Qt::AlignVCenter);
         /* 解锁时间 */
         connect(this, &AuthenticationModule::unlockTimeChanged, this, [=] {
