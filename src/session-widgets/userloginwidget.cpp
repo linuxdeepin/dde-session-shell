@@ -480,10 +480,10 @@ void UserLoginWidget::initPasswdAuth(const int index)
     m_registerFunctionIndexs["UserLoginPassword"] = FrameDataBind::Instance()->registerFunction("UserLoginPassword", passwordChanged);
     connect(m_passwordAuth, &AuthenticationModule::lineEditTextChanged, this, [=] (const QString &value) {
         FrameDataBind::Instance()->updateValue("UserLoginPassword", value);
-        if (value.length() > 0 || (m_ukeyAuth && (m_ukeyAuth->getAuthStatus() == StatusCodeSuccess)))
+        if (!value.isEmpty() || (m_passwordAuth && !m_passwordAuth->isEnabled()))
             m_lockButton->setEnabled(true);
-        else if(m_ukeyAuth && m_ukeyAuth->lineEditText().isEmpty()) {
-               m_lockButton->setEnabled(false);
+        else if(m_ukeyAuth && m_ukeyAuth->lineEditText().isEmpty() && m_ukeyAuth->isEnabled()) {
+            m_lockButton->setEnabled(false);
         }
     });
 
@@ -588,9 +588,9 @@ void UserLoginWidget::initUkeyAuth(const int index)
         }
         FrameDataBind::Instance()->updateValue("UserLoginUKey", value);
 
-        if (value.length() > 0 || (m_passwordAuth && (m_passwordAuth->getAuthStatus() == StatusCodeSuccess))) {
+        if (!value.isEmpty() || (m_ukeyAuth && !m_ukeyAuth->isEnabled())) {
             m_lockButton->setEnabled(true);
-        } else if (m_passwordAuth && m_passwordAuth->lineEditText().isEmpty()) {
+        } else if (m_passwordAuth && m_passwordAuth->lineEditText().isEmpty() && m_passwordAuth->isEnabled()) {
             m_lockButton->setEnabled(false);
         }
     });
