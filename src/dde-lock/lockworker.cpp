@@ -269,7 +269,12 @@ void LockWorker::initData()
     }
 
     /* com.deepin.dde.LockService */
-    m_model->updateCurrentUser(m_lockInter->CurrentUser());
+    std::shared_ptr<User> user_ptr = m_model->findUserByUid(getuid());
+    if (user_ptr.get()) {
+        m_model->updateCurrentUser(user_ptr);
+    } else {
+        m_model->updateCurrentUser(m_lockInter->CurrentUser());
+    }
 
     /* com.deepin.daemon.Authenticate */
     m_model->updateFrameworkState(m_authFramework->GetFrameworkState());
