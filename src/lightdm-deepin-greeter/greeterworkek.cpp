@@ -135,13 +135,15 @@ void GreeterWorkek::initConnections()
                     if (m_model->currentModeState() != SessionBaseModel::ModeStatus::PasswordMode) {
                         m_model->setCurrentModeState(SessionBaseModel::ModeStatus::PasswordMode);
                     }
-                    m_model->updateAuthStatus(type, status, message);
                     endAuthentication(m_account, type);
                     if (!m_model->currentUser()->limitsInfo(type).locked) {
                         QTimer::singleShot(50, this, [=] {
                             startAuthentication(m_account, type);
                         });
                     }
+                    QTimer::singleShot(50, this, [=] {
+                        m_model->updateAuthStatus(type, status, message);
+                    });
                     break;
                 case StatusCodeLocked:
                     if (m_model->currentModeState() != SessionBaseModel::ModeStatus::PasswordMode)
