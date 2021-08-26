@@ -309,6 +309,10 @@ void SessionBaseModel::updateCurrentUser(const QString &userJson)
         const QJsonObject userObj = userDoc.object();
         const QString &name = userObj["Name"].toString();
         user_ptr = findUserByName(name);
+        if (name.isEmpty() || user_ptr == nullptr) {
+            const uid_t uid = static_cast<uid_t>(userObj["Uid"].toInt());
+            user_ptr = findUserByUid(uid);
+        }
         if (user_ptr == nullptr) {
             qWarning() << "Failed to find user!";
             user_ptr = m_lastLogoutUser ? m_lastLogoutUser : m_users->first();
