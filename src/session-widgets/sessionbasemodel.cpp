@@ -551,7 +551,7 @@ void SessionBaseModel::updateFactorsInfo(const MFAInfoList &infoList)
         return;
     }
     switch (m_authProperty.FrameworkState) {
-    case 0:
+    case Available:
         if (m_authProperty.MFAFlag) {
             for (const MFAInfo &info : infoList) {
                 m_authProperty.AuthType |= info.AuthType;
@@ -580,7 +580,7 @@ void SessionBaseModel::updateAuthStatus(const int type, const int status, const 
 {
     qInfo() << "Authentication Service status:" << type << status << result;
     switch (m_authProperty.FrameworkState) {
-    case 0:
+    case Available:
         if (m_authProperty.MFAFlag) {
             emit authStatusChanged(type, status, result);
         } else {
