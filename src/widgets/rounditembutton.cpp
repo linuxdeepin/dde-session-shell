@@ -111,6 +111,7 @@ void RoundItemButton::initUI() {
     m_itemText->setAlignment(Qt::AlignCenter | Qt::AlignTop);
     m_itemText->setSizePolicy(QSizePolicy::Fixed, QSizePolicy::Fixed);
     m_itemText->setContentsMargins(10, 5, 10, 5);
+    m_itemText->setFixedWidth(140);
 
     QVBoxLayout *mainLayout = new QVBoxLayout;
     mainLayout->setMargin(0);
@@ -121,7 +122,6 @@ void RoundItemButton::initUI() {
 
     setFocusPolicy(Qt::NoFocus);
     setLayout(mainLayout);
-    setFixedSize(QSize(140, 140));
     setCheckable(true);
 
     QGraphicsDropShadowEffect *nameShadow = new QGraphicsDropShadowEffect(m_itemText);
