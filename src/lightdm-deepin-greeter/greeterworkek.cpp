@@ -268,6 +268,9 @@ void GreeterWorkek::initData()
         m_model->addUser(user);
         if (DSysInfo::deepinType() == DSysInfo::DeepinServer) {
             m_model->updateCurrentUser(user);
+        } else {
+            /* com.deepin.dde.LockService */
+            m_model->updateCurrentUser(m_lockInter->CurrentUser());
         }
     } else {
         connect(m_login1Inter, &DBusLogin1Manager::SessionRemoved, this, [=] {
@@ -283,10 +286,10 @@ void GreeterWorkek::initData()
                 m_model->updateCurrentUser(user_ptr);
             }
         });
-    }
 
-    /* com.deepin.dde.LockService */
-    m_model->updateCurrentUser(m_lockInter->CurrentUser());
+        /* com.deepin.dde.LockService */
+        m_model->updateCurrentUser(m_lockInter->CurrentUser());
+    }
 
     /* com.deepin.daemon.Authenticate */
     m_model->updateFrameworkState(m_authFramework->GetFrameworkState());
