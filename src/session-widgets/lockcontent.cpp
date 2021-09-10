@@ -1,18 +1,25 @@
 #include "lockcontent.h"
 
+#include "base_module_interface.h"
 #include "controlwidget.h"
-#include "sessionbasemodel.h"
-#include "userframe.h"
-#include "shutdownwidget.h"
-#include "virtualkbinstance.h"
 #include "logowidget.h"
+#include "modules_loader.h"
+#include "sessionbasemodel.h"
+#include "shutdownwidget.h"
 #include "timewidget.h"
+#include "tray_widget.h"
+#include "userframe.h"
+#include "userframelist.h"
 #include "userlogininfo.h"
 #include "userloginwidget.h"
-#include "userframelist.h"
+#include "virtualkbinstance.h"
+
+#include <DDBusSender>
 
 #include <QMouseEvent>
-#include <DDBusSender>
+
+using namespace dss;
+using namespace dss::module;
 
 LockContent::LockContent(SessionBaseModel *const model, QWidget *parent)
     : SessionBaseWindow(parent)
@@ -42,6 +49,8 @@ LockContent::LockContent(SessionBaseModel *const model, QWidget *parent)
     m_controlWidget->setAccessibleName("ControlWidget");
     setRightBottomWidget(m_controlWidget);
 
+    m_loginWidget = m_userLoginInfo->getUserLoginWidget();
+
     switch (model->currentType()) {
     case SessionBaseModel::AuthType::LockType:
         setMPRISEnable(model->currentModeState() != SessionBaseModel::ModeStatus::ShutDownMode);
@@ -59,6 +68,7 @@ LockContent::LockContent(SessionBaseModel *const model, QWidget *parent)
         m_model->setCurrentModeState(SessionBaseModel::ModeStatus::PowerMode);
     });
     connect(m_controlWidget, &ControlWidget::requestSwitchVirtualKB, this, &LockContent::toggleVirtualKB);
+    connect(m_controlWidget, &ControlWidget::requestShowModule, this, &LockContent::showModule);
     connect(m_userLoginInfo, &UserLoginInfo::requestAuthUser, this, &LockContent::requestAuthUser);
     connect(m_userLoginInfo, &UserLoginInfo::hideUserFrameList, this, &LockContent::restoreMode);
     connect(m_userLoginInfo, &UserLoginInfo::requestSwitchUser, this, &LockContent::requestSwitchToUser);
@@ -159,7 +169,7 @@ void LockContent::pushPasswordFrame()
 {
     auto current_user = m_model->currentUser();
 
-    setCenterContent(m_userLoginInfo->getUserLoginWidget(), false);
+    setCenterContent(m_loginWidget, false);
 
     // hide keyboardlayout widget
     // m_userLoginInfo->hideKBLayout();
@@ -328,6 +338,24 @@ void LockContent::toggleVirtualKB()
 
     updateVirtualKBPosition();
     m_virtualKB->setVisible(!m_virtualKB->isVisible());
+}
+
+void LockContent::showModule(const QString &name)
+{
+    BaseModuleInterface *module = ModulesLoader::instance().findModuleByName(name);
+    if (!module) {
+        return;
+    }
+
+    switch (module->type()) {
+    case BaseModuleInterface::LoginType:
+        m_loginWidget = new QWidget(module->content());
+        setCenterContent(m_loginWidget);
+        m_model->setCurrentModeState(SessionBaseModel::ModeStatus::PasswordMode);
+        break;
+    case BaseModuleInterface::TrayType:
+        break;
+    }
 }
 
 void LockContent::updateVirtualKBPosition()

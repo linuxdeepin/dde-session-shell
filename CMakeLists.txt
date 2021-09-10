@@ -96,12 +96,14 @@ include_directories(${PROJECT_SOURCE_DIR}/src/global_util/dbus)
 include_directories(${PROJECT_SOURCE_DIR}/src/widgets)
 include_directories(${PROJECT_SOURCE_DIR}/src/session-widgets)
 include_directories(${PROJECT_SOURCE_DIR}/src/libdde-auth)
+include_directories(${PROJECT_SOURCE_DIR}/interface)
 
 aux_source_directory(${PROJECT_SOURCE_DIR}/src/global_util GLOBAL_UTILS)
 aux_source_directory(${PROJECT_SOURCE_DIR}/src/global_util/dbus GLOBAL_UTILS_DBUS)
 aux_source_directory(${PROJECT_SOURCE_DIR}/src/widgets WIDGETS)
 aux_source_directory(${PROJECT_SOURCE_DIR}/src/session-widgets SESSION_WIDGETS)
 aux_source_directory(${PROJECT_SOURCE_DIR}/src/libdde-auth AUTHENTICATE)
+aux_source_directory(${PROJECT_SOURCE_DIR}/interface INTERFACE)
 
 set(QRCS
     ${CMAKE_CURRENT_SOURCE_DIR}/resources.qrc
@@ -118,6 +120,7 @@ set(LOCK_SRCS
     ${SESSION_WIDGETS}
     ${haweiswitchos_DBUS_SCRS}
     ${AUTHENTICATE}
+    ${INTERFACE}
     src/app/dde-lock.cpp
     src/dde-lock/lockframe.cpp
     src/dde-lock/lockworker.cpp
@@ -165,6 +168,7 @@ set(GREETER_SRCS
     ${SESSION_WIDGETS}
     ${haweiswitchos_DBUS_SCRS}
     ${AUTHENTICATE}
+    ${INTERFACE}
     src/app/lightdm-deepin-greeter.cpp
     src/lightdm-deepin-greeter/loginwindow.cpp
     src/lightdm-deepin-greeter/greeterworkek.cpp
@@ -206,6 +210,7 @@ target_link_libraries(lightdm-deepin-greeter PRIVATE
     ${Greeter_LIBRARIES}
 )
 
+add_subdirectory(modules)
 add_subdirectory(tests)
 
 # Install settings
@@ -221,8 +226,7 @@ file(GLOB SCRIPTS  scripts/*)
 install(PROGRAMS ${SCRIPTS} DESTINATION /etc/deepin/greeters.d)
 
 file(GLOB QM_FILES "translations/*.qm")
-install(FILES ${QM_FILES}
-        DESTINATION share/dde-session-shell/translations)
+install(FILES ${QM_FILES} DESTINATION share/dde-session-shell/translations)
 
 install(FILES files/lightdm-deepin-greeter.desktop DESTINATION share/xgreeters/)
 install(FILES files/dde-lock.desktop DESTINATION share/applications/)
@@ -236,3 +240,10 @@ install(FILES ${SERVICES} DESTINATION share/dbus-1/services)
 #schemas
 install(FILES xml/com.deepin.dde.session-shell.gschema.xml DESTINATION share/glib-2.0/schemas)
 install(CODE "execute_process(COMMAND glib-compile-schemas ${CMAKE_INSTALL_PREFIX}/share/glib-2.0/schemas)")
+
+# dev
+file(GLOB INTERFACE interface/*.h)
+install(FILES ${INTERFACE} DESTINATION include/dde-session-shell)
+
+file(GLOB CMAKE_CONFIG cmake/*.cmake)
+install(FILES ${CMAKE_CONFIG} DESTINATION ${CMAKE_INSTALL_LIBDIR}/cmake/DdeSessionShell)

@@ -25,19 +25,26 @@
 
 #include "controlwidget.h"
 
-#include <QHBoxLayout>
+#include "mediawidget.h"
+#include "modules_loader.h"
+#include "tray_module_interface.h"
+
+#include <DFloatingButton>
 #include <dimagebutton.h>
+
 #include <QEvent>
-#include <QWheelEvent>
 #include <QGraphicsDropShadowEffect>
+#include <QHBoxLayout>
 #include <QPainter>
+#include <QWheelEvent>
 
 #define BUTTON_ICON_SIZE QSize(26,26)
 #define BUTTON_SIZE QSize(52,52)
 
-DWIDGET_USE_NAMESPACE
+using namespace dss;
 
-ControlWidget::ControlWidget(QWidget *parent) : QWidget(parent)
+ControlWidget::ControlWidget(QWidget *parent)
+    : QWidget(parent)
 {
     initUI();
     initConnect();
@@ -52,7 +59,10 @@ void ControlWidget::initUI()
 {
     setFocusPolicy(Qt::TabFocus);
 
-    m_mainLayout = new QHBoxLayout;
+    m_mainLayout = new QHBoxLayout(this);
+    m_mainLayout->setContentsMargins(0, 0, 60, 0);
+    m_mainLayout->setSpacing(26);
+    m_mainLayout->setAlignment(Qt::AlignRight | Qt::AlignBottom);
 
     m_virtualKBBtn = new DFloatingButton(this);
     m_virtualKBBtn->setAccessibleName("VirtualKeyboardBtn");
@@ -86,22 +96,83 @@ void ControlWidget::initUI()
     m_btnList.append(m_switchUserBtn);
     m_btnList.append(m_powerBtn);
 
-    m_mainLayout->setMargin(0);
-    m_mainLayout->setSpacing(26);
-    m_mainLayout->addStretch();
-    m_mainLayout->addWidget(m_virtualKBBtn, 0, Qt::AlignBottom);
-    m_mainLayout->addWidget(m_switchUserBtn, 0, Qt::AlignBottom);
-    m_mainLayout->addWidget(m_powerBtn, 0, Qt::AlignBottom);
-    m_mainLayout->addSpacing(60);
+    m_mainLayout->addWidget(m_virtualKBBtn);
+    m_mainLayout->addWidget(m_switchUserBtn);
+    m_mainLayout->addWidget(m_powerBtn);
 
-    setLayout(m_mainLayout);
+    QHash<QString, module::BaseModuleInterface *> modules = module::ModulesLoader::instance().moduleList();
+    for (module::BaseModuleInterface *module : modules.values()) {
+        addModule(module);
+    }
+
+    updateLayout();
 }
 
 void ControlWidget::initConnect()
 {
+    connect(&module::ModulesLoader::instance(), &module::ModulesLoader::moduleFound, this, &ControlWidget::addModule);
     connect(m_switchUserBtn, &DFloatingButton::clicked, this, &ControlWidget::requestSwitchUser);
     connect(m_powerBtn, &DFloatingButton::clicked, this, &ControlWidget::requestShutdown);
     connect(m_virtualKBBtn, &DFloatingButton::clicked, this, &ControlWidget::requestSwitchVirtualKB);
+}
+
+void ControlWidget::addModule(module::BaseModuleInterface *module)
+{
+    if (module->type() != module::BaseModuleInterface::TrayType) {
+        return;
+    }
+
+    module::TrayModuleInterface *trayModule = dynamic_cast<module::TrayModuleInterface *>(module);
+
+    DFloatingButton *button = new DFloatingButton(this);
+    button->setIcon(QIcon(trayModule->icon()));
+    button->setIconSize(QSize(26, 26));
+    button->setFixedSize(QSize(52, 52));
+    button->setAutoExclusive(true);
+    button->setBackgroundRole(DPalette::Button);
+    button->setIcon(QIcon(trayModule->icon()));
+
+    m_modules.insert(trayModule->key(), button);
+    m_btnList.append(button);
+
+    connect(button, &DFloatingButton::clicked, this, [this, trayModule] {
+        emit requestShowModule(trayModule->key());
+    }, Qt::UniqueConnection);
+
+    updateLayout();
+}
+
+void ControlWidget::removeModule(module::BaseModuleInterface *module)
+{
+    if (module->type() != module::BaseModuleInterface::TrayType) {
+        return;
+    }
+    module::TrayModuleInterface *trayModule = dynamic_cast<module::TrayModuleInterface *>(module);
+
+    QMap<QString, QWidget *>::const_iterator i = m_modules.constBegin();
+    while (i != m_modules.constEnd()) {
+        if (i.key() == trayModule->key()) {
+            m_modules.remove(i.key());
+            m_btnList.removeAll(dynamic_cast<DFloatingButton *>(i.value()));
+            updateLayout();
+            break;
+        }
+        ++i;
+    }
+}
+
+void ControlWidget::updateLayout()
+{
+    QObjectList moduleWidgetList = m_mainLayout->children();
+    for (QWidget *moduleWidget : m_modules.values()) {
+        if (moduleWidgetList.contains(moduleWidget)) {
+            moduleWidgetList.removeAll(moduleWidget);
+        }
+        m_mainLayout->insertWidget(0, moduleWidget);
+    }
+    for (QObject *moduleWidget : moduleWidgetList) {
+        m_mainLayout->removeWidget(qobject_cast<QWidget *>(moduleWidget));
+    }
 }
 
 void ControlWidget::showTips()

@@ -53,3 +53,9 @@ Description: deepin desktop-environment - dde-session-shell module
  lightdm-deepin-greeter - login，the entry to the desktop
  dde-lock - lock screen, to protect privacy
  deepin-greeter - actual call the lightdm-deepin-greeter
+
+Package: dde-session-shell-dev
+Architecture: any
+Depends: dde-session-shell (= ${binary:Version}), ${shlibs:Depends}, ${misc:Depends}
+Description: deepin desktop-environment - dde-session-shell module development files
+ DDE Session Shell module development files of deepin desktop-environment

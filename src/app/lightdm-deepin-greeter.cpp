@@ -31,6 +31,7 @@
 #include "multiscreenmanager.h"
 #include "accessibilitycheckerex.h"
 #include "appeventfilter.h"
+#include "modules_loader.h"
 
 #include <DApplication>
 #include <QtCore/QTranslator>
@@ -233,6 +234,9 @@ int main(int argc, char* argv[])
 
     DLogManager::registerConsoleAppender();
 
+    dss::module::ModulesLoader *modulesLoader = &dss::module::ModulesLoader::instance();
+    modulesLoader->start(QThread::LowestPriority);
+
     const QString serviceName = "com.deepin.daemon.Accounts";
     QDBusConnectionInterface *interface = QDBusConnection::systemBus().interface();
     if (!interface->isServiceRegistered(serviceName)) {
@@ -295,6 +299,6 @@ int main(int argc, char* argv[])
     checker.setOutputFormat(DAccessibilityChecker::FullFormat);
     checker.start();
 #endif
-
-    return a.exec();
+    int ret = a.exec();
+    return ret;
 }

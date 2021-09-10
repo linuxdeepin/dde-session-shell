@@ -26,13 +26,26 @@
 #ifndef CONTROLWIDGET_H
 #define CONTROLWIDGET_H
 
+#include <dtkwidget_global.h>
+
 #include <QWidget>
-#include <QHBoxLayout>
-#include <DFloatingButton>
-#include "mediawidget.h"
+
+namespace dss {
+namespace module {
+class BaseModuleInterface;
+}
+} // namespace dss
+
+DWIDGET_BEGIN_NAMESPACE
+class DFloatingButton;
+DWIDGET_END_NAMESPACE
 
 DWIDGET_USE_NAMESPACE
 
+class MediaWidget;
+class QHBoxLayout;
+class QPropertyAnimation;
+class QLabel;
 class ControlWidget : public QWidget
 {
     Q_OBJECT
@@ -44,8 +57,11 @@ signals:
     void requestShutdown();
     void requestSwitchSession();
     void requestSwitchVirtualKB();
+    void requestShowModule(const QString &name);
 
 public slots:
+    void addModule(dss::module::BaseModuleInterface *module);
+    void removeModule(dss::module::BaseModuleInterface *module);
     void setVirtualKBVisible(bool visible);
     void setUserSwitchEnable(const bool visible);
     void setSessionSwitchEnable(const bool visible);
@@ -64,6 +80,7 @@ private:
     void initConnect();
     void showTips();
     void hideTips();
+    void updateLayout();
 
 private:
     enum FocusState
@@ -87,6 +104,7 @@ private:
 #ifndef SHENWEI_PLATFORM
     QPropertyAnimation *m_tipsAni = nullptr;
 #endif
+    QMap<QString, QWidget *> m_modules;
 };
 
 #endif // CONTROLWIDGET_H

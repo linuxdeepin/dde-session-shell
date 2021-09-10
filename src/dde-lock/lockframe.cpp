@@ -24,17 +24,20 @@
  */
 
 #include "lockframe.h"
+
+#include "hibernatewidget.h"
 #include "lockcontent.h"
 #include "sessionbasemodel.h"
 #include "userinfo.h"
-#include "hibernatewidget.h"
 #include "warningcontent.h"
 
+#include <DDBusSender>
+
 #include <QApplication>
-#include <QWindow>
 #include <QDBusInterface>
-#include <QScreen>
 #include <QGSettings>
+#include <QScreen>
+#include <QWindow>
 
 LockFrame::LockFrame(SessionBaseModel *const model, QWidget *parent)
     : FullscreenBackground(model, parent)

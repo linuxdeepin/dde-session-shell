@@ -23,23 +23,23 @@
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-#include <DLog>
-
-#include "lockframe.h"
-#include "dbuslockfrontservice.h"
+#include "accessibilitycheckerex.h"
+#include "appeventfilter.h"
 #include "dbuslockagent.h"
+#include "dbuslockfrontservice.h"
 #include "dbusshutdownagent.h"
 #include "dbusshutdownfrontservice.h"
-#include "multiscreenmanager.h"
-#include "accessibilitycheckerex.h"
 #include "lockcontent.h"
+#include "lockframe.h"
 #include "lockworker.h"
-#include "sessionbasemodel.h"
+#include "modules_loader.h"
+#include "multiscreenmanager.h"
 #include "propertygroup.h"
-#include "appeventfilter.h"
+#include "sessionbasemodel.h"
 
 #include <DApplication>
 #include <DGuiApplicationHelper>
+#include <DLog>
 #include <DPlatformTheme>
 
 #include <QDBusInterface>
@@ -102,6 +102,9 @@ int main(int argc, char *argv[])
     QTranslator translator;
     translator.load("/usr/share/dde-session-shell/translations/dde-session-shell_" + QLocale::system().name());
     app->installTranslator(&translator);
+
+    dss::module::ModulesLoader *modulesLoader = &dss::module::ModulesLoader::instance();
+    modulesLoader->start(QThread::LowestPriority);
 
     QCommandLineParser cmdParser;
     cmdParser.addHelpOption();
@@ -189,13 +192,13 @@ int main(int argc, char *argv[])
     QObject::connect(model, &SessionBaseModel::visibleChanged, &multi_screen_manager, &MultiScreenManager::startRaiseContentFrame);
 
     QDBusConnection conn = QDBusConnection::sessionBus();
+    int ret = 0;
     if (!conn.registerService(DBUS_LOCK_NAME) ||
         !conn.registerObject(DBUS_LOCK_PATH, &lockAgent) ||
         !conn.registerService(DBUS_SHUTDOWN_NAME) ||
         !conn.registerObject(DBUS_SHUTDOWN_PATH, &shutdownAgent) ||
         !app->setSingleInstance(QString("dde-lock%1").arg(getuid()), DApplication::UserScope)) {
         qDebug() << "register dbus failed"<< "maybe lockFront is running..." << conn.lastError();
-
 
         if (!runDaemon) {
             const char *lockFrontInter = "com.deepin.dde.lockFront";
@@ -221,7 +224,7 @@ int main(int argc, char *argv[])
                 emit model->showLockScreen();
             }
         }
-        app->exec();
+        ret = app->exec();
     }
-    return 0;
+    return ret;
 }

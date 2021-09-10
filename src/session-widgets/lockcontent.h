@@ -62,6 +62,7 @@ protected:
 protected:
     void updateTimeFormat(bool use24);
     void toggleVirtualKB();
+    void showModule(const QString &name);
     void updateVirtualKBPosition();
     void onUserListChanged(QList<std::shared_ptr<User>> list);
     void tryGrabKeyboard();
@@ -84,6 +85,8 @@ protected:
     MediaWidget *m_mediaWidget = nullptr;
     UserLoginInfo *m_userLoginInfo;
     com::deepin::wm *m_wmInter;
+    QWidget *m_loginWidget;
+    QMap<QString, QWidget *> m_centeralWidgets;
 
     int m_failures = 0;
 };
