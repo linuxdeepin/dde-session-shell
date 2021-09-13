@@ -10,6 +10,7 @@
 #include <QGSettings>
 
 #include <com_deepin_system_systempower.h>
+#include <pwd.h>
 
 #define LOCKSERVICE_PATH "/com/deepin/dde/LockService"
 #define LOCKSERVICE_NAME "com.deepin.dde.LockService"
@@ -550,13 +551,16 @@ void GreeterWorkek::checkAccount(const QString &account)
     if (m_greeter->authenticationUser() == account) {
         return;
     }
+    std::shared_ptr<User> user_ptr = m_model->findUserByName(account);
     const QString userPath = m_accountsInter->FindUserByName(account);
-    std::shared_ptr<User> user_ptr;
-    if (!userPath.startsWith("/")) {
-        if (account.startsWith("@")) {
+    if (userPath.startsWith("/")) {
+        user_ptr = std::make_shared<NativeUser>(userPath);
+    } else if (user_ptr == nullptr) {
+        std::string str = account.toStdString();
+        passwd *pw = getpwnam(str.c_str());
+        if (pw) {
             user_ptr = std::make_shared<ADDomainUser>(INT_MAX - 1);
             dynamic_cast<ADDomainUser *>(user_ptr.get())->setName(account);
-            dynamic_cast<ADDomainUser *>(user_ptr.get())->setFullName(account.midRef(QString("@").size()).toString());
         } else {
             qWarning() << userPath;
             onDisplayErrorMsg(tr("Wrong account"));
@@ -564,8 +568,6 @@ void GreeterWorkek::checkAccount(const QString &account)
             m_greeter->authenticate();
             return;
         }
-    } else {
-        user_ptr = std::make_shared<NativeUser>(userPath);
     }
     m_model->updateCurrentUser(user_ptr);
     if (user_ptr->isNoPasswordLogin()) {
