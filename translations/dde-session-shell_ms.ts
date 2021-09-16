@@ -1,123 +1,236 @@
 <?xml version="1.0" ?><!DOCTYPE TS><TS language="ms" version="2.1">
 <context>
+    <name>AuthFingerprint</name>
+    <message>
+        <source>Verify your fingerprint</source>
+        <translation>Sahkan cap jari anda</translation>
+    </message>
+    <message>
+        <source>Verification successful</source>
+        <translation>Pengesahan berjaya</translation>
+    </message>
+    <message numerus="yes">
+        <source>Verification failed, %n chances left</source>
+        <translation><numerusform>Pengesahan gagal,  %n peluang berbaki</numerusform></translation>
+    </message>
+    <message>
+        <source>Verification failed, only one chance left</source>
+        <translation>Pengesahan gagal,  hanya satu peluang berbaki</translation>
+    </message>
+    <message>
+        <source>Fingerprint locked, use password please</source>
+        <translation>Cap jari dikunci, sila guna kata laluan</translation>
+    </message>
+    <message numerus="yes">
+        <source>Please try again %n minute(s) later</source>
+        <translation><numerusform>Cuba sekali lagi selepas %n minit</numerusform></translation>
+    </message>
+</context>
+<context>
+    <name>AuthPassword</name>
+    <message>
+        <source>Verification successful</source>
+        <translation>Pengesahan berjaya</translation>
+    </message>
+    <message numerus="yes">
+        <source>Verification failed, %n chances left</source>
+        <translation><numerusform>Pengesahan gagal,  %n peluang berbaki</numerusform></translation>
+    </message>
+    <message>
+        <source>Verification failed, only one chance left</source>
+        <translation>Pengesahan gagal,  hanya satu peluang berbaki</translation>
+    </message>
+    <message>
+        <source>Wrong Password</source>
+        <translation>Kata Laluan Salah</translation>
+    </message>
+    <message>
+        <source>Password</source>
+        <translation>Kata Laluan</translation>
+    </message>
+    <message numerus="yes">
+        <source>Please try again %n minute(s) later</source>
+        <translation><numerusform>Cuba sekali lagi selepas %n minit</numerusform></translation>
+    </message>
+</context>
+<context>
+    <name>AuthSingle</name>
+    <message>
+        <source>Please try again 1 minute later</source>
+        <translation>Cuba sekali lagi selepas 1 minit</translation>
+    </message>
+    <message numerus="yes">
+        <source>Please try again %n minutes later</source>
+        <translation><numerusform>Cuba sekali lagi %d minit kemudian</numerusform></translation>
+    </message>
+</context>
+<context>
+    <name>AuthUKey</name>
+    <message>
+        <source>Verification successful</source>
+        <translation>Pengesahan berjaya</translation>
+    </message>
+    <message numerus="yes">
+        <source>Verification failed, %n chances left</source>
+        <translation><numerusform>Pengesahan gagal,  %n peluang berbaki</numerusform></translation>
+    </message>
+    <message>
+        <source>Verification failed, only one chance left</source>
+        <translation>Pengesahan gagal,  hanya satu peluang berbaki</translation>
+    </message>
+    <message>
+        <source>Wrong PIN</source>
+        <translation>PIN salah</translation>
+    </message>
+    <message>
+        <source>UKey is required</source>
+        <translation>UKey diperlukan</translation>
+    </message>
+    <message>
+        <source>Enter your PIN</source>
+        <translation>Masukkan PIN anda</translation>
+    </message>
+    <message numerus="yes">
+        <source>Please try again %n minute(s) later</source>
+        <translation><numerusform>Cuba sekali lagi %n minit kemudian</numerusform></translation>
+    </message>
+</context>
+<context>
+    <name>AuthenticationModule</name>
+    <message>
+        <source>Verification successful</source>
+        <translation>Pengesahan berjaya</translation>
+    </message>
+    <message numerus="yes">
+        <source>Verification failed, %n chances left</source>
+        <translation><numerusform>Pengesahan gagal,  %n peluang berbaki</numerusform></translation>
+    </message>
+    <message>
+        <source>Verification failed, only one chance left</source>
+        <translation>Pengesahan gagal,  hanya satu peluang berbaki</translation>
+    </message>
+    <message>
+        <source>Wrong Password</source>
+        <translation>Kata Laluan Salah</translation>
+    </message>
+    <message>
+        <source>Wrong PIN</source>
+        <translation>PIN Salah</translation>
+    </message>
+    <message>
+        <source>UKey is required</source>
+        <translation>UKey diperlukan</translation>
+    </message>
+    <message>
+        <source>Verify your fingerprint</source>
+        <translation>Sahkan cap jari anda</translation>
+    </message>
+    <message>
+        <source>Password</source>
+        <translation>Kata Laluan</translation>
+    </message>
+    <message>
+        <source>Enter your PIN</source>
+        <translation>Masukkan PIN anda</translation>
+    </message>
+    <message>
+        <source>Fingerprint locked, use password please</source>
+        <translation>Cap jari dikunci, sila guna kata laluan</translation>
+    </message>
+    <message>
+        <source>Please try again 1 minute later</source>
+        <translation>Cuba sekali lagi selepas 1 minit</translation>
+    </message>
+    <message numerus="yes">
+        <source>Please try again %n minutes later</source>
+        <translation><numerusform>Cuba sekali lagi %d minit kemudian</numerusform></translation>
+    </message>
+</context>
+<context>
     <name>ContentWidget</name>
     <message>
-        <location filename="../src/dde-shutdown/view/contentwidget.cpp" line="348"/>
         <source>The programs are preventing the computer from shutting down, and forcing shut down may cause data loss.</source>
         <translation>Ada program yang menghalang komputer dimatikan, dan memaksa dimatikan `boleh menyebabkan kehilangan data.</translation>
     </message>
     <message>
-        <location filename="../src/dde-shutdown/view/contentwidget.cpp" line="349"/>
-        <location filename="../src/dde-shutdown/view/contentwidget.cpp" line="354"/>
-        <location filename="../src/dde-shutdown/view/contentwidget.cpp" line="358"/>
-        <location filename="../src/dde-shutdown/view/contentwidget.cpp" line="362"/>
-        <location filename="../src/dde-shutdown/view/contentwidget.cpp" line="366"/>
         <source>To close the program, click Cancel, and then close the program.</source>
         <translation>Untuk menutup program, klik Batal, kemudian tutup program tersebut.</translation>
     </message>
     <message>
-        <location filename="../src/dde-shutdown/view/contentwidget.cpp" line="353"/>
         <source>The programs are preventing the computer from reboot, and forcing reboot may cause data loss.</source>
         <translation>Ada program yang menghalang komputer dibut semula, dan memaksa but semula`boleh menyebabkan kehilangan data.</translation>
     </message>
     <message>
-        <location filename="../src/dde-shutdown/view/contentwidget.cpp" line="357"/>
         <source>The programs are preventing the computer from suspend, and forcing suspend may cause data loss.</source>
         <translation>Ada program yang menghalang komputer ditangguh, dan memaksa penangguhan`boleh menyebabkan kehilangan data.</translation>
     </message>
     <message>
-        <location filename="../src/dde-shutdown/view/contentwidget.cpp" line="361"/>
         <source>The programs are preventing the computer from hibernate, and forcing hibernate may cause data loss.</source>
         <translation>Ada program yang menghalang komputer dihibernasikan, dan memaksa dihibernasikan boleh menyebabkan kehilangan data.</translation>
     </message>
     <message>
-        <location filename="../src/dde-shutdown/view/contentwidget.cpp" line="365"/>
         <source>The programs are preventing the computer from log out, and forcing log out may cause data loss.</source>
         <translation>Ada program yang menghalang komputer didaftar keluar, dan memaksa daftar keluar`boleh menyebabkan kehilangan data.</translation>
     </message>
     <message>
-        <location filename="../src/dde-shutdown/view/contentwidget.cpp" line="382"/>
-        <location filename="../src/dde-shutdown/view/contentwidget.cpp" line="423"/>
-        <location filename="../src/dde-shutdown/view/contentwidget.cpp" line="445"/>
-        <location filename="../src/dde-shutdown/view/contentwidget.cpp" line="593"/>
         <source>Shut down</source>
         <translation>Matikan</translation>
     </message>
     <message>
-        <location filename="../src/dde-shutdown/view/contentwidget.cpp" line="385"/>
-        <location filename="../src/dde-shutdown/view/contentwidget.cpp" line="425"/>
-        <location filename="../src/dde-shutdown/view/contentwidget.cpp" line="448"/>
-        <location filename="../src/dde-shutdown/view/contentwidget.cpp" line="596"/>
         <source>Reboot</source>
         <translation>But semula</translation>
     </message>
     <message>
-        <location filename="../src/dde-shutdown/view/contentwidget.cpp" line="388"/>
-        <location filename="../src/dde-shutdown/view/contentwidget.cpp" line="599"/>
         <source>Suspend</source>
         <translation>Tangguh</translation>
     </message>
     <message>
-        <location filename="../src/dde-shutdown/view/contentwidget.cpp" line="390"/>
-        <location filename="../src/dde-shutdown/view/contentwidget.cpp" line="602"/>
         <source>Hibernate</source>
         <translation>Hibernasi</translation>
     </message>
     <message>
-        <location filename="../src/dde-shutdown/view/contentwidget.cpp" line="392"/>
-        <location filename="../src/dde-shutdown/view/contentwidget.cpp" line="451"/>
-        <location filename="../src/dde-shutdown/view/contentwidget.cpp" line="608"/>
         <source>Log out</source>
         <translation>Daftar  keluar</translation>
     </message>
     <message>
-        <location filename="../src/dde-shutdown/view/contentwidget.cpp" line="446"/>
         <source>Are you sure you want to shut down?</source>
         <translation>Anda pasti mahu matikan komputer?</translation>
     </message>
     <message>
-        <location filename="../src/dde-shutdown/view/contentwidget.cpp" line="449"/>
         <source>Are you sure you want to reboot?</source>
         <translation>Anda pasti mahu but semula komputer?</translation>
     </message>
     <message>
-        <location filename="../src/dde-shutdown/view/contentwidget.cpp" line="452"/>
         <source>Are you sure you want to log out?</source>
         <translation>Anda pasti mahu mendaftar keluar komputer?</translation>
     </message>
     <message>
-        <location filename="../src/dde-shutdown/view/contentwidget.cpp" line="605"/>
         <source>Lock</source>
         <translation>Kunci</translation>
     </message>
     <message>
-        <location filename="../src/dde-shutdown/view/contentwidget.cpp" line="612"/>
         <source>Switch user</source>
         <translation>Tukar pengguna</translation>
     </message>
     <message>
-        <location filename="../src/dde-shutdown/view/contentwidget.cpp" line="617"/>
         <source>Switch system</source>
-        <translation type="unfinished"/>
+        <translation>Tukar sistem</translation>
     </message>
 </context>
 <context>
     <name>GreeterWorkek</name>
     <message>
-        <location filename="../src/lightdm-deepin-greeter/greeterworkek.cpp" line="327"/>
-        <source>Wrong Password</source>
-        <translation>Kata Laluan Salah</translation>
+        <source>Wrong account</source>
+        <translation>Akaun salah</translation>
     </message>
     <message>
-        <location filename="../src/lightdm-deepin-greeter/greeterworkek.cpp" line="331"/>
-        <source>The account or password is not correct. Please enter again.</source>
-        <translation type="unfinished"/>
+        <source>Wrong Password</source>
+        <translation>Kata Laluan Salah</translation>
     </message>
 </context>
 <context>
     <name>InhibitWarnView</name>
     <message>
-        <location filename="../src/dde-shutdown/view/inhibitwarnview.cpp" line="90"/>
         <source>Cancel</source>
         <translation>Batal</translation>
     </message>
@@ -125,12 +238,10 @@
 <context>
     <name>LockContent</name>
     <message>
-        <location filename="../src/session-widgets/lockcontent.cpp" line="353"/>
         <source>Lock Screen</source>
         <translation>Skrin Kunci</translation>
     </message>
     <message>
-        <location filename="../src/session-widgets/lockcontent.cpp" line="357"/>
         <source>Failed to lock screen</source>
         <translation>Gagal mengunci skrin</translation>
     </message>
@@ -138,35 +249,25 @@
 <context>
     <name>LockWorker</name>
     <message>
-        <location filename="../src/dde-lock/lockworker.cpp" line="229"/>
         <source>Fingerprint verification timed out, please enter your password manually</source>
         <translation>Pengesahan cap jari telah tamat masa, sila masukkan kata laluan secara manual</translation>
     </message>
     <message>
-        <location filename="../src/dde-lock/lockworker.cpp" line="247"/>
         <source>Failed to match fingerprint</source>
         <translation>Gagal padankan cap jari</translation>
-    </message>
-    <message>
-        <location filename="../src/dde-lock/lockworker.cpp" line="278"/>
-        <source>Wrong Password</source>
-        <translation>Kata Laluan Salah</translation>
     </message>
 </context>
 <context>
     <name>MultiUsersWarningView</name>
     <message>
-        <location filename="../src/dde-shutdown/view/multiuserswarningview.cpp" line="45"/>
         <source>Cancel</source>
         <translation>Batal</translation>
     </message>
     <message>
-        <location filename="../src/dde-shutdown/view/multiuserswarningview.cpp" line="129"/>
         <source>The above users are still logged in and data will be lost due to shutdown, are you sure you want to shut down?</source>
         <translation>Pengguna di atas masih boleh mendaftar masuk dan data akan hilang disebabkan proses penutupan komputer, anda pasti mahu matikan komputer?</translation>
     </message>
     <message>
-        <location filename="../src/dde-shutdown/view/multiuserswarningview.cpp" line="133"/>
         <source>The above users are still logged in and data will be lost due to reboot, are you sure you want to reboot?</source>
         <translation>Pengguna di atas masih boleh mendaftar masuk dan data tidak akan hilang disebabkan proses but semula komputer, anda pasti mahu but semula komputer?</translation>
     </message>
@@ -174,106 +275,121 @@
 <context>
     <name>ShutdownWidget</name>
     <message>
-        <location filename="../src/widgets/shutdownwidget.cpp" line="29"/>
         <source>Shut down</source>
         <translation>Matikan</translation>
     </message>
     <message>
-        <location filename="../src/widgets/shutdownwidget.cpp" line="30"/>
-        <location filename="../src/widgets/shutdownwidget.cpp" line="101"/>
         <source>Reboot</source>
         <translation>But semula</translation>
     </message>
     <message>
-        <location filename="../src/widgets/shutdownwidget.cpp" line="31"/>
-        <location filename="../src/widgets/shutdownwidget.cpp" line="108"/>
         <source>Suspend</source>
         <translation>Tangguh</translation>
     </message>
     <message>
-        <location filename="../src/widgets/shutdownwidget.cpp" line="32"/>
-        <location filename="../src/widgets/shutdownwidget.cpp" line="115"/>
         <source>Hibernate</source>
         <translation>Hibernasi</translation>
+    </message>
+    <message>
+        <source>Lock</source>
+        <translation>Kunci</translation>
+    </message>
+    <message>
+        <source>Log out</source>
+        <translation>Daftar  keluar</translation>
+    </message>
+    <message>
+        <source>Switch user</source>
+        <translation>Tukar pengguna</translation>
+    </message>
+    <message>
+        <source>Switch system</source>
+        <translation>Tukar sistem</translation>
     </message>
 </context>
 <context>
     <name>SystemMonitor</name>
     <message>
-        <location filename="../src/dde-shutdown/view/systemmonitor.cpp" line="45"/>
         <source>Start system monitor</source>
         <translation>Mula pemantau sistem</translation>
     </message>
 </context>
 <context>
-    <name>UserExpiredWidget</name>
-    <message>
-        <location filename="../src/session-widgets/userexpiredwidget.cpp" line="149"/>
-        <source>Password expired, please change</source>
-        <translation>Kata laluan telah luput, sila ubah</translation>
-    </message>
-    <message>
-        <location filename="../src/session-widgets/userexpiredwidget.cpp" line="153"/>
-        <source>New password</source>
-        <translation>Kata laluan baharu</translation>
-    </message>
-    <message>
-        <location filename="../src/session-widgets/userexpiredwidget.cpp" line="163"/>
-        <source>Repeat password</source>
-        <translation>Ulang kata laluan</translation>
-    </message>
-    <message>
-        <location filename="../src/session-widgets/userexpiredwidget.cpp" line="322"/>
-        <source>Failed to change your password</source>
-        <translation>Gagal mengubah kata laluan anda</translation>
-    </message>
-    <message>
-        <location filename="../src/session-widgets/userexpiredwidget.cpp" line="336"/>
-        <source>Password too weak</source>
-        <translation>Kata laluan terlalu lemah</translation>
-    </message>
-    <message>
-        <location filename="../src/session-widgets/userexpiredwidget.cpp" line="344"/>
-        <source>Please enter the new password</source>
-        <translation>Sila masukkan kata laluan baharu</translation>
-    </message>
-    <message>
-        <location filename="../src/session-widgets/userexpiredwidget.cpp" line="350"/>
-        <source>Please repeat the new password</source>
-        <translation>Sila ulang kata laluan baharu</translation>
-    </message>
-    <message>
-        <location filename="../src/session-widgets/userexpiredwidget.cpp" line="356"/>
-        <source>Passwords do not match</source>
-        <translation>Kata laluan tidak sepadan</translation>
-    </message>
-</context>
-<context>
     <name>UserLoginWidget</name>
     <message>
-        <location filename="../src/session-widgets/userloginwidget.cpp" line="195"/>
-        <source>Password</source>
-        <translation>Kata Laluan</translation>
-    </message>
-    <message>
-        <location filename="../src/session-widgets/userloginwidget.cpp" line="199"/>
         <source>Account</source>
         <translation>Akaun</translation>
     </message>
     <message>
-        <location filename="../src/session-widgets/userloginwidget.cpp" line="241"/>
-        <source>Please enter the account</source>
-        <translation>Sila masukkan akaun</translation>
-    </message>
-    <message>
-        <location filename="../src/session-widgets/userloginwidget.cpp" line="248"/>
-        <source>Please enter the password</source>
-        <translation>Sila masukkan kata laluan</translation>
+        <source>Verify your fingerprint</source>
+        <translation>Sahkan cap jari anda</translation>
     </message>
     <message numerus="yes">
-        <location filename="../src/session-widgets/userloginwidget.cpp" line="328"/>
-        <source>Please try again %n minute(s) later</source>
-        <translation type="unfinished"><numerusform></numerusform></translation>
+        <source>Your password will expire in %n days, please change it timely</source>
+        <translation><numerusform>Kata laluan anda akan luput dalam tempoh %d hari, sila ubah ia secepat mungkin</numerusform></translation>
+    </message>
+    <message>
+        <source>Password expired, please change</source>
+        <translation>Kata laluan telah luput, sila ubah</translation>
+    </message>
+</context>
+<context>
+    <name>WarningContent</name>
+    <message>
+        <source>The programs are preventing the computer from shutting down, and forcing shut down may cause data loss.</source>
+        <translation>Ada program yang menghalang komputer dimatikan, dan paksa dimatikan boleh menyebabkan kehilangan data.</translation>
+    </message>
+    <message>
+        <source>To close the program, click Cancel, and then close the program.</source>
+        <translation>Untuk menutup program, klik Batal, kemudian tutup program tersebut.</translation>
+    </message>
+    <message>
+        <source>The programs are preventing the computer from reboot, and forcing reboot may cause data loss.</source>
+        <translation>Ada program yang menghalang komputer dibut semula, dan memaksa but semula`boleh menyebabkan kehilangan data.</translation>
+    </message>
+    <message>
+        <source>The programs are preventing the computer from suspend, and forcing suspend may cause data loss.</source>
+        <translation>Ada program yang menghalang komputer ditangguh, dan memaksa penangguhan`boleh menyebabkan kehilangan data.</translation>
+    </message>
+    <message>
+        <source>The programs are preventing the computer from hibernate, and forcing hibernate may cause data loss.</source>
+        <translation>Ada program yang menghalang komputer dihibernasikan, dan memaksa dihibernasikan boleh menyebabkan kehilangan data.</translation>
+    </message>
+    <message>
+        <source>The programs are preventing the computer from log out, and forcing log out may cause data loss.</source>
+        <translation>Ada program yang menghalang komputer didaftar keluar, dan memaksa daftar keluar`boleh menyebabkan kehilangan data.</translation>
+    </message>
+    <message>
+        <source>Shut down</source>
+        <translation>Matikan</translation>
+    </message>
+    <message>
+        <source>Reboot</source>
+        <translation>But semula</translation>
+    </message>
+    <message>
+        <source>Suspend</source>
+        <translation>Tangguh</translation>
+    </message>
+    <message>
+        <source>Hibernate</source>
+        <translation>Hibernasi</translation>
+    </message>
+    <message>
+        <source>Log out</source>
+        <translation>Daftar keluar</translation>
+    </message>
+    <message>
+        <source>Are you sure you want to shut down?</source>
+        <translation>Anda pasti mahu matikan komputer?</translation>
+    </message>
+    <message>
+        <source>Are you sure you want to reboot?</source>
+        <translation>Anda pasti mahu but semula komputer?</translation>
+    </message>
+    <message>
+        <source>Are you sure you want to log out?</source>
+        <translation>Anda pasti mahu mendaftar keluar komputer?</translation>
     </message>
 </context>
 </TS>

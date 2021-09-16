@@ -224,7 +224,7 @@
         <translation>རྩིས་ཁྲ་ནོར་བ།</translation>
     </message>
     <message>
-        <source>Wrong password</source>
+        <source>Wrong Password</source>
         <translation>གསང་ཨང་ནོར་འདུག</translation>
     </message>
 </context>
@@ -325,8 +325,12 @@
         <translation>མཛུབ་རིས་ར་སྤྲོད་བྱེད།</translation>
     </message>
     <message numerus="yes">
-        <source>Please try again %n minute(s) later</source>
-        <translation><numerusform>སྐར་མ་%nརྗེས་ཡང་བསྐྱར་ཚོད་ལྟ་བྱེད།</numerusform></translation>
+        <source>Your password will expire in %n days, please change it timely</source>
+        <translation><numerusform>གསང་ཨང་ཉིན་%nརྗེས་དུས་ཚད་འཐིམ་པས་དུས་ཐོག་ཏུ་བཟོ་བཅོས་བྱོས།</numerusform></translation>
+    </message>
+    <message>
+        <source>Password expired, please change</source>
+        <translation>གསང་ཨང་དུས་ཚོད་ཡོལ་ཟིན་པས། བཟོ་བཅོས་བྱེད་རོགས།</translation>
     </message>
 </context>
 <context>

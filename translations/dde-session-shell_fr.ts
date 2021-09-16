@@ -11,7 +11,7 @@
     </message>
     <message numerus="yes">
         <source>Verification failed, %n chances left</source>
-        <translation type="unfinished"><numerusform></numerusform><numerusform></numerusform></translation>
+        <translation><numerusform>La vérification a échoué, il vous reste %n chance</numerusform><numerusform>La vérification a échoué, il vous reste %n chances</numerusform></translation>
     </message>
     <message>
         <source>Verification failed, only one chance left</source>
@@ -23,7 +23,7 @@
     </message>
     <message numerus="yes">
         <source>Please try again %n minute(s) later</source>
-        <translation type="unfinished"><numerusform></numerusform><numerusform></numerusform></translation>
+        <translation><numerusform>Veuillez réessayer dans %n minute(s)</numerusform><numerusform>Veuillez réessayer dans %n minute(s)</numerusform></translation>
     </message>
 </context>
 <context>
@@ -34,7 +34,7 @@
     </message>
     <message numerus="yes">
         <source>Verification failed, %n chances left</source>
-        <translation type="unfinished"><numerusform></numerusform><numerusform></numerusform></translation>
+        <translation><numerusform>La vérification a échouée, il vous reste %n chance</numerusform><numerusform>La vérification a échouée, il vous reste %n chances</numerusform></translation>
     </message>
     <message>
         <source>Verification failed, only one chance left</source>
@@ -50,18 +50,18 @@
     </message>
     <message numerus="yes">
         <source>Please try again %n minute(s) later</source>
-        <translation type="unfinished"><numerusform></numerusform><numerusform></numerusform></translation>
+        <translation><numerusform>Veuillez réessayer dans %n minute(s)</numerusform><numerusform>Veuillez réessayer dans %n minute(s)</numerusform></translation>
     </message>
 </context>
 <context>
     <name>AuthSingle</name>
     <message>
         <source>Please try again 1 minute later</source>
-        <translation type="unfinished"/>
+        <translation>Veuillez réessayer dans 1 minute</translation>
     </message>
     <message numerus="yes">
         <source>Please try again %n minutes later</source>
-        <translation type="unfinished"><numerusform></numerusform><numerusform></numerusform></translation>
+        <translation><numerusform>Veuillez réessayer dans %n minute</numerusform><numerusform>Veuillez réessayer dans %n minutes</numerusform></translation>
     </message>
 </context>
 <context>
@@ -72,7 +72,7 @@
     </message>
     <message numerus="yes">
         <source>Verification failed, %n chances left</source>
-        <translation type="unfinished"><numerusform></numerusform><numerusform></numerusform></translation>
+        <translation><numerusform>La vérification a échouée, il vous reste %n chance</numerusform><numerusform>La vérification a échouée, il vous reste %n chances</numerusform></translation>
     </message>
     <message>
         <source>Verification failed, only one chance left</source>
@@ -88,19 +88,15 @@
     </message>
     <message>
         <source>Enter your PIN</source>
-        <translation>Entrer votre code PIN</translation>
+        <translation>Entrez votre code PIN</translation>
     </message>
     <message numerus="yes">
         <source>Please try again %n minute(s) later</source>
-        <translation type="unfinished"><numerusform></numerusform><numerusform></numerusform></translation>
+        <translation><numerusform>Veuillez réessayer dans %n minute(s)</numerusform><numerusform>Veuillez réessayer dans %n minute(s)</numerusform></translation>
     </message>
 </context>
 <context>
     <name>AuthenticationModule</name>
-    <message numerus="yes">
-        <source>Please try again %n minute(s) later</source>
-        <translation><numerusform>Veuillez réessayer %n minute(s) plus tard</numerusform><numerusform>Veuillez réessayer %n minute(s) plus tard</numerusform></translation>
-    </message>
     <message>
         <source>Verification successful</source>
         <translation>Vérification réussie</translation>
@@ -135,7 +131,7 @@
     </message>
     <message>
         <source>Enter your PIN</source>
-        <translation>Entrer votre code PIN</translation>
+        <translation>Entrez votre code PIN</translation>
     </message>
     <message>
         <source>Fingerprint locked, use password please</source>
@@ -143,11 +139,11 @@
     </message>
     <message>
         <source>Please try again 1 minute later</source>
-        <translation type="unfinished"/>
+        <translation>Veuillez réessayer dans 1 minute</translation>
     </message>
     <message numerus="yes">
         <source>Please try again %n minutes later</source>
-        <translation type="unfinished"><numerusform></numerusform><numerusform></numerusform></translation>
+        <translation><numerusform>Veuillez réessayer dans %n minute</numerusform><numerusform>Veuillez réessayer dans %n minutes</numerusform></translation>
     </message>
 </context>
 <context>
@@ -225,15 +221,11 @@
     <name>GreeterWorkek</name>
     <message>
         <source>Wrong account</source>
-        <translation type="unfinished"/>
+        <translation>Mauvais compte</translation>
     </message>
     <message>
         <source>Wrong Password</source>
         <translation>Mauvais mot de passe </translation>
-    </message>
-    <message>
-        <source>The account or password is not correct. Please enter again.</source>
-        <translation>Le compte ou le mot de passe n&apos;est pas correct. Veuillez l&apos;entrer à nouveau.</translation>
     </message>
 </context>
 <context>
@@ -333,8 +325,12 @@
         <translation>Vérifier votre empreinte digitale</translation>
     </message>
     <message numerus="yes">
-        <source>Please try again %n minute(s) later</source>
-        <translation><numerusform>Veuillez réessayer dans %n minute(s) plus tard</numerusform><numerusform>Veuillez réessayer dans %n minute(s) plus tard</numerusform></translation>
+        <source>Your password will expire in %n days, please change it timely</source>
+        <translation type="unfinished"><numerusform></numerusform><numerusform></numerusform></translation>
+    </message>
+    <message>
+        <source>Password expired, please change</source>
+        <translation type="unfinished"/>
     </message>
 </context>
 <context>
@@ -345,7 +341,7 @@
     </message>
     <message>
         <source>To close the program, click Cancel, and then close the program.</source>
-        <translation>Pour fermer le programme, cliquer sur Annuler, puis fermer le programme.</translation>
+        <translation>Pour fermer le programme, cliquez sur Annuler, puis fermez le programme.</translation>
     </message>
     <message>
         <source>The programs are preventing the computer from reboot, and forcing reboot may cause data loss.</source>
@@ -365,7 +361,7 @@
     </message>
     <message>
         <source>Shut down</source>
-        <translation>Arrêter</translation>
+        <translation>Eteindre</translation>
     </message>
     <message>
         <source>Reboot</source>

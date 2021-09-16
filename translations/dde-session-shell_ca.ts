@@ -57,11 +57,11 @@
     <name>AuthSingle</name>
     <message>
         <source>Please try again 1 minute later</source>
-        <translation type="unfinished"/>
+        <translation>Si us plau, torneu-ho a intentar d&apos;aquí a 1 minut.</translation>
     </message>
     <message numerus="yes">
         <source>Please try again %n minutes later</source>
-        <translation type="unfinished"><numerusform></numerusform><numerusform></numerusform></translation>
+        <translation><numerusform>Si us plau, torneu-ho a intentar d&apos;aquí a %n minut.</numerusform><numerusform>Si us plau, torneu-ho a intentar d&apos;aquí a %n minuts.</numerusform></translation>
     </message>
 </context>
 <context>
@@ -97,10 +97,6 @@
 </context>
 <context>
     <name>AuthenticationModule</name>
-    <message numerus="yes">
-        <source>Please try again %n minute(s) later</source>
-        <translation><numerusform>Si us plau, torneu-ho a intentar d&apos;aquí a %n minut.</numerusform><numerusform>Si us plau, torneu-ho a intentar d&apos;aquí a %n minuts.</numerusform></translation>
-    </message>
     <message>
         <source>Verification successful</source>
         <translation>Verificació correcta</translation>
@@ -143,11 +139,11 @@
     </message>
     <message>
         <source>Please try again 1 minute later</source>
-        <translation type="unfinished"/>
+        <translation>Si us plau, torneu-ho a intentar d&apos;aquí a 1 minut.</translation>
     </message>
     <message numerus="yes">
         <source>Please try again %n minutes later</source>
-        <translation type="unfinished"><numerusform></numerusform><numerusform></numerusform></translation>
+        <translation><numerusform>Si us plau, torneu-ho a intentar d&apos;aquí a %n minut.</numerusform><numerusform>Si us plau, torneu-ho a intentar d&apos;aquí a %n minuts.</numerusform></translation>
     </message>
 </context>
 <context>
@@ -230,10 +226,6 @@
     <message>
         <source>Wrong Password</source>
         <translation>Contrasenya incorrecta</translation>
-    </message>
-    <message>
-        <source>The account or password is not correct. Please enter again.</source>
-        <translation>El compte o la contrasenya no són correctes. Si us plau, torneu-hi.</translation>
     </message>
 </context>
 <context>
@@ -333,8 +325,12 @@
         <translation>Verifiqueu l&apos;empremta</translation>
     </message>
     <message numerus="yes">
-        <source>Please try again %n minute(s) later</source>
-        <translation><numerusform>Torneu-ho a intentar d&apos;aquí a %n minut.</numerusform><numerusform>Torneu-ho a intentar d&apos;aquí a %n minuts.</numerusform></translation>
+        <source>Your password will expire in %n days, please change it timely</source>
+        <translation><numerusform>La contrasenya caducarà d&apos;aquí a %d dia; canvieu-la oportunament.</numerusform><numerusform>La contrasenya caducarà d&apos;aquí a %d dies; canvieu-la oportunament.</numerusform></translation>
+    </message>
+    <message>
+        <source>Password expired, please change</source>
+        <translation>La contrasenya ha caducat. Si us plau, canvieu-la.</translation>
     </message>
 </context>
 <context>

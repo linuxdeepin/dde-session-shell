@@ -57,11 +57,11 @@
     <name>AuthSingle</name>
     <message>
         <source>Please try again 1 minute later</source>
-        <translation type="unfinished"/>
+        <translation>Tente novamente em 1 minuto</translation>
     </message>
     <message numerus="yes">
         <source>Please try again %n minutes later</source>
-        <translation type="unfinished"><numerusform></numerusform><numerusform></numerusform></translation>
+        <translation><numerusform>Tente novamente em %n minuto(s)</numerusform><numerusform>Tente novamente em %n minuto(s)</numerusform></translation>
     </message>
 </context>
 <context>
@@ -97,10 +97,6 @@
 </context>
 <context>
     <name>AuthenticationModule</name>
-    <message numerus="yes">
-        <source>Please try again %n minute(s) later</source>
-        <translation><numerusform>Tente novamente em %n minuto(s)</numerusform><numerusform>Tente novamente em %n minuto(s)</numerusform></translation>
-    </message>
     <message>
         <source>Verification successful</source>
         <translation>Verificação bem-sucedida</translation>
@@ -143,11 +139,11 @@
     </message>
     <message>
         <source>Please try again 1 minute later</source>
-        <translation type="unfinished"/>
+        <translation>Tente novamente em 1 minuto</translation>
     </message>
     <message numerus="yes">
         <source>Please try again %n minutes later</source>
-        <translation type="unfinished"><numerusform></numerusform><numerusform></numerusform></translation>
+        <translation><numerusform>Tente novamente em %n minuto(s)</numerusform><numerusform>Tente novamente em %n minuto(s)</numerusform></translation>
     </message>
 </context>
 <context>
@@ -225,15 +221,11 @@
     <name>GreeterWorkek</name>
     <message>
         <source>Wrong account</source>
-        <translation type="unfinished"/>
+        <translation>Conta incorreta</translation>
     </message>
     <message>
         <source>Wrong Password</source>
-        <translation>Senha incorreta</translation>
-    </message>
-    <message>
-        <source>The account or password is not correct. Please enter again.</source>
-        <translation>A conta ou senha não está correta; digite novamente.</translation>
+        <translation>Senha Incorreta</translation>
     </message>
 </context>
 <context>
@@ -333,8 +325,12 @@
         <translation>Verifique a impressão digital</translation>
     </message>
     <message numerus="yes">
-        <source>Please try again %n minute(s) later</source>
-        <translation><numerusform>Por favor tente novamente após %n minutos</numerusform><numerusform>Por favor tente novamente após %n minuto</numerusform></translation>
+        <source>Your password will expire in %n days, please change it timely</source>
+        <translation><numerusform>A senha expirará em %n dias; altere-a em tempo hábil</numerusform><numerusform>A senha expirará em %n dias; altere-a em tempo hábil</numerusform></translation>
+    </message>
+    <message>
+        <source>Password expired, please change</source>
+        <translation>A senha expirou; altere-a</translation>
     </message>
 </context>
 <context>

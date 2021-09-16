@@ -57,11 +57,11 @@
     <name>AuthSingle</name>
     <message>
         <source>Please try again 1 minute later</source>
-        <translation type="unfinished"/>
+        <translation>Yritä 1 minuutin jälkeen uudelleen</translation>
     </message>
     <message numerus="yes">
         <source>Please try again %n minutes later</source>
-        <translation type="unfinished"><numerusform></numerusform><numerusform></numerusform></translation>
+        <translation><numerusform>Yritä uudelleen %n minuuttia myöhemmin</numerusform><numerusform>Yritä uudelleen %n minuuttia myöhemmin</numerusform></translation>
     </message>
 </context>
 <context>
@@ -97,10 +97,6 @@
 </context>
 <context>
     <name>AuthenticationModule</name>
-    <message numerus="yes">
-        <source>Please try again %n minute(s) later</source>
-        <translation><numerusform>Yritä uudelleen %n minuuttia myöhemmin</numerusform><numerusform>Please try again %n minute(s) later</numerusform></translation>
-    </message>
     <message>
         <source>Verification successful</source>
         <translation>Tarkistus onnistui</translation>
@@ -143,11 +139,11 @@
     </message>
     <message>
         <source>Please try again 1 minute later</source>
-        <translation type="unfinished"/>
+        <translation>Yritä 1 minuutin jälkeen uudelleen</translation>
     </message>
     <message numerus="yes">
         <source>Please try again %n minutes later</source>
-        <translation type="unfinished"><numerusform></numerusform><numerusform></numerusform></translation>
+        <translation><numerusform>Yritä uudelleen %n minuuttia myöhemmin</numerusform><numerusform>Yritä uudelleen %n minuuttia myöhemmin</numerusform></translation>
     </message>
 </context>
 <context>
@@ -230,10 +226,6 @@
     <message>
         <source>Wrong Password</source>
         <translation>Väärä salasana</translation>
-    </message>
-    <message>
-        <source>The account or password is not correct. Please enter again.</source>
-        <translation>Tili tai salasana ei ole oikea. Kirjoita uudelleen.</translation>
     </message>
 </context>
 <context>
@@ -333,8 +325,12 @@
         <translation>Vahvista sormenjälläsi</translation>
     </message>
     <message numerus="yes">
-        <source>Please try again %n minute(s) later</source>
-        <translation><numerusform>Yritä uudelleen %n minuuttia myöhemmin</numerusform><numerusform>Yritä uudelleen %n minuuttia myöhemmin</numerusform></translation>
+        <source>Your password will expire in %n days, please change it timely</source>
+        <translation><numerusform>Salasanasi vanhenee %n päivän kuluttua, vaihda se ajoissa</numerusform><numerusform>Salasanasi vanhenee %n päivän kuluttua, vaihda se ajoissa</numerusform></translation>
+    </message>
+    <message>
+        <source>Password expired, please change</source>
+        <translation>Salasana vanhentunut, vaihda</translation>
     </message>
 </context>
 <context>

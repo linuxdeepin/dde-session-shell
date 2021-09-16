@@ -57,11 +57,11 @@
     <name>AuthSingle</name>
     <message>
         <source>Please try again 1 minute later</source>
-        <translation type="unfinished"/>
+        <translation>Lütfən, 1 dəqiqə sonra cəhd edin</translation>
     </message>
     <message numerus="yes">
         <source>Please try again %n minutes later</source>
-        <translation type="unfinished"><numerusform></numerusform><numerusform></numerusform></translation>
+        <translation><numerusform>Lütfən %n dəqiqə sonra cəhd edin</numerusform><numerusform>Lütfən %n dəqiqə sonra cəhd edin</numerusform></translation>
     </message>
 </context>
 <context>
@@ -97,10 +97,6 @@
 </context>
 <context>
     <name>AuthenticationModule</name>
-    <message numerus="yes">
-        <source>Please try again %n minute(s) later</source>
-        <translation><numerusform>Lütfən, %n dəqiqə(lər) sonra cəhd edin</numerusform><numerusform>Lütfən, %n dəqiqə(lər) sonra cəhd edin</numerusform></translation>
-    </message>
     <message>
         <source>Verification successful</source>
         <translation>Doğrulama uğurlu oldu</translation>
@@ -143,11 +139,11 @@
     </message>
     <message>
         <source>Please try again 1 minute later</source>
-        <translation type="unfinished"/>
+        <translation>Lütfən, 1 dəqiqə sonra cəhd edin</translation>
     </message>
     <message numerus="yes">
         <source>Please try again %n minutes later</source>
-        <translation type="unfinished"><numerusform></numerusform><numerusform></numerusform></translation>
+        <translation><numerusform>Lütfən %n dəqiqə sonra cəhd edin</numerusform><numerusform>Lütfən %n dəqiqə sonra cəhd edin</numerusform></translation>
     </message>
 </context>
 <context>
@@ -230,10 +226,6 @@
     <message>
         <source>Wrong Password</source>
         <translation>Yanlış Şifrə</translation>
-    </message>
-    <message>
-        <source>The account or password is not correct. Please enter again.</source>
-        <translation>İstifadəçi hesabı və ya şifrə səhvdir, Yenidən cəhd edin.</translation>
     </message>
 </context>
 <context>
@@ -333,8 +325,12 @@
         <translation>Barmaq izinizi doğrulayın</translation>
     </message>
     <message numerus="yes">
-        <source>Please try again %n minute(s) later</source>
-        <translation><numerusform>Lütfən %n dəqiqə sonra cəhd edin</numerusform><numerusform>Lütfən, %n dəqiqə sonra cəhd edin</numerusform></translation>
+        <source>Your password will expire in %n days, please change it timely</source>
+        <translation><numerusform>Şifrənizin vaxtı %n gün sonra bitəcəkdir, lütfən onu vaxtında dəyişin</numerusform><numerusform>Şifrənizin vaxtı %n gün sonra bitəcəkdir, lütfən onu vaxtında dəyişin</numerusform></translation>
+    </message>
+    <message>
+        <source>Password expired, please change</source>
+        <translation>Şifrənin vaxtı bitib, lütfən onu dəyişin</translation>
     </message>
 </context>
 <context>

@@ -57,11 +57,11 @@
     <name>AuthSingle</name>
     <message>
         <source>Please try again 1 minute later</source>
-        <translation type="unfinished"/>
+        <translation>Будь ласка, повторіть спробу за хвилину</translation>
     </message>
     <message numerus="yes">
         <source>Please try again %n minutes later</source>
-        <translation type="unfinished"><numerusform></numerusform><numerusform></numerusform><numerusform></numerusform><numerusform></numerusform></translation>
+        <translation><numerusform>Будь ласка, повторіть спробу за %n хвилину</numerusform><numerusform>Будь ласка, повторіть спробу за %n хвилини</numerusform><numerusform>Будь ласка, повторіть спробу за %n хвилин</numerusform><numerusform>Будь ласка, повторіть спробу за %n хвилину</numerusform></translation>
     </message>
 </context>
 <context>
@@ -97,10 +97,6 @@
 </context>
 <context>
     <name>AuthenticationModule</name>
-    <message numerus="yes">
-        <source>Please try again %n minute(s) later</source>
-        <translation><numerusform>Будь ласка, повторіть спробу за %n хвилину</numerusform><numerusform>Будь ласка, повторіть спробу за %n хвилини</numerusform><numerusform>Будь ласка, повторіть спробу за %n хвилин</numerusform><numerusform>Будь ласка, повторіть спробу за %n хвилину</numerusform></translation>
-    </message>
     <message>
         <source>Verification successful</source>
         <translation>Перевірку пройдено</translation>
@@ -143,11 +139,11 @@
     </message>
     <message>
         <source>Please try again 1 minute later</source>
-        <translation type="unfinished"/>
+        <translation>Будь ласка, повторіть спробу за хвилину</translation>
     </message>
     <message numerus="yes">
         <source>Please try again %n minutes later</source>
-        <translation type="unfinished"><numerusform></numerusform><numerusform></numerusform><numerusform></numerusform><numerusform></numerusform></translation>
+        <translation><numerusform>Будь ласка, повторіть спробу за %n хвилину</numerusform><numerusform>Будь ласка, повторіть спробу за %n хвилини</numerusform><numerusform>Будь ласка, повторіть спробу за %n хвилин</numerusform><numerusform>Будь ласка, повторіть спробу за %n хвилину</numerusform></translation>
     </message>
 </context>
 <context>
@@ -230,10 +226,6 @@
     <message>
         <source>Wrong Password</source>
         <translation>Невірний Пароль</translation>
-    </message>
-    <message>
-        <source>The account or password is not correct. Please enter again.</source>
-        <translation>Назва облікового запису або пароль є помилковими. Будь ласка, повторіть спробу їхнього введення.</translation>
     </message>
 </context>
 <context>
@@ -333,8 +325,12 @@
         <translation>Перевірити ваш відбиток</translation>
     </message>
     <message numerus="yes">
-        <source>Please try again %n minute(s) later</source>
-        <translation><numerusform>Будь ласка, повторіть спробу за %n хвилину</numerusform><numerusform>Будь ласка, повторіть спробу за %n хвилини</numerusform><numerusform>Будь ласка, повторіть спробу за %n хвилин</numerusform><numerusform>Будь ласка, повторіть спробу за %n хвилину</numerusform></translation>
+        <source>Your password will expire in %n days, please change it timely</source>
+        <translation><numerusform>Строк дії вашого пароля буде вичерпано за %n день. Будь ласка, вчасно змініть його</numerusform><numerusform>Строк дії вашого пароля буде вичерпано за %n дні. Будь ласка, вчасно змініть його</numerusform><numerusform>Строк дії вашого пароля буде вичерпано за %n днів. Будь ласка, вчасно змініть його</numerusform><numerusform>Строк дії вашого пароля буде вичерпано за %n день. Будь ласка, вчасно змініть його</numerusform></translation>
+    </message>
+    <message>
+        <source>Password expired, please change</source>
+        <translation>Строк дії пароля вичерпано. Будь ласка, змініть</translation>
     </message>
 </context>
 <context>

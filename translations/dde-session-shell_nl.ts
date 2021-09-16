@@ -57,11 +57,11 @@
     <name>AuthSingle</name>
     <message>
         <source>Please try again 1 minute later</source>
-        <translation type="unfinished"/>
+        <translation>Probeer het over 1 minuut opnieuw</translation>
     </message>
     <message numerus="yes">
         <source>Please try again %n minutes later</source>
-        <translation type="unfinished"><numerusform></numerusform><numerusform></numerusform></translation>
+        <translation><numerusform>Probeer het over %n minuut opnieuw</numerusform><numerusform>Probeer het over %n minuten opnieuw</numerusform></translation>
     </message>
 </context>
 <context>
@@ -97,10 +97,6 @@
 </context>
 <context>
     <name>AuthenticationModule</name>
-    <message numerus="yes">
-        <source>Please try again %n minute(s) later</source>
-        <translation><numerusform>Probeer het over %n minuut opnieuw</numerusform><numerusform>Probeer het over %n minuten opnieuw</numerusform></translation>
-    </message>
     <message>
         <source>Verification successful</source>
         <translation>Verificatie gelukt</translation>
@@ -143,11 +139,11 @@
     </message>
     <message>
         <source>Please try again 1 minute later</source>
-        <translation type="unfinished"/>
+        <translation>Probeer het over 1 minuut opnieuw</translation>
     </message>
     <message numerus="yes">
         <source>Please try again %n minutes later</source>
-        <translation type="unfinished"><numerusform></numerusform><numerusform></numerusform></translation>
+        <translation><numerusform>Probeer het over %n minuut opnieuw</numerusform><numerusform>Probeer het over %n minuten opnieuw</numerusform></translation>
     </message>
 </context>
 <context>
@@ -230,10 +226,6 @@
     <message>
         <source>Wrong Password</source>
         <translation>Het wachtwoord is onjuist</translation>
-    </message>
-    <message>
-        <source>The account or password is not correct. Please enter again.</source>
-        <translation>Het account of wachtwoord is onjuist. Probeer het opnieuw.</translation>
     </message>
 </context>
 <context>
@@ -333,8 +325,12 @@
         <translation>Verifieer je vingerafdruk</translation>
     </message>
     <message numerus="yes">
-        <source>Please try again %n minute(s) later</source>
-        <translation><numerusform>Probeer het over %n minuut opnieuw</numerusform><numerusform>Probeer het over %n minuten opnieuw</numerusform></translation>
+        <source>Your password will expire in %n days, please change it timely</source>
+        <translation><numerusform>Je wachtwoord vervalt over %n dag - wijzig het op tijd!</numerusform><numerusform>Je wachtwoord vervalt over %n dagen - wijzig het op tijd!</numerusform></translation>
+    </message>
+    <message>
+        <source>Password expired, please change</source>
+        <translation>Je wachtwoord is verlopen - wijzig het</translation>
     </message>
 </context>
 <context>

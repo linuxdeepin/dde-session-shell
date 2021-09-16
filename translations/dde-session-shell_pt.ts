@@ -224,7 +224,7 @@
         <translation>Conta incorreta</translation>
     </message>
     <message>
-        <source>Wrong password</source>
+        <source>Wrong Password</source>
         <translation>Palavra-passe incorreta</translation>
     </message>
 </context>
@@ -325,8 +325,12 @@
         <translation>Verifique a impressão digital</translation>
     </message>
     <message numerus="yes">
-        <source>Please try again %n minute(s) later</source>
-        <translation><numerusform>Tentar novamente %n minuto(s) mais tarde</numerusform><numerusform>Tentar novamente %n minuto(s) mais tarde</numerusform></translation>
+        <source>Your password will expire in %n days, please change it timely</source>
+        <translation><numerusform>A palavra-passe expirará dentro de %n dia. Altere-a atempadamente</numerusform><numerusform>A palavra-passe expirará dentro de %n dias. Altere-a atempadamente</numerusform></translation>
+    </message>
+    <message>
+        <source>Password expired, please change</source>
+        <translation>A palavra-passe expirou, altere-a</translation>
     </message>
 </context>
 <context>

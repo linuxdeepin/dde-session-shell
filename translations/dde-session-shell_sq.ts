@@ -224,8 +224,8 @@
         <translation>Llogari e gabuar</translation>
     </message>
     <message>
-        <source>Wrong password</source>
-        <translation>Fjalëkalim i gabuar</translation>
+        <source>Wrong Password</source>
+        <translation>Fjalëkalim i Gabuar</translation>
     </message>
 </context>
 <context>
@@ -325,8 +325,12 @@
         <translation>Verifikoni shenjat tuaja të gishtave</translation>
     </message>
     <message numerus="yes">
-        <source>Please try again %n minute(s) later</source>
-        <translation><numerusform>Ju lutemi, riprovoni %n minutë(a) më vonë</numerusform><numerusform>Ju lutemi, riprovoni %n minutë(a) më vonë</numerusform></translation>
+        <source>Your password will expire in %n days, please change it timely</source>
+        <translation><numerusform>Fjalëkalimi juaj do të skadojë për %n ditë, ju lutemi, ndryshojeni në kohë</numerusform><numerusform>Fjalëkalimi juaj do të skadojë për %n ditë, ju lutemi, ndryshojeni në kohë</numerusform></translation>
+    </message>
+    <message>
+        <source>Password expired, please change</source>
+        <translation>Fjalëkalimi ndryshoi, ju lutemi, ndryshojeni</translation>
     </message>
 </context>
 <context>

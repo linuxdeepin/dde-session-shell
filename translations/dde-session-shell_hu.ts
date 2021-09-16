@@ -97,10 +97,6 @@
 </context>
 <context>
     <name>AuthenticationModule</name>
-    <message numerus="yes">
-        <source>Please try again %n minute(s) later</source>
-        <translation><numerusform>Kérjük próbálja újra %n perc múlva</numerusform><numerusform>Kérjük próbálja újra %n perc múlva</numerusform></translation>
-    </message>
     <message>
         <source>Verification successful</source>
         <translation>Az ellenőrzés sikeres</translation>
@@ -231,10 +227,6 @@
         <source>Wrong Password</source>
         <translation>Helytelen jelszó</translation>
     </message>
-    <message>
-        <source>The account or password is not correct. Please enter again.</source>
-        <translation>A fióknév vagy a jelszó helytelen. Kérjük próbálja újra.</translation>
-    </message>
 </context>
 <context>
     <name>InhibitWarnView</name>
@@ -333,8 +325,12 @@
         <translation>Az Ön ujjlenyomatának ellenőrzése</translation>
     </message>
     <message numerus="yes">
-        <source>Please try again %n minute(s) later</source>
-        <translation><numerusform>Kérjük próbálja újra %n perc múlva</numerusform><numerusform>Kérjük próbálja újra %n perc múlva</numerusform></translation>
+        <source>Your password will expire in %n days, please change it timely</source>
+        <translation><numerusform>A jelszava %d nap múlva lejár, kérjük változtassa meg időben</numerusform><numerusform>A jelszava %d nap múlva lejár, kérjük változtassa meg időben</numerusform></translation>
+    </message>
+    <message>
+        <source>Password expired, please change</source>
+        <translation>Jelszava lejárt, kérjük változtassa meg</translation>
     </message>
 </context>
 <context>

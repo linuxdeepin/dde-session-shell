@@ -23,7 +23,7 @@
     </message>
     <message numerus="yes">
         <source>Please try again %n minute(s) later</source>
-        <translation><numerusform>Vuelva a intentarlo en %n minuto</numerusform><numerusform>Vuelva a intentarlo en %n minutos</numerusform></translation>
+        <translation><numerusform>Vuelva a intentarlo en %n minuto</numerusform><numerusform>Vuelva a intentarlo en %n minuto(s)</numerusform></translation>
     </message>
 </context>
 <context>
@@ -50,14 +50,14 @@
     </message>
     <message numerus="yes">
         <source>Please try again %n minute(s) later</source>
-        <translation><numerusform>Vuelva a intentarlo en %n minutos</numerusform><numerusform>Vuelva a intentarlo en %n minutos</numerusform></translation>
+        <translation><numerusform>Vuelva a intentarlo en %n minutos</numerusform><numerusform>Vuelva a intentarlo en %n minuto(s)</numerusform></translation>
     </message>
 </context>
 <context>
     <name>AuthSingle</name>
     <message>
         <source>Please try again 1 minute later</source>
-        <translation type="unfinished"/>
+        <translation>Vuelve a intentarlo después de 1 minuto.</translation>
     </message>
     <message numerus="yes">
         <source>Please try again %n minutes later</source>
@@ -92,15 +92,11 @@
     </message>
     <message numerus="yes">
         <source>Please try again %n minute(s) later</source>
-        <translation><numerusform>Vuelva a intentarlo en %n minuto</numerusform><numerusform>Vuelva a intentarlo en %n minutos</numerusform></translation>
+        <translation><numerusform>Vuelva a intentarlo en %n minuto</numerusform><numerusform>Vuelva a intentarlo en %n minuto(s)</numerusform></translation>
     </message>
 </context>
 <context>
     <name>AuthenticationModule</name>
-    <message numerus="yes">
-        <source>Please try again %n minute(s) later</source>
-        <translation><numerusform>Vuelva a intentarlo en %n minuto</numerusform><numerusform>Vuelva a intentarlo en %n minutos</numerusform></translation>
-    </message>
     <message>
         <source>Verification successful</source>
         <translation>Verificación exitosa</translation>
@@ -143,7 +139,7 @@
     </message>
     <message>
         <source>Please try again 1 minute later</source>
-        <translation type="unfinished"/>
+        <translation>Vuelve a intentarlo después de 1 minuto.</translation>
     </message>
     <message numerus="yes">
         <source>Please try again %n minutes later</source>
@@ -230,10 +226,6 @@
     <message>
         <source>Wrong Password</source>
         <translation>Contraseña incorrecta</translation>
-    </message>
-    <message>
-        <source>The account or password is not correct. Please enter again.</source>
-        <translation>La cuenta o la contraseña no son correctas. Escriba de nuevo los datos.</translation>
     </message>
 </context>
 <context>
@@ -333,8 +325,12 @@
         <translation>Verifique su huella dactilar</translation>
     </message>
     <message numerus="yes">
-        <source>Please try again %n minute(s) later</source>
-        <translation><numerusform>Vuelva a intentarlo en %n minuto</numerusform><numerusform>Vuelva a intentarlo en %n minutos</numerusform></translation>
+        <source>Your password will expire in %n days, please change it timely</source>
+        <translation type="unfinished"><numerusform></numerusform><numerusform></numerusform></translation>
+    </message>
+    <message>
+        <source>Password expired, please change</source>
+        <translation type="unfinished"/>
     </message>
 </context>
 <context>

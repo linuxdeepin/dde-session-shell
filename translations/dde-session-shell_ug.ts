@@ -61,7 +61,7 @@
     </message>
     <message numerus="yes">
         <source>Please try again %n minutes later</source>
-        <translation type="unfinished"><numerusform></numerusform><numerusform></numerusform></translation>
+        <translation><numerusform>%n مىنۇتتىن كېيىن قايتا سىناڭ</numerusform><numerusform>%n مىنۇتتىن كېيىن قايتا سىناڭ</numerusform></translation>
     </message>
 </context>
 <context>
@@ -97,10 +97,6 @@
 </context>
 <context>
     <name>AuthenticationModule</name>
-    <message numerus="yes">
-        <source>Please try again %n minute(s) later</source>
-        <translation><numerusform>%n مىنۇتتىن كېيىن قايتا سىناڭ</numerusform><numerusform>%n مىنۇتتىن كېيىن قايتا سىناڭ</numerusform></translation>
-    </message>
     <message>
         <source>Verification successful</source>
         <translation>دەلىللەندى</translation>
@@ -147,7 +143,7 @@
     </message>
     <message numerus="yes">
         <source>Please try again %n minutes later</source>
-        <translation type="unfinished"><numerusform></numerusform><numerusform></numerusform></translation>
+        <translation><numerusform>%n مىنۇتتىن كېيىن قايتا سىناڭ</numerusform><numerusform>%n مىنۇتتىن كېيىن قايتا سىناڭ</numerusform></translation>
     </message>
 </context>
 <context>
@@ -225,15 +221,11 @@
     <name>GreeterWorkek</name>
     <message>
         <source>Wrong account</source>
-        <translation type="unfinished"/>
+        <translation>ھېسابات نومۇرى خاتا</translation>
     </message>
     <message>
         <source>Wrong Password</source>
         <translation>ئىناۋەتسىز پارول</translation>
-    </message>
-    <message>
-        <source>The account or password is not correct. Please enter again.</source>
-        <translation>ھېساباتىڭىز ياكى شىفىر توغرا ئەمەس، قايتا كىرگۈزۈڭ.</translation>
     </message>
 </context>
 <context>
@@ -333,8 +325,12 @@
         <translation>بارماق ئىزى ئارقىلىق دەلىللەڭ</translation>
     </message>
     <message numerus="yes">
-        <source>Please try again %n minute(s) later</source>
-        <translation><numerusform>%n مىنۇتتىن كېيىن قايتا سىناڭ</numerusform><numerusform>%n مىنۇتتىن كېيىن قايتا سىناڭ</numerusform></translation>
+        <source>Your password will expire in %n days, please change it timely</source>
+        <translation><numerusform>پارولنىڭ ۋاقتى %n كۈندە توشىدۇ، پارولنى ۋاقتىدا ئۆزگەرتىڭ</numerusform><numerusform>پارولنىڭ ۋاقتى %n كۈندە توشىدۇ، پارولنى ۋاقتىدا ئۆزگەرتىڭ</numerusform></translation>
+    </message>
+    <message>
+        <source>Password expired, please change</source>
+        <translation>پارولنىڭ ۋاقتى ئۆتتى، ئۆزگەرتىڭ</translation>
     </message>
 </context>
 <context>

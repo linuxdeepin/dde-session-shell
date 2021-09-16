@@ -97,10 +97,6 @@
 </context>
 <context>
     <name>AuthenticationModule</name>
-    <message numerus="yes">
-        <source>Please try again %n minute(s) later</source>
-        <translation><numerusform>請%n分鐘後再試</numerusform></translation>
-    </message>
     <message>
         <source>Verification successful</source>
         <translation>驗證成功</translation>
@@ -231,10 +227,6 @@
         <source>Wrong Password</source>
         <translation>密碼錯誤</translation>
     </message>
-    <message>
-        <source>The account or password is not correct. Please enter again.</source>
-        <translation>帳戶或密碼不正確，請重新輸入。</translation>
-    </message>
 </context>
 <context>
     <name>InhibitWarnView</name>
@@ -326,15 +318,19 @@
     <name>UserLoginWidget</name>
     <message>
         <source>Account</source>
-        <translation>帳號</translation>
+        <translation>帳戶</translation>
     </message>
     <message>
         <source>Verify your fingerprint</source>
         <translation>請驗證指紋</translation>
     </message>
     <message numerus="yes">
-        <source>Please try again %n minute(s) later</source>
-        <translation><numerusform>請%n分鐘後再試</numerusform></translation>
+        <source>Your password will expire in %n days, please change it timely</source>
+        <translation><numerusform>密碼將於%n天後過期，請及時修改密碼</numerusform></translation>
+    </message>
+    <message>
+        <source>Password expired, please change</source>
+        <translation>密碼已過期，請修改</translation>
     </message>
 </context>
 <context>

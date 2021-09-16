@@ -224,8 +224,8 @@
         <translation>Yanlış hesap</translation>
     </message>
     <message>
-        <source>Wrong password</source>
-        <translation>Yanlış parola</translation>
+        <source>Wrong Password</source>
+        <translation>Yanlış Parola</translation>
     </message>
 </context>
 <context>
@@ -325,8 +325,12 @@
         <translation>Parmak izinizi doğrulayın</translation>
     </message>
     <message numerus="yes">
-        <source>Please try again %n minute(s) later</source>
-        <translation><numerusform>Lütfen %n dakika sonra tekrar deneyin</numerusform><numerusform>Lütfen %n dakika sonra tekrar deneyin</numerusform></translation>
+        <source>Your password will expire in %n days, please change it timely</source>
+        <translation><numerusform>Parolanızın süresi %n gün içinde dolacak, lütfen zamanında değiştirin </numerusform><numerusform>Parolanızın süresi %n gün içinde dolacak, lütfen zamanında değiştirin </numerusform></translation>
+    </message>
+    <message>
+        <source>Password expired, please change</source>
+        <translation>Parolanın süresi doldu, lütfen değiştir</translation>
     </message>
 </context>
 <context>

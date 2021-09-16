@@ -97,10 +97,6 @@
 </context>
 <context>
     <name>AuthenticationModule</name>
-    <message numerus="yes">
-        <source>Please try again %n minute(s) later</source>
-        <translation><numerusform>请%n分钟后再试</numerusform></translation>
-    </message>
     <message>
         <source>Verification successful</source>
         <translation>验证成功</translation>
@@ -231,10 +227,6 @@
         <source>Wrong Password</source>
         <translation>密码错误</translation>
     </message>
-    <message>
-        <source>The account or password is not correct. Please enter again.</source>
-        <translation>帐户或密码不正确，请重新输入。</translation>
-    </message>
 </context>
 <context>
     <name>InhibitWarnView</name>
@@ -333,8 +325,12 @@
         <translation>请验证指纹</translation>
     </message>
     <message numerus="yes">
-        <source>Please try again %n minute(s) later</source>
-        <translation><numerusform>请%n分钟后再试</numerusform></translation>
+        <source>Your password will expire in %n days, please change it timely</source>
+        <translation><numerusform>密码将于%n天后过期，请及时修改密码</numerusform></translation>
+    </message>
+    <message>
+        <source>Password expired, please change</source>
+        <translation>密码已过期，请修改</translation>
     </message>
 </context>
 <context>

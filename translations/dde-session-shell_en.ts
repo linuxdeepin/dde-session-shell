@@ -1,6 +1,4 @@
-<?xml version="1.0" encoding="utf-8"?>
-<!DOCTYPE TS>
-<TS version="2.1" language="en">
+<?xml version="1.0" ?><!DOCTYPE TS><TS language="en" version="2.1">
 <context>
     <name>AuthFingerprint</name>
     <message>
@@ -13,10 +11,7 @@
     </message>
     <message numerus="yes">
         <source>Verification failed, %n chances left</source>
-        <translation>
-            <numerusform>Verification failed, %n chances left</numerusform>
-            <numerusform>Verification failed, %n chances left</numerusform>
-        </translation>
+        <translation><numerusform>Verification failed, %n chances left</numerusform><numerusform>Verification failed, %n chances left</numerusform></translation>
     </message>
     <message>
         <source>Verification failed, only one chance left</source>
@@ -28,10 +23,7 @@
     </message>
     <message numerus="yes">
         <source>Please try again %n minute(s) later</source>
-        <translation>
-            <numerusform>Please try again %n minute(s) later</numerusform>
-            <numerusform>Please try again %n minute(s) later</numerusform>
-        </translation>
+        <translation><numerusform>Please try again %n minute(s) later</numerusform><numerusform>Please try again %n minute(s) later</numerusform></translation>
     </message>
 </context>
 <context>
@@ -42,10 +34,7 @@
     </message>
     <message numerus="yes">
         <source>Verification failed, %n chances left</source>
-        <translation>
-            <numerusform>Verification failed, %n chances left</numerusform>
-            <numerusform>Verification failed, %n chances left</numerusform>
-        </translation>
+        <translation><numerusform>Verification failed, %n chances left</numerusform><numerusform>Verification failed, %n chances left</numerusform></translation>
     </message>
     <message>
         <source>Verification failed, only one chance left</source>
@@ -61,10 +50,7 @@
     </message>
     <message numerus="yes">
         <source>Please try again %n minute(s) later</source>
-        <translation>
-            <numerusform>Please try again %n minute(s) later</numerusform>
-            <numerusform>Please try again %n minute(s) later</numerusform>
-        </translation>
+        <translation><numerusform>Please try again %n minute(s) later</numerusform><numerusform>Please try again %n minute(s) later</numerusform></translation>
     </message>
 </context>
 <context>
@@ -75,10 +61,7 @@
     </message>
     <message numerus="yes">
         <source>Please try again %n minutes later</source>
-        <translation>
-            <numerusform>Please try again %n minutes later</numerusform>
-            <numerusform>Please try again %n minutes later</numerusform>
-        </translation>
+        <translation><numerusform>Please try again %n minutes later</numerusform><numerusform>Please try again %n minutes later</numerusform></translation>
     </message>
 </context>
 <context>
@@ -89,10 +72,7 @@
     </message>
     <message numerus="yes">
         <source>Verification failed, %n chances left</source>
-        <translation>
-            <numerusform>Verification failed, %n chances left</numerusform>
-            <numerusform>Verification failed, %n chances left</numerusform>
-        </translation>
+        <translation><numerusform>Verification failed, %n chances left</numerusform><numerusform>Verification failed, %n chances left</numerusform></translation>
     </message>
     <message>
         <source>Verification failed, only one chance left</source>
@@ -112,10 +92,7 @@
     </message>
     <message numerus="yes">
         <source>Please try again %n minute(s) later</source>
-        <translation>
-            <numerusform>Please try again %n minute(s) later</numerusform>
-            <numerusform>Please try again %n minute(s) later</numerusform>
-        </translation>
+        <translation><numerusform>Please try again %n minute(s) later</numerusform><numerusform>Please try again %n minute(s) later</numerusform></translation>
     </message>
 </context>
 <context>
@@ -126,10 +103,7 @@
     </message>
     <message numerus="yes">
         <source>Verification failed, %n chances left</source>
-        <translation>
-            <numerusform>Verification failed, %n chances left</numerusform>
-            <numerusform>Verification failed, %n chances left</numerusform>
-        </translation>
+        <translation><numerusform>Verification failed, %n chances left</numerusform><numerusform>Verification failed, %n chances left</numerusform></translation>
     </message>
     <message>
         <source>Verification failed, only one chance left</source>
@@ -169,10 +143,7 @@
     </message>
     <message numerus="yes">
         <source>Please try again %n minutes later</source>
-        <translation>
-            <numerusform>Please try again %n minutes later</numerusform>
-            <numerusform>Please try again %n minutes later</numerusform>
-        </translation>
+        <translation><numerusform>Please try again %n minutes later</numerusform><numerusform>Please try again %n minutes later</numerusform></translation>
     </message>
 </context>
 <context>
@@ -355,14 +326,11 @@
     </message>
     <message numerus="yes">
         <source>Your password will expire in %n days, please change it timely</source>
-        <translation type="unfinished">
-            <numerusform></numerusform>
-            <numerusform></numerusform>
-        </translation>
+        <translation><numerusform>Your password will expire in %n days, please change it timely</numerusform><numerusform>Your password will expire in %n days, please change it timely</numerusform></translation>
     </message>
     <message>
         <source>Password expired, please change</source>
-        <translation type="unfinished"></translation>
+        <translation>Password expired, please change</translation>
     </message>
 </context>
 <context>

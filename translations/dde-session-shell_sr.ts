@@ -57,11 +57,11 @@
     <name>AuthSingle</name>
     <message>
         <source>Please try again 1 minute later</source>
-        <translation type="unfinished"/>
+        <translation>Покушајте поново за 1 минут</translation>
     </message>
     <message numerus="yes">
         <source>Please try again %n minutes later</source>
-        <translation type="unfinished"><numerusform></numerusform><numerusform></numerusform><numerusform></numerusform></translation>
+        <translation><numerusform>Покушајте поново за %n минут</numerusform><numerusform>Покушајте поново за %n минута</numerusform><numerusform>Покушајте поново за %n минута</numerusform></translation>
     </message>
 </context>
 <context>
@@ -97,10 +97,6 @@
 </context>
 <context>
     <name>AuthenticationModule</name>
-    <message numerus="yes">
-        <source>Please try again %n minute(s) later</source>
-        <translation><numerusform>Покушајте поново за %n минут</numerusform><numerusform>Покушајте поново за %n минута</numerusform><numerusform>Покушајте поново за %n минута</numerusform></translation>
-    </message>
     <message>
         <source>Verification successful</source>
         <translation>Успешна верификација</translation>
@@ -143,11 +139,11 @@
     </message>
     <message>
         <source>Please try again 1 minute later</source>
-        <translation type="unfinished"/>
+        <translation>Покушајте поново за 1 минут</translation>
     </message>
     <message numerus="yes">
         <source>Please try again %n minutes later</source>
-        <translation type="unfinished"><numerusform></numerusform><numerusform></numerusform><numerusform></numerusform></translation>
+        <translation><numerusform>Покушајте поново за %n минут</numerusform><numerusform>Покушајте поново за %n минута</numerusform><numerusform>Покушајте поново за %n минута</numerusform></translation>
     </message>
 </context>
 <context>
@@ -225,15 +221,11 @@
     <name>GreeterWorkek</name>
     <message>
         <source>Wrong account</source>
-        <translation type="unfinished"/>
+        <translation>Погрешан налог</translation>
     </message>
     <message>
         <source>Wrong Password</source>
         <translation>Погрешна лозинка</translation>
-    </message>
-    <message>
-        <source>The account or password is not correct. Please enter again.</source>
-        <translation>Погрешан налог или лозинка. Молимо поново унесите.</translation>
     </message>
 </context>
 <context>
@@ -333,8 +325,12 @@
         <translation>Верификујте отисак прста</translation>
     </message>
     <message numerus="yes">
-        <source>Please try again %n minute(s) later</source>
-        <translation><numerusform>Покушајте поново за %n минут</numerusform><numerusform>Покушајте поново за %n минута</numerusform><numerusform>Покушајте поново за %n минут(а)</numerusform></translation>
+        <source>Your password will expire in %n days, please change it timely</source>
+        <translation><numerusform>Лозинка истиче за %n дан, промените је на време</numerusform><numerusform>Лозинка истиче за %n дана, промените је на време</numerusform><numerusform>Лозинка истиче за %n дан(а), промените је на време</numerusform></translation>
+    </message>
+    <message>
+        <source>Password expired, please change</source>
+        <translation>Лозинка је истекла, промените је</translation>
     </message>
 </context>
 <context>
