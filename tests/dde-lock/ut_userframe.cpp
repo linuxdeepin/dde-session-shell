@@ -26,5 +26,10 @@ void UT_UserFrame::TearDown()
 
 TEST_F(UT_UserFrame, basic)
 {
+    std::shared_ptr<NativeUser> user_ptr(new NativeUser("/com/deepin/daemon/Accounts/User"+QString::number((getuid()))));
     m_userFrame->setModel(m_model);
+    //m_userFrame->userAdded(user_ptr);
+    m_userFrame->userRemoved(user_ptr);
+    m_userFrame->refreshPosition();
+    m_userFrame->onUserClicked();
 }

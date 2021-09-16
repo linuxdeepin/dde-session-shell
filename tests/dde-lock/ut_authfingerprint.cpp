@@ -1,6 +1,8 @@
 #include "authcommon.h"
 #include "authfingerprint.h"
 
+#include <QTest>
+
 #include <gtest/gtest.h>
 
 class UT_AuthFingerprint : public testing::Test
@@ -27,6 +29,7 @@ TEST_F(UT_AuthFingerprint, BasicTest)
     m_authFingerprint->setAuthResult(0, "test");
     m_authFingerprint->setAnimationState(true);
     m_authFingerprint->setLimitsInfo(LimitsInfo());
+    QTest::mouseRelease(m_authFingerprint, Qt::MouseButton::RightButton, Qt::KeyboardModifier::NoModifier, QPoint(0, 0));
 }
 
 TEST_F(UT_AuthFingerprint, AuthResultTest)

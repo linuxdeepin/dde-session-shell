@@ -3,6 +3,8 @@
 #include <QApplication>
 #include <QKeyEvent>
 
+#include <QTest>
+
 class UT_ControlWidget : public testing::Test
 {
 protected:
@@ -34,4 +36,7 @@ TEST_F(UT_ControlWidget, init)
 
     controlWidget->rightKeySwitch();
     controlWidget->leftKeySwitch();
+    controlWidget->showTips();
+    controlWidget->hideTips();
+    QTest::keyRelease(controlWidget, Qt::Key_0, Qt::KeyboardModifier::NoModifier);
 }

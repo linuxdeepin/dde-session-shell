@@ -1,5 +1,7 @@
 #include "multiscreenmanager.h"
 
+#include <QGuiApplication>
+
 #include <gtest/gtest.h>
 
 class UT_MultiScreenManager : public testing::Test
@@ -25,4 +27,5 @@ TEST_F(UT_MultiScreenManager, basic)
 {
     m_manager->startRaiseContentFrame();
     m_manager->register_for_mutil_screen(nullptr);
+    m_manager->onScreenRemoved(QGuiApplication::primaryScreen());
 }

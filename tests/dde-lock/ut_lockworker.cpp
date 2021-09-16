@@ -31,29 +31,34 @@ void UT_LockWorker::TearDown()
 
 TEST_F(UT_LockWorker, worker)
 {
+    m_worker->isLocked();
     m_worker->onDisplayErrorMsg("aaaa");
     m_worker->onDisplayTextInfo("ssssss");
     m_worker->onPasswordResult("ddddd");
+    m_worker->enableZoneDetected(false);
 }
 
 TEST_F(UT_LockWorker, auth)
 {
-    // m_worker->createAuthentication("uos");
-    // m_worker->startAuthentication("uos", 0);
+    m_worker->createAuthentication("uos");
+    m_worker->startAuthentication("uos", 0);
     m_worker->sendTokenToAuth("uos", 0, "123");
     m_worker->endAuthentication("uos", 0);
     m_worker->destoryAuthentication("uos");
     m_worker->switchToUser(m_model->currentUser());
+    m_worker->setLocked(false);
+    m_worker->restartResetSessionTimer();
+    m_worker->lockServiceEvent(0, 0, "", "");
 }
 
 TEST_F(UT_LockWorker, connection)
 {
-    //    m_worker->doPowerAction(SessionBaseModel::PowerAction::RequireSuspend);
-    //    m_worker->doPowerAction(SessionBaseModel::PowerAction::RequireHibernate);
-    //    m_worker->doPowerAction(SessionBaseModel::PowerAction::RequireRestart);
-    //    m_worker->doPowerAction(SessionBaseModel::PowerAction::RequireShutdown);
-    //    m_worker->doPowerAction(SessionBaseModel::PowerAction::RequireLock);
-    //    m_worker->doPowerAction(SessionBaseModel::PowerAction::RequireLogout);
-    //    m_worker->doPowerAction(SessionBaseModel::PowerAction::RequireSwitchSystem);
-    //    m_worker->doPowerAction(SessionBaseModel::PowerAction::RequireSwitchUser);
+//    m_worker->doPowerAction(SessionBaseModel::PowerAction::RequireSuspend);
+//    m_worker->doPowerAction(SessionBaseModel::PowerAction::RequireHibernate);
+//    m_worker->doPowerAction(SessionBaseModel::PowerAction::RequireRestart);
+//    m_worker->doPowerAction(SessionBaseModel::PowerAction::RequireShutdown);
+//    m_worker->doPowerAction(SessionBaseModel::PowerAction::RequireLock);
+//    m_worker->doPowerAction(SessionBaseModel::PowerAction::RequireLogout);
+//    m_worker->doPowerAction(SessionBaseModel::PowerAction::RequireSwitchSystem);
+//    m_worker->doPowerAction(SessionBaseModel::PowerAction::RequireSwitchUser);
 }

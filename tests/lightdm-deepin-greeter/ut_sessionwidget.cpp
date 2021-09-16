@@ -27,5 +27,20 @@ void TstSessionWidget::TearDown()
 
 TEST_F(TstSessionWidget, BasicTest)
 {
+    //m_sessionwidget->show();
     m_sessionwidget->sessionCount();
+    m_sessionwidget->lastSessionName();
+    m_sessionwidget->currentSessionName();
+    m_sessionwidget->currentSessionKey();
+    m_sessionwidget->currentSessionOwner();
+    m_sessionwidget->leftKeySwitch();
+    m_sessionwidget->rightKeySwitch();
+}
+
+TEST_F(TstSessionWidget, EventTest)
+{
+    QTest::keyPress(m_sessionwidget, Qt::Key_Left);
+    //m_sessionwidget->resizeEvent(new QResizeEvent(m_sessionwidget->size(), m_sessionwidget->size()));
+    //m_sessionwidget->focusInEvent(new QFocusEvent(QEvent::FocusIn));
+    //m_sessionwidget->focusOutEvent(new QFocusEvent(QEvent::FocusOut));
 }

@@ -27,4 +27,5 @@ TEST_F(UT_LockPasswordWidget, init)
 {
     m_widget->setMessage("");
     // m_widget->paintEvent(new QPaintEvent(QRect()));
+    //m_widget->paintEvent(new QPaintEvent(m_widget->rect()));
 }

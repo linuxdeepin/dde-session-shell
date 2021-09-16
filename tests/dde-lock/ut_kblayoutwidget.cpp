@@ -1,5 +1,7 @@
 #include "kblayoutwidget.h"
 
+#include <QTest>
+
 #include <gtest/gtest.h>
 
 class UT_LayoutButton : public testing::Test

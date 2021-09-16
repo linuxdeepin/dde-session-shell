@@ -33,6 +33,11 @@ void UT_ShutdownWidget::TearDown()
     delete m_ShutdownWidget;
 }
 
+TEST_F(UT_ShutdownWidget, BasicTest)
+{
+    m_ShutdownWidget->setUserSwitchEnable(true);
+}
+
 TEST_F(UT_ShutdownWidget, buttonClicked)
 {
     RoundItemButton item;
@@ -58,4 +63,6 @@ TEST_F(UT_ShutdownWidget, buttonClicked)
 
     button = m_ShutdownWidget->findChild<RoundItemButton *>("RequireSwitchUserButton");
     QTest::mouseClick(button, Qt::MouseButton::LeftButton, Qt::KeyboardModifier::NoModifier, QPoint(0, 0));
+
+    QTest::keyPress(button, Qt::Key_Return, Qt::KeyboardModifier::NoModifier);
 }

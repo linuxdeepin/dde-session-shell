@@ -1,6 +1,8 @@
 #include "lockcontent.h"
 #include "sessionbasemodel.h"
 
+#include <QTest>
+
 #include <gtest/gtest.h>
 
 class UT_LockContent : public testing::Test
@@ -54,4 +56,14 @@ TEST_F(UT_LockContent, ModeTest)
     m_content->onStatusChanged(SessionBaseModel::PowerMode);
     m_content->onStatusChanged(SessionBaseModel::ShutDownMode);
     m_content->restoreMode();
+    m_content->updateTimeFormat(true);
+    m_content->toggleVirtualKB();
+    m_content->tryGrabKeyboard();
+    m_content->hideToplevelWindow();
+    m_content->currentWorkspaceChanged();
+    m_content->updateWallpaper("/usr/share/wallpapers/deepin");
+    QTest::mouseRelease(m_content, Qt::LeftButton, Qt::KeyboardModifier::NoModifier, QPoint(0, 0));
+    QTest::keyPress(m_content, Qt::Key_0, Qt::KeyboardModifier::NoModifier);
+    m_content->show();
+    m_content->hide();
 }

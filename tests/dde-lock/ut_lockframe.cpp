@@ -37,6 +37,7 @@ TEST_F(UT_LockFrame, frame)
     m_lockFrame->showShutdown();
     m_lockFrame->cancelShutdownInhibit();
     m_lockFrame->shutdownInhibit(SessionBaseModel::PowerAction::RequireNormal, false);
+    m_lockFrame->handlePoweroffKey();
 }
 
 TEST_F(UT_LockFrame, connection)
@@ -47,16 +48,18 @@ TEST_F(UT_LockFrame, connection)
 
 TEST_F(UT_LockFrame, event)
 {
-    // m_lockFrame->keyPressEvent(new QKeyEvent(QEvent::KeyPress, Qt::Key_Escape, Qt::NoModifier));
-    // m_lockFrame->event(new QKeyEvent(QEvent::KeyRelease, Qt::Key_PowerOff, Qt::NoModifier));
-    // m_lockFrame->event(new QKeyEvent(QEvent::KeyRelease, Qt::Key_NumLock, Qt::NoModifier));
-    // m_lockFrame->event(new QKeyEvent(QEvent::KeyRelease, Qt::Key_TouchpadOn, Qt::NoModifier));
-    // m_lockFrame->event(new QKeyEvent(QEvent::KeyRelease, Qt::Key_TouchpadOff, Qt::NoModifier));
-    // m_lockFrame->event(new QKeyEvent(QEvent::KeyRelease, Qt::Key_TouchpadToggle, Qt::NoModifier));
-    // m_lockFrame->event(new QKeyEvent(QEvent::KeyRelease, Qt::Key_CapsLock, Qt::NoModifier));
-    // m_lockFrame->event(new QKeyEvent(QEvent::KeyRelease, Qt::Key_VolumeDown, Qt::NoModifier));
-    // m_lockFrame->event(new QKeyEvent(QEvent::KeyRelease, Qt::Key_VolumeUp, Qt::NoModifier));
-    // m_lockFrame->event(new QKeyEvent(QEvent::KeyRelease, Qt::Key_VolumeMute, Qt::NoModifier));
-    // m_lockFrame->event(new QKeyEvent(QEvent::KeyRelease, Qt::Key_MonBrightnessUp, Qt::NoModifier));
-    // m_lockFrame->event(new QKeyEvent(QEvent::KeyRelease, Qt::Key_MonBrightnessDown, Qt::NoModifier));
+     //m_lockFrame->keyPressEvent(new QKeyEvent(QEvent::KeyPress, Qt::Key_Escape, Qt::NoModifier));
+     //m_lockFrame->event(new QKeyEvent(QEvent::KeyRelease, Qt::Key_PowerOff, Qt::NoModifier));
+     //m_lockFrame->event(new QKeyEvent(QEvent::KeyRelease, Qt::Key_NumLock, Qt::NoModifier));
+     //m_lockFrame->event(new QKeyEvent(QEvent::KeyRelease, Qt::Key_TouchpadOn, Qt::NoModifier));
+     //m_lockFrame->event(new QKeyEvent(QEvent::KeyRelease, Qt::Key_TouchpadOff, Qt::NoModifier));
+     //m_lockFrame->event(new QKeyEvent(QEvent::KeyRelease, Qt::Key_TouchpadToggle, Qt::NoModifier));
+     //m_lockFrame->event(new QKeyEvent(QEvent::KeyRelease, Qt::Key_CapsLock, Qt::NoModifier));
+     //m_lockFrame->event(new QKeyEvent(QEvent::KeyRelease, Qt::Key_VolumeDown, Qt::NoModifier));
+     //m_lockFrame->event(new QKeyEvent(QEvent::KeyRelease, Qt::Key_VolumeUp, Qt::NoModifier));
+     //m_lockFrame->event(new QKeyEvent(QEvent::KeyRelease, Qt::Key_VolumeMute, Qt::NoModifier));
+     //m_lockFrame->event(new QKeyEvent(QEvent::KeyRelease, Qt::Key_MonBrightnessUp, Qt::NoModifier));
+     //m_lockFrame->event(new QKeyEvent(QEvent::KeyRelease, Qt::Key_MonBrightnessDown, Qt::NoModifier));
+     m_lockFrame->hide();
+     m_lockFrame->show();
 }

@@ -1,5 +1,7 @@
 #include "systemmonitor.h"
 
+#include <QTest>
+
 #include <gtest/gtest.h>
 
 class UT_SystemMonitor : public testing::Test
@@ -25,4 +27,13 @@ TEST_F(UT_SystemMonitor, BasicTest)
 {
     m_systemMonitor->state();
     m_systemMonitor->setState(SystemMonitor::Enter);
+}
+
+TEST_F(UT_SystemMonitor, EventTest)
+{
+    //m_systemMonitor->enterEvent(new QEvent(QEvent::Type::Enter));
+    //m_systemMonitor->leaveEvent(new QEvent(QEvent::Type::Leave));
+    //m_systemMonitor->paintEvent(new QPaintEvent(m_systemMonitor->rect()));
+    QTest::mousePress(m_systemMonitor, Qt::LeftButton, Qt::KeyboardModifier::NoModifier);
+    QTest::mouseRelease(m_systemMonitor, Qt::LeftButton, Qt::KeyboardModifier::NoModifier);
 }

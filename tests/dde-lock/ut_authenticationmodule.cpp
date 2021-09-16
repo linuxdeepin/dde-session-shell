@@ -1,6 +1,8 @@
 #include "authcommon.h"
 #include "authenticationmodule.h"
 
+#include <QTest>
+
 #include <gtest/gtest.h>
 
 class UT_AuthenticationModule : public testing::Test
@@ -49,9 +51,9 @@ TEST_F(UT_AuthenticationModule, BasicTest)
     m_passwordAuth->setKeyboardButtonInfo("cn;");
     m_passwordAuth->lineEditIsEnable();
     m_passwordAuth->setLineEditBkColor(true);
-
     m_fingerprintAuth->lineEditText();
     m_fingerprintAuth->setText("test");
+    QTest::mouseRelease(m_fingerprintAuth, Qt::MouseButton::LeftButton, Qt::KeyboardModifier::NoModifier, QPoint(0, 0));
 }
 
 TEST_F(UT_AuthenticationModule, AuthResultTest)

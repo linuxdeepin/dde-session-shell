@@ -1,5 +1,7 @@
 #include "inhibitwarnview.h"
 
+#include <QTest>
+
 #include <gtest/gtest.h>
 
 class UT_InhibitorRow : public testing::Test
@@ -32,6 +34,7 @@ void UT_InhibitorRow::TearDown()
 
 TEST_F(UT_InhibitorRow, BasicTest)
 {
+    m_inhibitorRow->show();
 }
 
 void UT_InhibitWarnView::SetUp()
@@ -53,4 +56,7 @@ TEST_F(UT_InhibitWarnView, BasicTest)
     m_inhibitWarnView->toggleButtonState();
     m_inhibitWarnView->buttonClickHandle();
     m_inhibitWarnView->inhibitType();
+    m_inhibitWarnView->focusNextPrevChild(false);
+    m_inhibitWarnView->setCurrentButton(ButtonType::Cancel);
+    QTest::keyPress(m_inhibitWarnView, Qt::Key_Return, Qt::KeyboardModifier::NoModifier);
 }

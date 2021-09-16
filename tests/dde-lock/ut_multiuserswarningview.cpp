@@ -1,5 +1,7 @@
 #include "multiuserswarningview.h"
 
+#include <QTest>
+
 #include <gtest/gtest.h>
 
 class UT_MultiUsersWarningView : public testing::Test
@@ -37,6 +39,9 @@ TEST_F(UT_MultiUsersWarningView, BasicTest)
     m_multiUsersWarningView->toggleButtonState();
     m_multiUsersWarningView->buttonClickHandle();
     m_multiUsersWarningView->setAcceptReason("test");
+    m_multiUsersWarningView->getUserIcon(user_ptr->avatar());
+    QTest::keyPress(m_multiUsersWarningView, Qt::Key_Up, Qt::KeyboardModifier::NoModifier);
+
 }
 
 void UT_UserListItem::SetUp()

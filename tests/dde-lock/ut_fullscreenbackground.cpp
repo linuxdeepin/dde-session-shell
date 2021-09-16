@@ -1,6 +1,8 @@
 #include "fullscreenbackground.h"
 #include "sessionbasemodel.h"
 
+#include <QTest>
+
 #include <gtest/gtest.h>
 
 class UT_FullscreenBackground : public testing::Test
@@ -29,9 +31,14 @@ void UT_FullscreenBackground::TearDown()
 
 TEST_F(UT_FullscreenBackground, BasicTest)
 {
+    QWidget w;
+    m_background->setContent(&w);
+    m_background->isPicture("/usr/share/backgrounds/default_background.jpg");
+    m_background->getLocalFile("/usr/share/backgrounds/default_background.jpg");
     m_background->setContentVisible(true);
     m_background->contentVisible();
     m_background->enableEnterEvent(true);
     m_background->updateBackground("/usr/share/backgrounds/default_background.jpg");
     m_background->updateBlurBackground("/usr/share/backgrounds/default_background.jpg");
+    QTest::keyPress(m_background, Qt::Key_0, Qt::KeyboardModifier::NoModifier);
 }

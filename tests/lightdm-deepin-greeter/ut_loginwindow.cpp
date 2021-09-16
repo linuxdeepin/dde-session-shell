@@ -2,6 +2,8 @@
 #include "sessionbasemodel.h"
 #include "userinfo.h"
 
+#include <QResizeEvent>
+
 #include <gtest/gtest.h>
 
 class UT_LoginWindow : public testing::Test

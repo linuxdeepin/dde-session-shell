@@ -37,5 +37,14 @@ void UT_UserLoginInfo::TearDown()
 
 TEST_F(UT_UserLoginInfo, init)
 {
+    m_userLoginInfo->updateLocale();
+    EXPECT_NE(nullptr, m_userLoginInfo->getUserLoginWidget());
+    m_userLoginInfo->hideKBLayout();
+    m_userLoginInfo->abortConfirm(false);
+    m_userLoginInfo->beforeUnlockAction(true);
+    m_userLoginInfo->updateLoginContent();
     m_userLoginInfo->getUserFrameList()->setModel(m_model);
+    m_userLoginInfo->userLockChanged(false);
+    std::shared_ptr<User> user_ptr(new User);
+    m_userLoginInfo->receiveSwitchUser(user_ptr);
 }

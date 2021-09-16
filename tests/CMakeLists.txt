@@ -3,7 +3,7 @@ find_package(GTest REQUIRED)
 ADD_COMPILE_OPTIONS(-fno-access-control)
 
 # 用于测试覆盖率的编译条件
-set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -fprofile-arcs -ftest-coverage -lgcov")
+set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -fprofile-arcs -ftest-coverage -lgcov -fno-access-control")
 
 # Address Sanitizer 内存错误检测工具,打开下面的编译选项可以看到调试信息，正常运行时不需要这些信息
 if (CMAKE_BUILD_TYPE STREQUAL "Debug")
