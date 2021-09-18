@@ -83,7 +83,7 @@ public:
     void setSessionKey(const QString &sessionKey);
 
     inline PowerAction powerAction() const { return m_powerAction; }
-    void setPowerAction(const PowerAction &powerAction);
+    void setPowerAction(const PowerAction &powerAction, const bool operationFromUser = false);
 
     ModeStatus currentModeState() const { return m_currentModeState; }
     void setCurrentModeState(const ModeStatus &currentModeState);
@@ -175,7 +175,7 @@ signals:
     void authFaildTipsMessage(const QString &message, AuthFaildType type = KEYBOARD);
     void authFinished(bool success);
     void switchUserFinished();
-    void onPowerActionChanged(PowerAction poweraction);
+    void onPowerActionChanged(PowerAction poweraction, bool operationFromUser = false);
     void onRequirePowerAction(PowerAction poweraction, bool needConfirm);
     void onSessionKeyChanged(const QString &sessionKey);
     void showUserList();
@@ -205,7 +205,7 @@ signals:
 
 private:
     bool m_hasSwap;
-    bool m_visible = false;
+    bool m_visible;
     bool m_isServerModel;
     bool m_canSleep;
     bool m_allowShowUserSwitchButton;
@@ -214,9 +214,9 @@ private:
     bool m_isLockNoPassword;
     bool m_isBlackMode;
     bool m_isHibernateMode;
-    bool m_isLock = false;
+    bool m_isLock;
     bool m_allowShowCustomUser;
-    int m_userListSize = 0;
+    int m_userListSize;
     AuthType m_currentType;
     QList<std::shared_ptr<User>> m_userList;
     std::shared_ptr<User> m_currentUser;
@@ -224,7 +224,7 @@ private:
     QString m_sessionKey;
     PowerAction m_powerAction;
     ModeStatus m_currentModeState;
-    bool m_isCheckedInhibit = false;
+    bool m_isCheckedInhibit;
     AuthProperty m_authProperty; // 认证相关属性的值，初始时通过dbus获取，暂存在model中，供widget初始化界面使用
     QMap<QString, std::shared_ptr<User>> *m_users;
     QMap<QString, std::shared_ptr<User>> *m_loginedUsers;

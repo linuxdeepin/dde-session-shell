@@ -63,7 +63,7 @@ private:
     void initData();
     void initConfiguration();
 
-    void doPowerAction(const SessionBaseModel::PowerAction action);
+    void doPowerAction(const SessionBaseModel::PowerAction action, const bool operationFromUser = false);
     void setCurrentUser(const std::shared_ptr<User> user);
 
     // lock

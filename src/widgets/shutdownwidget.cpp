@@ -464,12 +464,12 @@ void ShutdownWidget::onRequirePowerAction(SessionBaseModel::PowerAction powerAct
             emit m_model->shutdownInhibit(powerAction, needConfirm);
             break;
         default:
-            m_model->setPowerAction(powerAction);
+            m_model->setPowerAction(powerAction, true);
             break;
         }
     } else {
         //登录模式直接操作
-        m_model->setPowerAction(powerAction);
+        m_model->setPowerAction(powerAction, true);
     }
 }
 

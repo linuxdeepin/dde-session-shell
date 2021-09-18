@@ -295,7 +295,7 @@ void LockWorker::initConfiguration()
     checkPowerInfo();
 }
 
-void LockWorker::doPowerAction(const SessionBaseModel::PowerAction action)
+void LockWorker::doPowerAction(const SessionBaseModel::PowerAction action, const bool operationFromUser)
 {
     switch (action) {
     case SessionBaseModel::PowerAction::RequireSuspend:
@@ -303,16 +303,20 @@ void LockWorker::doPowerAction(const SessionBaseModel::PowerAction action)
         m_model->setCurrentModeState(SessionBaseModel::ModeStatus::PasswordMode);
         QTimer::singleShot(100, this, [=] {
             //为实现待机一段时间后转休眠的功能，待机调用session daemon的接口，由session daemon去做待机和转休眠的工作。
-            QDBusPendingReply<> reply = m_powerInter->RequestSuspend();
-            reply.waitForFinished();
-            if (reply.isError()) {
-                //如果调用失败则调用startdde的接口
+            //如果是用户点击的"待机"按钮,调用daemon的接口,其它情况走startdde接口
+            if (operationFromUser) {
+                QDBusPendingReply<> reply = m_powerInter->RequestSuspend();
+                reply.waitForFinished();
+                if (reply.isError()) {
+                    //如果调用失败则调用startdde的接口
+                    m_sessionManagerInter->RequestSuspend();
+                }
+            } else {
                 m_sessionManagerInter->RequestSuspend();
             }
         });
         break;
-    case SessionBaseModel::PowerAction::RequireHibernate:
-        m_model->setIsBlackModel(true);
+    case SessionBaseModel::PowerAction::RequireHibernate:        m_model->setIsBlackModel(true);
         m_model->setCurrentModeState(SessionBaseModel::ModeStatus::PasswordMode);
         QTimer::singleShot(100, this, [=] {
             m_sessionManagerInter->RequestHibernate();
