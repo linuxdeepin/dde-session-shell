@@ -327,24 +327,8 @@ void UserLoginWidget::updateWidgetShowType(const int type)
         m_accountEdit->setVisible(visible);
         m_nameLabel->setVisible(!visible);
     }
-    /* 密码过期提示 */
-    switch (m_model->currentUser()->expiredStatus()) {
-    case User::ExpiredNormal:
-        m_expiredStatusLabel->clear();
-        m_expiredStatusLabel->hide();
-        break;
-    case User::ExpiredSoon:
-        m_expiredStatusLabel->setText(tr("Your password will expire in %n days, please change it timely", "", m_model->currentUser()->expiredDayLeft()));
-        m_expiredStatusLabel->show();
-        break;
-    case User::ExpiredAlready:
-        m_expiredStatusLabel->setText(tr("Password expired, please change"));
-        m_expiredStatusLabel->show();
-        break;
-    default:
-        break;
-    }
 
+    updateExpiredStatus();
     updateGeometry();
 
     /**
@@ -791,6 +775,27 @@ void UserLoginWidget::ShutdownPrompt(SessionBaseModel::PowerAction action)
         }
     }
     m_lockButton->setPalette(lockPalatte);
+}
+
+void UserLoginWidget::updateExpiredStatus()
+{
+    /* 密码过期提示 */
+    switch (m_model->currentUser()->expiredStatus()) {
+    case User::ExpiredNormal:
+        m_expiredStatusLabel->clear();
+        m_expiredStatusLabel->hide();
+        break;
+    case User::ExpiredSoon:
+        m_expiredStatusLabel->setText(tr("Your password will expire in %n days, please change it timely", "", m_model->currentUser()->expiredDayLeft()));
+        m_expiredStatusLabel->show();
+        break;
+    case User::ExpiredAlready:
+        m_expiredStatusLabel->setText(tr("Password expired, please change"));
+        m_expiredStatusLabel->show();
+        break;
+    default:
+        break;
+    }
 }
 
 /**
@@ -1418,6 +1423,7 @@ void UserLoginWidget::unlockFailedAni()
 void UserLoginWidget::updateAccoutLocale()
 {
     m_accountEdit->setPlaceholderText(tr("Account"));
+    updateExpiredStatus();
 }
 
 /**
