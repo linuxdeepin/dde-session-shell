@@ -197,6 +197,9 @@ void GreeterWorkek::initConnections()
     /* org.freedesktop.login1.Manager */
     connect(m_login1Inter, &DBusLogin1Manager::PrepareForSleep, this, [=](bool isSleep) {
         qDebug() << "DBusLogin1Manager::PrepareForSleep:" << isSleep;
+        // 登录界面待机或休眠时提供显示假黑屏，唤醒时显示正常界面
+        m_model->setIsBlackModel(isSleep);
+
         if (isSleep) {
             endAuthentication(m_account, AuthTypeAll);
             destoryAuthentication(m_account);
@@ -331,12 +334,15 @@ void GreeterWorkek::doPowerAction(const SessionBaseModel::PowerAction action)
     case SessionBaseModel::PowerAction::RequireRestart:
         m_login1Inter->Reboot(true);
         break;
+    // 在登录界面请求待机或者休眠时，通过显示假黑屏挡住输入密码界面，防止其闪现
     case SessionBaseModel::PowerAction::RequireSuspend:
+        m_model->setIsBlackModel(true);
         if (m_model->currentModeState() != SessionBaseModel::ModeStatus::PasswordMode)
             m_model->setCurrentModeState(SessionBaseModel::ModeStatus::PasswordMode);
         m_login1Inter->Suspend(true);
         break;
     case SessionBaseModel::PowerAction::RequireHibernate:
+        m_model->setIsBlackModel(true);
         if (m_model->currentModeState() != SessionBaseModel::ModeStatus::PasswordMode)
             m_model->setCurrentModeState(SessionBaseModel::ModeStatus::PasswordMode);
         m_login1Inter->Hibernate(true);
