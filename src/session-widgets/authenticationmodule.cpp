@@ -106,11 +106,22 @@ void AuthenticationModule::init()
         /* 大小写状态 */
         m_capsStatus = new DLabel(m_lineEdit);
         passwordLayout->addWidget(m_capsStatus, 1, Qt::AlignRight | Qt::AlignVCenter);
+        /* 密码提示 */
+        m_passwordHintBtn = new DIconButton(m_lineEdit);
+        m_passwordHintBtn->setContentsMargins(0, 0, 0, 0);
+        m_passwordHintBtn->setFocusPolicy(Qt::NoFocus);
+        m_passwordHintBtn->setCursor(Qt::ArrowCursor);
+        m_passwordHintBtn->setFlat(true);
+        m_passwordHintBtn->setIcon(QIcon(":/misc/images/password_hint.svg"));
+        passwordLayout->addWidget(m_passwordHintBtn, 0, Qt::AlignRight | Qt::AlignVCenter);
         /* 认证状态 */
         m_authStatus = new DLabel(m_lineEdit);
         passwordLayout->addWidget(m_authStatus, 0, Qt::AlignRight | Qt::AlignVCenter);
         mainLayout->addWidget(m_lineEdit);
         connect(m_keyboardButton, &QPushButton::clicked, this, &AuthenticationModule::requestShowKeyboardList);
+        connect(m_passwordHintBtn, &DIconButton::clicked, this, [this] {
+            m_lineEdit->showAlertMessage(m_passwordHint, this, 3000);
+        });
         connect(m_lineEdit, &DLineEditEx::lineEditTextHasFocus, this, [this](const bool value) {
             if (value) {
                 m_authStatus->hide();
@@ -495,6 +506,9 @@ void AuthenticationModule::setLimitsInfo(const LimitsInfo &info)
     if (info.locked) {
         setAuthResult(StatusCodeLocked, QString("Locked"));
     }
+    if (m_authType == AuthTypePassword) {
+        m_passwordHintBtn->setVisible(info.numFailures > 0);
+    }
 }
 
 /**
@@ -603,6 +617,18 @@ void AuthenticationModule::setKeyboardButtontext(const QString &text)
     painter.drawText(r, Qt::AlignCenter, tmpText);
 
     m_keyboardButton->setIcon(QIcon(QPixmap::fromImage(image)));
+}
+
+/**
+ * @brief 设置密码提示内容
+ * @param hint
+ */
+void AuthenticationModule::setPasswordHint(const QString &hint)
+{
+    if (hint == m_passwordHint) {
+        return;
+    }
+    m_passwordHint = hint;
 }
 
 /**

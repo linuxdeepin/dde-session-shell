@@ -395,6 +395,7 @@ void UserLoginWidget::initSingleAuth(const int index)
     m_singleAuth = new AuthSingle(this);
     m_singleAuth->setAccessibleName("SingleAuth");
     m_singleAuth->setCapsStatus(m_capslockMonitor->isCapslockOn());
+    m_singleAuth->setPasswordHint(m_model->currentUser()->passwordHint());
     m_userLoginLayout->insertWidget(index, m_singleAuth);
 
     connect(m_singleAuth, &AuthSingle::activeAuth, this, [this] {
@@ -439,6 +440,7 @@ void UserLoginWidget::initPasswdAuth(const int index)
     }
     m_passwordAuth = new AuthenticationModule(AuthTypePassword, this);
     m_passwordAuth->setCapsStatus(m_capslockMonitor->isCapslockOn());
+    m_passwordAuth->setPasswordHint(m_model->currentUser()->passwordHint());
     m_userLoginLayout->insertWidget(index, m_passwordAuth);
 
     connect(m_passwordAuth, &AuthenticationModule::activateAuthentication, this, [=] {
@@ -795,6 +797,20 @@ void UserLoginWidget::updateExpiredStatus()
         break;
     default:
         break;
+    }
+}
+
+/**
+ * @brief 设置密码提示
+ * @param hint
+ */
+void UserLoginWidget::setPasswordHint(const QString &hint)
+{
+    if (m_singleAuth) {
+        m_singleAuth->setPasswordHint(hint);
+    }
+    if (m_passwordAuth) {
+        m_passwordAuth->setPasswordHint(hint);
     }
 }
 

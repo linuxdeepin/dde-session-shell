@@ -58,6 +58,7 @@ void UserLoginInfo::setUser(std::shared_ptr<User> user)
     m_currentUserConnects << connect(user.get(), &User::keyboardLayoutListChanged, m_userLoginWidget, &UserLoginWidget::updateKeyboardList, Qt::UniqueConnection);
     m_currentUserConnects << connect(user.get(), &User::keyboardLayoutChanged, m_userLoginWidget, &UserLoginWidget::updateKeyboardInfo, Qt::UniqueConnection);
     m_currentUserConnects << connect(user.get(), &User::noPasswordLoginChanged, this, &UserLoginInfo::updateLoginContent); // TODO
+    m_currentUserConnects << connect(user.get(), &User::passwordHintChanged, m_userLoginWidget, &UserLoginWidget::setPasswordHint);
 
     //需要清除上一个用户的验证状态数据
     if (m_user != nullptr && m_user != user) {
@@ -68,6 +69,7 @@ void UserLoginInfo::setUser(std::shared_ptr<User> user)
     m_userLoginWidget->updateName(user->displayName());
     m_userLoginWidget->updateAvatar(user->avatar());
     m_userLoginWidget->updateAuthType(m_model->currentType());
+    m_userLoginWidget->setPasswordHint(user->passwordHint());
     /* 初始化锁定信息 */
     m_userLoginWidget->updateLimitsInfo(user->limitsInfo());
     /* 初始化验证状态*/

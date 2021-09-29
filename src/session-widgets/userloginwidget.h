@@ -82,6 +82,7 @@ public:
     inline uint uid() const { return m_uid; }
     void ShutdownPrompt(SessionBaseModel::PowerAction action);
     void updateExpiredStatus();
+    void setPasswordHint(const QString &hint);
 
 signals:
     void requestStartAuthentication(const QString &account, const int authType);            // 开启某一种认证

@@ -22,6 +22,7 @@
 #ifndef AUTHENTICATIONMODULE_H
 #define AUTHENTICATIONMODULE_H
 
+#include <DIconButton>
 #include <DLabel>
 #include <DPushButton>
 
@@ -57,6 +58,7 @@ public:
     int getAuthStatus() const { return m_status; }
     void setKeyboardButtonVisible(const bool visible);
     void setKeyboardButtontext(const QString &text);
+    void setPasswordHint(const QString &hint);
 
 signals:
     void activateAuthentication();
@@ -98,6 +100,7 @@ private:
     DLabel *m_textLabel;           // 中间文字标签
     DLineEditEx *m_lineEdit;       // 输入框
     DPushButton *m_keyboardButton; // 键盘布局按钮
+    DIconButton *m_passwordHintBtn; // 密码提示按钮
     LimitsInfo *m_limitsInfo;      // 认证限制信息
     int m_status;                  // 当前认证的认证状态
     QTimer *m_unlockTimer;         // 账户限制计时器
@@ -105,6 +108,7 @@ private:
     uint m_integerMinutes;
     bool m_showPrompt;
     QString m_iconText;
+    QString m_passwordHint;
 };
 
 #endif // AUTHENTICATIONMODULE_H

@@ -35,7 +35,8 @@ AuthSingle::AuthSingle(QWidget *parent)
     : AuthModule(parent)
     , m_capsStatus(new DLabel(this))
     , m_lineEdit(new DLineEditEx(this))
-    , m_keyboardButton(new DPushButton(this))
+    , m_keyboardButton(new DIconButton(this))
+    , m_passwordHintBtn(new DIconButton(this))
 {
     initUI();
     initConnections();
@@ -60,8 +61,8 @@ void AuthSingle::initUI()
     m_lineEdit->lineEdit()->setAlignment(Qt::AlignCenter);
 
     QHBoxLayout *passwordLayout = new QHBoxLayout(m_lineEdit->lineEdit());
-    passwordLayout->setContentsMargins(0, 0, 10, 0);
-    passwordLayout->setSpacing(5);
+    passwordLayout->setContentsMargins(10, 0, 10, 0);
+    passwordLayout->setSpacing(0);
     /* 键盘布局按钮 */
     m_keyboardButton->setAccessibleName("KeyboardButton");
     m_keyboardButton->setContentsMargins(0, 0, 0, 0);
@@ -75,7 +76,14 @@ void AuthSingle::initUI()
     m_capsStatus->setAccessibleName("CapsStatusLabel");
     m_capsStatus->setPixmap(pixmap);
     passwordLayout->addWidget(m_capsStatus, 1, Qt::AlignRight | Qt::AlignVCenter);
-
+    /* 密码提示 */
+    m_passwordHintBtn->setAccessibleName(QStringLiteral("PasswordHint"));
+    m_passwordHintBtn->setContentsMargins(0, 0, 0, 0);
+    m_passwordHintBtn->setFocusPolicy(Qt::NoFocus);
+    m_passwordHintBtn->setCursor(Qt::ArrowCursor);
+    m_passwordHintBtn->setFlat(true);
+    m_passwordHintBtn->setIcon(QIcon(":/misc/images/password_hint.svg"));
+    passwordLayout->addWidget(m_passwordHintBtn, 0, Qt::AlignRight | Qt::AlignVCenter);
     mainLayout->addWidget(m_lineEdit);
 }
 
@@ -86,6 +94,8 @@ void AuthSingle::initConnections()
 {
     /* 键盘布局按钮 */
     connect(m_keyboardButton, &QPushButton::clicked, this, &AuthSingle::requestShowKeyboardList);
+    /* 密码提示按钮 */
+    connect(m_passwordHintBtn, &DIconButton::clicked, this, &AuthSingle::showPasswordHint);
     /* 输入框 */
     connect(m_lineEdit, &DLineEditEx::lineEditTextHasFocus, this, &AuthSingle::focusChanged);
     connect(m_lineEdit, &DLineEditEx::textChanged, this, [this](const QString &text) {
@@ -258,6 +268,7 @@ void AuthSingle::setLimitsInfo(const LimitsInfo &info)
     m_limitsInfo->numFailures = info.numFailures;
     m_limitsInfo->unlockSecs = info.unlockSecs;
     updateUnlockTime();
+    setPasswordHintBtnVisible(info.numFailures > 0);
 }
 
 /**
@@ -304,16 +315,10 @@ void AuthSingle::setNumLockStatus(const QString &path)
  */
 void AuthSingle::setKeyboardButtonInfo(const QString &text)
 {
-    static QString currentText;
-    if (currentText == text)
-        return;
-
-    currentText = text;
-    QString tmpText = text;
-    tmpText = tmpText.split(";").first();
+    QString currentText = text.split(";").first();
     /* special mark in Japanese */
-    if (tmpText.contains("/")) {
-        tmpText = tmpText.split("/").last();
+    if (currentText.contains("/")) {
+        currentText = currentText.split("/").last();
     }
 
     QFont font = m_lineEdit->font();
@@ -331,7 +336,7 @@ void AuthSingle::setKeyboardButtonInfo(const QString &text)
 
     QRect image_rect = image.rect();
     QRect r(image_rect.left(), image_rect.top(), word_size, word_size);
-    painter.drawText(r, Qt::AlignCenter, tmpText);
+    painter.drawText(r, Qt::AlignCenter, currentText);
 
     m_keyboardButton->setIcon(QIcon(QPixmap::fromImage(image)));
 }
@@ -357,6 +362,18 @@ QString AuthSingle::lineEditText() const
 }
 
 /**
+ * @brief 设置密码提示内容
+ * @param hint
+ */
+void AuthSingle::setPasswordHint(const QString &hint)
+{
+    if (hint == m_passwordHint) {
+        return;
+    }
+    m_passwordHint = hint;
+}
+
+/**
  * @brief 更新认证锁定时的文案
  */
 void AuthSingle::updateUnlockPrompt()
@@ -372,6 +389,23 @@ void AuthSingle::updateUnlockPrompt()
         qInfo() << "Waiting authentication service...";
     }
     update();
+}
+
+/**
+ * @brief 显示密码提示
+ */
+void AuthSingle::showPasswordHint()
+{
+    m_lineEdit->showAlertMessage(m_passwordHint, this, 3000);
+}
+
+/**
+ * @brief 设置密码提示按钮的可见性
+ * @param visible
+ */
+void AuthSingle::setPasswordHintBtnVisible(const bool isVisible)
+{
+    m_passwordHintBtn->setVisible(isVisible);
 }
 
 bool AuthSingle::eventFilter(QObject *watched, QEvent *event)

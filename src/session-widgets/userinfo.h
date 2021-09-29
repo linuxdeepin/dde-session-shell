@@ -84,6 +84,7 @@ public:
     inline QString keyboardLayout() const { return m_keyboardLayout; }
     inline QString locale() const { return m_locale; }
     inline QString name() const { return m_name; }
+    inline QString passwordHint() const { return m_passwordHint; }
     virtual inline QString path() const { return QString(); }
     inline QStringList desktopBackgrounds() const { return m_desktopBackgrounds; }
     inline QStringList keyboardLayoutList() const { return m_keyboardLayoutList; }
@@ -107,6 +108,7 @@ signals:
     void localeChanged(const QString &locale);
     void loginStatusChanged(const bool);
     void noPasswordLoginChanged(const bool);
+    void passwordHintChanged(const QString &);
     void shortDateFormatChanged(const int);
     void shortTimeFormatChanged(const int);
     void weekdayFormatChanged(const int);
@@ -135,6 +137,7 @@ protected:
     QString m_keyboardLayout;            // 键盘布局
     QString m_locale;                    // 语言环境
     QString m_name;                      // 用户名
+    QString m_passwordHint;              // 密码提示
     QStringList m_desktopBackgrounds;    // 桌面背景（不同工作区壁纸不同，故是个 List）
     QStringList m_keyboardLayoutList;    // 键盘布局列表
     QMap<int, LimitsInfo> *m_limitsInfo; // 认证限制信息
@@ -168,6 +171,7 @@ private slots:
     void updateLocale(const QString &locale);
     void updateName(const QString &name);
     void updateNoPasswordLogin(const bool isNoPasswordLogin);
+    void updatePasswordHint(const QString &hint);
     void updatePasswordStatus(const QString &status);
     void updateShortDateFormat(const int format);
     void updateShortTimeFormat(const int format);

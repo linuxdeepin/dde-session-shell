@@ -24,6 +24,7 @@
 
 #include "authmodule.h"
 
+#include <DFloatingButton>
 #include <DPushButton>
 
 class DLineEditEx;
@@ -32,7 +33,9 @@ class AuthSingle : public AuthModule
     Q_OBJECT
 public:
     explicit AuthSingle(QWidget *parent = nullptr);
+
     QString lineEditText() const;
+    void setPasswordHint(const QString &hint);
 
 signals:
     void focusChanged(const bool);
@@ -55,13 +58,18 @@ protected:
 private:
     void initUI();
     void initConnections();
+
     void updateUnlockPrompt() override;
+    void showPasswordHint();
+    void setPasswordHintBtnVisible(const bool isVisible);
 
 private:
     DLabel *m_capsStatus;          // 大小写状态
     DLabel *m_numLockStatus;       // 数字键盘状态
     DLineEditEx *m_lineEdit;       // 输入框
-    DPushButton *m_keyboardButton; // 键盘布局按钮
+    DIconButton *m_keyboardButton; // 键盘布局按钮
+    DIconButton *m_passwordHintBtn; // 密码提示按钮
+    QString m_passwordHint;         // 密码提示
     bool m_retryAuth;              // 认证重试标志位
 };
 

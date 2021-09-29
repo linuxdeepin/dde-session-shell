@@ -231,6 +231,7 @@ void NativeUser::initConnections()
     connect(m_userInter, &UserInter::LayoutChanged, this, &NativeUser::updateKeyboardLayout);
     connect(m_userInter, &UserInter::LocaleChanged, this, &NativeUser::updateLocale);
     connect(m_userInter, &UserInter::NoPasswdLoginChanged, this, &NativeUser::updateNoPasswordLogin);
+    connect(m_userInter, &UserInter::PasswordHintChanged, this, &NativeUser::updatePasswordHint);
     connect(m_userInter, &UserInter::PasswordStatusChanged, this, &NativeUser::updatePasswordStatus);
     connect(m_userInter, &UserInter::ShortDateFormatChanged, this, &NativeUser::updateShortDateFormat);
     connect(m_userInter, &UserInter::ShortTimeFormatChanged, this, &NativeUser::updateShortTimeFormat);
@@ -264,6 +265,7 @@ void NativeUser::initData()
     m_keyboardLayout = m_userInter->layout();
     m_locale = m_userInter->locale();
     m_name = m_userInter->userName();
+    m_passwordHint = m_userInter->passwordHint();
     m_desktopBackgrounds = m_userInter->desktopBackgrounds();
     m_keyboardLayoutList = m_userInter->historyLayout();
     m_uid = m_userInter->uid().toUInt();
@@ -453,6 +455,21 @@ void NativeUser::updateNoPasswordLogin(const bool isNoPasswordLogin)
     }
     m_isNoPasswordLogin = isNoPasswordLogin;
     emit noPasswordLoginChanged(isNoPasswordLogin);
+}
+
+/**
+ * @brief 输入密码时的提示
+ *
+ * @param hint
+ */
+
+void NativeUser::updatePasswordHint(const QString &hint)
+{
+    if (hint == m_passwordHint) {
+        return;
+    }
+    m_passwordHint = hint;
+    emit passwordHintChanged(hint);
 }
 
 /**
