@@ -46,6 +46,7 @@ using namespace dss;
 ControlWidget::ControlWidget(QWidget *parent)
     : QWidget(parent)
 {
+    setAccessibleName("ControlWidget");
     initUI();
     initConnect();
 }

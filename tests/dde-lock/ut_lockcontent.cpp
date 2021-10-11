@@ -37,7 +37,6 @@ TEST_F(UT_LockContent, BasicTest)
     m_content->pushUserFrame();
     m_content->pushShutdownFrame();
     m_content->setMPRISEnable(true);
-    m_content->beforeUnlockAction(false);
 }
 
 TEST_F(UT_LockContent, BackgroundTest)

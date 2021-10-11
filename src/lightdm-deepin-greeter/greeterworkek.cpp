@@ -1,10 +1,9 @@
-#include "authcommon.h"
 #include "greeterworkek.h"
-#include "userinfo.h"
-#include "keyboardmonitor.h"
 
-#include <unistd.h>
-#include <libintl.h>
+#include "authcommon.h"
+#include "keyboardmonitor.h"
+#include "userinfo.h"
+
 #include <DSysInfo>
 
 #include <QGSettings>
@@ -43,6 +42,7 @@ GreeterWorkek::GreeterWorkek(SessionBaseModel *const model, QObject *parent)
     , m_authFramework(new DeepinAuthFramework(this))
     , m_lockInter(new DBusLockService(LOCKSERVICE_NAME, LOCKSERVICE_PATH, QDBusConnection::systemBus(), this))
     , m_resetSessionTimer(new QTimer(this))
+    , m_limitsUpdateTimer(new QTimer(this))
 {
 #ifndef QT_DEBUG
     if (!m_greeter->connectSync()) {
@@ -57,15 +57,18 @@ GreeterWorkek::GreeterWorkek(SessionBaseModel *const model, QObject *parent)
     initData();
     initConfiguration();
 
+    m_limitsUpdateTimer->setSingleShot(true);
+    m_limitsUpdateTimer->setInterval(50);
+
     //认证超时重启
     m_resetSessionTimer->setInterval(15000);
     if (QGSettings::isSchemaInstalled("com.deepin.dde.session-shell")) {
-         QGSettings gsetting("com.deepin.dde.session-shell", "/com/deepin/dde/session-shell/", this);
-         if(gsetting.keys().contains("authResetTime")){
-             int resetTime = gsetting.get("auth-reset-time").toInt();
-             if(resetTime > 0)
+        QGSettings gsetting("com.deepin.dde.session-shell", "/com/deepin/dde/session-shell/", this);
+        if (gsetting.keys().contains("authResetTime")) {
+            int resetTime = gsetting.get("auth-reset-time").toInt();
+            if (resetTime > 0)
                 m_resetSessionTimer->setInterval(resetTime);
-         }
+        }
     }
 
     m_resetSessionTimer->setSingleShot(true);
@@ -96,6 +99,7 @@ void GreeterWorkek::initConnections()
     /* com.deepin.daemon.Authenticate */
     connect(m_authFramework, &DeepinAuthFramework::FramworkStateChanged, m_model, &SessionBaseModel::updateFrameworkState);
     connect(m_authFramework, &DeepinAuthFramework::LimitsInfoChanged, this, [this](const QString &account) {
+        qDebug() << "GreeterWorkek::initConnections LimitsInfoChanged:" << account;
         if (account == m_model->currentUser()->name()) {
             m_model->updateLimitedInfo(m_authFramework->GetLimitedInfo(account));
         }
@@ -175,7 +179,7 @@ void GreeterWorkek::initConnections()
             case StatusCodeFailure:
                 endAuthentication(m_account, type);
                 if (!m_model->currentUser()->limitsInfo(type).locked) {
-                    QTimer::singleShot(50, this, [=] {
+                    QTimer::singleShot(50, this, [this, type] {
                         startAuthentication(m_account, type);
                     });
                 }
@@ -231,19 +235,14 @@ void GreeterWorkek::initConnections()
     });
     /* model */
     connect(m_model, &SessionBaseModel::authTypeChanged, this, [=](const int type) {
-        if (m_model->getAuthProperty().FrameworkState && !m_model->getAuthProperty().MFAFlag) {
-            m_model->updateLimitedInfo(m_authFramework->GetLimitedInfo(m_account));
-        } else if (type > 0 && !m_model->currentUser()->limitsInfo()->value(type).locked) {
+        if (type > 0 && !m_model->currentUser()->limitsInfo()->value(type).locked) {
             startAuthentication(m_account, m_model->getAuthProperty().AuthType);
-        } else {
-            QTimer::singleShot(10, this, [=] {
-                m_model->updateLimitedInfo(m_authFramework->GetLimitedInfo(m_account));
-            });
         }
+        m_limitsUpdateTimer->start();
     });
     connect(m_model, &SessionBaseModel::onPowerActionChanged, this, &GreeterWorkek::doPowerAction);
     connect(m_model, &SessionBaseModel::currentUserChanged, this, &GreeterWorkek::recoveryUserKBState);
-    connect(m_model, &SessionBaseModel::visibleChanged, this, [=] (bool visible) {
+    connect(m_model, &SessionBaseModel::visibleChanged, this, [=](bool visible) {
         if (visible) {
             if (!m_model->isServerModel() && (!m_model->currentUser()->isNoPasswordLogin()
                 || m_model->currentUser()->expiredStatus() == User::ExpiredAlready)) {
@@ -256,6 +255,9 @@ void GreeterWorkek::initConnections()
     /* others */
     connect(KeyboardMonitor::instance(), &KeyboardMonitor::numlockStatusChanged, this, [=](bool on) {
         saveNumlockStatus(m_model->currentUser(), on);
+    });
+    connect(m_limitsUpdateTimer, &QTimer::timeout, this, [this] {
+        m_model->updateLimitedInfo(m_authFramework->GetLimitedInfo(m_account));
     });
 }
 
@@ -310,8 +312,8 @@ void GreeterWorkek::initData()
 
 void GreeterWorkek::initConfiguration()
 {
-    m_model->setAlwaysShowUserSwitchButton(getGSettings("","switchuser").toInt() == AuthInterface::Always);
-    m_model->setAllowShowUserSwitchButton(getGSettings("","switchuser").toInt() == AuthInterface::Ondemand);
+    m_model->setAlwaysShowUserSwitchButton(getGSettings("", "switchuser").toInt() == AuthInterface::Always);
+    m_model->setAllowShowUserSwitchButton(getGSettings("", "switchuser").toInt() == AuthInterface::Ondemand);
 
     checkPowerInfo();
 
@@ -453,7 +455,7 @@ void GreeterWorkek::createAuthentication(const QString &account)
         m_greeter->authenticate(account);
         break;
     default:
-        m_model->updateFactorsInfo(MFAInfoList());
+        m_model->setAuthType(AuthTypeSingle);
         break;
     }
 }
@@ -493,9 +495,6 @@ void GreeterWorkek::startAuthentication(const QString &account, const int authTy
         m_greeter->authenticate(account);
         break;
     }
-    QTimer::singleShot(10, this, [=] {
-        m_model->updateLimitedInfo(m_authFramework->GetLimitedInfo(account));
-    });
 }
 
 /**
@@ -730,6 +729,7 @@ void GreeterWorkek::authenticationComplete()
         m_greeter->startSessionSync(m_model->sessionKey());
     };
 
+    emit requestUpdateBackground(m_model->currentUser()->greeterBackground());
 #ifndef DISABLE_LOGIN_ANI
     QTimer::singleShot(1000, this, startSessionSync);
 #else
@@ -816,7 +816,7 @@ void GreeterWorkek::resetLightdmAuth(std::shared_ptr<User> user, int delay_time,
 
 void GreeterWorkek::restartResetSessionTimer()
 {
-    if(m_model->visible() && m_resetSessionTimer->isActive()){
+    if (m_model->visible() && m_resetSessionTimer->isActive()) {
         m_resetSessionTimer->start();
     }
 }

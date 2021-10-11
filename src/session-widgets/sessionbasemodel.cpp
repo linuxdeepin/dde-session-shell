@@ -1,14 +1,13 @@
-#include "authcommon.h"
 #include "sessionbasemodel.h"
 
-#include <QDebug>
 #include <DSysInfo>
+
+#include <QDebug>
 #include <QGSettings>
 
 #define SessionManagerService "com.deepin.SessionManager"
 #define SessionManagerPath "/com/deepin/SessionManager"
 
-using namespace AuthCommon;
 DCORE_USE_NAMESPACE
 
 SessionBaseModel::SessionBaseModel(AuthType type, QObject *parent)
@@ -29,20 +28,13 @@ SessionBaseModel::SessionBaseModel(AuthType type, QObject *parent)
 
 SessionBaseModel::~SessionBaseModel()
 {
-    for (const QString &key : m_users->keys()) {
-        m_users->remove(key);
-    }
     delete m_users;
-
-    for (const QString &key : m_loginedUsers->keys()) {
-        m_loginedUsers->remove(key);
-    }
     delete m_loginedUsers;
 }
 
 std::shared_ptr<User> SessionBaseModel::findUserByUid(const uint uid) const
 {
-    for (auto user : m_users->values()) {
+    for (auto user : qAsConst(*m_users)) {
         if (user->uid() == uid) {
             return user;
         }
@@ -56,7 +48,7 @@ std::shared_ptr<User> SessionBaseModel::findUserByName(const QString &name) cons
         return std::shared_ptr<User>(nullptr);
     }
 
-    for (auto user : m_users->values()) {
+    for (auto user : qAsConst(*m_users)) {
         if (user->name() == name) {
             return user;
         }
@@ -64,8 +56,14 @@ std::shared_ptr<User> SessionBaseModel::findUserByName(const QString &name) cons
     return std::shared_ptr<User>(nullptr);
 }
 
+void SessionBaseModel::setAppType(const AppType type)
+{
+    m_appType = type;
+}
+
 void SessionBaseModel::setSessionKey(const QString &sessionKey)
 {
+    qDebug() << "SessionBaseModel::setSessionKey:" << sessionKey;
     if (m_sessionKey == sessionKey) return;
 
     m_sessionKey = sessionKey;
@@ -75,6 +73,7 @@ void SessionBaseModel::setSessionKey(const QString &sessionKey)
 
 void SessionBaseModel::setPowerAction(const PowerAction &powerAction)
 {
+    qDebug() << "SessionBaseModel::setPowerAction:" << m_powerAction << powerAction;
     if (powerAction == m_powerAction) return;
 
     m_powerAction = powerAction;
@@ -84,6 +83,7 @@ void SessionBaseModel::setPowerAction(const PowerAction &powerAction)
 
 void SessionBaseModel::setCurrentModeState(const ModeStatus &currentModeState)
 {
+    qDebug() << "SessionBaseModel::setCurrentModeState:" << m_currentModeState << currentModeState;
     if (m_currentModeState == currentModeState) return;
 
     m_currentModeState = currentModeState;
@@ -93,7 +93,7 @@ void SessionBaseModel::setCurrentModeState(const ModeStatus &currentModeState)
 
 void SessionBaseModel::setUserListSize(int users_size)
 {
-    if(m_userListSize == users_size) return;
+    if (m_userListSize == users_size) return;
 
     m_userListSize = users_size;
 
@@ -103,7 +103,7 @@ void SessionBaseModel::setUserListSize(int users_size)
 void SessionBaseModel::setHasVirtualKB(bool hasVirtualKB)
 {
     //锁屏显示时，加载初始化屏幕键盘onboard进程，锁屏完成后结束onboard进程
-    if (hasVirtualKB){
+    if (hasVirtualKB) {
         bool b = QProcess::execute("which", QStringList() << "onboard") == 0;
         emit hasVirtualKBChanged(b);
     } else {
@@ -111,7 +111,8 @@ void SessionBaseModel::setHasVirtualKB(bool hasVirtualKB)
     }
 }
 
-void SessionBaseModel::setHasSwap(bool hasSwap) {
+void SessionBaseModel::setHasSwap(bool hasSwap)
+{
     if (m_hasSwap == hasSwap) return;
 
     m_hasSwap = hasSwap;
@@ -126,6 +127,7 @@ void SessionBaseModel::setHasSwap(bool hasSwap) {
  */
 void SessionBaseModel::setVisible(const bool visible)
 {
+    qDebug() << "SessionBaseModel::setVisible:" << visible;
     if (m_visible == visible) {
         return;
     }
@@ -175,21 +177,22 @@ void SessionBaseModel::setAbortConfirm(bool abortConfirm)
 
 void SessionBaseModel::setIsLockNoPassword(bool LockNoPassword)
 {
-   if (m_isLockNoPassword == LockNoPassword) return;
+    if (m_isLockNoPassword == LockNoPassword) return;
 
     m_isLockNoPassword = LockNoPassword;
 }
 
 void SessionBaseModel::setIsBlackModel(bool is_black)
 {
-    if(m_isBlackMode == is_black) return;
+    if (m_isBlackMode == is_black) return;
 
     m_isBlackMode = is_black;
     emit blackModeChanged(is_black);
 }
 
-void SessionBaseModel::setIsHibernateModel(bool is_Hibernate){
-    if(m_isHibernateMode == is_Hibernate) return;
+void SessionBaseModel::setIsHibernateModel(bool is_Hibernate)
+{
+    if (m_isHibernateMode == is_Hibernate) return;
     m_isHibernateMode = is_Hibernate;
     emit HibernateModeChanged(is_Hibernate);
 }
@@ -221,8 +224,16 @@ void SessionBaseModel::setAllowShowCustomUser(const bool allowShowCustomUser)
 void SessionBaseModel::setAuthType(const int type)
 {
     qDebug() << Q_FUNC_INFO << type;
-    m_authProperty.AuthType = type;
-    emit authTypeChanged(type);
+    if (type == m_authProperty.AuthType) {
+        return;
+    }
+    if (m_currentUser->type() == User::Default) {
+        m_authProperty.AuthType = type;
+        emit authTypeChanged(AuthTypeNone);
+    } else {
+        m_authProperty.AuthType = type;
+        emit authTypeChanged(type);
+    }
 }
 
 /**
@@ -232,10 +243,10 @@ void SessionBaseModel::setAuthType(const int type)
  */
 void SessionBaseModel::addUser(const QString &path)
 {
+    qDebug() << "SessionBaseModel::addUser:" << path;
     if (m_users->contains(path)) {
         return;
     }
-    qDebug() << "SessionBaseModel::addUser:" << path;
     std::shared_ptr<NativeUser> user(new NativeUser(path));
     m_users->insert(path, user);
     emit userAdded(user);
@@ -249,11 +260,11 @@ void SessionBaseModel::addUser(const QString &path)
  */
 void SessionBaseModel::addUser(const std::shared_ptr<User> user)
 {
+    qDebug() << "SessionBaseModel::addUser:" << user->path() << user->name();
     const QList<std::shared_ptr<User>> userList = m_users->values();
     if (userList.contains(user)) {
         return;
     }
-    qDebug() << "SessionBaseModel::addUser:" << user->name() << user->uid();
     const QString path = user->path().isEmpty() ? QString::number(user->uid()) : user->path();
     m_users->insert(path, user);
     emit userAdded(user);
@@ -446,6 +457,7 @@ void SessionBaseModel::updateLoginedUserList(const QString &list)
  */
 void SessionBaseModel::updateLimitedInfo(const QString &info)
 {
+    qDebug() << "SessionBaseModel::updateLimitedInfo" << info;
     m_currentUser->updateLimitsInfo(info);
 }
 
@@ -456,6 +468,7 @@ void SessionBaseModel::updateLimitedInfo(const QString &info)
  */
 void SessionBaseModel::updateFrameworkState(const int state)
 {
+    qDebug() << "SessionBaseModel::updateFrameworkState:" << state;
     if (state == m_authProperty.FrameworkState) {
         return;
     }
@@ -508,10 +521,12 @@ void SessionBaseModel::updateFuzzyMFA(const bool fuzzMFA)
  */
 void SessionBaseModel::updateMFAFlag(const bool MFAFlag)
 {
+    qDebug() << "SessionBaseModel::updateMFAFlag:" << m_authProperty.MFAFlag << MFAFlag;
     if (MFAFlag == m_authProperty.MFAFlag) {
         return;
     }
     m_authProperty.MFAFlag = MFAFlag;
+    emit MFAFlagChanged(MFAFlag);
 }
 
 /**
@@ -548,21 +563,12 @@ void SessionBaseModel::updateFactorsInfo(const MFAInfoList &infoList)
 {
     qDebug() << Q_FUNC_INFO << infoList;
     m_authProperty.AuthType = AuthTypeNone;
-    if (m_currentUser->uid() == INT_MAX) {
-        emit authTypeChanged(AuthTypeNone);
-        return;
-    }
     switch (m_authProperty.FrameworkState) {
     case Available:
-        if (m_authProperty.MFAFlag) {
-            for (const MFAInfo &info : infoList) {
-                m_authProperty.AuthType |= info.AuthType;
-            }
-            emit authTypeChanged(m_authProperty.AuthType);
-        } else {
-            m_authProperty.AuthType = AuthTypeSingle;
-            emit authTypeChanged(AuthTypeSingle);
+        for (const MFAInfo &info : infoList) {
+            m_authProperty.AuthType |= info.AuthType;
         }
+        emit authTypeChanged(m_authProperty.AuthType);
         break;
     default:
         m_authProperty.AuthType = AuthTypeSingle;
@@ -583,11 +589,7 @@ void SessionBaseModel::updateAuthStatus(const int type, const int status, const 
     qInfo() << "Authentication Service status:" << type << status << result;
     switch (m_authProperty.FrameworkState) {
     case Available:
-        if (m_authProperty.MFAFlag) {
-            emit authStatusChanged(type, status, result);
-        } else {
-            emit authStatusChanged(AuthTypeSingle, status, result);
-        }
+        emit authStatusChanged(type, status, result);
         break;
     default:
         emit authStatusChanged(AuthTypeSingle, status, result);

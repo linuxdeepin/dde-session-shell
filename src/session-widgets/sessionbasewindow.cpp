@@ -56,22 +56,23 @@ void SessionBaseWindow::setRightBottomWidget(QWidget * const widget)
 
 void SessionBaseWindow::setCenterContent(QWidget * const widget, bool responseResizeEvent)
 {
-    if (m_centerWidget == widget)
+    if (!widget || m_centerWidget == widget) {
         return;
+    }
 
     m_responseResizeEvent = responseResizeEvent;
-    if (m_centerWidget != nullptr) {
-        m_centerLayout->removeWidget(m_centerWidget);
+
+    if (m_centerWidget) {
+        m_centerLayout->replaceWidget(m_centerWidget, widget);
         m_centerWidget->hide();
-        m_centerWidget->setParent(nullptr);
+    } else {
+        m_centerLayout->addWidget(widget);
     }
     m_centerWidget = widget;
+    widget->show();
 
-    //Minimum 布局中部件大小是最小值并且是足够大的。而部件允许扩展，并不一定要扩展，但是不能比缺省大小更小
-    setFocusProxy(m_centerWidget);
-    m_centerLayout->addWidget(m_centerWidget);
-    m_centerWidget->show();
-    m_centerWidget->setFocus();
+    setFocusProxy(widget);
+    setFocus();
 }
 
 void SessionBaseWindow::setCenterTopWidget(QWidget *const widget)
@@ -160,9 +161,6 @@ QSize SessionBaseWindow::getCenterContentSize()
 
 void SessionBaseWindow::resizeEvent(QResizeEvent *event)
 {
-    if (m_centerWidget && m_responseResizeEvent)
-        m_centerWidget->setFixedSize(getCenterContentSize());
-
     QFrame::resizeEvent(event);
 }
 

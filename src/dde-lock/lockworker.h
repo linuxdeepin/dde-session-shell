@@ -76,6 +76,7 @@ private:
     DBusLockService *m_lockInter;
     DBusHotzone *m_hotZoneInter;
     QTimer *m_resetSessionTimer;
+    QTimer *m_limitsUpdateTimer;
     QString m_password;
     QMap<std::shared_ptr<User>, bool> m_lockUser;
     SessionManagerInter *m_sessionManagerInter;

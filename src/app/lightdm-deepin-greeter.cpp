@@ -255,6 +255,7 @@ int main(int argc, char* argv[])
     }
 
     SessionBaseModel *model = new SessionBaseModel(SessionBaseModel::AuthType::LightdmType);
+    model->setAppType(AppTypeLogin);
     GreeterWorkek *worker = new GreeterWorkek(model);
     QObject::connect(&appEventFilter, &AppEventFilter::userIsActive, worker, &GreeterWorkek::restartResetSessionTimer);
 

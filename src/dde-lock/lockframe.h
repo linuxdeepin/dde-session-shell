@@ -52,7 +52,6 @@ class LockFrame: public FullscreenBackground
     Q_OBJECT
 public:
     LockFrame(SessionBaseModel *const model, QWidget *parent = nullptr);
-    ~LockFrame() override;
 
 signals:
     void requestSetLocked(const bool);
@@ -64,6 +63,8 @@ signals:
 
     void requestStartAuthentication(const QString &account, const int authType);
     void sendTokenToAuth(const QString &account, const int authType, const QString &token);
+    void requestEndAuthentication(const QString &account, const int authType);
+    void authFinished();
 
 public slots:
     void showUserList();

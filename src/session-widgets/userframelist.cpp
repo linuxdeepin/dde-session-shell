@@ -20,30 +20,30 @@
  */
 
 #include "userframelist.h"
-#include "sessionbasemodel.h"
-#include "userinfo.h"
-#include "userloginwidget.h"
 
 #include "dflowlayout.h"
 #include "framedatabind.h"
+#include "sessionbasemodel.h"
+#include "user_widget.h"
+#include "userinfo.h"
 
-#include <QVBoxLayout>
-#include <QScrollArea>
 #include <QMouseEvent>
+#include <QScrollArea>
 #include <QScrollBar>
 #include <QScroller>
+#include <QVBoxLayout>
 
-const int UserFrameWidth = 226;
-const int UserFrameHeight = 167;
+const int UserFrameSpaceing = 40;
 
 UserFrameList::UserFrameList(QWidget *parent)
     : QWidget(parent)
     , m_scrollArea(new QScrollArea(this))
     , m_frameDataBind(FrameDataBind::Instance())
 {
-    setAccessibleName("UserFrameList");
-    setSizePolicy(QSizePolicy::Fixed, QSizePolicy::Fixed); // 设置窗口的大小策略为 Fixed，不受父窗口缩放影响
+    setObjectName(QStringLiteral("UserFrameList"));
+    setAccessibleName(QStringLiteral("UserFrameList"));
 
+    setSizePolicy(QSizePolicy::Fixed, QSizePolicy::Fixed);
     setFocusPolicy(Qt::StrongFocus);
 
     initUI();
@@ -127,22 +127,17 @@ void UserFrameList::handlerBeforeAddUser(std::shared_ptr<User> user)
 //创建用户窗体
 void UserFrameList::addUser(const std::shared_ptr<User> user)
 {
-    UserLoginWidget *widget = new UserLoginWidget(UserLoginWidget::UserListType, m_centerWidget);
-    widget->updateAvatar(user->avatar());
-    widget->updateName(user->displayName());
-    widget->updateLoginState(user->isLogin());
-
-    connect(widget, &UserLoginWidget::clicked, this, &UserFrameList::onUserClicked);
-    connect(user.get(), &User::displayNameChanged, widget, &UserLoginWidget::updateName);
-    connect(user.get(), &User::avatarChanged, widget, &UserLoginWidget::updateAvatar);
-    connect(user.get(), &User::loginStatusChanged, widget, &UserLoginWidget::updateLoginState);
-
+    qDebug() << "UserFrameList::addUser:" << user->path();
+    UserWidget *widget = new UserWidget(this);
+    widget->setUser(user);
     widget->setSelected(m_model->currentUser()->uid() == user->uid());
-    widget->setUid(user->uid());
+    m_loginWidgets.append(widget);
+
+    connect(widget, &UserWidget::clicked, this, &UserFrameList::onUserClicked);
 
     //多用户的情况按照其uid排序，升序排列，符合账户先后创建顺序
     m_loginWidgets.push_back(widget);
-    qSort(m_loginWidgets.begin(), m_loginWidgets.end(), [=] (UserLoginWidget *w1, UserLoginWidget *w2) {
+    qSort(m_loginWidgets.begin(), m_loginWidgets.end(), [=](UserWidget *w1, UserWidget *w2) {
         return (w1->uid() < w2->uid());
     });
     int index = m_loginWidgets.indexOf(widget);
@@ -155,6 +150,7 @@ void UserFrameList::addUser(const std::shared_ptr<User> user)
 //删除用户
 void UserFrameList::removeUser(const std::shared_ptr<User> user)
 {
+    qDebug() << "UserFrameList::removeUser:" << user->path();
     foreach (auto w, m_loginWidgets) {
         if (w->uid() == user->uid()) {
             m_loginWidgets.removeOne(w);
@@ -174,7 +170,7 @@ void UserFrameList::removeUser(const std::shared_ptr<User> user)
 //点击用户
 void UserFrameList::onUserClicked()
 {
-    UserLoginWidget *widget = static_cast<UserLoginWidget *>(sender());
+    UserWidget *widget = static_cast<UserWidget *>(sender());
     if (!widget) return;
 
     currentSelectedUser = widget;
@@ -263,13 +259,22 @@ void UserFrameList::onOtherPageChanged(const QVariant &value)
 void UserFrameList::updateLayout()
 {
     //处理窗体数量小于5个时的居中显示，取 窗体数量*窗体宽度 和 最大宽度 的较小值，设置为m_centerWidget的宽度
+    int count = m_flowLayout->count();
+    if (count < 5 && count > 0) {
+        m_scrollArea->setFixedSize((UserFrameWidth + UserFrameSpaceing) * count, UserFrameHeight + 20);
+    }
+    if (count > 5) {
+        m_scrollArea->setFixedSize((UserFrameWidth + UserFrameSpaceing) * 5, (UserFrameHeight + UserFrameSpaceing) * 2);
+    }
+    return;
+
     int maxWidth = this->width();
     int maxHeight = this->height();
 
     m_colCount = maxWidth / (UserFrameWidth + UserFrameSpaceing);
-    m_colCount = m_colCount > 5 ? 5 : m_colCount;
+    m_colCount = (m_colCount > 5 && count > 5) ? 5 : count;
     m_rowCount = maxHeight / (UserFrameHeight + UserFrameSpaceing);
-    m_rowCount = m_rowCount > 2 ? 2 : m_rowCount;
+    m_rowCount = (m_rowCount > 2 && count > 5) ? 2 : 1;
 
     //fix BUG 3268
     if (m_loginWidgets.size() <= m_colCount) {

@@ -3,8 +3,10 @@
 #include "base_module_interface.h"
 #include "controlwidget.h"
 #include "logowidget.h"
+#include "mfa_widget.h"
 #include "modules_loader.h"
 #include "sessionbasemodel.h"
+#include "sfa_widget.h"
 #include "shutdownwidget.h"
 #include "timewidget.h"
 #include "userframe.h"
@@ -25,30 +27,16 @@ LockContent::LockContent(SessionBaseModel *const model, QWidget *parent)
     , m_model(model)
     , m_virtualKB(nullptr)
     , m_translator(new QTranslator(this))
-    , m_userLoginInfo(new UserLoginInfo(model, this))
     , m_wmInter(new com::deepin::wm("com.deepin.wm", "/com/deepin/wm", QDBusConnection::sessionBus(), this))
+    , m_sfaWidget(nullptr)
+    , m_mfaWidget(nullptr)
+    , m_authWidget(nullptr)
+    , m_userListWidget(nullptr)
 {
     m_model->setCurrentModeState(SessionBaseModel::ModeStatus::PasswordMode);
 
-    m_timeWidget = new TimeWidget();
-    m_timeWidget->setAccessibleName("TimeWidget");
-    setCenterTopWidget(m_timeWidget);
-    // 处理时间制跳转策略，获取到时间制再显示时间窗口
-    m_timeWidget->setVisible(false);
-
-    m_shutdownFrame = new ShutdownWidget;
-    m_shutdownFrame->setAccessibleName("ShutdownFrame");
-    m_shutdownFrame->setModel(model);
-
-    m_logoWidget = new LogoWidget;
-    m_logoWidget->setAccessibleName("LogoWidget");
-    setLeftBottomWidget(m_logoWidget);
-
-    m_controlWidget = new ControlWidget;
-    m_controlWidget->setAccessibleName("ControlWidget");
-    setRightBottomWidget(m_controlWidget);
-
-    m_loginWidget = m_userLoginInfo->getUserLoginWidget();
+    initUI();
+    initConnections();
 
     switch (model->currentType()) {
     case SessionBaseModel::AuthType::LockType:
@@ -58,7 +46,45 @@ LockContent::LockContent(SessionBaseModel *const model, QWidget *parent)
         break;
     }
 
-    connect(model, &SessionBaseModel::currentUserChanged, this, &LockContent::onCurrentUserChanged);
+    QTimer::singleShot(0, this, [=] {
+        onCurrentUserChanged(model->currentUser());
+        onUserListChanged(model->isServerModel() ? model->loginedUserList() : model->userList());
+    });
+}
+
+void LockContent::initUI()
+{
+    m_timeWidget = new TimeWidget();
+    m_timeWidget->setAccessibleName("TimeWidget");
+    setCenterTopWidget(m_timeWidget);
+    // 处理时间制跳转策略，获取到时间制再显示时间窗口
+    m_timeWidget->setVisible(false);
+
+    m_shutdownFrame = new ShutdownWidget;
+    m_shutdownFrame->setAccessibleName("ShutdownFrame");
+    m_shutdownFrame->setModel(m_model);
+
+    m_logoWidget = new LogoWidget;
+    m_logoWidget->setAccessibleName("LogoWidget");
+    setLeftBottomWidget(m_logoWidget);
+
+    m_controlWidget = new ControlWidget;
+    m_controlWidget->setAccessibleName("ControlWidget");
+    setRightBottomWidget(m_controlWidget);
+
+    if (m_model->getAuthProperty().MFAFlag) {
+        initMFAWidget();
+    } else {
+        initSFAWidget();
+    }
+    m_authWidget->hide();
+
+    initUserListWidget();
+}
+
+void LockContent::initConnections()
+{
+    connect(m_model, &SessionBaseModel::currentUserChanged, this, &LockContent::onCurrentUserChanged);
     connect(m_controlWidget, &ControlWidget::requestSwitchUser, this, [ = ] {
         if (m_model->currentModeState() == SessionBaseModel::ModeStatus::UserMode) return;
         m_model->setCurrentModeState(SessionBaseModel::ModeStatus::UserMode);
@@ -68,20 +94,9 @@ LockContent::LockContent(SessionBaseModel *const model, QWidget *parent)
     });
     connect(m_controlWidget, &ControlWidget::requestSwitchVirtualKB, this, &LockContent::toggleVirtualKB);
     connect(m_controlWidget, &ControlWidget::requestShowModule, this, &LockContent::showModule);
-    connect(m_userLoginInfo, &UserLoginInfo::requestAuthUser, this, &LockContent::requestAuthUser);
-    connect(m_userLoginInfo, &UserLoginInfo::hideUserFrameList, this, &LockContent::restoreMode);
-    connect(m_userLoginInfo, &UserLoginInfo::requestSwitchUser, this, &LockContent::requestSwitchToUser);
-    connect(m_userLoginInfo, &UserLoginInfo::switchToCurrentUser, this, &LockContent::restoreMode);
-    connect(m_userLoginInfo, &UserLoginInfo::requestSetLayout, this, &LockContent::requestSetLayout);
-    connect(m_userLoginInfo, &UserLoginInfo::unlockActionFinish, this, [&] {
-        emit unlockActionFinish();
-    });
-    connect(m_userLoginInfo, &UserLoginInfo::requestStartAuthentication, this, &LockContent::requestStartAuthentication);
-    connect(m_userLoginInfo, &UserLoginInfo::sendTokenToAuth, this, &LockContent::sendTokenToAuth);
-    connect(m_userLoginInfo, &UserLoginInfo::requestCheckAccount, this, &LockContent::requestCheckAccount);
 
     //刷新背景单独与onStatusChanged信号连接，避免在showEvent事件时调用onStatusChanged而重复刷新背景，减少刷新次数
-    connect(model, &SessionBaseModel::onStatusChanged, this, &LockContent::onStatusChanged);
+    connect(m_model, &SessionBaseModel::onStatusChanged, this, &LockContent::onStatusChanged);
 
     //在锁屏显示时，启动onborad进程，锁屏结束时结束onboard进程
     auto initVirtualKB = [&](bool hasvirtualkb) {
@@ -98,22 +113,90 @@ LockContent::LockContent(SessionBaseModel *const model, QWidget *parent)
         }
     };
 
-    connect(model, &SessionBaseModel::hasVirtualKBChanged, this, initVirtualKB, Qt::QueuedConnection);
-    connect(model, &SessionBaseModel::userListChanged, this, &LockContent::onUserListChanged);
-    connect(model, &SessionBaseModel::userListLoginedChanged, this, &LockContent::onUserListChanged);
-    connect(model, &SessionBaseModel::authFinished, this, &LockContent::restoreMode);
-    connect(model, &SessionBaseModel::switchUserFinished, this, [ = ] {
+    connect(m_model, &SessionBaseModel::hasVirtualKBChanged, this, initVirtualKB, Qt::QueuedConnection);
+    connect(m_model, &SessionBaseModel::userListChanged, this, &LockContent::onUserListChanged);
+    connect(m_model, &SessionBaseModel::userListLoginedChanged, this, &LockContent::onUserListChanged);
+    connect(m_model, &SessionBaseModel::authFinished, this, &LockContent::restoreMode);
+    connect(m_model, &SessionBaseModel::switchUserFinished, this, [=] {
         QTimer::singleShot(100, this, [ = ] {
             emit LockContent::restoreMode();
         });
     });
 
-    QTimer::singleShot(0, this, [ = ] {
-        onCurrentUserChanged(model->currentUser());
-        onUserListChanged(model->isServerModel() ? model->loginedUserList() : model->userList());
+    connect(m_model, &SessionBaseModel::MFAFlagChanged, this, [this](const bool isMFA) {
+        m_centerWidget->hide();
+        m_centerWidget = nullptr;
+        isMFA ? initMFAWidget() : initSFAWidget();
+        setCenterContent(m_authWidget);
     });
 
     connect(m_wmInter, &__wm::WorkspaceSwitched, this, &LockContent::currentWorkspaceChanged);
+}
+
+/**
+ * @brief 初始化多因认证界面
+ */
+void LockContent::initMFAWidget()
+{
+    qDebug() << "LockContent::initMFAWidget:" << m_sfaWidget << m_mfaWidget;
+    if (m_sfaWidget) {
+        m_sfaWidget->hide();
+        delete m_sfaWidget;
+        m_sfaWidget = nullptr;
+    }
+    if (m_mfaWidget) {
+        m_authWidget = m_mfaWidget;
+        return;
+    }
+    m_mfaWidget = new MFAWidget(this);
+    m_mfaWidget->setModel(m_model);
+    m_authWidget = m_mfaWidget;
+
+    connect(m_mfaWidget, &MFAWidget::requestStartAuthentication, this, &LockContent::requestStartAuthentication);
+    connect(m_mfaWidget, &MFAWidget::sendTokenToAuth, this, &LockContent::sendTokenToAuth);
+    connect(m_mfaWidget, &MFAWidget::requestEndAuthentication, this, &LockContent::requestEndAuthentication);
+    connect(m_mfaWidget, &MFAWidget::requestCheckAccount, this, &LockContent::requestCheckAccount);
+}
+
+/**
+ * @brief 初始化单因认证界面
+ */
+void LockContent::initSFAWidget()
+{
+    qDebug() << "LockContent::initSFAWidget:" << m_sfaWidget << m_mfaWidget;
+    if (m_mfaWidget) {
+        m_mfaWidget->hide();
+        delete m_mfaWidget;
+        m_mfaWidget = nullptr;
+    }
+    if (m_sfaWidget) {
+        m_authWidget = m_sfaWidget;
+        return;
+    }
+    m_sfaWidget = new SFAWidget(this);
+    m_sfaWidget->setModel(m_model);
+    m_authWidget = m_sfaWidget;
+
+    connect(m_sfaWidget, &SFAWidget::requestStartAuthentication, this, &LockContent::requestStartAuthentication);
+    connect(m_sfaWidget, &SFAWidget::sendTokenToAuth, this, &LockContent::sendTokenToAuth);
+    connect(m_sfaWidget, &SFAWidget::requestEndAuthentication, this, &LockContent::requestEndAuthentication);
+    connect(m_sfaWidget, &SFAWidget::requestCheckAccount, this, &LockContent::requestCheckAccount);
+    connect(m_sfaWidget, &SFAWidget::authFinished, this, &LockContent::authFinished);
+}
+
+/**
+ * @brief 初始化用户列表界面
+ */
+void LockContent::initUserListWidget()
+{
+    if (m_userListWidget) {
+        return;
+    }
+    m_userListWidget = new UserFrameList(this);
+    m_userListWidget->setModel(m_model);
+
+    connect(m_userListWidget, &UserFrameList::clicked, this, &LockContent::restoreMode);
+    connect(m_userListWidget, &UserFrameList::requestSwitchUser, this, &LockContent::requestSwitchToUser);
 }
 
 void LockContent::onCurrentUserChanged(std::shared_ptr<User> user)
@@ -129,9 +212,9 @@ void LockContent::onCurrentUserChanged(std::shared_ptr<User> user)
     qApp->installTranslator(m_translator);
 
     //服务器登录界面,更新了翻译,所以需要再次初始化accontLineEdit
-    if (qApp->applicationName() != "dde-lock") {
-        m_userLoginInfo->updateLocale();
-    }
+    //    if (qApp->applicationName() != "dde-lock") {
+    //        m_userLoginInfo->updateLocale();
+    //    }
 
     for (auto connect : m_currentUserConnects) {
         m_user.get()->disconnect(connect);
@@ -153,9 +236,6 @@ void LockContent::onCurrentUserChanged(std::shared_ptr<User> user)
                           << connect(user.get(), &User::shortDateFormatChanged, m_timeWidget, &TimeWidget::setShortDateFormat)
                           << connect(user.get(), &User::shortTimeFormatChanged, m_timeWidget, &TimeWidget::setShortTimeFormat);
 
-    //lixin
-    m_userLoginInfo->setUser(user);
-
     //TODO: refresh blur image
     QTimer::singleShot(0, this, [ = ] {
         updateTimeFormat(user->isUse24HourFormat());
@@ -166,28 +246,20 @@ void LockContent::onCurrentUserChanged(std::shared_ptr<User> user)
 
 void LockContent::pushPasswordFrame()
 {
-    auto current_user = m_model->currentUser();
-
-    setCenterContent(m_loginWidget, false);
-
-    // hide keyboardlayout widget
-    // m_userLoginInfo->hideKBLayout();
+    setCenterContent(m_authWidget, false);
 }
 
 void LockContent::pushUserFrame()
 {
     if(m_model->isServerModel())
         m_controlWidget->setUserSwitchEnable(false);
-    //设置用户列表大小为中间区域的大小,并移动到左上角，避免显示后出现移动现象
-    UserFrameList * userFrameList = m_userLoginInfo->getUserFrameList();
-    userFrameList->setFixedSize(getCenterContentSize());
-    userFrameList->move(0, 0);
-    setCenterContent(m_userLoginInfo->getUserFrameList());
+
+    setCenterContent(m_userListWidget);
 }
 
 void LockContent::pushConfirmFrame()
 {
-    setCenterContent(m_userLoginInfo->getUserLoginWidget());
+    setCenterContent(m_authWidget);
 }
 
 void LockContent::pushShutdownFrame()
@@ -210,11 +282,6 @@ void LockContent::setMPRISEnable(const bool state)
 
     m_mediaWidget->setVisible(state);
     setCenterBottomWidget(m_mediaWidget);
-}
-
-void LockContent::beforeUnlockAction(bool is_finish)
-{
-    m_userLoginInfo->beforeUnlockAction(is_finish);
 }
 
 void LockContent::onStatusChanged(SessionBaseModel::ModeStatus status)

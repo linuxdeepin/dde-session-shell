@@ -1,14 +1,18 @@
 #ifndef SESSIONBASEMODEL_H
 #define SESSIONBASEMODEL_H
 
+#include "authcommon.h"
 #include "userinfo.h"
 
-#include <types/mfainfolist.h>
+#include <DSysInfo>
 
 #include <QObject>
-#include <memory>
 
-#include <DSysInfo>
+#include <memory>
+#include <types/mfainfolist.h>
+
+using namespace AuthCommon;
+
 class SessionBaseModel : public QObject
 {
     Q_OBJECT
@@ -51,22 +55,21 @@ public:
     };
     Q_ENUM(ModeStatus)
 
+    /* com.deepin.daemon.Authenticate */
     struct AuthProperty {
-        /* com.deepin.daemon.Authenticate */
+        bool FuzzyMFA;          // Reserved
+        bool MFAFlag;           // 多因子标志位
         int FrameworkState;     // 认证框架是否可用标志位
+        int AuthType = 0;       // 账户开启的认证类型
         int MixAuthFlags;       // 受支持的认证类型
+        int PINLen = 0;         // PIN 码的最大长度
         QString EncryptionType; // 加密类型
-        /* com.deepin.daemon.Authenticate.Session */
-        int AuthType = 0; // 账户开启的认证类型
-        int PINLen = 0;   // PIN 码的最大长度
-        bool MFAFlag;     // 多因子标志位
-        bool FuzzyMFA;    // ???
-        QString Prompt;   // 提示语
-        QString UserName; // 账户名
+        QString Prompt;         // 提示语
+        QString UserName;       // 账户名
     };
 
     explicit SessionBaseModel(AuthType type, QObject *parent = nullptr);
-    ~SessionBaseModel();
+    ~SessionBaseModel() override;
 
     inline AuthType currentType() const { return m_currentType; }
 
@@ -78,6 +81,9 @@ public:
 
     std::shared_ptr<User> findUserByUid(const uint uid) const;
     std::shared_ptr<User> findUserByName(const QString &name) const;
+
+    inline AppType appType() const { return m_appType; }
+    void setAppType(const AppType type);
 
     inline QString sessionKey() const { return m_sessionKey; }
     void setSessionKey(const QString &sessionKey);
@@ -141,6 +147,8 @@ signals:
     void userRemoved(const std::shared_ptr<User>);
     void userListChanged(const QList<std::shared_ptr<User>>);
     void loginedUserListChanged(const QList<std::shared_ptr<User>>);
+    /* com.deepin.daemon.Authenticate */
+    void MFAFlagChanged(const bool);
     /* others */
     void visibleChanged(const bool);
 
@@ -189,7 +197,6 @@ signals:
     void canSleepChanged(bool canSleep);
     void allowShowUserSwitchButtonChanged(bool allowShowUserSwitchButton);
     void abortConfirmChanged(bool abortConfirm);
-    void lockLimitFinished();
     void userListLoginedChanged(QList<std::shared_ptr<User>> list);
     void activeAuthChanged(bool active);
     void blackModeChanged(bool is_black);
@@ -217,6 +224,7 @@ private:
     bool m_isLock = false;
     bool m_allowShowCustomUser;
     int m_userListSize = 0;
+    AppType m_appType;
     AuthType m_currentType;
     QList<std::shared_ptr<User>> m_userList;
     std::shared_ptr<User> m_currentUser;

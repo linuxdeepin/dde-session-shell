@@ -61,6 +61,12 @@ LockFrame::LockFrame(SessionBaseModel *const model, QWidget *parent)
     connect(m_lockContent, &LockContent::requestBackground, this, static_cast<void (LockFrame::*)(const QString &)>(&LockFrame::updateBackground));
     connect(m_lockContent, &LockContent::requestStartAuthentication, this, &LockFrame::requestStartAuthentication);
     connect(m_lockContent, &LockContent::sendTokenToAuth, this, &LockFrame::sendTokenToAuth);
+    connect(m_lockContent, &LockContent::requestEndAuthentication, this, &LockFrame::requestEndAuthentication);
+    connect(m_lockContent, &LockContent::authFinished, this, [this] {
+        hide();
+        emit requestEnableHotzone(true);
+        emit authFinished();
+    });
     connect(model, &SessionBaseModel::blackModeChanged, this, &FullscreenBackground::setIsBlackMode);
     connect(model, &SessionBaseModel::showUserList, this, &LockFrame::showUserList);
     connect(model, &SessionBaseModel::showLockScreen, this, &LockFrame::showLockScreen);
@@ -93,9 +99,7 @@ LockFrame::LockFrame(SessionBaseModel *const model, QWidget *parent)
         }
     } );
 
-    connect(model, &SessionBaseModel::authFinished, this, [ = ](bool success){
-        m_lockContent->beforeUnlockAction(success);
-
+    connect(model, &SessionBaseModel::authFinished, this, [this](bool success) {
         if (success) {
             Q_EMIT requestEnableHotzone(true);
             hide();
@@ -306,9 +310,4 @@ void LockFrame::hideEvent(QHideEvent *event)
         m_autoExitTimer->start();
 
     return FullscreenBackground::hideEvent(event);
-}
-
-LockFrame::~LockFrame()
-{
-
 }

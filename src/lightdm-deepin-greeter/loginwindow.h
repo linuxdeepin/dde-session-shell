@@ -38,7 +38,7 @@ class LoginWindow : public FullscreenBackground
     Q_OBJECT
 
 public:
-    explicit LoginWindow(SessionBaseModel *const model, QWidget *parent = 0);
+    explicit LoginWindow(SessionBaseModel *const model, QWidget *parent = nullptr);
 
 private:
     void resizeEvent(QResizeEvent *event) Q_DECL_OVERRIDE;

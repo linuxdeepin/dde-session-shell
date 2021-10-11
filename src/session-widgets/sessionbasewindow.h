@@ -24,7 +24,7 @@ protected:
 private:
     void initUI();
 
-private:
+protected:
     QFrame *m_centerTopFrame;
     QFrame *m_centerFrame;
     QFrame *m_bottomFrame;

@@ -28,6 +28,7 @@
 
 #include <memory>
 
+class UserWidget;
 class User;
 class SessionBaseModel;
 class FrameDataBind;
@@ -53,8 +54,8 @@ protected:
     void mouseReleaseEvent(QMouseEvent *event) override;
     void hideEvent(QHideEvent *event) override;
     void keyPressEvent(QKeyEvent *event) override;
-    void focusInEvent(QFocusEvent  *event) override;
-    void focusOutEvent(QFocusEvent  *event) override;
+    void focusInEvent(QFocusEvent *event) override;
+    void focusOutEvent(QFocusEvent *event) override;
     void resizeEvent(QResizeEvent *event) override;
 
 private:
@@ -71,8 +72,9 @@ private:
 private:
     QScrollArea *m_scrollArea;
     DFlowLayout *m_flowLayout;
-    QList<UserLoginWidget *> m_loginWidgets;
-    UserLoginWidget *currentSelectedUser = nullptr;
+    QList<UserWidget *> m_loginWidgets;
+    QMap<uid_t, UserWidget *> m_userWidgets;
+    UserWidget *currentSelectedUser;
     SessionBaseModel *m_model;
     FrameDataBind *m_frameDataBind;
     QWidget *m_centerWidget;

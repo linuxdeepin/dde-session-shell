@@ -273,7 +273,7 @@ void UserLoginWidget::updateWidgetShowType(const int type)
     if (type & AuthTypeFace) {
         initFaceAuth(0);
         index++;
-    } else if (m_faceAuth != nullptr) {
+    } else if (m_faceAuth) {
         m_faceAuth->deleteLater();
         m_faceAuth = nullptr;
     }
@@ -281,14 +281,14 @@ void UserLoginWidget::updateWidgetShowType(const int type)
     if (type & AuthTypeIris) {
         initIrisAuth(0);
         index++;
-    } else if (m_irisAuth != nullptr) {
+    } else if (m_irisAuth) {
         m_irisAuth->deleteLater();
         m_irisAuth = nullptr;
     }
     /* 指纹 */
     if (type & AuthTypeFingerprint) {
         initFingerprintAuth(index++);
-    } else if (m_fingerprintAuth != nullptr) {
+    } else if (m_fingerprintAuth) {
         m_fingerprintAuth->deleteLater();
         m_fingerprintAuth = nullptr;
     }
@@ -299,7 +299,7 @@ void UserLoginWidget::updateWidgetShowType(const int type)
     /* Ukey */
     if (type & AuthTypeUkey) {
         initUkeyAuth(index++);
-    } else if (m_ukeyAuth != nullptr) {
+    } else if (m_ukeyAuth) {
         m_ukeyAuth->deleteLater();
         m_ukeyAuth = nullptr;
     }
@@ -310,21 +310,21 @@ void UserLoginWidget::updateWidgetShowType(const int type)
     /* PIN码 */
     if (type & AuthTypePIN) {
         initPINAuth(index++);
-    } else if (m_PINAuth != nullptr) {
+    } else if (m_PINAuth) {
         m_PINAuth->deleteLater();
         m_PINAuth = nullptr;
     }
     /* 密码 */
     if (type & AuthTypePassword) {
         initPasswdAuth(index++);
-    } else if (m_passwordAuth != nullptr) {
+    } else if (m_passwordAuth) {
         m_passwordAuth->deleteLater();
         m_passwordAuth = nullptr;
     }
     /* 单因子 */
     if (type & AuthTypeSingle) {
         initSingleAuth(index++);
-    } else if (m_singleAuth != nullptr) {
+    } else if (m_singleAuth) {
         m_singleAuth->deleteLater();
         m_singleAuth = nullptr;
     }
@@ -358,16 +358,16 @@ void UserLoginWidget::updateWidgetShowType(const int type)
     if (m_lockButton->isVisible() && m_lockButton->isEnabled()) {
         setFocusProxy(m_lockButton);
     }
-    if (m_passwordAuth != nullptr) {
+    if (m_passwordAuth) {
         setFocusProxy(m_passwordAuth);
     }
-    if (m_ukeyAuth != nullptr) {
+    if (m_ukeyAuth) {
         setFocusProxy(m_ukeyAuth);
     }
-    if (m_PINAuth != nullptr) {
+    if (m_PINAuth) {
         setFocusProxy(m_PINAuth);
     }
-    if (m_singleAuth != nullptr) {
+    if (m_singleAuth) {
         setFocusProxy(m_singleAuth);
     }
     if (m_accountEdit->isVisible()) {
@@ -401,7 +401,7 @@ void UserLoginWidget::updateWidgetShowType(const int type)
  */
 void UserLoginWidget::initSingleAuth(const int index)
 {
-    if (m_singleAuth != nullptr) {
+    if (m_singleAuth) {
         m_singleAuth->reset();
         return;
     }
@@ -446,7 +446,7 @@ void UserLoginWidget::initSingleAuth(const int index)
  */
 void UserLoginWidget::initPasswdAuth(const int index)
 {
-    if (m_passwordAuth != nullptr) {
+    if (m_passwordAuth) {
         m_passwordAuth->reset();
         return;
     }
@@ -499,7 +499,7 @@ void UserLoginWidget::initPasswdAuth(const int index)
  */
 void UserLoginWidget::initFingerprintAuth(const int index)
 {
-    if (m_fingerprintAuth != nullptr) {
+    if (m_fingerprintAuth) {
         m_fingerprintAuth->reset();
         return;
     }
@@ -519,7 +519,7 @@ void UserLoginWidget::initFingerprintAuth(const int index)
  */
 void UserLoginWidget::initUkeyAuth(const int index)
 {
-    if (m_ukeyAuth != nullptr) {
+    if (m_ukeyAuth) {
         m_ukeyAuth->reset();
         return;
     }
@@ -565,7 +565,7 @@ void UserLoginWidget::initUkeyAuth(const int index)
  */
 void UserLoginWidget::initFaceAuth(const int index)
 {
-    if (m_faceAuth != nullptr) {
+    if (m_faceAuth) {
         m_faceAuth->reset();
         return;
     }
@@ -585,7 +585,7 @@ void UserLoginWidget::initFaceAuth(const int index)
  */
 void UserLoginWidget::initIrisAuth(const int index)
 {
-    if (m_irisAuth != nullptr) {
+    if (m_irisAuth) {
         m_irisAuth->reset();
         return;
     }
@@ -638,56 +638,56 @@ void UserLoginWidget::updateAuthResult(const int type, const int status, const Q
     qDebug() << "UserLoginWidget::updateAuthResult:" << type << status << message;
     switch (type) {
     case AuthTypePassword:
-        if (m_passwordAuth != nullptr) {
+        if (m_passwordAuth) {
             m_passwordAuth->setAuthStatus(status, message);
             FrameDataBind::Instance()->updateValue("PasswordAuthStatus", status);
             FrameDataBind::Instance()->updateValue("PasswordAuthMsg", message);
         }
         break;
     case AuthTypeFingerprint:
-        if (m_fingerprintAuth != nullptr) {
+        if (m_fingerprintAuth) {
             m_fingerprintAuth->setAuthStatus(status, message);
             FrameDataBind::Instance()->updateValue("FingerprintAuthStatus", status);
             FrameDataBind::Instance()->updateValue("FingerprintAuthMsg", message);
         }
         break;
     case AuthTypeFace:
-        if (m_faceAuth != nullptr) {
+        if (m_faceAuth) {
             m_faceAuth->setAuthStatus(status, message);
             FrameDataBind::Instance()->updateValue("FaceAuthStatus", status);
             FrameDataBind::Instance()->updateValue("FaceAuthMsg", message);
         }
         break;
     case AuthTypeActiveDirectory:
-        if (m_activeDirectoryAuth != nullptr) {
+        if (m_activeDirectoryAuth) {
             m_activeDirectoryAuth->setAuthStatus(status, message);
             FrameDataBind::Instance()->updateValue("ActiveDirectoryAuthStatus", status);
             FrameDataBind::Instance()->updateValue("ActiveDirectoryAuthMsg", message);
         }
         break;
     case AuthTypeUkey:
-        if (m_ukeyAuth != nullptr) {
+        if (m_ukeyAuth) {
             m_ukeyAuth->setAuthStatus(status, message);
             FrameDataBind::Instance()->updateValue("UKeyAuthStatus", status);
             FrameDataBind::Instance()->updateValue("UKeyAuthMsg", message);
         }
         break;
     case AuthTypeFingerVein:
-        if (m_fingerVeinAuth != nullptr) {
+        if (m_fingerVeinAuth) {
             m_fingerVeinAuth->setAuthStatus(status, message);
             FrameDataBind::Instance()->updateValue("FingerVeinAuthStatus", status);
             FrameDataBind::Instance()->updateValue("FingerVeinAuthMsg", message);
         }
         break;
     case AuthTypeIris:
-        if (m_irisAuth != nullptr) {
+        if (m_irisAuth) {
             m_irisAuth->setAuthStatus(status, message);
             FrameDataBind::Instance()->updateValue("IrisAuthStatus", status);
             FrameDataBind::Instance()->updateValue("IrisAuthMsg", message);
         }
         break;
     case AuthTypeSingle:
-        if (m_singleAuth != nullptr) {
+        if (m_singleAuth) {
             m_singleAuth->setAuthStatus(status, message);
             FrameDataBind::Instance()->updateValue("SingleAuthStatus", status);
             FrameDataBind::Instance()->updateValue("SingleAuthMsg", message);
@@ -958,15 +958,15 @@ void UserLoginWidget::updateKeyboardList(const QStringList &list)
         return;
     }
     m_keyboardList = list;
-    if (m_kbLayoutWidget != nullptr && m_kbLayoutBorder != nullptr) {
+    if (m_kbLayoutWidget && m_kbLayoutBorder) {
         m_kbLayoutWidget->updateButtonList(list);
         m_kbLayoutBorder->setContent(m_kbLayoutWidget);
         updateClipPath();
     }
-    if (m_passwordAuth != nullptr) {
+    if (m_passwordAuth) {
         m_passwordAuth->setKeyboardButtonVisible(list.size() > 1 ? true : false);
     }
-    if (m_singleAuth != nullptr) {
+    if (m_singleAuth) {
         m_singleAuth->setKeyboardButtonVisible(list.size() > 1 ? true : false);
     }
 }
@@ -978,13 +978,13 @@ void UserLoginWidget::updateNextFocusPosition()
 {
     AuthModule *module = static_cast<AuthModule *>(sender());
     if (module == m_passwordAuth) {
-        if (m_ukeyAuth != nullptr && m_ukeyAuth->isEnabled()) {
+        if (m_ukeyAuth && m_ukeyAuth->isEnabled()) {
             setFocusProxy(m_ukeyAuth);
         } else {
             setFocusProxy(m_lockButton);
         }
     } else {
-        if (m_passwordAuth != nullptr && m_passwordAuth->isEnabled()) {
+        if (m_passwordAuth && m_passwordAuth->isEnabled()) {
             setFocusProxy(m_passwordAuth);
         } else {
             setFocusProxy(m_lockButton);
@@ -1013,47 +1013,47 @@ void UserLoginWidget::updateLimitsInfo(const QMap<int, User::LimitsInfo> *limits
         limitsInfoTmp.unlockTime = limitsInfoTmpU.unlockTime;
         switch (i.key()) {
         case AuthTypeSingle:
-            if (m_singleAuth != nullptr) {
+            if (m_singleAuth) {
                 m_singleAuth->setLimitsInfo(limitsInfoTmp);
             }
             break;
         case AuthTypePassword:
-            if (m_passwordAuth != nullptr) {
+            if (m_passwordAuth) {
                 m_passwordAuth->setLimitsInfo(limitsInfoTmp);
             }
             break;
         case AuthTypeFingerprint:
-            if (m_fingerprintAuth != nullptr) {
+            if (m_fingerprintAuth) {
                 m_fingerprintAuth->setLimitsInfo(limitsInfoTmp);
             }
             break;
         case AuthTypeUkey:
-            if (m_ukeyAuth != nullptr) {
+            if (m_ukeyAuth) {
                 m_ukeyAuth->setLimitsInfo(limitsInfoTmp);
             }
             break;
         case AuthTypeFace:
-            if (m_faceAuth != nullptr) {
+            if (m_faceAuth) {
                 m_faceAuth->setLimitsInfo(limitsInfoTmp);
             }
             break;
         case AuthTypeIris:
-            if (m_irisAuth != nullptr) {
+            if (m_irisAuth) {
                 m_irisAuth->setLimitsInfo(limitsInfoTmp);
             }
             break;
         case AuthTypeActiveDirectory:
-            if (m_activeDirectoryAuth != nullptr) {
+            if (m_activeDirectoryAuth) {
                 m_activeDirectoryAuth->setLimitsInfo(limitsInfoTmp);
             }
             break;
         case AuthTypeFingerVein:
-            if (m_fingerVeinAuth != nullptr) {
+            if (m_fingerVeinAuth) {
                 m_fingerVeinAuth->setLimitsInfo(limitsInfoTmp);
             }
             break;
         case AuthTypePIN:
-            if (m_PINAuth != nullptr) {
+            if (m_PINAuth) {
                 m_PINAuth->setLimitsInfo(limitsInfoTmp);
             }
             break;
@@ -1067,7 +1067,7 @@ void UserLoginWidget::updateLimitsInfo(const QMap<int, User::LimitsInfo> *limits
 
 void UserLoginWidget::updateAuthStatus()
 {
-    if (m_singleAuth != nullptr) {
+    if (m_singleAuth) {
         QVariant authStatus = FrameDataBind::Instance()->getValue("SingleAuthStatus");
         QVariant authMsg = FrameDataBind::Instance()->getValue("SingleAuthMsg");
         if (!authStatus.isNull() && !authMsg.isNull()) {
@@ -1075,7 +1075,7 @@ void UserLoginWidget::updateAuthStatus()
         }
     }
 
-    if (m_passwordAuth != nullptr) {
+    if (m_passwordAuth) {
         QVariant authStatus = FrameDataBind::Instance()->getValue("PasswordAuthStatus");
         QVariant authMsg = FrameDataBind::Instance()->getValue("PasswordAuthMsg");
         if (!authStatus.isNull() && !authMsg.isNull()) {
@@ -1083,7 +1083,7 @@ void UserLoginWidget::updateAuthStatus()
         }
     }
 
-    if (m_fingerprintAuth != nullptr) {
+    if (m_fingerprintAuth) {
         QVariant authStatus = FrameDataBind::Instance()->getValue("FingerprintAuthStatus");
         QVariant authMsg = FrameDataBind::Instance()->getValue("FingerprintAuthMsg");
         if (authStatus.isDetached() && !authMsg.isNull()) {
@@ -1091,7 +1091,7 @@ void UserLoginWidget::updateAuthStatus()
         }
     }
 
-    if (m_faceAuth != nullptr) {
+    if (m_faceAuth) {
         QVariant authStatus = FrameDataBind::Instance()->getValue("FaceAuthStatus");
         QVariant authMsg = FrameDataBind::Instance()->getValue("FaceAuthMsg");
         if (!authStatus.isNull() && !authMsg.isNull()) {
@@ -1099,7 +1099,7 @@ void UserLoginWidget::updateAuthStatus()
         }
     }
 
-    if (m_ukeyAuth != nullptr) {
+    if (m_ukeyAuth) {
         QVariant authStatus = FrameDataBind::Instance()->getValue("UKeyAuthStatus");
         QVariant authMsg = FrameDataBind::Instance()->getValue("UKeyAuthMsg");
         if (!authStatus.isNull() && !authMsg.isNull()) {
@@ -1107,7 +1107,7 @@ void UserLoginWidget::updateAuthStatus()
         }
     }
 
-    if (m_fingerVeinAuth != nullptr) {
+    if (m_fingerVeinAuth) {
         QVariant authStatus = FrameDataBind::Instance()->getValue("FingerVeinAuthStatus");
         QVariant authMsg = FrameDataBind::Instance()->getValue("FingerVeinAuthMsg");
         if (!authStatus.isNull() && !authMsg.isNull()) {
@@ -1115,7 +1115,7 @@ void UserLoginWidget::updateAuthStatus()
         }
     }
 
-    if (m_irisAuth != nullptr) {
+    if (m_irisAuth) {
         QVariant authStatus = FrameDataBind::Instance()->getValue("FrisAuthStatus");
         QVariant authMsg = FrameDataBind::Instance()->getValue("IrisVeinAuthMsg");
         if (!authStatus.isNull() && !authMsg.isNull()) {
@@ -1123,7 +1123,7 @@ void UserLoginWidget::updateAuthStatus()
         }
     }
 
-    if (m_PINAuth != nullptr) {
+    if (m_PINAuth) {
         QVariant authStatus = FrameDataBind::Instance()->getValue("PINAuthStatus");
         QVariant authMsg = FrameDataBind::Instance()->getValue("PINAuthMsg");
         if (!authStatus.isNull() && !authMsg.isNull()) {
@@ -1165,10 +1165,10 @@ void UserLoginWidget::updateKeyboardInfo(const QString &text)
     }
     m_keyboardInfo = text;
     m_kbLayoutWidget->setDefault(text);
-    if (m_passwordAuth != nullptr) {
+    if (m_passwordAuth) {
         m_passwordAuth->setKeyboardButtonInfo(text);
     }
-    if (m_singleAuth != nullptr) {
+    if (m_singleAuth) {
         m_singleAuth->setKeyboardButtonInfo(text);
     }
 }
@@ -1239,21 +1239,21 @@ void UserLoginWidget::updateClipPath()
 void UserLoginWidget::checkAuthResult(const int type, const int state)
 {
     if (type == AuthTypePassword && state == StatusCodeSuccess) {
-        if (m_fingerprintAuth != nullptr && m_fingerprintAuth->authStatus() == StatusCodeFailure) {
+        if (m_fingerprintAuth && m_fingerprintAuth->authStatus() == StatusCodeFailure) {
             m_fingerprintAuth->reset();
         }
     }
     if (state == StatusCodeCancel) {
-        if (m_ukeyAuth != nullptr) {
+        if (m_ukeyAuth) {
             m_ukeyAuth->setAuthStatus(StatusCodeCancel, "Cancel");
         }
-        if (m_passwordAuth != nullptr) {
+        if (m_passwordAuth) {
             m_passwordAuth->setAuthStatus(StatusCodeCancel, "Cancel");
         }
-        if (m_fingerprintAuth != nullptr) {
+        if (m_fingerprintAuth) {
             m_fingerprintAuth->setAuthStatus(StatusCodeCancel, "Cancel");
         }
-        if (m_singleAuth != nullptr) {
+        if (m_singleAuth) {
             m_singleAuth->setAuthStatus(StatusCodeCancel, "Cancel");
         }
     }

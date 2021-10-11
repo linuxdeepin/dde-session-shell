@@ -1,6 +1,6 @@
-#include "authcommon.h"
 #include "lockworker.h"
 
+#include "authcommon.h"
 #include "sessionbasemodel.h"
 #include "userinfo.h"
 
@@ -30,6 +30,7 @@ LockWorker::LockWorker(SessionBaseModel *const model, QObject *parent)
     , m_lockInter(new DBusLockService("com.deepin.dde.LockService", "/com/deepin/dde/LockService", QDBusConnection::systemBus(), this))
     , m_hotZoneInter(new DBusHotzone("com.deepin.daemon.Zone", "/com/deepin/daemon/Zone", QDBusConnection::sessionBus(), this))
     , m_resetSessionTimer(new QTimer(this))
+    , m_limitsUpdateTimer(new QTimer(this))
     , m_sessionManagerInter(new SessionManagerInter("com.deepin.SessionManager", "/com/deepin/SessionManager", QDBusConnection::sessionBus(), this))
     , m_switchosInterface(new HuaWeiSwitchOSInterface("com.huawei", "/com/huawei/switchos", QDBusConnection::sessionBus(), this))
     , m_accountsInter(new AccountsInter("com.deepin.daemon.Accounts", "/com/deepin/daemon/Accounts", QDBusConnection::systemBus(), this))
@@ -39,14 +40,17 @@ LockWorker::LockWorker(SessionBaseModel *const model, QObject *parent)
     initData();
     initConfiguration();
 
+    m_limitsUpdateTimer->setSingleShot(true);
+    m_limitsUpdateTimer->setInterval(50);
+
     m_resetSessionTimer->setInterval(15000);
     if (QGSettings::isSchemaInstalled("com.deepin.dde.session-shell")) {
-         QGSettings gsetting("com.deepin.dde.session-shell", "/com/deepin/dde/session-shell/", this);
-         if(gsetting.keys().contains("authResetTime")){
-             int resetTime = gsetting.get("auth-reset-time").toInt();
-             if(resetTime > 0)
+        QGSettings gsetting("com.deepin.dde.session-shell", "/com/deepin/dde/session-shell/", this);
+        if (gsetting.keys().contains("authResetTime")) {
+            int resetTime = gsetting.get("auth-reset-time").toInt();
+            if (resetTime > 0)
                 m_resetSessionTimer->setInterval(resetTime);
-         }
+        }
     }
 
     m_resetSessionTimer->setSingleShot(true);
@@ -75,6 +79,7 @@ void LockWorker::initConnections()
     /* com.deepin.daemon.Authenticate */
     connect(m_authFramework, &DeepinAuthFramework::FramworkStateChanged, m_model, &SessionBaseModel::updateFrameworkState);
     connect(m_authFramework, &DeepinAuthFramework::LimitsInfoChanged, this, [this](const QString &account) {
+        qDebug() << "DeepinAuthFramework::LimitsInfoChanged:" << account;
         if (account == m_model->currentUser()->name()) {
             m_model->updateLimitedInfo(m_authFramework->GetLimitedInfo(account));
         }
@@ -121,11 +126,11 @@ void LockWorker::initConnections()
                     }
                     endAuthentication(m_account, type);
                     if (!m_model->currentUser()->limitsInfo(type).locked) {
-                        QTimer::singleShot(50, this, [=] {
+                        QTimer::singleShot(50, this, [this, type] {
                             startAuthentication(m_account, type);
                         });
                     }
-                    QTimer::singleShot(50, this, [=] {
+                    QTimer::singleShot(50, this, [this, type, status, message] {
                         m_model->updateAuthStatus(type, status, message);
                     });
                     break;
@@ -136,7 +141,7 @@ void LockWorker::initConnections()
                     }
                     endAuthentication(m_account, type);
                     // TODO: 信号时序问题,考虑优化,Bug 89056
-                    QTimer::singleShot(50, this, [=]{
+                    QTimer::singleShot(50, this, [this, type, status, message] {
                         m_model->updateAuthStatus(type, status, message);
                     });
                     break;
@@ -154,7 +159,6 @@ void LockWorker::initConnections()
             switch (status) {
             case StatusCodeSuccess:
                 m_model->updateAuthStatus(type, status, message);
-                onUnlockFinished(true);
                 if (m_model->currentModeState() != SessionBaseModel::ModeStatus::PasswordMode
                     && m_model->currentModeState() != SessionBaseModel::ModeStatus::ConfirmPasswordMode) {
                     m_model->setCurrentModeState(SessionBaseModel::ModeStatus::PasswordMode);
@@ -166,8 +170,11 @@ void LockWorker::initConnections()
                     && m_model->currentModeState() != SessionBaseModel::ModeStatus::ConfirmPasswordMode) {
                     m_model->setCurrentModeState(SessionBaseModel::ModeStatus::PasswordMode);
                 }
-                if (!m_model->currentUser()->limitsInfo(AuthTypePassword).locked) {
-                    startAuthentication(m_account, type);
+                endAuthentication(m_account, type);
+                if (!m_model->currentUser()->limitsInfo(type).locked) {
+                    QTimer::singleShot(50, this, [this, type] {
+                        startAuthentication(m_account, type);
+                    });
                 }
                 break;
             case StatusCodeCancel:
@@ -218,15 +225,10 @@ void LockWorker::initConnections()
     });
     /* model */
     connect(m_model, &SessionBaseModel::authTypeChanged, this, [=](const int type) {
-        if (m_model->getAuthProperty().FrameworkState && !m_model->getAuthProperty().MFAFlag) {
-            m_model->updateLimitedInfo(m_authFramework->GetLimitedInfo(m_account));
-        } else if (type > 0 && !m_model->currentUser()->limitsInfo()->value(type).locked) {
-            startAuthentication(m_account, m_model->getAuthProperty().AuthType);
-        } else {
-            QTimer::singleShot(10, this, [=] {
-                m_model->updateLimitedInfo(m_authFramework->GetLimitedInfo(m_account));
-            });
+        if (type > 0 && m_model->getAuthProperty().MFAFlag) {
+            startAuthentication(m_account, type);
         }
+        m_limitsUpdateTimer->start();
     });
     connect(m_model, &SessionBaseModel::onPowerActionChanged, this, &LockWorker::doPowerAction);
     connect(m_model, &SessionBaseModel::visibleChanged, this, [=](bool visible) {
@@ -244,8 +246,12 @@ void LockWorker::initConnections()
             checkPowerInfo();
         }
     });
-    connect(m_dbusInter,&DBusObjectInter::NameOwnerChanged, this , [=](const QString &name, const QString &oldOwner, const QString &newOwner) {
-        if (name == "com.deepin.daemon.Authenticate" && newOwner!= "" && m_model->visible() && m_sessionManagerInter->locked()) {
+    /* others */
+    connect(m_limitsUpdateTimer, &QTimer::timeout, this, [this] {
+        m_model->updateLimitedInfo(m_authFramework->GetLimitedInfo(m_account));
+    });
+    connect(m_dbusInter, &DBusObjectInter::NameOwnerChanged, this, [=](const QString &name, const QString &oldOwner, const QString &newOwner) {
+        if (name == "com.deepin.daemon.Authenticate" && newOwner != "" && m_model->visible() && m_sessionManagerInter->locked()) {
             m_resetSessionTimer->stop();
             endAuthentication(m_account, AuthTypeAll);
             createAuthentication(m_model->currentUser()->name());
@@ -292,8 +298,8 @@ void LockWorker::initConfiguration()
     const bool &LockNoPasswordValue = valueByQSettings<bool>("", "lockNoPassword", false);
     m_model->setIsLockNoPassword(LockNoPasswordValue);
 
-    m_model->setAlwaysShowUserSwitchButton(getGSettings("","switchuser").toInt() == AuthInterface::Always);
-    m_model->setAllowShowUserSwitchButton(getGSettings("","switchuser").toInt() == AuthInterface::Ondemand);
+    m_model->setAlwaysShowUserSwitchButton(getGSettings("", "switchuser").toInt() == AuthInterface::Always);
+    m_model->setAllowShowUserSwitchButton(getGSettings("", "switchuser").toInt() == AuthInterface::Ondemand);
 
     checkPowerInfo();
 }
@@ -490,7 +496,7 @@ void LockWorker::createAuthentication(const QString &account)
         break;
     default:
         m_authFramework->CreateAuthenticate(account);
-        m_model->updateFactorsInfo(MFAInfoList());
+        m_model->setAuthType(AuthTypeSingle);
         break;
     }
 }
@@ -505,12 +511,7 @@ void LockWorker::destoryAuthentication(const QString &account)
     qDebug() << "LockWorker::destoryAuthentication:" << account;
     switch (m_model->getAuthProperty().FrameworkState) {
     case Available:
-        if (m_model->getAuthProperty().MFAFlag) {
-            m_authFramework->DestoryAuthController(account);
-        } else {
-            m_authFramework->DestoryAuthController(account);
-            m_authFramework->DestoryAuthenticate();
-        }
+        m_authFramework->DestoryAuthController(account);
         break;
     default:
         m_authFramework->DestoryAuthenticate();
@@ -530,19 +531,12 @@ void LockWorker::startAuthentication(const QString &account, const int authType)
     qDebug() << "LockWorker::startAuthentication:" << account << authType;
     switch (m_model->getAuthProperty().FrameworkState) {
     case Available:
-        if (m_model->getAuthProperty().MFAFlag) {
-            m_authFramework->StartAuthentication(account, authType, -1);
-        } else {
-            m_authFramework->CreateAuthenticate(account);
-        }
+        m_authFramework->StartAuthentication(account, authType, -1);
         break;
     default:
         m_authFramework->CreateAuthenticate(account);
         break;
     }
-    QTimer::singleShot(10, this, [=] {
-        m_model->updateLimitedInfo(m_authFramework->GetLimitedInfo(account));
-    });
 }
 
 /**
@@ -557,11 +551,7 @@ void LockWorker::sendTokenToAuth(const QString &account, const int authType, con
     qDebug() << "LockWorker::sendTokenToAuth:" << account << authType;
     switch (m_model->getAuthProperty().FrameworkState) {
     case Available:
-        if (m_model->getAuthProperty().MFAFlag) {
-            m_authFramework->SendTokenToAuth(account, authType, token);
-        } else {
-            m_authFramework->SendToken(token);
-        }
+        m_authFramework->SendTokenToAuth(account, authType, token);
         break;
     default:
         m_authFramework->SendToken(token);
@@ -647,7 +637,7 @@ void LockWorker::onAuthFinished()
 
 void LockWorker::onUnlockFinished(bool unlocked)
 {
-    qWarning() << "LockWorker::onUnlockFinished -- unlocked status : " << unlocked;
+    qInfo() << "LockWorker::onUnlockFinished -- unlocked status : " << unlocked;
 
     m_authenticating = false;
 
@@ -681,7 +671,7 @@ void LockWorker::onUnlockFinished(bool unlocked)
 
 void LockWorker::restartResetSessionTimer()
 {
-    if(m_model->visible() && m_resetSessionTimer->isActive()){
+    if (m_model->visible() && m_resetSessionTimer->isActive()) {
         m_resetSessionTimer->start();
     }
 }

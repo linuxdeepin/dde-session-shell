@@ -134,6 +134,7 @@ int main(int argc, char *argv[])
 #endif
 
     SessionBaseModel *model = new SessionBaseModel(SessionBaseModel::AuthType::LockType);
+    model->setAppType(AppTypeLock);
     LockWorker *worker = new LockWorker(model);
     QObject::connect(&appEventFilter, &AppEventFilter::userIsActive, worker, &LockWorker::restartResetSessionTimer);
     PropertyGroup *property_group = new PropertyGroup(worker);
@@ -174,6 +175,8 @@ int main(int argc, char *argv[])
         });
         QObject::connect(lockFrame, &LockFrame::requestStartAuthentication, worker, &LockWorker::startAuthentication);
         QObject::connect(lockFrame, &LockFrame::sendTokenToAuth, worker, &LockWorker::sendTokenToAuth);
+        QObject::connect(lockFrame, &LockFrame::requestEndAuthentication, worker, &LockWorker::endAuthentication);
+        QObject::connect(lockFrame, &LockFrame::authFinished, worker, &LockWorker::onAuthFinished);
         lockFrame->setVisible(model->visible());
         emit lockService.Visible(true);
         return lockFrame;

@@ -4,13 +4,17 @@
 #include <QWidget>
 #include <memory>
 
-#include "sessionbasewindow.h"
-#include "sessionbasemodel.h"
 #include "mediawidget.h"
+#include "sessionbasemodel.h"
+#include "sessionbasewindow.h"
 #include "systemmonitor.h"
 
 #include <com_deepin_wm.h>
 
+class AuthWidget;
+class MFAWidget;
+class SFAWidget;
+class UserFrameList;
 class ControlWidget;
 class UserInputWidget;
 class User;
@@ -52,7 +56,6 @@ public slots:
     void pushConfirmFrame();
     void pushShutdownFrame();
     void setMPRISEnable(const bool state);
-    void beforeUnlockAction(bool is_finish);
 
 protected:
     void mouseReleaseEvent(QMouseEvent *event) Q_DECL_OVERRIDE;
@@ -74,6 +77,12 @@ protected:
     void refreshBackground(SessionBaseModel::ModeStatus status);
     void refreshLayout(SessionBaseModel::ModeStatus status);
 
+    void initUI();
+    void initConnections();
+    void initMFAWidget();
+    void initSFAWidget();
+    void initUserListWidget();
+
 protected:
     SessionBaseModel *m_model;
     ControlWidget *m_controlWidget;
@@ -89,6 +98,11 @@ protected:
     com::deepin::wm *m_wmInter;
     QWidget *m_loginWidget;
     QMap<QString, QWidget *> m_centeralWidgets;
+
+    SFAWidget *m_sfaWidget;
+    MFAWidget *m_mfaWidget;
+    AuthWidget *m_authWidget;
+    UserFrameList *m_userListWidget;
 
     int m_failures = 0;
 };
