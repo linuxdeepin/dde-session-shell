@@ -32,6 +32,8 @@
 #include <QKeyEvent>
 #include <QDBusConnection>
 #include <QDBusAbstractAdaptor>
+#include <QTimer>
+
 #include <memory>
 
 const QString DBUS_LOCK_PATH = "/com/deepin/dde/lockFront";
@@ -85,6 +87,7 @@ private:
     LockContent *m_lockContent;
     WarningContent *m_warningContent;
     bool m_enablePowerOffKey;
+    QTimer *m_autoExitTimer;
 };
 
 #endif // LOCKFRAME

@@ -30,6 +30,7 @@
 #include "sessionbasemodel.h"
 #include "userinfo.h"
 #include "warningcontent.h"
+#include "public_func.h"
 
 #include <DDBusSender>
 
@@ -45,6 +46,7 @@ LockFrame::LockFrame(SessionBaseModel *const model, QWidget *parent)
     , m_lockContent(new LockContent(model))
     , m_warningContent(nullptr)
     , m_enablePowerOffKey(false)
+    , m_autoExitTimer(nullptr)
 {
     updateBackground(m_model->currentUser()->greeterBackground());
 
@@ -104,6 +106,13 @@ LockFrame::LockFrame(SessionBaseModel *const model, QWidget *parent)
     QTimer::singleShot(1000, this, [ = ] {
         m_enablePowerOffKey = true;
     });
+
+    if (getDConfigValue("autoExit", false).toBool()) {
+        m_autoExitTimer = new QTimer(this);
+        m_autoExitTimer->setInterval(1000*60); //1分钟
+        m_autoExitTimer->setSingleShot(true);
+        connect(m_autoExitTimer, &QTimer::timeout, qApp, &QApplication::quit);
+    }
 }
 
 bool LockFrame::event(QEvent *event)
@@ -282,6 +291,8 @@ void LockFrame::showEvent(QShowEvent *event)
     emit requestEnableHotzone(false);
 
     m_model->setVisible(true);
+    if (m_autoExitTimer)
+        m_autoExitTimer->stop();
 
     return FullscreenBackground::showEvent(event);
 }
@@ -291,6 +302,8 @@ void LockFrame::hideEvent(QHideEvent *event)
     emit requestEnableHotzone(true);
 
     m_model->setVisible(false);
+    if (m_autoExitTimer)
+        m_autoExitTimer->start();
 
     return FullscreenBackground::hideEvent(event);
 }

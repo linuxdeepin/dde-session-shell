@@ -27,6 +27,7 @@
 #define FULLSCREENBACKGROUND_H
 
 #include <QWidget>
+#include <QSharedPointer>
 
 #include <com_deepin_daemon_imageeffect.h>
 
@@ -75,10 +76,11 @@ private:
     QString getLocalFile(const QString &file);
 
 private:
-    QPixmap m_background;                 // 高清背景
-    QPixmap m_backgroundCache;            // 高清背景缓存
-    QPixmap m_blurBackground;             // 模糊背景
-    QPixmap m_blurBackgroundCache;        // 模糊背景缓存
+    static QString backgroundPath;                             // 高清背景图片路径
+    static QSharedPointer<QPixmap> backgroundCache;            // 高清背景缓存
+    static QString blurBackgroundPath;                         // 模糊背景图片路径
+    static QSharedPointer<QPixmap> blurBackgroundCache;        // 模糊背景缓存
+
     QVariantAnimation *m_fadeOutAni;      // 背景动画
     ImageEffectInter *m_imageEffectInter; // 获取模糊背景服务
 
@@ -90,6 +92,9 @@ private:
     bool m_enableEnterEvent = true;
     QCursor m_originalCursor;
     bool m_blackModeContentVisible = true;
+    bool m_useSolidBackground;
+    bool m_fadeOutAniFinished;
+    bool m_enableAnimation;
 };
 
 #endif // FULLSCREENBACKGROUND_H

@@ -55,6 +55,9 @@ const QStringList SHUTDOWN_CONFIGS {
     "/etc/deepin/dde-shutdown.conf",
     "/usr/share/dde-session-ui/dde-shutdown.conf"
 };
+
+static const QString DEFAULT_META_CONFIG_NAME = "default";      // 默认配置文件名称
+static const QString SOLID_BACKGROUND_COLOR = "#000F27";        // 纯色背景色号
 }
 
 

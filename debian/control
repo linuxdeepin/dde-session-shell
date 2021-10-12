@@ -23,7 +23,8 @@ Build-Depends: debhelper (>= 8.0.0), pkg-config,
  libxrandr-dev,
  libgtest-dev,
  libx11-xcb-dev,
- libssl-dev
+ libssl-dev,
+ libdtkcore-dev
 Standards-Version: 3.9.4
 Homepage: http://www.deepin.org/
 

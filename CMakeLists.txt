@@ -43,7 +43,8 @@ endif ()
 find_package(PAM REQUIRED)
 find_package(PkgConfig REQUIRED)
 find_package(DtkWidget REQUIRED)
-find_package(DtkCMake REQUIRED)
+find_package(DtkCMake  REQUIRED)
+find_package(DtkCore REQUIRED)
 find_package(Qt5 COMPONENTS
     Core
     Widgets
@@ -141,6 +142,7 @@ add_executable(dde-lock
 target_include_directories(dde-lock PUBLIC
     ${PAM_INCLUDE_DIR}
     ${DTKWIDGET_INCLUDE_DIR}
+    ${DTKCORE_INCLUDE_DIR}
     ${XCB_EWMH_INCLUDE_DIRS}
     ${DFrameworkDBus_INCLUDE_DIRS}
     ${Qt5Gui_PRIVATE_INCLUDE_DIRS}
@@ -156,6 +158,7 @@ target_link_libraries(dde-lock PRIVATE
     ${XCB_EWMH_LIBRARIES}
     ${DFrameworkDBus_LIBRARIES}
     ${DtkWidget_LIBRARIES}
+    ${DtkCore_LIBRARIES}
     ${Qt5Widgets_LIBRARIES}
     ${Qt5Concurrent_LIBRARIES}
     ${Qt5X11Extras_LIBRARIES}
@@ -188,6 +191,7 @@ add_executable(lightdm-deepin-greeter
 target_include_directories(lightdm-deepin-greeter PUBLIC
     ${PAM_INCLUDE_DIR}
     ${DTKWIDGET_INCLUDE_DIR}
+    ${DTKCORE_INCLUDE_DIR}
     ${XCB_EWMH_INCLUDE_DIRS}
     ${DFrameworkDBus_INCLUDE_DIRS}
     ${Qt5Gui_PRIVATE_INCLUDE_DIRS}
@@ -206,6 +210,7 @@ target_link_libraries(lightdm-deepin-greeter PRIVATE
     ${XCB_EWMH_LIBRARIES}
     ${DFrameworkDBus_LIBRARIES}
     ${DtkWidget_LIBRARIES}
+    ${DtkCore_LIBRARIES}
     ${Qt5Widgets_LIBRARIES}
     ${Qt5Concurrent_LIBRARIES}
     ${Qt5X11Extras_LIBRARIES}
@@ -251,3 +256,7 @@ install(FILES ${INTERFACE} DESTINATION include/dde-session-shell)
 
 file(GLOB CMAKE_CONFIG cmake/*.cmake)
 install(FILES ${CMAKE_CONFIG} DESTINATION ${CMAKE_INSTALL_LIBDIR}/cmake/DdeSessionShell)
+
+# config
+dconfig_meta_files(APPID dde-lock BASE configs FILES configs/default.json)
+dconfig_meta_files(APPID lightdm-deepin-greeter BASE configs FILES configs/default.json)

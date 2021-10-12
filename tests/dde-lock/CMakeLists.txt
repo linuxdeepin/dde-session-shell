@@ -27,6 +27,7 @@ add_executable(${BIN_NAME}
 
 target_include_directories(${BIN_NAME} PUBLIC
     ${DTKWIDGET_INCLUDE_DIR}
+    ${DTKCORE_INCLUDE_DIR}
     ${DFrameworkDBus_INCLUDE_DIRS}
     ${Qt5Gui_PRIVATE_INCLUDE_DIRS}
     ${QGSettings_INCLUDE_DIRS}
@@ -42,6 +43,7 @@ target_link_libraries(${BIN_NAME} PRIVATE
     ${Qt5Test_LIBRARIES}
     ${DFrameworkDBus_LIBRARIES}
     ${DtkWidget_LIBRARIES}
+    ${DtkCore_LIBRARIES}
     ${Qt5Widgets_LIBRARIES}
     ${Qt5DBus_LIBRARIES}
     ${QGSettings_LIBRARIES}

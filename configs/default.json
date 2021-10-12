@@ -1,0 +1,24 @@
+{
+    "magic": "dsg.config.meta",
+    "version": "1.0",
+    "contents": {
+        "useSolidBackground": {
+            "value": false,
+            "serial": 0,
+            "name": "useSolidBackground",
+            "name[zh_CN]": "使用纯色背景",
+            "description": "Use solid background",
+            "permissions": "readwrite",
+            "visibility": "private"
+        },
+        "autoExit": {
+            "value": false,
+            "serial": 0,
+            "name": "autoExit",
+            "name[zh_CN]": "自动退出",
+            "description": "Auto exit process",
+            "permissions": "readwrite",
+            "visibility": "private"
+        }
+    }
+}

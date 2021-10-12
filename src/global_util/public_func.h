@@ -26,6 +26,8 @@
 #ifndef PUBLIC_FUNC_H
 #define PUBLIC_FUNC_H
 
+#include "constants.h"
+
 #include <QPixmap>
 #include <QApplication>
 #include <QIcon>
@@ -93,5 +95,7 @@ void init_sig_crash();
  * @brief 把字符串解析成时间，然后转换为Unix时间戳
  */
 uint timeFromString(QString time);
+
+QVariant getDConfigValue(const QString &key, const QVariant &defaultValue, const QString &configFileName = DDESESSIONCC::DEFAULT_META_CONFIG_NAME);
 
 #endif // PUBLIC_FUNC_H

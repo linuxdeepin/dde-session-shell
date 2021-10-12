@@ -28,6 +28,7 @@ add_executable(${BIN_NAME}
 target_include_directories(${BIN_NAME} PUBLIC
     ${PAM_INCLUDE_DIR}
     ${DTKWIDGET_INCLUDE_DIR}
+    ${DTKCORE_INCLUDE_DIR}
     ${XCB_EWMH_INCLUDE_DIRS}
     ${DFrameworkDBus_INCLUDE_DIRS}
     ${Qt5Gui_PRIVATE_INCLUDE_DIRS}
@@ -48,6 +49,7 @@ target_link_libraries(${BIN_NAME} PRIVATE
     ${XCB_EWMH_LIBRARIES}
     ${DFrameworkDBus_LIBRARIES}
     ${DtkWidget_LIBRARIES}
+    ${DtkCore_LIBRARIES}
     ${Qt5Widgets_LIBRARIES}
     ${Qt5Concurrent_LIBRARIES}
     ${Qt5X11Extras_LIBRARIES}
