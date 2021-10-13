@@ -240,7 +240,9 @@ void GreeterWorkek::initConnections()
     connect(m_model, &SessionBaseModel::currentUserChanged, this, &GreeterWorkek::recoveryUserKBState);
     connect(m_model, &SessionBaseModel::visibleChanged, this, [=] (bool visible) {
         if (visible) {
-            if (!m_model->isServerModel() && !m_model->currentUser()->isNoPasswordLogin()) {
+            // 当用户开启无密码登录，密码过期后，应该创建认证服务，提示用户修改密码，否则会造成当前用户无法登录
+            if (!m_model->isServerModel() && (!m_model->currentUser()->isNoPasswordLogin()
+                || (m_model->currentUser()->expiredStatus() == User::ExpiredAlready))) {
                 createAuthentication(m_model->currentUser()->name());
             }
         } else {
