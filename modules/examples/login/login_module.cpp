@@ -19,38 +19,47 @@
 * along with this program.  If not, see <http://www.gnu.org/licenses/>.
 */
 
-#ifndef LOGINMODULEINTERFACE_H
-#define LOGINMODULEINTERFACE_H
+#include "login_module.h"
 
-#include "base_module_interface.h"
+#include <QWidget>
 
 namespace dss {
 namespace module {
 
-using Fun = void (*)(char *);
-
-class LoginModuleInterface : public BaseModuleInterface
+LoginModule::LoginModule(QObject *parent)
+    : QObject(parent)
+    , m_funPtr(nullptr)
+    , m_loginWidget(nullptr)
 {
-public:
-    /**
-     * @brief 模块的类型
-     * @return ModuleType
-     */
-    ModuleType type() const override { return LoginType; }
+    setObjectName(QStringLiteral("LoginModule"));
+}
 
-    /**
-     * @brief 在认证完成后，需要调用回调函数 void Fun(char *);
-     * char *: json 格式的字符串，包含两个字段
-     * string: 用户在系统的唯一标识（用户名或 uid）
-     * bool: 认证结果（true: 成功，false: 失败）
-     * Fun 在模块初始化时建议赋值 nullptr，在使用之前判断非 nullptr
-     */
-    virtual void setAuthFinishedCallBack(Fun) = 0;
-};
+LoginModule::~LoginModule()
+{
+    if (m_loginWidget) {
+        delete m_loginWidget;
+    }
+}
+
+void LoginModule::init()
+{
+    initUI();
+}
+
+void LoginModule::initUI()
+{
+    if (m_loginWidget) {
+        return;
+    }
+    m_loginWidget = new QWidget;
+    m_loginWidget->setAccessibleName(QStringLiteral("LoginWidget"));
+    m_loginWidget->setFixedSize(200, 100);
+}
+
+void LoginModule::setAuthFinishedCallBack(Fun funPtr)
+{
+    m_funPtr = funPtr;
+}
 
 } // namespace module
 } // namespace dss
-
-Q_DECLARE_INTERFACE(dss::module::LoginModuleInterface, "com.deepin.dde.shell.Modules.Login")
-
-#endif // LOGINMODULEINTERFACE_H

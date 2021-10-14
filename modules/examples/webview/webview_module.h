@@ -19,38 +19,39 @@
 * along with this program.  If not, see <http://www.gnu.org/licenses/>.
 */
 
-#ifndef LOGINMODULEINTERFACE_H
-#define LOGINMODULEINTERFACE_H
+#ifndef LOGIN_MODULE_H
+#define LOGIN_MODULE_H
 
-#include "base_module_interface.h"
+#include "tray_module_interface.h"
+#include "webview_content.h"
 
 namespace dss {
 namespace module {
 
-using Fun = void (*)(char *);
-
-class LoginModuleInterface : public BaseModuleInterface
+class WebviewModule : public QObject
+    , public TrayModuleInterface
 {
-public:
-    /**
-     * @brief 模块的类型
-     * @return ModuleType
-     */
-    ModuleType type() const override { return LoginType; }
+    Q_OBJECT
+    Q_PLUGIN_METADATA(IID "com.deepin.dde.shell.Modules.Tray" FILE "webview.json")
+    Q_INTERFACES(dss::module::TrayModuleInterface)
 
-    /**
-     * @brief 在认证完成后，需要调用回调函数 void Fun(char *);
-     * char *: json 格式的字符串，包含两个字段
-     * string: 用户在系统的唯一标识（用户名或 uid）
-     * bool: 认证结果（true: 成功，false: 失败）
-     * Fun 在模块初始化时建议赋值 nullptr，在使用之前判断非 nullptr
-     */
-    virtual void setAuthFinishedCallBack(Fun) = 0;
+public:
+    explicit WebviewModule(QObject *parent = nullptr);
+    ~WebviewModule() override;
+
+    void init() override;
+
+    inline QString key() const override { return objectName(); }
+    QWidget *content() override { return m_webviewContent; }
+    inline QString icon() const override { return ":/img/deepin-system-monitor.svg"; }
+
+private:
+    void initUI();
+
+private:
+    WebviewContent *m_webviewContent;
 };
 
 } // namespace module
 } // namespace dss
-
-Q_DECLARE_INTERFACE(dss::module::LoginModuleInterface, "com.deepin.dde.shell.Modules.Login")
-
-#endif // LOGINMODULEINTERFACE_H
+#endif // LOGIN_MODULE_H

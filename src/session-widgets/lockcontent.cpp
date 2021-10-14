@@ -343,17 +343,20 @@ void LockContent::toggleVirtualKB()
 void LockContent::showModule(const QString &name)
 {
     BaseModuleInterface *module = ModulesLoader::instance().findModuleByName(name);
+    module->init();
     if (!module) {
         return;
     }
 
     switch (module->type()) {
     case BaseModuleInterface::LoginType:
-        m_loginWidget = new QWidget(module->content());
+        m_loginWidget = module->content();
         setCenterContent(m_loginWidget);
         m_model->setCurrentModeState(SessionBaseModel::ModeStatus::PasswordMode);
         break;
     case BaseModuleInterface::TrayType:
+        m_loginWidget = module->content();
+        setCenterContent(m_loginWidget);
         break;
     }
 }

@@ -19,37 +19,34 @@
 * along with this program.  If not, see <http://www.gnu.org/licenses/>.
 */
 
-#include "login_module.h"
+#include "webview_content.h"
 
-#include <QWidget>
+#include <QBoxLayout>
 
 namespace dss {
 namespace module {
 
-LoginModule::LoginModule(QObject *parent)
-    : QObject(parent)
-    , m_funPtr(nullptr)
-    , m_loginWidget(new QWidget)
+WebviewContent::WebviewContent(QWidget *parent)
+    : QWidget(parent)
+    , m_mainLayout(nullptr)
+    , m_webview(nullptr)
 {
-    setObjectName(QStringLiteral("LoginModule"));
+    setObjectName(QStringLiteral("WebviewContent"));
+    setAccessibleName(QStringLiteral("WebviewContent"));
+
+    setFixedSize(600, 500);
 
     initUI();
 }
 
-LoginModule::~LoginModule()
+void WebviewContent::initUI()
 {
-    delete m_loginWidget;
-}
+    m_mainLayout = new QVBoxLayout(this);
 
-void LoginModule::initUI()
-{
-    m_loginWidget->setAccessibleName(QStringLiteral("LoginWidget"));
-    m_loginWidget->setFixedSize(200, 100);
-}
+    m_webview = new QWebEngineView(this);
+    m_webview->load(QUrl("http://www.baidu.com"));
 
-void LoginModule::setAuthFinishedCallBack(Fun funPtr)
-{
-    m_funPtr = funPtr;
+    m_mainLayout->addWidget(m_webview);
 }
 
 } // namespace module

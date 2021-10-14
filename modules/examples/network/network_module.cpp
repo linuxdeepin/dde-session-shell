@@ -19,35 +19,41 @@
 * along with this program.  If not, see <http://www.gnu.org/licenses/>.
 */
 
-#ifndef LOGIN_MODULE_H
-#define LOGIN_MODULE_H
+#include "network_module.h"
 
-#include "tray_module_interface.h"
+#include <QWidget>
 
 namespace dss {
 namespace module {
 
-class NetworkModule : public QObject
-    , public TrayModuleInterface
+NetworkModule::NetworkModule(QObject *parent)
+    : QObject(parent)
+    , m_networkWidget(nullptr)
 {
-    Q_OBJECT
-    Q_PLUGIN_METADATA(IID "com.deepin.dde.shell.Modules.Tray" FILE "network.json")
-    Q_INTERFACES(dss::module::TrayModuleInterface)
-public:
-    explicit NetworkModule(QObject *parent = nullptr);
-    ~NetworkModule() override;
+    setObjectName(QStringLiteral("NetworkModule"));
+}
 
-    inline QString key() const override { return objectName(); }
-    inline QWidget *content() override { return m_networkWidget; }
-    inline QString icon() const override { return ":/img/default_avatar.svg"; }
+NetworkModule::~NetworkModule()
+{
+    if (m_networkWidget) {
+        delete m_networkWidget;
+    }
+}
 
-private:
-    void initUI();
+void NetworkModule::init()
+{
+    initUI();
+}
 
-private:
-    QWidget *m_networkWidget;
-};
+void NetworkModule::initUI()
+{
+    if (m_networkWidget) {
+        return;
+    }
+    m_networkWidget = new QWidget;
+    m_networkWidget->setAccessibleName(QStringLiteral("NetworkWidget"));
+    m_networkWidget->setFixedSize(200, 100);
+}
 
 } // namespace module
 } // namespace dss
-#endif // LOGIN_MODULE_H

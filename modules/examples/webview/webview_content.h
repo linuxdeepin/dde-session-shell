@@ -19,32 +19,32 @@
 * along with this program.  If not, see <http://www.gnu.org/licenses/>.
 */
 
-#include "network_module.h"
+#ifndef WEBVIEWCONTENT_H
+#define WEBVIEWCONTENT_H
 
 #include <QWidget>
+#include <QtWebEngineWidgets/qwebengineview.h>
+
+class QVBoxLayout;
 
 namespace dss {
 namespace module {
 
-NetworkModule::NetworkModule(QObject *parent)
-    : QObject(parent)
-    , m_networkWidget(new QWidget)
+class WebviewContent : public QWidget
 {
-    setObjectName(QStringLiteral("NetworkModule"));
+    Q_OBJECT
 
-    initUI();
-}
+public:
+    explicit WebviewContent(QWidget *parent = nullptr);
 
-NetworkModule::~NetworkModule()
-{
-    delete m_networkWidget;
-}
+private:
+    void initUI();
 
-void NetworkModule::initUI()
-{
-    m_networkWidget->setAccessibleName(QStringLiteral("NetworkWidget"));
-    m_networkWidget->setFixedSize(200, 100);
-}
+private:
+    QVBoxLayout *m_mainLayout;
+    QWebEngineView *m_webview;
+};
 
 } // namespace module
 } // namespace dss
+#endif // WEBVIEWCONTENT_H

@@ -19,37 +19,39 @@
 * along with this program.  If not, see <http://www.gnu.org/licenses/>.
 */
 
-#ifndef LOGIN_MODULE_H
-#define LOGIN_MODULE_H
+#include "webview_module.h"
 
-#include "login_module_interface.h"
+#include <QWidget>
 
 namespace dss {
 namespace module {
 
-class LoginModule : public QObject
-    , public LoginModuleInterface
+WebviewModule::WebviewModule(QObject *parent)
+    : QObject(parent)
+    , m_webviewContent(nullptr)
 {
-    Q_OBJECT
-    Q_PLUGIN_METADATA(IID "com.deepin.dde.shell.Modules.Login" FILE "login.json")
-    Q_INTERFACES(dss::module::LoginModuleInterface)
-public:
-    explicit LoginModule(QObject *parent = nullptr);
-    ~LoginModule() override;
+    setObjectName(QStringLiteral("WebviewModule"));
+}
 
-    inline QString key() const override { return objectName(); }
-    inline QWidget *content() override { return m_loginWidget; }
+WebviewModule::~WebviewModule()
+{
+    if (m_webviewContent) {
+        delete m_webviewContent;
+    }
+}
 
-    void setAuthFinishedCallBack(Fun funPtr) override;
+void WebviewModule::init()
+{
+    initUI();
+}
 
-private:
-    void initUI();
-
-private:
-    Fun m_funPtr;
-    QWidget *m_loginWidget;
-};
+void WebviewModule::initUI()
+{
+    if (m_webviewContent) {
+        return;
+    }
+    m_webviewContent = new WebviewContent();
+}
 
 } // namespace module
 } // namespace dss
-#endif // LOGIN_MODULE_H

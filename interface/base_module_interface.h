@@ -42,6 +42,12 @@ public:
     virtual ~BaseModuleInterface() = default;
 
     /**
+     * @brief 界面相关的初始化
+     * 插件在非主线程加载，故界面相关的初始化需要放在这个方法里，由主程序调用并初始化
+     */
+    virtual void init() = 0;
+
+    /**
      * @brief 键值，用于与其它模块区分
      * @return QString
      */

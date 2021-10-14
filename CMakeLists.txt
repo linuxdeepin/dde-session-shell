@@ -210,7 +210,6 @@ target_link_libraries(lightdm-deepin-greeter PRIVATE
     ${Greeter_LIBRARIES}
 )
 
-add_subdirectory(modules)
 add_subdirectory(tests)
 
 # Install settings
