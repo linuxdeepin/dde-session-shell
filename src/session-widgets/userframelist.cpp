@@ -153,6 +153,10 @@ void UserFrameList::removeUser(const std::shared_ptr<User> user)
     foreach (auto w, m_loginWidgets) {
         if (w->uid() == user->uid()) {
             m_loginWidgets.removeOne(w);
+
+            if (w == currentSelectedUser) {
+                currentSelectedUser = nullptr;
+            }
             w->deleteLater();
             break;
         }
