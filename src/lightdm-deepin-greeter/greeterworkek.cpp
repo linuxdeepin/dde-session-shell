@@ -588,6 +588,9 @@ void GreeterWorkek::checkAccount(const QString &account)
     }
     m_model->updateCurrentUser(user_ptr);
     if (user_ptr->isNoPasswordLogin()) {
+        if (user_ptr->expiredStatus() == User::ExpiredAlready) {
+            m_model->setAuthType(AuthTypeSingle);
+        }
         m_greeter->authenticate(account);
     } else {
         m_resetSessionTimer->stop();
