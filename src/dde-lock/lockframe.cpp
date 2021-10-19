@@ -76,6 +76,7 @@ LockFrame::LockFrame(SessionBaseModel *const model, QWidget *parent)
         }
 
         //待机时由锁屏提供假黑屏，唤醒时显示正常界面
+        model->setVisible(true);
         model->setIsBlackModel(isSleep);
 
         if (!isSleep) {
