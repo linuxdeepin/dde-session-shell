@@ -186,9 +186,6 @@ void GreeterWorkek::initConnections()
             if (!m_model->isServerModel() && !m_model->currentUser()->isNoPasswordLogin()) {
                 createAuthentication(m_model->currentUser()->name());
             }
-            if (!m_model->isServerModel() && m_model->currentUser()->isNoPasswordLogin() && m_model->currentUser()->isAutomaticLogin()) {
-                m_greeter->authenticate(m_model->currentUser()->name());
-            }
         } else {
             endAuthentication(m_account, AuthTypeAll);
             destoryAuthentication(m_account);
