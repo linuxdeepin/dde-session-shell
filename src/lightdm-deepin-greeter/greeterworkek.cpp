@@ -556,7 +556,9 @@ void GreeterWorkek::checkAccount(const QString &account)
     if (m_greeter->authenticationUser() == account) {
         return;
     }
+
     std::shared_ptr<User> user_ptr = m_model->findUserByName(account);
+    // 当用户登录成功后，判断用户输入帐户有效性逻辑改为后端去做处理
     const QString userPath = m_accountsInter->FindUserByName(account);
     if (userPath.startsWith("/")) {
         user_ptr = std::make_shared<NativeUser>(userPath);
@@ -570,6 +572,7 @@ void GreeterWorkek::checkAccount(const QString &account)
             return;
         }
     } else if (user_ptr == nullptr) {
+        // 判断账户第一次登录时的有效性
         std::string str = account.toStdString();
         passwd *pw = getpwnam(str.c_str());
         if (pw) {
@@ -583,18 +586,19 @@ void GreeterWorkek::checkAccount(const QString &account)
             return;
         }
     }
+
     m_model->updateCurrentUser(user_ptr);
     if (user_ptr->isNoPasswordLogin()) {
         if (user_ptr->expiredStatus() == User::ExpiredAlready) {
             m_model->setAuthType(AuthTypeSingle);
         }
-        m_greeter->authenticate(account);
+        m_greeter->authenticate(user_ptr->name());
     } else {
         m_resetSessionTimer->stop();
         endAuthentication(m_account, AuthTypeAll);
         m_model->updateAuthStatus(AuthTypeAll, StatusCodeCancel, "Cancel");
         destoryAuthentication(m_account);
-        createAuthentication(account);
+        createAuthentication(user_ptr->name());
     }
 }
 
