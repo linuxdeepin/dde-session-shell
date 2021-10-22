@@ -59,8 +59,8 @@ public:
     void setChecked(bool checked);
     inline bool isChecked() const {return m_state == Checked;}
     inline State state() const {return m_state;}
-    inline const QString text() const {return m_itemText->text();}
-    inline void setText(const QString &text) {m_itemText->setText(text);}
+    inline const QString text() const {return m_text;}
+    void setText(const QString &text);
     void updateState(const State state);
 
     void setNormalPic(const QString &path);
@@ -75,30 +75,26 @@ signals:
 private slots:
     void updateIcon();
     inline void setState(const State state) {updateState(state);}
+
 protected:
     void paintEvent(QPaintEvent* event) Q_DECL_OVERRIDE;
     void enterEvent(QEvent* event) Q_DECL_OVERRIDE;
     void leaveEvent(QEvent* event) Q_DECL_OVERRIDE;
     void mousePressEvent(QMouseEvent* event) Q_DECL_OVERRIDE;
     void mouseReleaseEvent(QMouseEvent* e) Q_DECL_OVERRIDE;
-    bool eventFilter(QObject *watched, QEvent *event) Q_DECL_OVERRIDE;
 
 private:
     void initUI();
     void initConnect();
 
+    QString m_text;
     State m_state = Normal;
-
-    QLabel *m_itemIcon;
-    QLabel *m_itemText;
-
-    QGraphicsOpacityEffect *m_opacityEffect;
 
     QString m_normalIcon;
     QString m_hoverIcon;
     QString m_pressedIcon;
     QString m_currentIcon;
-    int m_penWidth = 2;
+    int m_penWidth = 1;
     int m_rectRadius = 8;
 };
 #endif // ROUNDITEMBUTTON

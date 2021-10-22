@@ -39,16 +39,9 @@ RoundItemButton::RoundItemButton(QWidget *parent)
 }
 
 RoundItemButton::RoundItemButton(const QString &text, QWidget *parent)
-    : QAbstractButton(parent),
-      m_itemIcon(new QLabel(this)),
-      m_itemText(new QLabel(this))
+    : QAbstractButton(parent)
+    , m_text(text)
 {
-    m_itemText->setText(text);
-    DFontSizeManager::instance()->bind(m_itemText, DFontSizeManager::T6);
-    m_opacityEffect = new QGraphicsOpacityEffect(this);
-    m_opacityEffect->setOpacity(1.0);
-    setGraphicsEffect(m_opacityEffect);
-
     initUI();
     initConnect();
 }
@@ -65,12 +58,6 @@ void RoundItemButton::setDisabled(bool disabled)
         updateState(Disabled);
 
     QAbstractButton::setDisabled(disabled);
-
-    // update qss
-    setStyleSheet(styleSheet());
-
-    // update opacity
-    m_opacityEffect->setOpacity(disabled ? 0.5 : 1.0);
 }
 
 void RoundItemButton::setChecked(bool checked)
@@ -81,6 +68,13 @@ void RoundItemButton::setChecked(bool checked)
         updateState(Normal);
 }
 
+void RoundItemButton::setText(const QString &text)
+{
+    m_text = text;
+
+    update();
+}
+
 void RoundItemButton::initConnect()
 {
     connect(this, &RoundItemButton::stateChanged, this, &RoundItemButton::setState, Qt::DirectConnection);
@@ -88,47 +82,18 @@ void RoundItemButton::initConnect()
     connect(this, &RoundItemButton::stateChanged, this, static_cast<void (RoundItemButton::*)()>(&RoundItemButton::update));
     connect(this, &RoundItemButton::iconChanged, this, &RoundItemButton::updateIcon);
     connect(this, &RoundItemButton::toggled, this, &RoundItemButton::setChecked);
-//    connect(signalManager, &SignalManager::setButtonHover, [this] (const QString &text) {
-//        if (m_itemText->text() != text && !isChecked() && !isDisabled()) {
-//            updateState(Normal);
-//        }
-//    });
+    //    connect(signalManager, &SignalManager::setButtonHover, [this] (const QString &text) {
+    //        if (m_itemText->text() != text && !isChecked() && !isDisabled()) {
+    //            updateState(Normal);
+    //        }
+    //    });
 }
 
 void RoundItemButton::initUI() {
-    m_itemIcon->setAccessibleName("ItemIconLabel");
-    m_itemText->setAccessibleName("ItemTextLabel");
-
-    m_itemIcon->setFocusPolicy(Qt::NoFocus);
-    m_itemIcon->setFixedSize(75, 75);
-    m_itemIcon->installEventFilter(this);
-
-    m_itemText->setWordWrap(true);
-    m_itemText->setForegroundRole(QPalette::WindowText);
-    QPalette palette = m_itemText->palette();
-    palette.setColor(QPalette::WindowText, Qt::white);
-    m_itemText->setPalette(palette);
-    m_itemText->setAlignment(Qt::AlignCenter | Qt::AlignTop);
-    m_itemText->setSizePolicy(QSizePolicy::Fixed, QSizePolicy::Fixed);
-    m_itemText->setContentsMargins(10, 5, 10, 5);
-    m_itemText->setFixedWidth(140);
-
-    QVBoxLayout *mainLayout = new QVBoxLayout;
-    mainLayout->setMargin(0);
-    mainLayout->addSpacing(10);
-    mainLayout->addWidget(m_itemIcon);
-    mainLayout->setAlignment(m_itemIcon, Qt::AlignHCenter);
-    mainLayout->addWidget(m_itemText, 0, Qt::AlignCenter);
-
     setFocusPolicy(Qt::NoFocus);
-    setLayout(mainLayout);
+    setFixedSize(144, 164);
     setCheckable(true);
-
-    QGraphicsDropShadowEffect *nameShadow = new QGraphicsDropShadowEffect(m_itemText);
-    nameShadow->setBlurRadius(16);
-    nameShadow->setColor(QColor(0, 0, 0, 85));
-    nameShadow->setOffset(0, 4);
-//    m_itemText->setGraphicsEffect(nameShadow);
+    DFontSizeManager::instance()->bind(this, DFontSizeManager::T6);
 }
 
 void RoundItemButton::enterEvent(QEvent* event)
@@ -142,7 +107,7 @@ void RoundItemButton::enterEvent(QEvent* event)
         updateState(Hover);
     }
 
-//    emit signalManager->setButtonHover(m_itemText->text());
+    //    emit signalManager->setButtonHover(m_itemText->text());
 }
 
 void RoundItemButton::leaveEvent(QEvent* event)
@@ -178,56 +143,110 @@ void RoundItemButton::mouseReleaseEvent(QMouseEvent* e)
         emit clicked();
 }
 
-bool RoundItemButton::eventFilter(QObject *watched, QEvent *event)
-{
-    if (watched == m_itemIcon && event->type() == QEvent::Paint) {
-        QSvgRenderer renderer(m_currentIcon, m_itemIcon);
-        QPainter painter(m_itemIcon);
-        if (!isEnabled()) {
-            painter.setOpacity(0.4);
-        }
-        renderer.render(&painter, m_itemIcon->rect());
-    }
-
-    return false;
-}
-
 void RoundItemButton::paintEvent(QPaintEvent* event)
 {
     QWidget::paintEvent(event);
     QPainter painter(this);
 
+    const int padding = 10;
+    const int lineHeight = fontMetrics().height() + 10;
+
+    // 计算文本行数
+    QStringList textList;
+    QString str = m_text;
+    while (fontMetrics().width(str) > width() - 20 && str.length() > 0) {
+        int lastSpacePos = str.lastIndexOf(" ");
+        if (lastSpacePos == -1) {
+            str = fontMetrics().elidedText(str, Qt::ElideRight, width() - 2 * padding);
+        } else {
+            str = m_text.left(lastSpacePos);
+        }
+    }
+    textList.append(str);
+
+    if (str.length() != m_text.length() && m_text.contains(str)) {
+        textList.append(fontMetrics().elidedText(m_text.mid(m_text.indexOf(str) + str.length()), Qt::ElideRight, width() - 20));
+    }
+
+    // 计算文本绘制的区域
+    int textWidth = 0;
+    for (auto text : textList) {
+        textWidth = qMax(textWidth, fontMetrics().width(text));
+    }
+    QRect textRect;
+    textRect.setX((width() - qMin(width(), textWidth + 2 * padding)) / 2);
+    textRect.setY(rect().y() + height() - 2 * lineHeight);
+    textRect.setWidth(qMin(width(), textWidth + 2 * padding));
+    textRect.setHeight(textList.size() * lineHeight);
+
+    // 计算图标绘制的区域
+    const int minSize = qMin(width(), height() - 2 * lineHeight - 2 * padding);
+    QRect iconRect;
+    iconRect.setX((width() - minSize) / 2);
+    iconRect.setY((height() - 2 * lineHeight- minSize) / 2);
+    iconRect.setWidth(minSize);
+    iconRect.setHeight(minSize);
+
     if (m_state == Checked) {
+        painter.setBrush(QColor(0, 15, 39, 178));
+        painter.setRenderHint(QPainter::Antialiasing, true);
+
+        // 绘制图标背景
+        QRect itemIconRect = iconRect.marginsRemoved(QMargins(m_penWidth, m_penWidth, m_penWidth, m_penWidth));
+        painter.drawEllipse(itemIconRect);
+        // 绘制文本背景
+        QRect itemTextRect = textRect.marginsRemoved(QMargins(m_penWidth, m_penWidth, m_penWidth, m_penWidth));
+        painter.drawRoundedRect(itemTextRect, m_rectRadius, m_rectRadius);
+
         QPen pen;
         QColor penColor(151, 151, 151, 127);
         pen.setColor(penColor);
-        pen.setWidth(m_penWidth);
+        pen.setWidth(m_penWidth * 2);
         painter.setPen(pen);
         painter.setRenderHint(QPainter::Antialiasing, true);
 
-        //只绘制轮廓，无中间填充色
-        //底下的矩形框轮廓是外描绘，所以需要减去画笔的宽度绘制轮廓
-        QRect itemTextRect = m_itemText->geometry().marginsRemoved(QMargins(m_penWidth / 2, m_penWidth / 2, m_penWidth / 2, m_penWidth / 2));
-        painter.drawRoundedRect(itemTextRect, m_rectRadius, m_rectRadius);
-        painter.drawEllipse(m_itemIcon->geometry());
+        // 绘制图标区域边框
+        QRect iconBackgroundRect(iconRect.marginsRemoved(QMargins(m_penWidth, m_penWidth, m_penWidth, m_penWidth)));
+        painter.drawEllipse(iconBackgroundRect);
 
-        //填充中间背景
-        painter.setBrush(QColor(0, 15, 39, 178));
-        painter.setPen(Qt::NoPen);
-        //drawEllipse是内描绘，中间填充色需要减去画笔宽度/2
-        QRect m_itemIconRtct(m_itemIcon->geometry().marginsRemoved((QMargins(m_penWidth / 2, m_penWidth / 2, m_penWidth / 2, m_penWidth / 2))));
-        painter.drawEllipse(m_itemIconRtct);
-
-        //drawRoundedRect外描绘，填充色区域需要再减掉画笔宽度
-        QRect textBackgroundRect(m_itemText->geometry().marginsRemoved(QMargins(m_penWidth, m_penWidth, m_penWidth, m_penWidth)));
+        // 绘制文本区域边框
+        QRect textBackgroundRect(textRect.marginsRemoved(QMargins(m_penWidth, m_penWidth, m_penWidth, m_penWidth)));
         painter.drawRoundedRect(textBackgroundRect, m_rectRadius, m_rectRadius);
-
     } else if (m_state == Hover) {
         painter.setPen(Qt::NoPen);
         painter.setBrush(QColor(255, 255, 255, 127));
         painter.setRenderHint(QPainter::Antialiasing, true);
-        painter.drawRoundedRect(m_itemText->geometry(), m_rectRadius, m_rectRadius);
-        painter.drawEllipse(m_itemIcon->geometry());
+
+        // 绘制鼠标选中的白色背景
+        painter.drawRoundedRect(textRect, m_rectRadius, m_rectRadius);
+        painter.drawEllipse(iconRect);
+    }
+
+    // 图标
+    painter.setRenderHints(QPainter::Antialiasing | QPainter::SmoothPixmapTransform);
+    QSvgRenderer renderer(m_currentIcon);
+    if (!isEnabled()) {
+        painter.setOpacity(0.4);
+    }
+    renderer.render(&painter, iconRect);
+
+    // 绘制文本内容
+    for (int i = 0; i < textList.size(); ++i) {
+        QRect lineRect;
+        lineRect.setX(textRect.x());
+        lineRect.setY(textRect.y() + i * lineHeight);
+        lineRect.setWidth(textRect.width());
+        lineRect.setHeight(lineHeight);
+        if (m_state == Checked) {
+            painter.setPen(Qt::white);
+        } else if (m_state == Hover) {
+            painter.setPen(Qt::black);
+        }
+
+        if (!isEnabled())
+            painter.setPen(Qt::gray);
+
+        painter.drawText(lineRect, Qt::AlignCenter, textList.at(i));
     }
 }
 
@@ -241,10 +260,9 @@ void RoundItemButton::updateIcon()
     case Hover:     m_currentIcon = m_hoverIcon;   break;
     case Checked:   m_currentIcon = m_normalIcon;  break;
     case Pressed:   m_currentIcon = m_pressedIcon; break;
-    default:;
     }
 
-    m_itemIcon->update();
+    update();
 }
 
 void RoundItemButton::updateState(const RoundItemButton::State state)
@@ -252,23 +270,6 @@ void RoundItemButton::updateState(const RoundItemButton::State state)
     if (m_state != state) {
         m_state = state;
         emit stateChanged(state);
-    }
-
-    //Hover状态下，字体颜色设置为黑色
-    if (state == Hover) {
-        QPalette palette = m_itemText->palette();
-        palette.setColor(QPalette::WindowText, Qt::black);
-        m_itemText->setPalette(palette);
-    } else {
-        QPalette palette = m_itemText->palette();
-        palette.setColor(QPalette::WindowText, Qt::white);
-        m_itemText->setPalette(palette);
-    }
-
-    if(!isEnabled()) {
-        QPalette palette = m_itemText->palette();
-        palette.setColor(QPalette::WindowText, Qt::gray);
-        m_itemText->setPalette(palette);
     }
 
     QAbstractButton::setChecked(m_state == Checked);
