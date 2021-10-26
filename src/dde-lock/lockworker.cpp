@@ -295,7 +295,7 @@ void LockWorker::initConfiguration()
     checkPowerInfo();
 }
 
-void LockWorker::doPowerAction(const SessionBaseModel::PowerAction action, const bool operationFromUser)
+void LockWorker::doPowerAction(const SessionBaseModel::PowerAction action)
 {
     switch (action) {
     case SessionBaseModel::PowerAction::RequireSuspend:
@@ -305,7 +305,8 @@ void LockWorker::doPowerAction(const SessionBaseModel::PowerAction action, const
             m_sessionManagerInter->RequestSuspend();
         });
         break;
-    case SessionBaseModel::PowerAction::RequireHibernate:        m_model->setIsBlackModel(true);
+    case SessionBaseModel::PowerAction::RequireHibernate:
+        m_model->setIsBlackModel(true);
         m_model->setCurrentModeState(SessionBaseModel::ModeStatus::PasswordMode);
         QTimer::singleShot(100, this, [=] {
             m_sessionManagerInter->RequestHibernate();

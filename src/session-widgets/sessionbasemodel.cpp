@@ -17,22 +17,11 @@ SessionBaseModel::SessionBaseModel(AuthType type, QObject *parent)
     , m_visible(false)
     , m_isServerModel(false)
     , m_canSleep(false)
-    , m_allowShowUserSwitchButton(false)
-    , m_alwaysShowUserSwitchButton(false)
-    , m_abortConfirm(false)
     , m_isLockNoPassword(false)
-    , m_isBlackMode(false)
-    , m_isHibernateMode(false)
-    , m_isLock(false)
-    , m_allowShowCustomUser(false)
-    , m_userListSize(0)
     , m_currentType(type)
     , m_currentUser(nullptr)
-    , m_lastLogoutUser(nullptr)
     , m_powerAction(PowerAction::RequireNormal)
     , m_currentModeState(ModeStatus::NoStatus)
-    , m_isCheckedInhibit(false)
-    , m_authProperty(AuthProperty())
     , m_users(new QMap<QString, std::shared_ptr<User>>())
     , m_loginedUsers(new QMap<QString, std::shared_ptr<User>>())
 {
@@ -84,13 +73,13 @@ void SessionBaseModel::setSessionKey(const QString &sessionKey)
     emit onSessionKeyChanged(sessionKey);
 }
 
-void SessionBaseModel::setPowerAction(const PowerAction &powerAction, const bool operationFromUser)
+void SessionBaseModel::setPowerAction(const PowerAction &powerAction)
 {
     if (powerAction == m_powerAction) return;
 
     m_powerAction = powerAction;
 
-    emit onPowerActionChanged(powerAction, operationFromUser);
+    emit onPowerActionChanged(powerAction);
 }
 
 void SessionBaseModel::setCurrentModeState(const ModeStatus &currentModeState)
