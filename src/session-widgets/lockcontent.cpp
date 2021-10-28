@@ -334,7 +334,6 @@ void LockContent::mouseReleaseEvent(QMouseEvent *event)
 void LockContent::showEvent(QShowEvent *event)
 {
     onStatusChanged(m_model->currentModeState());
-
     tryGrabKeyboard();
     return QFrame::showEvent(event);
 }
@@ -464,6 +463,9 @@ void LockContent::tryGrabKeyboard()
 #ifdef QT_DEBUG
     return;
 #endif
+
+    if (qgetenv("XDG_SESSION_TYPE").contains("wayland"))
+        return;
 
     if (window()->windowHandle() && window()->windowHandle()->setKeyboardGrabEnabled(true)) {
         m_failures = 0;
