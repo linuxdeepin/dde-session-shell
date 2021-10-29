@@ -114,7 +114,7 @@ void AuthSingle::initConnections()
     /* 认证解锁时间 */
     connect(m_unlockTimerTmp, &QTimer::timeout, this, [this] {
         m_integerMinutes--;
-        if (m_integerMinutes <= 1) {
+        if (m_integerMinutes < 1) {
             m_integerMinutes = 0;
             m_unlockTimer->start(0);
         } else {
