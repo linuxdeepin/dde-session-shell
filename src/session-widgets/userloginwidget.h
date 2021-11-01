@@ -122,6 +122,7 @@ public slots:
     void unlockSuccessAni(); // obsolete
     void unlockFailedAni();  // obsolete
     void updateAccoutLocale();
+    void updateResetPasswordUI();
 
 protected:
     bool eventFilter(QObject *watched, QEvent *event) override;
@@ -152,6 +153,7 @@ private:
     void onOtherPageUKeyChanged(const QVariant &value);
     void onOtherPagePasswordChanged(const QVariant &value);
     void onOtherPageKBLayoutChanged(const QVariant &value);
+    void onOtherPageResetPasswordVisibleChanged(const QVariant &value);
 
     void showKeyboardList();
     void updateKeyboardListPosition();

@@ -436,6 +436,14 @@ void UserLoginWidget::initSingleAuth(const int index)
     });
     FrameDataBind::Instance()->refreshData("UserLoginToken");
 
+    /* 重置密码可见性数据同步 */
+    std::function<void(QVariant)> resetPasswordVisibleChanged = std::bind(&UserLoginWidget::onOtherPageResetPasswordVisibleChanged, this, std::placeholders::_1);
+    m_registerFunctionIndexs["ResetPasswordVisible"] = FrameDataBind::Instance()->registerFunction("ResetPasswordVisible", resetPasswordVisibleChanged);
+    connect(m_singleAuth, &AuthSingle::resetPasswordMessageVisibleChanged, this, [ = ](const bool value) {
+        FrameDataBind::Instance()->updateValue("ResetPasswordVisible", value);
+    });
+    FrameDataBind::Instance()->refreshData("ResetPasswordVisible");
+
     m_lockButton->setEnabled(true);
     m_singleAuth->setKeyboardButtonVisible(m_keyboardList.size() > 1 ? true : false);
     m_singleAuth->setKeyboardButtonInfo(m_keyboardInfo);
@@ -873,6 +881,28 @@ void UserLoginWidget::onOtherPageKBLayoutChanged(const QVariant &value)
     }
 
     updateKeyboardListPosition();
+}
+
+/**
+ * @brief 重置密码可见性数据同步
+ *
+ * @param value
+ */
+void UserLoginWidget::onOtherPageResetPasswordVisibleChanged(const QVariant &value)
+{
+    m_singleAuth->setResetPasswordMessageVisible(value.toBool());
+}
+
+/**
+ * @brief 更新重置密码消息和对话框的可见性UI状态
+ *
+ * @param value
+ */
+void UserLoginWidget::updateResetPasswordUI()
+{
+    if (m_singleAuth) {
+        m_singleAuth->updateResetPasswordUI();
+    }
 }
 
 /**

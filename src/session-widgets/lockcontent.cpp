@@ -247,6 +247,11 @@ void LockContent::onCurrentUserChanged(std::shared_ptr<User> user)
 void LockContent::pushPasswordFrame()
 {
     setCenterContent(m_authWidget, false);
+
+    UserLoginWidget *loginWidget = m_userLoginInfo->getUserLoginWidget();
+    if (loginWidget) {
+        loginWidget->updateResetPasswordUI();
+    }
 }
 
 void LockContent::pushUserFrame()
