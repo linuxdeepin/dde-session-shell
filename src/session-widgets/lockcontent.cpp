@@ -7,7 +7,6 @@
 #include "sessionbasemodel.h"
 #include "shutdownwidget.h"
 #include "timewidget.h"
-#include "tray_widget.h"
 #include "userframe.h"
 #include "userframelist.h"
 #include "userlogininfo.h"
