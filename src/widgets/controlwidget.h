@@ -72,8 +72,6 @@ public slots:
 protected:
     bool eventFilter(QObject *watched, QEvent *event) Q_DECL_OVERRIDE;
     void keyReleaseEvent(QKeyEvent *event) Q_DECL_OVERRIDE;
-    void focusInEvent(QFocusEvent *event) Q_DECL_OVERRIDE;
-    void focusOutEvent(QFocusEvent *event) Q_DECL_OVERRIDE;
 
 private:
     void initUI();
@@ -83,14 +81,6 @@ private:
     void updateLayout();
 
 private:
-    enum FocusState
-    {
-        FocusNo,
-        FocusHasIn,
-        FocusReadyOut
-    };
-    FocusState m_focusState = FocusNo;
-
     int m_index = 0;
     QList<DFloatingButton *> m_btnList;
 

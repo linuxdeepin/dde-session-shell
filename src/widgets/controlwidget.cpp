@@ -57,8 +57,6 @@ void ControlWidget::setVirtualKBVisible(bool visible)
 
 void ControlWidget::initUI()
 {
-    setFocusPolicy(Qt::TabFocus);
-
     m_mainLayout = new QHBoxLayout(this);
     m_mainLayout->setContentsMargins(0, 0, 60, 0);
     m_mainLayout->setSpacing(26);
@@ -201,10 +199,6 @@ void ControlWidget::hideTips()
 void ControlWidget::setUserSwitchEnable(const bool visible)
 {
     m_switchUserBtn->setVisible(visible);
-    if (!visible) {
-        m_focusState = FocusNo;
-        setFocusPolicy(Qt::TabFocus);
-    }
     if (m_btnList.indexOf(m_switchUserBtn) == m_index) {
         m_index = 0;
     }
@@ -369,59 +363,12 @@ bool ControlWidget::eventFilter(QObject *watched, QEvent *event)
         if (event->type() == QEvent::Enter) {
             m_index = m_btnList.indexOf(btn);
         }
-        if (btn->isVisible()) {
-            if (event->type() == QFocusEvent::FocusOut) {
-                m_focusState = FocusNo;
-                setFocusPolicy(Qt::TabFocus);
-            } else if (event->type() == QFocusEvent::FocusIn) {
-                m_focusState = FocusHasIn;
-                setFocusPolicy(Qt::NoFocus);
-            }
-        }
     }
 #else
     Q_UNUSED(watched);
     Q_UNUSED(event);
 #endif
     return false;
-}
-
-void ControlWidget::focusInEvent(QFocusEvent *)
-{
-    switch (m_focusState) {
-    case FocusNo: {
-        m_focusState = FocusHasIn;
-        clearFocus();
-    }
-    break;
-    case FocusHasIn: {
-        m_focusState = FocusReadyOut;
-        clearFocus();
-    }
-    break;
-    case FocusReadyOut: {
-
-    }
-    break;
-    }
-}
-
-void ControlWidget::focusOutEvent(QFocusEvent *)
-{
-    switch (m_focusState) {
-    case FocusNo: {
-
-    }
-    break;
-    case FocusHasIn: {
-        m_btnList.at(m_index)->setFocus();
-    }
-    break;
-    case FocusReadyOut: {
-        m_focusState = FocusNo;
-    }
-    break;
-    }
 }
 
 void ControlWidget::keyReleaseEvent(QKeyEvent *event)
