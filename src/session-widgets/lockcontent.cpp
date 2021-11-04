@@ -248,9 +248,9 @@ void LockContent::pushPasswordFrame()
 {
     setCenterContent(m_authWidget, false);
 
-    UserLoginWidget *loginWidget = m_userLoginInfo->getUserLoginWidget();
-    if (loginWidget) {
-        loginWidget->updateResetPasswordUI();
+    SFAWidget *sfaWidget = qobject_cast<SFAWidget *>(m_authWidget);
+    if (sfaWidget) {
+        sfaWidget->syncResetPasswordUI();
     }
 }
 

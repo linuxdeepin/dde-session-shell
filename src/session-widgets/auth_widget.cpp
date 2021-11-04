@@ -487,6 +487,16 @@ void AuthWidget::syncSingle(const QVariant &value)
 }
 
 /**
+ * @brief 单因重置密码可见性数据同步
+ *
+ * @param value
+ */
+void AuthWidget::syncSingleResetPasswordVisibleChanged(const QVariant &value)
+{
+    m_singleAuth->setResetPasswordMessageVisible(value.toBool());
+}
+
+/**
  * @brief 用户名编辑框数据同步
  * @param value
  */
@@ -504,6 +514,16 @@ void AuthWidget::syncAccount(const QVariant &value)
 void AuthWidget::syncPassword(const QVariant &value)
 {
     m_passwordAuth->setLineEditInfo(value.toString(), AuthPassword::InputText);
+}
+
+/**
+ * @brief 密码重置密码可见性数据同步
+ *
+ * @param value
+ */
+void AuthWidget::syncPasswordResetPasswordVisibleChanged(const QVariant &value)
+{
+    m_passwordAuth->setResetPasswordMessageVisible(value.toBool());
 }
 
 /**

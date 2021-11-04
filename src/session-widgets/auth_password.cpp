@@ -30,6 +30,19 @@
 #include <QKeyEvent>
 #include <QTimer>
 #include <QVBoxLayout>
+#include <QDBusConnection>
+#include <QDBusInterface>
+#include <QApplication>
+#include <QDesktopWidget>
+#include <QDBusReply>
+
+#include <unistd.h>
+
+#include <com_deepin_daemon_accounts_user.h>
+
+#define Service "com.deepin.dialogs.ResetPassword"
+#define Path "/com/deepin/dialogs/ResetPassword"
+#define Interface "com.deepin.dialogs.ResetPassword"
 
 using namespace AuthCommon;
 
@@ -39,6 +52,8 @@ AuthPassword::AuthPassword(QWidget *parent)
     , m_lineEdit(new DLineEditEx(this))
     , m_keyboardBtn(new DPushButton(this))
     , m_passwordHintBtn(new DIconButton(this))
+    , m_resetPasswordMessageVisible(false)
+    , m_resetPasswordFloatingMessage(nullptr)
 {
     setObjectName(QStringLiteral("AuthPassword"));
     setAccessibleName(QStringLiteral("AuthPassword"));
@@ -221,6 +236,10 @@ void AuthPassword::setAuthStatus(const int state, const QString &result)
             setLineEditInfo(tr("Please try again 1 minute later"), PlaceHolderText);
         } else {
             setLineEditInfo(tr("Please try again %n minutes later", "", static_cast<int>(m_integerMinutes)), PlaceHolderText);
+        }
+        if (getuid() <= 9999 && isUserAccountBinded()) {
+            setResetPasswordMessageVisible(true);
+            updateResetPasswordUI();
         }
         m_showPrompt = false;
         m_passwordHintBtn->hide();
@@ -416,4 +435,137 @@ bool AuthPassword::eventFilter(QObject *watched, QEvent *event)
         }
     }
     return false;
+}
+
+/**
+ * @brief 设置重置密码消息框的显示状态数据
+ *
+ * @param visible
+ */
+void AuthPassword::setResetPasswordMessageVisible(const bool isVisible)
+{
+    m_resetPasswordMessageVisible = isVisible;
+}
+
+/**
+ * @brief 显示重置密码消息框
+ */
+void AuthPassword::showResetPasswordMessage()
+{
+    if (m_resetPasswordFloatingMessage && m_resetPasswordFloatingMessage->isVisible()) {
+        return;
+    }
+
+    QWidget *userLoginWidget = parentWidget();
+    if (!userLoginWidget) {
+        return;
+    }
+
+    QWidget *centerFrame = userLoginWidget->parentWidget();
+    if (!centerFrame) {
+        return;
+    }
+
+    QPalette pa;
+    pa.setColor(QPalette::Background, QColor(247, 247, 247, 51));
+    m_resetPasswordFloatingMessage = new DFloatingMessage(DFloatingMessage::MessageType::ResidentType);
+    m_resetPasswordFloatingMessage->setPalette(pa);
+    m_resetPasswordFloatingMessage->setIcon(QIcon::fromTheme("dialog-warning"));
+    DSuggestButton *suggestButton = new DSuggestButton(tr("Reset Password!"));
+    m_resetPasswordFloatingMessage->setWidget(suggestButton);
+    m_resetPasswordFloatingMessage->setMessage(tr("Forget pasword? Click here to Reset!"));
+    connect(suggestButton, &QPushButton::clicked, this, []{
+        const QString AccountsService("com.deepin.daemon.Accounts");
+        const QString path = QString("/com/deepin/daemon/Accounts/User%1").arg(getuid());
+        com::deepin::daemon::accounts::User user(AccountsService, path, QDBusConnection::systemBus());
+        auto reply = user.SetPassword("");
+        reply.waitForFinished();
+        qWarning() << "reply setpassword:" << reply.error().message();
+    });
+    DMessageManager::instance()->sendMessage(centerFrame, m_resetPasswordFloatingMessage);
+    connect(m_resetPasswordFloatingMessage, &DFloatingMessage::closeButtonClicked, this, [this](){
+        if (m_resetPasswordFloatingMessage) {
+            delete  m_resetPasswordFloatingMessage;
+            m_resetPasswordFloatingMessage = nullptr;
+        }
+        emit resetPasswordMessageVisibleChanged(false);
+    });
+    emit resetPasswordMessageVisibleChanged(true);
+}
+
+/**
+ * @brief 关闭重置密码消息框
+ */
+void AuthPassword::closeResetPasswordMessage()
+{
+    if (m_resetPasswordFloatingMessage) {
+        m_resetPasswordFloatingMessage->close();
+        delete  m_resetPasswordFloatingMessage;
+        m_resetPasswordFloatingMessage = nullptr;
+        emit resetPasswordMessageVisibleChanged(false);
+    }
+}
+
+/**
+ * @brief 当前账户是否绑定unionid
+ */
+bool AuthPassword::isUserAccountBinded()
+{
+    QDBusInterface syncHelperInter("com.deepin.sync.Helper",
+                                   "/com/deepin/sync/Helper",
+                                   "com.deepin.sync.Helper",
+                                   QDBusConnection::systemBus());
+    QDBusReply<QString> retUOSID = syncHelperInter.call("UOSID");
+    if (!syncHelperInter.isValid()) {
+        return false;
+    }
+    QString uosid;
+    if (retUOSID.error().message().isEmpty()) {
+        uosid = retUOSID.value();
+    } else {
+        qWarning() << retUOSID.error().message();
+        return false;
+    }
+
+    QDBusInterface accountsInter("com.deepin.daemon.Accounts",
+                                 QString("/com/deepin/daemon/Accounts/User%1").arg(getuid()),
+                                 "com.deepin.daemon.Accounts.User",
+                                 QDBusConnection::systemBus());
+    QVariant retUUID = accountsInter.property("UUID");
+    if (!accountsInter.isValid()) {
+        return false;
+    }
+    QString uuid = retUUID.toString();
+
+    QDBusReply<QString> retLocalBindCheck= syncHelperInter.call("LocalBindCheck", uosid, uuid);
+    if (!syncHelperInter.isValid()) {
+        return false;
+    }
+    QString ubid;
+    if (retLocalBindCheck.error().message().isEmpty()) {
+        ubid = retLocalBindCheck.value();
+    } else {
+        qWarning() << "UOSID:" << uosid << "uuid:" << uuid;
+        qWarning() << retLocalBindCheck.error().message();
+        return false;
+    }
+
+    return !ubid.isEmpty();
+}
+
+/**
+ * @brief 更新重置密码UI相关状态
+ */
+void AuthPassword::updateResetPasswordUI()
+{
+    // >=10000 域管账户, 该功能屏蔽域管账户
+    if (getuid() > 9999) {
+        return;
+    }
+
+    if (m_resetPasswordMessageVisible) {
+        showResetPasswordMessage();
+    } else {
+        closeResetPasswordMessage();
+    }
 }

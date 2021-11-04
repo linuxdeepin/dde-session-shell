@@ -249,6 +249,16 @@ void SFAWidget::setAuthStatus(const int type, const int status, const QString &m
     }
 }
 
+void SFAWidget::syncResetPasswordUI()
+{
+    if (m_singleAuth) {
+        m_singleAuth->updateResetPasswordUI();
+    }
+    if (m_passwordAuth) {
+        m_passwordAuth->updateResetPasswordUI();
+    }
+}
+
 /**
  * @brief 初始化单因认证
  * 用于兼容开源 PAM
@@ -280,6 +290,13 @@ void SFAWidget::initSingleAuth()
     registerSyncFunctions("SFSingleAuth", tokenChanged);
     connect(m_singleAuth, &AuthSingle::lineEditTextChanged, this, [this](const QString &value) {
         m_frameDataBind->updateValue("SFSingleAuth", value);
+    });
+
+    /* 重置密码可见性数据同步 */
+    std::function<void(QVariant)> resetPasswordVisibleChanged = std::bind(&SFAWidget::syncSingleResetPasswordVisibleChanged, this, std::placeholders::_1);
+    registerSyncFunctions("ResetPasswordVisible", resetPasswordVisibleChanged);
+    connect(m_singleAuth, &AuthSingle::resetPasswordMessageVisibleChanged, this, [ = ](const bool value) {
+        m_frameDataBind->updateValue("ResetPasswordVisible", value);
     });
 
     m_singleAuth->setKeyboardButtonVisible(m_keyboardList.size() > 1 ? true : false);
@@ -332,6 +349,12 @@ void SFAWidget::initPasswdAuth()
     registerSyncFunctions("SFPasswordAuth", passwordChanged);
     connect(m_passwordAuth, &AuthPassword::lineEditTextChanged, this, [this](const QString &value) {
         m_frameDataBind->updateValue("SFPasswordAuth", value);
+    });
+    /* 重置密码可见性数据同步 */
+    std::function<void(QVariant)> resetPasswordVisibleChanged = std::bind(&SFAWidget::syncPasswordResetPasswordVisibleChanged, this, std::placeholders::_1);
+    registerSyncFunctions("ResetPasswordVisible", resetPasswordVisibleChanged);
+    connect(m_passwordAuth, &AuthPassword::resetPasswordMessageVisibleChanged, this, [ = ](const bool value) {
+        m_frameDataBind->updateValue("ResetPasswordVisible", value);
     });
 
     connect(m_passwordAuth, &AuthPassword::focusChanged, this, [this](bool focus) {

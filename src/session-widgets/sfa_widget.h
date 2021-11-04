@@ -52,6 +52,7 @@ public:
     void setModel(const SessionBaseModel *model) override;
     void setAuthType(const int type) override;
     void setAuthStatus(const int type, const int status, const QString &message) override;
+    void syncResetPasswordUI();
 
 private:
     void initUI();

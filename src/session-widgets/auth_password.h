@@ -27,6 +27,9 @@
 #include <DIconButton>
 #include <DLabel>
 #include <DPushButton>
+#include <DFloatingMessage>
+#include <DSuggestButton>
+#include <DMessageManager>
 
 #define Password_Auth QStringLiteral(":/misc/images/auth/password.svg")
 //const QString Password_Auth = ":/misc/images/auth/password.svg";
@@ -58,6 +61,11 @@ signals:
     void lineEditTextChanged(const QString &); // 数据同步
     void requestChangeFocus();                 // 切换焦点
     void requestShowKeyboardList();            // 显示键盘布局列表
+    void resetPasswordMessageVisibleChanged(const bool isVisible);
+
+public slots:
+    void setResetPasswordMessageVisible(const bool isVisible);
+    void updateResetPasswordUI();
 
 protected:
     bool eventFilter(QObject *watched, QEvent *event) override;
@@ -68,6 +76,9 @@ private:
     void updateUnlockPrompt() override;
     void showPasswordHint();
     void setPasswordHintBtnVisible(const bool isVisible);
+    void showResetPasswordMessage();
+    void closeResetPasswordMessage();
+    bool isUserAccountBinded();
 
 private:
     DLabel *m_capsLock;             // 大小写状态
@@ -75,6 +86,8 @@ private:
     DPushButton *m_keyboardBtn;     // 键盘布局按钮
     DIconButton *m_passwordHintBtn; // 密码提示按钮
     QString m_passwordHint;         // 密码提示
+    bool m_resetPasswordMessageVisible;
+    DFloatingMessage *m_resetPasswordFloatingMessage;
 };
 
 #endif // AUTHPASSWORD_H

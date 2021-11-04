@@ -28,7 +28,6 @@
 
 #include <QKeyEvent>
 #include <QTimer>
-#include <QProcess>
 #include <QDBusConnection>
 #include <QDBusInterface>
 #include <QApplication>
@@ -440,7 +439,9 @@ void AuthSingle::showResetPasswordMessage()
         const QString AccountsService("com.deepin.daemon.Accounts");
         const QString path = QString("/com/deepin/daemon/Accounts/User%1").arg(getuid());
         com::deepin::daemon::accounts::User user(AccountsService, path, QDBusConnection::systemBus());
-        user.SetPassword("");
+        auto reply = user.SetPassword("");
+        reply.waitForFinished();
+        qWarning() << "reply setpassword:" << reply.error().message();
     });
     DMessageManager::instance()->sendMessage(centerFrame, m_resetPasswordFloatingMessage);
     connect(m_resetPasswordFloatingMessage, &DFloatingMessage::closeButtonClicked, this, [this](){

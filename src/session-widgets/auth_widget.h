@@ -98,8 +98,10 @@ protected:
 
     void registerSyncFunctions(const QString &flag, std::function<void(QVariant)> function);
     void syncSingle(const QVariant &value);
+    void syncSingleResetPasswordVisibleChanged(const QVariant &value);
     void syncAccount(const QVariant &value);
     void syncPassword(const QVariant &value);
+    void syncPasswordResetPasswordVisibleChanged(const QVariant &value);
     void syncUKey(const QVariant &value);
 
 protected:
