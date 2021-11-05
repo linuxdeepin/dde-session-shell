@@ -59,7 +59,7 @@ FullscreenBackground::FullscreenBackground(SessionBaseModel *model, QWidget *par
     , m_enableAnimation(true)
 {
 #ifndef QT_DEBUG
-    if (qEnvironmentVariable("XDG_SESSION_TYPE").contains("wayland")) {
+    if (!qEnvironmentVariable("XDG_SESSION_TYPE").contains("wayland")) {
         setWindowFlags(Qt::WindowStaysOnTopHint | Qt::X11BypassWindowManagerHint);
     } else {
         setWindowFlags(windowFlags() | Qt::WindowStaysOnTopHint | Qt::FramelessWindowHint | Qt::Window);
