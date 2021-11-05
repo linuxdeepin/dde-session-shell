@@ -24,6 +24,8 @@
 
 #include "tray_module_interface.h"
 
+class QLabel;
+
 namespace dss {
 namespace module {
 
@@ -42,13 +44,19 @@ public:
 
     inline QString key() const override { return objectName(); }
     QWidget *content() override { return m_networkWidget; }
-    inline QString icon() const override { return ":/img/default_avatar.svg"; }
+    virtual inline QString icon() const override { return ":/img/default_avatar.svg"; }
+
+    virtual QWidget *itemWidget() const override;
+    virtual QWidget *itemTipsWidget() const override;
+    virtual const QString itemContextMenu() const override;
+    virtual void invokedMenuItem(const QString &menuId, const bool checked) const override;
 
 private:
     void initUI();
 
 private:
     QWidget *m_networkWidget;
+    QLabel *m_tipLabel;
 };
 
 } // namespace module

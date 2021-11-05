@@ -22,6 +22,8 @@
 #include "network_module.h"
 
 #include <QWidget>
+#include <QLabel>
+#include <QIcon>
 
 namespace dss {
 namespace module {
@@ -29,6 +31,7 @@ namespace module {
 NetworkModule::NetworkModule(QObject *parent)
     : QObject(parent)
     , m_networkWidget(nullptr)
+    , m_tipLabel(nullptr)
 {
     setObjectName(QStringLiteral("NetworkModule"));
 }
@@ -45,6 +48,56 @@ void NetworkModule::init()
     initUI();
 }
 
+QWidget *NetworkModule::itemWidget() const
+{
+    QLabel *label = new QLabel;
+    label->setPixmap(QIcon::fromTheme("dialog-warning").pixmap(20, 20));
+    label->setFixedSize(20, 20);
+    return label;
+}
+
+QWidget *NetworkModule::itemTipsWidget() const
+{
+    QLabel *label = new QLabel;
+    label->setText("network info");
+    return label;
+}
+
+const QString NetworkModule::itemContextMenu() const
+{
+    QList<QVariant> items;
+    items.reserve(2);
+
+    QMap<QString, QVariant> shift;
+    shift["itemId"] = "SHIFT";
+    shift["itemText"] = tr("Turn on");
+    shift["isActive"] = true;
+    items.push_back(shift);
+
+    QMap<QString, QVariant> settings;
+    settings["itemId"] = "SETTINGS";
+    settings["itemText"] = tr("Turn off");
+    settings["isActive"] = true;
+    items.push_back(settings);
+
+    QMap<QString, QVariant> menu;
+    menu["items"] = items;
+    menu["checkableMenu"] = false;
+    menu["singleCheck"] = false;
+    return QJsonDocument::fromVariant(menu).toJson();
+}
+
+void NetworkModule::invokedMenuItem(const QString &menuId, const bool checked) const
+{
+    Q_UNUSED(checked);
+
+    if (menuId == "SHIFT") {
+        qDebug() << "shift clicked";
+    } else if (menuId == "SETTINGS") {
+        qDebug() << "settings clicked";
+    }
+}
+
 void NetworkModule::initUI()
 {
     if (m_networkWidget) {
@@ -52,6 +105,7 @@ void NetworkModule::initUI()
     }
     m_networkWidget = new QWidget;
     m_networkWidget->setAccessibleName(QStringLiteral("NetworkWidget"));
+    m_networkWidget->setStyleSheet("background-color: red");
     m_networkWidget->setFixedSize(200, 100);
 }
 

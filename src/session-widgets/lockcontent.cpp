@@ -27,6 +27,7 @@ LockContent::LockContent(SessionBaseModel *const model, QWidget *parent)
     , m_model(model)
     , m_virtualKB(nullptr)
     , m_translator(new QTranslator(this))
+    , m_userLoginInfo(new UserLoginInfo(model, this))
     , m_wmInter(new com::deepin::wm("com.deepin.wm", "/com/deepin/wm", QDBusConnection::sessionBus(), this))
     , m_sfaWidget(nullptr)
     , m_mfaWidget(nullptr)
@@ -124,8 +125,10 @@ void LockContent::initConnections()
     });
 
     connect(m_model, &SessionBaseModel::MFAFlagChanged, this, [this](const bool isMFA) {
-        m_centerWidget->hide();
-        m_centerWidget = nullptr;
+        if (m_centerWidget) {
+            m_centerWidget->hide();
+            m_centerWidget = nullptr;
+        }
         isMFA ? initMFAWidget() : initSFAWidget();
         setCenterContent(m_authWidget);
     });
@@ -414,7 +417,6 @@ void LockContent::toggleVirtualKB()
 void LockContent::showModule(const QString &name)
 {
     BaseModuleInterface *module = ModulesLoader::instance().findModuleByName(name);
-    module->init();
     if (!module) {
         return;
     }

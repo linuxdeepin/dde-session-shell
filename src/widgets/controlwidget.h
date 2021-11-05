@@ -29,6 +29,10 @@
 #include <dtkwidget_global.h>
 
 #include <QWidget>
+#include <QEvent>
+#include <QMouseEvent>
+
+#include <DFloatingButton>
 
 namespace dss {
 namespace module {
@@ -36,16 +40,66 @@ class BaseModuleInterface;
 }
 } // namespace dss
 
-DWIDGET_BEGIN_NAMESPACE
-class DFloatingButton;
-DWIDGET_END_NAMESPACE
-
 DWIDGET_USE_NAMESPACE
+
+DWIDGET_BEGIN_NAMESPACE
+class DArrowRectangle;
+DWIDGET_END_NAMESPACE
 
 class MediaWidget;
 class QHBoxLayout;
 class QPropertyAnimation;
 class QLabel;
+class QMenu;
+
+class FlotingButton : public DFloatingButton
+{
+    Q_OBJECT
+public:
+    explicit FlotingButton(QWidget *parent = nullptr)
+        : DFloatingButton(parent) {
+        installEventFilter(this);
+    }
+    explicit FlotingButton(QStyle::StandardPixmap iconType = static_cast<QStyle::StandardPixmap>(-1), QWidget *parent = nullptr)
+        : DFloatingButton(iconType, parent) {
+        installEventFilter(this);
+    }
+    explicit FlotingButton(DStyle::StandardPixmap iconType = static_cast<DStyle::StandardPixmap>(-1), QWidget *parent = nullptr)
+        : DFloatingButton(iconType, parent) {
+        installEventFilter(this);
+    }
+    explicit FlotingButton(const QString &text, QWidget *parent = nullptr)
+        : DFloatingButton(text, parent) {
+        installEventFilter(this);
+    }
+    FlotingButton(const QIcon& icon, const QString &text = QString(), QWidget *parent = nullptr)
+        : DFloatingButton(icon, text, parent) {
+        installEventFilter(this);
+    }
+
+Q_SIGNALS:
+    void requestShowMenu();
+    void requestShowTips();
+    void requestHideTips();
+
+protected:
+    bool eventFilter(QObject *watch, QEvent *event) {
+        if (watch == this) {
+            if (event->type() == QEvent::MouseButtonRelease) {
+                QMouseEvent *e = static_cast<QMouseEvent *>(event);
+                if (e->button() == Qt::RightButton) {
+                    Q_EMIT requestShowMenu();
+                }
+            } else if (event->type() == QEvent::Enter) {
+                Q_EMIT requestShowTips();
+            } else if (event->type() == QEvent::Leave) {
+                Q_EMIT requestHideTips();
+            }
+        }
+
+        return false;
+    }
+};
 class ControlWidget : public QWidget
 {
     Q_OBJECT
@@ -95,6 +149,8 @@ private:
     QPropertyAnimation *m_tipsAni = nullptr;
 #endif
     QMap<QString, QWidget *> m_modules;
+    QMenu *m_contextMenu;
+    DArrowRectangle *m_tipsWidget;
 };
 
 #endif // CONTROLWIDGET_H

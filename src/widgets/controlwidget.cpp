@@ -30,6 +30,7 @@
 #include "tray_module_interface.h"
 
 #include <DFloatingButton>
+#include <DArrowRectangle>
 #include <dimagebutton.h>
 
 #include <QEvent>
@@ -37,6 +38,7 @@
 #include <QHBoxLayout>
 #include <QPainter>
 #include <QWheelEvent>
+#include <QMenu>
 
 #define BUTTON_ICON_SIZE QSize(26,26)
 #define BUTTON_SIZE QSize(52,52)
@@ -45,6 +47,8 @@ using namespace dss;
 
 ControlWidget::ControlWidget(QWidget *parent)
     : QWidget(parent)
+    , m_contextMenu(new QMenu(this))
+    , m_tipsWidget(new DArrowRectangle(DArrowRectangle::ArrowDirection::ArrowBottom, this))
 {
     setAccessibleName("ControlWidget");
     initUI();
@@ -117,35 +121,93 @@ void ControlWidget::initConnect()
 
 void ControlWidget::addModule(module::BaseModuleInterface *module)
 {
-    if (module->type() != module::BaseModuleInterface::TrayType) {
+    if (module && module->type() != module::BaseModuleInterface::TrayType)
         return;
-    }
 
     module::TrayModuleInterface *trayModule = dynamic_cast<module::TrayModuleInterface *>(module);
+    if (!trayModule)
+        return;
 
-    DFloatingButton *button = new DFloatingButton(this);
-    button->setIcon(QIcon(trayModule->icon()));
+    trayModule->init();
+
+    FlotingButton *button = new FlotingButton(this);
     button->setIconSize(QSize(26, 26));
     button->setFixedSize(QSize(52, 52));
     button->setAutoExclusive(true);
     button->setBackgroundRole(DPalette::Button);
-    button->setIcon(QIcon(trayModule->icon()));
+
+    if (QWidget *trayWidget = trayModule->itemWidget()) {
+        trayWidget->setParent(this);
+        QHBoxLayout *layout = new QHBoxLayout(this);
+        layout->setSpacing(0);
+        layout->setMargin(0);
+        layout->addWidget(trayWidget);
+
+        button->setLayout(layout);
+    } else {
+        button->setIcon(QIcon(trayModule->icon()));
+    }
 
     m_modules.insert(trayModule->key(), button);
     m_btnList.append(button);
 
+    connect(button, &FlotingButton::requestShowMenu, this, [ = ] {
+        const QString menuJson = trayModule->itemContextMenu();
+        if (menuJson.isEmpty())
+            return;
+
+        QJsonDocument jsonDocument = QJsonDocument::fromJson(menuJson.toLocal8Bit().data());
+        if (jsonDocument.isNull())
+            return;
+
+        QJsonObject jsonMenu = jsonDocument.object();
+
+        m_contextMenu->clear();
+        QJsonArray jsonMenuItems = jsonMenu.value("items").toArray();
+        for (auto item : jsonMenuItems) {
+            QJsonObject itemObj = item.toObject();
+            QAction *action = new QAction(itemObj.value("itemText").toString());
+            action->setCheckable(itemObj.value("isCheckable").toBool());
+            action->setChecked(itemObj.value("checked").toBool());
+            action->setData(itemObj.value("itemId").toString());
+            action->setEnabled(itemObj.value("isActive").toBool());
+            m_contextMenu->addAction(action);
+        }
+
+        connect(m_contextMenu, &QMenu::triggered, this, [ = ] (QAction *action) {
+            trayModule->invokedMenuItem( action->data().toString(), true);
+        });
+        m_contextMenu->exec(QCursor::pos());
+    });
+
+    connect(button, &FlotingButton::requestShowTips, this, [ = ] {
+        if (QWidget *tipWidget = trayModule->itemTipsWidget()) {
+            tipWidget->setParent(this);
+            m_tipsWidget->setContent(trayModule->itemTipsWidget());
+            m_tipsWidget->show(mapToGlobal(button->pos()).x() + button->width() / 2,mapToGlobal(button->pos()).y());
+        }
+    });
+
+    connect(button, &FlotingButton::requestHideTips, this, [ = ] {
+        if (m_tipsWidget->getContent()) {
+            delete m_tipsWidget->getContent();
+        }
+        m_tipsWidget->hide();
+    });
+
     connect(button, &DFloatingButton::clicked, this, [this, trayModule] {
         emit requestShowModule(trayModule->key());
     }, Qt::UniqueConnection);
+
 
     updateLayout();
 }
 
 void ControlWidget::removeModule(module::BaseModuleInterface *module)
 {
-    if (module->type() != module::BaseModuleInterface::TrayType) {
+    if (module->type() != module::BaseModuleInterface::TrayType)
         return;
-    }
+
     module::TrayModuleInterface *trayModule = dynamic_cast<module::TrayModuleInterface *>(module);
 
     QMap<QString, QWidget *>::const_iterator i = m_modules.constBegin();
