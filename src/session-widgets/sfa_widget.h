@@ -54,6 +54,12 @@ public:
     void setAuthStatus(const int type, const int status, const QString &message) override;
     void syncResetPasswordUI();
 
+public slots:
+    void onRetryButtonVisibleChanged(bool visible);
+
+protected:
+    void resizeEvent(QResizeEvent *event);
+
 private:
     void initUI();
     void initConnections();
@@ -68,16 +74,18 @@ private:
     void checkAuthResult(const int type, const int status) override;
 
     void syncAuthType(const QVariant &value);
+    void replaceWidget(AuthModule *authModule);
 
 private:
     QVBoxLayout *m_mainLayout;
 
     DButtonBox *m_chooesAuthButtonBox; // 认证选择按钮
     DLabel *m_biometricAuthStatus;     // 生物认证状态
-    QWidget *m_currentAuth;            // 当前选中的认证，默认 single 用于兼容开源 PAM
+    AuthModule *m_currentAuth;            // 当前选中的认证，默认 single 用于兼容开源 PAM
     AuthModule *m_lastAuth;            // 上次成功的认证
 
     QMap<int, DButtonBoxButton *> m_authButtons;
+    DFloatingButton *m_retryButton;
 };
 
 #endif // SFAWIDGET_H

@@ -141,7 +141,8 @@ void GreeterWorkek::initConnections()
                         m_model->setCurrentModeState(SessionBaseModel::ModeStatus::PasswordMode);
                     }
                     endAuthentication(m_account, type);
-                    if (!m_model->currentUser()->limitsInfo(type).locked) {
+                    // 人脸和虹膜需要手动重启验证
+                    if (!m_model->currentUser()->limitsInfo(type).locked && type != AuthTypeFace && type != AuthTypeIris) {
                         QTimer::singleShot(50, this, [=] {
                             startAuthentication(m_account, type);
                         });
@@ -170,20 +171,25 @@ void GreeterWorkek::initConnections()
                 }
             }
         } else {
-            if (m_model->currentModeState() != SessionBaseModel::ModeStatus::PasswordMode && (status == StatusCodeSuccess || status == StatusCodeFailure))
-                m_model->setCurrentModeState(SessionBaseModel::ModeStatus::PasswordMode);
-            m_model->updateAuthStatus(type, status, message);
-            switch (status) {
-            case StatusCodeSuccess:
-                break;
-            case StatusCodeFailure:
-                endAuthentication(m_account, type);
-                if (!m_model->currentUser()->limitsInfo(type).locked) {
-                    QTimer::singleShot(50, this, [this, type] {
-                        startAuthentication(m_account, type);
-                    });
+            if (AuthTypeAll != type) {
+                if (m_model->currentModeState() != SessionBaseModel::ModeStatus::PasswordMode && (status == StatusCodeSuccess || status == StatusCodeFailure))
+                    m_model->setCurrentModeState(SessionBaseModel::ModeStatus::PasswordMode);
+                m_model->updateAuthStatus(type, status, message);
+                switch (status) {
+                case StatusCodeFailure:
+                    endAuthentication(m_account, type);
+                    // 人脸和虹膜需要手动重新开启验证
+                    if (!m_model->currentUser()->limitsInfo(type).locked && type != AuthTypeFace && type != AuthTypeIris) {
+                        QTimer::singleShot(50, this, [this, type] {
+                            startAuthentication(m_account, type);
+                        });
+                    }
+                    break;
+                case StatusCodeCancel:
+                    destoryAuthentication(m_account);
+                default:
+                    break;
                 }
-                break;
             }
         }
     });
@@ -234,8 +240,8 @@ void GreeterWorkek::initConnections()
         emit m_model->switchUserFinished();
     });
     /* model */
-    connect(m_model, &SessionBaseModel::authTypeChanged, this, [=](const int type) {
-        if (type > 0 && !m_model->currentUser()->limitsInfo()->value(type).locked) {
+    connect(m_model, &SessionBaseModel::authTypeChanged, this, [ = ](const int type) {
+        if (type > 0 && !m_model->currentUser()->limitsInfo()->value(type).locked && m_model->getAuthProperty().MFAFlag) {
             startAuthentication(m_account, m_model->getAuthProperty().AuthType);
         }
         m_limitsUpdateTimer->start();

@@ -34,19 +34,22 @@ public:
 
     void reset();
 
+    void setAuthFactorType(AuthFactorType authFactorType) override;
 public slots:
     void setAuthStatus(const int state, const QString &result) override;
     void setAnimationStatus(const bool start) override;
     void setLimitsInfo(const LimitsInfo &info) override;
 
 protected:
-    void mouseReleaseEvent(QMouseEvent *event) override;
-
+    bool eventFilter(QObject *watched, QEvent *event);
 private:
     void initUI();
     void initConnections();
     void updateUnlockPrompt() override;
     void doAnimation() override;
+
+signals:
+    void retryButtonVisibleChanged(bool visible);
 
 private:
     int m_aniIndex;

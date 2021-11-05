@@ -26,6 +26,7 @@ public:
     void setLimitsInfo(const LimitsInfo &info) override;
     void setLineEditEnabled(const bool enable);
     void setLineEditInfo(const QString &text, const TextType type);
+    void hide();
 
 signals:
     void focusChanged(const bool);

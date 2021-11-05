@@ -58,6 +58,11 @@ const QStringList SHUTDOWN_CONFIGS {
 
 static const QString DEFAULT_META_CONFIG_NAME = "default";      // 默认配置文件名称
 static const QString SOLID_BACKGROUND_COLOR = "#000F27";        // 纯色背景色号
+
+enum AuthFactorType {
+    SingleAuthFactor,
+    MultiAuthFactor,
+};
 }
 
 

@@ -9,7 +9,7 @@ SessionBaseWindow::SessionBaseWindow(QWidget *parent)
     , m_centerTopFrame(nullptr)
     , m_centerFrame(nullptr)
     , m_bottomFrame(nullptr)
-    , m_mainLayou(nullptr)
+    , m_mainLayout(nullptr)
     , m_centerTopLayout(nullptr)
     , m_centerLayout(nullptr)
     , m_leftBottomLayout(nullptr)
@@ -20,7 +20,6 @@ SessionBaseWindow::SessionBaseWindow(QWidget *parent)
     , m_leftBottomWidget(nullptr)
     , m_centerBottomWidget(nullptr)
     , m_rightBottomWidget(nullptr)
-    , m_responseResizeEvent(true)
 {
     initUI();
 }
@@ -59,8 +58,6 @@ void SessionBaseWindow::setCenterContent(QWidget * const widget, bool responseRe
     if (!widget || m_centerWidget == widget) {
         return;
     }
-
-    m_responseResizeEvent = responseResizeEvent;
 
     if (m_centerWidget) {
         m_centerLayout->replaceWidget(m_centerWidget, widget);
@@ -133,22 +130,22 @@ void SessionBaseWindow::initUI()
     m_bottomFrame->setFixedHeight(132);
     m_bottomFrame->setAutoFillBackground(false);
 
-    m_mainLayou = new QVBoxLayout;
-    m_mainLayou->setContentsMargins(0, 33, 0, 33);
-    m_mainLayou->setSpacing(0);
-    m_mainLayou->addWidget(m_centerTopFrame);
-    m_mainLayou->addWidget(m_centerFrame);
-    m_mainLayou->addWidget(m_bottomFrame);
+    m_mainLayout = new QVBoxLayout;
+    m_mainLayout->setContentsMargins(0, 33, 0, 33);
+    m_mainLayout->setSpacing(0);
+    m_mainLayout->addWidget(m_centerTopFrame);
+    m_mainLayout->addWidget(m_centerFrame);
+    m_mainLayout->addWidget(m_bottomFrame);
 
-    setLayout(m_mainLayou);
+    setLayout(m_mainLayout);
 }
 
 QSize SessionBaseWindow::getCenterContentSize()
 {
     //计算中间区域的大小
-    int w = width() - m_mainLayou->contentsMargins().left() - m_mainLayou->contentsMargins().right();
+    int w = width() - m_mainLayout->contentsMargins().left() - m_mainLayout->contentsMargins().right();
 
-    int h = height() - m_mainLayou->contentsMargins().top() - m_mainLayou->contentsMargins().bottom();
+    int h = height() - m_mainLayout->contentsMargins().top() - m_mainLayout->contentsMargins().bottom();
     if (m_centerTopFrame->isVisible()) {
         h = h - m_centerTopFrame->height();
     }

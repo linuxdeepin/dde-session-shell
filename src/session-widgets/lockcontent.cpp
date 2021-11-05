@@ -125,12 +125,10 @@ void LockContent::initConnections()
     });
 
     connect(m_model, &SessionBaseModel::MFAFlagChanged, this, [this](const bool isMFA) {
-        if (m_centerWidget) {
-            m_centerWidget->hide();
-            m_centerWidget = nullptr;
-        }
         isMFA ? initMFAWidget() : initSFAWidget();
-        setCenterContent(m_authWidget);
+        // 当前中间窗口为空或者中间窗口就是验证窗口的时候显示验证窗口
+        if (!m_centerWidget || m_centerWidget == m_authWidget)
+            setCenterContent(m_authWidget);
     });
 
     connect(m_wmInter, &__wm::WorkspaceSwitched, this, &LockContent::currentWorkspaceChanged);

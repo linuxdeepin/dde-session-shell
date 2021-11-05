@@ -48,17 +48,18 @@ AuthFace::AuthFace(QWidget *parent)
  */
 void AuthFace::initUI()
 {
-    QVBoxLayout *mainLayout = new QVBoxLayout(this);
-    mainLayout->setContentsMargins(0, 0, 0, 0);
-    mainLayout->setSpacing(10);
-    /* 认证状态 */
-    m_authStatus = new DLabel(this);
-    setAuthStatusStyle(AUTH_LOCK);
-    mainLayout->addWidget(m_authStatus, 0, Qt::AlignHCenter);
+    QHBoxLayout *mainLayout = new QHBoxLayout(this);
+    mainLayout->setContentsMargins(27, 0, 10, 0);
+    mainLayout->setSpacing(0);
     /* 文案提示 */
     m_textLabel->setText(tr("Face ID"));
     m_textLabel->setWordWrap(true);
-    mainLayout->addWidget(m_textLabel, 0, Qt::AlignHCenter);
+    mainLayout->addWidget(m_textLabel, 1, Qt::AlignHCenter);
+    /* 认证状态 */
+    m_authStatusLabel = new DLabel(this);
+    m_authStatusLabel->installEventFilter(this);
+    setAuthStatusStyle(LOGIN_WAIT);
+    mainLayout->addWidget(m_authStatusLabel, 0, Qt::AlignRight | Qt::AlignVCenter);
 }
 
 /**
@@ -75,6 +76,10 @@ void AuthFace::initConnections()
 void AuthFace::reset()
 {
     m_textLabel->setText(tr("Face ID"));
+    if (m_authStatusLabel) {
+        setAuthStatusStyle(isMFA() ? LOGIN_WAIT : AUTH_LOCK);
+        m_authStatusLabel->show();
+    }
 }
 
 /**
@@ -86,23 +91,28 @@ void AuthFace::reset()
 void AuthFace::setAuthStatus(const int state, const QString &result)
 {
     m_status = state;
-
     switch (state) {
     case StatusCodeSuccess:
-        setAnimationStatus(true);
+        if (isMFA())
+            setAuthStatusStyle(LOGIN_CHECK);
+        else
+            setAnimationStatus(true);
         m_textLabel->setText(tr("Verification successful"));
         m_showPrompt = true;
         emit authFinished(state);
+        emit retryButtonVisibleChanged(false);
         break;
     case StatusCodeFailure: {
-        setAnimationStatus(true);
+        setAnimationStatus(false);
+        setAuthStatusStyle(isMFA() ? LOGIN_RETRY : AUTH_LOCK);
+        m_showPrompt = false;
         const int leftTimes = static_cast<int>(m_limitsInfo->maxTries - m_limitsInfo->numFailures);
         if (leftTimes > 1) {
             m_textLabel->setText(tr("Verification failed, %n chances left", "", leftTimes));
         } else if (leftTimes == 1) {
             m_textLabel->setText(tr("Verification failed, only one chance left"));
         }
-        m_showPrompt = false;
+        emit retryButtonVisibleChanged(true);
         emit authFinished(state);
         break;
     }
@@ -111,58 +121,53 @@ void AuthFace::setAuthStatus(const int state, const QString &result)
         m_showPrompt = true;
         break;
     case StatusCodeTimeout:
-        setAnimationStatus(false);
-        setAuthStatusStyle(AUTH_LOCK);
-        m_textLabel->setText(result);
-        m_showPrompt = true;
-        break;
     case StatusCodeError:
         setAnimationStatus(false);
-        setAuthStatusStyle(AUTH_LOCK);
+        setAuthStatusStyle(isMFA() ? LOGIN_WAIT : AUTH_LOCK);
         m_textLabel->setText(result);
         m_showPrompt = true;
         break;
     case StatusCodeVerify:
-        setAnimationStatus(true);
-        setAuthStatusStyle(AUTH_LOCK);
+        setAnimationStatus(false);
+        setAuthStatusStyle(isMFA() ? LOGIN_SPINNER : AUTH_LOCK);
         m_textLabel->setText(result);
         break;
     case StatusCodeException:
         setAnimationStatus(false);
-        setAuthStatusStyle(AUTH_LOCK);
+        setAuthStatusStyle(isMFA() ? LOGIN_WAIT : AUTH_LOCK);
         m_textLabel->setText(result);
         m_showPrompt = true;
         break;
     case StatusCodePrompt:
-        if (m_showPrompt) {
-            setAnimationStatus(false);
-            setAuthStatusStyle(AUTH_LOCK);
-            m_textLabel->setText(tr("Verify your FaceID"));
-        }
+        setAnimationStatus(false);
+        setAuthStatusStyle(isMFA() ? LOGIN_WAIT : AUTH_LOCK);
         break;
     case StatusCodeStarted:
+        m_textLabel->setText(tr("Verify your FaceID"));
         break;
     case StatusCodeEnded:
         break;
     case StatusCodeLocked:
         setAnimationStatus(false);
-        setAuthStatusStyle(AUTH_LOCK);
+        setAuthStatusStyle(isMFA() ? LOGIN_LOCK : AUTH_LOCK);
         m_textLabel->setText(tr("FaceID locked, use password please"));
         m_showPrompt = true;
+        if (DDESESSIONCC::SingleAuthFactor == m_authFactorType)
+            emit retryButtonVisibleChanged(false);
         break;
     case StatusCodeRecover:
         setAnimationStatus(false);
-        setAuthStatusStyle(AUTH_LOCK);
+        setAuthStatusStyle(isMFA() ? LOGIN_WAIT : AUTH_LOCK);
         m_showPrompt = true;
         break;
     case StatusCodeUnlocked:
         setAnimationStatus(false);
-        setAuthStatusStyle(AUTH_LOCK);
+        setAuthStatusStyle(isMFA() ? LOGIN_WAIT : AUTH_LOCK);
         m_showPrompt = true;
         break;
     default:
         setAnimationStatus(false);
-        setAuthStatusStyle(AUTH_LOCK);
+        setAuthStatusStyle(isMFA() ? LOGIN_WAIT : AUTH_LOCK);
         m_textLabel->setText(result);
         qWarning() << "Error! The status of Face Auth is wrong!" << state << result;
         break;
@@ -193,7 +198,6 @@ void AuthFace::setAnimationStatus(const bool start)
  */
 void AuthFace::setLimitsInfo(const LimitsInfo &info)
 {
-    qDebug() << "AuthFace::setLimitsInfo" << info.unlockTime;
     AuthModule::setLimitsInfo(info);
 }
 
@@ -229,10 +233,23 @@ void AuthFace::doAnimation()
     }
 }
 
-void AuthFace::mouseReleaseEvent(QMouseEvent *event)
+bool AuthFace::eventFilter(QObject *watched, QEvent *event)
 {
-    if (event->button() == Qt::LeftButton) {
+    if (watched == m_authStatusLabel
+            && QEvent::MouseButtonRelease == event->type()
+            && !m_isAuthing
+            && StatusCodeLocked != m_status
+            && DDESESSIONCC::MultiAuthFactor == m_authFactorType) {
         emit activeAuth(AuthTypeFace);
     }
-    QWidget::mouseReleaseEvent(event);
+
+    return false;
+}
+
+void AuthFace::setAuthFactorType(AuthFactorType authFactorType)
+{
+    if (DDESESSIONCC::SingleAuthFactor == authFactorType)
+        layout()->setContentsMargins(10, 0, 10, 0);
+
+    AuthModule::setAuthFactorType(authFactorType);
 }

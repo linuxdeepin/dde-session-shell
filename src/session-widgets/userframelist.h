@@ -25,6 +25,7 @@
 #include <dflowlayout.h>
 
 #include <QMap>
+#include <QPointer>
 
 #include <memory>
 
@@ -74,7 +75,7 @@ private:
     DFlowLayout *m_flowLayout;
     QList<UserWidget *> m_loginWidgets;
     QMap<uid_t, UserWidget *> m_userWidgets;
-    UserWidget *currentSelectedUser;
+    QPointer<UserWidget> currentSelectedUser;
     SessionBaseModel *m_model;
     FrameDataBind *m_frameDataBind;
     QWidget *m_centerWidget;

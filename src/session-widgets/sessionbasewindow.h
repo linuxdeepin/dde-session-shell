@@ -3,6 +3,7 @@
 
 #include <QFrame>
 #include <QVBoxLayout>
+#include <QPointer>
 
 class SessionBaseWindow : public QFrame
 {
@@ -28,18 +29,17 @@ protected:
     QFrame *m_centerTopFrame;
     QFrame *m_centerFrame;
     QFrame *m_bottomFrame;
-    QVBoxLayout *m_mainLayou;
+    QVBoxLayout *m_mainLayout;
     QHBoxLayout *m_centerTopLayout;
     QHBoxLayout *m_centerLayout;
     QHBoxLayout *m_leftBottomLayout;
     QHBoxLayout *m_centerBottomLayout;
     QHBoxLayout *m_rightBottomLayout;
     QWidget *m_centerTopWidget;
-    QWidget *m_centerWidget;
+    QPointer<QWidget> m_centerWidget;
     QWidget *m_leftBottomWidget;
     QWidget *m_centerBottomWidget;
     QWidget *m_rightBottomWidget;
-    bool m_responseResizeEvent;
 };
 
 #endif // SESSIONBASEWINDOW_H

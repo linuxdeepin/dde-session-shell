@@ -37,6 +37,8 @@ public:
     void setAnimationStatus(const bool start) override;
     void setAuthStatus(const int state, const QString &result) override;
     void setLimitsInfo(const LimitsInfo &info) override;
+    void setAuthFactorType(AuthFactorType authFactorType);
+    void doAnimation() override;
 
 protected:
     void mouseReleaseEvent(QMouseEvent *event) override;
@@ -47,6 +49,7 @@ private:
     void updateUnlockPrompt() override;
 
 private:
+    int m_aniIndex;
     DLabel *m_textLabel;
 };
 

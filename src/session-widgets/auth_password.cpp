@@ -100,9 +100,9 @@ void AuthPassword::initUI()
     m_capsLock->setPixmap(pixmap);
     passwordLayout->addWidget(m_capsLock, 0, Qt::AlignRight | Qt::AlignVCenter);
     /* 认证状态 */
-    m_authStatus = new DLabel(this);
+    m_authStatusLabel = new DLabel(this);
     setAuthStatusStyle(LOGIN_WAIT);
-    passwordLayout->addWidget(m_authStatus, 0, Qt::AlignRight | Qt::AlignVCenter);
+    passwordLayout->addWidget(m_authStatusLabel, 0, Qt::AlignRight | Qt::AlignVCenter);
     /* 密码提示 */
     m_passwordHintBtn->setAccessibleName(QStringLiteral("PasswordHint"));
     m_passwordHintBtn->setContentsMargins(0, 0, 0, 0);
@@ -129,7 +129,7 @@ void AuthPassword::initConnections()
     /* 密码输入框 */
     connect(m_lineEdit, &DLineEditEx::focusChanged, this, [this](const bool focus) {
         if (!focus) m_lineEdit->setAlert(false);
-        m_authStatus->setVisible(!focus);
+        m_authStatusLabel->setVisible(!focus & m_showAuthStatus);
         emit focusChanged(focus);
     });
     connect(m_lineEdit, &DLineEditEx::textChanged, this, [this](const QString &text) {
@@ -292,10 +292,9 @@ void AuthPassword::setCapsLockVisible(const bool on)
  */
 void AuthPassword::setLimitsInfo(const LimitsInfo &info)
 {
-    qDebug() << "AuthPassword::setLimitsInfo" << info.unlockTime;
+    qDebug() << "AuthPassword::setLimitsInfo" << info.numFailures;
     AuthModule::setLimitsInfo(info);
     m_passwordHintBtn->setVisible(info.numFailures > 0 && !m_passwordHint.isEmpty());
-    setLineEditEnabled(!info.locked);
 }
 
 /**
@@ -574,4 +573,10 @@ void AuthPassword::updateResetPasswordUI()
     } else {
         closeResetPasswordMessage();
     }
+}
+
+void AuthPassword::hide()
+{
+    m_lineEdit->hideAlertMessage();
+    AuthModule::hide();
 }

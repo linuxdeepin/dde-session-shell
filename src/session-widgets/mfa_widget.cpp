@@ -143,7 +143,7 @@ void MFAWidget::setAuthType(const int type)
     }
 
     updateExpiredStatus();
-     updateGeometry();
+    updateGeometry();
 
     if (m_lockButton->isVisible() && m_lockButton->isEnabled()) {
         setFocusProxy(m_lockButton);
@@ -290,6 +290,7 @@ void MFAWidget::initFingerprintAuth()
         return;
     }
     m_fingerprintAuth = new AuthFingerprint(this);
+    m_fingerprintAuth->setAuthFactorType(DDESESSIONCC::MultiAuthFactor);
     m_mainLayout->insertWidget(m_index, m_fingerprintAuth);
 
     connect(m_fingerprintAuth, &AuthFingerprint::activeAuth, this, [this] {
@@ -356,6 +357,7 @@ void MFAWidget::initFaceAuth()
         return;
     }
     m_faceAuth = new AuthFace(this);
+    m_faceAuth->setAuthFactorType(DDESESSIONCC::MultiAuthFactor);
     m_mainLayout->insertWidget(m_index, m_faceAuth);
 
     connect(m_faceAuth, &AuthFace::activeAuth, this, [this] {
@@ -376,6 +378,7 @@ void MFAWidget::initIrisAuth()
         return;
     }
     m_irisAuth = new AuthIris(this);
+    m_irisAuth->setAuthFactorType(DDESESSIONCC::MultiAuthFactor);
     m_mainLayout->insertWidget(m_index, m_irisAuth);
 
     connect(m_irisAuth, &AuthIris::activeAuth, this, [this] {
@@ -394,11 +397,21 @@ void MFAWidget::initIrisAuth()
  */
 void MFAWidget::checkAuthResult(const int type, const int status)
 {
-    if (type == AuthTypePassword && status == StatusCodeSuccess) {
-        if (m_fingerprintAuth && m_fingerprintAuth->authStatus() == StatusCodeFailure) {
+        if (type == AuthTypePassword && status == StatusCodeSuccess) {
+        if (m_fingerprintAuth && m_fingerprintAuth->authStatus() == StatusCodeLocked) {
             m_fingerprintAuth->reset();
+            emit m_fingerprintAuth->activeAuth(AuthTypeFingerprint);
+        }
+        if (m_faceAuth && m_faceAuth->authStatus() == StatusCodeLocked) {
+            m_faceAuth->reset();
+            emit m_faceAuth->activeAuth(AuthTypeFace);
+        }
+        if (m_irisAuth && m_irisAuth->authStatus() == StatusCodeLocked) {
+            m_irisAuth->reset();
+            emit m_irisAuth->activeAuth(AuthTypeIris);
         }
     }
+
     if (status == StatusCodeCancel) {
         if (m_ukeyAuth) {
             m_ukeyAuth->setAuthStatus(StatusCodeCancel, "Cancel");

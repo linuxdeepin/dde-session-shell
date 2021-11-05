@@ -33,20 +33,23 @@ public:
     explicit AuthFace(QWidget *parent = nullptr);
 
     void reset();
-
 public slots:
     void setAuthStatus(const int state, const QString &result) override;
     void setAnimationStatus(const bool start) override;
     void setLimitsInfo(const LimitsInfo &info) override;
+    void setAuthFactorType(AuthFactorType authFactorType) override;
 
 protected:
-    void mouseReleaseEvent(QMouseEvent *event) override;
+    virtual bool eventFilter(QObject *watched, QEvent *event);
 
 private:
     void initUI();
     void initConnections();
     void updateUnlockPrompt() override;
     void doAnimation() override;
+
+signals:
+    void retryButtonVisibleChanged(bool visible);
 
 private:
     int m_aniIndex;

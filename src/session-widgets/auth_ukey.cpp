@@ -75,9 +75,9 @@ void AuthUKey::initUI()
     m_capsLock->setPixmap(pixmap);
     UKeyLayout->addWidget(m_capsLock, 0, Qt::AlignRight | Qt::AlignVCenter);
     /* 认证状态 */
-    m_authStatus = new DLabel(m_lineEdit);
+    m_authStatusLabel = new DLabel(m_lineEdit);
     setAuthStatusStyle(LOGIN_WAIT);
-    UKeyLayout->addWidget(m_authStatus, 0, Qt::AlignRight | Qt::AlignVCenter);
+    UKeyLayout->addWidget(m_authStatusLabel, 0, Qt::AlignRight | Qt::AlignVCenter);
 
     mainLayout->addWidget(m_lineEdit);
 }
@@ -91,7 +91,7 @@ void AuthUKey::initConnections()
     /* PIN 码输入框 */
     connect(m_lineEdit, &DLineEditEx::focusChanged, this, [this](const bool focus) {
         if (!focus) m_lineEdit->setAlert(false);
-        m_authStatus->setVisible(!focus);
+        m_authStatusLabel->setVisible(!focus);
         emit focusChanged(focus);
     });
     connect(m_lineEdit, &DLineEditEx::textChanged, this, [this](const QString &text) {
@@ -260,7 +260,6 @@ void AuthUKey::setLimitsInfo(const LimitsInfo &info)
  */
 void AuthUKey::setLineEditEnabled(const bool enable)
 {
-    // m_lineEdit->setEnabled(enable);
     if (enable) {
         m_lineEdit->setFocusPolicy(Qt::StrongFocus);
         m_lineEdit->setFocus();
@@ -338,4 +337,11 @@ bool AuthUKey::eventFilter(QObject *watched, QEvent *event)
         }
     }
     return false;
+}
+
+
+void AuthUKey::hide()
+{
+    m_lineEdit->hideAlertMessage();
+    AuthModule::hide();
 }

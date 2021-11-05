@@ -414,7 +414,9 @@ void AuthWidget::setAccountErrorMsg(const QString &message)
  */
 void AuthWidget::updateBlurEffectGeometry()
 {
-    QRect rect = layout()->geometry();
+    QRect rect;
+    rect.setLeft(0);
+    rect.setRight(this->geometry().width());
     rect.setTop(m_userAvatar->geometry().top() + m_userAvatar->height() / 2);
     rect.setBottom(m_lockButton->geometry().top() - 10);
     m_blurEffectWidget->setGeometry(rect);

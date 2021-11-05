@@ -40,8 +40,9 @@
 SFAWidget::SFAWidget(QWidget *parent)
     : AuthWidget(parent)
     , m_mainLayout(new QVBoxLayout(this))
-    , m_currentAuth(new QWidget(this))
+    , m_currentAuth(new AuthModule(this))
     , m_lastAuth(nullptr)
+    , m_retryButton(new DFloatingButton(this))
 {
     setObjectName(QStringLiteral("SFAWidget"));
     setAccessibleName(QStringLiteral("SFAWidget"));
@@ -63,13 +64,15 @@ void SFAWidget::initUI()
     m_chooesAuthButtonBox->setFocusPolicy(Qt::NoFocus);
     /* 生物认证状态 */
     m_biometricAuthStatus = new DLabel(this);
-    QPixmap pixmap = DHiDPIHelper::loadNxPixmap(":/misc/images/select.svg");
-    pixmap.setDevicePixelRatio(devicePixelRatioF());
-    m_biometricAuthStatus->setPixmap(pixmap);
+    m_biometricAuthStatus->hide();
+    /* 重试按钮 */
+    m_retryButton->setIcon(QIcon(":/img/bottom_actions/reboot.svg"));
+    m_retryButton->hide();
 
     m_mainLayout->setContentsMargins(10, 0, 10, 0);
     m_mainLayout->setSpacing(10);
     m_mainLayout->addWidget(m_biometricAuthStatus, 0, Qt::AlignCenter);
+    m_mainLayout->addSpacing(50);
     m_mainLayout->addWidget(m_chooesAuthButtonBox, 0, Qt::AlignCenter);
     m_mainLayout->addSpacing(50);
     m_mainLayout->addWidget(m_userAvatar);
@@ -78,6 +81,7 @@ void SFAWidget::initUI()
     m_mainLayout->addWidget(m_currentAuth);
     m_mainLayout->addSpacing(10);
     m_mainLayout->addWidget(m_lockButton, 0, Qt::AlignCenter);
+    m_mainLayout->addWidget(m_retryButton, 0, Qt::AlignCenter);
 }
 
 void SFAWidget::initConnections()
@@ -165,7 +169,7 @@ void SFAWidget::setAuthType(const int type)
         typeTmp &= typeTmp - 1;
         count++;
     }
-    m_biometricAuthStatus->setVisible(false);
+
     if (count > 1) {
         m_chooesAuthButtonBox->show();
         m_chooesAuthButtonBox->setButtonList(m_authButtons.values(), true);
@@ -185,6 +189,10 @@ void SFAWidget::setAuthType(const int type)
         m_registerFunctions["SFAType"] = m_frameDataBind->registerFunction("SFAType", authTypeChanged);
         m_frameDataBind->refreshData("SFAType");
     } else {
+        if (!m_authButtons.isEmpty() && m_authButtons.first()) {
+            m_authButtons.first()->setVisible(false);
+            m_authButtons.first()->toggled(true);
+        }
         m_chooesAuthButtonBox->hide();
     }
     m_lockButton->setEnabled(false);
@@ -320,6 +328,7 @@ void SFAWidget::initPasswdAuth()
     m_passwordAuth = new AuthPassword(this);
     m_passwordAuth->setCurrentUid(m_model->currentUser()->uid());
     m_passwordAuth->hide();
+    m_passwordAuth->setShowAuthStatus(false);
 
     connect(m_passwordAuth, &AuthPassword::activeAuth, this, [this] {
         emit requestStartAuthentication(m_user->name(), AuthTypePassword);
@@ -379,12 +388,7 @@ void SFAWidget::initPasswdAuth()
     m_authButtons.insert(AuthTypePassword, btn);
     connect(btn, &DButtonBoxButton::toggled, this, [this](const bool checked) {
         if (checked) {
-            m_mainLayout->replaceWidget(m_currentAuth, m_passwordAuth);
-            m_currentAuth->hide();
-            m_currentAuth = m_passwordAuth;
-            m_passwordAuth->show();
-            setFocusProxy(m_passwordAuth);
-            setFocus();
+            replaceWidget(m_passwordAuth);
             m_frameDataBind->updateValue("SFAType", AuthTypePassword);
             emit requestStartAuthentication(m_user->name(), AuthTypePassword);
         } else {
@@ -406,6 +410,8 @@ void SFAWidget::initFingerprintAuth()
     }
     m_fingerprintAuth = new AuthFingerprint(this);
     m_fingerprintAuth->hide();
+    m_fingerprintAuth->setAuthFactorType(DDESESSIONCC::SingleAuthFactor);
+    m_fingerprintAuth->setAuthStatusLabel(m_biometricAuthStatus);
 
     connect(m_fingerprintAuth, &AuthFingerprint::activeAuth, this, [this] {
         emit requestStartAuthentication(m_model->currentUser()->name(), AuthTypeFingerprint);
@@ -431,12 +437,8 @@ void SFAWidget::initFingerprintAuth()
     m_authButtons.insert(AuthTypeFingerprint, btn);
     connect(btn, &DButtonBoxButton::toggled, this, [this](const bool checked) {
         if (checked) {
-            m_mainLayout->replaceWidget(m_currentAuth, m_fingerprintAuth);
-            m_currentAuth->hide();
-            m_currentAuth = m_fingerprintAuth;
-            m_fingerprintAuth->show();
-            setFocusProxy(m_fingerprintAuth);
-            setFocus();
+            replaceWidget(m_fingerprintAuth);
+            m_fingerprintAuth->setAuthStatueVisible(true);
             m_frameDataBind->updateValue("SFAType", AuthTypeFingerprint);
             emit requestStartAuthentication(m_user->name(), AuthTypeFingerprint);
         } else {
@@ -505,12 +507,7 @@ void SFAWidget::initUKeyAuth()
     m_authButtons.insert(AuthTypeUkey, btn);
     connect(btn, &DButtonBoxButton::toggled, this, [this](const bool checked) {
         if (checked) {
-            m_mainLayout->replaceWidget(m_currentAuth, m_ukeyAuth);
-            m_currentAuth->hide();
-            m_currentAuth = m_ukeyAuth;
-            m_ukeyAuth->show();
-            setFocusProxy(m_ukeyAuth);
-            setFocus();
+            replaceWidget(m_ukeyAuth);
             m_frameDataBind->updateValue("SFAType", AuthTypeUkey);
             emit requestStartAuthentication(m_user->name(), AuthTypeUkey);
         } else {
@@ -531,8 +528,15 @@ void SFAWidget::initFaceAuth()
         return;
     }
     m_faceAuth = new AuthFace(this);
+    m_faceAuth->setAuthStatusLabel(m_biometricAuthStatus);
+    m_faceAuth->setAuthFactorType(DDESESSIONCC::SingleAuthFactor);
     m_faceAuth->hide();
 
+    connect(m_faceAuth, &AuthFace::retryButtonVisibleChanged, this, &SFAWidget::onRetryButtonVisibleChanged);
+    connect(m_retryButton, &DFloatingButton::clicked, this, [this] {
+        onRetryButtonVisibleChanged(false);
+        emit requestStartAuthentication(m_model->currentUser()->name(), AuthTypeFace);
+    });
     connect(m_faceAuth, &AuthFace::activeAuth, this, [this] {
         emit requestStartAuthentication(m_model->currentUser()->name(), AuthTypeFace);
     });
@@ -561,12 +565,8 @@ void SFAWidget::initFaceAuth()
     m_authButtons.insert(AuthTypeFace, btn);
     connect(btn, &DButtonBoxButton::toggled, this, [this](const bool checked) {
         if (checked) {
-            m_mainLayout->replaceWidget(m_currentAuth, m_faceAuth);
-            m_currentAuth->hide();
-            m_currentAuth = m_faceAuth;
-            m_faceAuth->show();
-            setFocusProxy(m_faceAuth);
-            setFocus();
+            replaceWidget(m_faceAuth);
+            m_faceAuth->setAuthStatueVisible(true);
             m_frameDataBind->updateValue("SFAType", AuthTypeFace);
             emit requestStartAuthentication(m_user->name(), AuthTypeFace);
         } else {
@@ -588,11 +588,18 @@ void SFAWidget::initIrisAuth()
     }
     m_irisAuth = new AuthIris(this);
     m_irisAuth->hide();
+    m_irisAuth->setAuthStatusLabel(m_biometricAuthStatus);
+    m_irisAuth->setAuthFactorType(DDESESSIONCC::SingleAuthFactor);
 
-    connect(m_irisAuth, &AuthIris::activeAuth, this, [this] {
+    connect(m_irisAuth, &AuthIris::retryButtonVisibleChanged, this, &SFAWidget::onRetryButtonVisibleChanged);
+    connect(m_retryButton, &DFloatingButton::clicked, this, [ this ] {
+        onRetryButtonVisibleChanged(false);
         emit requestStartAuthentication(m_model->currentUser()->name(), AuthTypeIris);
     });
-    connect(m_irisAuth, &AuthIris::authFinished, this, [this](const int authStatus) {
+    connect(m_irisAuth, &AuthIris::activeAuth, this, [ this ] {
+        emit requestStartAuthentication(m_model->currentUser()->name(), AuthTypeIris);
+    });
+    connect(m_irisAuth, &AuthIris::authFinished, this, [ this ] (const int authStatus) {
         if (authStatus == StatusCodeSuccess) {
             m_lastAuth = m_irisAuth;
             m_lockButton->setEnabled(true);
@@ -601,14 +608,11 @@ void SFAWidget::initIrisAuth()
             m_lockButton->setEnabled(false);
         }
     });
-    connect(m_lockButton, &QPushButton::clicked, this, [this] {
+    connect(m_lockButton, &QPushButton::clicked, this, [ this ] {
         if (m_irisAuth->authStatus() == StatusCodeSuccess) {
             emit authFinished();
         }
     });
-
-    // m_irisAuth->setAuthStatus(m_frameDataBind->getValue("SFIrisAuthStatus").toInt(),
-    //                           m_frameDataBind->getValue("SFIrisAuthMsg").toString());
 
     /* 认证选择按钮 */
     DButtonBoxButton *btn = new DButtonBoxButton(QIcon(Iris_Auth), QString(), this);
@@ -617,12 +621,8 @@ void SFAWidget::initIrisAuth()
     m_authButtons.insert(AuthTypeIris, btn);
     connect(btn, &DButtonBoxButton::toggled, this, [this](const bool checked) {
         if (checked) {
-            m_mainLayout->replaceWidget(m_currentAuth, m_irisAuth);
-            m_currentAuth->hide();
-            m_currentAuth = m_irisAuth;
-            m_irisAuth->show();
-            setFocusProxy(m_irisAuth);
-            setFocus();
+            replaceWidget(m_irisAuth);
+            m_irisAuth->setAuthStatueVisible(true);
             m_frameDataBind->updateValue("SFAType", AuthTypeIris);
             emit requestStartAuthentication(m_user->name(), AuthTypeIris);
         } else {
@@ -651,4 +651,31 @@ void SFAWidget::checkAuthResult(const int type, const int status)
 void SFAWidget::syncAuthType(const QVariant &value)
 {
     m_chooesAuthButtonBox->button(value.toInt())->setChecked(true);
+}
+
+void SFAWidget::resizeEvent(QResizeEvent *event)
+{
+    return AuthWidget::resizeEvent(event);
+}
+
+
+void SFAWidget::replaceWidget(AuthModule *authModule)
+{
+    if (authModule == m_currentAuth)
+        return;
+
+    m_mainLayout->replaceWidget(m_currentAuth, authModule);
+    m_currentAuth->hide();
+    m_currentAuth->setAuthStatueVisible(false);
+    m_currentAuth = authModule;
+    authModule->show();
+    setFocusProxy(authModule);
+    setFocus();
+    onRetryButtonVisibleChanged(false);
+}
+
+void SFAWidget::onRetryButtonVisibleChanged(bool visible)
+{
+    m_retryButton->setVisible(visible);
+    m_lockButton->setVisible(!visible);
 }

@@ -56,6 +56,7 @@ public:
     void setLineEditInfo(const QString &text, const TextType type);
     void setPasswordHint(const QString &hint);
     void setCurrentUid(uid_t uid);
+    void hide();
 
 signals:
     void focusChanged(const bool);

@@ -48,6 +48,9 @@ AuthModule::AuthModule(QWidget *parent)
     , m_aniTimer(new QTimer(this))
     , m_unlockTimer(new QTimer(this))
     , m_unlockTimerTmp(new QTimer(this))
+    , m_showAuthStatus(true)
+    , m_isAuthing(false)
+    , m_authFactorType(DDESESSIONCC::SingleAuthFactor)
 {
     m_limitsInfo->locked = false;
     m_limitsInfo->maxTries = 0;
@@ -110,8 +113,12 @@ void AuthModule::setAnimationStatus(const bool start)
  */
 void AuthModule::setAuthStatus(const int status, const QString &result)
 {
-    Q_UNUSED(status)
     Q_UNUSED(result)
+
+    if (StatusCodeStarted == status)
+        m_isAuthing = true;
+    else if (StatusCodeEnded == status)
+        m_isAuthing = false;
 }
 
 /**
@@ -121,9 +128,12 @@ void AuthModule::setAuthStatus(const int status, const QString &result)
  */
 void AuthModule::setAuthStatusStyle(const QString &path)
 {
+    if (!m_authStatusLabel)
+        return;
+
     QPixmap pixmap = DHiDPIHelper::loadNxPixmap(path);
     pixmap.setDevicePixelRatio(devicePixelRatioF());
-    m_authStatus->setPixmap(pixmap);
+    m_authStatusLabel->setPixmap(pixmap);
 }
 
 /**
@@ -135,6 +145,17 @@ void AuthModule::setLimitsInfo(const LimitsInfo &info)
 {
     *m_limitsInfo = info;
     updateUnlockTime();
+}
+
+void AuthModule::setShowAuthStatus(bool showAuthStatus)
+{
+    m_showAuthStatus = showAuthStatus;
+}
+
+void AuthModule::setAuthStatueVisible(bool visible)
+{
+    if (m_authStatusLabel)
+        m_authStatusLabel->setVisible(visible);
 }
 
 /**
@@ -162,4 +183,25 @@ void AuthModule::updateUnlockTime()
     m_integerMinutes = (intervalSeconds - remainderSeconds) / 60 + 1;
     updateUnlockPrompt();
     m_unlockTimerTmp->start(static_cast<int>(remainderSeconds * 1000));
+}
+
+
+void AuthModule::setAuthStatusLabel(DLabel *label)
+{
+    if (!label)
+        return;
+        
+    if (m_authStatusLabel) {
+        delete m_authStatusLabel;
+        m_authStatusLabel = nullptr;
+    }
+
+    /* 认证状态 */
+    m_authStatusLabel = label;
+    setAuthStatusStyle(AUTH_LOCK);
+}
+
+void AuthModule::setAuthFactorType(AuthFactorType authFactorType)
+{
+    m_authFactorType = authFactorType;
 }

@@ -125,7 +125,8 @@ void LockWorker::initConnections()
                         m_model->setCurrentModeState(SessionBaseModel::ModeStatus::PasswordMode);
                     }
                     endAuthentication(m_account, type);
-                    if (!m_model->currentUser()->limitsInfo(type).locked) {
+                    if (!m_model->currentUser()->limitsInfo(type).locked
+                            && type != AuthTypeFace && type != AuthTypeIris) {
                         QTimer::singleShot(50, this, [this, type] {
                             startAuthentication(m_account, type);
                         });
@@ -156,34 +157,29 @@ void LockWorker::initConnections()
                 }
             }
         } else {
-            switch (status) {
-            case StatusCodeSuccess:
-                m_model->updateAuthStatus(type, status, message);
+            // 单因失败会返回明确的失败类型，不关注type为-1的情况
+            if (AuthTypeAll != type) {
                 if (m_model->currentModeState() != SessionBaseModel::ModeStatus::PasswordMode
                     && m_model->currentModeState() != SessionBaseModel::ModeStatus::ConfirmPasswordMode) {
                     m_model->setCurrentModeState(SessionBaseModel::ModeStatus::PasswordMode);
                 }
-                break;
-            case StatusCodeFailure:
                 m_model->updateAuthStatus(type, status, message);
-                if (m_model->currentModeState() != SessionBaseModel::ModeStatus::PasswordMode
-                    && m_model->currentModeState() != SessionBaseModel::ModeStatus::ConfirmPasswordMode) {
-                    m_model->setCurrentModeState(SessionBaseModel::ModeStatus::PasswordMode);
+                switch (status) {
+                case StatusCodeFailure:
+                    endAuthentication(m_account, type);
+                    // 人脸和虹膜需要手动重新开启验证
+                    if (!m_model->currentUser()->limitsInfo(type).locked && type != AuthTypeFace && type != AuthTypeIris) {
+                        QTimer::singleShot(50, this, [this, type] {
+                            startAuthentication(m_account, type);
+                        });
+                    }
+                    break;
+                case StatusCodeCancel:
+                    destoryAuthentication(m_account);
+                    break;
+                default:
+                    break;
                 }
-                endAuthentication(m_account, type);
-                if (!m_model->currentUser()->limitsInfo(type).locked) {
-                    QTimer::singleShot(50, this, [this, type] {
-                        startAuthentication(m_account, type);
-                    });
-                }
-                break;
-            case StatusCodeCancel:
-                m_model->updateAuthStatus(type, status, message);
-                destoryAuthentication(m_account);
-                break;
-            default:
-                m_model->updateAuthStatus(type, status, message);
-                break;
             }
         }
     });
