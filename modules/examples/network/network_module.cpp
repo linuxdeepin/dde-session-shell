@@ -58,9 +58,7 @@ QWidget *NetworkModule::itemWidget() const
 
 QWidget *NetworkModule::itemTipsWidget() const
 {
-    QLabel *label = new QLabel;
-    label->setText("network info");
-    return label;
+    return m_tipLabel;
 }
 
 const QString NetworkModule::itemContextMenu() const
@@ -107,6 +105,8 @@ void NetworkModule::initUI()
     m_networkWidget->setAccessibleName(QStringLiteral("NetworkWidget"));
     m_networkWidget->setStyleSheet("background-color: red");
     m_networkWidget->setFixedSize(200, 100);
+
+    m_tipLabel = new QLabel("network info");
 }
 
 } // namespace module

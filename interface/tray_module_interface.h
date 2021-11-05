@@ -48,7 +48,7 @@ public:
     virtual QWidget *itemWidget() const = 0;
 
     /**
-     * @brief itemTipsWidget 插件的tip界面，返回的指针由锁屏进行管理
+     * @brief itemTipsWidget 插件的tip界面
      * @param itemKey
      * @return
      */

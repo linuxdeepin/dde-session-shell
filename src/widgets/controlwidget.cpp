@@ -182,16 +182,12 @@ void ControlWidget::addModule(module::BaseModuleInterface *module)
 
     connect(button, &FlotingButton::requestShowTips, this, [ = ] {
         if (QWidget *tipWidget = trayModule->itemTipsWidget()) {
-            tipWidget->setParent(this);
             m_tipsWidget->setContent(trayModule->itemTipsWidget());
             m_tipsWidget->show(mapToGlobal(button->pos()).x() + button->width() / 2,mapToGlobal(button->pos()).y());
         }
     });
 
     connect(button, &FlotingButton::requestHideTips, this, [ = ] {
-        if (m_tipsWidget->getContent()) {
-            delete m_tipsWidget->getContent();
-        }
         m_tipsWidget->hide();
     });
 
