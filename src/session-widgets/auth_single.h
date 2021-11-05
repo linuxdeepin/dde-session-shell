@@ -49,6 +49,7 @@ public:
     void setLineEditEnabled(const bool enable);
     void setLineEditInfo(const QString &text, const TextType type);
     void setPasswordHint(const QString &hint);
+    void setCurrentUid(uid_t uid);
 
 signals:
     void focusChanged(const bool);
@@ -79,6 +80,7 @@ private:
     QString m_passwordHint;         // 密码提示
     bool m_resetPasswordMessageVisible;
     DFloatingMessage *m_resetPasswordFloatingMessage;
+    uid_t m_currentUid; // 当前用户uid
 };
 
 #endif // AUTHSINGLE_H

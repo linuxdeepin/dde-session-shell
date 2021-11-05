@@ -270,6 +270,7 @@ void SFAWidget::initSingleAuth()
         return;
     }
     m_singleAuth = new AuthSingle(this);
+    m_singleAuth->setCurrentUid(m_model->currentUser()->uid());
     m_singleAuth->hide();
 
     connect(m_singleAuth, &AuthSingle::activeAuth, this, [this] {
@@ -317,6 +318,7 @@ void SFAWidget::initPasswdAuth()
         return;
     }
     m_passwordAuth = new AuthPassword(this);
+    m_passwordAuth->setCurrentUid(m_model->currentUser()->uid());
     m_passwordAuth->hide();
 
     connect(m_passwordAuth, &AuthPassword::activeAuth, this, [this] {

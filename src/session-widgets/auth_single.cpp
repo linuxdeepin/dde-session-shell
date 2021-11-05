@@ -182,7 +182,7 @@ void AuthSingle::setAuthStatus(const int state, const QString &result)
             } else {
                 setLineEditInfo(tr("Please try again %n minutes later", "", static_cast<int>(m_integerMinutes)), PlaceHolderText);
             }
-            if (getuid() <= 9999 && isUserAccountBinded()) {
+            if (m_currentUid <= 9999 && isUserAccountBinded()) {
                 setResetPasswordMessageVisible(true);
                 updateResetPasswordUI();
             }
@@ -327,6 +327,11 @@ void AuthSingle::setPasswordHint(const QString &hint)
     m_passwordHint = hint;
 }
 
+void AuthSingle::setCurrentUid(uid_t uid)
+{
+    m_currentUid = uid;
+}
+
 /**
  * @brief 设置键盘布局按钮显示的文案
  *
@@ -435,9 +440,9 @@ void AuthSingle::showResetPasswordMessage()
     DSuggestButton *suggestButton = new DSuggestButton(tr("Reset Password!"));
     m_resetPasswordFloatingMessage->setWidget(suggestButton);
     m_resetPasswordFloatingMessage->setMessage(tr("Forget pasword? Click here to Reset!"));
-    connect(suggestButton, &QPushButton::clicked, this, []{
+    connect(suggestButton, &QPushButton::clicked, this, [ this ]{
         const QString AccountsService("com.deepin.daemon.Accounts");
-        const QString path = QString("/com/deepin/daemon/Accounts/User%1").arg(getuid());
+        const QString path = QString("/com/deepin/daemon/Accounts/User%1").arg(m_currentUid);
         com::deepin::daemon::accounts::User user(AccountsService, path, QDBusConnection::systemBus());
         auto reply = user.SetPassword("");
         reply.waitForFinished();
@@ -489,7 +494,7 @@ bool AuthSingle::isUserAccountBinded()
     }
 
     QDBusInterface accountsInter("com.deepin.daemon.Accounts",
-                                 QString("/com/deepin/daemon/Accounts/User%1").arg(getuid()),
+                                 QString("/com/deepin/daemon/Accounts/User%1").arg(m_currentUid),
                                  "com.deepin.daemon.Accounts.User",
                                  QDBusConnection::systemBus());
     QVariant retUUID = accountsInter.property("UUID");
@@ -522,7 +527,7 @@ bool AuthSingle::isUserAccountBinded()
  */
 void AuthSingle::updateResetPasswordUI()
 {
-    if (getuid() > 9999) {
+    if (m_currentUid > 9999) {
         return;
     }
     if (m_resetPasswordMessageVisible) {
