@@ -1,5 +1,36 @@
 <?xml version="1.0" ?><!DOCTYPE TS><TS language="az" version="2.1">
 <context>
+    <name>AuthFace</name>
+    <message>
+        <source>Face ID</source>
+        <translation>Face ID</translation>
+    </message>
+    <message>
+        <source>Verification successful</source>
+        <translation>Doğrulama uğurlu oldu</translation>
+    </message>
+    <message numerus="yes">
+        <source>Verification failed, %n chances left</source>
+        <translation><numerusform>Doğrulama alınmadı, %n cəhdiniz qaldı</numerusform><numerusform>Doğrulama alınmadı, %n cəhdiniz qaldı</numerusform></translation>
+    </message>
+    <message>
+        <source>Verification failed, only one chance left</source>
+        <translation>Doğrulama alınmadı, yalnız bir cəhd qaldı</translation>
+    </message>
+    <message>
+        <source>Verify your FaceID</source>
+        <translation>FaceİD ilə doğrulamaq</translation>
+    </message>
+    <message>
+        <source>FaceID locked, use password please</source>
+        <translation>FaceİD kilidləndi, şifrəni istifadə edin</translation>
+    </message>
+    <message numerus="yes">
+        <source>Please try again %n minute(s) later</source>
+        <translation><numerusform>Lütfən %n dəqiqə(lər) sonra cəhd edin</numerusform><numerusform>Lütfən %n dəqiqə(lər) sonra cəhd edin</numerusform></translation>
+    </message>
+</context>
+<context>
     <name>AuthFingerprint</name>
     <message>
         <source>Verify your fingerprint</source>
@@ -11,7 +42,7 @@
     </message>
     <message numerus="yes">
         <source>Verification failed, %n chances left</source>
-        <translation><numerusform>Doğrulama alınmadı %n cəhdiniz qaldı</numerusform><numerusform>Doğrulama alınmadı, %n cəhdiniz qaldı</numerusform></translation>
+        <translation><numerusform>Doğrulama alınmadı, %n cəhdiniz qaldı</numerusform><numerusform>Doğrulama alınmadı, %n cəhdiniz qaldı</numerusform></translation>
     </message>
     <message>
         <source>Verification failed, only one chance left</source>
@@ -23,7 +54,42 @@
     </message>
     <message numerus="yes">
         <source>Please try again %n minute(s) later</source>
-        <translation><numerusform>Lütfən %n dəqiqə sonra cəhd edin</numerusform><numerusform>Lütfən %n dəqiqə sonra cəhd edin</numerusform></translation>
+        <translation><numerusform>Lütfən %n dəqiqə(lər) sonra cəhd edin</numerusform><numerusform>Lütfən %n dəqiqə(lər) sonra cəhd edin</numerusform></translation>
+    </message>
+    <message>
+        <source>Please try again 1 minute later</source>
+        <translation>Lütfən, 1 dəqiqə sonra cəhd edin</translation>
+    </message>
+</context>
+<context>
+    <name>AuthIris</name>
+    <message>
+        <source>Iris ID</source>
+        <translation>Iris ID</translation>
+    </message>
+    <message>
+        <source>Verification successful</source>
+        <translation>Doğrulama uğurlu oldu</translation>
+    </message>
+    <message numerus="yes">
+        <source>Verification failed, %n chances left</source>
+        <translation><numerusform>Doğrulama alınmadı, %n cəhdiniz qaldı</numerusform><numerusform>Doğrulama alınmadı, %n cəhdiniz qaldı</numerusform></translation>
+    </message>
+    <message>
+        <source>Verification failed, only one chance left</source>
+        <translation>Doğrulama alınmadı, yalnız bir cəhd qaldı</translation>
+    </message>
+    <message>
+        <source>Verify your IrisID</source>
+        <translation>IrisID-nizi doğrulayın</translation>
+    </message>
+    <message>
+        <source>IrisID locked, use password please</source>
+        <translation>İrisİD kilidləndi, şifrəni istifadə edin</translation>
+    </message>
+    <message numerus="yes">
+        <source>Please try again %n minute(s) later</source>
+        <translation><numerusform>Lütfən %n dəqiqə(lər) sonra cəhd edin</numerusform><numerusform>Lütfən %n dəqiqə(lər) sonra cəhd edin</numerusform></translation>
     </message>
 </context>
 <context>
@@ -50,7 +116,23 @@
     </message>
     <message numerus="yes">
         <source>Please try again %n minute(s) later</source>
-        <translation><numerusform>Lütfən %n dəiqə sonra cəhd edin</numerusform><numerusform>Lütfən %n dəqiqə sonra cəhd edin</numerusform></translation>
+        <translation><numerusform>Lütfən %n dəqiqə(lər) sonra cəhd edin</numerusform><numerusform>Lütfən %n dəqiqə(lər) sonra cəhd edin</numerusform></translation>
+    </message>
+    <message>
+        <source>Please try again 1 minute later</source>
+        <translation>Lütfən, 1 dəqiqə sonra cəhd edin</translation>
+    </message>
+    <message numerus="yes">
+        <source>Please try again %n minutes later</source>
+        <translation><numerusform>Lütfən %n dəqiqə sonra cəhd edin</numerusform><numerusform>Lütfən %n dəqiqə sonra cəhd edin</numerusform></translation>
+    </message>
+    <message>
+        <source>Reset Password</source>
+        <translation type="unfinished"/>
+    </message>
+    <message>
+        <source>Forgot password?</source>
+        <translation type="unfinished"/>
     </message>
 </context>
 <context>
@@ -62,6 +144,14 @@
     <message numerus="yes">
         <source>Please try again %n minutes later</source>
         <translation><numerusform>Lütfən %n dəqiqə sonra cəhd edin</numerusform><numerusform>Lütfən %n dəqiqə sonra cəhd edin</numerusform></translation>
+    </message>
+    <message>
+        <source>Reset Password</source>
+        <translation type="unfinished"/>
+    </message>
+    <message>
+        <source>Forgot password?</source>
+        <translation type="unfinished"/>
     </message>
 </context>
 <context>
@@ -92,7 +182,30 @@
     </message>
     <message numerus="yes">
         <source>Please try again %n minute(s) later</source>
+        <translation><numerusform>Lütfən %n dəqiqə(lər) sonra cəhd edin</numerusform><numerusform>Lütfən %n dəqiqə(lər) sonra cəhd edin</numerusform></translation>
+    </message>
+    <message>
+        <source>Please try again 1 minute later</source>
+        <translation>Lütfən, 1 dəqiqə sonra cəhd edin</translation>
+    </message>
+    <message numerus="yes">
+        <source>Please try again %n minutes later</source>
         <translation><numerusform>Lütfən %n dəqiqə sonra cəhd edin</numerusform><numerusform>Lütfən %n dəqiqə sonra cəhd edin</numerusform></translation>
+    </message>
+</context>
+<context>
+    <name>AuthWidget</name>
+    <message>
+        <source>Account</source>
+        <translation>İstifadəçi hesabı</translation>
+    </message>
+    <message numerus="yes">
+        <source>Your password will expire in %n days, please change it timely</source>
+        <translation><numerusform>Şifrənizin vaxtı %n gün sonra bitəcəkdir, lütfən onu vaxtında dəyişin</numerusform><numerusform>Şifrənizin vaxtı %n gün sonra bitəcəkdir, lütfən onu vaxtında dəyişin</numerusform></translation>
+    </message>
+    <message>
+        <source>Password expired, please change</source>
+        <translation>Şifrənin vaxtı bitib, lütfən onu dəyişin</translation>
     </message>
 </context>
 <context>
@@ -103,7 +216,7 @@
     </message>
     <message numerus="yes">
         <source>Verification failed, %n chances left</source>
-        <translation><numerusform>Doğrulama alınmadı, %n cəhd qaldı</numerusform><numerusform>Doğrulana bilmədi, %n cəhd qaldı</numerusform></translation>
+        <translation><numerusform>Doğrulana bilmədi, %n cəhd qaldı</numerusform><numerusform>Doğrulana bilmədi, %n cəhd qaldı</numerusform></translation>
     </message>
     <message>
         <source>Verification failed, only one chance left</source>
@@ -144,77 +257,6 @@
     <message numerus="yes">
         <source>Please try again %n minutes later</source>
         <translation><numerusform>Lütfən %n dəqiqə sonra cəhd edin</numerusform><numerusform>Lütfən %n dəqiqə sonra cəhd edin</numerusform></translation>
-    </message>
-</context>
-<context>
-    <name>ContentWidget</name>
-    <message>
-        <source>The programs are preventing the computer from shutting down, and forcing shut down may cause data loss.</source>
-        <translation>Bu tətbiq komputerin sönməsini əngəlləyir və məcburi söndürmə məlumatların itirilməsinə səbəb ola bilər.</translation>
-    </message>
-    <message>
-        <source>To close the program, click Cancel, and then close the program.</source>
-        <translation>Tətbiqi bağlamaq üçün İmtina vurun və tətbiqi bağlayın</translation>
-    </message>
-    <message>
-        <source>The programs are preventing the computer from reboot, and forcing reboot may cause data loss.</source>
-        <translation>Bu tətbiq komputerin yenidən başlanmasını əngəlləyir və məcburi yenidən başlatma məlumatların itirilməsinə səbəb ola bilər.</translation>
-    </message>
-    <message>
-        <source>The programs are preventing the computer from suspend, and forcing suspend may cause data loss.</source>
-        <translation>Bu tətbiq komputerin dayandırılmasını əngəlləyir və məcburi dayandırılma məlumatların itirilməsinə səbəb ola bilər.</translation>
-    </message>
-    <message>
-        <source>The programs are preventing the computer from hibernate, and forcing hibernate may cause data loss.</source>
-        <translation>Bu tətbiq komputerin yuxu rejiminə keçməsini əngəlləyir və məcburi yuxu rejiminə keçmə məlumatların itirilməsinə səbəb ola bilər.</translation>
-    </message>
-    <message>
-        <source>The programs are preventing the computer from log out, and forcing log out may cause data loss.</source>
-        <translation>Bu tətbiq komputerin sistemdən çıxmasını əngəlləyir və məcburi sistemdən çıxış məlumatların itirilməsinə səbəb ola bilər.</translation>
-    </message>
-    <message>
-        <source>Shut down</source>
-        <translation>Sistemi söndür</translation>
-    </message>
-    <message>
-        <source>Reboot</source>
-        <translation>Yenidən başlatmaq</translation>
-    </message>
-    <message>
-        <source>Suspend</source>
-        <translation>Gözlət</translation>
-    </message>
-    <message>
-        <source>Hibernate</source>
-        <translation>Yuxu rejimi</translation>
-    </message>
-    <message>
-        <source>Log out</source>
-        <translation>Çıxış</translation>
-    </message>
-    <message>
-        <source>Are you sure you want to shut down?</source>
-        <translation>Söndürmək istədiyinizə əminsiniz?</translation>
-    </message>
-    <message>
-        <source>Are you sure you want to reboot?</source>
-        <translation>Yenidən başlatmaq istədiyinizə əminsiniz?</translation>
-    </message>
-    <message>
-        <source>Are you sure you want to log out?</source>
-        <translation>Sistemdən şıxmaq istədiyinizə əminsiniz?</translation>
-    </message>
-    <message>
-        <source>Lock</source>
-        <translation>Kilidləmək</translation>
-    </message>
-    <message>
-        <source>Switch user</source>
-        <translation>İstifadıçini dəyişmək</translation>
-    </message>
-    <message>
-        <source>Switch system</source>
-        <translation>Başqa sistemə keçid</translation>
     </message>
 </context>
 <context>
@@ -320,10 +362,6 @@
         <source>Account</source>
         <translation>İstifadəçi hesabı</translation>
     </message>
-    <message>
-        <source>Verify your fingerprint</source>
-        <translation>Barmaq izinizi doğrulayın</translation>
-    </message>
     <message numerus="yes">
         <source>Your password will expire in %n days, please change it timely</source>
         <translation><numerusform>Şifrənizin vaxtı %n gün sonra bitəcəkdir, lütfən onu vaxtında dəyişin</numerusform><numerusform>Şifrənizin vaxtı %n gün sonra bitəcəkdir, lütfən onu vaxtında dəyişin</numerusform></translation>
@@ -390,6 +428,17 @@
     <message>
         <source>Are you sure you want to log out?</source>
         <translation>Sistemdən çıxmaq istədiyinizə əminsiniz?</translation>
+    </message>
+</context>
+<context>
+    <name>dss::module::NetworkModule</name>
+    <message>
+        <source>Turn on</source>
+        <translation type="unfinished"/>
+    </message>
+    <message>
+        <source>Turn off</source>
+        <translation type="unfinished"/>
     </message>
 </context>
 </TS>

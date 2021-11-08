@@ -1,5 +1,36 @@
 <?xml version="1.0" ?><!DOCTYPE TS><TS language="uk" version="2.1">
 <context>
+    <name>AuthFace</name>
+    <message>
+        <source>Face ID</source>
+        <translation>Ідентифікація за обличчям</translation>
+    </message>
+    <message>
+        <source>Verification successful</source>
+        <translation>Перевірку пройдено</translation>
+    </message>
+    <message numerus="yes">
+        <source>Verification failed, %n chances left</source>
+        <translation><numerusform>Перевірку не пройдено, лишилася %n спроба</numerusform><numerusform>Перевірку не пройдено, лишилося %n спроби</numerusform><numerusform>Перевірку не пройдено, лишилося %n спроб</numerusform><numerusform>Перевірку не пройдено, лишилася %n спроба</numerusform></translation>
+    </message>
+    <message>
+        <source>Verification failed, only one chance left</source>
+        <translation>Перевірку не пройдено. Лишилася лише одна спроба.</translation>
+    </message>
+    <message>
+        <source>Verify your FaceID</source>
+        <translation>Перевірет ваш FaceID</translation>
+    </message>
+    <message>
+        <source>FaceID locked, use password please</source>
+        <translation>FaceID заблоковано. Скористайтеся, будь ласка, паролем</translation>
+    </message>
+    <message numerus="yes">
+        <source>Please try again %n minute(s) later</source>
+        <translation><numerusform>Будь ласка, повторіть спробу за %n хвилину</numerusform><numerusform>Будь ласка, повторіть спробу за %n хвилини</numerusform><numerusform>Будь ласка, повторіть спробу за %n хвилин</numerusform><numerusform>Будь ласка, повторіть спробу за %n хвилину</numerusform></translation>
+    </message>
+</context>
+<context>
     <name>AuthFingerprint</name>
     <message>
         <source>Verify your fingerprint</source>
@@ -20,6 +51,41 @@
     <message>
         <source>Fingerprint locked, use password please</source>
         <translation>Відбиток заблоковано. Будь ласка, скористайтеся паролем.</translation>
+    </message>
+    <message numerus="yes">
+        <source>Please try again %n minute(s) later</source>
+        <translation><numerusform>Будь ласка, повторіть спробу за %n хвилину</numerusform><numerusform>Будь ласка, повторіть спробу за %n хвилини</numerusform><numerusform>Будь ласка, повторіть спробу за %n хвилин</numerusform><numerusform>Будь ласка, повторіть спробу за %n хвилину</numerusform></translation>
+    </message>
+    <message>
+        <source>Please try again 1 minute later</source>
+        <translation>Будь ласка, повторіть спробу за хвилину</translation>
+    </message>
+</context>
+<context>
+    <name>AuthIris</name>
+    <message>
+        <source>Iris ID</source>
+        <translation>Ідентифікаціія за райдужкою</translation>
+    </message>
+    <message>
+        <source>Verification successful</source>
+        <translation>Перевірку пройдено</translation>
+    </message>
+    <message numerus="yes">
+        <source>Verification failed, %n chances left</source>
+        <translation><numerusform>Перевірку не пройдено, лишилася %n спроба</numerusform><numerusform>Перевірку не пройдено, лишилося %n спроби</numerusform><numerusform>Перевірку не пройдено, лишилося %n спроб</numerusform><numerusform>Перевірку не пройдено, лишилася %n спроба</numerusform></translation>
+    </message>
+    <message>
+        <source>Verification failed, only one chance left</source>
+        <translation>Перевірку не пройдено. Лишилася лише одна спроба.</translation>
+    </message>
+    <message>
+        <source>Verify your IrisID</source>
+        <translation>Перевірте ваш IrisID</translation>
+    </message>
+    <message>
+        <source>IrisID locked, use password please</source>
+        <translation>IrisID заблоковано. Скористайтеся, будь ласка, паролем</translation>
     </message>
     <message numerus="yes">
         <source>Please try again %n minute(s) later</source>
@@ -52,6 +118,22 @@
         <source>Please try again %n minute(s) later</source>
         <translation><numerusform>Будь ласка, повторіть спробу за %n хвилину</numerusform><numerusform>Будь ласка, повторіть спробу за %n хвилини</numerusform><numerusform>Будь ласка, повторіть спробу за %n хвилин</numerusform><numerusform>Будь ласка, повторіть спробу за %n хвилину</numerusform></translation>
     </message>
+    <message>
+        <source>Please try again 1 minute later</source>
+        <translation>Будь ласка, повторіть спробу за хвилину</translation>
+    </message>
+    <message numerus="yes">
+        <source>Please try again %n minutes later</source>
+        <translation><numerusform>Будь ласка, повторіть спробу за %n хвилину</numerusform><numerusform>Будь ласка, повторіть спробу за %n хвилини</numerusform><numerusform>Будь ласка, повторіть спробу за %n хвилин</numerusform><numerusform>Будь ласка, повторіть спробу за %n хвилину</numerusform></translation>
+    </message>
+    <message>
+        <source>Reset Password</source>
+        <translation type="unfinished"/>
+    </message>
+    <message>
+        <source>Forgot password?</source>
+        <translation type="unfinished"/>
+    </message>
 </context>
 <context>
     <name>AuthSingle</name>
@@ -62,6 +144,14 @@
     <message numerus="yes">
         <source>Please try again %n minutes later</source>
         <translation><numerusform>Будь ласка, повторіть спробу за %n хвилину</numerusform><numerusform>Будь ласка, повторіть спробу за %n хвилини</numerusform><numerusform>Будь ласка, повторіть спробу за %n хвилин</numerusform><numerusform>Будь ласка, повторіть спробу за %n хвилину</numerusform></translation>
+    </message>
+    <message>
+        <source>Reset Password</source>
+        <translation type="unfinished"/>
+    </message>
+    <message>
+        <source>Forgot password?</source>
+        <translation type="unfinished"/>
     </message>
 </context>
 <context>
@@ -94,6 +184,29 @@
         <source>Please try again %n minute(s) later</source>
         <translation><numerusform>Будь ласка, повторіть спробу за %n хвилину</numerusform><numerusform>Будь ласка, повторіть спробу за %n хвилини</numerusform><numerusform>Будь ласка, повторіть спробу за %n хвилин</numerusform><numerusform>Будь ласка, повторіть спробу за %n хвилину</numerusform></translation>
     </message>
+    <message>
+        <source>Please try again 1 minute later</source>
+        <translation>Будь ласка, повторіть спробу за хвилину</translation>
+    </message>
+    <message numerus="yes">
+        <source>Please try again %n minutes later</source>
+        <translation><numerusform>Будь ласка, повторіть спробу за %n хвилину</numerusform><numerusform>Будь ласка, повторіть спробу за %n хвилини</numerusform><numerusform>Будь ласка, повторіть спробу за %n хвилин</numerusform><numerusform>Будь ласка, повторіть спробу за %n хвилину</numerusform></translation>
+    </message>
+</context>
+<context>
+    <name>AuthWidget</name>
+    <message>
+        <source>Account</source>
+        <translation>Обліковий запис</translation>
+    </message>
+    <message numerus="yes">
+        <source>Your password will expire in %n days, please change it timely</source>
+        <translation><numerusform>Строк дії вашого пароля буде вичерпано за %n день. Будь ласка, вчасно змініть його</numerusform><numerusform>Строк дії вашого пароля буде вичерпано за %n дні. Будь ласка, вчасно змініть його</numerusform><numerusform>Строк дії вашого пароля буде вичерпано за %n днів. Будь ласка, вчасно змініть його</numerusform><numerusform>Строк дії вашого пароля буде вичерпано за %n день. Будь ласка, вчасно змініть його</numerusform></translation>
+    </message>
+    <message>
+        <source>Password expired, please change</source>
+        <translation>Строк дії пароля вичерпано. Будь ласка, змініть</translation>
+    </message>
 </context>
 <context>
     <name>AuthenticationModule</name>
@@ -103,7 +216,7 @@
     </message>
     <message numerus="yes">
         <source>Verification failed, %n chances left</source>
-        <translation><numerusform>Перевірку не пройдено, лишилася %n спроба</numerusform><numerusform>Перевірку не пройдено, лишилося %n спроби</numerusform><numerusform>Перевірку не пройдено, лишилося %n спроб</numerusform><numerusform>Перевірку не пройдено, лишилася %n спроба</numerusform></translation>
+        <translation><numerusform>Перевірку не пройдено, лишилася %n спроба</numerusform><numerusform>Перевірку не пройдено, лишилася %n спроби</numerusform><numerusform>Перевірку не пройдено, лишилася %n спроб</numerusform><numerusform>Перевірку не пройдено, лишилася %n спроба</numerusform></translation>
     </message>
     <message>
         <source>Verification failed, only one chance left</source>
@@ -144,77 +257,6 @@
     <message numerus="yes">
         <source>Please try again %n minutes later</source>
         <translation><numerusform>Будь ласка, повторіть спробу за %n хвилину</numerusform><numerusform>Будь ласка, повторіть спробу за %n хвилини</numerusform><numerusform>Будь ласка, повторіть спробу за %n хвилин</numerusform><numerusform>Будь ласка, повторіть спробу за %n хвилину</numerusform></translation>
-    </message>
-</context>
-<context>
-    <name>ContentWidget</name>
-    <message>
-        <source>The programs are preventing the computer from shutting down, and forcing shut down may cause data loss.</source>
-        <translation>Програми не дозволяють вимкнути комп&apos;ютер, а примусове вимкнення може призвести до втрати даних.</translation>
-    </message>
-    <message>
-        <source>To close the program, click Cancel, and then close the program.</source>
-        <translation>Щоб завершити роботу програми, натисніть кнопку «Скасувати» і закрийте вікно програми.</translation>
-    </message>
-    <message>
-        <source>The programs are preventing the computer from reboot, and forcing reboot may cause data loss.</source>
-        <translation>Програми не дозволяють перезавантажити комп&apos;ютер, і примусове перезавантаження може призвести до втрати даних.</translation>
-    </message>
-    <message>
-        <source>The programs are preventing the computer from suspend, and forcing suspend may cause data loss.</source>
-        <translation>Програми не дозволяють призупинити роботу комп&apos;ютера, а примушування призупинення може призвести до втрати даних.</translation>
-    </message>
-    <message>
-        <source>The programs are preventing the computer from hibernate, and forcing hibernate may cause data loss.</source>
-        <translation>Програми запобігають сплячому стану комп’ютера, а примушування до сплячого режиму може призвести до втрати даних.</translation>
-    </message>
-    <message>
-        <source>The programs are preventing the computer from log out, and forcing log out may cause data loss.</source>
-        <translation>Програми перешкоджають виходу з комп&apos;ютера, а примусовий вихід може призвести до втрати даних.</translation>
-    </message>
-    <message>
-        <source>Shut down</source>
-        <translation>Вимкнути</translation>
-    </message>
-    <message>
-        <source>Reboot</source>
-        <translation>Перезавантажити</translation>
-    </message>
-    <message>
-        <source>Suspend</source>
-        <translation>Призупинити</translation>
-    </message>
-    <message>
-        <source>Hibernate</source>
-        <translation>Приспати</translation>
-    </message>
-    <message>
-        <source>Log out</source>
-        <translation>Вихід</translation>
-    </message>
-    <message>
-        <source>Are you sure you want to shut down?</source>
-        <translation>Ви впевнені, що хочете вимкнути компʼютер?</translation>
-    </message>
-    <message>
-        <source>Are you sure you want to reboot?</source>
-        <translation>Ви впевнені, що хочете перезавантажити?</translation>
-    </message>
-    <message>
-        <source>Are you sure you want to log out?</source>
-        <translation>Ви впевнені, що хочете вийти?</translation>
-    </message>
-    <message>
-        <source>Lock</source>
-        <translation>Заблокувати</translation>
-    </message>
-    <message>
-        <source>Switch user</source>
-        <translation>Змінити користувача</translation>
-    </message>
-    <message>
-        <source>Switch system</source>
-        <translation>Перемкнути систему</translation>
     </message>
 </context>
 <context>
@@ -320,10 +362,6 @@
         <source>Account</source>
         <translation>Обліковий запис</translation>
     </message>
-    <message>
-        <source>Verify your fingerprint</source>
-        <translation>Перевірити ваш відбиток</translation>
-    </message>
     <message numerus="yes">
         <source>Your password will expire in %n days, please change it timely</source>
         <translation><numerusform>Строк дії вашого пароля буде вичерпано за %n день. Будь ласка, вчасно змініть його</numerusform><numerusform>Строк дії вашого пароля буде вичерпано за %n дні. Будь ласка, вчасно змініть його</numerusform><numerusform>Строк дії вашого пароля буде вичерпано за %n днів. Будь ласка, вчасно змініть його</numerusform><numerusform>Строк дії вашого пароля буде вичерпано за %n день. Будь ласка, вчасно змініть його</numerusform></translation>
@@ -390,6 +428,17 @@
     <message>
         <source>Are you sure you want to log out?</source>
         <translation>Ви впевнені, що хочете вийти?</translation>
+    </message>
+</context>
+<context>
+    <name>dss::module::NetworkModule</name>
+    <message>
+        <source>Turn on</source>
+        <translation type="unfinished"/>
+    </message>
+    <message>
+        <source>Turn off</source>
+        <translation type="unfinished"/>
     </message>
 </context>
 </TS>

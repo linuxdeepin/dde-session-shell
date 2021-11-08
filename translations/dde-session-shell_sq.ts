@@ -1,5 +1,36 @@
 <?xml version="1.0" ?><!DOCTYPE TS><TS language="sq" version="2.1">
 <context>
+    <name>AuthFace</name>
+    <message>
+        <source>Face ID</source>
+        <translation>Face ID</translation>
+    </message>
+    <message>
+        <source>Verification successful</source>
+        <translation>Verifikim i suksesshëm</translation>
+    </message>
+    <message numerus="yes">
+        <source>Verification failed, %n chances left</source>
+        <translation><numerusform>Verifikimi dështoi, edhe %n provë</numerusform><numerusform>Verifikimi dështoi, edhe %n prova</numerusform></translation>
+    </message>
+    <message>
+        <source>Verification failed, only one chance left</source>
+        <translation>Verifikimi dështoi, edhe një provë</translation>
+    </message>
+    <message>
+        <source>Verify your FaceID</source>
+        <translation>Verifikoni FaceID-në tuaj</translation>
+    </message>
+    <message>
+        <source>FaceID locked, use password please</source>
+        <translation>FaceID e kyçur, ju lutemi, përdorni fjalëkalimin</translation>
+    </message>
+    <message numerus="yes">
+        <source>Please try again %n minute(s) later</source>
+        <translation><numerusform>Ju lutemi, riprovoni pas %n minute</numerusform><numerusform>Ju lutemi, riprovoni pas %n minutash</numerusform></translation>
+    </message>
+</context>
+<context>
     <name>AuthFingerprint</name>
     <message>
         <source>Verify your fingerprint</source>
@@ -20,6 +51,41 @@
     <message>
         <source>Fingerprint locked, use password please</source>
         <translation>Shenja gishti të kyçura, ju lutemi, përdorni fjalëkalim</translation>
+    </message>
+    <message numerus="yes">
+        <source>Please try again %n minute(s) later</source>
+        <translation><numerusform>Ju lutemi, riprovoni pas %n minute</numerusform><numerusform>Ju lutemi, riprovoni pas %n minutash</numerusform></translation>
+    </message>
+    <message>
+        <source>Please try again 1 minute later</source>
+        <translation>Ju lutemi, riprovoni pas 1 minute</translation>
+    </message>
+</context>
+<context>
+    <name>AuthIris</name>
+    <message>
+        <source>Iris ID</source>
+        <translation>Iris ID</translation>
+    </message>
+    <message>
+        <source>Verification successful</source>
+        <translation>Verifikim i suksesshëm</translation>
+    </message>
+    <message numerus="yes">
+        <source>Verification failed, %n chances left</source>
+        <translation><numerusform>Verifikimi dështoi, edhe %n provë</numerusform><numerusform>Verifikimi dështoi, edhe %n prova</numerusform></translation>
+    </message>
+    <message>
+        <source>Verification failed, only one chance left</source>
+        <translation>Verifikimi dështoi, edhe një provë</translation>
+    </message>
+    <message>
+        <source>Verify your IrisID</source>
+        <translation>Verifikoni IrisID-në tuaj</translation>
+    </message>
+    <message>
+        <source>IrisID locked, use password please</source>
+        <translation>IrisID e kyçur, ju lutemi, përdorni fjalëkalimin</translation>
     </message>
     <message numerus="yes">
         <source>Please try again %n minute(s) later</source>
@@ -52,6 +118,22 @@
         <source>Please try again %n minute(s) later</source>
         <translation><numerusform>Ju lutemi, riprovoni pas %n minute</numerusform><numerusform>Ju lutemi, riprovoni pas %n minutash</numerusform></translation>
     </message>
+    <message>
+        <source>Please try again 1 minute later</source>
+        <translation>Ju lutemi, riprovoni pas 1 minute</translation>
+    </message>
+    <message numerus="yes">
+        <source>Please try again %n minutes later</source>
+        <translation><numerusform>Ju lutemi, riprovoni pas %n minute</numerusform><numerusform>Ju lutemi, riprovoni pas %n minutash</numerusform></translation>
+    </message>
+    <message>
+        <source>Reset Password</source>
+        <translation type="unfinished"/>
+    </message>
+    <message>
+        <source>Forgot password?</source>
+        <translation type="unfinished"/>
+    </message>
 </context>
 <context>
     <name>AuthSingle</name>
@@ -62,6 +144,14 @@
     <message numerus="yes">
         <source>Please try again %n minutes later</source>
         <translation><numerusform>Ju lutemi, riprovoni pas %n minute</numerusform><numerusform>Ju lutemi, riprovoni pas %n minutash</numerusform></translation>
+    </message>
+    <message>
+        <source>Reset Password</source>
+        <translation type="unfinished"/>
+    </message>
+    <message>
+        <source>Forgot password?</source>
+        <translation type="unfinished"/>
     </message>
 </context>
 <context>
@@ -92,7 +182,30 @@
     </message>
     <message numerus="yes">
         <source>Please try again %n minute(s) later</source>
-        <translation><numerusform>Ju lutemi, riprovoni pas %n minute</numerusform><numerusform>Ju lutemi, riprovoni %n minutash</numerusform></translation>
+        <translation><numerusform>Ju lutemi, riprovoni %n minute</numerusform><numerusform>Ju lutemi, riprovoni %n minutash</numerusform></translation>
+    </message>
+    <message>
+        <source>Please try again 1 minute later</source>
+        <translation>Ju lutemi, riprovoni pas 1 minute</translation>
+    </message>
+    <message numerus="yes">
+        <source>Please try again %n minutes later</source>
+        <translation><numerusform>Ju lutemi, riprovoni pas %n minute</numerusform><numerusform>Ju lutemi, riprovoni pas %n minutash</numerusform></translation>
+    </message>
+</context>
+<context>
+    <name>AuthWidget</name>
+    <message>
+        <source>Account</source>
+        <translation>Llogari</translation>
+    </message>
+    <message numerus="yes">
+        <source>Your password will expire in %n days, please change it timely</source>
+        <translation><numerusform>Fjalëkalimi juaj do të skadojë për %n ditë, ju lutemi, ndryshojeni në kohë</numerusform><numerusform>Fjalëkalimi juaj do të skadojë për %n ditë, ju lutemi, ndryshojeni në kohë</numerusform></translation>
+    </message>
+    <message>
+        <source>Password expired, please change</source>
+        <translation>Fjalëkalimi ndryshoi, ju lutemi, ndryshojeni</translation>
     </message>
 </context>
 <context>
@@ -144,77 +257,6 @@
     <message numerus="yes">
         <source>Please try again %n minutes later</source>
         <translation><numerusform>Ju lutemi, riprovoni pas %n minute</numerusform><numerusform>Ju lutemi, riprovoni pas %n minutash</numerusform></translation>
-    </message>
-</context>
-<context>
-    <name>ContentWidget</name>
-    <message>
-        <source>The programs are preventing the computer from shutting down, and forcing shut down may cause data loss.</source>
-        <translation>Ka programe që e pengojnë fikjen e kompjuterit, dhe fikja me zor mund të sjellë humbje të dhënash.</translation>
-    </message>
-    <message>
-        <source>To close the program, click Cancel, and then close the program.</source>
-        <translation>Që të mbyllet programi, klikoni mbi “Anuloje”, dhe mandej mbyllni programin.</translation>
-    </message>
-    <message>
-        <source>The programs are preventing the computer from reboot, and forcing reboot may cause data loss.</source>
-        <translation>Ka programe që e pengojnë rinisjen e kompjuterit, dhe rinisja me zor mund të sjellë humbje të dhënash.</translation>
-    </message>
-    <message>
-        <source>The programs are preventing the computer from suspend, and forcing suspend may cause data loss.</source>
-        <translation>Ka programe që e pengojnë pezullimin e kompjuterit, dhe pezullimi me zor mund të sjellë humbje të dhënash.</translation>
-    </message>
-    <message>
-        <source>The programs are preventing the computer from hibernate, and forcing hibernate may cause data loss.</source>
-        <translation>Ka programe që e pengojnë plogështimin e kompjuterit, dhe plogështimi me zor mund të sjellë humbje të dhënash.</translation>
-    </message>
-    <message>
-        <source>The programs are preventing the computer from log out, and forcing log out may cause data loss.</source>
-        <translation>Ka programe që e pengojnë kompjuterin të bëjë dalje nga llogaria, dhe dalja me zor mund të sjellë humbje të dhënash.</translation>
-    </message>
-    <message>
-        <source>Shut down</source>
-        <translation>Fike</translation>
-    </message>
-    <message>
-        <source>Reboot</source>
-        <translation>Rinisu</translation>
-    </message>
-    <message>
-        <source>Suspend</source>
-        <translation>Pezulloje</translation>
-    </message>
-    <message>
-        <source>Hibernate</source>
-        <translation>Plogështoje</translation>
-    </message>
-    <message>
-        <source>Log out</source>
-        <translation>Dilni</translation>
-    </message>
-    <message>
-        <source>Are you sure you want to shut down?</source>
-        <translation>Jeni i sigurt se doni të fiket?</translation>
-    </message>
-    <message>
-        <source>Are you sure you want to reboot?</source>
-        <translation>Jeni i sigurt se doni të riniset?</translation>
-    </message>
-    <message>
-        <source>Are you sure you want to log out?</source>
-        <translation>Jeni i sigurt se doni të dilet?</translation>
-    </message>
-    <message>
-        <source>Lock</source>
-        <translation>Kyçe</translation>
-    </message>
-    <message>
-        <source>Switch user</source>
-        <translation>Këmbe përdorues</translation>
-    </message>
-    <message>
-        <source>Switch system</source>
-        <translation>Ndërroni sistem</translation>
     </message>
 </context>
 <context>
@@ -320,10 +362,6 @@
         <source>Account</source>
         <translation>Llogari</translation>
     </message>
-    <message>
-        <source>Verify your fingerprint</source>
-        <translation>Verifikoni shenjat tuaja të gishtave</translation>
-    </message>
     <message numerus="yes">
         <source>Your password will expire in %n days, please change it timely</source>
         <translation><numerusform>Fjalëkalimi juaj do të skadojë për %n ditë, ju lutemi, ndryshojeni në kohë</numerusform><numerusform>Fjalëkalimi juaj do të skadojë për %n ditë, ju lutemi, ndryshojeni në kohë</numerusform></translation>
@@ -390,6 +428,17 @@
     <message>
         <source>Are you sure you want to log out?</source>
         <translation>Jeni i sigurt se doni të dilet?</translation>
+    </message>
+</context>
+<context>
+    <name>dss::module::NetworkModule</name>
+    <message>
+        <source>Turn on</source>
+        <translation type="unfinished"/>
+    </message>
+    <message>
+        <source>Turn off</source>
+        <translation type="unfinished"/>
     </message>
 </context>
 </TS>
