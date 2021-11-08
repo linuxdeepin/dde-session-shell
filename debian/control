@@ -46,8 +46,8 @@ Depends: ${shlibs:Depends}, ${misc:Depends}, ${dist:Depends},
  libssl-dev
 Provides: lightdm-greeter
 Recommends: onboard,
- dde-shell-network-plugin,
- dde-network-list
+ dss-network-plugin,
+ dde-network-dialog
 Conflicts: dde-workspace,
  deepin-notifications,
  dde-session-ui (<< 5.0.0),
