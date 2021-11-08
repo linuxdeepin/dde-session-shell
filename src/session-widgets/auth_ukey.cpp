@@ -132,6 +132,7 @@ void AuthUKey::setAuthStatus(const int state, const QString &result)
         setLineEditEnabled(false);
         setLineEditInfo(tr("Verification successful"), PlaceHolderText);
         m_showPrompt = true;
+        m_lineEdit->hideAlertMessage();
         emit authFinished(state);
         emit requestChangeFocus();
         break;

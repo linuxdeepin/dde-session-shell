@@ -297,8 +297,9 @@ void SFAWidget::initSingleAuth()
     /* 输入框数据同步（可能是密码或PIN） */
     std::function<void(QVariant)> tokenChanged = std::bind(&SFAWidget::syncSingle, this, std::placeholders::_1);
     registerSyncFunctions("SFSingleAuth", tokenChanged);
-    connect(m_singleAuth, &AuthSingle::lineEditTextChanged, this, [this](const QString &value) {
+    connect(m_singleAuth, &AuthSingle::lineEditTextChanged, this, [ this ](const QString &value) {
         m_frameDataBind->updateValue("SFSingleAuth", value);
+        m_lockButton->setEnabled(!value.isEmpty());
     });
 
     /* 重置密码可见性数据同步 */
@@ -338,8 +339,6 @@ void SFAWidget::initPasswdAuth()
             m_lastAuth = m_passwordAuth;
             m_lockButton->setEnabled(true);
             emit authFinished();
-        } else {
-            m_lockButton->setEnabled(false);
         }
     });
     connect(m_passwordAuth, &AuthPassword::requestAuthenticate, this, [this] {
@@ -350,6 +349,7 @@ void SFAWidget::initPasswdAuth()
         m_passwordAuth->setAuthStatusStyle(LOGIN_SPINNER);
         m_passwordAuth->setAnimationStatus(true);
         m_passwordAuth->setLineEditEnabled(false);
+        m_lockButton->setEnabled(false);
         emit sendTokenToAuth(m_user->name(), AuthTypePassword, text);
     });
     connect(m_passwordAuth, &AuthPassword::requestShowKeyboardList, this, &SFAWidget::showKeyboardList);
@@ -360,6 +360,7 @@ void SFAWidget::initPasswdAuth()
     registerSyncFunctions("SFPasswordAuth", passwordChanged);
     connect(m_passwordAuth, &AuthPassword::lineEditTextChanged, this, [this](const QString &value) {
         m_frameDataBind->updateValue("SFPasswordAuth", value);
+        m_lockButton->setEnabled(!value.isEmpty());
     });
     /* 重置密码可见性数据同步 */
     std::function<void(QVariant)> resetPasswordVisibleChanged = std::bind(&SFAWidget::syncPasswordResetPasswordVisibleChanged, this, std::placeholders::_1);
@@ -482,6 +483,7 @@ void SFAWidget::initUKeyAuth()
         m_ukeyAuth->setAuthStatusStyle(LOGIN_SPINNER);
         m_ukeyAuth->setAnimationStatus(true);
         m_ukeyAuth->setLineEditEnabled(false);
+        m_lockButton->setEnabled(false);
         emit sendTokenToAuth(m_model->currentUser()->name(), AuthTypeUkey, text);
     });
     connect(m_lockButton, &QPushButton::clicked, m_ukeyAuth, &AuthUKey::requestAuthenticate);
@@ -497,8 +499,6 @@ void SFAWidget::initUKeyAuth()
     });
 
     m_ukeyAuth->setCapsLockVisible(m_capslockMonitor->isCapslockOn());
-    // m_ukeyAuth->setAuthStatus(m_frameDataBind->getValue("SFUKeyAuthStatus").toInt(),
-    //                           m_frameDataBind->getValue("SFUKeyAuthMsg").toString());
 
     /* 认证选择按钮 */
     DButtonBoxButton *btn = new DButtonBoxButton(QIcon(UKey_Auth), QString(), this);
