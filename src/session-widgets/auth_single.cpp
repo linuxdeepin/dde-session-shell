@@ -437,9 +437,9 @@ void AuthSingle::showResetPasswordMessage()
     m_resetPasswordFloatingMessage = new DFloatingMessage(DFloatingMessage::MessageType::ResidentType);
     m_resetPasswordFloatingMessage->setPalette(pa);
     m_resetPasswordFloatingMessage->setIcon(QIcon::fromTheme("dialog-warning"));
-    DSuggestButton *suggestButton = new DSuggestButton(tr("Reset Password!"));
+    DSuggestButton *suggestButton = new DSuggestButton(tr("Reset Password"));
     m_resetPasswordFloatingMessage->setWidget(suggestButton);
-    m_resetPasswordFloatingMessage->setMessage(tr("Forget pasword? Click here to Reset!"));
+    m_resetPasswordFloatingMessage->setMessage(tr("Forgot password?"));
     connect(suggestButton, &QPushButton::clicked, this, [ this ]{
         const QString AccountsService("com.deepin.daemon.Accounts");
         const QString path = QString("/com/deepin/daemon/Accounts/User%1").arg(m_currentUid);
