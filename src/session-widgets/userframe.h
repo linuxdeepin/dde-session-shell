@@ -13,6 +13,7 @@ class FrameDataBind;
 class UserFrame : public QWidget
 {
     Q_OBJECT
+
 public:
     explicit UserFrame(QWidget *parent = nullptr);
     void setModel(SessionBaseModel *model);

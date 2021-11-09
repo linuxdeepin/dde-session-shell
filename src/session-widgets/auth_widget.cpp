@@ -45,7 +45,15 @@ AuthWidget::AuthWidget(QWidget *parent)
     : QWidget(parent)
     , m_frameDataBind(FrameDataBind::Instance())
     , m_blurEffectWidget(new DBlurEffectWidget(this))
+    , m_lockButton(nullptr)
+    , m_userAvatar(nullptr)
     , m_expiredStatusLabel(new DLabel(this))
+    , m_nameLabel(nullptr)
+    , m_accountEdit(nullptr)
+    , m_capslockMonitor(nullptr)
+    , m_keyboardTypeWidget(nullptr)
+    , m_keyboardTypeBorder(nullptr)
+    , m_keyboardTypeClip(nullptr)
     , m_singleAuth(nullptr)
     , m_passwordAuth(nullptr)
     , m_fingerprintAuth(nullptr)
@@ -485,7 +493,8 @@ void AuthWidget::registerSyncFunctions(const QString &flag, std::function<void (
  */
 void AuthWidget::syncSingle(const QVariant &value)
 {
-    m_singleAuth->setLineEditInfo(value.toString(), AuthPassword::InputText);
+    if (m_singleAuth)
+        m_singleAuth->setLineEditInfo(value.toString(), AuthPassword::InputText);
 }
 
 /**
@@ -495,7 +504,8 @@ void AuthWidget::syncSingle(const QVariant &value)
  */
 void AuthWidget::syncSingleResetPasswordVisibleChanged(const QVariant &value)
 {
-    m_singleAuth->setResetPasswordMessageVisible(value.toBool());
+    if (m_singleAuth)
+        m_singleAuth->setResetPasswordMessageVisible(value.toBool());
 }
 
 /**
@@ -515,7 +525,8 @@ void AuthWidget::syncAccount(const QVariant &value)
  */
 void AuthWidget::syncPassword(const QVariant &value)
 {
-    m_passwordAuth->setLineEditInfo(value.toString(), AuthPassword::InputText);
+    if (m_passwordAuth)
+        m_passwordAuth->setLineEditInfo(value.toString(), AuthPassword::InputText);
 }
 
 /**
@@ -525,7 +536,8 @@ void AuthWidget::syncPassword(const QVariant &value)
  */
 void AuthWidget::syncPasswordResetPasswordVisibleChanged(const QVariant &value)
 {
-    m_passwordAuth->setResetPasswordMessageVisible(value.toBool());
+    if (m_passwordAuth)
+        m_passwordAuth->setResetPasswordMessageVisible(value.toBool());
 }
 
 /**
@@ -534,7 +546,8 @@ void AuthWidget::syncPasswordResetPasswordVisibleChanged(const QVariant &value)
  */
 void AuthWidget::syncUKey(const QVariant &value)
 {
-    m_ukeyAuth->setLineEditInfo(value.toString(), AuthUKey::InputText);
+    if (m_passwordAuth)
+        m_ukeyAuth->setLineEditInfo(value.toString(), AuthUKey::InputText);
 }
 
 void AuthWidget::hideEvent(QHideEvent *event)
@@ -554,4 +567,20 @@ void AuthWidget::showEvent(QShowEvent *event)
 {
     activateWindow();
     QWidget::showEvent(event);
+}
+
+void AuthWidget::reset()
+{
+    if (m_singleAuth)
+        m_singleAuth->reset();
+    if (m_passwordAuth)
+        m_passwordAuth->reset();
+    if (m_fingerprintAuth)
+        m_fingerprintAuth->reset();
+    if (m_ukeyAuth)
+        m_ukeyAuth->reset();
+    if (m_faceAuth)
+        m_faceAuth->reset();
+    if (m_irisAuth)
+        m_irisAuth->reset();
 }

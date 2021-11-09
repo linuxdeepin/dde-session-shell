@@ -58,6 +58,7 @@ public:
     virtual void setModel(const SessionBaseModel *model);
     virtual void setAuthType(const int type);
     virtual void setAuthStatus(const int type, const int status, const QString &message);
+    virtual void reset();
 
     void setAccountErrorMsg(const QString &message);
 

@@ -46,6 +46,7 @@ public:
     explicit UserFrameList(QWidget *parent = nullptr);
     void setModel(SessionBaseModel *model);
     void setFixedSize(const QSize &size);
+    void updateLayout();
 
 signals:
     void requestSwitchUser(std::shared_ptr<User> user);
@@ -68,7 +69,6 @@ private:
     void switchNextUser();
     void switchPreviousUser();
     void onOtherPageChanged(const QVariant &value);
-    void updateLayout();
 
 private:
     QScrollArea *m_scrollArea;

@@ -28,6 +28,7 @@ class UserLoginInfo;
 class LockContent : public SessionBaseWindow
 {
     Q_OBJECT
+
 public:
     explicit LockContent(SessionBaseModel *const model, QWidget *parent = nullptr);
 
@@ -98,7 +99,6 @@ protected:
     LogoWidget *m_logoWidget;
     TimeWidget *m_timeWidget;
     MediaWidget *m_mediaWidget = nullptr;
-    UserLoginInfo *m_userLoginInfo;
     com::deepin::wm *m_wmInter;
     QWidget *m_loginWidget;
     QMap<QString, QWidget *> m_centeralWidgets;

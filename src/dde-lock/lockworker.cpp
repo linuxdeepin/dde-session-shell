@@ -157,15 +157,15 @@ void LockWorker::initConnections()
                 }
             }
         } else {
-            // 单因失败会返回明确的失败类型，不关注type为-1的情况
-            if (AuthTypeAll != type) {
-                if (m_model->currentModeState() != SessionBaseModel::ModeStatus::PasswordMode
-                    && m_model->currentModeState() != SessionBaseModel::ModeStatus::ConfirmPasswordMode) {
-                    m_model->setCurrentModeState(SessionBaseModel::ModeStatus::PasswordMode);
-                }
-                m_model->updateAuthStatus(type, status, message);
-                switch (status) {
-                case StatusCodeFailure:
+            if (m_model->currentModeState() != SessionBaseModel::ModeStatus::PasswordMode
+                && m_model->currentModeState() != SessionBaseModel::ModeStatus::ConfirmPasswordMode) {
+                m_model->setCurrentModeState(SessionBaseModel::ModeStatus::PasswordMode);
+            }
+            m_model->updateAuthStatus(type, status, message);
+            switch (status) {
+            case StatusCodeFailure:
+                // 单因失败会返回明确的失败类型，不关注type为-1的情况
+                if (AuthTypeAll != type) {
                     endAuthentication(m_account, type);
                     // 人脸和虹膜需要手动重新开启验证
                     if (!m_model->currentUser()->limitsInfo(type).locked && type != AuthTypeFace && type != AuthTypeIris) {
@@ -173,13 +173,13 @@ void LockWorker::initConnections()
                             startAuthentication(m_account, type);
                         });
                     }
-                    break;
-                case StatusCodeCancel:
-                    destoryAuthentication(m_account);
-                    break;
-                default:
-                    break;
                 }
+                break;
+            case StatusCodeCancel:
+                destoryAuthentication(m_account);
+                break;
+            default:
+                break;
             }
         }
     });
@@ -228,7 +228,9 @@ void LockWorker::initConnections()
     });
     connect(m_model, &SessionBaseModel::onPowerActionChanged, this, &LockWorker::doPowerAction);
     connect(m_model, &SessionBaseModel::visibleChanged, this, [=](bool visible) {
-        if (visible && m_model->currentModeState() != SessionBaseModel::ShutDownMode) {
+        if (visible
+                && SessionBaseModel::ShutDownMode != m_model->currentModeState()
+                && SessionBaseModel::UserMode != m_model->currentModeState()) {
             createAuthentication(m_model->currentUser()->name());
         } else if (!visible) {
             m_resetSessionTimer->stop();
@@ -345,7 +347,6 @@ void LockWorker::doPowerAction(const SessionBaseModel::PowerAction action)
         break;
     case SessionBaseModel::PowerAction::RequireSwitchUser:
         m_model->setCurrentModeState(SessionBaseModel::ModeStatus::UserMode);
-        createAuthentication(m_model->currentUser()->name());
         break;
     default:
         break;
@@ -371,6 +372,9 @@ void LockWorker::setCurrentUser(const std::shared_ptr<User> user)
 void LockWorker::switchToUser(std::shared_ptr<User> user)
 {
     if (user->name() == m_account) {
+        if (!m_authFramework->authSessionExist(m_account)) {
+            createAuthentication(m_account);
+        }
         return;
     }
     qInfo() << "switch user from" << m_account << " to " << user->name() << user->isLogin();
@@ -527,6 +531,10 @@ void LockWorker::startAuthentication(const QString &account, const int authType)
     qDebug() << "LockWorker::startAuthentication:" << account << authType;
     switch (m_model->getAuthProperty().FrameworkState) {
     case Available:
+        if (!m_authFramework->authSessionExist(account))
+            createAuthentication(m_account);
+
+        m_authFramework->EndAuthentication(account, authType);
         m_authFramework->StartAuthentication(account, authType, -1);
         break;
     default:
@@ -547,6 +555,10 @@ void LockWorker::sendTokenToAuth(const QString &account, const int authType, con
     qDebug() << "LockWorker::sendTokenToAuth:" << account << authType;
     switch (m_model->getAuthProperty().FrameworkState) {
     case Available:
+        if (!m_authFramework->authSessionExist(account)) {
+            createAuthentication(m_account);
+            startAuthentication(account, authType);
+        }
         m_authFramework->SendTokenToAuth(account, authType, token);
         break;
     default:

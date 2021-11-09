@@ -349,6 +349,7 @@ void DeepinAuthFramework::encryptSymmtricKey(const QString &account)
  */
 void DeepinAuthFramework::CreateAuthController(const QString &account, const int authType, const int appType)
 {
+    qDebug() << "DeepinAuthFramework::CreateAuthController, account: " << account << ", authType: " << authType << ", appType: " << appType;
     if (m_authenticateControllers->contains(account) && m_authenticateControllers->value(account)->isValid()) {
         return;
     }
@@ -439,7 +440,7 @@ void DeepinAuthFramework::EndAuthentication(const QString &account, const int au
         return;
     }
     qInfo() << "End Authentication:" << account << authType;
-    m_authenticateControllers->value(account)->End(authType);
+    m_authenticateControllers->value(account)->End(authType).waitForFinished();
 }
 
 /**
@@ -657,4 +658,9 @@ QString DeepinAuthFramework::AuthSessionPath(const QString &account) const
         return QString();
     }
     return m_authenticateControllers->value(account)->path();
+}
+
+bool DeepinAuthFramework::authSessionExist(const QString &account) const
+{
+    return m_authenticateControllers->contains(account);
 }

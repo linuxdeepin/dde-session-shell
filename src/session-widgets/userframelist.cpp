@@ -127,11 +127,9 @@ void UserFrameList::handlerBeforeAddUser(std::shared_ptr<User> user)
 //创建用户窗体
 void UserFrameList::addUser(const std::shared_ptr<User> user)
 {
-    qDebug() << "UserFrameList::addUser:" << user->path();
-    UserWidget *widget = new UserWidget(this);
+    UserWidget *widget = new UserWidget(m_centerWidget);
     widget->setUser(user);
     widget->setSelected(m_model->currentUser()->uid() == user->uid());
-    m_loginWidgets.append(widget);
 
     connect(widget, &UserWidget::clicked, this, &UserFrameList::onUserClicked);
 
@@ -266,29 +264,7 @@ void UserFrameList::updateLayout()
     if (count > 5) {
         m_scrollArea->setFixedSize((UserFrameWidth + UserFrameSpaceing) * 5, (UserFrameHeight + UserFrameSpaceing) * 2);
     }
-    return;
-
-    int maxWidth = this->width();
-    int maxHeight = this->height();
-
-    m_colCount = maxWidth / (UserFrameWidth + UserFrameSpaceing);
-    m_colCount = (m_colCount > 5 && count > 5) ? 5 : count;
-    m_rowCount = maxHeight / (UserFrameHeight + UserFrameSpaceing);
-    m_rowCount = (m_rowCount > 2 && count > 5) ? 2 : 1;
-
-    //fix BUG 3268
-    if (m_loginWidgets.size() <= m_colCount) {
-        m_rowCount = 1;
-    }
-
-    int totalHeight = (UserFrameHeight + UserFrameSpaceing) * m_rowCount;
-    int totalWidth = qMin((UserFrameWidth + UserFrameSpaceing) * m_colCount, (UserFrameWidth + UserFrameSpaceing) * m_loginWidgets.size());
-
-    m_scrollArea->setFixedHeight(totalHeight);
-    m_scrollArea->setFixedWidth(totalWidth + 10);
-    m_centerWidget->setFixedWidth(totalWidth);
-    // setFixedWidth(totalWidth);
-    // setFixedHeight(totalHeight);
+    m_centerWidget->setFixedWidth(m_scrollArea->width() - 10);
 
     std::shared_ptr<User> user = m_model->currentUser();
     if (user.get() == nullptr) return;

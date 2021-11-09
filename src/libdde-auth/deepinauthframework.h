@@ -26,6 +26,7 @@ using FUNC_RSA_FREE = void (*)(void *);
 class DeepinAuthFramework : public QObject
 {
     Q_OBJECT
+
 public:
     enum AuthQuitFlag {
         AutoQuit,  // 自动退出（默认）
@@ -58,6 +59,7 @@ public:
 
     QString AuthSessionPath(const QString &account) const;
     void setEncryption(const int type, const ArrayInt method);
+    bool authSessionExist(const QString &account) const;
 
 signals:
     /* com.deepin.daemon.Authenticate */

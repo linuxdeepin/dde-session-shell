@@ -20,7 +20,6 @@
 */
 
 #include "user_widget.h"
-
 #include "useravatar.h"
 
 #include <DFontSizeManager>

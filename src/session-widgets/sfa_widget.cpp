@@ -176,13 +176,15 @@ void SFAWidget::setAuthType(const int type)
         QMap<int, DButtonBoxButton *>::const_iterator iter = m_authButtons.constBegin();
         while (iter != m_authButtons.constEnd()) {
             m_chooesAuthButtonBox->setId(iter.value(), iter.key());
-            iter++;
+            iter.value()->show();
+            ++iter;
         }
 
         if (m_lastAuth) {
             emit requestStartAuthentication(m_user->name(), m_lastAuth->authType());
         } else {
             m_chooesAuthButtonBox->button(m_authButtons.firstKey())->setChecked(true);
+            m_chooesAuthButtonBox->button(m_authButtons.firstKey())->toggled(true);
         }
 
         std::function<void(QVariant)> authTypeChanged = std::bind(&SFAWidget::syncAuthType, this, std::placeholders::_1);
@@ -190,7 +192,7 @@ void SFAWidget::setAuthType(const int type)
         m_frameDataBind->refreshData("SFAType");
     } else {
         if (!m_authButtons.isEmpty() && m_authButtons.first()) {
-            m_authButtons.first()->setVisible(false);
+            m_authButtons.first()->hide();
             m_authButtons.first()->toggled(true);
         }
         m_chooesAuthButtonBox->hide();

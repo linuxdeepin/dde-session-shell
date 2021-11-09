@@ -28,7 +28,6 @@ LockContent::LockContent(SessionBaseModel *const model, QWidget *parent)
     , m_model(model)
     , m_virtualKB(nullptr)
     , m_translator(new QTranslator(this))
-    , m_userLoginInfo(new UserLoginInfo(model, this))
     , m_wmInter(new com::deepin::wm("com.deepin.wm", "/com/deepin/wm", QDBusConnection::sessionBus(), this))
     , m_sfaWidget(nullptr)
     , m_mfaWidget(nullptr)
@@ -95,7 +94,6 @@ void LockContent::initConnections()
 {
     connect(m_model, &SessionBaseModel::currentUserChanged, this, &LockContent::onCurrentUserChanged);
     connect(m_controlWidget, &ControlWidget::requestSwitchUser, this, [ = ] {
-        if (m_model->currentModeState() == SessionBaseModel::ModeStatus::UserMode) return;
         m_model->setCurrentModeState(SessionBaseModel::ModeStatus::UserMode);
     });
     connect(m_controlWidget, &ControlWidget::requestShutdown, this, [ = ] {
@@ -269,6 +267,7 @@ void LockContent::pushUserFrame()
     if(m_model->isServerModel())
         m_controlWidget->setUserSwitchEnable(false);
 
+    m_userListWidget->updateLayout();
     setCenterContent(m_userListWidget);
 }
 

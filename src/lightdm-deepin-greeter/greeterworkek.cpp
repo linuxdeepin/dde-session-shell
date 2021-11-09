@@ -171,12 +171,14 @@ void GreeterWorkek::initConnections()
                 }
             }
         } else {
-            if (AuthTypeAll != type) {
-                if (m_model->currentModeState() != SessionBaseModel::ModeStatus::PasswordMode && (status == StatusCodeSuccess || status == StatusCodeFailure))
-                    m_model->setCurrentModeState(SessionBaseModel::ModeStatus::PasswordMode);
-                m_model->updateAuthStatus(type, status, message);
-                switch (status) {
-                case StatusCodeFailure:
+            if (m_model->currentModeState() != SessionBaseModel::ModeStatus::PasswordMode
+                    && (status == StatusCodeSuccess || status == StatusCodeFailure))
+                m_model->setCurrentModeState(SessionBaseModel::ModeStatus::PasswordMode);
+
+            m_model->updateAuthStatus(type, status, message);
+            switch (status) {
+            case StatusCodeFailure:
+                if (AuthTypeAll != type) {
                     endAuthentication(m_account, type);
                     // 人脸和虹膜需要手动重新开启验证
                     if (!m_model->currentUser()->limitsInfo(type).locked && type != AuthTypeFace && type != AuthTypeIris) {
@@ -184,12 +186,13 @@ void GreeterWorkek::initConnections()
                             startAuthentication(m_account, type);
                         });
                     }
-                    break;
-                case StatusCodeCancel:
-                    destoryAuthentication(m_account);
-                default:
-                    break;
                 }
+                break;
+            case StatusCodeCancel:
+                destoryAuthentication(m_account);
+                break;
+            default:
+                break;
             }
         }
     });
@@ -385,6 +388,9 @@ void GreeterWorkek::setCurrentUser(const std::shared_ptr<User> user)
 void GreeterWorkek::switchToUser(std::shared_ptr<User> user)
 {
     if (user->name() == m_account) {
+        if (!m_authFramework->authSessionExist(m_account))
+            createAuthentication(m_account);
+
         return;
     }
     qInfo() << "switch user from" << m_account << " to " << user->name() << user->uid() << user->isLogin();
@@ -495,6 +501,10 @@ void GreeterWorkek::startAuthentication(const QString &account, const int authTy
     qDebug() << "GreeterWorkek::startAuthentication:" << account << authType;
     switch (m_model->getAuthProperty().FrameworkState) {
     case Available:
+        if (!m_authFramework->authSessionExist(account))
+            createAuthentication(account);
+
+        m_authFramework->EndAuthentication(account, authType);
         m_authFramework->StartAuthentication(account, authType, -1);
         break;
     default:
@@ -515,6 +525,8 @@ void GreeterWorkek::sendTokenToAuth(const QString &account, const int authType, 
     qDebug() << "GreeterWorkek::sendTokenToAuth:" << account << authType;
     switch (m_model->getAuthProperty().FrameworkState) {
     case Available:
+        if (!m_authFramework->authSessionExist(account))
+            createAuthentication(m_account);
         m_authFramework->SendTokenToAuth(account, authType, token);
         if (authType == AuthTypePassword) {
             m_password = token; // 用于解锁密钥环
