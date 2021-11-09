@@ -17,6 +17,7 @@
 
 #include <DDBusSender>
 
+#include <QLocalSocket>
 #include <QMouseEvent>
 
 using namespace dss;
@@ -33,6 +34,7 @@ LockContent::LockContent(SessionBaseModel *const model, QWidget *parent)
     , m_mfaWidget(nullptr)
     , m_authWidget(nullptr)
     , m_userListWidget(nullptr)
+    , m_localServer(new QLocalServer(this))
 {
     m_model->setCurrentModeState(SessionBaseModel::ModeStatus::PasswordMode);
 
@@ -51,6 +53,12 @@ LockContent::LockContent(SessionBaseModel *const model, QWidget *parent)
         onCurrentUserChanged(model->currentUser());
         onUserListChanged(model->isServerModel() ? model->loginedUserList() : model->userList());
     });
+
+    m_localServer->setMaxPendingConnections(1);
+    m_localServer->setSocketOptions(QLocalServer::WorldAccessOption);
+    if (!m_localServer->listen("GrabKeyboard")) { // 监听特定的连接
+        qWarning() << "监听失败！";
+    }
 }
 
 void LockContent::initUI()
@@ -132,6 +140,7 @@ void LockContent::initConnections()
     });
 
     connect(m_wmInter, &__wm::WorkspaceSwitched, this, &LockContent::currentWorkspaceChanged);
+    connect(m_localServer, &QLocalServer::newConnection, this, &LockContent::onNewConnection);
 }
 
 /**
@@ -288,6 +297,19 @@ void LockContent::setMPRISEnable(const bool state)
 
     m_mediaWidget->setVisible(state);
     setCenterBottomWidget(m_mediaWidget);
+}
+
+void LockContent::onNewConnection()
+{
+    if (m_localServer->hasPendingConnections()) {
+        QLocalSocket *socket = m_localServer->nextPendingConnection();
+        connect(socket, &QLocalSocket::disconnected, this, &LockContent::onDisConnect);
+    }
+}
+
+void LockContent::onDisConnect()
+{
+    tryGrabKeyboard();
 }
 
 void LockContent::onStatusChanged(SessionBaseModel::ModeStatus status)

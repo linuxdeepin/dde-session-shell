@@ -53,6 +53,7 @@ find_package(Qt5 COMPONENTS
     DBus
     Xml
     Svg
+    Network
 REQUIRED)
 
 pkg_check_modules(XCB_EWMH REQUIRED xcb-ewmh x11 xi xcursor xfixes xrandr xext xtst)

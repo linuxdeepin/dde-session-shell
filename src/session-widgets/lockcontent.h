@@ -2,6 +2,8 @@
 #define LOCKCONTENT_H
 
 #include <QWidget>
+#include <QLocalServer>
+
 #include <memory>
 
 #include "mediawidget.h"
@@ -56,6 +58,8 @@ public slots:
     void pushConfirmFrame();
     void pushShutdownFrame();
     void setMPRISEnable(const bool state);
+    void onNewConnection();
+    void onDisConnect();
 
 protected:
     void mouseReleaseEvent(QMouseEvent *event) Q_DECL_OVERRIDE;
@@ -105,6 +109,7 @@ protected:
     UserFrameList *m_userListWidget;
 
     int m_failures = 0;
+    QLocalServer *m_localServer;
 };
 
 #endif // LOCKCONTENT_H
