@@ -188,6 +188,8 @@ void ControlWidget::addModule(module::BaseModuleInterface *module)
     });
 
     connect(button, &FlotingButton::requestHideTips, this, [ = ] {
+        if (m_tipsWidget->getContent())
+            m_tipsWidget->getContent()->setVisible(false);
         m_tipsWidget->hide();
     });
 
