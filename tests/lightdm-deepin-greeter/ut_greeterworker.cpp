@@ -1,4 +1,4 @@
-#include "greeterworkek.h"
+#include "greeterworker.h"
 #include "sessionbasemodel.h"
 
 #include <gtest/gtest.h>
@@ -9,14 +9,14 @@ protected:
     void SetUp() override;
     void TearDown() override;
 
-    GreeterWorkek *m_worker;
+    GreeterWorker *m_worker;
     SessionBaseModel *m_model;
 };
 
 void UT_GreeterWorker::SetUp()
 {
     m_model = new SessionBaseModel(SessionBaseModel::LightdmType);
-    m_worker = new GreeterWorkek(m_model);
+    m_worker = new GreeterWorker(m_model);
 }
 
 void UT_GreeterWorker::TearDown()

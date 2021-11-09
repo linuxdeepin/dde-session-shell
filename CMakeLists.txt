@@ -180,7 +180,7 @@ set(GREETER_SRCS
     ${INTERFACE}
     src/app/lightdm-deepin-greeter.cpp
     src/lightdm-deepin-greeter/loginwindow.cpp
-    src/lightdm-deepin-greeter/greeterworkek.cpp
+    src/lightdm-deepin-greeter/greeterworker.cpp
     src/lightdm-deepin-greeter/logincontent.cpp
     src/lightdm-deepin-greeter/logintipswindow.cpp
     src/lightdm-deepin-greeter/sessionwidget.cpp

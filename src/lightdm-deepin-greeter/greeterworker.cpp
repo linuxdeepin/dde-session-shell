@@ -1,4 +1,4 @@
-#include "greeterworkek.h"
+#include "greeterworker.h"
 
 #include "authcommon.h"
 #include "keyboardmonitor.h"
@@ -36,7 +36,7 @@ private:
     QSettings m_settings;
 };
 
-GreeterWorkek::GreeterWorkek(SessionBaseModel *const model, QObject *parent)
+GreeterWorker::GreeterWorker(SessionBaseModel *const model, QObject *parent)
     : AuthInterface(model, parent)
     , m_greeter(new QLightDM::Greeter(this))
     , m_authFramework(new DeepinAuthFramework(this))
@@ -80,16 +80,16 @@ GreeterWorkek::GreeterWorkek(SessionBaseModel *const model, QObject *parent)
     });
 }
 
-GreeterWorkek::~GreeterWorkek()
+GreeterWorker::~GreeterWorker()
 {
 }
 
-void GreeterWorkek::initConnections()
+void GreeterWorker::initConnections()
 {
     /* greeter */
-    connect(m_greeter, &QLightDM::Greeter::showPrompt, this, &GreeterWorkek::showPrompt);
-    connect(m_greeter, &QLightDM::Greeter::showMessage, this, &GreeterWorkek::showMessage);
-    connect(m_greeter, &QLightDM::Greeter::authenticationComplete, this, &GreeterWorkek::authenticationComplete);
+    connect(m_greeter, &QLightDM::Greeter::showPrompt, this, &GreeterWorker::showPrompt);
+    connect(m_greeter, &QLightDM::Greeter::showMessage, this, &GreeterWorker::showMessage);
+    connect(m_greeter, &QLightDM::Greeter::authenticationComplete, this, &GreeterWorker::authenticationComplete);
     /* com.deepin.daemon.Accounts */
     connect(m_accountsInter, &AccountsInter::UserAdded, m_model, static_cast<void (SessionBaseModel::*)(const QString &)>(&SessionBaseModel::addUser));
     connect(m_accountsInter, &AccountsInter::UserDeleted, m_model, static_cast<void (SessionBaseModel::*)(const QString &)>(&SessionBaseModel::removeUser));
@@ -99,7 +99,7 @@ void GreeterWorkek::initConnections()
     /* com.deepin.daemon.Authenticate */
     connect(m_authFramework, &DeepinAuthFramework::FramworkStateChanged, m_model, &SessionBaseModel::updateFrameworkState);
     connect(m_authFramework, &DeepinAuthFramework::LimitsInfoChanged, this, [this](const QString &account) {
-        qDebug() << "GreeterWorkek::initConnections LimitsInfoChanged:" << account;
+        qDebug() << "GreeterWorker::initConnections LimitsInfoChanged:" << account;
         if (account == m_model->currentUser()->name()) {
             m_model->updateLimitedInfo(m_authFramework->GetLimitedInfo(account));
         }
@@ -249,8 +249,8 @@ void GreeterWorkek::initConnections()
         }
         m_limitsUpdateTimer->start();
     });
-    connect(m_model, &SessionBaseModel::onPowerActionChanged, this, &GreeterWorkek::doPowerAction);
-    connect(m_model, &SessionBaseModel::currentUserChanged, this, &GreeterWorkek::recoveryUserKBState);
+    connect(m_model, &SessionBaseModel::onPowerActionChanged, this, &GreeterWorker::doPowerAction);
+    connect(m_model, &SessionBaseModel::currentUserChanged, this, &GreeterWorker::recoveryUserKBState);
     connect(m_model, &SessionBaseModel::visibleChanged, this, [=](bool visible) {
         if (visible) {
             if (!m_model->isServerModel() && (!m_model->currentUser()->isNoPasswordLogin()
@@ -270,7 +270,7 @@ void GreeterWorkek::initConnections()
     });
 }
 
-void GreeterWorkek::initData()
+void GreeterWorker::initData()
 {
     /* com.deepin.daemon.Accounts */
     m_model->updateUserList(m_accountsInter->userList());
@@ -319,7 +319,7 @@ void GreeterWorkek::initData()
     m_model->updateLimitedInfo(m_authFramework->GetLimitedInfo(m_model->currentUser()->name()));
 }
 
-void GreeterWorkek::initConfiguration()
+void GreeterWorker::initConfiguration()
 {
     m_model->setAlwaysShowUserSwitchButton(getGSettings("", "switchuser").toInt() == AuthInterface::Always);
     m_model->setAllowShowUserSwitchButton(getGSettings("", "switchuser").toInt() == AuthInterface::Ondemand);
@@ -342,7 +342,7 @@ void GreeterWorkek::initConfiguration()
     }
 }
 
-void GreeterWorkek::doPowerAction(const SessionBaseModel::PowerAction action)
+void GreeterWorker::doPowerAction(const SessionBaseModel::PowerAction action)
 {
     switch (action) {
     case SessionBaseModel::PowerAction::RequireShutdown:
@@ -376,7 +376,7 @@ void GreeterWorkek::doPowerAction(const SessionBaseModel::PowerAction action)
  *
  * @param user
  */
-void GreeterWorkek::setCurrentUser(const std::shared_ptr<User> user)
+void GreeterWorker::setCurrentUser(const std::shared_ptr<User> user)
 {
     QJsonObject json;
     json["Name"] = user->name();
@@ -385,7 +385,7 @@ void GreeterWorkek::setCurrentUser(const std::shared_ptr<User> user)
     m_lockInter->SwitchToUser(QString(QJsonDocument(json).toJson(QJsonDocument::Compact))).waitForFinished();
 }
 
-void GreeterWorkek::switchToUser(std::shared_ptr<User> user)
+void GreeterWorker::switchToUser(std::shared_ptr<User> user)
 {
     if (user->name() == m_account) {
         if (!m_authFramework->authSessionExist(m_account))
@@ -419,7 +419,7 @@ void GreeterWorkek::switchToUser(std::shared_ptr<User> user)
  *
  * @param password
  */
-void GreeterWorkek::authUser(const QString &password)
+void GreeterWorker::authUser(const QString &password)
 {
     // auth interface
     std::shared_ptr<User> user = m_model->currentUser();
@@ -444,9 +444,9 @@ void GreeterWorkek::authUser(const QString &password)
  * 有用户时，通过dbus发过来的user信息创建认证服务，类服务器模式下通过用户输入的用户创建认证服务
  * @param account
  */
-void GreeterWorkek::createAuthentication(const QString &account)
+void GreeterWorker::createAuthentication(const QString &account)
 {
-    qDebug() << "GreeterWorkek::createAuthentication:" << account;
+    qDebug() << "GreeterWorker::createAuthentication:" << account;
     m_account = account;
     if (account.isEmpty()) {
         m_model->setAuthType(AuthTypeNone);
@@ -477,9 +477,9 @@ void GreeterWorkek::createAuthentication(const QString &account)
  *
  * @param account
  */
-void GreeterWorkek::destoryAuthentication(const QString &account)
+void GreeterWorker::destoryAuthentication(const QString &account)
 {
-    qDebug() << "GreeterWorkek::destoryAuthentication:" << account;
+    qDebug() << "GreeterWorker::destoryAuthentication:" << account;
     switch (m_model->getAuthProperty().FrameworkState) {
     case Available:
         m_authFramework->DestoryAuthController(account);
@@ -496,9 +496,9 @@ void GreeterWorkek::destoryAuthentication(const QString &account)
  * @param authType  认证类型（可传入一种或多种）
  * @param timeout   设定超时时间（默认 -1）
  */
-void GreeterWorkek::startAuthentication(const QString &account, const int authType)
+void GreeterWorker::startAuthentication(const QString &account, const int authType)
 {
-    qDebug() << "GreeterWorkek::startAuthentication:" << account << authType;
+    qDebug() << "GreeterWorker::startAuthentication:" << account << authType;
     switch (m_model->getAuthProperty().FrameworkState) {
     case Available:
         if (!m_authFramework->authSessionExist(account))
@@ -520,9 +520,9 @@ void GreeterWorkek::startAuthentication(const QString &account, const int authTy
  * @param authType  认证类型
  * @param token     密文
  */
-void GreeterWorkek::sendTokenToAuth(const QString &account, const int authType, const QString &token)
+void GreeterWorker::sendTokenToAuth(const QString &account, const int authType, const QString &token)
 {
-    qDebug() << "GreeterWorkek::sendTokenToAuth:" << account << authType;
+    qDebug() << "GreeterWorker::sendTokenToAuth:" << account << authType;
     switch (m_model->getAuthProperty().FrameworkState) {
     case Available:
         if (!m_authFramework->authSessionExist(account))
@@ -544,9 +544,9 @@ void GreeterWorkek::sendTokenToAuth(const QString &account, const int authType, 
  * @param account   账户
  * @param authType  认证类型
  */
-void GreeterWorkek::endAuthentication(const QString &account, const int authType)
+void GreeterWorker::endAuthentication(const QString &account, const int authType)
 {
-    qDebug() << "GreeterWorkek::endAuthentication:" << account << authType;
+    qDebug() << "GreeterWorker::endAuthentication:" << account << authType;
     switch (m_model->getAuthProperty().FrameworkState) {
     case Available:
         if (authType == AuthTypeAll) {
@@ -564,9 +564,9 @@ void GreeterWorkek::endAuthentication(const QString &account, const int authType
  *
  * @param account
  */
-void GreeterWorkek::checkAccount(const QString &account)
+void GreeterWorker::checkAccount(const QString &account)
 {
-    qDebug() << "GreeterWorkek::checkAccount:" << account;
+    qDebug() << "GreeterWorker::checkAccount:" << account;
     if (m_greeter->authenticationUser() == account) {
         return;
     }
@@ -620,7 +620,7 @@ void GreeterWorkek::checkAccount(const QString &account)
     }
 }
 
-void GreeterWorkek::checkDBusServer(bool isvalid)
+void GreeterWorker::checkDBusServer(bool isvalid)
 {
     if (isvalid) {
         m_accountsInter->userList();
@@ -633,7 +633,7 @@ void GreeterWorkek::checkDBusServer(bool isvalid)
     }
 }
 
-void GreeterWorkek::oneKeyLogin()
+void GreeterWorker::oneKeyLogin()
 {
     // 多用户一键登陆
     QDBusPendingCall call = m_authenticateInter->PreOneKeyLogin(AuthFlag::Fingerprint);
@@ -656,7 +656,7 @@ void GreeterWorkek::oneKeyLogin()
     });
 }
 
-void GreeterWorkek::userAuthForLightdm(std::shared_ptr<User> user)
+void GreeterWorker::userAuthForLightdm(std::shared_ptr<User> user)
 {
     if (user.get() != nullptr && !user->isNoPasswordLogin()) {
         //后端需要大约600ms时间去释放指纹设备
@@ -670,9 +670,9 @@ void GreeterWorkek::userAuthForLightdm(std::shared_ptr<User> user)
  * @param text
  * @param type
  */
-void GreeterWorkek::showPrompt(const QString &text, const QLightDM::Greeter::PromptType type)
+void GreeterWorker::showPrompt(const QString &text, const QLightDM::Greeter::PromptType type)
 {
-    qDebug() << "GreeterWorkek::showPrompt:" << text << type;
+    qDebug() << "GreeterWorker::showPrompt:" << text << type;
     switch (type) {
     case QLightDM::Greeter::PromptTypeSecret:
         m_retryAuth = true;
@@ -689,9 +689,9 @@ void GreeterWorkek::showPrompt(const QString &text, const QLightDM::Greeter::Pro
  * @param text
  * @param type
  */
-void GreeterWorkek::showMessage(const QString &text, const QLightDM::Greeter::MessageType type)
+void GreeterWorker::showMessage(const QString &text, const QLightDM::Greeter::MessageType type)
 {
-    qDebug() << "GreeterWorkek::showMessage:" << text << type;
+    qDebug() << "GreeterWorker::showMessage:" << text << type;
     switch (type) {
     case QLightDM::Greeter::MessageTypeInfo:
         m_model->updateAuthStatus(AuthTypeSingle, StatusCodeSuccess, text);
@@ -710,7 +710,7 @@ void GreeterWorkek::showMessage(const QString &text, const QLightDM::Greeter::Me
 /**
  * @brief 认证完成
  */
-void GreeterWorkek::authenticationComplete()
+void GreeterWorker::authenticationComplete()
 {
     const bool result = m_greeter->isAuthenticated();
     qInfo() << "Authentication result:" << result << m_retryAuth;
@@ -757,9 +757,9 @@ void GreeterWorkek::authenticationComplete()
     destoryAuthentication(m_account);
 }
 
-void GreeterWorkek::onAuthFinished()
+void GreeterWorker::onAuthFinished()
 {
-    qDebug() << "GreeterWorkek::onAuthFinished";
+    qDebug() << "GreeterWorker::onAuthFinished";
     if (m_greeter->inAuthentication()) {
         m_greeter->respond(m_authFramework->AuthSessionPath(m_account) + QString(";") + m_password);
     } else {
@@ -767,12 +767,12 @@ void GreeterWorkek::onAuthFinished()
     }
 }
 
-void GreeterWorkek::saveNumlockStatus(std::shared_ptr<User> user, const bool &on)
+void GreeterWorker::saveNumlockStatus(std::shared_ptr<User> user, const bool &on)
 {
     UserNumlockSettings(user->name()).set(on);
 }
 
-void GreeterWorkek::recoveryUserKBState(std::shared_ptr<User> user)
+void GreeterWorker::recoveryUserKBState(std::shared_ptr<User> user)
 {
     //FIXME(lxz)
     //    PowerInter powerInter("com.deepin.system.Power", "/com/deepin/system/Power", QDBusConnection::systemBus(), this);
@@ -794,17 +794,17 @@ void GreeterWorkek::recoveryUserKBState(std::shared_ptr<User> user)
 }
 
 //TODO 显示内容
-void GreeterWorkek::onDisplayErrorMsg(const QString &msg)
+void GreeterWorker::onDisplayErrorMsg(const QString &msg)
 {
     emit m_model->authFaildTipsMessage(msg);
 }
 
-void GreeterWorkek::onDisplayTextInfo(const QString &msg)
+void GreeterWorker::onDisplayTextInfo(const QString &msg)
 {
     emit m_model->authFaildMessage(msg);
 }
 
-void GreeterWorkek::onPasswordResult(const QString &msg)
+void GreeterWorker::onPasswordResult(const QString &msg)
 {
     //onUnlockFinished(!msg.isEmpty());
 
@@ -813,7 +813,7 @@ void GreeterWorkek::onPasswordResult(const QString &msg)
     //}
 }
 
-void GreeterWorkek::resetLightdmAuth(std::shared_ptr<User> user, int delay_time, bool is_respond)
+void GreeterWorker::resetLightdmAuth(std::shared_ptr<User> user, int delay_time, bool is_respond)
 {
     QTimer::singleShot(delay_time, this, [=] {
         // m_greeter->authenticate(user->name());
@@ -832,7 +832,7 @@ void GreeterWorkek::resetLightdmAuth(std::shared_ptr<User> user, int delay_time,
     });
 }
 
-void GreeterWorkek::restartResetSessionTimer()
+void GreeterWorker::restartResetSessionTimer()
 {
     if (m_model->visible() && m_resetSessionTimer->isActive()) {
         m_resetSessionTimer->start();

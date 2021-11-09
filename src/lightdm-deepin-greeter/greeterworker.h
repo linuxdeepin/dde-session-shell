@@ -15,7 +15,7 @@
 
 using com::deepin::daemon::Authenticate;
 
-class GreeterWorkek : public Auth::AuthInterface, public DeepinAuthInterface
+class GreeterWorker : public Auth::AuthInterface, public DeepinAuthInterface
 {
     Q_OBJECT
 public:
@@ -26,8 +26,8 @@ public:
         ActiveDirectory = 1 << 3
     };
 
-    explicit GreeterWorkek(SessionBaseModel *const model, QObject *parent = nullptr);
-    ~GreeterWorkek();
+    explicit GreeterWorker(SessionBaseModel *const model, QObject *parent = nullptr);
+    ~GreeterWorker();
 
     void switchToUser(std::shared_ptr<User> user) override;
 
