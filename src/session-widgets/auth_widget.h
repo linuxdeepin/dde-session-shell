@@ -114,6 +114,7 @@ protected:
     UserAvatar *m_userAvatar;              // 用户头像
 
     DLabel *m_expiredStatusLabel; // 密码过期提示
+    QSpacerItem *m_expiredSpacerItem;      // 密码过期提示与按钮的间隔
     DLabel *m_nameLabel;          // 用户名
     DLineEditEx *m_accountEdit;   // 用户名输入框
 

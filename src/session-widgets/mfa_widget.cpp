@@ -57,6 +57,8 @@ void MFAWidget::initUI()
     m_mainLayout->addWidget(m_nameLabel, 0, Qt::AlignVCenter);
     m_mainLayout->addWidget(m_accountEdit, 0, Qt::AlignVCenter);
     m_mainLayout->addSpacing(10);
+    m_mainLayout->addWidget(m_expiredStatusLabel);
+    m_mainLayout->addItem(m_expiredSpacerItem);
     m_mainLayout->addWidget(m_lockButton, 0, Qt::AlignCenter);
 }
 
