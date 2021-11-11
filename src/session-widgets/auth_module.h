@@ -39,6 +39,7 @@
 #define PASSWORD_HINT QStringLiteral(":/misc/images/password_hint.svg")
 #define AUTH_LOCK QStringLiteral(":/misc/images/unlock/unlock_1.svg")
 #define UnionID_Auth QStringLiteral(":/misc/images/auth/UnionID.svg")
+#define ResetPassword_Exe_Path QStringLiteral("/usr/lib/dde-control-center/reset-password-dialog")
 
 DWIDGET_USE_NAMESPACE
 using namespace DDESESSIONCC;

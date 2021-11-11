@@ -239,7 +239,7 @@ void AuthPassword::setAuthStatus(const int state, const QString &result)
         } else {
             setLineEditInfo(tr("Please try again %n minutes later", "", static_cast<int>(m_integerMinutes)), PlaceHolderText);
         }
-        if (m_currentUid <= 9999 && isUserAccountBinded()) {
+        if (QFile::exists(ResetPassword_Exe_Path) && m_currentUid <= 9999 && isUserAccountBinded()) {
             qDebug() << "begin reset passoword";
             setResetPasswordMessageVisible(true);
             updateResetPasswordUI();
