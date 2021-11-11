@@ -137,5 +137,5 @@ bool DLineEditEx::eventFilter(QObject *watched, QEvent *event)
         return true;
     }
 
-    return QWidget::eventFilter(watched,event);
+    return DLineEdit::eventFilter(watched,event);
 }
