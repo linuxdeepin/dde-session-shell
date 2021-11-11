@@ -33,6 +33,7 @@
 class LoginContent;
 class SessionBaseModel;
 class User;
+
 class LoginWindow : public FullscreenBackground
 {
     Q_OBJECT
@@ -54,8 +55,10 @@ signals:
     void sendTokenToAuth(const QString &account, const int authType, const QString &token);
     void requestEndAuthentication(const QString &account, const int authType);
     void authFinished();
-
     void requestCheckAccount(const QString &account);
+    void requestShowPrompt(const QString &prompt);
+    void requestShowMessage(const QString &message);
+    void respondPasswd(const QString& );
 
 protected:
     void showEvent(QShowEvent *event) override;

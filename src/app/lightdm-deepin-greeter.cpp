@@ -280,13 +280,15 @@ int main(int argc, char* argv[])
         QObject::connect(loginFrame, &LoginWindow::requestSwitchToUser, worker, &GreeterWorker::switchToUser);
         QObject::connect(loginFrame, &LoginWindow::requestSetLayout, worker, &GreeterWorker::setLayout);
         QObject::connect(worker, &GreeterWorker::requestUpdateBackground, loginFrame, static_cast<void (LoginWindow::*)(const QString &)>(&LoginWindow::updateBackground));
+        QObject::connect(worker, &GreeterWorker::requestShowPrompt, loginFrame, &LoginWindow::requestShowPrompt);
+        QObject::connect(worker, &GreeterWorker::requestShowMessage, loginFrame, &LoginWindow::requestShowMessage);
         QObject::connect(loginFrame, &LoginWindow::destroyed, property_group, &PropertyGroup::removeObject);
-
         QObject::connect(loginFrame, &LoginWindow::requestCheckAccount, worker, &GreeterWorker::checkAccount);
         QObject::connect(loginFrame, &LoginWindow::requestStartAuthentication, worker, &GreeterWorker::startAuthentication);
         QObject::connect(loginFrame, &LoginWindow::sendTokenToAuth, worker, &GreeterWorker::sendTokenToAuth);
         QObject::connect(loginFrame, &LoginWindow::requestEndAuthentication, worker, &GreeterWorker::endAuthentication);
         QObject::connect(loginFrame, &LoginWindow::authFinished, worker, &GreeterWorker::onAuthFinished);
+        QObject::connect(loginFrame, &LoginWindow::respondPasswd, worker, &GreeterWorker::onPasswdRespond);
         loginFrame->show();
         return loginFrame;
     };

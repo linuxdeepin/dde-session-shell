@@ -23,9 +23,11 @@
 #include "logintipswindow.h"
 #include "sessionwidget.h"
 #include "controlwidget.h"
+#include "resetpasswdwidget.h"
 
 LoginContent::LoginContent(SessionBaseModel *const model, QWidget *parent)
     : LockContent(model, parent)
+    , m_resetPasswdWidget(nullptr)
 {
     m_sessionFrame = new SessionWidget;
     m_sessionFrame->setModel(model);
@@ -92,4 +94,23 @@ void LoginContent::popTipsFrame()
     setTopFrameVisible(true);
     setBottomFrameVisible(true);
     LockContent::onStatusChanged(m_model->currentModeState());
+}
+
+void LoginContent::showPrompt(const QString &prompt)
+{
+    // 根据提示修改密码
+    qDebug() << Q_FUNC_INFO << prompt;
+    if (!m_resetPasswdWidget) {
+        m_resetPasswdWidget = new ResetPasswdWidget(this);
+        m_resetPasswdWidget->setModel(m_model);
+        connect(m_resetPasswdWidget, &ResetPasswdWidget::respondPasswd, this, &LoginContent::respondPasswd);
+    }
+    m_resetPasswdWidget->setPrompt(prompt);
+    setCenterContent(m_resetPasswdWidget);
+}
+
+void LoginContent::showMessage(const QString &message)
+{
+    if (m_resetPasswdWidget)
+        m_resetPasswdWidget->setMessage(message);
 }

@@ -340,6 +340,10 @@ void LockContent::onStatusChanged(SessionBaseModel::ModeStatus status)
 
 void LockContent::mouseReleaseEvent(QMouseEvent *event)
 {
+    // 如果是设置密码界面，不做处理
+    if (m_model->currentModeState() == SessionBaseModel::ResetPasswdMode)
+        return SessionBaseWindow::mouseReleaseEvent(event);
+
     //在关机界面没有点击按钮直接点击界面时，直接隐藏关机界面
     if (m_model->currentModeState() == SessionBaseModel::ShutDownMode) {
         hideToplevelWindow();

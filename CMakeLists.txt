@@ -184,6 +184,7 @@ set(GREETER_SRCS
     src/lightdm-deepin-greeter/logincontent.cpp
     src/lightdm-deepin-greeter/logintipswindow.cpp
     src/lightdm-deepin-greeter/sessionwidget.cpp
+    src/lightdm-deepin-greeter/resetpasswdwidget.cpp
 )
 add_executable(lightdm-deepin-greeter
     ${GREETER_SRCS}

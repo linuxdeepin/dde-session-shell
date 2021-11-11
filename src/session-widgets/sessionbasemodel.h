@@ -51,7 +51,8 @@ public:
         UserMode,
         SessionMode,
         PowerMode,
-        ShutDownMode
+        ShutDownMode,
+        ResetPasswdMode
     };
     Q_ENUM(ModeStatus)
 

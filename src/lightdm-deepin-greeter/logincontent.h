@@ -26,6 +26,8 @@
 
 class SessionWidget;
 class LoginTipsWindow;
+class ResetPasswdWidget;
+
 class LoginContent : public LockContent
 {
     Q_OBJECT
@@ -38,10 +40,18 @@ public:
     void pushTipsFrame();
     void popTipsFrame();
 
+public slots:
+    void showPrompt(const QString &prompt);
+    void showMessage(const QString &message);
+
+signals:
+    void respondPasswd(const QString& );
+
 private:
     SessionWidget *m_sessionFrame;
     LoginTipsWindow *m_loginTipsWindow;
     bool m_showTipsWidget = true;
+    ResetPasswdWidget *m_resetPasswdWidget;
 };
 
 #endif // LOGINCONTENT_H

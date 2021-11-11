@@ -43,6 +43,7 @@ GreeterWorker::GreeterWorker(SessionBaseModel *const model, QObject *parent)
     , m_lockInter(new DBusLockService(LOCKSERVICE_NAME, LOCKSERVICE_PATH, QDBusConnection::systemBus(), this))
     , m_resetSessionTimer(new QTimer(this))
     , m_limitsUpdateTimer(new QTimer(this))
+    , m_authFinished(false)
 {
 #ifndef QT_DEBUG
     if (!m_greeter->connectSync()) {
@@ -107,95 +108,7 @@ void GreeterWorker::initConnections()
     connect(m_authFramework, &DeepinAuthFramework::SupportedEncryptsChanged, m_model, &SessionBaseModel::updateSupportedEncryptionType);
     connect(m_authFramework, &DeepinAuthFramework::SupportedMixAuthFlagsChanged, m_model, &SessionBaseModel::updateSupportedMixAuthFlags);
     /* com.deepin.daemon.Authenticate.Session */
-    connect(m_authFramework, &DeepinAuthFramework::AuthStatusChanged, this, [=](const int type, const int status, const QString &message) {
-        qDebug() << "DeepinAuthFramework::AuthStatusChanged:" << type << status << message;
-        if (m_model->getAuthProperty().MFAFlag) {
-            if (type == AuthTypeAll) {
-                switch (status) {
-                case StatusCodeSuccess:
-                    m_model->updateAuthStatus(type, status, message);
-                    m_resetSessionTimer->stop();
-                    if (m_greeter->inAuthentication()) {
-                        m_greeter->respond(m_authFramework->AuthSessionPath(m_account) + QString(";") + m_password);
-                    } else {
-                        qWarning() << "The lightdm is not in authentication!";
-                    }
-                    break;
-                case StatusCodeCancel:
-                    m_model->updateAuthStatus(type, status, message);
-                    destoryAuthentication(m_account);
-                    break;
-                default:
-                    break;
-                }
-            } else {
-                switch (status) {
-                case StatusCodeSuccess:
-                    if (m_model->currentModeState() != SessionBaseModel::ModeStatus::PasswordMode)
-                        m_model->setCurrentModeState(SessionBaseModel::ModeStatus::PasswordMode);
-                    m_resetSessionTimer->start();
-                    m_model->updateAuthStatus(type, status, message);
-                    break;
-                case StatusCodeFailure:
-                    if (m_model->currentModeState() != SessionBaseModel::ModeStatus::PasswordMode) {
-                        m_model->setCurrentModeState(SessionBaseModel::ModeStatus::PasswordMode);
-                    }
-                    endAuthentication(m_account, type);
-                    // 人脸和虹膜需要手动重启验证
-                    if (!m_model->currentUser()->limitsInfo(type).locked && type != AuthTypeFace && type != AuthTypeIris) {
-                        QTimer::singleShot(50, this, [=] {
-                            startAuthentication(m_account, type);
-                        });
-                    }
-                    QTimer::singleShot(50, this, [=] {
-                        m_model->updateAuthStatus(type, status, message);
-                    });
-                    break;
-                case StatusCodeLocked:
-                    if (m_model->currentModeState() != SessionBaseModel::ModeStatus::PasswordMode)
-                        m_model->setCurrentModeState(SessionBaseModel::ModeStatus::PasswordMode);
-                    endAuthentication(m_account, type);
-                    // TODO: 信号时序问题,考虑优化,Bug 89056
-                    QTimer::singleShot(50, this, [=] {
-                        m_model->updateAuthStatus(type, status, message);
-                    });
-                    break;
-                case StatusCodeTimeout:
-                case StatusCodeError:
-                    m_model->updateAuthStatus(type, status, message);
-                    endAuthentication(m_account, type);
-                    break;
-                default:
-                    m_model->updateAuthStatus(type, status, message);
-                    break;
-                }
-            }
-        } else {
-            if (m_model->currentModeState() != SessionBaseModel::ModeStatus::PasswordMode
-                    && (status == StatusCodeSuccess || status == StatusCodeFailure))
-                m_model->setCurrentModeState(SessionBaseModel::ModeStatus::PasswordMode);
-
-            m_model->updateAuthStatus(type, status, message);
-            switch (status) {
-            case StatusCodeFailure:
-                if (AuthTypeAll != type) {
-                    endAuthentication(m_account, type);
-                    // 人脸和虹膜需要手动重新开启验证
-                    if (!m_model->currentUser()->limitsInfo(type).locked && type != AuthTypeFace && type != AuthTypeIris) {
-                        QTimer::singleShot(50, this, [this, type] {
-                            startAuthentication(m_account, type);
-                        });
-                    }
-                }
-                break;
-            case StatusCodeCancel:
-                destoryAuthentication(m_account);
-                break;
-            default:
-                break;
-            }
-        }
-    });
+    connect(m_authFramework, &DeepinAuthFramework::AuthStatusChanged, this, &GreeterWorker::handleAuthStatusChanged);
     connect(m_authFramework, &DeepinAuthFramework::FactorsInfoChanged, m_model, &SessionBaseModel::updateFactorsInfo);
     connect(m_authFramework, &DeepinAuthFramework::FuzzyMFAChanged, m_model, &SessionBaseModel::updateFuzzyMFA);
     connect(m_authFramework, &DeepinAuthFramework::MFAFlagChanged, m_model, &SessionBaseModel::updateMFAFlag);
@@ -397,12 +310,12 @@ void GreeterWorker::switchToUser(std::shared_ptr<User> user)
     endAuthentication(m_account, AuthTypeAll);
 
     if (user->uid() == INT_MAX) {
-        m_greeter->authenticate();
+        startGreeterAuth();
         m_model->setAuthType(AuthTypeNone);
     }
     setCurrentUser(user);
     if (user->isLogin()) { // switch to user Xorg
-        m_greeter->authenticate();
+        startGreeterAuth();
         QProcess::startDetached("dde-switchtogreeter", QStringList() << user->name());
     } else {
         m_model->updateAuthStatus(AuthTypeAll, StatusCodeCancel, "Cancel");
@@ -434,7 +347,7 @@ void GreeterWorker::authUser(const QString &password)
             // m_authFramework->Responsed(password);
             // m_greeter->respond(password);
         } else {
-            m_greeter->authenticate(user->name());
+            startGreeterAuth(user->name());
         }
     }
 }
@@ -464,7 +377,7 @@ void GreeterWorker::createAuthentication(const QString &account)
         if (!m_authFramework->SetPrivilegesEnable(account, QString("/usr/sbin/lightdm"))) {
             qWarning() << "Failed to set privileges!";
         }
-        m_greeter->authenticate(account);
+        startGreeterAuth(account);
         break;
     default:
         m_model->setAuthType(AuthTypeSingle);
@@ -508,7 +421,7 @@ void GreeterWorker::startAuthentication(const QString &account, const int authTy
         m_authFramework->StartAuthentication(account, authType, -1);
         break;
     default:
-        m_greeter->authenticate(account);
+        startGreeterAuth(account);
         break;
     }
 }
@@ -534,6 +447,7 @@ void GreeterWorker::sendTokenToAuth(const QString &account, const int authType, 
         break;
     default:
         m_greeter->respond(token);
+        m_authFinished = true;
         break;
     }
 }
@@ -582,7 +496,7 @@ void GreeterWorker::checkAccount(const QString &account)
             qWarning() << userPath;
             onDisplayErrorMsg(tr("Wrong account"));
             m_model->setAuthType(AuthTypeNone);
-            m_greeter->authenticate();
+            startGreeterAuth();
             return;
         }
     } else if (user_ptr == nullptr) {
@@ -600,7 +514,7 @@ void GreeterWorker::checkAccount(const QString &account)
             qWarning() << userPath;
             onDisplayErrorMsg(tr("Wrong account"));
             m_model->setAuthType(AuthTypeNone);
-            m_greeter->authenticate();
+            startGreeterAuth();
             return;
         }
     }
@@ -610,7 +524,7 @@ void GreeterWorker::checkAccount(const QString &account)
         if (user_ptr->expiredStatus() == User::ExpiredAlready) {
             m_model->setAuthType(AuthTypeSingle);
         }
-        m_greeter->authenticate(user_ptr->name());
+        startGreeterAuth(user_ptr->name());
     } else {
         m_resetSessionTimer->stop();
         endAuthentication(m_account, AuthTypeAll);
@@ -672,11 +586,17 @@ void GreeterWorker::userAuthForLightdm(std::shared_ptr<User> user)
  */
 void GreeterWorker::showPrompt(const QString &text, const QLightDM::Greeter::PromptType type)
 {
-    qDebug() << "GreeterWorker::showPrompt:" << text << type;
+    qDebug() << "GreeterWorker::showPrompt:" << text << type
+             << " is authenticated: " << m_greeter->isAuthenticated()
+             << ", current user passwd expired status: " << m_model->currentUser()->expiredStatus();
     switch (type) {
     case QLightDM::Greeter::PromptTypeSecret:
-        m_retryAuth = true;
-        m_model->updateAuthStatus(AuthTypeSingle, StatusCodePrompt, text);
+        // 验证成功且当前用户的密码已过期，按照提示修改密码
+        if (m_authFinished && User::ExpiredAlready == m_model->currentUser()->expiredStatus()) {
+            m_model->setCurrentModeState(SessionBaseModel::ResetPasswdMode);
+            m_retryAuth = true;
+            emit requestShowPrompt(text);
+        }
         break;
     case QLightDM::Greeter::PromptTypeQuestion:
         break;
@@ -697,12 +617,8 @@ void GreeterWorker::showMessage(const QString &text, const QLightDM::Greeter::Me
         m_model->updateAuthStatus(AuthTypeSingle, StatusCodeSuccess, text);
         break;
     case QLightDM::Greeter::MessageTypeError:
-        if (m_retryAuth && m_model->getAuthProperty().MFAFlag) {
-            m_model->updateMFAFlag(false);
-            m_model->setAuthType(AuthTypeSingle);
-        }
         m_retryAuth = false;
-        m_model->updateAuthStatus(AuthTypeSingle, StatusCodeFailure, text);
+        emit requestShowMessage(text);
         break;
     }
 }
@@ -720,7 +636,7 @@ void GreeterWorker::authenticationComplete()
             showMessage(tr("Wrong Password"), QLightDM::Greeter::MessageTypeError);
         }
         if (!m_model->currentUser()->limitsInfo(AuthTypePassword).locked) {
-            m_greeter->authenticate(m_model->currentUser()->name());
+            startGreeterAuth(m_model->currentUser()->name());
         }
         return;
     }
@@ -759,12 +675,115 @@ void GreeterWorker::authenticationComplete()
 
 void GreeterWorker::onAuthFinished()
 {
-    qDebug() << "GreeterWorker::onAuthFinished";
     if (m_greeter->inAuthentication()) {
+        m_authFinished = true;
         m_greeter->respond(m_authFramework->AuthSessionPath(m_account) + QString(";") + m_password);
     } else {
         qWarning() << "The lightdm is not in authentication!";
     }
+}
+
+void GreeterWorker::handleAuthStatusChanged(const int type, const int status, const QString &message)
+{
+    qDebug() << Q_FUNC_INFO
+             << ", type: " << type
+             << ", status: " << status
+             << ", message: " << message;
+
+    if (m_model->getAuthProperty().MFAFlag) {
+        if (type == AuthTypeAll) {
+            switch (status) {
+            case StatusCodeSuccess:
+                m_model->updateAuthStatus(type, status, message);
+                m_resetSessionTimer->stop();
+                if (m_greeter->inAuthentication()) {
+                    m_authFinished = true;
+                    m_greeter->respond(m_authFramework->AuthSessionPath(m_account) + QString(";") + m_password);
+                } else {
+                    qWarning() << "The lightdm is not in authentication!";
+                }
+                break;
+            case StatusCodeCancel:
+                m_model->updateAuthStatus(type, status, message);
+                destoryAuthentication(m_account);
+                break;
+            default:
+                break;
+            }
+        } else {
+            switch (status) {
+            case StatusCodeSuccess:
+                if (m_model->currentModeState() != SessionBaseModel::ResetPasswdMode)
+                    m_model->setCurrentModeState(SessionBaseModel::ModeStatus::PasswordMode);
+                m_resetSessionTimer->start();
+                m_model->updateAuthStatus(type, status, message);
+                break;
+            case StatusCodeFailure:
+                if (m_model->currentModeState() != SessionBaseModel::ResetPasswdMode) {
+                    m_model->setCurrentModeState(SessionBaseModel::ModeStatus::PasswordMode);
+                }
+                endAuthentication(m_account, type);
+                // 人脸和虹膜需要手动重启验证
+                if (!m_model->currentUser()->limitsInfo(type).locked && type != AuthTypeFace && type != AuthTypeIris) {
+                    QTimer::singleShot(50, this, [=] {
+                        startAuthentication(m_account, type);
+                    });
+                }
+                QTimer::singleShot(50, this, [=] {
+                    m_model->updateAuthStatus(type, status, message);
+                });
+                break;
+            case StatusCodeLocked:
+                if (m_model->currentModeState() != SessionBaseModel::ResetPasswdMode)
+                    m_model->setCurrentModeState(SessionBaseModel::ModeStatus::PasswordMode);
+                endAuthentication(m_account, type);
+                // TODO: 信号时序问题,考虑优化,Bug 89056
+                QTimer::singleShot(50, this, [=] {
+                    m_model->updateAuthStatus(type, status, message);
+                });
+                break;
+            case StatusCodeTimeout:
+            case StatusCodeError:
+                m_model->updateAuthStatus(type, status, message);
+                endAuthentication(m_account, type);
+                break;
+            default:
+                m_model->updateAuthStatus(type, status, message);
+                break;
+            }
+        }
+    } else {
+        if (m_model->currentModeState() != SessionBaseModel::ModeStatus::PasswordMode
+                && (status == StatusCodeSuccess || status == StatusCodeFailure)
+                && m_model->currentModeState() != SessionBaseModel::ResetPasswdMode)
+            m_model->setCurrentModeState(SessionBaseModel::ModeStatus::PasswordMode);
+
+        m_model->updateAuthStatus(type, status, message);
+        switch (status) {
+        case StatusCodeFailure:
+            if (AuthTypeAll != type) {
+                endAuthentication(m_account, type);
+                // 人脸和虹膜需要手动重新开启验证
+                if (!m_model->currentUser()->limitsInfo(type).locked && type != AuthTypeFace && type != AuthTypeIris) {
+                    QTimer::singleShot(50, this, [this, type] {
+                        startAuthentication(m_account, type);
+                    });
+                }
+            }
+            break;
+        case StatusCodeCancel:
+            destoryAuthentication(m_account);
+            break;
+        default:
+            break;
+        }
+    }
+}
+
+void GreeterWorker::onPasswdRespond(const QString &passwd)
+{
+    qDebug() << Q_FUNC_INFO;
+    m_greeter->respond(passwd);
 }
 
 void GreeterWorker::saveNumlockStatus(std::shared_ptr<User> user, const bool &on)
@@ -816,7 +835,7 @@ void GreeterWorker::onPasswordResult(const QString &msg)
 void GreeterWorker::resetLightdmAuth(std::shared_ptr<User> user, int delay_time, bool is_respond)
 {
     QTimer::singleShot(delay_time, this, [=] {
-        // m_greeter->authenticate(user->name());
+        // startGreeterAuth(user->name());
         // m_authFramework->AuthenticateByUser(user);
         if (is_respond && !m_password.isEmpty()) {
             // if (m_framworkState == 0) {
@@ -837,4 +856,10 @@ void GreeterWorker::restartResetSessionTimer()
     if (m_model->visible() && m_resetSessionTimer->isActive()) {
         m_resetSessionTimer->start();
     }
+}
+
+void GreeterWorker::startGreeterAuth(const QString &account)
+{
+    m_greeter->authenticate(account);
+    m_authFinished = false;
 }

@@ -38,6 +38,8 @@ public:
 
 signals:
     void requestUpdateBackground(const QString &path);
+    void requestShowPrompt(const QString &prompt);
+    void requestShowMessage(const QString &message);
 
 public slots:
     /* Old authentication methods */
@@ -52,6 +54,8 @@ public slots:
     void checkAccount(const QString &account);
     void restartResetSessionTimer();
     void onAuthFinished();
+    void handleAuthStatusChanged(const int type, const int status, const QString &message);
+    void onPasswdRespond(const QString &passwd);
 
 private:
     void initConnections();
@@ -70,6 +74,7 @@ private:
     void saveNumlockStatus(std::shared_ptr<User> user, const bool &on);
     void recoveryUserKBState(std::shared_ptr<User> user);
     void resetLightdmAuth(std::shared_ptr<User> user, int delay_time, bool is_respond);
+    void startGreeterAuth(const QString &account = QString());
 
 private:
     QLightDM::Greeter *m_greeter;
@@ -80,6 +85,7 @@ private:
     QString m_account;
     QString m_password;
     bool m_retryAuth;
+    bool m_authFinished;
 };
 
 #endif  // GREETERWORKEK_H
