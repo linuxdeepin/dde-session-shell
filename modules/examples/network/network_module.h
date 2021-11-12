@@ -57,6 +57,7 @@ private:
 private:
     QWidget *m_networkWidget;
     QLabel *m_tipLabel;
+    QLabel *m_itemLabel;
 };
 
 } // namespace module

@@ -32,6 +32,7 @@ NetworkModule::NetworkModule(QObject *parent)
     : QObject(parent)
     , m_networkWidget(nullptr)
     , m_tipLabel(nullptr)
+    , m_itemLabel(nullptr)
 {
     setObjectName(QStringLiteral("NetworkModule"));
 }
@@ -41,19 +42,24 @@ NetworkModule::~NetworkModule()
     if (m_networkWidget) {
         delete m_networkWidget;
     }
+
+    if (m_itemLabel) {
+        delete m_itemLabel;
+    }
 }
 
 void NetworkModule::init()
 {
     initUI();
+
+    m_itemLabel = new QLabel;
+    m_itemLabel->setPixmap(QIcon::fromTheme("dialog-warning").pixmap(20, 20));
+    m_itemLabel->setFixedSize(20, 20);
 }
 
 QWidget *NetworkModule::itemWidget() const
 {
-    QLabel *label = new QLabel;
-    label->setPixmap(QIcon::fromTheme("dialog-warning").pixmap(20, 20));
-    label->setFixedSize(20, 20);
-    return label;
+    return m_itemLabel;
 }
 
 QWidget *NetworkModule::itemTipsWidget() const
