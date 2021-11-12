@@ -491,6 +491,8 @@ void AuthPassword::showResetPasswordMessage()
         auto reply = user.SetPassword("");
         reply.waitForFinished();
         qWarning() << "reply setpassword:" << reply.error().message();
+
+        emit m_resetPasswordFloatingMessage->closeButtonClicked();
     });
     connect(m_resetPasswordFloatingMessage, &DFloatingMessage::closeButtonClicked, this, [this](){
         if (m_resetPasswordFloatingMessage) {

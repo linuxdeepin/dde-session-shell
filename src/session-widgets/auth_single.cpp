@@ -452,6 +452,8 @@ void AuthSingle::showResetPasswordMessage()
         auto reply = user.SetPassword("");
         reply.waitForFinished();
         qWarning() << "reply setpassword:" << reply.error().message();
+
+        emit m_resetPasswordFloatingMessage->closeButtonClicked();
     });
     DMessageManager::instance()->sendMessage(centerFrame, m_resetPasswordFloatingMessage);
     connect(m_resetPasswordFloatingMessage, &DFloatingMessage::closeButtonClicked, this, [this](){
