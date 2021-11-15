@@ -84,8 +84,7 @@ private:
     QTimer *m_limitsUpdateTimer;
     QString m_account;
     QString m_password;
-    bool m_retryAuth;
-    bool m_authFinished;
+    bool m_haveRespondedToLightdm;
 };
 
 #endif  // GREETERWORKEK_H

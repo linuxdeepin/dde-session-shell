@@ -28,8 +28,9 @@ namespace AuthCommon {
  * 认证框架是否可用的标志位
  */
 enum AuthFrameFlag {
-    Unavailable,
-    Available
+    Unavailable = 0,        // DA 不存在
+    Available,              // DA 可用
+    OnlyDaDbusAvailable     // DA 存在但是不可用
 };
 
 /**

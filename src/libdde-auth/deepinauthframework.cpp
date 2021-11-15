@@ -24,8 +24,6 @@
 #define PAM_SERVICE_DEEPIN_NAME "common-auth"
 #define PKCS1_HEADER "-----BEGIN RSA PUBLIC KEY-----"
 #define PKCS8_HEADER "-----BEGIN PUBLIC KEY-----"
-#define AUTHRNTICATESERVICE "com.deepin.daemon.Authenticate"
-#define AUTHRNTICATEINTERFACE "com.deepin.daemon.Authenticate.Session"
 #define OPENSSLNAME "libssl.so"
 
 using namespace AuthCommon;
@@ -663,4 +661,18 @@ QString DeepinAuthFramework::AuthSessionPath(const QString &account) const
 bool DeepinAuthFramework::authSessionExist(const QString &account) const
 {
     return m_authenticateControllers->contains(account);
+}
+
+/**
+ * @brief DeepinAuthFramework::isDeepinAuthValid
+ * 判断DA服务是否存在以及DA服务是否可用
+ * @return DA认证是否可用
+ */
+bool DeepinAuthFramework::isDeepinAuthValid() const
+{
+    qDebug() << Q_FUNC_INFO
+             << ", frameworkState" << m_authenticateInter->frameworkState()
+             << ", isServiceRegistered: " << QDBusConnection::systemBus().interface()->isServiceRegistered(AUTHRNTICATESERVICE);
+    return QDBusConnection::systemBus().interface()->isServiceRegistered(AUTHRNTICATESERVICE)
+            && Available == GetFrameworkState();
 }

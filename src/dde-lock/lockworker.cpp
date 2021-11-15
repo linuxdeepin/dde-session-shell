@@ -91,100 +91,7 @@ void LockWorker::initConnections()
     connect(m_authFramework, &DeepinAuthFramework::MFAFlagChanged, m_model, &SessionBaseModel::updateMFAFlag);
     connect(m_authFramework, &DeepinAuthFramework::PINLenChanged, m_model, &SessionBaseModel::updatePINLen);
     connect(m_authFramework, &DeepinAuthFramework::PromptChanged, m_model, &SessionBaseModel::updatePrompt);
-    connect(m_authFramework, &DeepinAuthFramework::AuthStatusChanged, this, [=](const int type, const int status, const QString &message) {
-        qDebug() << "DeepinAuthFramework::AuthStatusChanged:" << type << status << message << m_model->getAuthProperty().MFAFlag;
-        if (m_model->getAuthProperty().MFAFlag) {
-            if (type == AuthTypeAll) {
-                switch (status) {
-                case StatusCodeSuccess:
-                    m_model->updateAuthStatus(type, status, message);
-                    destoryAuthentication(m_account);
-                    onUnlockFinished(true);
-                    m_resetSessionTimer->stop();
-                    break;
-                case StatusCodeCancel:
-                    m_model->updateAuthStatus(type, status, message);
-                    destoryAuthentication(m_account);
-                    break;
-                default:
-                    break;
-                }
-            } else {
-                switch (status) {
-                case StatusCodeSuccess:
-                    if (m_model->currentModeState() != SessionBaseModel::ModeStatus::PasswordMode
-                        && m_model->currentModeState() != SessionBaseModel::ModeStatus::ConfirmPasswordMode) {
-                        m_model->setCurrentModeState(SessionBaseModel::ModeStatus::PasswordMode);
-                    }
-                    m_resetSessionTimer->start();
-                    m_model->updateAuthStatus(type, status, message);
-                    break;
-                case StatusCodeFailure:
-                    if (m_model->currentModeState() != SessionBaseModel::ModeStatus::PasswordMode
-                        && m_model->currentModeState() != SessionBaseModel::ModeStatus::ConfirmPasswordMode) {
-                        m_model->setCurrentModeState(SessionBaseModel::ModeStatus::PasswordMode);
-                    }
-                    m_model->updateLimitedInfo(m_authFramework->GetLimitedInfo(m_model->currentUser()->name()));
-                    endAuthentication(m_account, type);
-                    if (!m_model->currentUser()->limitsInfo(type).locked
-                            && type != AuthTypeFace && type != AuthTypeIris) {
-                        QTimer::singleShot(50, this, [this, type] {
-                            startAuthentication(m_account, type);
-                        });
-                    }
-                    QTimer::singleShot(50, this, [this, type, status, message] {
-                        m_model->updateAuthStatus(type, status, message);
-                    });
-                    break;
-                case StatusCodeLocked:
-                    if (m_model->currentModeState() != SessionBaseModel::ModeStatus::PasswordMode
-                        && m_model->currentModeState() != SessionBaseModel::ModeStatus::ConfirmPasswordMode) {
-                        m_model->setCurrentModeState(SessionBaseModel::ModeStatus::PasswordMode);
-                    }
-                    endAuthentication(m_account, type);
-                    // TODO: 信号时序问题,考虑优化,Bug 89056
-                    QTimer::singleShot(50, this, [this, type, status, message] {
-                        m_model->updateAuthStatus(type, status, message);
-                    });
-                    break;
-                case StatusCodeTimeout:
-                case StatusCodeError:
-                    endAuthentication(m_account, type);
-                    m_model->updateAuthStatus(type, status, message);
-                    break;
-                default:
-                    m_model->updateAuthStatus(type, status, message);
-                    break;
-                }
-            }
-        } else {
-            if (m_model->currentModeState() != SessionBaseModel::ModeStatus::PasswordMode
-                && m_model->currentModeState() != SessionBaseModel::ModeStatus::ConfirmPasswordMode) {
-                m_model->setCurrentModeState(SessionBaseModel::ModeStatus::PasswordMode);
-            }
-            m_model->updateLimitedInfo(m_authFramework->GetLimitedInfo(m_model->currentUser()->name()));
-            m_model->updateAuthStatus(type, status, message);
-            switch (status) {
-            case StatusCodeFailure:
-                // 单因失败会返回明确的失败类型，不关注type为-1的情况
-                if (AuthTypeAll != type) {
-                    endAuthentication(m_account, type);
-                    // 人脸和虹膜需要手动重新开启验证
-                    if (!m_model->currentUser()->limitsInfo(type).locked && type != AuthTypeFace && type != AuthTypeIris) {
-                        QTimer::singleShot(50, this, [this, type] {
-                            startAuthentication(m_account, type);
-                        });
-                    }
-                }
-                break;
-            case StatusCodeCancel:
-                destoryAuthentication(m_account);
-                break;
-            default:
-                break;
-            }
-        }
-    });
+    connect(m_authFramework, &DeepinAuthFramework::AuthStatusChanged, this, &LockWorker::handleAuthStatus);
     connect(m_authFramework, &DeepinAuthFramework::FactorsInfoChanged, m_model, &SessionBaseModel::updateFactorsInfo);
     /* com.deepin.dde.LockService */
     connect(m_lockInter, &DBusLockService::UserChanged, this, [=](const QString &json) {
@@ -226,6 +133,7 @@ void LockWorker::initConnections()
         if (type > 0 && m_model->getAuthProperty().MFAFlag) {
             startAuthentication(m_account, type);
         }
+        // OPTMIZE: 为什么要特意用一个timer延时？
         m_limitsUpdateTimer->start();
     });
     connect(m_model, &SessionBaseModel::onPowerActionChanged, this, &LockWorker::doPowerAction);
@@ -248,7 +156,8 @@ void LockWorker::initConnections()
     });
     /* others */
     connect(m_limitsUpdateTimer, &QTimer::timeout, this, [this] {
-        m_model->updateLimitedInfo(m_authFramework->GetLimitedInfo(m_account));
+        if (m_authFramework->isDeepinAuthValid())
+            m_model->updateLimitedInfo(m_authFramework->GetLimitedInfo(m_account));
     });
     connect(m_dbusInter, &DBusObjectInter::NameOwnerChanged, this, [=](const QString &name, const QString &oldOwner, const QString &newOwner) {
         if (name == "com.deepin.daemon.Authenticate" && newOwner != "" && m_model->visible() && m_sessionManagerInter->locked()) {
@@ -287,10 +196,12 @@ void LockWorker::initData()
     }
 
     /* com.deepin.daemon.Authenticate */
-    m_model->updateFrameworkState(m_authFramework->GetFrameworkState());
-    m_model->updateSupportedEncryptionType(m_authFramework->GetSupportedEncrypts());
-    m_model->updateSupportedMixAuthFlags(m_authFramework->GetSupportedMixAuthFlags());
-    m_model->updateLimitedInfo(m_authFramework->GetLimitedInfo(m_model->currentUser()->name()));
+    if (m_authFramework->isDeepinAuthValid()) {
+        m_model->updateFrameworkState(m_authFramework->GetFrameworkState());
+        m_model->updateSupportedEncryptionType(m_authFramework->GetSupportedEncrypts());
+        m_model->updateSupportedMixAuthFlags(m_authFramework->GetSupportedMixAuthFlags());
+        m_model->updateLimitedInfo(m_authFramework->GetLimitedInfo(m_model->currentUser()->name()));
+    }
 }
 
 void LockWorker::initConfiguration()
@@ -302,6 +213,105 @@ void LockWorker::initConfiguration()
     m_model->setAllowShowUserSwitchButton(getGSettings("", "switchuser").toInt() == AuthInterface::Ondemand);
 
     checkPowerInfo();
+}
+
+void LockWorker::handleAuthStatus(const int type, const int status, const QString &message)
+{
+    qDebug() << Q_FUNC_INFO
+             << ", type: " << type
+             << ", status: " << status
+             << ", message: " << message
+             << ", MFAFlag: " << m_model->getAuthProperty().MFAFlag;
+
+    if (m_model->getAuthProperty().MFAFlag) {
+        if (type == AuthTypeAll) {
+            switch (status) {
+            case StatusCodeSuccess:
+                m_model->updateAuthStatus(type, status, message);
+                destoryAuthentication(m_account);
+                onUnlockFinished(true);
+                m_resetSessionTimer->stop();
+                break;
+            case StatusCodeCancel:
+                m_model->updateAuthStatus(type, status, message);
+                destoryAuthentication(m_account);
+                break;
+            default:
+                break;
+            }
+        } else {
+            switch (status) {
+            case StatusCodeSuccess:
+                if (m_model->currentModeState() != SessionBaseModel::ModeStatus::PasswordMode
+                    && m_model->currentModeState() != SessionBaseModel::ModeStatus::ConfirmPasswordMode) {
+                    m_model->setCurrentModeState(SessionBaseModel::ModeStatus::PasswordMode);
+                }
+                m_resetSessionTimer->start();
+                m_model->updateAuthStatus(type, status, message);
+                break;
+            case StatusCodeFailure:
+                if (m_model->currentModeState() != SessionBaseModel::ModeStatus::PasswordMode
+                    && m_model->currentModeState() != SessionBaseModel::ModeStatus::ConfirmPasswordMode) {
+                    m_model->setCurrentModeState(SessionBaseModel::ModeStatus::PasswordMode);
+                }
+                endAuthentication(m_account, type);
+                if (!m_model->currentUser()->limitsInfo(type).locked
+                        && type != AuthTypeFace && type != AuthTypeIris) {
+                    QTimer::singleShot(50, this, [ this, type ] {
+                        startAuthentication(m_account, type);
+                    });
+                }
+                QTimer::singleShot(50, this, [ this, type, status, message ] {
+                    m_model->updateAuthStatus(type, status, message);
+                });
+                break;
+            case StatusCodeLocked:
+                if (m_model->currentModeState() != SessionBaseModel::ModeStatus::PasswordMode
+                    && m_model->currentModeState() != SessionBaseModel::ModeStatus::ConfirmPasswordMode) {
+                    m_model->setCurrentModeState(SessionBaseModel::ModeStatus::PasswordMode);
+                }
+                endAuthentication(m_account, type);
+                // TODO: 信号时序问题,考虑优化,Bug 89056
+                QTimer::singleShot(50, this, [ this, type, status, message ] {
+                    m_model->updateAuthStatus(type, status, message);
+                });
+                break;
+            case StatusCodeTimeout:
+            case StatusCodeError:
+                endAuthentication(m_account, type);
+                m_model->updateAuthStatus(type, status, message);
+                break;
+            default:
+                m_model->updateAuthStatus(type, status, message);
+                break;
+            }
+        }
+    } else {
+        if (m_model->currentModeState() != SessionBaseModel::ModeStatus::PasswordMode
+            && m_model->currentModeState() != SessionBaseModel::ModeStatus::ConfirmPasswordMode) {
+            m_model->setCurrentModeState(SessionBaseModel::ModeStatus::PasswordMode);
+        }
+        m_model->updateAuthStatus(type, status, message);
+        switch (status) {
+        case StatusCodeFailure:
+            // 单因失败会返回明确的失败类型，不关注type为-1的情况
+            if (AuthTypeAll != type) {
+                endAuthentication(m_account, type);
+                // 人脸和虹膜需要手动重新开启验证
+                if (!m_model->currentUser()->limitsInfo(type).locked && type != AuthTypeFace && type != AuthTypeIris) {
+                    QTimer::singleShot(50, this, [ this, type ] {
+                        startAuthentication(m_account, type);
+                    });
+                }
+            }
+            break;
+        case StatusCodeCancel:
+            destoryAuthentication(m_account);
+            break;
+        default:
+            break;
+        }
+    }
 }
 
 void LockWorker::doPowerAction(const SessionBaseModel::PowerAction action)

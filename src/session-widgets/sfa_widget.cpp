@@ -165,6 +165,13 @@ void SFAWidget::setAuthType(const int type)
         m_frameDataBind->clearValue("SFUKeyAuthMsg");
     }
 
+    if (type & AuthTypeSingle) {
+        initSingleAuth();
+    } else if (m_singleAuth) {
+        m_singleAuth->deleteLater();
+        m_singleAuth = nullptr;
+    }
+
     int count = 0;
     int typeTmp = type;
     while (typeTmp) {
@@ -289,12 +296,20 @@ void SFAWidget::initSingleAuth()
     }
     m_singleAuth = new AuthSingle(this);
     m_singleAuth->setCurrentUid(m_model->currentUser()->uid());
-    m_singleAuth->hide();
+    replaceWidget(m_singleAuth);
+    m_frameDataBind->updateValue("SFAType", AuthTypeSingle);
 
-    connect(m_singleAuth, &AuthSingle::activeAuth, this, [this] {
+    connect(m_singleAuth, &AuthSingle::activeAuth, this, [ this ] {
         emit requestStartAuthentication(m_model->currentUser()->name(), AuthTypeSingle);
     });
-    connect(m_singleAuth, &AuthSingle::requestAuthenticate, this, [this] {
+    connect(m_singleAuth, &AuthSingle::authFinished, this, [ this ] (const int authStatus) {
+        if (authStatus == StatusCodeSuccess) {
+            m_lastAuth = m_singleAuth;
+            m_lockButton->setEnabled(true);
+            emit authFinished();
+        }
+    });
+    connect(m_singleAuth, &AuthSingle::requestAuthenticate, this, [ this ] {
         if (m_singleAuth->lineEditText().isEmpty()) {
             return;
         }
@@ -307,7 +322,7 @@ void SFAWidget::initSingleAuth()
     /* 输入框数据同步（可能是密码或PIN） */
     std::function<void(QVariant)> tokenChanged = std::bind(&SFAWidget::syncSingle, this, std::placeholders::_1);
     registerSyncFunctions("SFSingleAuth", tokenChanged);
-    connect(m_singleAuth, &AuthSingle::lineEditTextChanged, this, [ this ](const QString &value) {
+    connect(m_singleAuth, &AuthSingle::lineEditTextChanged, this, [ this ] (const QString &value) {
         m_frameDataBind->updateValue("SFSingleAuth", value);
         m_lockButton->setEnabled(!value.isEmpty());
     });
@@ -315,7 +330,7 @@ void SFAWidget::initSingleAuth()
     /* 重置密码可见性数据同步 */
     std::function<void(QVariant)> resetPasswordVisibleChanged = std::bind(&SFAWidget::syncSingleResetPasswordVisibleChanged, this, std::placeholders::_1);
     registerSyncFunctions("ResetPasswordVisible", resetPasswordVisibleChanged);
-    connect(m_singleAuth, &AuthSingle::resetPasswordMessageVisibleChanged, this, [ = ](const bool value) {
+    connect(m_singleAuth, &AuthSingle::resetPasswordMessageVisibleChanged, this, [ this ] (const bool value) {
         m_frameDataBind->updateValue("ResetPasswordVisible", value);
     });
 

@@ -9,6 +9,9 @@
 #include <memory>
 #include <openssl/aes.h>
 
+#define AUTHRNTICATESERVICE "com.deepin.daemon.Authenticate"
+#define AUTHRNTICATEINTERFACE "com.deepin.daemon.Authenticate.Session"
+
 using AuthInter = com::deepin::daemon::Authenticate;
 using AuthControllerInter = com::deepin::daemon::authenticate::Session;
 
@@ -60,6 +63,7 @@ public:
     QString AuthSessionPath(const QString &account) const;
     void setEncryption(const int type, const ArrayInt method);
     bool authSessionExist(const QString &account) const;
+    bool isDeepinAuthValid() const ;
 
 signals:
     /* com.deepin.daemon.Authenticate */

@@ -58,15 +58,15 @@ public:
 
     /* com.deepin.daemon.Authenticate */
     struct AuthProperty {
-        bool FuzzyMFA;          // Reserved
-        bool MFAFlag;           // 多因子标志位
-        int FrameworkState;     // 认证框架是否可用标志位
-        int AuthType = 0;       // 账户开启的认证类型
-        int MixAuthFlags;       // 受支持的认证类型
-        int PINLen = 0;         // PIN 码的最大长度
-        QString EncryptionType; // 加密类型
-        QString Prompt;         // 提示语
-        QString UserName;       // 账户名
+        bool FuzzyMFA;                        // Reserved
+        bool MFAFlag = false;                 // 多因子标志位
+        int FrameworkState = Unavailable;     // 认证框架是否可用标志位
+        int AuthType = 0;                     // 账户开启的认证类型
+        int MixAuthFlags;                     // 受支持的认证类型
+        int PINLen = 0;                       // PIN 码的最大长度
+        QString EncryptionType;               // 加密类型
+        QString Prompt;                       // 提示语
+        QString UserName;                     // 账户名
     };
 
     explicit SessionBaseModel(AuthType type, QObject *parent = nullptr);
