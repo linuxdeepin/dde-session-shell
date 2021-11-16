@@ -336,6 +336,8 @@ void LockContent::onStatusChanged(SessionBaseModel::ModeStatus status)
     }
 
     m_model->setAbortConfirm(status == SessionBaseModel::ModeStatus::ConfirmPasswordMode);
+    if (status != SessionBaseModel::ModeStatus::ConfirmPasswordMode)
+        m_model->setPowerAction(SessionBaseModel::PowerAction::None);
 }
 
 void LockContent::mouseReleaseEvent(QMouseEvent *event)
@@ -583,6 +585,7 @@ void LockContent::keyPressEvent(QKeyEvent *event)
     case Qt::Key_Escape: {
         if (m_model->currentModeState() == SessionBaseModel::ModeStatus::ConfirmPasswordMode) {
             m_model->setAbortConfirm(false);
+            m_model->setPowerAction(SessionBaseModel::PowerAction::None);
         } else if (m_model->currentModeState() == SessionBaseModel::ModeStatus::ShutDownMode) {
             hideToplevelWindow();
             m_model->setCurrentModeState(SessionBaseModel::ModeStatus::PasswordMode);

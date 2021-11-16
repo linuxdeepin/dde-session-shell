@@ -391,17 +391,15 @@ void AuthWidget::setKeyboardTypeList(const QStringList &list)
  */
 void AuthWidget::setLockButtonType(const int type)
 {
-    QPalette lockPalatte = m_lockButton->palette();
+    QPalette lockPalatte;
     switch (type) {
     case SessionBaseModel::RequireRestart:
         m_lockButton->setIcon(QIcon(":/img/bottom_actions/reboot.svg"));
         lockPalatte.setColor(QPalette::Highlight, ShutdownColor);
-        m_lockButton->setPalette(lockPalatte);
         break;
     case SessionBaseModel::RequireShutdown:
         m_lockButton->setIcon(QIcon(":/img/bottom_actions/shutdown.svg"));
         lockPalatte.setColor(QPalette::Highlight, ShutdownColor);
-        m_lockButton->setPalette(lockPalatte);
         break;
     default:
         if (m_model->appType() == AppTypeLogin) {
@@ -411,6 +409,7 @@ void AuthWidget::setLockButtonType(const int type)
         }
         break;
     }
+    m_lockButton->setPalette(lockPalatte);
 }
 
 /**
