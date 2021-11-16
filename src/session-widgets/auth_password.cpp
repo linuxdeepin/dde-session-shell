@@ -383,8 +383,7 @@ QString AuthPassword::lineEditText() const
  */
 void AuthPassword::setLineEditEnabled(const bool enable)
 {
-    // m_lineEdit->setEnabled(enable);
-    if (enable) {
+    if (enable && !m_limitsInfo->locked) {
         m_lineEdit->setFocusPolicy(Qt::StrongFocus);
         m_lineEdit->setFocus();
         m_lineEdit->lineEdit()->setReadOnly(false);
