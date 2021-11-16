@@ -76,6 +76,7 @@ enum AuthType {
  * 认证状态
  */
 enum AuthStatus {
+    StatusCodeNone = -1,   // 默认状态
     StatusCodeSuccess = 0, // 成功，此次认证的最终结果
     StatusCodeFailure,     // 失败，此次认证的最终结果
     StatusCodeCancel,      // 取消，当认证没有给出最终结果时，调用 End 会出发 Cancel 信号

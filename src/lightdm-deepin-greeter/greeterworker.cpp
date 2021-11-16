@@ -722,6 +722,7 @@ void GreeterWorker::handleAuthStatusChanged(const int type, const int status, co
                 if (m_model->currentModeState() != SessionBaseModel::ResetPasswdMode) {
                     m_model->setCurrentModeState(SessionBaseModel::ModeStatus::PasswordMode);
                 }
+                m_model->updateLimitedInfo(m_authFramework->GetLimitedInfo(m_model->currentUser()->name()));
                 endAuthentication(m_account, type);
                 // 人脸和虹膜需要手动重启验证
                 if (!m_model->currentUser()->limitsInfo(type).locked && type != AuthTypeFace && type != AuthTypeIris) {
@@ -758,6 +759,7 @@ void GreeterWorker::handleAuthStatusChanged(const int type, const int status, co
                 && m_model->currentModeState() != SessionBaseModel::ResetPasswdMode)
             m_model->setCurrentModeState(SessionBaseModel::ModeStatus::PasswordMode);
 
+        m_model->updateLimitedInfo(m_authFramework->GetLimitedInfo(m_model->currentUser()->name()));
         m_model->updateAuthStatus(type, status, message);
         switch (status) {
         case StatusCodeFailure:
