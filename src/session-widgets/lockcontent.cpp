@@ -582,6 +582,11 @@ void LockContent::refreshLayout(SessionBaseModel::ModeStatus status)
 void LockContent::keyPressEvent(QKeyEvent *event)
 {
     switch (event->key()) {
+    case Qt::Key_Return ... Qt::Key_Enter: {
+        if (m_mfaWidget) {
+            m_mfaWidget->autoUnlock();
+        }
+    }
     case Qt::Key_Escape: {
         if (m_model->currentModeState() == SessionBaseModel::ModeStatus::ConfirmPasswordMode) {
             m_model->setAbortConfirm(false);

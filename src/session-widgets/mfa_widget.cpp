@@ -230,6 +230,13 @@ void MFAWidget::setAuthStatus(const int type, const int status, const QString &m
     }
 }
 
+void MFAWidget::autoUnlock()
+{
+    if (m_model->currentUser()->isNoPasswordLogin()) {
+        m_lockButton->click();
+    }
+}
+
 /**
  * @brief 密码认证
  */

@@ -37,6 +37,8 @@ public:
     void setAuthType(const int type) override;
     void setAuthStatus(const int type, const int status, const QString &message) override;
 
+    void autoUnlock();
+
 private:
     void initUI();
     void initConnections();
