@@ -83,7 +83,7 @@ private:
 private:
     static QString backgroundPath;                             // 高清背景图片路径
     static QString blurBackgroundPath;                         // 模糊背景图片路径
-    
+
     static QList<QPair<QSize, QPixmap>> backgroundCacheList;
     static QList<QPair<QSize, QPixmap>> blurBackgroundCacheList;
     static QList<FullscreenBackground *> frameList;
@@ -98,7 +98,6 @@ private:
     bool m_isBlackMode = false;
     bool m_enableEnterEvent = true;
     QCursor m_originalCursor;
-    bool m_blackModeContentVisible = true;
     bool m_useSolidBackground;
     bool m_fadeOutAniFinished;
     bool m_enableAnimation;
