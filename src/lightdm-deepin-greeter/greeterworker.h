@@ -10,12 +10,11 @@
 #include "deepinauthframework.h"
 #include "dbuslogin1manager.h"
 #include "sessionbasemodel.h"
-#include "interface/deepinauthinterface.h"
 #include <com_deepin_daemon_authenticate.h>
 
 using com::deepin::daemon::Authenticate;
 
-class GreeterWorker : public Auth::AuthInterface, public DeepinAuthInterface
+class GreeterWorker : public Auth::AuthInterface
 {
     Q_OBJECT
 public:
@@ -31,19 +30,12 @@ public:
 
     void switchToUser(std::shared_ptr<User> user) override;
 
-    /* Old authentication methods */
-    void onDisplayErrorMsg(const QString &msg) override;
-    void onDisplayTextInfo(const QString &msg) override;
-    void onPasswordResult(const QString &msg) override;
-
 signals:
     void requestUpdateBackground(const QString &path);
     void requestShowPrompt(const QString &prompt);
     void requestShowMessage(const QString &message);
 
 public slots:
-    /* Old authentication methods */
-    void authUser(const QString &password) override;
     /* New authentication framework */
     void createAuthentication(const QString &account);
     void destoryAuthentication(const QString &account);
@@ -66,14 +58,11 @@ private:
     void setCurrentUser(const std::shared_ptr<User> user);
 
     void checkDBusServer(bool isvalid);
-    void oneKeyLogin();
-    void userAuthForLightdm(std::shared_ptr<User> user);
     void showPrompt(const QString &text, const QLightDM::Greeter::PromptType type);
     void showMessage(const QString &text, const QLightDM::Greeter::MessageType type);
     void authenticationComplete();
     void saveNumlockStatus(std::shared_ptr<User> user, const bool &on);
     void recoveryUserKBState(std::shared_ptr<User> user);
-    void resetLightdmAuth(std::shared_ptr<User> user, int delay_time, bool is_respond);
     void startGreeterAuth(const QString &account = QString());
 
 private:

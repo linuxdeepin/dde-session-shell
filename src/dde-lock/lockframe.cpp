@@ -25,7 +25,6 @@
 
 #include "lockframe.h"
 
-#include "hibernatewidget.h"
 #include "lockcontent.h"
 #include "sessionbasemodel.h"
 #include "userinfo.h"

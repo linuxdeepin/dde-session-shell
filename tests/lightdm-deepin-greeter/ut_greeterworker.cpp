@@ -29,10 +29,6 @@ TEST_F(UT_GreeterWorker, BasicTest)
 {
     std::shared_ptr<User> user_ptr(new User);
     m_worker->switchToUser(user_ptr);
-
-    m_worker->onDisplayErrorMsg("test");
-    m_worker->onDisplayTextInfo("test");
-    m_worker->onPasswordResult("test");
 }
 
 TEST_F(UT_GreeterWorker, AuthTest)
@@ -48,12 +44,9 @@ TEST_F(UT_GreeterWorker, AuthTest)
     m_worker->doPowerAction(SessionBaseModel::PowerAction::RequireLock);
     std::shared_ptr<User> user_ptr(new User);
     m_worker->setCurrentUser(user_ptr);
-    m_worker->oneKeyLogin();
-    m_worker->userAuthForLightdm(user_ptr);
     m_worker->showPrompt("", QLightDM::Greeter::PromptType::PromptTypeQuestion);
     m_worker->showMessage("", QLightDM::Greeter::MessageType::MessageTypeInfo);
     m_worker->authenticationComplete();
     m_worker->saveNumlockStatus(user_ptr, false);
     m_worker->recoveryUserKBState(user_ptr);
-    m_worker->resetLightdmAuth(user_ptr, 0, false);
 }

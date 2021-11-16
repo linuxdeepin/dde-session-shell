@@ -27,7 +27,7 @@
 #define LOCKFRAME
 
 #include "fullscreenbackground.h"
-#include "hibernatewidget.h"
+#include "sessionbasemodel.h"
 
 #include <QKeyEvent>
 #include <QDBusConnection>
@@ -43,7 +43,6 @@ const QString DBUS_SHUTDOWN_PATH = "/com/deepin/dde/shutdownFront";
 const QString DBUS_SHUTDOWN_NAME = "com.deepin.dde.shutdownFront";
 
 class DBusLockService;
-class SessionBaseModel;
 class LockContent;
 class WarningContent;
 class User;
@@ -55,7 +54,6 @@ public:
 
 signals:
     void requestSetLocked(const bool);
-    void requestAuthUser(const QString &password);
     void requestSwitchToUser(std::shared_ptr<User> user);
     void requestSetLayout(std::shared_ptr<User> user, const QString &layout);
     void requestEnableHotzone(bool disable);

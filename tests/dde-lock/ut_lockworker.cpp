@@ -32,9 +32,6 @@ void UT_LockWorker::TearDown()
 TEST_F(UT_LockWorker, worker)
 {
     m_worker->isLocked();
-    m_worker->onDisplayErrorMsg("aaaa");
-    m_worker->onDisplayTextInfo("ssssss");
-    m_worker->onPasswordResult("ddddd");
     m_worker->enableZoneDetected(false);
 }
 

@@ -54,13 +54,14 @@ struct LimitsInfo {
     void operator=(const LimitsInfo &info);
 
 #ifdef QT_DEBUG
-    friend QDebug& operator<<(QDebug out, const LimitsInfo& info)
+    friend QDebug operator<<(QDebug out, const LimitsInfo& info)
     {
         out << "locked:" << info.locked
             << ", maxTried:" << info.maxTries
             << ", numFailures:" << info.numFailures
             << ", unlockSecs:" << info.unlockSecs
             << ", unlockTime:" << info.unlockTime;
+        return out;
     }
 #endif
 };

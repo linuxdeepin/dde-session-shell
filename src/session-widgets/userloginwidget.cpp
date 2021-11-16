@@ -32,12 +32,10 @@
 #include "authenticationmodule.h"
 #include "constants.h"
 #include "dhidpihelper.h"
-#include "dpasswordeditex.h"
+#include "dlineeditex.h"
 #include "framedatabind.h"
 #include "kblayoutwidget.h"
 #include "keyboardmonitor.h"
-#include "lockpasswordwidget.h"
-#include "loginbutton.h"
 #include "useravatar.h"
 #include "userinfo.h"
 

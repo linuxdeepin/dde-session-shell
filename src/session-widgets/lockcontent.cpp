@@ -9,7 +9,6 @@
 #include "sfa_widget.h"
 #include "shutdownwidget.h"
 #include "timewidget.h"
-#include "userframe.h"
 #include "userframelist.h"
 #include "userlogininfo.h"
 #include "userloginwidget.h"

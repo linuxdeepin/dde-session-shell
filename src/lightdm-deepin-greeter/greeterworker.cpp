@@ -331,31 +331,6 @@ void GreeterWorker::switchToUser(std::shared_ptr<User> user)
 }
 
 /**
- * @brief 旧的认证接口，已废弃
- *
- * @param password
- */
-void GreeterWorker::authUser(const QString &password)
-{
-    // auth interface
-    std::shared_ptr<User> user = m_model->currentUser();
-    m_password = password;
-
-    qWarning() << "greeter authenticate user: " << m_greeter->authenticationUser() << " current user: " << user->name();
-    if (m_greeter->authenticationUser() != user->name()) {
-        resetLightdmAuth(user, 100, false);
-    } else {
-        if (m_greeter->inAuthentication()) {
-            // m_authFramework->AuthenticateByUser(user);
-            // m_authFramework->Responsed(password);
-            // m_greeter->respond(password);
-        } else {
-            startGreeterAuth(user->name());
-        }
-    }
-}
-
-/**
  * @brief 创建认证服务
  * 有用户时，通过dbus发过来的user信息创建认证服务，类服务器模式下通过用户输入的用户创建认证服务
  * @param account
@@ -501,7 +476,7 @@ void GreeterWorker::checkAccount(const QString &account)
         // 对于没有设置密码的账户,直接认定为错误账户
         if (!user_ptr->isPasswordValid()) {
             qWarning() << userPath;
-            onDisplayErrorMsg(tr("Wrong account"));
+            emit m_model->authFaildTipsMessage(tr("Wrong account"));
             m_model->setAuthType(AuthTypeNone);
             startGreeterAuth();
             return;
@@ -519,7 +494,7 @@ void GreeterWorker::checkAccount(const QString &account)
             dynamic_cast<ADDomainUser *>(user_ptr.get())->setFullName(userFullName);
         } else {
             qWarning() << userPath;
-            onDisplayErrorMsg(tr("Wrong account"));
+            emit m_model->authFaildTipsMessage(tr("Wrong account"));
             m_model->setAuthType(AuthTypeNone);
             startGreeterAuth();
             return;
@@ -551,37 +526,6 @@ void GreeterWorker::checkDBusServer(bool isvalid)
             qWarning() << "com.deepin.daemon.Accounts is not start, rechecking!";
             checkDBusServer(m_accountsInter->isValid());
         });
-    }
-}
-
-void GreeterWorker::oneKeyLogin()
-{
-    // 多用户一键登陆
-    QDBusPendingCall call = m_authenticateInter->PreOneKeyLogin(AuthFlag::Fingerprint);
-    QDBusPendingCallWatcher *watcher = new QDBusPendingCallWatcher(call, this);
-    connect(watcher, &QDBusPendingCallWatcher::finished, [=] {
-        if (!call.isError()) {
-            QDBusReply<QString> reply = call.reply();
-            qWarning() << "one key Login User Name is : " << reply.value();
-
-            auto user_ptr = m_model->findUserByName(reply.value());
-            if (user_ptr.get() != nullptr && reply.isValid()) {
-                m_model->updateCurrentUser(user_ptr);
-                userAuthForLightdm(user_ptr);
-            }
-        } else {
-            qWarning() << "pre one key login: " << call.error().message();
-        }
-
-        watcher->deleteLater();
-    });
-}
-
-void GreeterWorker::userAuthForLightdm(std::shared_ptr<User> user)
-{
-    if (user.get() != nullptr && !user->isNoPasswordLogin()) {
-        //后端需要大约600ms时间去释放指纹设备
-        resetLightdmAuth(user, 100, true);
     }
 }
 
@@ -823,45 +767,6 @@ void GreeterWorker::recoveryUserKBState(std::shared_ptr<User> user)
     KeyboardMonitor::instance()->setNumlockStatus(cur_numlock);
 
     KeyboardMonitor::instance()->setNumlockStatus(enabled);
-}
-
-//TODO 显示内容
-void GreeterWorker::onDisplayErrorMsg(const QString &msg)
-{
-    emit m_model->authFaildTipsMessage(msg);
-}
-
-void GreeterWorker::onDisplayTextInfo(const QString &msg)
-{
-    emit m_model->authFaildMessage(msg);
-}
-
-void GreeterWorker::onPasswordResult(const QString &msg)
-{
-    //onUnlockFinished(!msg.isEmpty());
-
-    //if(msg.isEmpty()) {
-    //    m_authFramework->AuthenticateByUser(m_model->currentUser());
-    //}
-}
-
-void GreeterWorker::resetLightdmAuth(std::shared_ptr<User> user, int delay_time, bool is_respond)
-{
-    QTimer::singleShot(delay_time, this, [=] {
-        // startGreeterAuth(user->name());
-        // m_authFramework->AuthenticateByUser(user);
-        if (is_respond && !m_password.isEmpty()) {
-            // if (m_framworkState == 0) {
-            //其他
-            // } else if (m_framworkState == 1) {
-            //没有修改过
-            // m_authFramework->Responsed(m_password);
-            // } else if (m_framworkState == 2) {
-            //修改过的pam
-            // m_greeter->respond(m_password);
-            // }
-        }
-    });
 }
 
 void GreeterWorker::restartResetSessionTimer()
