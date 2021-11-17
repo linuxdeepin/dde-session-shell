@@ -180,7 +180,7 @@ void AuthPassword::setAuthStatus(const int state, const QString &result)
         setAuthStatusStyle(LOGIN_WAIT);
         m_lineEdit->clear();
         setLineEditEnabled(true);
-        const int leftTimes = static_cast<int>(m_limitsInfo->maxTries - m_limitsInfo->numFailures - 1);
+        const int leftTimes = static_cast<int>(m_limitsInfo->maxTries - m_limitsInfo->numFailures);
         if (leftTimes > 1) {
             setLineEditInfo(tr("Verification failed, %n chances left", "", leftTimes), PlaceHolderText);
         } else if (leftTimes == 1) {
