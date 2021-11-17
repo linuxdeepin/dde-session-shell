@@ -103,6 +103,7 @@ protected:
     virtual void doAnimation() { }
     virtual void updateUnlockPrompt();
     void updateUnlockTime();
+    void updateIntegerMinutes();
 
 protected:
     int m_inputType;          // 认证信息输入设备类型

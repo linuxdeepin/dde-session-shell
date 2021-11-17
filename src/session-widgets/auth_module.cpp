@@ -27,6 +27,7 @@
 
 #include <QDateTime>
 #include <QTimer>
+#include <QtMath>
 
 using namespace AuthCommon;
 
@@ -47,7 +48,6 @@ AuthModule::AuthModule(QWidget *parent)
     , m_limitsInfo(new LimitsInfo())
     , m_aniTimer(new QTimer(this))
     , m_unlockTimer(new QTimer(this))
-    , m_unlockTimerTmp(new QTimer(this))
     , m_showAuthStatus(true)
     , m_isAuthing(false)
     , m_authFactorType(DDESESSIONCC::SingleAuthFactor)
@@ -59,7 +59,7 @@ AuthModule::AuthModule(QWidget *parent)
     m_limitsInfo->unlockTime = QString("0001-01-01T00:00:00Z");
 
     m_unlockTimer->setSingleShot(false);
-    m_unlockTimerTmp->setSingleShot(true);
+    m_unlockTimer->setInterval(1000);
 }
 
 AuthModule::~AuthModule()
@@ -73,22 +73,10 @@ AuthModule::~AuthModule()
 void AuthModule::initConnections()
 {
     /* 认证解锁时间 */
-    connect(m_unlockTimerTmp, &QTimer::timeout, this, [this] {
-        m_integerMinutes--;
-        if (m_integerMinutes <= 1) {
-            m_integerMinutes = 0;
-            m_unlockTimer->start(0);
-        } else {
-            updateUnlockPrompt();
-            m_unlockTimer->start(60 * 1000);
-        }
-    });
-    connect(m_unlockTimer, &QTimer::timeout, this, [this] {
-        if (m_integerMinutes > 0) {
-            m_integerMinutes--;
-        } else {
+    connect(m_unlockTimer, &QTimer::timeout, this, [ this ] {
+        updateIntegerMinutes();
+        if (m_integerMinutes <= 0)
             m_unlockTimer->stop();
-        }
         updateUnlockPrompt();
     });
     /* 解锁动画 */
@@ -173,24 +161,30 @@ void AuthModule::updateUnlockTime()
 {
     if (QDateTime::fromString(m_limitsInfo->unlockTime, Qt::ISODateWithMs) <= QDateTime::currentDateTime()) {
         m_integerMinutes = 0;
-        m_unlockTimerTmp->stop();
         m_unlockTimer->stop();
         return;
     }
-    uint intervalSeconds = QDateTime::fromString(m_limitsInfo->unlockTime, Qt::ISODateWithMs).toLocalTime().toTime_t()
-                           - QDateTime::currentDateTimeUtc().toTime_t();
-    uint remainderSeconds = intervalSeconds % 60;
-    m_integerMinutes = (intervalSeconds - remainderSeconds) / 60 + 1;
+    updateIntegerMinutes();
     updateUnlockPrompt();
-    m_unlockTimerTmp->start(static_cast<int>(remainderSeconds * 1000));
+    m_unlockTimer->start();
 }
 
+void AuthModule::updateIntegerMinutes()
+{
+    if (QDateTime::fromString(m_limitsInfo->unlockTime, Qt::ISODateWithMs) > QDateTime::currentDateTime()) {
+        qreal intervalSeconds = QDateTime::fromString(m_limitsInfo->unlockTime, Qt::ISODateWithMs).toLocalTime().toTime_t()
+                               - QDateTime::currentDateTimeUtc().toTime_t();
+        m_integerMinutes = static_cast<uint>(qCeil(intervalSeconds / 60));
+    } else {
+        m_integerMinutes = 0;
+    }
+}
 
 void AuthModule::setAuthStatusLabel(DLabel *label)
 {
     if (!label)
         return;
-        
+
     if (m_authStatusLabel) {
         delete m_authStatusLabel;
         m_authStatusLabel = nullptr;
