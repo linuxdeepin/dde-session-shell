@@ -28,6 +28,8 @@
 
 #include <QWidget>
 #include <QSharedPointer>
+#include <QLoggingCategory>
+Q_DECLARE_LOGGING_CATEGORY(DDE_SS)
 
 #include <com_deepin_daemon_imageeffect.h>
 
@@ -61,7 +63,7 @@ protected:
     void setContent(QWidget *const w);
     void keyPressEvent(QKeyEvent *e) Q_DECL_OVERRIDE;
     void showEvent(QShowEvent *event) override;
-    bool eventFilter(QObject *watched, QEvent *e) override;
+    bool event(QEvent *e) override;
     void resizeEvent(QResizeEvent *event) Q_DECL_OVERRIDE;
 
 private:
@@ -79,6 +81,7 @@ private:
     void addPixmap(const QPixmap &pixmap, const int type);
     static void updatePixmap();
     bool contains(int type);
+    void tryActiveWindow(int count = 9);
 
 private:
     static QString backgroundPath;                             // 高清背景图片路径
