@@ -361,7 +361,14 @@ void DeepinAuthFramework::CreateAuthController(const QString &account, const int
     connect(authControllerInter, &AuthControllerInter::IsMFAChanged, this, &DeepinAuthFramework::MFAFlagChanged);
     connect(authControllerInter, &AuthControllerInter::PINLenChanged, this, &DeepinAuthFramework::PINLenChanged);
     connect(authControllerInter, &AuthControllerInter::PromptChanged, this, &DeepinAuthFramework::PromptChanged);
-    connect(authControllerInter, &AuthControllerInter::Status, this, &DeepinAuthFramework::AuthStatusChanged);
+    connect(authControllerInter, &AuthControllerInter::Status, this, [ this ] (int flag, int status, const QString &msg) {
+        emit AuthStatusChanged(flag, status, msg);
+
+        // 当人脸或者虹膜认证成功 或者 指纹识别失败/成功 时唤醒屏幕
+        if (((AuthTypeFace == flag || AuthTypeIris == flag) && StatusCodeSuccess == status)
+                || (AuthTypeFingerprint == flag && (StatusCodeFailure == status || StatusCodeSuccess == status)))
+            system("xset dpms force on");
+    });
 
     emit MFAFlagChanged(authControllerInter->isMFA());
     emit FactorsInfoChanged(authControllerInter->factorsInfo());
