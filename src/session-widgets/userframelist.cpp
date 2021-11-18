@@ -261,7 +261,7 @@ void UserFrameList::updateLayout()
     if (count < 5 && count > 0) {
         m_scrollArea->setFixedSize((UserFrameWidth + UserFrameSpaceing) * count, UserFrameHeight + 20);
     }
-    if (count > 5) {
+    if (count >= 5) {
         m_scrollArea->setFixedSize((UserFrameWidth + UserFrameSpaceing) * 5, (UserFrameHeight + UserFrameSpaceing) * 2);
     }
     m_centerWidget->setFixedWidth(m_scrollArea->width() - 10);
