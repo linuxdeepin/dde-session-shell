@@ -133,7 +133,7 @@ void LockContent::initConnections()
         isMFA ? initMFAWidget() : initSFAWidget();
         // 当前中间窗口为空或者中间窗口就是验证窗口的时候显示验证窗口
         if (!m_centerWidget || m_centerWidget == m_authWidget)
-            setCenterContent(m_authWidget);
+            setCenterContent(m_authWidget, Qt::AlignTop, m_authWidget->getTopSpacing());
     });
 
     connect(m_wmInter, &__wm::WorkspaceSwitched, this, &LockContent::currentWorkspaceChanged);
@@ -253,7 +253,7 @@ void LockContent::onCurrentUserChanged(std::shared_ptr<User> user)
 
 void LockContent::pushPasswordFrame()
 {
-    setCenterContent(m_authWidget, false);
+    setCenterContent(m_authWidget, Qt::AlignTop, m_authWidget->getTopSpacing());
 
     SFAWidget *sfaWidget = qobject_cast<SFAWidget *>(m_authWidget);
     if (sfaWidget) {
@@ -272,7 +272,7 @@ void LockContent::pushUserFrame()
 
 void LockContent::pushConfirmFrame()
 {
-    setCenterContent(m_authWidget);
+    setCenterContent(m_authWidget, Qt::AlignTop, m_authWidget->getTopSpacing());
 }
 
 void LockContent::pushShutdownFrame()
@@ -371,11 +371,15 @@ void LockContent::hideEvent(QHideEvent *event)
 void LockContent::resizeEvent(QResizeEvent *event)
 {
     QTimer::singleShot(0, this, [ = ] {
-        if (m_virtualKB && m_virtualKB->isVisible())
-        {
+        if (m_virtualKB && m_virtualKB->isVisible()) {
             updateVirtualKBPosition();
         }
     });
+
+    if (SessionBaseModel::PasswordMode == m_model->currentModeState() || SessionBaseModel::ConfirmPasswordMode) {
+        m_centerSpacerItem->changeSize(0, m_authWidget->getTopSpacing());
+        m_centerVLayout->update();
+    }
 
     return SessionBaseWindow::resizeEvent(event);
 }

@@ -106,7 +106,7 @@ void LoginContent::showPrompt(const QString &prompt)
         connect(m_resetPasswdWidget, &ResetPasswdWidget::respondPasswd, this, &LoginContent::respondPasswd);
     }
     m_resetPasswdWidget->setPrompt(prompt);
-    setCenterContent(m_resetPasswdWidget);
+    setCenterContent(m_resetPasswdWidget, Qt::AlignTop, m_resetPasswdWidget->getTopSpacing());
 }
 
 void LoginContent::showMessage(const QString &message)

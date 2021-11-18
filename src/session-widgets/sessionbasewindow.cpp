@@ -1,8 +1,11 @@
 #include "sessionbasewindow.h"
+#include "constants.h"
 
 #include <QDebug>
 #include <QResizeEvent>
 #include <QApplication>
+
+using namespace DDESESSIONCC;
 
 SessionBaseWindow::SessionBaseWindow(QWidget *parent)
     : QFrame(parent)
@@ -12,6 +15,7 @@ SessionBaseWindow::SessionBaseWindow(QWidget *parent)
     , m_mainLayout(nullptr)
     , m_centerTopLayout(nullptr)
     , m_centerLayout(nullptr)
+    , m_centerVLayout(nullptr)
     , m_leftBottomLayout(nullptr)
     , m_centerBottomLayout(nullptr)
     , m_rightBottomLayout(nullptr)
@@ -20,6 +24,7 @@ SessionBaseWindow::SessionBaseWindow(QWidget *parent)
     , m_leftBottomWidget(nullptr)
     , m_centerBottomWidget(nullptr)
     , m_rightBottomWidget(nullptr)
+    , m_centerSpacerItem(new QSpacerItem(0, 0))
 {
     initUI();
 }
@@ -53,18 +58,18 @@ void SessionBaseWindow::setRightBottomWidget(QWidget * const widget)
     m_rightBottomWidget = widget;
 }
 
-void SessionBaseWindow::setCenterContent(QWidget * const widget, bool responseResizeEvent)
+void SessionBaseWindow::setCenterContent(QWidget * const widget, Qt::AlignmentFlag align, int spacerHeight)
 {
     if (!widget || m_centerWidget == widget) {
         return;
     }
-
     if (m_centerWidget) {
-        m_centerLayout->replaceWidget(m_centerWidget, widget);
+        m_centerLayout->removeWidget(m_centerWidget);
         m_centerWidget->hide();
-    } else {
-        m_centerLayout->addWidget(widget);
     }
+    m_centerLayout->addWidget(widget, 0, align);
+    m_centerSpacerItem->changeSize(0, spacerHeight);
+
     m_centerWidget = widget;
     widget->show();
 
@@ -94,16 +99,22 @@ void SessionBaseWindow::initUI()
     m_centerTopFrame = new QFrame;
     m_centerTopFrame->setAccessibleName("CenterTopFrame");
     m_centerTopFrame->setLayout(m_centerTopLayout);
-    m_centerTopFrame->setFixedHeight(132);
+    m_centerTopFrame->setFixedHeight(LOCK_CONTENT_TOP_WIDGET_HEIGHT);
     m_centerTopFrame->setAutoFillBackground(false);
 
     m_centerLayout = new QHBoxLayout;
     m_centerLayout->setMargin(0);
     m_centerLayout->setSpacing(0);
 
+    m_centerVLayout = new QVBoxLayout;
+    m_centerVLayout->setMargin(0);
+    m_centerVLayout->setSpacing(0);
+    m_centerVLayout->addSpacerItem(m_centerSpacerItem);
+    m_centerVLayout->addLayout(m_centerLayout);
+
     m_centerFrame = new QFrame;
     m_centerFrame->setAccessibleName("CenterFrame");
-    m_centerFrame->setLayout(m_centerLayout);
+    m_centerFrame->setLayout(m_centerVLayout);
     m_centerFrame->setAutoFillBackground(false);
 
     m_leftBottomLayout = new QHBoxLayout;
@@ -127,11 +138,11 @@ void SessionBaseWindow::initUI()
     m_bottomFrame = new QFrame;
     m_bottomFrame->setAccessibleName("BottomFrame");
     m_bottomFrame->setLayout(bottomLayout);
-    m_bottomFrame->setFixedHeight(132);
+    m_bottomFrame->setFixedHeight(LOCK_CONTENT_TOP_WIDGET_HEIGHT);
     m_bottomFrame->setAutoFillBackground(false);
 
     m_mainLayout = new QVBoxLayout;
-    m_mainLayout->setContentsMargins(0, 33, 0, 33);
+    m_mainLayout->setContentsMargins(0, LOCK_CONTENT_CENTER_LAYOUT_MARGIN, 0, LOCK_CONTENT_CENTER_LAYOUT_MARGIN);
     m_mainLayout->setSpacing(0);
     m_mainLayout->addWidget(m_centerTopFrame);
     m_mainLayout->addWidget(m_centerFrame);

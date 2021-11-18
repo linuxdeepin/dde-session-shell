@@ -4,6 +4,7 @@
 #include <QFrame>
 #include <QVBoxLayout>
 #include <QPointer>
+#include <QSpacerItem>
 
 class SessionBaseWindow : public QFrame
 {
@@ -13,7 +14,7 @@ public:
     virtual void setLeftBottomWidget(QWidget *const widget) final;
     virtual void setCenterBottomWidget(QWidget *const widget) final;
     virtual void setRightBottomWidget(QWidget *const widget) final;
-    virtual void setCenterContent(QWidget *const widget, bool responseResizeEvent = true) final;
+    virtual void setCenterContent(QWidget *const widget, Qt::AlignmentFlag align = Qt::AlignCenter, int spacerHeight = 0) final;
     virtual void setCenterTopWidget(QWidget *const widget) final;
     QSize getCenterContentSize();
 
@@ -32,6 +33,7 @@ protected:
     QVBoxLayout *m_mainLayout;
     QHBoxLayout *m_centerTopLayout;
     QHBoxLayout *m_centerLayout;
+    QVBoxLayout *m_centerVLayout;
     QHBoxLayout *m_leftBottomLayout;
     QHBoxLayout *m_centerBottomLayout;
     QHBoxLayout *m_rightBottomLayout;
@@ -40,6 +42,7 @@ protected:
     QWidget *m_leftBottomWidget;
     QWidget *m_centerBottomWidget;
     QWidget *m_rightBottomWidget;
+    QSpacerItem *m_centerSpacerItem;
 };
 
 #endif // SESSIONBASEWINDOW_H

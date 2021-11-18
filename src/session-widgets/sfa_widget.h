@@ -41,6 +41,7 @@ class KeyboardMonitor;
 class DLineEditEx;
 class QVBoxLayout;
 class UserAvatar;
+class QSpacerItem;
 
 class SFAWidget : public AuthWidget
 {
@@ -53,6 +54,7 @@ public:
     void setAuthType(const int type) override;
     void setAuthStatus(const int type, const int status, const QString &message) override;
     void syncResetPasswordUI();
+    int getTopSpacing() const override;
 
 public slots:
     void onRetryButtonVisibleChanged(bool visible);
@@ -75,6 +77,7 @@ private:
 
     void syncAuthType(const QVariant &value);
     void replaceWidget(AuthModule *authModule);
+    void setBioAuthStatusVisible(AuthModule *authModule, bool visible);
 
 private:
     QVBoxLayout *m_mainLayout;
@@ -86,6 +89,8 @@ private:
 
     QMap<int, DButtonBoxButton *> m_authButtons;
     DFloatingButton *m_retryButton;
+    QSpacerItem *m_bioAuthStatusPlaceHolder;
+    QSpacerItem *m_chooseAuthButtonBoxPlaceHolder;
 };
 
 #endif // SFAWIDGET_H

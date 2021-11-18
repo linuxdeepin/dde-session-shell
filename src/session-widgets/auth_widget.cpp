@@ -593,3 +593,11 @@ void AuthWidget::reset()
     if (m_irisAuth)
         m_irisAuth->reset();
 }
+
+int AuthWidget::getTopSpacing() const
+{
+    const int topHeight = static_cast<int>(topLevelWidget()->geometry().height() * AUTH_WIDGET_TOP_SPACING_PERCENT);
+    const int deltaY = topHeight - (LOCK_CONTENT_TOP_WIDGET_HEIGHT + LOCK_CONTENT_CENTER_LAYOUT_MARGIN);
+
+    return qMax(0, deltaY);
+}

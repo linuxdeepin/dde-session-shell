@@ -59,6 +59,7 @@ public:
     virtual void setAuthType(const int type);
     virtual void setAuthStatus(const int type, const int status, const QString &message);
     virtual void reset();
+    virtual int getTopSpacing() const ;
 
     void setAccountErrorMsg(const QString &message);
 

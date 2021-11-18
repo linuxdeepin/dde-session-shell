@@ -37,12 +37,16 @@
 #include <DFontSizeManager>
 #include <DHiDPIHelper>
 
+#include <QSpacerItem>
+
 SFAWidget::SFAWidget(QWidget *parent)
     : AuthWidget(parent)
     , m_mainLayout(new QVBoxLayout(this))
     , m_currentAuth(new AuthModule(this))
     , m_lastAuth(nullptr)
     , m_retryButton(new DFloatingButton(this))
+    , m_bioAuthStatusPlaceHolder(new QSpacerItem(0, BIO_AUTH_STATUS_PLACE_HOLDER_HEIGHT))
+    , m_chooseAuthButtonBoxPlaceHolder(new QSpacerItem(0, CHOOSE_AUTH_TYPE_BUTTON_PLACE_HOLDER_HEIGHT))
 {
     setObjectName(QStringLiteral("SFAWidget"));
     setAccessibleName(QStringLiteral("SFAWidget"));
@@ -65,6 +69,7 @@ void SFAWidget::initUI()
     /* 生物认证状态 */
     m_biometricAuthStatus = new DLabel(this);
     m_biometricAuthStatus->hide();
+
     /* 重试按钮 */
     m_retryButton->setIcon(QIcon(":/img/bottom_actions/reboot.svg"));
     m_retryButton->hide();
@@ -72,12 +77,14 @@ void SFAWidget::initUI()
     m_mainLayout->setContentsMargins(10, 0, 10, 0);
     m_mainLayout->setSpacing(10);
     m_mainLayout->addWidget(m_biometricAuthStatus, 0, Qt::AlignCenter);
-    m_mainLayout->addSpacing(50);
+    m_mainLayout->addItem(m_bioAuthStatusPlaceHolder);
+    m_mainLayout->addSpacing(BIO_AUTH_STATUS_BOTTOM_SPACING);
     m_mainLayout->addWidget(m_chooesAuthButtonBox, 0, Qt::AlignCenter);
-    m_mainLayout->addSpacing(50);
+    m_mainLayout->addItem(m_chooseAuthButtonBoxPlaceHolder);
+    m_mainLayout->addSpacing(CHOOSE_AUTH_TYPE_BUTTON_BOTTOM_SPACING);
     m_mainLayout->addWidget(m_userAvatar);
-    m_mainLayout->addWidget(m_nameLabel, 0, Qt::AlignVCenter);
-    m_mainLayout->addWidget(m_accountEdit, 0, Qt::AlignVCenter);
+    m_mainLayout->addWidget(m_nameLabel, 0, Qt::AlignCenter);
+    m_mainLayout->addWidget(m_accountEdit, 0, Qt::AlignCenter);
     m_mainLayout->addWidget(m_currentAuth);
     m_mainLayout->addSpacing(10);
     m_mainLayout->addWidget(m_expiredStatusLabel);
@@ -172,6 +179,7 @@ void SFAWidget::setAuthType(const int type)
         m_singleAuth = nullptr;
     }
 
+
     int count = 0;
     int typeTmp = type;
     while (typeTmp) {
@@ -180,6 +188,7 @@ void SFAWidget::setAuthType(const int type)
     }
 
     if (count > 1) {
+        m_chooseAuthButtonBoxPlaceHolder->changeSize(0, 0);
         m_chooesAuthButtonBox->show();
         m_chooesAuthButtonBox->setButtonList(m_authButtons.values(), true);
         QMap<int, DButtonBoxButton *>::const_iterator iter = m_authButtons.constBegin();
@@ -200,12 +209,14 @@ void SFAWidget::setAuthType(const int type)
         m_registerFunctions["SFAType"] = m_frameDataBind->registerFunction("SFAType", authTypeChanged);
         m_frameDataBind->refreshData("SFAType");
     } else {
+        m_chooseAuthButtonBoxPlaceHolder->changeSize(0, CHOOSE_AUTH_TYPE_BUTTON_PLACE_HOLDER_HEIGHT);
         if (!m_authButtons.isEmpty() && m_authButtons.first()) {
             m_authButtons.first()->hide();
             m_authButtons.first()->toggled(true);
         }
         m_chooesAuthButtonBox->hide();
     }
+
     m_lockButton->setEnabled(false);
 }
 
@@ -462,7 +473,7 @@ void SFAWidget::initFingerprintAuth()
     connect(btn, &DButtonBoxButton::toggled, this, [this](const bool checked) {
         if (checked) {
             replaceWidget(m_fingerprintAuth);
-            m_fingerprintAuth->setAuthStatueVisible(true);
+            setBioAuthStatusVisible(m_fingerprintAuth, true);
             m_frameDataBind->updateValue("SFAType", AuthTypeFingerprint);
             emit requestStartAuthentication(m_user->name(), AuthTypeFingerprint);
         } else {
@@ -586,7 +597,7 @@ void SFAWidget::initFaceAuth()
     connect(btn, &DButtonBoxButton::toggled, this, [this](const bool checked) {
         if (checked) {
             replaceWidget(m_faceAuth);
-            m_faceAuth->setAuthStatueVisible(true);
+            setBioAuthStatusVisible(m_faceAuth, true);
             m_frameDataBind->updateValue("SFAType", AuthTypeFace);
             emit requestStartAuthentication(m_user->name(), AuthTypeFace);
         } else {
@@ -640,7 +651,7 @@ void SFAWidget::initIrisAuth()
     connect(btn, &DButtonBoxButton::toggled, this, [this](const bool checked) {
         if (checked) {
             replaceWidget(m_irisAuth);
-            m_irisAuth->setAuthStatueVisible(true);
+            setBioAuthStatusVisible(m_irisAuth, true);
             m_frameDataBind->updateValue("SFAType", AuthTypeIris);
             emit requestStartAuthentication(m_user->name(), AuthTypeIris);
         } else {
@@ -673,7 +684,7 @@ void SFAWidget::syncAuthType(const QVariant &value)
 
 void SFAWidget::resizeEvent(QResizeEvent *event)
 {
-    return AuthWidget::resizeEvent(event);
+    AuthWidget::resizeEvent(event);
 }
 
 
@@ -684,7 +695,7 @@ void SFAWidget::replaceWidget(AuthModule *authModule)
 
     m_mainLayout->replaceWidget(m_currentAuth, authModule);
     m_currentAuth->hide();
-    m_currentAuth->setAuthStatueVisible(false);
+    setBioAuthStatusVisible(m_currentAuth, false);
     m_currentAuth = authModule;
     authModule->show();
     setFocusProxy(authModule);
@@ -696,4 +707,22 @@ void SFAWidget::onRetryButtonVisibleChanged(bool visible)
 {
     m_retryButton->setVisible(visible);
     m_lockButton->setVisible(!visible);
+}
+
+void SFAWidget::setBioAuthStatusVisible(AuthModule *authModule, bool visible)
+{
+    m_bioAuthStatusPlaceHolder->changeSize(0, visible ? 0 : BIO_AUTH_STATUS_PLACE_HOLDER_HEIGHT);
+    authModule->setAuthStatueVisible(visible);
+}
+
+int SFAWidget::getTopSpacing() const
+{
+    int topHeight = static_cast<int>(topLevelWidget()->geometry().height() * AUTH_WIDGET_TOP_SPACING_PERCENT);
+    int deltaY = topHeight - (LOCK_CONTENT_TOP_WIDGET_HEIGHT
+                              + LOCK_CONTENT_CENTER_LAYOUT_MARGIN
+                              + BIO_AUTH_STATUS_BOTTOM_SPACING
+                              + CHOOSE_AUTH_TYPE_BUTTON_BOTTOM_SPACING
+                              + BIO_AUTH_STATUS_PLACE_HOLDER_HEIGHT
+                              + CHOOSE_AUTH_TYPE_BUTTON_PLACE_HOLDER_HEIGHT);
+    return qMax(0, deltaY);
 }
