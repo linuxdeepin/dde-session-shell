@@ -64,10 +64,8 @@ SessionWidget::SessionWidget(QWidget *parent)
     , m_currentSessionIndex(0)
     , m_frameDataBind(FrameDataBind::Instance())
     , m_sessionModel(new QLightDM::SessionsModel(this))
+    , m_userModel(new QLightDM::UsersModel(this))
 {
-//    setStyleSheet("QFrame {"
-//                  "background-color: red;"
-//                  "}");
     setSizePolicy(QSizePolicy::Expanding, QSizePolicy::Expanding);
     loadSessionList();
     setFocusPolicy(Qt::StrongFocus);
@@ -162,7 +160,7 @@ void SessionWidget::switchToUser(const QString &userName)
     if (m_currentUser != userName)
         m_currentUser = userName;
 
-    const QString sessionName = lastSessionName();
+    const QString sessionName = lastLoggedInSession(userName);
     m_currentSessionIndex = sessionIndex(sessionName);
 
     m_model->setSessionKey(currentSessionKey());
@@ -317,4 +315,17 @@ void SessionWidget::loadSessionList()
 
         m_sessionBtns.append(sbtn);
     }
+}
+
+QString SessionWidget::lastLoggedInSession(const QString &userName)
+{
+    for (int i = 0; i < m_userModel->rowCount(QModelIndex()); ++i) {
+        if (userName == m_userModel->data(m_userModel->index(i), QLightDM::UsersModel::NameRole).toString()) {
+            QString session = m_userModel->data(m_userModel->index(i), QLightDM::UsersModel::SessionRole).toString();
+            if (!session.isEmpty())
+                return session;
+        }
+    }
+
+    return m_sessionModel->data(m_sessionModel->index(0), QLightDM::SessionsModel::KeyRole).toString();
 }

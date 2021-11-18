@@ -31,6 +31,7 @@
 #include <QSettings>
 
 #include <QLightDM/SessionsModel>
+#include <QLightDM/UsersModel>
 
 #include "rounditembutton.h"
 #include "framedatabind.h"
@@ -75,6 +76,7 @@ private slots:
 private:
     int sessionIndex(const QString &sessionName);
     void onOtherPageChanged(const QVariant &value);
+    QString lastLoggedInSession(const QString &userName);
 
 private:
     int m_currentSessionIndex;
@@ -84,6 +86,7 @@ private:
 
     QLightDM::SessionsModel *m_sessionModel;
     QList<RoundItemButton *> m_sessionBtns;
+    QLightDM::UsersModel *m_userModel;
 };
 
 #endif // SESSIONWIDGET_H
