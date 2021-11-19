@@ -585,6 +585,7 @@ void LockContent::keyPressEvent(QKeyEvent *event)
         if (m_mfaWidget) {
             m_mfaWidget->autoUnlock();
         }
+        break;
     }
     case Qt::Key_Escape: {
         if (m_model->currentModeState() == SessionBaseModel::ModeStatus::ConfirmPasswordMode) {
