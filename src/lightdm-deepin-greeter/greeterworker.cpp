@@ -304,9 +304,6 @@ void GreeterWorker::setCurrentUser(const std::shared_ptr<User> user)
 void GreeterWorker::switchToUser(std::shared_ptr<User> user)
 {
     if (user->name() == m_account) {
-        if (!m_authFramework->authSessionExist(m_account))
-            createAuthentication(m_account);
-
         return;
     }
     qInfo() << "switch user from" << m_account << " to " << user->name() << user->uid() << user->isLogin();
@@ -393,10 +390,6 @@ void GreeterWorker::startAuthentication(const QString &account, const int authTy
     qDebug() << "GreeterWorker::startAuthentication:" << account << authType;
     switch (m_model->getAuthProperty().FrameworkState) {
     case Available:
-        if (!m_authFramework->authSessionExist(account))
-            createAuthentication(account);
-
-        m_authFramework->EndAuthentication(account, authType);
         m_authFramework->StartAuthentication(account, authType, -1);
         break;
     default:
@@ -419,9 +412,6 @@ void GreeterWorker::sendTokenToAuth(const QString &account, const int authType, 
              << "auth type: " << authType;
     switch (m_model->getAuthProperty().FrameworkState) {
     case Available:
-        if (!m_authFramework->authSessionExist(account))
-            createAuthentication(m_account);
-
         m_authFramework->SendTokenToAuth(account, authType, token);
         if (authType == AuthTypePassword) {
             m_password = token; // 用于解锁密钥环
@@ -537,10 +527,7 @@ void GreeterWorker::checkDBusServer(bool isvalid)
  */
 void GreeterWorker::showPrompt(const QString &text, const QLightDM::Greeter::PromptType type)
 {
-    qDebug() << "GreeterWorker::showPrompt:" << text
-             << ", type: " << type
-             << ", is authenticated: " << m_greeter->isAuthenticated()
-             << ", current user passwd expired status: " << m_model->currentUser()->expiredStatus();
+    qInfo() << "Greeter prompt:" << text << "type:" << type;
     switch (type) {
     case QLightDM::Greeter::PromptTypeSecret:
         // 已经回应lightdm且当前用户的密码已过期，按照提示修改密码
@@ -565,9 +552,7 @@ void GreeterWorker::showPrompt(const QString &text, const QLightDM::Greeter::Pro
  */
 void GreeterWorker::showMessage(const QString &text, const QLightDM::Greeter::MessageType type)
 {
-    qDebug() << Q_FUNC_INFO
-             << ", message: " << text
-             << ", type: " << type;
+    qInfo() << "Greeter message:" << text << "type:" << type;
     switch (type) {
     case QLightDM::Greeter::MessageTypeInfo:
         m_model->updateAuthStatus(AuthTypeSingle, StatusCodeSuccess, text);
@@ -578,7 +563,6 @@ void GreeterWorker::showMessage(const QString &text, const QLightDM::Greeter::Me
             handleAuthStatusChanged(AuthTypeSingle, StatusCodeFailure, text);
         else
             emit requestShowMessage(text);
-
         break;
     }
 }

@@ -196,12 +196,10 @@ void LockWorker::initData()
     }
 
     /* com.deepin.daemon.Authenticate */
-    if (m_authFramework->isDeepinAuthValid()) {
-        m_model->updateFrameworkState(m_authFramework->GetFrameworkState());
-        m_model->updateSupportedEncryptionType(m_authFramework->GetSupportedEncrypts());
-        m_model->updateSupportedMixAuthFlags(m_authFramework->GetSupportedMixAuthFlags());
-        m_model->updateLimitedInfo(m_authFramework->GetLimitedInfo(m_model->currentUser()->name()));
-    }
+    m_model->updateFrameworkState(m_authFramework->GetFrameworkState());
+    m_model->updateSupportedEncryptionType(m_authFramework->GetSupportedEncrypts());
+    m_model->updateSupportedMixAuthFlags(m_authFramework->GetSupportedMixAuthFlags());
+    m_model->updateLimitedInfo(m_authFramework->GetLimitedInfo(m_model->currentUser()->name()));
 }
 
 void LockWorker::initConfiguration()
@@ -382,15 +380,18 @@ void LockWorker::setCurrentUser(const std::shared_ptr<User> user)
 
 void LockWorker::switchToUser(std::shared_ptr<User> user)
 {
+    qDebug() << "LockWorker::switchToUser:" << m_account << user->name();
     if (user->name() == m_account) {
-        if (!m_authFramework->authSessionExist(m_account)) {
-            createAuthentication(m_account);
-        }
         return;
     }
-    qInfo() << "switch user from" << m_account << " to " << user->name() << user->isLogin();
-    endAuthentication(m_account, AuthTypeAll);
-    setCurrentUser(user);
+    if (user == m_model->currentUser()) {
+        createAuthentication(user->name());
+        qInfo() << "switch to current user:" << user->name() << user->isLogin();
+    } else {
+        qInfo() << "switch user from" << m_account << "to" << user->name() << user->isLogin();
+        endAuthentication(m_account, AuthTypeAll);
+        setCurrentUser(user);
+    }
     if (user->isLogin()) {
         QProcess::startDetached("dde-switchtogreeter", QStringList() << user->name());
     } else {
@@ -490,10 +491,6 @@ void LockWorker::startAuthentication(const QString &account, const int authType)
     qDebug() << "LockWorker::startAuthentication:" << account << authType;
     switch (m_model->getAuthProperty().FrameworkState) {
     case Available:
-        if (!m_authFramework->authSessionExist(account))
-            createAuthentication(m_account);
-
-        m_authFramework->EndAuthentication(account, authType);
         m_authFramework->StartAuthentication(account, authType, -1);
         break;
     default:
@@ -514,10 +511,6 @@ void LockWorker::sendTokenToAuth(const QString &account, const int authType, con
     qDebug() << "LockWorker::sendTokenToAuth:" << account << authType;
     switch (m_model->getAuthProperty().FrameworkState) {
     case Available:
-        if (!m_authFramework->authSessionExist(account)) {
-            createAuthentication(m_account);
-            startAuthentication(account, authType);
-        }
         m_authFramework->SendTokenToAuth(account, authType, token);
         break;
     default:
