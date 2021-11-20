@@ -98,7 +98,10 @@ void AuthUKey::initConnections()
         m_lineEdit->setAlert(false);
         emit lineEditTextChanged(text);
     });
-    connect(m_lineEdit, &DLineEditEx::returnPressed, this, &AuthUKey::requestAuthenticate);
+    connect(m_lineEdit, &DLineEditEx::returnPressed, this, [ this ] {
+        if (!m_lineEdit->lineEdit()->isReadOnly())
+            emit requestAuthenticate();
+    });
 }
 
 /**

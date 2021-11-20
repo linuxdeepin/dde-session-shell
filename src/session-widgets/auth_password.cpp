@@ -137,7 +137,10 @@ void AuthPassword::initConnections()
         m_lineEdit->setAlert(false);
         emit lineEditTextChanged(text);
     });
-    connect(m_lineEdit, &DLineEditEx::returnPressed, this, &AuthPassword::requestAuthenticate);
+    connect(m_lineEdit, &DLineEditEx::returnPressed, this, [ this ] {
+        if (!m_lineEdit->lineEdit()->isReadOnly()) // 避免用户在验证的时候反复点击
+            emit requestAuthenticate();
+    });
 }
 
 /**

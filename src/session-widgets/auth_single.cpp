@@ -133,7 +133,7 @@ void AuthSingle::initConnections()
         emit lineEditTextChanged(text);
     });
     connect(m_lineEdit, &DLineEditEx::returnPressed, this, [this] {
-        if (!m_lineEdit->text().isEmpty()) {
+        if (!m_lineEdit->text().isEmpty() && !m_lineEdit->lineEdit()->isReadOnly()) {
             setAnimationStatus(true);
             m_lineEdit->clearFocus();
             m_lineEdit->setFocusPolicy(Qt::NoFocus);
