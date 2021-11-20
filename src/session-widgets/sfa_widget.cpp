@@ -217,7 +217,7 @@ void SFAWidget::setAuthType(const int type)
         m_chooesAuthButtonBox->hide();
     }
 
-    m_lockButton->setEnabled(false);
+    m_lockButton->setEnabled(m_model->currentUser()->isNoPasswordLogin());
 }
 
 /**
