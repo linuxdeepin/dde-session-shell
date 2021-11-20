@@ -40,6 +40,7 @@
 
 static const int SessionButtonWidth = 160;
 static const int SessionButtonHeight = 160;
+static const QString DEFAULT_SESSION_NAME = "deepin";
 
 const QString session_standard_icon_name(const QString &realName)
 {
@@ -234,13 +235,19 @@ int SessionWidget::sessionIndex(const QString &sessionName)
 {
     const int count = m_sessionModel->rowCount(QModelIndex());
     Q_ASSERT(count);
-    for (int i(0); i != count; ++i)
-        if (!sessionName.compare(m_sessionModel->data(m_sessionModel->index(i), QLightDM::SessionsModel::KeyRole).toString(), Qt::CaseInsensitive))
+    int defaultSessionIndex = 0;
+    for (int i(0); i < count; ++i) {
+        const QString &sessionKey = m_sessionModel->data(m_sessionModel->index(i), QLightDM::SessionsModel::KeyRole).toString();
+        if (!sessionName.compare(sessionKey, Qt::CaseInsensitive))
             return i;
+
+        if (!DEFAULT_SESSION_NAME.compare(sessionKey, Qt::CaseInsensitive))
+            defaultSessionIndex = i;
+    }
 
     // NOTE: The current session does not exist
     qWarning() << "The session does not exist, using the default value.";
-    return 0;
+    return defaultSessionIndex;
 }
 
 void SessionWidget::onOtherPageChanged(const QVariant &value)
@@ -293,7 +300,7 @@ void SessionWidget::loadSessionList()
 {
     // add sessions button
     const int count = m_sessionModel->rowCount(QModelIndex());
-    for (int i(0); i != count; ++i) {
+    for (int i(0); i < count; ++i) {
         const QString &session_name = m_sessionModel->data(m_sessionModel->index(i), QLightDM::SessionsModel::KeyRole).toString();
         const QString &session_icon = session_standard_icon_name(session_name);
         const QString normalIcon = QString(":/img/sessions_icon/%1_normal.svg").arg(session_icon);
