@@ -59,6 +59,7 @@ public slots:
     void updateLocale(std::shared_ptr<User> user);
 
 protected:
+    bool eventFilter(QObject *watched, QEvent *event) override;
     void keyPressEvent(QKeyEvent *event) Q_DECL_OVERRIDE;
     bool event(QEvent *e) Q_DECL_OVERRIDE;
     void showEvent(QShowEvent *event) Q_DECL_OVERRIDE;
@@ -95,9 +96,7 @@ private:
     RoundItemButton* m_requireLogoutButton;
     RoundItemButton* m_requireSwitchUserBtn;
     RoundItemButton* m_requireSwitchSystemBtn = nullptr;
-    HuaWeiSwitchOSInterface* m_switchosInterface = nullptr;
-
+    HuaWeiSwitchOSInterface *m_switchosInterface = nullptr;
 };
 
 #endif // SHUTDOWNWIDGET
-

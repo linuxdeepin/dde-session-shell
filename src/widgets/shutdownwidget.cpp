@@ -57,6 +57,7 @@ ShutdownWidget::ShutdownWidget(QWidget *parent)
     connect(this, &ShutdownWidget::destroyed, this, [ = ] {
         m_frameDataBind->unRegisterFunction("ShutdownWidget", index);
     });
+    installEventFilter(this);
 }
 
 ShutdownWidget::~ShutdownWidget()
@@ -359,6 +360,10 @@ void ShutdownWidget::leftKeySwitch()
     m_currentSelectedBtn->updateState(RoundItemButton::Checked);
 
     m_frameDataBind->updateValue("ShutdownWidget", m_index);
+
+    if (m_systemMonitor && m_systemMonitor->isVisible()) {
+        m_systemMonitor->setState(SystemMonitor::Leave);
+    }
 }
 
 void ShutdownWidget::rightKeySwitch()
@@ -384,14 +389,17 @@ void ShutdownWidget::rightKeySwitch()
     m_currentSelectedBtn->updateState(RoundItemButton::Checked);
 
     m_frameDataBind->updateValue("ShutdownWidget", m_index);
+
+    if (m_systemMonitor && m_systemMonitor->isVisible()) {
+        m_systemMonitor->setState(SystemMonitor::Leave);
+    }
 }
 
 void ShutdownWidget::onStatusChanged(SessionBaseModel::ModeStatus status)
 {
-    //根据当前是锁屏还是关机,设置按钮可见状态,同时需要判官切换用户按钮是否允许可见
-    RoundItemButton * roundItemButton = m_requireShutdownButton;
+    RoundItemButton *roundItemButton;
     if (m_model->currentModeState() == SessionBaseModel::ModeStatus::ShutDownMode) {
-        m_requireLockButton->setVisible(true && (GSettingWatcher::instance()->getStatus("systemLock") != "Hiden"));
+        m_requireLockButton->setVisible(GSettingWatcher::instance()->getStatus("systemLock") != "Hiden");
         m_requireSwitchUserBtn->setVisible(m_switchUserEnable);
         if (m_requireSwitchSystemBtn) {
             m_requireSwitchSystemBtn->setVisible(true);
@@ -484,6 +492,27 @@ void ShutdownWidget::setUserSwitchEnable(bool enable)
     m_requireSwitchUserBtn->setVisible(m_switchUserEnable && m_model->currentModeState() == SessionBaseModel::ModeStatus::ShutDownMode);
 }
 
+bool ShutdownWidget::eventFilter(QObject *watched, QEvent *event)
+{
+    Q_UNUSED(watched)
+    if (event->type() == QEvent::KeyPress) {
+        QKeyEvent *keyEvent = static_cast<QKeyEvent *>(event);
+        if (keyEvent->key() == Qt::Key_Tab) {
+            if (m_systemMonitor && m_systemMonitor->isVisible() && m_currentSelectedBtn && m_currentSelectedBtn->isVisible()) {
+                if (m_currentSelectedBtn->isChecked()) {
+                    m_currentSelectedBtn->setChecked(false);
+                    m_systemMonitor->setState(SystemMonitor::Enter);
+                } else {
+                    m_currentSelectedBtn->setChecked(true);
+                    m_systemMonitor->setState(SystemMonitor::Leave);
+                }
+            }
+            return true;
+        }
+    }
+    return false;
+}
+
 void ShutdownWidget::keyPressEvent(QKeyEvent *event)
 {
     switch (event->key()) {
@@ -497,18 +526,6 @@ void ShutdownWidget::keyPressEvent(QKeyEvent *event)
     case Qt::Key_Return:
         enterKeyPushed();
         break;
-    case Qt::Key_Tab: {
-        if (m_systemMonitor && m_currentSelectedBtn->isVisible() && m_systemMonitor->isVisible()) {
-            if (m_currentSelectedBtn && m_currentSelectedBtn->isChecked()) {
-                m_currentSelectedBtn->setChecked(false);
-                m_systemMonitor->setState(SystemMonitor::Enter);
-            } else if (m_systemMonitor->state() == SystemMonitor::Enter) {
-                m_systemMonitor->setState(SystemMonitor::Leave);
-                m_currentSelectedBtn->setChecked(true);
-            }
-        }
-        break;
-    }
     default:
         break;
     }
