@@ -84,7 +84,7 @@ TEST_F(UT_UserloginWidget, init)
     m_userloginwidget->setUid(1);
     m_userloginwidget->uid();
     m_userloginwidget->ShutdownPrompt(SessionBaseModel::PowerAction::None);
-    m_userloginwidget->updateAuthResult(AuthTypePassword, StatusCodeSuccess, "successful");
+    m_userloginwidget->updateAuthResult(AT_Password, AS_Success, "successful");
     m_userloginwidget->updateAvatar(user_ptr->avatar());
     m_userloginwidget->updateName(user_ptr->name());
     m_userloginwidget->updateLimitsInfo(user_ptr->limitsInfo());

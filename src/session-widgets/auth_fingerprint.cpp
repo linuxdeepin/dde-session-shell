@@ -37,7 +37,7 @@ AuthFingerprint::AuthFingerprint(QWidget *parent)
     setObjectName(QStringLiteral("AuthFingerprint"));
     setAccessibleName(QStringLiteral("AuthFingerprint"));
 
-    m_type = AuthTypeFingerprint;
+    m_type = AT_Fingerprint;
 
     initUI();
     initConnections();
@@ -87,7 +87,7 @@ void AuthFingerprint::setAuthStatus(const int state, const QString &result)
     qDebug() << "AuthFingerprint::setAuthResult:" << state << result;
     m_status = state;
     switch (state) {
-    case StatusCodeSuccess:
+    case AS_Success:
         if (isMFA())
             setAuthStatusStyle(LOGIN_CHECK);
         else
@@ -96,7 +96,7 @@ void AuthFingerprint::setAuthStatus(const int state, const QString &result)
         m_showPrompt = true;
         emit authFinished(state);
         break;
-    case StatusCodeFailure: {
+    case AS_Failure: {
         setAnimationStatus(false);
         if (isMFA())
             setAuthStatusStyle(LOGIN_WAIT);
@@ -110,53 +110,53 @@ void AuthFingerprint::setAuthStatus(const int state, const QString &result)
         emit authFinished(state);
         break;
     }
-    case StatusCodeCancel:
+    case AS_Cancel:
         setAnimationStatus(false);
         if (isMFA())
             setAuthStatusStyle(LOGIN_WAIT);
         m_showPrompt = true;
         break;
-    case StatusCodeTimeout:
+    case AS_Timeout:
         setAnimationStatus(false);
         setAuthStatusStyle(isMFA() ? LOGIN_WAIT : AUTH_LOCK);
         m_textLabel->setText(result);
         break;
-    case StatusCodeError:
+    case AS_Error:
         setAnimationStatus(false);
         setAuthStatusStyle(isMFA() ? LOGIN_WAIT : AUTH_LOCK);
         m_textLabel->setText(result);
         break;
-    case StatusCodeVerify:
+    case AS_Verify:
         setAnimationStatus(true);
         setAuthStatusStyle(isMFA() ? LOGIN_SPINNER : AUTH_LOCK);
         m_textLabel->setText(result);
         break;
-    case StatusCodeException:
+    case AS_Exception:
         setAnimationStatus(false);
         setAuthStatusStyle(isMFA() ? LOGIN_WAIT : AUTH_LOCK);
         m_textLabel->setText(result);
         break;
-    case StatusCodePrompt:
+    case AS_Prompt:
         setAnimationStatus(false);
         setAuthStatusStyle(isMFA() ? LOGIN_WAIT : AUTH_LOCK);
         if (m_showPrompt) {
             m_textLabel->setText(tr("Verify your fingerprint"));
         }
         break;
-    case StatusCodeStarted:
+    case AS_Started:
         break;
-    case StatusCodeEnded:
+    case AS_Ended:
         break;
-    case StatusCodeLocked:
+    case AS_Locked:
         setAnimationStatus(false);
         setAuthStatusStyle(isMFA() ? LOGIN_LOCK : AUTH_LOCK);
         m_textLabel->setText(tr("Fingerprint locked, use password please"));
         break;
-    case StatusCodeRecover:
+    case AS_Recover:
         setAnimationStatus(false);
         setAuthStatusStyle(isMFA() ? LOGIN_WAIT : AUTH_LOCK);
         break;
-    case StatusCodeUnlocked:
+    case AS_Unlocked:
         setAnimationStatus(false);
         setAuthStatusStyle(isMFA() ? LOGIN_WAIT : AUTH_LOCK);
         break;
@@ -236,10 +236,10 @@ void AuthFingerprint::mouseReleaseEvent(QMouseEvent *event)
  */
 void AuthFingerprint::doAnimation()
 {
-    if (m_status == StatusCodeSuccess) {
+    if (m_status == AS_Success) {
         if (m_aniIndex > 10) {
             m_aniTimer->stop();
-            emit authFinished(StatusCodeSuccess);
+            emit authFinished(AS_Success);
         } else {
             setAuthStatusStyle(QStringLiteral(":/misc/images/unlock/unlock_%1.svg").arg(m_aniIndex++));
         }

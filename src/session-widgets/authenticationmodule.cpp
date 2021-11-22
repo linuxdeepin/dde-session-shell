@@ -45,7 +45,7 @@ AuthenticationModule::AuthenticationModule(const int type, QWidget *parent)
     , m_lineEdit(nullptr)
     , m_keyboardButton(nullptr)
     , m_limitsInfo(new LimitsInfo())
-    , m_status(StatusCodeStarted)
+    , m_status(AS_Started)
     , m_unlockTimer(new QTimer(this))
     , m_unlockTimerTmp(new QTimer(this))
     , m_showPrompt(true)
@@ -86,7 +86,7 @@ void AuthenticationModule::init()
     QHBoxLayout *mainLayout = new QHBoxLayout(this);
     mainLayout->setSpacing(0);
     switch (m_authType) {
-    case AuthTypePassword: {
+    case AT_Password: {
         mainLayout->setContentsMargins(0, 0, 0, 0);
         m_lineEdit = new DLineEditEx(this);
         m_lineEdit->setClearButtonEnabled(false);
@@ -151,8 +151,8 @@ void AuthenticationModule::init()
         m_lineEdit->installEventFilter(this);
         setFocusProxy(m_lineEdit);
     } break;
-    case AuthTypePIN:
-    case AuthTypeUkey: {
+    case AT_PIN:
+    case AT_Ukey: {
         mainLayout->setContentsMargins(0, 0, 0, 0);
         m_lineEdit = new DLineEditEx(this);
         m_lineEdit->setClearButtonEnabled(false);
@@ -199,10 +199,10 @@ void AuthenticationModule::init()
         m_lineEdit->installEventFilter(this);
         setFocusProxy(m_lineEdit);
     } break;
-    case AuthTypeFingerprint:
-    case AuthTypeFace:
-    case AuthTypeFingerVein:
-    case AuthTypeIris: {
+    case AT_Fingerprint:
+    case AT_Face:
+    case AT_FingerVein:
+    case AT_Iris: {
         mainLayout->setContentsMargins(27, 0, 10, 0);
         m_textLabel = new DLabel(this);
         m_textLabel->setAccessibleName("TextLable");
@@ -224,7 +224,7 @@ void AuthenticationModule::init()
             }
         });
     } break;
-    case AuthTypeActiveDirectory: {
+    case AT_ActiveDirectory: {
         // TODO
     } break;
     default: {
@@ -242,7 +242,7 @@ void AuthenticationModule::init()
 void AuthenticationModule::setAuthResult(const int status, const QString &result)
 {
     switch (status) {
-    case StatusCodeSuccess:
+    case AS_Success:
         m_status = status;
         setEnabled(false);
         if (m_textLabel != nullptr) {
@@ -257,10 +257,10 @@ void AuthenticationModule::setAuthResult(const int status, const QString &result
             setAuthStatus(":/misc/images/login_check.svg");
         }
         m_showPrompt = true;
-        emit authFinished(m_authType, StatusCodeSuccess);
+        emit authFinished(m_authType, AS_Success);
         emit requestChangeFocus();
         break;
-    case StatusCodeFailure:
+    case AS_Failure:
         m_status = status;
         setEnabled(true);
         if (m_textLabel != nullptr) {
@@ -274,14 +274,14 @@ void AuthenticationModule::setAuthResult(const int status, const QString &result
             setAnimationState(false);
             m_lineEdit->clear();
             m_lineEdit->setFocus();
-            if (m_authType == AuthTypePassword) {
+            if (m_authType == AT_Password) {
                 if (m_limitsInfo->maxTries - m_limitsInfo->numFailures > 1) {
                     setLineEditInfo(tr("Verification failed, %n chances left", "", static_cast<int>(m_limitsInfo->maxTries - m_limitsInfo->numFailures)), PlaceHolderText);
                 } else if (m_limitsInfo->maxTries - m_limitsInfo->numFailures == 1) {
                     setLineEditInfo(tr("Verification failed, only one chance left"), PlaceHolderText);
                 }
                 setLineEditInfo(tr("Wrong Password"), AlertText);
-            } else if (m_authType == AuthTypeUkey) {
+            } else if (m_authType == AT_Ukey) {
                 setLineEditInfo(tr("Wrong PIN"), AlertText);
             }
         }
@@ -289,9 +289,9 @@ void AuthenticationModule::setAuthResult(const int status, const QString &result
             setAuthStatus(":/misc/images/login_wait.svg");
         }
         m_showPrompt = false;
-        emit authFinished(m_authType, StatusCodeFailure);
+        emit authFinished(m_authType, AS_Failure);
         break;
-    case StatusCodeCancel:
+    case AS_Cancel:
         setEnabled(true);
         if (m_lineEdit != nullptr) {
             setAnimationState(false);
@@ -302,7 +302,7 @@ void AuthenticationModule::setAuthResult(const int status, const QString &result
         }
         m_showPrompt = true;
         break;
-    case StatusCodeTimeout:
+    case AS_Timeout:
         setEnabled(true);
         if (m_textLabel != nullptr) {
             m_textLabel->setText(result);
@@ -316,7 +316,7 @@ void AuthenticationModule::setAuthResult(const int status, const QString &result
             m_authStatus->show();
         }
         break;
-    case StatusCodeError:
+    case AS_Error:
         setEnabled(true);
         if (m_textLabel != nullptr) {
             m_textLabel->setText(result);
@@ -332,7 +332,7 @@ void AuthenticationModule::setAuthResult(const int status, const QString &result
             m_authStatus->show();
         }
         break;
-    case StatusCodeVerify:
+    case AS_Verify:
         setEnabled(true);
         if (m_textLabel != nullptr) {
             m_textLabel->setText(result);
@@ -345,7 +345,7 @@ void AuthenticationModule::setAuthResult(const int status, const QString &result
             m_authStatus->show();
         }
         break;
-    case StatusCodeException:
+    case AS_Exception:
         setEnabled(true);
         if (m_textLabel != nullptr) {
             m_textLabel->setText(result);
@@ -359,7 +359,7 @@ void AuthenticationModule::setAuthResult(const int status, const QString &result
             m_authStatus->show();
         }
         break;
-    case StatusCodePrompt:
+    case AS_Prompt:
         setEnabled(true);
         if (m_textLabel != nullptr) {
             if (m_showPrompt) {
@@ -369,9 +369,9 @@ void AuthenticationModule::setAuthResult(const int status, const QString &result
         if (m_lineEdit != nullptr) {
             setAnimationState(false);
             if (m_showPrompt) {
-                if (m_authType == AuthTypePassword) {
+                if (m_authType == AT_Password) {
                     setLineEditInfo(tr("Password"), PlaceHolderText);
-                } else if (m_authType == AuthTypeUkey) {
+                } else if (m_authType == AT_Ukey) {
                     setLineEditInfo(tr("Enter your PIN"), PlaceHolderText);
                 } else {
                     setLineEditInfo(result, PlaceHolderText);
@@ -382,15 +382,15 @@ void AuthenticationModule::setAuthResult(const int status, const QString &result
             setAuthStatus(":/misc/images/login_wait.svg");
         }
         break;
-    case StatusCodeStarted:
+    case AS_Started:
         setEnabled(true);
         break;
-    case StatusCodeEnded:
+    case AS_Ended:
         if (m_lineEdit != nullptr) {
             setAnimationState(false);
         }
         break;
-    case StatusCodeLocked:
+    case AS_Locked:
         m_status = status;
         setEnabled(false);
         if (m_textLabel != nullptr) {
@@ -409,7 +409,7 @@ void AuthenticationModule::setAuthResult(const int status, const QString &result
         }
         m_showPrompt = true;
         break;
-    case StatusCodeRecover:
+    case AS_Recover:
         /** TODO
          * 设备异常后，认证会被 end，当设备状态恢复正常后，会发出这个状态
          * 需要在这里调用 start 重新开启认证
@@ -420,7 +420,7 @@ void AuthenticationModule::setAuthResult(const int status, const QString &result
         }
         m_showPrompt = true;
         break;
-    case StatusCodeUnlocked:
+    case AS_Unlocked:
         setEnabled(true);
         if (m_authStatus != nullptr) {
             setAuthStatus(":/misc/images/login_wait.svg");
@@ -511,9 +511,9 @@ void AuthenticationModule::setLimitsInfo(const LimitsInfo &info)
     m_limitsInfo->unlockSecs = info.unlockSecs;
     updateUnlockTime();
     if (info.locked) {
-        setAuthResult(StatusCodeLocked, QString("Locked"));
+        setAuthResult(AS_Locked, QString("Locked"));
     }
-    if (m_authType == AuthTypePassword) {
+    if (m_authType == AT_Password) {
         m_passwordHintBtn->setVisible(info.numFailures > 0);
     }
 }

@@ -58,7 +58,7 @@ AuthPassword::AuthPassword(QWidget *parent)
     setObjectName(QStringLiteral("AuthPassword"));
     setAccessibleName(QStringLiteral("AuthPassword"));
 
-    m_type = AuthTypePassword;
+    m_type = AT_Password;
 
     initUI();
     initConnections();
@@ -158,7 +158,7 @@ void AuthPassword::setAuthStatus(const int state, const QString &result)
     qDebug() << "AuthPassword::setAuthResult:" << state << result << m_currentUid;
     m_status = state;
     switch (state) {
-    case StatusCodeSuccess:
+    case AS_Success:
         setAnimationStatus(false);
         setAuthStatusStyle(LOGIN_CHECK);
         m_lineEdit->setAlert(false);
@@ -172,7 +172,7 @@ void AuthPassword::setAuthStatus(const int state, const QString &result)
         setResetPasswordMessageVisible(false);
         updateResetPasswordUI();
         break;
-    case StatusCodeFailure: {
+    case AS_Failure: {
         setAnimationStatus(false);
         setAuthStatusStyle(LOGIN_WAIT);
         m_lineEdit->clear();
@@ -188,31 +188,31 @@ void AuthPassword::setAuthStatus(const int state, const QString &result)
         emit authFinished(state);
         break;
     }
-    case StatusCodeCancel:
+    case AS_Cancel:
         setAnimationStatus(false);
         setAuthStatusStyle(LOGIN_WAIT);
         m_showPrompt = true;
         break;
-    case StatusCodeTimeout:
+    case AS_Timeout:
         setAnimationStatus(false);
         setAuthStatusStyle(LOGIN_WAIT);
         setLineEditInfo(result, AlertText);
         break;
-    case StatusCodeError:
+    case AS_Error:
         setAnimationStatus(false);
         setAuthStatusStyle(LOGIN_WAIT);
         setLineEditInfo(result, AlertText);
         break;
-    case StatusCodeVerify:
+    case AS_Verify:
         setAnimationStatus(true);
         setAuthStatusStyle(LOGIN_SPINNER);
         break;
-    case StatusCodeException:
+    case AS_Exception:
         setAnimationStatus(false);
         setAuthStatusStyle(LOGIN_WAIT);
         setLineEditInfo(result, AlertText);
         break;
-    case StatusCodePrompt:
+    case AS_Prompt:
         setAnimationStatus(false);
         setAuthStatusStyle(LOGIN_WAIT);
         setLineEditEnabled(true);
@@ -220,12 +220,12 @@ void AuthPassword::setAuthStatus(const int state, const QString &result)
             setLineEditInfo(tr("Password"), PlaceHolderText);
         }
         break;
-    case StatusCodeStarted:
+    case AS_Started:
         break;
-    case StatusCodeEnded:
+    case AS_Ended:
         m_lineEdit->clear();
         break;
-    case StatusCodeLocked:
+    case AS_Locked:
         setAnimationStatus(false);
         setAuthStatusStyle(LOGIN_LOCK);
         setLineEditEnabled(false);
@@ -244,11 +244,11 @@ void AuthPassword::setAuthStatus(const int state, const QString &result)
         m_showPrompt = false;
         m_passwordHintBtn->hide();
         break;
-    case StatusCodeRecover:
+    case AS_Recover:
         setAnimationStatus(false);
         setAuthStatusStyle(LOGIN_WAIT);
         break;
-    case StatusCodeUnlocked:
+    case AS_Unlocked:
         setAuthStatusStyle(LOGIN_WAIT);
         setLineEditEnabled(true);
         m_showPrompt = true;
@@ -295,7 +295,7 @@ void AuthPassword::setLimitsInfo(const LimitsInfo &info)
     AuthModule::setLimitsInfo(info);
     m_passwordHintBtn->setVisible(info.numFailures > 0 && !m_passwordHint.isEmpty());
     if (m_limitsInfo->locked)
-        setAuthStatus(StatusCodeLocked, "Locked");
+        setAuthStatus(AS_Locked, "Locked");
 }
 
 /**

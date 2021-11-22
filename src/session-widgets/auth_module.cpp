@@ -42,8 +42,8 @@ void LimitsInfo::operator=(const LimitsInfo &info)
 
 AuthModule::AuthModule(QWidget *parent)
     : QWidget(parent)
-    , m_status(StatusCodeNone)
-    , m_type(AuthTypeNone)
+    , m_status(AS_None)
+    , m_type(AT_None)
     , m_showPrompt(true)
     , m_limitsInfo(new LimitsInfo())
     , m_aniTimer(new QTimer(this))
@@ -103,9 +103,9 @@ void AuthModule::setAuthStatus(const int status, const QString &result)
 {
     Q_UNUSED(result)
 
-    if (StatusCodeStarted == status)
+    if (AS_Started == status)
         m_isAuthing = true;
-    else if (StatusCodeEnded == status)
+    else if (AS_Ended == status)
         m_isAuthing = false;
 }
 

@@ -131,7 +131,7 @@ int main(int argc, char *argv[])
 #endif
 
     SessionBaseModel *model = new SessionBaseModel(SessionBaseModel::AuthType::LockType);
-    model->setAppType(AppTypeLock);
+    model->setAppType(Lock);
     LockWorker *worker = new LockWorker(model);
     QObject::connect(&appEventFilter, &AppEventFilter::userIsActive, worker, &LockWorker::restartResetSessionTimer);
     PropertyGroup *property_group = new PropertyGroup(worker);

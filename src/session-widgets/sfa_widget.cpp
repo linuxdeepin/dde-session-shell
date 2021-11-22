@@ -120,58 +120,58 @@ void SFAWidget::setModel(const SessionBaseModel *model)
 void SFAWidget::setAuthType(const int type)
 {
     qDebug() << "SFAWidget::setAuthType:" << type;
-    if (type & AuthTypePassword) {
+    if (type & AT_Password) {
         initPasswdAuth();
     } else if (m_passwordAuth) {
         m_passwordAuth->deleteLater();
         m_passwordAuth = nullptr;
-        m_authButtons.value(AuthTypePassword)->deleteLater();
-        m_authButtons.remove(AuthTypePassword);
+        m_authButtons.value(AT_Password)->deleteLater();
+        m_authButtons.remove(AT_Password);
         m_frameDataBind->clearValue("SFPasswordAuthStatus");
         m_frameDataBind->clearValue("SFPasswordAuthMsg");
     }
-    if (type & AuthTypeFace) {
+    if (type & AT_Face) {
         initFaceAuth();
     } else if (m_faceAuth) {
         m_faceAuth->deleteLater();
         m_faceAuth = nullptr;
-        m_authButtons.value(AuthTypeFace)->deleteLater();
-        m_authButtons.remove(AuthTypeFace);
+        m_authButtons.value(AT_Face)->deleteLater();
+        m_authButtons.remove(AT_Face);
         m_frameDataBind->clearValue("SFFaceAuthStatus");
         m_frameDataBind->clearValue("SFFaceAuthMsg");
     }
-    if (type & AuthTypeIris) {
+    if (type & AT_Iris) {
         initIrisAuth();
     } else if (m_irisAuth) {
         m_irisAuth->deleteLater();
         m_irisAuth = nullptr;
-        m_authButtons.value(AuthTypeIris)->deleteLater();
-        m_authButtons.remove(AuthTypeIris);
+        m_authButtons.value(AT_Iris)->deleteLater();
+        m_authButtons.remove(AT_Iris);
         m_frameDataBind->clearValue("SFIrisAuthStatus");
         m_frameDataBind->clearValue("SFIrisAuthMsg");
     }
-    if (type & AuthTypeFingerprint) {
+    if (type & AT_Fingerprint) {
         initFingerprintAuth();
     } else if (m_fingerprintAuth) {
         m_fingerprintAuth->deleteLater();
         m_fingerprintAuth = nullptr;
-        m_authButtons.value(AuthTypeFingerprint)->deleteLater();
-        m_authButtons.remove(AuthTypeFingerprint);
+        m_authButtons.value(AT_Fingerprint)->deleteLater();
+        m_authButtons.remove(AT_Fingerprint);
         m_frameDataBind->clearValue("SFFingerprintAuthStatus");
         m_frameDataBind->clearValue("SFFingerprintAuthMsg");
     }
-    if (type & AuthTypeUkey) {
+    if (type & AT_Ukey) {
         initUKeyAuth();
     } else if (m_ukeyAuth) {
         m_ukeyAuth->deleteLater();
         m_ukeyAuth = nullptr;
-        m_authButtons.value(AuthTypeUkey)->deleteLater();
-        m_authButtons.remove(AuthTypeUkey);
+        m_authButtons.value(AT_Ukey)->deleteLater();
+        m_authButtons.remove(AT_Ukey);
         m_frameDataBind->clearValue("SFUKeyAuthStatus");
         m_frameDataBind->clearValue("SFUKeyAuthMsg");
     }
 
-    if (type & AuthTypeSingle) {
+    if (type & AT_PAM) {
         initSingleAuth();
     } else if (m_singleAuth) {
         m_singleAuth->deleteLater();
@@ -229,53 +229,53 @@ void SFAWidget::setAuthStatus(const int type, const int status, const QString &m
 {
     qDebug() << "SFAWidget::setAuthStatus:" << type << status << message;
     switch (type) {
-    case AuthTypePassword:
+    case AT_Password:
         if (m_passwordAuth) {
             m_passwordAuth->setAuthStatus(status, message);
             m_frameDataBind->updateValue("SFPasswordAuthStatus", status);
             m_frameDataBind->updateValue("SFPasswordAuthMsg", message);
         }
         break;
-    case AuthTypeFingerprint:
+    case AT_Fingerprint:
         if (m_fingerprintAuth) {
             m_fingerprintAuth->setAuthStatus(status, message);
             m_frameDataBind->updateValue("SFFingerprintAuthStatus", status);
             m_frameDataBind->updateValue("SFFingerprintAuthMsg", message);
         }
         break;
-    case AuthTypeFace:
+    case AT_Face:
         if (m_faceAuth) {
             m_faceAuth->setAuthStatus(status, message);
             m_frameDataBind->updateValue("SFFaceAuthStatus", status);
             m_frameDataBind->updateValue("SFFaceAuthMsg", message);
         }
         break;
-    case AuthTypeUkey:
+    case AT_Ukey:
         if (m_ukeyAuth) {
             m_ukeyAuth->setAuthStatus(status, message);
             m_frameDataBind->updateValue("SFUKeyAuthStatus", status);
             m_frameDataBind->updateValue("SFUKeyAuthMsg", message);
         }
         break;
-    case AuthTypeIris:
+    case AT_Iris:
         if (m_irisAuth) {
             m_irisAuth->setAuthStatus(status, message);
             m_frameDataBind->updateValue("SFIrisAuthStatus", status);
             m_frameDataBind->updateValue("SFIrisAuthMsg", message);
         }
         break;
-    case AuthTypeSingle:
+    case AT_PAM:
         if (m_singleAuth) {
             m_singleAuth->setAuthStatus(status, message);
             m_frameDataBind->updateValue("SFSingleAuthStatus", status);
             m_frameDataBind->updateValue("SFSingleAuthMsg", message);
         }
         break;
-    case AuthTypeAll:
+    case AT_All:
         // 等所有类型验证通过的时候在发送验证完成信息，否则DA的验证结果可能还没有刷新，导致lightdm调用pam验证失败
-        if ((m_passwordAuth && StatusCodeSuccess == m_passwordAuth->authStatus())
-                || (m_ukeyAuth && StatusCodeSuccess == m_ukeyAuth->authStatus())
-                || (m_fingerprintAuth && StatusCodeSuccess == m_fingerprintAuth->authStatus()))
+        if ((m_passwordAuth && AS_Success == m_passwordAuth->authStatus())
+                || (m_ukeyAuth && AS_Success == m_ukeyAuth->authStatus())
+                || (m_fingerprintAuth && AS_Success == m_fingerprintAuth->authStatus()))
             emit authFinished();
 
         break;
@@ -307,13 +307,13 @@ void SFAWidget::initSingleAuth()
     m_singleAuth = new AuthSingle(this);
     m_singleAuth->setCurrentUid(m_model->currentUser()->uid());
     replaceWidget(m_singleAuth);
-    m_frameDataBind->updateValue("SFAType", AuthTypeSingle);
+    m_frameDataBind->updateValue("SFAType", AT_PAM);
 
     connect(m_singleAuth, &AuthSingle::activeAuth, this, [ this ] {
-        emit requestStartAuthentication(m_model->currentUser()->name(), AuthTypeSingle);
+        emit requestStartAuthentication(m_model->currentUser()->name(), AT_PAM);
     });
     connect(m_singleAuth, &AuthSingle::authFinished, this, [ this ] (const int authStatus) {
-        if (authStatus == StatusCodeSuccess) {
+        if (authStatus == AS_Success) {
             m_lastAuth = m_singleAuth;
             m_lockButton->setEnabled(true);
             emit authFinished();
@@ -323,7 +323,7 @@ void SFAWidget::initSingleAuth()
         if (m_singleAuth->lineEditText().isEmpty()) {
             return;
         }
-        emit sendTokenToAuth(m_model->currentUser()->name(), AuthTypeSingle, m_singleAuth->lineEditText());
+        emit sendTokenToAuth(m_model->currentUser()->name(), AT_PAM, m_singleAuth->lineEditText());
     });
     connect(m_capslockMonitor, &KeyboardMonitor::capslockStatusChanged, m_singleAuth, &AuthSingle::setCapsLockVisible);
     connect(m_lockButton, &QPushButton::clicked, m_singleAuth, &AuthSingle::requestAuthenticate);
@@ -365,10 +365,10 @@ void SFAWidget::initPasswdAuth()
     m_passwordAuth->setShowAuthStatus(false);
 
     connect(m_passwordAuth, &AuthPassword::activeAuth, this, [this] {
-        emit requestStartAuthentication(m_user->name(), AuthTypePassword);
+        emit requestStartAuthentication(m_user->name(), AT_Password);
     });
     connect(m_passwordAuth, &AuthPassword::authFinished, this, [this](const int authStatus) {
-        if (authStatus == StatusCodeSuccess) {
+        if (authStatus == AS_Success) {
             m_lastAuth = m_passwordAuth;
             m_lockButton->setEnabled(true);
         }
@@ -382,7 +382,7 @@ void SFAWidget::initPasswdAuth()
         m_passwordAuth->setAnimationStatus(true);
         m_passwordAuth->setLineEditEnabled(false);
         m_lockButton->setEnabled(false);
-        emit sendTokenToAuth(m_user->name(), AuthTypePassword, text);
+        emit sendTokenToAuth(m_user->name(), AT_Password, text);
     });
     connect(m_lockButton, &QPushButton::clicked, m_passwordAuth, &AuthPassword::requestAuthenticate);
     connect(m_capslockMonitor, &KeyboardMonitor::capslockStatusChanged, m_passwordAuth, &AuthPassword::setCapsLockVisible);
@@ -409,16 +409,16 @@ void SFAWidget::initPasswdAuth()
     DButtonBoxButton *btn = new DButtonBoxButton(QIcon(Password_Auth), QString(), this);
     btn->setIconSize(QSize(24, 24));
     btn->setFocusPolicy(Qt::NoFocus);
-    m_authButtons.insert(AuthTypePassword, btn);
+    m_authButtons.insert(AT_Password, btn);
     connect(btn, &DButtonBoxButton::toggled, this, [this](const bool checked) {
         if (checked) {
             replaceWidget(m_passwordAuth);
-            m_frameDataBind->updateValue("SFAType", AuthTypePassword);
-            emit requestStartAuthentication(m_user->name(), AuthTypePassword);
+            m_frameDataBind->updateValue("SFAType", AT_Password);
+            emit requestStartAuthentication(m_user->name(), AT_Password);
         } else {
             m_passwordAuth->hide();
             m_lockButton->setEnabled(false);
-            emit requestEndAuthentication(m_user->name(), AuthTypePassword);
+            emit requestEndAuthentication(m_user->name(), AT_Password);
         }
     });
 }
@@ -438,10 +438,10 @@ void SFAWidget::initFingerprintAuth()
     m_fingerprintAuth->setAuthStatusLabel(m_biometricAuthStatus);
 
     connect(m_fingerprintAuth, &AuthFingerprint::activeAuth, this, [this] {
-        emit requestStartAuthentication(m_model->currentUser()->name(), AuthTypeFingerprint);
+        emit requestStartAuthentication(m_model->currentUser()->name(), AT_Fingerprint);
     });
     connect(m_fingerprintAuth, &AuthFingerprint::authFinished, this, [this](const int authStatus) {
-        if (authStatus == StatusCodeSuccess) {
+        if (authStatus == AS_Success) {
             m_lastAuth = m_fingerprintAuth;
             m_lockButton->setEnabled(true);
             m_lockButton->setFocus();
@@ -457,17 +457,17 @@ void SFAWidget::initFingerprintAuth()
     DButtonBoxButton *btn = new DButtonBoxButton(QIcon(Fingerprint_Auth), QString(), this);
     btn->setIconSize(QSize(24, 24));
     btn->setFocusPolicy(Qt::NoFocus);
-    m_authButtons.insert(AuthTypeFingerprint, btn);
+    m_authButtons.insert(AT_Fingerprint, btn);
     connect(btn, &DButtonBoxButton::toggled, this, [this](const bool checked) {
         if (checked) {
             replaceWidget(m_fingerprintAuth);
             setBioAuthStatusVisible(m_fingerprintAuth, true);
-            m_frameDataBind->updateValue("SFAType", AuthTypeFingerprint);
-            emit requestStartAuthentication(m_user->name(), AuthTypeFingerprint);
+            m_frameDataBind->updateValue("SFAType", AT_Fingerprint);
+            emit requestStartAuthentication(m_user->name(), AT_Fingerprint);
         } else {
             m_fingerprintAuth->hide();
             m_lockButton->setEnabled(false);
-            emit requestEndAuthentication(m_user->name(), AuthTypeFingerprint);
+            emit requestEndAuthentication(m_user->name(), AT_Fingerprint);
         }
     });
 }
@@ -485,10 +485,10 @@ void SFAWidget::initUKeyAuth()
     m_ukeyAuth->hide();
 
     connect(m_ukeyAuth, &AuthUKey::activeAuth, this, [this] {
-        emit requestStartAuthentication(m_model->currentUser()->name(), AuthTypeUkey);
+        emit requestStartAuthentication(m_model->currentUser()->name(), AT_Ukey);
     });
     connect(m_ukeyAuth, &AuthUKey::authFinished, this, [this](const int authStatus) {
-        if (authStatus == StatusCodeSuccess) {
+        if (authStatus == AS_Success) {
             m_lastAuth = m_ukeyAuth;
             m_lockButton->setEnabled(true);
             m_lockButton->setFocus();
@@ -505,7 +505,7 @@ void SFAWidget::initUKeyAuth()
         m_ukeyAuth->setAnimationStatus(true);
         m_ukeyAuth->setLineEditEnabled(false);
         m_lockButton->setEnabled(false);
-        emit sendTokenToAuth(m_model->currentUser()->name(), AuthTypeUkey, text);
+        emit sendTokenToAuth(m_model->currentUser()->name(), AT_Ukey, text);
     });
     connect(m_lockButton, &QPushButton::clicked, m_ukeyAuth, &AuthUKey::requestAuthenticate);
     connect(m_capslockMonitor, &KeyboardMonitor::capslockStatusChanged, m_ukeyAuth, &AuthUKey::setCapsLockVisible);
@@ -525,16 +525,16 @@ void SFAWidget::initUKeyAuth()
     DButtonBoxButton *btn = new DButtonBoxButton(QIcon(UKey_Auth), QString(), this);
     btn->setIconSize(QSize(24, 24));
     btn->setFocusPolicy(Qt::NoFocus);
-    m_authButtons.insert(AuthTypeUkey, btn);
+    m_authButtons.insert(AT_Ukey, btn);
     connect(btn, &DButtonBoxButton::toggled, this, [this](const bool checked) {
         if (checked) {
             replaceWidget(m_ukeyAuth);
-            m_frameDataBind->updateValue("SFAType", AuthTypeUkey);
-            emit requestStartAuthentication(m_user->name(), AuthTypeUkey);
+            m_frameDataBind->updateValue("SFAType", AT_Ukey);
+            emit requestStartAuthentication(m_user->name(), AT_Ukey);
         } else {
             m_ukeyAuth->hide();
             m_lockButton->setEnabled(false);
-            emit requestEndAuthentication(m_user->name(), AuthTypeUkey);
+            emit requestEndAuthentication(m_user->name(), AT_Ukey);
         }
     });
 }
@@ -556,20 +556,20 @@ void SFAWidget::initFaceAuth()
     connect(m_faceAuth, &AuthFace::retryButtonVisibleChanged, this, &SFAWidget::onRetryButtonVisibleChanged);
     connect(m_retryButton, &DFloatingButton::clicked, this, [this] {
         onRetryButtonVisibleChanged(false);
-        emit requestStartAuthentication(m_model->currentUser()->name(), AuthTypeFace);
+        emit requestStartAuthentication(m_model->currentUser()->name(), AT_Face);
     });
     connect(m_faceAuth, &AuthFace::activeAuth, this, [this] {
-        emit requestStartAuthentication(m_model->currentUser()->name(), AuthTypeFace);
+        emit requestStartAuthentication(m_model->currentUser()->name(), AT_Face);
     });
     connect(m_faceAuth, &AuthFace::authFinished, this, [this](const int authStatus) {
-        if (authStatus == StatusCodeSuccess) {
+        if (authStatus == AS_Success) {
             m_lastAuth = m_faceAuth;
             m_lockButton->setEnabled(true);
             m_lockButton->setFocus();
         }
     });
     connect(m_lockButton, &QPushButton::clicked, this, [this] {
-        if (m_faceAuth->authStatus() == StatusCodeSuccess) {
+        if (m_faceAuth->authStatus() == AS_Success) {
             emit authFinished();
         }
     });
@@ -581,17 +581,17 @@ void SFAWidget::initFaceAuth()
     DButtonBoxButton *btn = new DButtonBoxButton(QIcon(Face_Auth), QString(), this);
     btn->setIconSize(QSize(24, 24));
     btn->setFocusPolicy(Qt::NoFocus);
-    m_authButtons.insert(AuthTypeFace, btn);
+    m_authButtons.insert(AT_Face, btn);
     connect(btn, &DButtonBoxButton::toggled, this, [this](const bool checked) {
         if (checked) {
             replaceWidget(m_faceAuth);
             setBioAuthStatusVisible(m_faceAuth, true);
-            m_frameDataBind->updateValue("SFAType", AuthTypeFace);
-            emit requestStartAuthentication(m_user->name(), AuthTypeFace);
+            m_frameDataBind->updateValue("SFAType", AT_Face);
+            emit requestStartAuthentication(m_user->name(), AT_Face);
         } else {
             m_faceAuth->hide();
             m_lockButton->setEnabled(false);
-            emit requestEndAuthentication(m_user->name(), AuthTypeFace);
+            emit requestEndAuthentication(m_user->name(), AT_Face);
         }
     });
 }
@@ -613,20 +613,20 @@ void SFAWidget::initIrisAuth()
     connect(m_irisAuth, &AuthIris::retryButtonVisibleChanged, this, &SFAWidget::onRetryButtonVisibleChanged);
     connect(m_retryButton, &DFloatingButton::clicked, this, [ this ] {
         onRetryButtonVisibleChanged(false);
-        emit requestStartAuthentication(m_model->currentUser()->name(), AuthTypeIris);
+        emit requestStartAuthentication(m_model->currentUser()->name(), AT_Iris);
     });
     connect(m_irisAuth, &AuthIris::activeAuth, this, [ this ] {
-        emit requestStartAuthentication(m_model->currentUser()->name(), AuthTypeIris);
+        emit requestStartAuthentication(m_model->currentUser()->name(), AT_Iris);
     });
     connect(m_irisAuth, &AuthIris::authFinished, this, [ this ] (const int authStatus) {
-        if (authStatus == StatusCodeSuccess) {
+        if (authStatus == AS_Success) {
             m_lastAuth = m_irisAuth;
             m_lockButton->setEnabled(true);
             m_lockButton->setFocus();
         }
     });
     connect(m_lockButton, &QPushButton::clicked, this, [ this ] {
-        if (m_irisAuth->authStatus() == StatusCodeSuccess) {
+        if (m_irisAuth->authStatus() == AS_Success) {
             emit authFinished();
         }
     });
@@ -635,17 +635,17 @@ void SFAWidget::initIrisAuth()
     DButtonBoxButton *btn = new DButtonBoxButton(QIcon(Iris_Auth), QString(), this);
     btn->setIconSize(QSize(24, 24));
     btn->setFocusPolicy(Qt::NoFocus);
-    m_authButtons.insert(AuthTypeIris, btn);
+    m_authButtons.insert(AT_Iris, btn);
     connect(btn, &DButtonBoxButton::toggled, this, [this](const bool checked) {
         if (checked) {
             replaceWidget(m_irisAuth);
             setBioAuthStatusVisible(m_irisAuth, true);
-            m_frameDataBind->updateValue("SFAType", AuthTypeIris);
-            emit requestStartAuthentication(m_user->name(), AuthTypeIris);
+            m_frameDataBind->updateValue("SFAType", AT_Iris);
+            emit requestStartAuthentication(m_user->name(), AT_Iris);
         } else {
             m_irisAuth->hide();
             m_lockButton->setEnabled(false);
-            emit requestEndAuthentication(m_user->name(), AuthTypeIris);
+            emit requestEndAuthentication(m_user->name(), AT_Iris);
         }
     });
 }

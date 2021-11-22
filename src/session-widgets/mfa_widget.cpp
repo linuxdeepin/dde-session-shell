@@ -88,7 +88,7 @@ void MFAWidget::setAuthType(const int type)
     qDebug() << "MFAWidget::setAuthType:" << type;
     m_index = 2;
     /* 面容 */
-    if (type & AuthTypeFace) {
+    if (type & AT_Face) {
         initFaceAuth();
         m_index++;
     } else if (m_faceAuth) {
@@ -96,7 +96,7 @@ void MFAWidget::setAuthType(const int type)
         m_faceAuth = nullptr;
     }
     /* 虹膜 */
-    if (type & AuthTypeIris) {
+    if (type & AT_Iris) {
         initIrisAuth();
         m_index++;
     } else if (m_irisAuth) {
@@ -104,7 +104,7 @@ void MFAWidget::setAuthType(const int type)
         m_irisAuth = nullptr;
     }
     /* 指纹 */
-    if (type & AuthTypeFingerprint) {
+    if (type & AT_Fingerprint) {
         initFingerprintAuth();
         m_index++;
     } else if (m_fingerprintAuth) {
@@ -112,7 +112,7 @@ void MFAWidget::setAuthType(const int type)
         m_fingerprintAuth = nullptr;
     }
     /* Ukey */
-    if (type & AuthTypeUkey) {
+    if (type & AT_Ukey) {
         initUKeyAuth();
         m_index++;
     } else if (m_ukeyAuth) {
@@ -120,7 +120,7 @@ void MFAWidget::setAuthType(const int type)
         m_ukeyAuth = nullptr;
     }
     /* 密码 */
-    if (type & AuthTypePassword) {
+    if (type & AT_Password) {
         initPasswdAuth();
         m_index++;
     } else if (m_passwordAuth) {
@@ -128,7 +128,7 @@ void MFAWidget::setAuthType(const int type)
         m_passwordAuth = nullptr;
     }
     /* 账户 */
-    if (type == AuthTypeNone) {
+    if (type == AT_None) {
         if (m_model->currentUser()->isNoPasswordLogin()) {
             m_lockButton->setEnabled(true);
             m_accountEdit->hide();
@@ -187,42 +187,42 @@ void MFAWidget::setAuthStatus(const int type, const int status, const QString &m
 {
     qDebug() << "MFAWidget::setAuthStatus:" << type << status << message;
     switch (type) {
-    case AuthTypePassword:
+    case AT_Password:
         if (m_passwordAuth) {
             m_passwordAuth->setAuthStatus(status, message);
             FrameDataBind::Instance()->updateValue("MFPasswordAuthStatus", status);
             FrameDataBind::Instance()->updateValue("MFPasswordAuthMsg", message);
         }
         break;
-    case AuthTypeFingerprint:
+    case AT_Fingerprint:
         if (m_fingerprintAuth) {
             m_fingerprintAuth->setAuthStatus(status, message);
             FrameDataBind::Instance()->updateValue("MFFingerprintAuthStatus", status);
             FrameDataBind::Instance()->updateValue("MFFingerprintAuthMsg", message);
         }
         break;
-    case AuthTypeUkey:
+    case AT_Ukey:
         if (m_ukeyAuth) {
             m_ukeyAuth->setAuthStatus(status, message);
             FrameDataBind::Instance()->updateValue("MFUKeyAuthStatus", status);
             FrameDataBind::Instance()->updateValue("MFUKeyAuthMsg", message);
         }
         break;
-    case AuthTypeFace:
+    case AT_Face:
         if (m_faceAuth) {
             m_faceAuth->setAuthStatus(status, message);
             FrameDataBind::Instance()->updateValue("MFFaceAuthStatus", status);
             FrameDataBind::Instance()->updateValue("MFFaceAuthMsg", message);
         }
         break;
-    case AuthTypeIris:
+    case AT_Iris:
         if (m_irisAuth) {
             m_irisAuth->setAuthStatus(status, message);
             FrameDataBind::Instance()->updateValue("MFIrisAuthStatus", status);
             FrameDataBind::Instance()->updateValue("MFIrisAuthMsg", message);
         }
         break;
-    case AuthTypeAll:
+    case AT_All:
         checkAuthResult(type, status);
         break;
     default:
@@ -252,7 +252,7 @@ void MFAWidget::initPasswdAuth()
     m_mainLayout->insertWidget(m_index, m_passwordAuth);
 
     connect(m_passwordAuth, &AuthPassword::activeAuth, this, [this] {
-        emit requestStartAuthentication(m_model->currentUser()->name(), AuthTypePassword);
+        emit requestStartAuthentication(m_model->currentUser()->name(), AT_Password);
     });
     connect(m_passwordAuth, &AuthPassword::requestAuthenticate, this, [this] {
         const QString &text = m_passwordAuth->lineEditText();
@@ -262,10 +262,10 @@ void MFAWidget::initPasswdAuth()
         m_passwordAuth->setAuthStatusStyle(LOGIN_SPINNER);
         m_passwordAuth->setAnimationStatus(true);
         m_passwordAuth->setLineEditEnabled(false);
-        emit sendTokenToAuth(m_model->currentUser()->name(), AuthTypePassword, text);
+        emit sendTokenToAuth(m_model->currentUser()->name(), AT_Password, text);
     });
     connect(m_passwordAuth, &AuthPassword::authFinished, this, [this](const int value) {
-        checkAuthResult(AuthTypePassword, value);
+        checkAuthResult(AT_Password, value);
     });
     connect(m_lockButton, &QPushButton::clicked, m_passwordAuth, &AuthPassword::requestAuthenticate);
     connect(m_capslockMonitor, &KeyboardMonitor::capslockStatusChanged, m_passwordAuth, &AuthPassword::setCapsLockVisible);
@@ -295,10 +295,10 @@ void MFAWidget::initFingerprintAuth()
     m_mainLayout->insertWidget(m_index, m_fingerprintAuth);
 
     connect(m_fingerprintAuth, &AuthFingerprint::activeAuth, this, [this] {
-        emit requestStartAuthentication(m_model->currentUser()->name(), AuthTypeFingerprint);
+        emit requestStartAuthentication(m_model->currentUser()->name(), AT_Fingerprint);
     });
     connect(m_fingerprintAuth, &AuthFingerprint::authFinished, this, [this](const int value) {
-        checkAuthResult(AuthTypePassword, value);
+        checkAuthResult(AT_Password, value);
     });
 }
 
@@ -316,7 +316,7 @@ void MFAWidget::initUKeyAuth()
     m_mainLayout->insertWidget(m_index, m_ukeyAuth);
 
     connect(m_ukeyAuth, &AuthUKey::activeAuth, this, [this] {
-        emit requestStartAuthentication(m_model->currentUser()->name(), AuthTypeUkey);
+        emit requestStartAuthentication(m_model->currentUser()->name(), AT_Ukey);
     });
     connect(m_ukeyAuth, &AuthUKey::requestAuthenticate, this, [this] {
         const QString &text = m_ukeyAuth->lineEditText();
@@ -326,11 +326,11 @@ void MFAWidget::initUKeyAuth()
         m_ukeyAuth->setAuthStatusStyle(LOGIN_SPINNER);
         m_ukeyAuth->setAnimationStatus(true);
         m_ukeyAuth->setLineEditEnabled(false);
-        emit sendTokenToAuth(m_model->currentUser()->name(), AuthTypeUkey, text);
+        emit sendTokenToAuth(m_model->currentUser()->name(), AT_Ukey, text);
     });
     connect(m_lockButton, &QPushButton::clicked, m_ukeyAuth, &AuthUKey::requestAuthenticate);
     connect(m_ukeyAuth, &AuthUKey::authFinished, this, [this](const bool status) {
-        checkAuthResult(AuthTypeUkey, status);
+        checkAuthResult(AT_Ukey, status);
     });
     connect(m_capslockMonitor, &KeyboardMonitor::capslockStatusChanged, m_ukeyAuth, &AuthUKey::setCapsLockVisible);
 
@@ -362,10 +362,10 @@ void MFAWidget::initFaceAuth()
     m_mainLayout->insertWidget(m_index, m_faceAuth);
 
     connect(m_faceAuth, &AuthFace::activeAuth, this, [this] {
-        emit requestStartAuthentication(m_model->currentUser()->name(), AuthTypeFace);
+        emit requestStartAuthentication(m_model->currentUser()->name(), AT_Face);
     });
     connect(m_faceAuth, &AuthFace::authFinished, this, [this](const bool status) {
-        checkAuthResult(AuthTypeFace, status);
+        checkAuthResult(AT_Face, status);
     });
 }
 
@@ -383,10 +383,10 @@ void MFAWidget::initIrisAuth()
     m_mainLayout->insertWidget(m_index, m_irisAuth);
 
     connect(m_irisAuth, &AuthIris::activeAuth, this, [this] {
-        emit requestStartAuthentication(m_model->currentUser()->name(), AuthTypeIris);
+        emit requestStartAuthentication(m_model->currentUser()->name(), AT_Iris);
     });
     connect(m_irisAuth, &AuthIris::authFinished, this, [this](const bool status) {
-        checkAuthResult(AuthTypeIris, status);
+        checkAuthResult(AT_Iris, status);
     });
 }
 
@@ -398,30 +398,30 @@ void MFAWidget::initIrisAuth()
  */
 void MFAWidget::checkAuthResult(const int type, const int status)
 {
-        if (type == AuthTypePassword && status == StatusCodeSuccess) {
-        if (m_fingerprintAuth && m_fingerprintAuth->authStatus() == StatusCodeLocked) {
+        if (type == AT_Password && status == AS_Success) {
+        if (m_fingerprintAuth && m_fingerprintAuth->authStatus() == AS_Locked) {
             m_fingerprintAuth->reset();
-            emit m_fingerprintAuth->activeAuth(AuthTypeFingerprint);
+            emit m_fingerprintAuth->activeAuth(AT_Fingerprint);
         }
-        if (m_faceAuth && m_faceAuth->authStatus() == StatusCodeLocked) {
+        if (m_faceAuth && m_faceAuth->authStatus() == AS_Locked) {
             m_faceAuth->reset();
-            emit m_faceAuth->activeAuth(AuthTypeFace);
+            emit m_faceAuth->activeAuth(AT_Face);
         }
-        if (m_irisAuth && m_irisAuth->authStatus() == StatusCodeLocked) {
+        if (m_irisAuth && m_irisAuth->authStatus() == AS_Locked) {
             m_irisAuth->reset();
-            emit m_irisAuth->activeAuth(AuthTypeIris);
+            emit m_irisAuth->activeAuth(AT_Iris);
         }
     }
 
-    if (status == StatusCodeCancel) {
+    if (status == AS_Cancel) {
         if (m_ukeyAuth) {
-            m_ukeyAuth->setAuthStatus(StatusCodeCancel, "Cancel");
+            m_ukeyAuth->setAuthStatus(AS_Cancel, "Cancel");
         }
         if (m_passwordAuth) {
-            m_passwordAuth->setAuthStatus(StatusCodeCancel, "Cancel");
+            m_passwordAuth->setAuthStatus(AS_Cancel, "Cancel");
         }
         if (m_fingerprintAuth) {
-            m_fingerprintAuth->setAuthStatus(StatusCodeCancel, "Cancel");
+            m_fingerprintAuth->setAuthStatus(AS_Cancel, "Cancel");
         }
     }
 }
@@ -430,7 +430,7 @@ void MFAWidget::updateFocusPosition()
 {
     AuthModule *module = static_cast<AuthModule *>(sender());
     if (module == m_passwordAuth) {
-        if (m_ukeyAuth && m_ukeyAuth->authStatus() == StatusCodePrompt) {
+        if (m_ukeyAuth && m_ukeyAuth->authStatus() == AS_Prompt) {
             setFocusProxy(m_ukeyAuth);
         } else {
             setFocusProxy(m_lockButton);

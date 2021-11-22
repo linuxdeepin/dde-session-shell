@@ -31,19 +31,19 @@ TEST_F(UT_AuthSingle, basic)
 TEST_F(UT_AuthSingle, AuthResultTest)
 {
     m_authSingle->setAuthStatus(INT_MAX, "default");
-    m_authSingle->setAuthStatus(AuthCommon::StatusCodeSuccess, "Success");
-    m_authSingle->setAuthStatus(AuthCommon::StatusCodeFailure, "Failure");
-    m_authSingle->setAuthStatus(AuthCommon::StatusCodeCancel, "Cancel");
-    m_authSingle->setAuthStatus(AuthCommon::StatusCodeTimeout, "Timeout");
-    m_authSingle->setAuthStatus(AuthCommon::StatusCodeError, "Error");
-    m_authSingle->setAuthStatus(AuthCommon::StatusCodeVerify, "Verify");
-    m_authSingle->setAuthStatus(AuthCommon::StatusCodeException, "Exception");
-    m_authSingle->setAuthStatus(AuthCommon::StatusCodePrompt, "Prompt");
-    m_authSingle->setAuthStatus(AuthCommon::StatusCodeStarted, "Started");
-    m_authSingle->setAuthStatus(AuthCommon::StatusCodeEnded, "Ended");
-    m_authSingle->setAuthStatus(AuthCommon::StatusCodeLocked, "Locked");
-    m_authSingle->setAuthStatus(AuthCommon::StatusCodeRecover, "Recover");
-    m_authSingle->setAuthStatus(AuthCommon::StatusCodeUnlocked, "Unlocked");
+    m_authSingle->setAuthStatus(AuthCommon::AS_Success, "Success");
+    m_authSingle->setAuthStatus(AuthCommon::AS_Failure, "Failure");
+    m_authSingle->setAuthStatus(AuthCommon::AS_Cancel, "Cancel");
+    m_authSingle->setAuthStatus(AuthCommon::AS_Timeout, "Timeout");
+    m_authSingle->setAuthStatus(AuthCommon::AS_Error, "Error");
+    m_authSingle->setAuthStatus(AuthCommon::AS_Verify, "Verify");
+    m_authSingle->setAuthStatus(AuthCommon::AS_Exception, "Exception");
+    m_authSingle->setAuthStatus(AuthCommon::AS_Prompt, "Prompt");
+    m_authSingle->setAuthStatus(AuthCommon::AS_Started, "Started");
+    m_authSingle->setAuthStatus(AuthCommon::AS_Ended, "Ended");
+    m_authSingle->setAuthStatus(AuthCommon::AS_Locked, "Locked");
+    m_authSingle->setAuthStatus(AuthCommon::AS_Recover, "Recover");
+    m_authSingle->setAuthStatus(AuthCommon::AS_Unlocked, "Unlocked");
 }
 
 TEST_F(UT_AuthSingle, CapsStatusTest)

@@ -20,11 +20,11 @@ protected:
 
 void UT_AuthenticationModule::SetUp()
 {
-    m_passwordAuth = new AuthenticationModule(AuthCommon::AuthTypePassword);
-    m_fingerprintAuth = new AuthenticationModule(AuthCommon::AuthTypeFingerprint);
-    m_ukeyAuth = new AuthenticationModule(AuthCommon::AuthTypeUkey);
-    m_activeDirectoryAuth = new AuthenticationModule(AuthCommon::AuthTypeActiveDirectory);
-    m_defaultAuth = new AuthenticationModule(AuthCommon::AuthTypeNone);
+    m_passwordAuth = new AuthenticationModule(AuthCommon::AT_Password);
+    m_fingerprintAuth = new AuthenticationModule(AuthCommon::AT_Fingerprint);
+    m_ukeyAuth = new AuthenticationModule(AuthCommon::AT_Ukey);
+    m_activeDirectoryAuth = new AuthenticationModule(AuthCommon::AT_ActiveDirectory);
+    m_defaultAuth = new AuthenticationModule(AuthCommon::AT_None);
 }
 
 void UT_AuthenticationModule::TearDown()
@@ -59,47 +59,47 @@ TEST_F(UT_AuthenticationModule, BasicTest)
 TEST_F(UT_AuthenticationModule, AuthResultTest)
 {
     m_passwordAuth->setAuthResult(INT_MAX, "default");
-    m_passwordAuth->setAuthResult(AuthCommon::StatusCodeSuccess, "Success");
-    m_passwordAuth->setAuthResult(AuthCommon::StatusCodeFailure, "Failure");
-    m_passwordAuth->setAuthResult(AuthCommon::StatusCodeCancel, "Cancel");
-    m_passwordAuth->setAuthResult(AuthCommon::StatusCodeTimeout, "Timeout");
-    m_passwordAuth->setAuthResult(AuthCommon::StatusCodeError, "Error");
-    m_passwordAuth->setAuthResult(AuthCommon::StatusCodeVerify, "Verify");
-    m_passwordAuth->setAuthResult(AuthCommon::StatusCodeException, "Exception");
-    m_passwordAuth->setAuthResult(AuthCommon::StatusCodePrompt, "Prompt");
-    m_passwordAuth->setAuthResult(AuthCommon::StatusCodeStarted, "Started");
-    m_passwordAuth->setAuthResult(AuthCommon::StatusCodeEnded, "Ended");
-    m_passwordAuth->setAuthResult(AuthCommon::StatusCodeLocked, "Locked");
-    m_passwordAuth->setAuthResult(AuthCommon::StatusCodeRecover, "Recover");
-    m_passwordAuth->setAuthResult(AuthCommon::StatusCodeUnlocked, "Unlocked");
+    m_passwordAuth->setAuthResult(AuthCommon::AS_Success, "Success");
+    m_passwordAuth->setAuthResult(AuthCommon::AS_Failure, "Failure");
+    m_passwordAuth->setAuthResult(AuthCommon::AS_Cancel, "Cancel");
+    m_passwordAuth->setAuthResult(AuthCommon::AS_Timeout, "Timeout");
+    m_passwordAuth->setAuthResult(AuthCommon::AS_Error, "Error");
+    m_passwordAuth->setAuthResult(AuthCommon::AS_Verify, "Verify");
+    m_passwordAuth->setAuthResult(AuthCommon::AS_Exception, "Exception");
+    m_passwordAuth->setAuthResult(AuthCommon::AS_Prompt, "Prompt");
+    m_passwordAuth->setAuthResult(AuthCommon::AS_Started, "Started");
+    m_passwordAuth->setAuthResult(AuthCommon::AS_Ended, "Ended");
+    m_passwordAuth->setAuthResult(AuthCommon::AS_Locked, "Locked");
+    m_passwordAuth->setAuthResult(AuthCommon::AS_Recover, "Recover");
+    m_passwordAuth->setAuthResult(AuthCommon::AS_Unlocked, "Unlocked");
 
-    m_fingerprintAuth->setAuthResult(AuthCommon::StatusCodeSuccess, "Success");
-    m_fingerprintAuth->setAuthResult(AuthCommon::StatusCodeFailure, "Failure");
-    m_fingerprintAuth->setAuthResult(AuthCommon::StatusCodeCancel, "Cancel");
-    m_fingerprintAuth->setAuthResult(AuthCommon::StatusCodeTimeout, "Timeout");
-    m_fingerprintAuth->setAuthResult(AuthCommon::StatusCodeError, "Error");
-    m_fingerprintAuth->setAuthResult(AuthCommon::StatusCodeVerify, "Verify");
-    m_fingerprintAuth->setAuthResult(AuthCommon::StatusCodeException, "Exception");
-    m_fingerprintAuth->setAuthResult(AuthCommon::StatusCodePrompt, "Prompt");
-    m_fingerprintAuth->setAuthResult(AuthCommon::StatusCodeStarted, "Started");
-    m_fingerprintAuth->setAuthResult(AuthCommon::StatusCodeEnded, "Ended");
-    m_fingerprintAuth->setAuthResult(AuthCommon::StatusCodeLocked, "Locked");
-    m_fingerprintAuth->setAuthResult(AuthCommon::StatusCodeRecover, "Recover");
-    m_fingerprintAuth->setAuthResult(AuthCommon::StatusCodeUnlocked, "Unlocked");
+    m_fingerprintAuth->setAuthResult(AuthCommon::AS_Success, "Success");
+    m_fingerprintAuth->setAuthResult(AuthCommon::AS_Failure, "Failure");
+    m_fingerprintAuth->setAuthResult(AuthCommon::AS_Cancel, "Cancel");
+    m_fingerprintAuth->setAuthResult(AuthCommon::AS_Timeout, "Timeout");
+    m_fingerprintAuth->setAuthResult(AuthCommon::AS_Error, "Error");
+    m_fingerprintAuth->setAuthResult(AuthCommon::AS_Verify, "Verify");
+    m_fingerprintAuth->setAuthResult(AuthCommon::AS_Exception, "Exception");
+    m_fingerprintAuth->setAuthResult(AuthCommon::AS_Prompt, "Prompt");
+    m_fingerprintAuth->setAuthResult(AuthCommon::AS_Started, "Started");
+    m_fingerprintAuth->setAuthResult(AuthCommon::AS_Ended, "Ended");
+    m_fingerprintAuth->setAuthResult(AuthCommon::AS_Locked, "Locked");
+    m_fingerprintAuth->setAuthResult(AuthCommon::AS_Recover, "Recover");
+    m_fingerprintAuth->setAuthResult(AuthCommon::AS_Unlocked, "Unlocked");
 
-    m_ukeyAuth->setAuthResult(AuthCommon::StatusCodeSuccess, "Success");
-    m_ukeyAuth->setAuthResult(AuthCommon::StatusCodeFailure, "Failure");
-    m_ukeyAuth->setAuthResult(AuthCommon::StatusCodeCancel, "Cancel");
-    m_ukeyAuth->setAuthResult(AuthCommon::StatusCodeTimeout, "Timeout");
-    m_ukeyAuth->setAuthResult(AuthCommon::StatusCodeError, "Error");
-    m_ukeyAuth->setAuthResult(AuthCommon::StatusCodeVerify, "Verify");
-    m_ukeyAuth->setAuthResult(AuthCommon::StatusCodeException, "Exception");
-    m_ukeyAuth->setAuthResult(AuthCommon::StatusCodePrompt, "Prompt");
-    m_ukeyAuth->setAuthResult(AuthCommon::StatusCodeStarted, "Started");
-    m_ukeyAuth->setAuthResult(AuthCommon::StatusCodeEnded, "Ended");
-    m_ukeyAuth->setAuthResult(AuthCommon::StatusCodeLocked, "Locked");
-    m_ukeyAuth->setAuthResult(AuthCommon::StatusCodeRecover, "Recover");
-    m_ukeyAuth->setAuthResult(AuthCommon::StatusCodeUnlocked, "Unlocked");
+    m_ukeyAuth->setAuthResult(AuthCommon::AS_Success, "Success");
+    m_ukeyAuth->setAuthResult(AuthCommon::AS_Failure, "Failure");
+    m_ukeyAuth->setAuthResult(AuthCommon::AS_Cancel, "Cancel");
+    m_ukeyAuth->setAuthResult(AuthCommon::AS_Timeout, "Timeout");
+    m_ukeyAuth->setAuthResult(AuthCommon::AS_Error, "Error");
+    m_ukeyAuth->setAuthResult(AuthCommon::AS_Verify, "Verify");
+    m_ukeyAuth->setAuthResult(AuthCommon::AS_Exception, "Exception");
+    m_ukeyAuth->setAuthResult(AuthCommon::AS_Prompt, "Prompt");
+    m_ukeyAuth->setAuthResult(AuthCommon::AS_Started, "Started");
+    m_ukeyAuth->setAuthResult(AuthCommon::AS_Ended, "Ended");
+    m_ukeyAuth->setAuthResult(AuthCommon::AS_Locked, "Locked");
+    m_ukeyAuth->setAuthResult(AuthCommon::AS_Recover, "Recover");
+    m_ukeyAuth->setAuthResult(AuthCommon::AS_Unlocked, "Unlocked");
 }
 
 TEST_F(UT_AuthenticationModule, LineEditInfoTest)

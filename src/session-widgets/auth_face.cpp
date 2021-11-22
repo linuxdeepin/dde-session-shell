@@ -37,7 +37,7 @@ AuthFace::AuthFace(QWidget *parent)
     setObjectName(QStringLiteral("AuthFace"));
     setAccessibleName(QStringLiteral("AuthFace"));
 
-    m_type = AuthTypeFace;
+    m_type = AT_Face;
 
     initUI();
     initConnections();
@@ -92,7 +92,7 @@ void AuthFace::setAuthStatus(const int state, const QString &result)
 {
     m_status = state;
     switch (state) {
-    case StatusCodeSuccess:
+    case AS_Success:
         if (isMFA())
             setAuthStatusStyle(LOGIN_CHECK);
         else
@@ -102,7 +102,7 @@ void AuthFace::setAuthStatus(const int state, const QString &result)
         emit authFinished(state);
         emit retryButtonVisibleChanged(false);
         break;
-    case StatusCodeFailure: {
+    case AS_Failure: {
         setAnimationStatus(false);
         setAuthStatusStyle(isMFA() ? LOGIN_RETRY : AUTH_LOCK);
         m_showPrompt = false;
@@ -116,38 +116,38 @@ void AuthFace::setAuthStatus(const int state, const QString &result)
         emit authFinished(state);
         break;
     }
-    case StatusCodeCancel:
+    case AS_Cancel:
         setAnimationStatus(false);
         m_showPrompt = true;
         break;
-    case StatusCodeTimeout:
-    case StatusCodeError:
+    case AS_Timeout:
+    case AS_Error:
         setAnimationStatus(false);
         setAuthStatusStyle(isMFA() ? LOGIN_WAIT : AUTH_LOCK);
         m_textLabel->setText(result);
         m_showPrompt = true;
         break;
-    case StatusCodeVerify:
+    case AS_Verify:
         setAnimationStatus(false);
         setAuthStatusStyle(isMFA() ? LOGIN_SPINNER : AUTH_LOCK);
         m_textLabel->setText(result);
         break;
-    case StatusCodeException:
+    case AS_Exception:
         setAnimationStatus(false);
         setAuthStatusStyle(isMFA() ? LOGIN_WAIT : AUTH_LOCK);
         m_textLabel->setText(result);
         m_showPrompt = true;
         break;
-    case StatusCodePrompt:
+    case AS_Prompt:
         setAnimationStatus(false);
         setAuthStatusStyle(isMFA() ? LOGIN_WAIT : AUTH_LOCK);
         break;
-    case StatusCodeStarted:
+    case AS_Started:
         m_textLabel->setText(tr("Verify your FaceID"));
         break;
-    case StatusCodeEnded:
+    case AS_Ended:
         break;
-    case StatusCodeLocked:
+    case AS_Locked:
         setAnimationStatus(false);
         setAuthStatusStyle(isMFA() ? LOGIN_LOCK : AUTH_LOCK);
         m_textLabel->setText(tr("FaceID locked, use password please"));
@@ -155,12 +155,12 @@ void AuthFace::setAuthStatus(const int state, const QString &result)
         if (DDESESSIONCC::SingleAuthFactor == m_authFactorType)
             emit retryButtonVisibleChanged(false);
         break;
-    case StatusCodeRecover:
+    case AS_Recover:
         setAnimationStatus(false);
         setAuthStatusStyle(isMFA() ? LOGIN_WAIT : AUTH_LOCK);
         m_showPrompt = true;
         break;
-    case StatusCodeUnlocked:
+    case AS_Unlocked:
         setAnimationStatus(false);
         setAuthStatusStyle(isMFA() ? LOGIN_WAIT : AUTH_LOCK);
         m_showPrompt = true;
@@ -223,10 +223,10 @@ void AuthFace::updateUnlockPrompt()
  */
 void AuthFace::doAnimation()
 {
-    if (m_status == StatusCodeSuccess) {
+    if (m_status == AS_Success) {
         if (m_aniIndex > 10) {
             m_aniTimer->stop();
-            emit authFinished(StatusCodeSuccess);
+            emit authFinished(AS_Success);
         } else {
             setAuthStatusStyle(QStringLiteral(":/misc/images/unlock/unlock_%1.svg").arg(m_aniIndex++));
         }
@@ -238,9 +238,9 @@ bool AuthFace::eventFilter(QObject *watched, QEvent *event)
     if (watched == m_authStatusLabel
             && QEvent::MouseButtonRelease == event->type()
             && !m_isAuthing
-            && StatusCodeLocked != m_status
+            && AS_Locked != m_status
             && DDESESSIONCC::MultiAuthFactor == m_authFactorType) {
-        emit activeAuth(AuthTypeFace);
+        emit activeAuth(AT_Face);
     }
 
     return false;

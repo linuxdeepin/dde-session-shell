@@ -252,7 +252,7 @@ void UserLoginWidget::updateWidgetShowType(const int type)
      * 这里是按照显示顺序初始化的，如果后续布局改变或者新增认证方式，初始化顺序需要重新调整
      */
     /* 面容 */
-    if (type & AuthTypeFace) {
+    if (type & AT_Face) {
         initFaceAuth(0);
         index++;
     } else if (m_faceAuth) {
@@ -260,7 +260,7 @@ void UserLoginWidget::updateWidgetShowType(const int type)
         m_faceAuth = nullptr;
     }
     /* 虹膜 */
-    if (type & AuthTypeIris) {
+    if (type & AT_Iris) {
         initIrisAuth(0);
         index++;
     } else if (m_irisAuth) {
@@ -268,50 +268,50 @@ void UserLoginWidget::updateWidgetShowType(const int type)
         m_irisAuth = nullptr;
     }
     /* 指纹 */
-    if (type & AuthTypeFingerprint) {
+    if (type & AT_Fingerprint) {
         initFingerprintAuth(index++);
     } else if (m_fingerprintAuth) {
         m_fingerprintAuth->deleteLater();
         m_fingerprintAuth = nullptr;
     }
     /* AD域 */
-    if (type & AuthTypeActiveDirectory) {
+    if (type & AT_ActiveDirectory) {
         initActiveDirectoryAuth(index++);
     }
     /* Ukey */
-    if (type & AuthTypeUkey) {
+    if (type & AT_Ukey) {
         initUkeyAuth(index++);
     } else if (m_ukeyAuth) {
         m_ukeyAuth->deleteLater();
         m_ukeyAuth = nullptr;
     }
     /* 指静脉 */
-    if (type & AuthTypeFingerVein) {
+    if (type & AT_FingerVein) {
         initFingerVeinAuth(index++);
     }
     /* PIN码 */
-    if (type & AuthTypePIN) {
+    if (type & AT_PIN) {
         initPINAuth(index++);
     } else if (m_PINAuth) {
         m_PINAuth->deleteLater();
         m_PINAuth = nullptr;
     }
     /* 密码 */
-    if (type & AuthTypePassword) {
+    if (type & AT_Password) {
         initPasswdAuth(index++);
     } else if (m_passwordAuth) {
         m_passwordAuth->deleteLater();
         m_passwordAuth = nullptr;
     }
     /* 单因子 */
-    if (type & AuthTypeSingle) {
+    if (type & AT_PAM) {
         initSingleAuth(index++);
     } else if (m_singleAuth) {
         m_singleAuth->deleteLater();
         m_singleAuth = nullptr;
     }
     /* 账户 */
-    if (type == AuthTypeNone) {
+    if (type == AT_None) {
         if (m_model->currentUser()->isNoPasswordLogin()) {
             m_lockButton->setEnabled(true);
             m_accountEdit->hide();
@@ -393,17 +393,17 @@ void UserLoginWidget::initSingleAuth(const int index)
     m_userLoginLayout->insertWidget(index, m_singleAuth);
 
     connect(m_singleAuth, &AuthSingle::activeAuth, this, [this] {
-        emit requestStartAuthentication(m_model->currentUser()->name(), AuthTypeSingle);
+        emit requestStartAuthentication(m_model->currentUser()->name(), AT_PAM);
     });
     connect(m_singleAuth, &AuthSingle::requestAuthenticate, this, [this] {
         if (m_singleAuth->lineEditText().isEmpty()) {
             return;
         }
-        emit sendTokenToAuth(m_model->currentUser()->name(), AuthTypeSingle, m_singleAuth->lineEditText());
+        emit sendTokenToAuth(m_model->currentUser()->name(), AT_PAM, m_singleAuth->lineEditText());
     });
     connect(m_singleAuth, &AuthSingle::requestShowKeyboardList, this, &UserLoginWidget::showKeyboardList);
     connect(m_singleAuth, &AuthSingle::authFinished, this, [this](const bool status) {
-        checkAuthResult(AuthTypeSingle, status);
+        checkAuthResult(AT_PAM, status);
     });
 
     connect(m_capslockMonitor, &KeyboardMonitor::capslockStatusChanged, m_singleAuth, &AuthSingle::setCapsLockVisible);
@@ -445,7 +445,7 @@ void UserLoginWidget::initPasswdAuth(const int index)
     m_userLoginLayout->insertWidget(index, m_passwordAuth);
 
     connect(m_passwordAuth, &AuthPassword::activeAuth, this, [this] {
-        emit requestStartAuthentication(m_model->currentUser()->name(), AuthTypePassword);
+        emit requestStartAuthentication(m_model->currentUser()->name(), AT_Password);
     });
     connect(m_passwordAuth, &AuthPassword::requestAuthenticate, this, [this] {
         const QString &text = m_passwordAuth->lineEditText();
@@ -455,11 +455,11 @@ void UserLoginWidget::initPasswdAuth(const int index)
         m_passwordAuth->setAuthStatusStyle(LOGIN_SPINNER);
         m_passwordAuth->setAnimationStatus(true);
         m_passwordAuth->setLineEditEnabled(false);
-        emit sendTokenToAuth(m_model->currentUser()->name(), AuthTypePassword, text);
+        emit sendTokenToAuth(m_model->currentUser()->name(), AT_Password, text);
     });
     connect(m_passwordAuth, &AuthPassword::requestShowKeyboardList, this, &UserLoginWidget::showKeyboardList);
     connect(m_passwordAuth, &AuthPassword::authFinished, this, [this](const int value) {
-        checkAuthResult(AuthTypePassword, value);
+        checkAuthResult(AT_Password, value);
     });
     connect(m_lockButton, &QPushButton::clicked, m_passwordAuth, &AuthPassword::requestAuthenticate);
     connect(m_capslockMonitor, &KeyboardMonitor::capslockStatusChanged, m_passwordAuth, &AuthPassword::setCapsLockVisible);
@@ -493,10 +493,10 @@ void UserLoginWidget::initFingerprintAuth(const int index)
     m_userLoginLayout->insertWidget(index, m_fingerprintAuth);
 
     connect(m_fingerprintAuth, &AuthFingerprint::activeAuth, this, [this] {
-        emit requestStartAuthentication(m_model->currentUser()->name(), AuthTypeFingerprint);
+        emit requestStartAuthentication(m_model->currentUser()->name(), AT_Fingerprint);
     });
     connect(m_fingerprintAuth, &AuthFingerprint::authFinished, this, [this](const int value) {
-        checkAuthResult(AuthTypePassword, value);
+        checkAuthResult(AT_Password, value);
     });
 }
 
@@ -514,7 +514,7 @@ void UserLoginWidget::initUkeyAuth(const int index)
     m_userLoginLayout->insertWidget(index, m_ukeyAuth);
 
     connect(m_ukeyAuth, &AuthUKey::activeAuth, this, [this] {
-        emit requestStartAuthentication(m_model->currentUser()->name(), AuthTypeUkey);
+        emit requestStartAuthentication(m_model->currentUser()->name(), AT_Ukey);
     });
     connect(m_ukeyAuth, &AuthUKey::requestAuthenticate, this, [=] {
         const QString &text = m_ukeyAuth->lineEditText();
@@ -524,11 +524,11 @@ void UserLoginWidget::initUkeyAuth(const int index)
         m_ukeyAuth->setAuthStatusStyle(LOGIN_SPINNER);
         m_ukeyAuth->setAnimationStatus(true);
         m_ukeyAuth->setLineEditEnabled(false);
-        emit sendTokenToAuth(m_model->currentUser()->name(), AuthTypeUkey, text);
+        emit sendTokenToAuth(m_model->currentUser()->name(), AT_Ukey, text);
     });
     connect(m_lockButton, &QPushButton::clicked, m_ukeyAuth, &AuthUKey::requestAuthenticate);
     connect(m_ukeyAuth, &AuthUKey::authFinished, this, [this](const bool status) {
-        checkAuthResult(AuthTypeUkey, status);
+        checkAuthResult(AT_Ukey, status);
     });
     connect(m_capslockMonitor, &KeyboardMonitor::capslockStatusChanged, m_ukeyAuth, &AuthUKey::setCapsLockVisible);
 
@@ -559,10 +559,10 @@ void UserLoginWidget::initFaceAuth(const int index)
     m_userLoginLayout->insertWidget(index, m_faceAuth);
 
     connect(m_faceAuth, &AuthFace::activeAuth, this, [=] {
-        emit requestStartAuthentication(m_model->currentUser()->name(), AuthTypeFace);
+        emit requestStartAuthentication(m_model->currentUser()->name(), AT_Face);
     });
     connect(m_faceAuth, &AuthFace::authFinished, this, [this](const bool status) {
-        checkAuthResult(AuthTypeFace, status);
+        checkAuthResult(AT_Face, status);
     });
 }
 
@@ -579,10 +579,10 @@ void UserLoginWidget::initIrisAuth(const int index)
     m_userLoginLayout->insertWidget(index, m_irisAuth);
 
     connect(m_irisAuth, &AuthIris::activeAuth, this, [=] {
-        emit requestStartAuthentication(m_model->currentUser()->name(), AuthTypeIris);
+        emit requestStartAuthentication(m_model->currentUser()->name(), AT_Iris);
     });
     connect(m_irisAuth, &AuthIris::authFinished, this, [this](const bool status) {
-        checkAuthResult(AuthTypeIris, status);
+        checkAuthResult(AT_Iris, status);
     });
 }
 
@@ -623,63 +623,63 @@ void UserLoginWidget::updateAuthResult(const int type, const int status, const Q
 {
     qDebug() << "UserLoginWidget::updateAuthResult:" << type << status << message;
     switch (type) {
-    case AuthTypePassword:
+    case AT_Password:
         if (m_passwordAuth) {
             m_passwordAuth->setAuthStatus(status, message);
             FrameDataBind::Instance()->updateValue("PasswordAuthStatus", status);
             FrameDataBind::Instance()->updateValue("PasswordAuthMsg", message);
         }
         break;
-    case AuthTypeFingerprint:
+    case AT_Fingerprint:
         if (m_fingerprintAuth) {
             m_fingerprintAuth->setAuthStatus(status, message);
             FrameDataBind::Instance()->updateValue("FingerprintAuthStatus", status);
             FrameDataBind::Instance()->updateValue("FingerprintAuthMsg", message);
         }
         break;
-    case AuthTypeFace:
+    case AT_Face:
         if (m_faceAuth) {
             m_faceAuth->setAuthStatus(status, message);
             FrameDataBind::Instance()->updateValue("FaceAuthStatus", status);
             FrameDataBind::Instance()->updateValue("FaceAuthMsg", message);
         }
         break;
-    case AuthTypeActiveDirectory:
+    case AT_ActiveDirectory:
         if (m_activeDirectoryAuth) {
             m_activeDirectoryAuth->setAuthStatus(status, message);
             FrameDataBind::Instance()->updateValue("ActiveDirectoryAuthStatus", status);
             FrameDataBind::Instance()->updateValue("ActiveDirectoryAuthMsg", message);
         }
         break;
-    case AuthTypeUkey:
+    case AT_Ukey:
         if (m_ukeyAuth) {
             m_ukeyAuth->setAuthStatus(status, message);
             FrameDataBind::Instance()->updateValue("UKeyAuthStatus", status);
             FrameDataBind::Instance()->updateValue("UKeyAuthMsg", message);
         }
         break;
-    case AuthTypeFingerVein:
+    case AT_FingerVein:
         if (m_fingerVeinAuth) {
             m_fingerVeinAuth->setAuthStatus(status, message);
             FrameDataBind::Instance()->updateValue("FingerVeinAuthStatus", status);
             FrameDataBind::Instance()->updateValue("FingerVeinAuthMsg", message);
         }
         break;
-    case AuthTypeIris:
+    case AT_Iris:
         if (m_irisAuth) {
             m_irisAuth->setAuthStatus(status, message);
             FrameDataBind::Instance()->updateValue("IrisAuthStatus", status);
             FrameDataBind::Instance()->updateValue("IrisAuthMsg", message);
         }
         break;
-    case AuthTypeSingle:
+    case AT_PAM:
         if (m_singleAuth) {
             m_singleAuth->setAuthStatus(status, message);
             FrameDataBind::Instance()->updateValue("SingleAuthStatus", status);
             FrameDataBind::Instance()->updateValue("SingleAuthMsg", message);
         }
         break;
-    case AuthTypeAll:
+    case AT_All:
         checkAuthResult(type, status);
         break;
     default:
@@ -996,47 +996,47 @@ void UserLoginWidget::updateLimitsInfo(const QMap<int, User::LimitsInfo> *limits
         limitsInfoTmp.unlockSecs = limitsInfoTmpU.unlockSecs;
         limitsInfoTmp.unlockTime = limitsInfoTmpU.unlockTime;
         switch (i.key()) {
-        case AuthTypeSingle:
+        case AT_PAM:
             if (m_singleAuth) {
                 m_singleAuth->setLimitsInfo(limitsInfoTmp);
             }
             break;
-        case AuthTypePassword:
+        case AT_Password:
             if (m_passwordAuth) {
                 m_passwordAuth->setLimitsInfo(limitsInfoTmp);
             }
             break;
-        case AuthTypeFingerprint:
+        case AT_Fingerprint:
             if (m_fingerprintAuth) {
                 m_fingerprintAuth->setLimitsInfo(limitsInfoTmp);
             }
             break;
-        case AuthTypeUkey:
+        case AT_Ukey:
             if (m_ukeyAuth) {
                 m_ukeyAuth->setLimitsInfo(limitsInfoTmp);
             }
             break;
-        case AuthTypeFace:
+        case AT_Face:
             if (m_faceAuth) {
                 m_faceAuth->setLimitsInfo(limitsInfoTmp);
             }
             break;
-        case AuthTypeIris:
+        case AT_Iris:
             if (m_irisAuth) {
                 m_irisAuth->setLimitsInfo(limitsInfoTmp);
             }
             break;
-        case AuthTypeActiveDirectory:
+        case AT_ActiveDirectory:
             if (m_activeDirectoryAuth) {
                 m_activeDirectoryAuth->setLimitsInfo(limitsInfoTmp);
             }
             break;
-        case AuthTypeFingerVein:
+        case AT_FingerVein:
             if (m_fingerVeinAuth) {
                 m_fingerVeinAuth->setLimitsInfo(limitsInfoTmp);
             }
             break;
-        case AuthTypePIN:
+        case AT_PIN:
             if (m_PINAuth) {
                 m_PINAuth->setLimitsInfo(limitsInfoTmp);
             }
@@ -1201,23 +1201,23 @@ void UserLoginWidget::updateClipPath()
  */
 void UserLoginWidget::checkAuthResult(const int type, const int state)
 {
-    if (type == AuthTypePassword && state == StatusCodeSuccess) {
-        if (m_fingerprintAuth && m_fingerprintAuth->authStatus() == StatusCodeFailure) {
+    if (type == AT_Password && state == AS_Success) {
+        if (m_fingerprintAuth && m_fingerprintAuth->authStatus() == AS_Failure) {
             m_fingerprintAuth->reset();
         }
     }
-    if (state == StatusCodeCancel) {
+    if (state == AS_Cancel) {
         if (m_ukeyAuth) {
-            m_ukeyAuth->setAuthStatus(StatusCodeCancel, "Cancel");
+            m_ukeyAuth->setAuthStatus(AS_Cancel, "Cancel");
         }
         if (m_passwordAuth) {
-            m_passwordAuth->setAuthStatus(StatusCodeCancel, "Cancel");
+            m_passwordAuth->setAuthStatus(AS_Cancel, "Cancel");
         }
         if (m_fingerprintAuth) {
-            m_fingerprintAuth->setAuthStatus(StatusCodeCancel, "Cancel");
+            m_fingerprintAuth->setAuthStatus(AS_Cancel, "Cancel");
         }
         if (m_singleAuth) {
-            m_singleAuth->setAuthStatus(StatusCodeCancel, "Cancel");
+            m_singleAuth->setAuthStatus(AS_Cancel, "Cancel");
         }
     }
 }

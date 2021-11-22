@@ -104,7 +104,7 @@ void AuthWidget::initUI()
     m_accountEdit->setClearButtonEnabled(false);
     m_accountEdit->setPlaceholderText(tr("Account"));
     /* 用户名和用户名输入框的可见性 */
-    if (m_model->appType() == AppTypeLogin && m_model->isServerModel()) {
+    if (m_model->appType() == Login && m_model->isServerModel()) {
         m_accountEdit->show();
         m_nameLabel->hide();
     } else {
@@ -118,7 +118,7 @@ void AuthWidget::initUI()
     m_expiredStatusLabel->hide();
     /* 解锁按钮 */
     m_lockButton = new DFloatingButton(this);
-    if (m_model->appType() == AppTypeLock) {
+    if (m_model->appType() == Lock) {
         m_lockButton->setIcon(DStyle::SP_LockElement);
     } else {
         m_lockButton->setIcon(DStyle::SP_ArrowNext);
@@ -241,37 +241,37 @@ void AuthWidget::setLimitsInfo(const QMap<int, User::LimitsInfo> *limitsInfo)
         limitsInfoTmp.unlockSecs = limitsInfoTmpU.unlockSecs;
         limitsInfoTmp.unlockTime = limitsInfoTmpU.unlockTime;
         switch (i.key()) {
-        case AuthTypeSingle:
+        case AT_PAM:
             if (m_singleAuth) {
                 m_singleAuth->setLimitsInfo(limitsInfoTmp);
             }
             break;
-        case AuthTypePassword:
+        case AT_Password:
             if (m_passwordAuth) {
                 m_passwordAuth->setLimitsInfo(limitsInfoTmp);
             }
             break;
-        case AuthTypeFingerprint:
+        case AT_Fingerprint:
             if (m_fingerprintAuth) {
                 m_fingerprintAuth->setLimitsInfo(limitsInfoTmp);
             }
             break;
-        case AuthTypeUkey:
+        case AT_Ukey:
             if (m_ukeyAuth) {
                 m_ukeyAuth->setLimitsInfo(limitsInfoTmp);
             }
             break;
-        case AuthTypeFace:
+        case AT_Face:
             if (m_faceAuth) {
                 m_faceAuth->setLimitsInfo(limitsInfoTmp);
             }
             break;
-        case AuthTypeIris:
+        case AT_Iris:
             if (m_irisAuth) {
                 m_irisAuth->setLimitsInfo(limitsInfoTmp);
             }
             break;
-        case AuthTypeActiveDirectory:
+        case AT_ActiveDirectory:
             break;
         default:
             qWarning() << "Error! Authentication type is wrong." << i.key();
@@ -351,7 +351,7 @@ void AuthWidget::setLockButtonType(const int type)
         lockPalatte.setColor(QPalette::Highlight, ShutdownColor);
         break;
     default:
-        if (m_model->appType() == AppTypeLogin) {
+        if (m_model->appType() == Login) {
             m_lockButton->setIcon(DStyle::SP_ArrowNext);
         } else {
             m_lockButton->setIcon(DStyle::SP_LockElement);

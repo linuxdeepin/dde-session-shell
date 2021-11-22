@@ -133,9 +133,9 @@ void DeepinAuthFramework::PAMAuthentication(const QString &account)
     }
 
     if (rc == 0) {
-        UpdateAuthStatus(StatusCodeSuccess, m_message);
+        UpdateAuthStatus(AS_Success, m_message);
     } else {
-        UpdateAuthStatus(StatusCodeFailure, m_message);
+        UpdateAuthStatus(AS_Failure, m_message);
     }
 
     m_PAMAuthThread = 0;
@@ -178,7 +178,7 @@ int DeepinAuthFramework::PAMConversation(int num_msg, const pam_message **msg, p
         case PAM_PROMPT_ECHO_ON:
         case PAM_PROMPT_ECHO_OFF: {
             qDebug() << "pam auth echo:" << message;
-            app_ptr->UpdateAuthStatus(StatusCodePrompt, message);
+            app_ptr->UpdateAuthStatus(AS_Prompt, message);
             /* 等待用户输入密码 */
             while (app_ptr->m_waitToken) {
                 qDebug() << "Waiting for the password...";
@@ -207,14 +207,14 @@ int DeepinAuthFramework::PAMConversation(int num_msg, const pam_message **msg, p
         case PAM_ERROR_MSG: {
             qDebug() << "pam auth error: " << message;
             app_ptr->m_message = message;
-            app_ptr->UpdateAuthStatus(StatusCodeFailure, message);
+            app_ptr->UpdateAuthStatus(AS_Failure, message);
             aresp[idx].resp_retcode = PAM_SUCCESS;
             break;
         }
         case PAM_TEXT_INFO: {
             qDebug() << "pam auth info: " << message;
             app_ptr->m_message = message;
-            app_ptr->UpdateAuthStatus(StatusCodePrompt, message);
+            app_ptr->UpdateAuthStatus(AS_Prompt, message);
             aresp[idx].resp_retcode = PAM_SUCCESS;
             break;
         }
@@ -258,7 +258,7 @@ void DeepinAuthFramework::SendToken(const QString &token)
  */
 void DeepinAuthFramework::UpdateAuthStatus(const int status, const QString &message)
 {
-    emit AuthStatusChanged(AuthTypeSingle, status, message);
+    emit AuthStatusChanged(AT_PAM, status, message);
 }
 
 /**
@@ -365,8 +365,8 @@ void DeepinAuthFramework::CreateAuthController(const QString &account, const int
         emit AuthStatusChanged(flag, status, msg);
 
         // 当人脸或者虹膜认证成功 或者 指纹识别失败/成功 时唤醒屏幕
-        if (((AuthTypeFace == flag || AuthTypeIris == flag) && StatusCodeSuccess == status)
-                || (AuthTypeFingerprint == flag && (StatusCodeFailure == status || StatusCodeSuccess == status)))
+        if (((AT_Face == flag || AT_Iris == flag) && AS_Success == status)
+                || (AT_Fingerprint == flag && (AS_Failure == status || AS_Success == status)))
             system("xset dpms force on");
     });
 

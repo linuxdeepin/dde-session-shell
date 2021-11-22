@@ -56,7 +56,7 @@ AuthSingle::AuthSingle(QWidget *parent)
     setObjectName(QStringLiteral("AuthSingle"));
     setAccessibleName(QStringLiteral("AuthSingle"));
 
-    m_type = AuthTypeSingle;
+    m_type = AT_PAM;
 
     initUI();
     initConnections();
@@ -165,17 +165,17 @@ void AuthSingle::setAuthStatus(const int state, const QString &result)
     qDebug() << "AuthSingle::setAuthResult:" << state << result;
     m_status = state;
     switch (state) {
-    case StatusCodeSuccess:
+    case AS_Success:
         setAnimationStatus(false);
         m_lineEdit->setAlert(false);
         m_lineEdit->clear();
         setLineEditEnabled(false);
         setLineEditInfo(result, PlaceHolderText);
-        emit authFinished(StatusCodeSuccess);
+        emit authFinished(AS_Success);
         setResetPasswordMessageVisible(false);
         updateResetPasswordUI();
         break;
-    case StatusCodeFailure: {
+    case AS_Failure: {
         setAnimationStatus(false);
         m_lineEdit->clear();
         if (m_limitsInfo->locked) {
@@ -196,43 +196,43 @@ void AuthSingle::setAuthStatus(const int state, const QString &result)
         }
         break;
     }
-    case StatusCodeCancel:
+    case AS_Cancel:
         setAnimationStatus(false);
         m_lineEdit->setAlert(false);
         m_lineEdit->hideAlertMessage();
         break;
-    case StatusCodeTimeout:
+    case AS_Timeout:
         setAnimationStatus(false);
         setLineEditInfo(result, AlertText);
         break;
-    case StatusCodeError:
+    case AS_Error:
         setAnimationStatus(false);
         setLineEditInfo(result, AlertText);
         break;
-    case StatusCodeVerify:
+    case AS_Verify:
         setAnimationStatus(true);
         break;
-    case StatusCodeException:
+    case AS_Exception:
         setAnimationStatus(false);
         setLineEditInfo(result, AlertText);
         break;
-    case StatusCodePrompt:
+    case AS_Prompt:
         setAnimationStatus(false);
         m_lineEdit->clear();
         setLineEditEnabled(true);
         setLineEditInfo(result, PlaceHolderText);
         break;
-    case StatusCodeStarted:
+    case AS_Started:
         break;
-    case StatusCodeEnded:
+    case AS_Ended:
         break;
-    case StatusCodeLocked:
+    case AS_Locked:
         setAnimationStatus(false);
         break;
-    case StatusCodeRecover:
+    case AS_Recover:
         setAnimationStatus(false);
         break;
-    case StatusCodeUnlocked:
+    case AS_Unlocked:
         break;
     default:
         setAnimationStatus(false);

@@ -55,7 +55,7 @@ LockWorker::LockWorker(SessionBaseModel *const model, QObject *parent)
 
     m_resetSessionTimer->setSingleShot(true);
     connect(m_resetSessionTimer, &QTimer::timeout, this, [=] {
-        endAuthentication(m_account, AuthTypeAll);
+        endAuthentication(m_account, AT_All);
         destoryAuthentication(m_account);
         createAuthentication(m_account);
     });
@@ -112,7 +112,7 @@ void LockWorker::initConnections()
         if (active) {
             createAuthentication(m_model->currentUser()->name());
         } else {
-            endAuthentication(m_account, AuthTypeAll);
+            endAuthentication(m_account, AT_All);
             destoryAuthentication(m_account);
         }
     });
@@ -120,7 +120,7 @@ void LockWorker::initConnections()
     connect(m_login1Inter, &DBusLogin1Manager::PrepareForSleep, this, [=](bool isSleep) {
         qDebug() << "DBusLogin1Manager::PrepareForSleep:" << isSleep;
         if (isSleep) {
-            endAuthentication(m_account, AuthTypeAll);
+            endAuthentication(m_account, AT_All);
             destoryAuthentication(m_account);
         } else {
             createAuthentication(m_model->currentUser()->name());
@@ -144,7 +144,7 @@ void LockWorker::initConnections()
             createAuthentication(m_model->currentUser()->name());
         } else if (!visible) {
             m_resetSessionTimer->stop();
-            endAuthentication(m_account, AuthTypeAll);
+            endAuthentication(m_account, AT_All);
             destoryAuthentication(m_model->currentUser()->name());
         }
         setLocked(visible);
@@ -162,7 +162,7 @@ void LockWorker::initConnections()
     connect(m_dbusInter, &DBusObjectInter::NameOwnerChanged, this, [=](const QString &name, const QString &oldOwner, const QString &newOwner) {
         if (name == "com.deepin.daemon.Authenticate" && newOwner != "" && m_model->visible() && m_sessionManagerInter->locked()) {
             m_resetSessionTimer->stop();
-            endAuthentication(m_account, AuthTypeAll);
+            endAuthentication(m_account, AT_All);
             createAuthentication(m_model->currentUser()->name());
         }
     });
@@ -219,15 +219,15 @@ void LockWorker::handleAuthStatus(const int type, const int status, const QStrin
              << ", MFAFlag: " << m_model->getAuthProperty().MFAFlag;
 
     if (m_model->getAuthProperty().MFAFlag) {
-        if (type == AuthTypeAll) {
+        if (type == AT_All) {
             switch (status) {
-            case StatusCodeSuccess:
+            case AS_Success:
                 m_model->updateAuthStatus(type, status, message);
                 destoryAuthentication(m_account);
                 onUnlockFinished(true);
                 m_resetSessionTimer->stop();
                 break;
-            case StatusCodeCancel:
+            case AS_Cancel:
                 m_model->updateAuthStatus(type, status, message);
                 destoryAuthentication(m_account);
                 break;
@@ -236,7 +236,7 @@ void LockWorker::handleAuthStatus(const int type, const int status, const QStrin
             }
         } else {
             switch (status) {
-            case StatusCodeSuccess:
+            case AS_Success:
                 if (m_model->currentModeState() != SessionBaseModel::ModeStatus::PasswordMode
                     && m_model->currentModeState() != SessionBaseModel::ModeStatus::ConfirmPasswordMode) {
                     m_model->setCurrentModeState(SessionBaseModel::ModeStatus::PasswordMode);
@@ -244,7 +244,7 @@ void LockWorker::handleAuthStatus(const int type, const int status, const QStrin
                 m_resetSessionTimer->start();
                 m_model->updateAuthStatus(type, status, message);
                 break;
-            case StatusCodeFailure:
+            case AS_Failure:
                 if (m_model->currentModeState() != SessionBaseModel::ModeStatus::PasswordMode
                     && m_model->currentModeState() != SessionBaseModel::ModeStatus::ConfirmPasswordMode) {
                     m_model->setCurrentModeState(SessionBaseModel::ModeStatus::PasswordMode);
@@ -252,7 +252,7 @@ void LockWorker::handleAuthStatus(const int type, const int status, const QStrin
                 m_model->updateLimitedInfo(m_authFramework->GetLimitedInfo(m_model->currentUser()->name()));
                 endAuthentication(m_account, type);
                 if (!m_model->currentUser()->limitsInfo(type).locked
-                        && type != AuthTypeFace && type != AuthTypeIris) {
+                        && type != AT_Face && type != AT_Iris) {
                     QTimer::singleShot(50, this, [ this, type ] {
                         startAuthentication(m_account, type);
                     });
@@ -261,7 +261,7 @@ void LockWorker::handleAuthStatus(const int type, const int status, const QStrin
                     m_model->updateAuthStatus(type, status, message);
                 });
                 break;
-            case StatusCodeLocked:
+            case AS_Locked:
                 if (m_model->currentModeState() != SessionBaseModel::ModeStatus::PasswordMode
                     && m_model->currentModeState() != SessionBaseModel::ModeStatus::ConfirmPasswordMode) {
                     m_model->setCurrentModeState(SessionBaseModel::ModeStatus::PasswordMode);
@@ -272,8 +272,8 @@ void LockWorker::handleAuthStatus(const int type, const int status, const QStrin
                     m_model->updateAuthStatus(type, status, message);
                 });
                 break;
-            case StatusCodeTimeout:
-            case StatusCodeError:
+            case AS_Timeout:
+            case AS_Error:
                 endAuthentication(m_account, type);
                 m_model->updateAuthStatus(type, status, message);
                 break;
@@ -290,19 +290,19 @@ void LockWorker::handleAuthStatus(const int type, const int status, const QStrin
         m_model->updateLimitedInfo(m_authFramework->GetLimitedInfo(m_model->currentUser()->name()));
         m_model->updateAuthStatus(type, status, message);
         switch (status) {
-        case StatusCodeFailure:
+        case AS_Failure:
             // 单因失败会返回明确的失败类型，不关注type为-1的情况
-            if (AuthTypeAll != type) {
+            if (AT_All != type) {
                 endAuthentication(m_account, type);
                 // 人脸和虹膜需要手动重新开启验证
-                if (!m_model->currentUser()->limitsInfo(type).locked && type != AuthTypeFace && type != AuthTypeIris) {
+                if (!m_model->currentUser()->limitsInfo(type).locked && type != AT_Face && type != AT_Iris) {
                     QTimer::singleShot(50, this, [ this, type ] {
                         startAuthentication(m_account, type);
                     });
                 }
             }
             break;
-        case StatusCodeCancel:
+        case AS_Cancel:
             destoryAuthentication(m_account);
             break;
         default:
@@ -389,7 +389,7 @@ void LockWorker::switchToUser(std::shared_ptr<User> user)
         qInfo() << "switch to current user:" << user->name() << user->isLogin();
     } else {
         qInfo() << "switch user from" << m_account << "to" << user->name() << user->isLogin();
-        endAuthentication(m_account, AuthTypeAll);
+        endAuthentication(m_account, AT_All);
         setCurrentUser(user);
     }
     if (user->isLogin()) {
@@ -452,11 +452,11 @@ void LockWorker::createAuthentication(const QString &account)
     m_account = account;
     switch (m_model->getAuthProperty().FrameworkState) {
     case Available:
-        m_authFramework->CreateAuthController(account, m_authFramework->GetSupportedMixAuthFlags(), AppTypeLock);
+        m_authFramework->CreateAuthController(account, m_authFramework->GetSupportedMixAuthFlags(), Lock);
         break;
     default:
         m_authFramework->CreateAuthenticate(account);
-        m_model->setAuthType(AuthTypeSingle);
+        m_model->setAuthType(AT_PAM);
         break;
     }
 }
