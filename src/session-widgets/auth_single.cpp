@@ -172,6 +172,8 @@ void AuthSingle::setAuthStatus(const int state, const QString &result)
         setLineEditEnabled(false);
         setLineEditInfo(result, PlaceHolderText);
         emit authFinished(StatusCodeSuccess);
+        setResetPasswordMessageVisible(false);
+        updateResetPasswordUI();
         break;
     case StatusCodeFailure: {
         setAnimationStatus(false);

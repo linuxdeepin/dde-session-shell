@@ -62,6 +62,7 @@ public:
     virtual int getTopSpacing() const ;
 
     void setAccountErrorMsg(const QString &message);
+    void syncPasswordResetPasswordVisibleChanged(const QVariant &value);
 
 signals:
     void requestCheckAccount(const QString &account);
@@ -103,7 +104,6 @@ protected:
     void syncSingleResetPasswordVisibleChanged(const QVariant &value);
     void syncAccount(const QVariant &value);
     void syncPassword(const QVariant &value);
-    void syncPasswordResetPasswordVisibleChanged(const QVariant &value);
     void syncUKey(const QVariant &value);
 
 protected:

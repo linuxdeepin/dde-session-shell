@@ -177,6 +177,8 @@ void AuthPassword::setAuthStatus(const int state, const QString &result)
         m_lineEdit->hideAlertMessage();
         emit authFinished(state);
         emit requestChangeFocus();
+        setResetPasswordMessageVisible(false);
+        updateResetPasswordUI();
         break;
     case StatusCodeFailure: {
         setAnimationStatus(false);

@@ -54,9 +54,23 @@ LockContent::LockContent(SessionBaseModel *const model, QWidget *parent)
 
     m_localServer->setMaxPendingConnections(1);
     m_localServer->setSocketOptions(QLocalServer::WorldAccessOption);
-    if (!m_localServer->listen("GrabKeyboard")) { // 监听特定的连接
-        qWarning() << "监听失败！";
+    static bool once = false;
+    if (!once) {
+        if (!m_localServer->listen("GrabKeyboard")) { // 监听特定的连接
+            qWarning() << "listen failed!" << m_localServer->errorString();
+            if(m_localServer->serverError() == QAbstractSocket::AddressInUseError) {
+                QLocalServer::removeServer("GrabKeyboard");
+                if (!m_localServer->listen("GrabKeyboard")) {
+                    qWarning() << "listen failed again!" << m_localServer->serverName() << m_localServer->errorString();
+                } else {
+                    qDebug() << "listen success!";
+                }
+            }
+        } else {
+            qDebug() << "listen success!";
+        }
     }
+    once = true;
 }
 
 void LockContent::initUI()
@@ -302,6 +316,13 @@ void LockContent::onNewConnection()
     if (m_localServer->hasPendingConnections()) {
         QLocalSocket *socket = m_localServer->nextPendingConnection();
         connect(socket, &QLocalSocket::disconnected, this, &LockContent::onDisConnect);
+        connect(socket, &QLocalSocket::readyRead, this, [socket, this]{
+            auto content = socket->readAll();
+            if (content == "close") {
+                m_sfaWidget->syncPasswordResetPasswordVisibleChanged(QVariant::fromValue(true));
+                m_sfaWidget->syncResetPasswordUI();
+            }
+        });
     }
 }
 
