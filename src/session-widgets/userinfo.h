@@ -113,6 +113,8 @@ signals:
     void shortTimeFormatChanged(const int);
     void weekdayFormatChanged(const int);
     void use24HourFormatChanged(const bool);
+    void passwordExpiredInfoChanged();
+
 
 protected:
     bool checkUserIsNoPWGrp(const User *user) const;

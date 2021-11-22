@@ -144,7 +144,7 @@ void MFAWidget::setAuthType(const int type)
         m_nameLabel->setVisible(!visible);
     }
 
-    updateExpiredStatus();
+    updatePasswordExpiredStatus();
     updateGeometry();
 
     if (m_lockButton->isVisible() && m_lockButton->isEnabled()) {

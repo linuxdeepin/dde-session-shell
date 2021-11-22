@@ -195,7 +195,8 @@ void AuthWidget::setUser(std::shared_ptr<User> user)
                      << connect(user.get(), &User::keyboardLayoutChanged, this, &AuthWidget::setKeyboardType)
                      << connect(user.get(), &User::keyboardLayoutListChanged, this, &AuthWidget::setKeyboardTypeList)
                      << connect(user.get(), &User::limitsInfoChanged, this, &AuthWidget::setLimitsInfo)
-                     << connect(m_keyboardTypeWidget, &KbLayoutWidget::setButtonClicked, user.get(), &User::setKeyboardLayout);
+                     << connect(m_keyboardTypeWidget, &KbLayoutWidget::setButtonClicked, user.get(), &User::setKeyboardLayout)
+                     << connect(user.get(), &User::passwordExpiredInfoChanged, this, &AuthWidget::updatePasswordExpiredStatus);
 
     setAvatar(user->avatar());
     setName(user->displayName());
@@ -203,7 +204,7 @@ void AuthWidget::setUser(std::shared_ptr<User> user)
     setKeyboardType(user->keyboardLayout());
     setKeyboardTypeList(user->keyboardLayoutList());
     setLimitsInfo(user->limitsInfo());
-    updateExpiredStatus();
+    updatePasswordExpiredStatus();
 }
 
 /**
@@ -450,7 +451,7 @@ void AuthWidget::updateKeyboardTypeListGeometry()
 /**
  * @brief 密码过期提示
  */
-void AuthWidget::updateExpiredStatus()
+void AuthWidget::updatePasswordExpiredStatus()
 {
     switch (m_user->expiredStatus()) {
     case User::ExpiredNormal:

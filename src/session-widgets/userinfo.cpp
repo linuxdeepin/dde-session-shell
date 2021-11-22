@@ -240,6 +240,8 @@ void NativeUser::initConnections()
     connect(m_userInter, &UserInter::UidChanged, this, &NativeUser::updateUid);
     connect(m_userInter, &UserInter::UserNameChanged, this, &NativeUser::updateName);
     connect(m_userInter, &UserInter::Use24HourFormatChanged, this, &NativeUser::updateUse24HourFormat);
+    connect(m_userInter, &UserInter::PasswordLastChangeChanged, this, &NativeUser::updatePasswordExpiredInfo);
+    connect(m_userInter, &UserInter::MaxPasswordAgeChanged, this, &NativeUser::updatePasswordExpiredInfo);
 }
 
 void NativeUser::initData()
@@ -479,6 +481,8 @@ void NativeUser::updatePasswordHint(const QString &hint)
 void NativeUser::updatePasswordExpiredInfo()
 {
     m_expiredStatus = m_userInter->PasswordExpiredInfo(m_expiredDayLeft).value();
+
+    emit passwordExpiredInfoChanged();
 }
 
 /**

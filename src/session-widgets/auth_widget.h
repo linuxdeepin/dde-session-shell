@@ -95,7 +95,7 @@ protected:
 
     void updateBlurEffectGeometry();
     void updateKeyboardTypeListGeometry();
-    void updateExpiredStatus();
+    void updatePasswordExpiredStatus();
 
     void showKeyboardList();
 
