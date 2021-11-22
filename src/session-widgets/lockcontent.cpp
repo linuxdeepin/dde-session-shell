@@ -10,8 +10,6 @@
 #include "shutdownwidget.h"
 #include "timewidget.h"
 #include "userframelist.h"
-#include "userlogininfo.h"
-#include "userloginwidget.h"
 #include "virtualkbinstance.h"
 
 #include <DDBusSender>

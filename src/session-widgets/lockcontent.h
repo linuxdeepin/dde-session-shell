@@ -23,7 +23,6 @@ class User;
 class ShutdownWidget;
 class LogoWidget;
 class TimeWidget;
-class UserLoginInfo;
 
 class LockContent : public SessionBaseWindow
 {

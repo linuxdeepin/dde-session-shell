@@ -33,7 +33,6 @@ class UserWidget;
 class User;
 class SessionBaseModel;
 class FrameDataBind;
-class UserLoginWidget;
 class QVBoxLayout;
 class QScrollArea;
 
