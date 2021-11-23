@@ -578,7 +578,9 @@ void LockContent::updateWallpaper(const QString &path)
 
 void LockContent::refreshBackground(SessionBaseModel::ModeStatus status)
 {
-    //根据当前状态刷新不同的背景
+    Q_UNUSED(status)
+
+    // 根据当前状态刷新不同的背景
     auto user = m_model->currentUser();
     if (user != nullptr) {
         emit requestBackground(user->greeterBackground());

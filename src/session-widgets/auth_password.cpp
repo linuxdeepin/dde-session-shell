@@ -290,7 +290,12 @@ void AuthPassword::setCapsLockVisible(const bool on)
 void AuthPassword::setLimitsInfo(const LimitsInfo &info)
 {
     qDebug() << "AuthPassword::setLimitsInfo" << info.numFailures;
+    const bool lockStateChanged = (info.locked != m_limitsInfo->locked);
     AuthModule::setLimitsInfo(info);
+    // 如果lock状态发生变化且当前状态为非lock更新编辑框文案
+    if (lockStateChanged && !info.locked)
+        updateUnlockPrompt();
+
     m_passwordHintBtn->setVisible(info.numFailures > 0 && !m_passwordHint.isEmpty());
     if (m_limitsInfo->locked)
         setAuthStatus(AS_Locked, "Locked");

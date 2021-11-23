@@ -117,7 +117,6 @@ protected:
     QPointer<DLabel> m_authStatusLabel;     // 认证状态图标
     QTimer *m_aniTimer;       // 动画执行定时器
     QTimer *m_unlockTimer;    // 认证解锁定时器
-    QTimer *m_unlockTimerTmp; // 认证解锁定时器
     bool m_showAuthStatus;    // 是否显示认证状态
     bool m_isAuthing;         // 是否正在验证
     AuthFactorType m_authFactorType;    // 验证因子类型
