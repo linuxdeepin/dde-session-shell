@@ -48,7 +48,7 @@
 using namespace AuthCommon;
 
 AuthPassword::AuthPassword(QWidget *parent)
-    : AuthModule(parent)
+    : AuthModule(AT_Password, parent)
     , m_capsLock(new DLabel(this))
     , m_lineEdit(new DLineEditEx(this))
     , m_passwordHintBtn(new DIconButton(this))
@@ -57,8 +57,6 @@ AuthPassword::AuthPassword(QWidget *parent)
 {
     setObjectName(QStringLiteral("AuthPassword"));
     setAccessibleName(QStringLiteral("AuthPassword"));
-
-    m_type = AT_Password;
 
     initUI();
     initConnections();

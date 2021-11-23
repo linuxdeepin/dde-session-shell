@@ -32,14 +32,12 @@
 using namespace AuthCommon;
 
 AuthUKey::AuthUKey(QWidget *parent)
-    : AuthModule(parent)
+    : AuthModule(AT_Ukey, parent)
     , m_capsLock(new DLabel(this))
     , m_lineEdit(new DLineEditEx(this))
 {
     setObjectName(QStringLiteral("AuthUkey"));
     setAccessibleName(QStringLiteral("AuthUkey"));
-
-    m_type = AT_Ukey;
 
     initUI();
     initConnections();

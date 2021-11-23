@@ -41,7 +41,7 @@
 SFAWidget::SFAWidget(QWidget *parent)
     : AuthWidget(parent)
     , m_mainLayout(new QVBoxLayout(this))
-    , m_currentAuth(new AuthModule(this))
+    , m_currentAuth(new AuthModule(AT_None, this))
     , m_lastAuth(nullptr)
     , m_retryButton(new DFloatingButton(this))
     , m_bioAuthStatusPlaceHolder(new QSpacerItem(0, BIO_AUTH_STATUS_PLACE_HOLDER_HEIGHT))

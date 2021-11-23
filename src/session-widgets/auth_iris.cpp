@@ -30,14 +30,12 @@
 using namespace AuthCommon;
 
 AuthIris::AuthIris(QWidget *parent)
-    : AuthModule(parent)
+    : AuthModule(AT_Iris, parent)
     , m_aniIndex(-1)
     , m_textLabel(new DLabel(this))
 {
     setObjectName(QStringLiteral("AuthIris"));
     setAccessibleName(QStringLiteral("AuthIris"));
-
-    m_type = AT_Iris;
 
     initUI();
     initConnections();

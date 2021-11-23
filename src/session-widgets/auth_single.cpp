@@ -45,7 +45,7 @@
 using namespace AuthCommon;
 
 AuthSingle::AuthSingle(QWidget *parent)
-    : AuthModule(parent)
+    : AuthModule(AT_PAM, parent)
     , m_capsLock(new DLabel(this))
     , m_lineEdit(new DLineEditEx(this))
     , m_keyboardBtn(new DPushButton(this))
@@ -55,8 +55,6 @@ AuthSingle::AuthSingle(QWidget *parent)
 {
     setObjectName(QStringLiteral("AuthSingle"));
     setAccessibleName(QStringLiteral("AuthSingle"));
-
-    m_type = AT_PAM;
 
     initUI();
     initConnections();

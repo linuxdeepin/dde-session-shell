@@ -40,10 +40,10 @@ void LimitsInfo::operator=(const LimitsInfo &info)
     unlockTime = info.unlockTime;
 }
 
-AuthModule::AuthModule(QWidget *parent)
+AuthModule::AuthModule(const int type, QWidget *parent)
     : QWidget(parent)
     , m_status(AS_None)
-    , m_type(AT_None)
+    , m_type(type)
     , m_showPrompt(true)
     , m_limitsInfo(new LimitsInfo())
     , m_aniTimer(new QTimer(this))

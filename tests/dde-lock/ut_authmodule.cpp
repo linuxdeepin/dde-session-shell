@@ -1,4 +1,5 @@
 #include "auth_module.h"
+#include "authcommon.h"
 
 #include <gtest/gtest.h>
 
@@ -13,7 +14,7 @@ protected:
 
 void UT_AuthModule::SetUp()
 {
-    m_authModule = new AuthModule;
+    m_authModule = new AuthModule(AuthCommon::AT_None);
 }
 
 void UT_AuthModule::TearDown()

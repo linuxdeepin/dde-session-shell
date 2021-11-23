@@ -30,14 +30,12 @@
 using namespace AuthCommon;
 
 AuthFace::AuthFace(QWidget *parent)
-    : AuthModule(parent)
+    : AuthModule(AT_Face, parent)
     , m_aniIndex(-1)
     , m_textLabel(new DLabel(this))
 {
     setObjectName(QStringLiteral("AuthFace"));
     setAccessibleName(QStringLiteral("AuthFace"));
-
-    m_type = AT_Face;
 
     initUI();
     initConnections();

@@ -30,14 +30,12 @@
 using namespace AuthCommon;
 
 AuthFingerprint::AuthFingerprint(QWidget *parent)
-    : AuthModule(parent)
+    : AuthModule(AT_Fingerprint, parent)
     , m_aniIndex(-1)
     , m_textLabel(new DLabel(this))
 {
     setObjectName(QStringLiteral("AuthFingerprint"));
     setAccessibleName(QStringLiteral("AuthFingerprint"));
-
-    m_type = AT_Fingerprint;
 
     initUI();
     initConnections();

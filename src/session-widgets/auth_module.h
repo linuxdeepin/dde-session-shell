@@ -77,7 +77,7 @@ public:
     };
     Q_ENUM(TextType)
 
-    explicit AuthModule(QWidget *parent = nullptr);
+    explicit AuthModule(const int type, QWidget *parent = nullptr);
     ~AuthModule() override;
 
     inline int authType() const { return m_type; }
