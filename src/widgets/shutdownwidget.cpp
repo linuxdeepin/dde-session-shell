@@ -459,8 +459,7 @@ void ShutdownWidget::recoveryLayout()
 void ShutdownWidget::onRequirePowerAction(SessionBaseModel::PowerAction powerAction, bool needConfirm)
 {
     //锁屏或关机模式时，需要确认是否关机或检查是否有阻止关机
-    if (m_model->currentType() == SessionBaseModel::AuthType::LockType ||
-        m_model->currentType() == SessionBaseModel::AuthType::UnknowAuthType) {
+    if (m_model->appType() == Lock) {
         switch (powerAction) {
         case SessionBaseModel::PowerAction::RequireShutdown:
         case SessionBaseModel::PowerAction::RequireRestart:

@@ -18,7 +18,7 @@ protected:
 
 void UT_ControlWidget::SetUp()
 {
-    m_model = new SessionBaseModel(SessionBaseModel::AuthType::LockType);
+    m_model = new SessionBaseModel();
     m_model->setAppType(Lock);
     m_controlWidget = new ControlWidget(m_model);
 }

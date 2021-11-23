@@ -16,7 +16,7 @@ protected:
 
 void UT_LockWorker::SetUp()
 {
-    m_model = new SessionBaseModel(SessionBaseModel::LockType);
+    m_model = new SessionBaseModel();
     std::shared_ptr<User> user_ptr(new User);
     m_model->updateCurrentUser(user_ptr);
 

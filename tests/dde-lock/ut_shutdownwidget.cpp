@@ -22,7 +22,7 @@ protected:
 
 void UT_ShutdownWidget::SetUp()
 {
-    m_sessionBaseModels = new SessionBaseModel(SessionBaseModel::AuthType::LightdmType);
+    m_sessionBaseModels = new SessionBaseModel();
     m_ShutdownWidget = new ShutdownWidget();
     m_ShutdownWidget->setModel(m_sessionBaseModels);
 }

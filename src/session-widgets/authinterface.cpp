@@ -33,7 +33,7 @@ AuthInterface::AuthInterface(SessionBaseModel *const model, QObject *parent)
         qWarning() << "m_login1Inter:" << m_login1Inter->lastError().type();
     }
 
-    if (m_model->currentType() != SessionBaseModel::LightdmType && QGSettings::isSchemaInstalled("com.deepin.dde.session-shell")) {
+    if (m_model->appType() != Login && QGSettings::isSchemaInstalled("com.deepin.dde.session-shell")) {
         m_gsettings = new QGSettings("com.deepin.dde.session-shell", "/com/deepin/dde/session-shell/", this);
     }
 }

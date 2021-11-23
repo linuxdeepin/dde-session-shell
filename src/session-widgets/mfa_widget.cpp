@@ -139,7 +139,7 @@ void MFAWidget::setAuthType(const int type)
             m_nameLabel->hide();
         }
     } else {
-        const bool visible = m_model->isServerModel() && m_model->currentType() == SessionBaseModel::LightdmType;
+        const bool visible = m_model->isServerModel() && m_model->appType() == Login;
         m_accountEdit->setVisible(visible);
         m_nameLabel->setVisible(!visible);
     }

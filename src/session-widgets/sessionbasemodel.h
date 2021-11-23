@@ -17,13 +17,6 @@ class SessionBaseModel : public QObject
 {
     Q_OBJECT
 public:
-    enum AuthType {
-        UnknowAuthType,
-        LockType,
-        LightdmType
-    };
-    Q_ENUM(AuthType)
-
     enum AuthFaildType {
         Fprint,
         KEYBOARD
@@ -69,10 +62,8 @@ public:
         QString UserName;                     // 账户名
     };
 
-    explicit SessionBaseModel(AuthType type, QObject *parent = nullptr);
+    explicit SessionBaseModel(QObject *parent = nullptr);
     ~SessionBaseModel() override;
-
-    inline AuthType currentType() const { return m_currentType; }
 
     inline std::shared_ptr<User> currentUser() const { return m_currentUser; }
     inline std::shared_ptr<User> lastLogoutUser() const { return m_lastLogoutUser; }
@@ -223,7 +214,6 @@ private:
     bool m_allowShowCustomUser;
     int m_userListSize = 0;
     AppType m_appType;
-    AuthType m_currentType;
     QList<std::shared_ptr<User>> m_userList;
     std::shared_ptr<User> m_currentUser;
     std::shared_ptr<User> m_lastLogoutUser;

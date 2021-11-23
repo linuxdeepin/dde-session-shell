@@ -16,7 +16,7 @@ protected:
 
 void UT_SessionBaseModel::SetUp()
 {
-    m_sessionBaseModel = new SessionBaseModel(SessionBaseModel::AuthType::LockType);
+    m_sessionBaseModel = new SessionBaseModel();
 }
 
 void UT_SessionBaseModel::TearDown()
@@ -28,7 +28,6 @@ TEST_F(UT_SessionBaseModel, init)
 {
     std::shared_ptr<NativeUser> nativeUser(new NativeUser("/com/deepin/daemon/Accounts/User"+QString::number((getuid()))));
     ASSERT_TRUE(m_sessionBaseModel);
-    EXPECT_EQ(m_sessionBaseModel->currentType(), SessionBaseModel::AuthType::LockType);
     m_sessionBaseModel->updateCurrentUser(nativeUser);
     EXPECT_EQ(m_sessionBaseModel->currentUser(), nativeUser);
 

@@ -37,6 +37,7 @@ enum AuthFrameFlag {
  * 发起认证的应用类型
  */
 enum AppType {
+    None = 0,  // none
     Login = 1, // 登录
     Lock = 2   // 锁屏
 };

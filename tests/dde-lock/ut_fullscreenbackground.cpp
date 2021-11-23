@@ -17,7 +17,7 @@ protected:
 
 void UT_FullscreenBackground::SetUp()
 {
-    m_model = new SessionBaseModel(SessionBaseModel::AuthType::LockType);
+    m_model = new SessionBaseModel();
     std::shared_ptr<User> user_ptr(new User);
     m_model->updateCurrentUser(user_ptr);
     m_background = new FullscreenBackground(m_model);

@@ -15,7 +15,7 @@ protected:
 
 void UT_GreeterWorker::SetUp()
 {
-    m_model = new SessionBaseModel(SessionBaseModel::LightdmType);
+    m_model = new SessionBaseModel();
     m_worker = new GreeterWorker(m_model);
 }
 

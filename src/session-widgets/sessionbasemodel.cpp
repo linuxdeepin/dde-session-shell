@@ -10,14 +10,14 @@
 
 DCORE_USE_NAMESPACE
 
-SessionBaseModel::SessionBaseModel(AuthType type, QObject *parent)
+SessionBaseModel::SessionBaseModel(QObject *parent)
     : QObject(parent)
     , m_hasSwap(false)
     , m_visible(false)
     , m_isServerModel(false)
     , m_canSleep(false)
     , m_isLockNoPassword(false)
-    , m_currentType(type)
+    , m_appType(AuthCommon::None)
     , m_currentUser(nullptr)
     , m_powerAction(PowerAction::RequireNormal)
     , m_currentModeState(ModeStatus::NoStatus)

@@ -130,7 +130,7 @@ int main(int argc, char *argv[])
     showLockScreen = true;
 #endif
 
-    SessionBaseModel *model = new SessionBaseModel(SessionBaseModel::AuthType::LockType);
+    SessionBaseModel *model = new SessionBaseModel();
     model->setAppType(Lock);
     LockWorker *worker = new LockWorker(model);
     QObject::connect(&appEventFilter, &AppEventFilter::userIsActive, worker, &LockWorker::restartResetSessionTimer);

@@ -37,12 +37,8 @@ LockContent::LockContent(SessionBaseModel *const model, QWidget *parent)
     initUI();
     initConnections();
 
-    switch (model->currentType()) {
-    case SessionBaseModel::AuthType::LockType:
+    if (model->appType() == Lock) {
         setMPRISEnable(model->currentModeState() != SessionBaseModel::ModeStatus::ShutDownMode);
-        break;
-    default:
-        break;
     }
 
     QTimer::singleShot(0, this, [=] {
@@ -492,7 +488,7 @@ void LockContent::onUserListChanged(QList<std::shared_ptr<User> > list)
     const bool alwaysShowUserSwitchButton = m_model->alwaysShowUserSwitchButton();
     bool haveLogindUser = true;
 
-    if (m_model->isServerModel() && m_model->currentType() == SessionBaseModel::LightdmType) {
+    if (m_model->isServerModel() && m_model->appType() == Login) {
         haveLogindUser = !m_model->loginedUserList().isEmpty();
     }
 

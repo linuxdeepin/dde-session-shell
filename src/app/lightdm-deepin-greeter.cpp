@@ -249,8 +249,7 @@ int main(int argc, char* argv[])
         qDebug() << "service OK!";
     }
 
-    // TODO AuthType和AppType 保留一个就可以了，这两个变量只会在初始化赋值
-    SessionBaseModel *model = new SessionBaseModel(SessionBaseModel::AuthType::LightdmType);
+    SessionBaseModel *model = new SessionBaseModel();
     model->setAppType(Login);
     GreeterWorker *worker = new GreeterWorker(model);
     QObject::connect(&appEventFilter, &AppEventFilter::userIsActive, worker, &GreeterWorker::restartResetSessionTimer);
