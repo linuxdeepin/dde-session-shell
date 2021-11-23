@@ -131,12 +131,6 @@ void LockContent::initConnections()
     connect(m_model, &SessionBaseModel::userListChanged, this, &LockContent::onUserListChanged);
     connect(m_model, &SessionBaseModel::userListLoginedChanged, this, &LockContent::onUserListChanged);
     connect(m_model, &SessionBaseModel::authFinished, this, &LockContent::restoreMode);
-    connect(m_model, &SessionBaseModel::switchUserFinished, this, [=] {
-        QTimer::singleShot(100, this, [ = ] {
-            emit LockContent::restoreMode();
-        });
-    });
-
     connect(m_model, &SessionBaseModel::MFAFlagChanged, this, [this](const bool isMFA) {
         isMFA ? initMFAWidget() : initSFAWidget();
         // 当前中间窗口为空或者中间窗口就是验证窗口的时候显示验证窗口

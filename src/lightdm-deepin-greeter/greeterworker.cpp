@@ -153,7 +153,9 @@ void GreeterWorker::initConnections()
             emit m_model->authTypeChanged(AT_None);
             m_account = account;
         }
-        emit m_model->switchUserFinished();
+        QTimer::singleShot(100, this, [ = ] {
+            m_model->setCurrentModeState(SessionBaseModel::ModeStatus::PasswordMode);
+        });
     });
     /* model */
     connect(m_model, &SessionBaseModel::authTypeChanged, this, [ = ](const int type) {

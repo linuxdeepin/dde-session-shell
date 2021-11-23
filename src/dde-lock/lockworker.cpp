@@ -96,7 +96,9 @@ void LockWorker::initConnections()
     /* com.deepin.dde.LockService */
     connect(m_lockInter, &DBusLockService::UserChanged, this, [=](const QString &json) {
         qDebug() << "DBusLockService::UserChanged:" << json;
-        emit m_model->switchUserFinished();
+        QTimer::singleShot(100, this, [ = ] {
+            m_model->setCurrentModeState(SessionBaseModel::ModeStatus::PasswordMode);
+        });
         m_resetSessionTimer->stop();
     });
     connect(m_lockInter, &DBusLockService::Event, this, &LockWorker::lockServiceEvent);

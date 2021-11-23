@@ -171,7 +171,6 @@ signals:
     void authFaildMessage(const QString &message, AuthFaildType type = KEYBOARD);
     void authFaildTipsMessage(const QString &message, AuthFaildType type = KEYBOARD);
     void authFinished(bool success);
-    void switchUserFinished();
     void onPowerActionChanged(PowerAction poweraction);
     void onRequirePowerAction(PowerAction poweraction, bool needConfirm);
     void onSessionKeyChanged(const QString &sessionKey);
