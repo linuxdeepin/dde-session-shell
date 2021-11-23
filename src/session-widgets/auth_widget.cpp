@@ -61,6 +61,7 @@ AuthWidget::AuthWidget(QWidget *parent)
     , m_ukeyAuth(nullptr)
     , m_faceAuth(nullptr)
     , m_irisAuth(nullptr)
+    , m_customAuth(nullptr)
 {
     setObjectName(QStringLiteral("AuthWidget"));
     setAccessibleName(QStringLiteral("AuthWidget"));

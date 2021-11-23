@@ -21,6 +21,7 @@
 
 #include "sfa_widget.h"
 
+#include "auth_custom.h"
 #include "auth_face.h"
 #include "auth_fingerprint.h"
 #include "auth_iris.h"
@@ -30,6 +31,7 @@
 #include "dlineeditex.h"
 #include "framedatabind.h"
 #include "keyboardmonitor.h"
+#include "modules_loader.h"
 #include "sessionbasemodel.h"
 #include "useravatar.h"
 
@@ -189,8 +191,20 @@ void SFAWidget::setAuthType(const int type)
         m_frameDataBind->clearValue("SFSingleAuthState");
         m_frameDataBind->clearValue("SFSingleAuthMsg");
     }
-
     int count = 0;
+    if (dss::module::ModulesLoader::instance().findModulesByType(0).size() > 0) {
+        count++;
+        initCustomAuth();
+    } else if (m_customAuth) {
+        count--;
+        m_customAuth->deleteLater();
+        m_customAuth = nullptr;
+        m_authButtons.value(AT_Custom)->deleteLater();
+        m_authButtons.remove(AT_Custom);
+        m_frameDataBind->clearValue("SFCustomAuthStatus");
+        m_frameDataBind->clearValue("SFCustomAuthMsg");
+    }
+
     int typeTmp = type;
     while (typeTmp) {
         typeTmp &= typeTmp - 1;
@@ -683,6 +697,53 @@ void SFAWidget::initIrisAuth()
 }
 
 /**
+ * @brief 初始化自定义认证
+ */
+void SFAWidget::initCustomAuth()
+{
+    if (m_customAuth) {
+        return;
+    }
+
+    m_customAuth = new AuthCustom(this);
+    dss::module::BaseModuleInterface *module = dss::module::ModulesLoader::instance().findModulesByType(0).values().first();
+    module->init();
+    m_customAuth->setModule(dynamic_cast<dss::module::LoginModuleInterface *>(module));
+    m_customAuth->hide();
+
+    connect(m_customAuth, &AuthCustom::requestAuthenticate, this, [this] {
+        m_lockButton->setEnabled(false);
+        emit sendTokenToAuth(m_user->name(), AT_Custom, "");
+    });
+    connect(m_customAuth, &AuthCustom::authFinished, this, [ this ] (const int authStatus) {
+        if (authStatus == AS_Success) {
+            m_lockButton->setEnabled(true);
+            emit authFinished();
+        }
+    });
+
+    /* 认证选择按钮 */
+    DButtonBoxButton *btn = new DButtonBoxButton(DStyle::SP_SelectElement, QString(), this);
+    btn->setIconSize(AuthButtonIconSize);
+    btn->setFixedSize(AuthButtonSize);
+    btn->setFocusPolicy(Qt::NoFocus);
+    m_authButtons.insert(AT_Custom, btn);
+    connect(btn, &DButtonBoxButton::toggled, this, [this](const bool checked) {
+        if (checked) {
+            replaceWidget(m_customAuth);
+            m_frameDataBind->updateValue("SFAType", AT_Custom);
+            emit requestStartAuthentication(m_user->name(), AT_Custom);
+            m_nameLabel->hide();
+        } else {
+            m_customAuth->hide();
+            m_nameLabel->show();
+            m_lockButton->setEnabled(false);
+            emit requestEndAuthentication(m_user->name(), AT_Custom);
+        }
+    });
+}
+
+/**
  * @brief SFAWidget::checkAuthResult
  *
  * @param type  认证类型
@@ -716,11 +777,6 @@ void SFAWidget::syncAuthType(const QVariant &value)
     QAbstractButton *btn = m_chooseAuthButtonBox->button(value.toInt());
     if (btn)
         btn->setChecked(true);
-}
-
-void SFAWidget::resizeEvent(QResizeEvent *event)
-{
-    AuthWidget::resizeEvent(event);
 }
 
 void SFAWidget::replaceWidget(AuthModule *authModule)

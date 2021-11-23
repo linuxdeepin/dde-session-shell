@@ -59,9 +59,6 @@ public:
 public slots:
     void onRetryButtonVisibleChanged(bool visible);
 
-protected:
-    void resizeEvent(QResizeEvent *event) override;
-
 private:
     void initUI();
     void initConnections();
@@ -72,6 +69,7 @@ private:
     void initUKeyAuth();
     void initFaceAuth();
     void initIrisAuth();
+    void initCustomAuth();
 
     void checkAuthResult(const int type, const int state) override;
 

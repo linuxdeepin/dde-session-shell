@@ -27,7 +27,31 @@
 namespace dss {
 namespace module {
 
-using Fun = void (*)(char *);
+/**
+ * @brief 认证插件需要传回的数据
+ */
+struct AuthCallbackData{
+    int result;          // 认证结果
+    std::string account; // 账户
+    std::string token;   // 令牌
+    std::string message; // 提示消息
+    std::string json;    // 预留数据
+};
+
+/**
+ * @brief 回调函数
+ * AuthData: 需要传回的数据
+ * void *: ContainerPtr
+ */
+using AuthCallbackFun = void (*)(const AuthCallbackData *, void *);
+
+/**
+ * @brief 插件回调相关
+ */
+struct AuthCallback {
+    void *app_data;                // 插件无需关注
+    AuthCallbackFun callbackFun;   // 回调函数
+};
 
 class LoginModuleInterface : public BaseModuleInterface
 {
@@ -39,13 +63,9 @@ public:
     ModuleType type() const override { return LoginType; }
 
     /**
-     * @brief 在认证完成后，需要调用回调函数 void Fun(char *);
-     * char *: json 格式的字符串，包含两个字段
-     * string: 用户在系统的唯一标识（用户名或 uid）
-     * bool: 认证结果（true: 成功，false: 失败）
-     * Fun 在模块初始化时建议赋值 nullptr，在使用之前判断非 nullptr
+     * @brief 认证完成后，需要调用回调函数 CallbackFun
      */
-    virtual void setAuthFinishedCallBack(Fun) = 0;
+    virtual void setAuthFinishedCallback(AuthCallback *) = 0;
 };
 
 } // namespace module

@@ -38,6 +38,7 @@ class AuthFace;
 class AuthUKey;
 class AuthFingerprint;
 class AuthPassword;
+class AuthCustom;
 class DLineEditEx;
 class FrameDataBind;
 class KbLayoutWidget;
@@ -121,6 +122,7 @@ protected:
     AuthUKey *m_ukeyAuth;               // UKey
     AuthFace *m_faceAuth;               // 面容
     AuthIris *m_irisAuth;               // 虹膜
+    AuthCustom *m_customAuth;           // 自定义认证
 
     QString m_passwordHint;     // 密码提示
     QString m_keyboardType;     // 键盘布局类型
