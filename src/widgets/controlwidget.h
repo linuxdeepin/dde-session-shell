@@ -133,6 +133,7 @@ private:
     void showTips();
     void hideTips();
     void updateLayout();
+    void updateTapOrder();
 
 private:
     int m_index = 0;

@@ -232,6 +232,8 @@ void ControlWidget::updateLayout()
     for (QObject *moduleWidget : moduleWidgetList) {
         m_mainLayout->removeWidget(qobject_cast<QWidget *>(moduleWidget));
     }
+
+    updateTapOrder();
 }
 
 void ControlWidget::showTips()
@@ -327,6 +329,8 @@ void ControlWidget::setSessionSwitchEnable(const bool visible)
         m_tipsAni = new QPropertyAnimation(m_sessionTip, "pos", this);
     }
 #endif
+
+    updateTapOrder();
 }
 
 void ControlWidget::chooseToSession(const QString &session)
@@ -443,5 +447,22 @@ void ControlWidget::keyReleaseEvent(QKeyEvent *event)
         break;
     default:
         break;
+    }
+}
+
+void ControlWidget::updateTapOrder()
+{
+    // 找出所有按钮
+    QList<DFloatingButton*> buttons;
+    for(int i = 0; i < m_mainLayout->count(); ++i) {
+        DFloatingButton *btn = qobject_cast<DFloatingButton *>(m_mainLayout->itemAt(i)->widget());
+        if (btn)
+            buttons.append(btn);
+    }
+
+    // 按从左到右的顺序设置tab order
+    for (int i = 0; i < buttons.size(); ++i) {
+        if ((i + 1) < buttons.size())
+            setTabOrder(buttons[i], buttons[i + 1]);
     }
 }
