@@ -356,6 +356,7 @@ void FullscreenBackground::keyPressEvent(QKeyEvent *e)
 
 void FullscreenBackground::showEvent(QShowEvent *event)
 {
+    bool isWayLand = qgetenv("XDG_SESSION_TYPE").contains("wayland");
     if (QWindow *w = windowHandle()) {
         if (m_screen) {
             if (w->screen() != m_screen) {
@@ -368,7 +369,8 @@ void FullscreenBackground::showEvent(QShowEvent *event)
             updateScreen(w->screen());
         }
 
-        connect(w, &QWindow::screenChanged, this, &FullscreenBackground::updateScreen);
+        if (!isWayLand)
+            connect(w, &QWindow::screenChanged, this, &FullscreenBackground::updateScreen);
     }
 
     return QWidget::showEvent(event);
