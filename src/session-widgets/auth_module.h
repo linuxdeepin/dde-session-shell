@@ -22,6 +22,7 @@
 #ifndef AUTHMODULE_H
 #define AUTHMODULE_H
 
+#include "authcommon.h"
 #include "constants.h"
 
 #include <DLabel>
@@ -77,7 +78,7 @@ public:
     };
     Q_ENUM(TextType)
 
-    explicit AuthModule(const int type, QWidget *parent = nullptr);
+    explicit AuthModule(const AuthCommon::AuthType type, QWidget *parent = nullptr);
     ~AuthModule() override;
 
     inline int authType() const { return m_type; }

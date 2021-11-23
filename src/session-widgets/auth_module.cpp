@@ -21,15 +21,11 @@
 
 #include "auth_module.h"
 
-#include "authcommon.h"
-
 #include <DHiDPIHelper>
 
 #include <QDateTime>
 #include <QTimer>
 #include <QtMath>
-
-using namespace AuthCommon;
 
 void LimitsInfo::operator=(const LimitsInfo &info)
 {
@@ -40,9 +36,9 @@ void LimitsInfo::operator=(const LimitsInfo &info)
     unlockTime = info.unlockTime;
 }
 
-AuthModule::AuthModule(const int type, QWidget *parent)
+AuthModule::AuthModule(const AuthCommon::AuthType type, QWidget *parent)
     : QWidget(parent)
-    , m_status(AS_None)
+    , m_status(AuthCommon::AS_None)
     , m_type(type)
     , m_showPrompt(true)
     , m_limitsInfo(new LimitsInfo())
@@ -103,9 +99,9 @@ void AuthModule::setAuthStatus(const int status, const QString &result)
 {
     Q_UNUSED(result)
 
-    if (AS_Started == status)
+    if (AuthCommon::AS_Started == status)
         m_isAuthing = true;
-    else if (AS_Ended == status)
+    else if (AuthCommon::AS_Ended == status)
         m_isAuthing = false;
 }
 
