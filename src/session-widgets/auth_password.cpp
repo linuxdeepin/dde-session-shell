@@ -302,6 +302,8 @@ void AuthPassword::setLimitsInfo(const LimitsInfo &info)
     qDebug() << "AuthPassword::setLimitsInfo" << info.numFailures;
     AuthModule::setLimitsInfo(info);
     m_passwordHintBtn->setVisible(info.numFailures > 0 && !m_passwordHint.isEmpty());
+    if (m_limitsInfo->locked)
+        setAuthStatus(StatusCodeLocked, "Locked");
 }
 
 /**
@@ -463,7 +465,8 @@ void AuthPassword::setResetPasswordMessageVisible(const bool isVisible)
  */
 void AuthPassword::showResetPasswordMessage()
 {
-    if (m_resetPasswordFloatingMessage && m_resetPasswordFloatingMessage->isVisible()) {
+    if (m_resetPasswordFloatingMessage) {
+        m_resetPasswordFloatingMessage->show();
         return;
     }
 
@@ -485,7 +488,7 @@ void AuthPassword::showResetPasswordMessage()
     DSuggestButton *suggestButton = new DSuggestButton(tr("Reset Password"));
     m_resetPasswordFloatingMessage->setWidget(suggestButton);
     m_resetPasswordFloatingMessage->setMessage(tr("Forgot password?"));
-    connect(suggestButton, &QPushButton::clicked, this, [ this ]{
+    connect(suggestButton, &QPushButton::clicked, this, [ this ] {
         if (window()->windowHandle() && window()->windowHandle()->setKeyboardGrabEnabled(false)) {
             qDebug() << "setKeyboardGrabEnabled(false) success！";
         }
