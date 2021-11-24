@@ -41,12 +41,9 @@ class LoginWindow : public FullscreenBackground
 public:
     explicit LoginWindow(SessionBaseModel *const model, QWidget *parent = nullptr);
 
-private:
-    void resizeEvent(QResizeEvent *event) Q_DECL_OVERRIDE;
-
 signals:
     void requestSwitchToUser(std::shared_ptr<User> user);
-    void requestSetLayout(std::shared_ptr<User> user, const QString &layout);
+    void requestSetKeyboardLayout(std::shared_ptr<User> user, const QString &layout);
 
     void requestCreateAuthController(const QString &account);
     void requestDestoryAuthController(const QString &account);

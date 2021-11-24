@@ -206,9 +206,6 @@ void LockWorker::initData()
 
 void LockWorker::initConfiguration()
 {
-    const bool &LockNoPasswordValue = valueByQSettings<bool>("", "lockNoPassword", false);
-    m_model->setIsLockNoPassword(LockNoPasswordValue);
-
     m_model->setAlwaysShowUserSwitchButton(getGSettings("", "switchuser").toInt() == AuthInterface::Always);
     m_model->setAllowShowUserSwitchButton(getGSettings("", "switchuser").toInt() == AuthInterface::Ondemand);
 
@@ -320,14 +317,14 @@ void LockWorker::doPowerAction(const SessionBaseModel::PowerAction action)
 {
     switch (action) {
     case SessionBaseModel::PowerAction::RequireSuspend:
-        m_model->setIsBlackModel(true);
+        m_model->setIsBlackMode(true);
         m_model->setCurrentModeState(SessionBaseModel::ModeStatus::PasswordMode);
         QTimer::singleShot(100, this, [=] {
             m_sessionManagerInter->RequestSuspend();
         });
         break;
     case SessionBaseModel::PowerAction::RequireHibernate:
-        m_model->setIsBlackModel(true);
+        m_model->setIsBlackMode(true);
         m_model->setCurrentModeState(SessionBaseModel::ModeStatus::PasswordMode);
         QTimer::singleShot(100, this, [=] {
             m_sessionManagerInter->RequestHibernate();

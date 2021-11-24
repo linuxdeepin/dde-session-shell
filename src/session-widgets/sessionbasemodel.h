@@ -121,11 +121,8 @@ public:
     inline bool abortConfim() const { return m_abortConfirm; }
     void setAbortConfirm(bool abortConfirm);
 
-    inline bool isLockNoPassword() const { return m_isLockNoPassword; }
-    void setIsLockNoPassword(bool LockNoPassword);
-
     inline bool isBlackMode() const { return m_isBlackMode; }
-    void setIsBlackModel(bool is_black);
+    void setIsBlackMode(bool is_black);
 
     inline bool isHibernateMode() const { return m_isHibernateMode; }
     void setIsHibernateModel(bool is_Hibernate);
@@ -213,7 +210,7 @@ signals:
 
 private:
     bool m_hasSwap;
-    bool m_visible = false;
+    bool m_visible;
     bool m_isServerModel;
     bool m_canSleep;
     bool m_allowShowUserSwitchButton;

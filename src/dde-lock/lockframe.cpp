@@ -85,7 +85,7 @@ LockFrame::LockFrame(SessionBaseModel *const model, QWidget *parent)
 
         //待机时由锁屏提供假黑屏，唤醒时显示正常界面
         model->setVisible(true);
-        model->setIsBlackModel(isSleep);
+        model->setIsBlackMode(isSleep);
 
         if (!isSleep) {
             //待机唤醒后检查是否需要密码，若不需要密码直接隐藏锁定界面

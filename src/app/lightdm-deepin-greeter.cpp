@@ -105,8 +105,8 @@ static int set_rootwindow_cursor() {
     }
 
     const char *cursorPath = qApp->devicePixelRatio() > 1.7
-        ? "/usr/share/icons/bloom/cursors/loginspinner@2x"
-        : "/usr/share/icons/bloom/cursors/loginspinner";
+            ? "/usr/share/icons/bloom/cursors/loginspinner@2x"
+            : "/usr/share/icons/bloom/cursors/loginspinner";
 
     Cursor cursor = static_cast<Cursor>(XcursorFilenameLoadCursor(display, cursorPath));
     if (cursor == 0) {
@@ -183,13 +183,14 @@ static void set_auto_QT_SCALE_FACTOR() {
 
 int main(int argc, char* argv[])
 {
+    // 正确加载dxcb插件
     //for qt5platform-plugins load DPlatformIntegration or DPlatformIntegrationParent
     if (!QString(qgetenv("XDG_CURRENT_DESKTOP")).toLower().startsWith("deepin")){
         setenv("XDG_CURRENT_DESKTOP", "Deepin", 1);
     }
 
     DGuiApplicationHelper::setAttribute(DGuiApplicationHelper::UseInactiveColorGroup, false);
-    // load dpi settings
+    // 设置缩放，文件存在的情况下，由后端去设置，否则前端自行设置
     if (!QFile::exists("/etc/lightdm/deepin/xsettingsd.conf")) {
         set_auto_QT_SCALE_FACTOR();
     }
@@ -222,13 +223,6 @@ int main(int argc, char* argv[])
     DGuiApplicationHelper::generatePaletteColor(pa, DPalette::ButtonText, DGuiApplicationHelper::LightType);
     DGuiApplicationHelper::instance()->setApplicationPalette(pa);
 
-    // follow system active color
-    QObject::connect(DGuiApplicationHelper::instance()->systemTheme(), &DPlatformTheme::activeColorChanged, [] (const QColor &color) {
-        auto palette = DGuiApplicationHelper::instance()->applicationPalette();
-        palette.setColor(QPalette::Highlight, color);
-        DGuiApplicationHelper::instance()->setApplicationPalette(palette);
-    });
-
     DLogManager::registerConsoleAppender();
 
     dss::module::ModulesLoader *modulesLoader = &dss::module::ModulesLoader::instance();
@@ -237,36 +231,44 @@ int main(int argc, char* argv[])
     const QString serviceName = "com.deepin.daemon.Accounts";
     QDBusConnectionInterface *interface = QDBusConnection::systemBus().interface();
     if (!interface->isServiceRegistered(serviceName)) {
-        qWarning() << "Accounts service is not registered!";
-
+        qWarning() << "accounts service is not registered wait...";
         QEventLoop eventLoop;
 
         QDBusServiceWatcher *serviceWatcher = new QDBusServiceWatcher(serviceName, QDBusConnection::systemBus());
         QObject::connect(serviceWatcher, &QDBusServiceWatcher::serviceRegistered, &eventLoop, &QEventLoop::quit);
-        QObject::connect(serviceWatcher, &QDBusServiceWatcher::serviceRegistered, serviceWatcher, &QDBusServiceWatcher::deleteLater);
+        QObject::connect(serviceWatcher, &QDBusServiceWatcher::serviceUnregistered, [ = ] (const QString &service) {
+            if (service == serviceName) {
+                qCritical() << "ERROR, accounts service unregistered, what should I do?";
+            }
+        });
 
 #ifdef  QT_DEBUG
         QTimer::singleShot(10000, &eventLoop, &QEventLoop::quit);
 #endif
         eventLoop.exec();
+        qDebug() << "service OK!";
     }
 
+    // TODO AuthType和AppType 保留一个就可以了，这两个变量只会在初始化赋值
     SessionBaseModel *model = new SessionBaseModel(SessionBaseModel::AuthType::LightdmType);
     model->setAppType(AppTypeLogin);
     GreeterWorker *worker = new GreeterWorker(model);
     QObject::connect(&appEventFilter, &AppEventFilter::userIsActive, worker, &GreeterWorker::restartResetSessionTimer);
 
+    // 加载对应用户语言的翻译
     if (model->currentUser()) {
         QTranslator translator;
         translator.load("/usr/share/dde-session-shell/translations/dde-session-shell_" + model->currentUser()->locale().split(".").first());
         DApplication::installTranslator(&translator);
     }
 
-    QObject::connect(model, &SessionBaseModel::authFinished, model, [=](bool is_success) {
+    // 设置系统登录成功的加载光标
+    QObject::connect(model, &SessionBaseModel::authFinished, model, [ = ](bool is_success) {
         if (is_success)
             set_rootwindow_cursor();
     });
 
+    // 保证多个屏幕的情况下，始终只有一个屏幕显示
     PropertyGroup *property_group = new PropertyGroup(worker);
     property_group->addProperty("contentVisible");
 
@@ -275,17 +277,16 @@ int main(int argc, char* argv[])
         loginFrame->setScreen(screen, count <= 0);
         property_group->addObject(loginFrame);
         QObject::connect(loginFrame, &LoginWindow::requestSwitchToUser, worker, &GreeterWorker::switchToUser);
-        QObject::connect(loginFrame, &LoginWindow::requestSetLayout, worker, &GreeterWorker::setLayout);
-        QObject::connect(worker, &GreeterWorker::requestUpdateBackground, loginFrame, static_cast<void (LoginWindow::*)(const QString &)>(&LoginWindow::updateBackground));
-        QObject::connect(worker, &GreeterWorker::requestShowPrompt, loginFrame, &LoginWindow::requestShowPrompt);
-        QObject::connect(worker, &GreeterWorker::requestShowMessage, loginFrame, &LoginWindow::requestShowMessage);
-        QObject::connect(loginFrame, &LoginWindow::destroyed, property_group, &PropertyGroup::removeObject);
+        QObject::connect(loginFrame, &LoginWindow::requestSetKeyboardLayout, worker, &GreeterWorker::setKeyboardLayout);
         QObject::connect(loginFrame, &LoginWindow::requestCheckAccount, worker, &GreeterWorker::checkAccount);
         QObject::connect(loginFrame, &LoginWindow::requestStartAuthentication, worker, &GreeterWorker::startAuthentication);
         QObject::connect(loginFrame, &LoginWindow::sendTokenToAuth, worker, &GreeterWorker::sendTokenToAuth);
         QObject::connect(loginFrame, &LoginWindow::requestEndAuthentication, worker, &GreeterWorker::endAuthentication);
         QObject::connect(loginFrame, &LoginWindow::authFinished, worker, &GreeterWorker::onAuthFinished);
         QObject::connect(loginFrame, &LoginWindow::respondPasswd, worker, &GreeterWorker::onPasswdRespond);
+        QObject::connect(worker, &GreeterWorker::requestUpdateBackground, loginFrame, &LoginWindow::updateBackground);
+        QObject::connect(worker, &GreeterWorker::requestShowPrompt, loginFrame, &LoginWindow::requestShowPrompt);
+        QObject::connect(worker, &GreeterWorker::requestShowMessage, loginFrame, &LoginWindow::requestShowMessage);
         loginFrame->show();
         return loginFrame;
     };
@@ -297,10 +298,10 @@ int main(int argc, char* argv[])
 #if defined(DSS_CHECK_ACCESSIBILITY) && defined(QT_DEBUG)
     AccessibilityCheckerEx checker;
     checker.addIgnoreClasses(QStringList()
-                          << "Dtk::Widget::DBlurEffectWidget");
+                             << "Dtk::Widget::DBlurEffectWidget");
     checker.setOutputFormat(DAccessibilityChecker::FullFormat);
     checker.start();
 #endif
-    int ret = a.exec();
-    return ret;
+
+    return a.exec();
 }

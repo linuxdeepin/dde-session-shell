@@ -37,9 +37,8 @@ LoginWindow::LoginWindow(SessionBaseModel *const model, QWidget *parent)
 {
     setAccessibleName("LoginWindow");
     updateBackground(m_model->currentUser()->greeterBackground());
-    m_loginContent->setAccessibleName("LoginContent");
     setContent(m_loginContent);
-    m_loginContent->hide();
+    m_loginContent->setVisible(false);
 
     connect(m_loginContent, &LockContent::requestBackground, this, [ = ](const QString & wallpaper) {
         updateBackground(wallpaper);
@@ -51,7 +50,7 @@ LoginWindow::LoginWindow(SessionBaseModel *const model, QWidget *parent)
     });
 
     connect(model, &SessionBaseModel::authFinished, this, [ = ](bool successd) {
-        enableEnterEvent(!successd);
+        setEnterEnable(!successd);
         if (successd) {
             m_loginContent->setVisible(!successd);
         }
@@ -64,14 +63,14 @@ LoginWindow::LoginWindow(SessionBaseModel *const model, QWidget *parent)
     });
 
     connect(m_loginContent, &LockContent::requestSwitchToUser, this, &LoginWindow::requestSwitchToUser);
-    connect(m_loginContent, &LockContent::requestSetLayout, this, &LoginWindow::requestSetLayout);
+    connect(m_loginContent, &LockContent::requestSetLayout, this, &LoginWindow::requestSetKeyboardLayout);
 
     connect(m_loginContent, &LockContent::requestCheckAccount, this, &LoginWindow::requestCheckAccount);
     connect(m_loginContent, &LockContent::requestStartAuthentication, this, &LoginWindow::requestStartAuthentication);
     connect(m_loginContent, &LockContent::sendTokenToAuth, this, &LoginWindow::sendTokenToAuth);
     connect(m_loginContent, &LockContent::requestEndAuthentication, this, &LoginWindow::requestEndAuthentication);
     connect(m_loginContent, &LockContent::authFinished, this, [this]{
-        enableEnterEvent(true);
+        setEnterEnable(true);
         if (m_model->currentUser()->expiredStatus() != User::ExpiredAlready)
             m_loginContent->hide();
         emit authFinished();
@@ -82,25 +81,20 @@ LoginWindow::LoginWindow(SessionBaseModel *const model, QWidget *parent)
     connect(model, &SessionBaseModel::blackModeChanged, this, &FullscreenBackground::setIsBlackMode);
 }
 
-void LoginWindow::resizeEvent(QResizeEvent *event)
-{
-    return FullscreenBackground::resizeEvent(event);
-}
-
 void LoginWindow::showEvent(QShowEvent *event)
 {
-    //greeter界面显示时，需要调用虚拟键盘
     FullscreenBackground::showEvent(event);
 
+    //greeter界面显示时，需要调用虚拟键盘
     m_model->setHasVirtualKB(true);
     m_model->setVisible(true);
 }
 
 void LoginWindow::hideEvent(QHideEvent *event)
 {
-    //greeter界面隐藏时，需要结束虚拟键盘
     FullscreenBackground::hideEvent(event);
 
+    //greeter界面隐藏时，需要结束虚拟键盘
     m_model->setHasVirtualKB(false);
     m_model->setVisible(false);
 }

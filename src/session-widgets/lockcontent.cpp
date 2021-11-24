@@ -397,7 +397,7 @@ void LockContent::resizeEvent(QResizeEvent *event)
         }
     });
 
-    if (SessionBaseModel::PasswordMode == m_model->currentModeState() || SessionBaseModel::ConfirmPasswordMode) {
+    if (SessionBaseModel::PasswordMode == m_model->currentModeState() || (SessionBaseModel::ConfirmPasswordMode == m_model->currentModeState())) {
         m_centerSpacerItem->changeSize(0, m_authWidget->getTopSpacing());
         m_centerVLayout->update();
     }

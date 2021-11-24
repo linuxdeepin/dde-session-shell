@@ -37,7 +37,7 @@ TEST_F(UT_FullscreenBackground, BasicTest)
     m_background->getLocalFile("/usr/share/backgrounds/default_background.jpg");
     m_background->setContentVisible(true);
     m_background->contentVisible();
-    m_background->enableEnterEvent(true);
+    m_background->setEnterEnable(true);
     m_background->updateBackground("/usr/share/backgrounds/default_background.jpg");
     m_background->updateBlurBackground("/usr/share/backgrounds/default_background.jpg");
     QTest::keyPress(m_background, Qt::Key_0, Qt::KeyboardModifier::NoModifier);

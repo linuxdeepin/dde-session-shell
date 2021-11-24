@@ -46,14 +46,14 @@ public:
     ~FullscreenBackground();
 
     bool contentVisible() const;
-    void enableEnterEvent(bool enable);
+    void setEnterEnable(bool enable);
 
 public slots:
     void updateBackground(const QString &path);
     void updateBlurBackground(const QString &path);
     void setScreen(QScreen *screen, bool isVisible = true);
-    void setContentVisible(bool contentVisible);
-    void setIsBlackMode(bool is_black);
+    void setContentVisible(bool visible);
+    void setIsBlackMode(bool isBlack);
     void setIsHibernateMode();
 
 signals:

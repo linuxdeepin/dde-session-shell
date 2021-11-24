@@ -248,7 +248,7 @@ void NativeUser::initData()
 {
     m_isAutomaticLogin = m_userInter->automaticLogin();
     m_isNoPasswordLogin = m_userInter->noPasswdLogin();
-    m_isPasswordValid = m_userInter->passwordStatus() == "P" ? true : false;
+    m_isPasswordValid = (m_userInter->passwordStatus() == "P");
     m_isUse24HourFormat = m_userInter->use24HourFormat();
 
     m_expiredStatus = m_userInter->PasswordExpiredInfo(m_expiredDayLeft).value();

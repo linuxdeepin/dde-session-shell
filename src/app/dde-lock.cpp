@@ -163,7 +163,7 @@ int main(int argc, char *argv[])
         QObject::connect(model, &SessionBaseModel::visibleChanged, lockFrame,[&](bool visible) {
             emit lockService.Visible(visible);
         });
-        QObject::connect(lockFrame, &LockFrame::requestSetLayout, worker, &LockWorker::setLayout);
+        QObject::connect(lockFrame, &LockFrame::requestSetLayout, worker, &LockWorker::setKeyboardLayout);
         QObject::connect(lockFrame, &LockFrame::requestEnableHotzone, worker, &LockWorker::enableZoneDetected, Qt::UniqueConnection);
         QObject::connect(lockFrame, &LockFrame::destroyed, property_group, &PropertyGroup::removeObject);
         QObject::connect(lockFrame, &LockFrame::sendKeyValue, [&](QString key) {

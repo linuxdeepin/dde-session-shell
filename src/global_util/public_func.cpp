@@ -51,11 +51,6 @@ DCORE_USE_NAMESPACE
 
 QPixmap loadPixmap(const QString &file, const QSize& size)
 {
-
-    if(!QFile::exists(file)){
-        return QPixmap(DDESESSIONCC::LAYOUTBUTTON_HEIGHT,DDESESSIONCC::LAYOUTBUTTON_HEIGHT);
-    }
-
     qreal ratio = 1.0;
     qreal devicePixel = qApp->devicePixelRatio();
 
@@ -77,35 +72,6 @@ QPixmap loadPixmap(const QString &file, const QSize& size)
 }
 
 /**
- * @brief 获取图像共享内存
- *
- * @param uid 当前用户ID
- * @param purpose 图像用途，1是锁屏、关机、登录，2是启动器，3-19是工作区
- * @return QString Qt的共享内存key
- */
-QString readSharedImage(uid_t uid, int purpose)
-{
-    QDBusMessage msg = QDBusMessage::createMethodCall("com.deepin.dde.preload", "/com/deepin/dde/preload", "com.deepin.dde.preload", "requestSource");
-    QList<QVariant> args;
-    args.append(int(uid));
-    args.append(purpose);
-    msg.setArguments(args);
-    QString shareKey;
-    QDBusMessage ret = QDBusConnection::sessionBus().call(msg);
-    if (ret.type() == QDBusMessage::ErrorMessage) {
-        qDebug() << "readSharedImage fail. user: " << uid << ", purpose: " << purpose << ", detail: " << ret;
-    } else {
-        QDBusReply<QString> reply(ret);
-        shareKey = reply.value();
-    }
-#ifdef QT_DEBUG
-    qInfo() << __FILE__ << ", " << Q_FUNC_INFO << " user: " << uid << ", purpose: " << purpose << " share memory key: " << shareKey;
-#endif
-    return shareKey;
-}
-
-
-/**
  * @brief 是否使用域管认证。
  *
  * @return true 使用域管认证
@@ -116,12 +82,13 @@ bool isDeepinAuth()
     const char* controlId = "com.deepin.dde.auth.control";
     const char* controlPath = "/com/deepin/dde/auth/control/";
     if (QGSettings::isSchemaInstalled (controlId)) {
-        QGSettings controlObj (controlId, controlPath);
-        bool bUseDeepinAuth =  controlObj.get ("use-deepin-auth").toBool();
+        QGSettings controlObj(controlId, controlPath);
+        const QString &key = "useDeepinAuth";
+        bool useDeepinAuth = controlObj.keys().contains(key) && controlObj.get(key).toBool();
     #ifdef QT_DEBUG
-        qDebug() << "----------use deepin auth: " << bUseDeepinAuth;
+        qDebug() << "use deepin auth: " << useDeepinAuth;
     #endif
-        return bUseDeepinAuth;
+        return useDeepinAuth;
     }
     return true;
 }
@@ -145,14 +112,12 @@ QVariant getDConfigValue(const QString &key, const QVariant &defaultValue, const
 {
     DConfig config(configFileName);
 
-    if (!config.isValid()) {
-        qWarning() << QString("DConfig is invalid, name:[%1], subpath[%2].").
-                        arg(config.name(), config.subpath());
+    if (!config.isValid() || !config.keyList().contains(key)) {
+        qWarning() << "dconfig parse failed, name: " << config.name()
+                   << "subpath: " << config.subpath()
+                   << "\n use fallback value:" << defaultValue;
         return defaultValue;
     }
 
-    if (config.keyList().contains(key))
-        return config.value(key);
-
-    return defaultValue;
+    return config.value(key);
 }

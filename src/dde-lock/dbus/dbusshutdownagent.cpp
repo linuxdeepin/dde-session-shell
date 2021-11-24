@@ -88,7 +88,7 @@ void DBusShutdownAgent::Suspend()
         qDebug() << "DBusShutdownAgent::Suspend() 333333";
         m_model->setCurrentModeState(SessionBaseModel::ModeStatus::PasswordMode);
         m_model->setVisible(true);
-        m_model->setIsBlackModel(true);
+        m_model->setIsBlackMode(true);
         m_model->setPowerAction(SessionBaseModel::RequireSuspend);
     }
 }
@@ -101,7 +101,7 @@ void DBusShutdownAgent::Hibernate()
     } else {
         m_model->setCurrentModeState(SessionBaseModel::ModeStatus::PasswordMode);
         m_model->setVisible(true);
-        m_model->setIsBlackModel(true);
+        m_model->setIsBlackMode(true);
         m_model->setPowerAction(SessionBaseModel::RequireHibernate);
     }
 }

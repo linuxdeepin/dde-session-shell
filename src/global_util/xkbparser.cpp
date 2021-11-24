@@ -28,6 +28,7 @@
 
 #include <QDomDocument>
 #include <QDomElement>
+#include <QDebug>
 
 #include "xkbparser.h"
 
@@ -134,23 +135,18 @@ bool XkbParser::parse() {
         LayoutItem tmpLayoutItem;
 
         layoutNode = layoutNodes.at(layoutIndex);
-//        qDebug() << "layout element: " << layoutNode.nodeName();
 
         QDomElement configElement = layoutNode.firstChildElement("configItem");
         QDomElement nameElement = configElement.firstChildElement("name");
         //get the Layout element: name
         tmpLayoutItem.name = nameElement.text();
-//        qDebug() << "layout name: " << nameElement.text();
-
 
         QDomElement descriptionElement = configElement.firstChildElement("description");
-//        qDebug() << "layout description: " << descriptionElement.text();
         //get the Layout element: description
         tmpLayoutItem.description = descriptionElement.text();
 
         QDomElement variantListElement = layoutNode.firstChildElement("variantList");
         QDomNodeList variantNodes = variantListElement.elementsByTagName("variant");
-//        qDebug() << "size of variant list: " << variantNodes.size();
         QDomNode variantNode;
         for (int variantIndex = 0; variantIndex < variantNodes.size(); ++variantIndex) {
             variantNode = variantNodes.at(variantIndex);
@@ -158,18 +154,16 @@ bool XkbParser::parse() {
                 qDebug() << "variant node is null.";
                 continue;
             }
-//            qDebug() << "tag name of variant node: " << variantNode.nodeName();
+
             QDomElement variantConfigElement = variantNode.firstChildElement("configItem");
             if (variantConfigElement.isNull()) {
                 qDebug() << "variant config element is null.";
                 continue;
             }
             QDomElement variantNameElement = variantConfigElement.firstChildElement("name");
-//            qDebug() << "variant name: " << variantNameElement.text();
             tmpVariantItem.name = variantNameElement.text();
             QDomElement variantDescriptionElement = variantConfigElement.firstChildElement("description");
             tmpVariantItem.description = variantDescriptionElement.text();
-//            qDebug() << "variant description: " << variantDescriptionElement.text();
 
             tmpLayoutItem.variantItemList.append(tmpVariantItem);
         }

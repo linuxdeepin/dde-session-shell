@@ -133,7 +133,7 @@ void GreeterWorker::initConnections()
     connect(m_login1Inter, &DBusLogin1Manager::PrepareForSleep, this, [=](bool isSleep) {
         qDebug() << "DBusLogin1Manager::PrepareForSleep:" << isSleep;
         // 登录界面待机或休眠时提供显示假黑屏，唤醒时显示正常界面
-        m_model->setIsBlackModel(isSleep);
+        m_model->setIsBlackMode(isSleep);
 
         if (isSleep) {
             endAuthentication(m_account, AuthTypeAll);
@@ -269,13 +269,13 @@ void GreeterWorker::doPowerAction(const SessionBaseModel::PowerAction action)
         break;
     // 在登录界面请求待机或者休眠时，通过显示假黑屏挡住输入密码界面，防止其闪现
     case SessionBaseModel::PowerAction::RequireSuspend:
-        m_model->setIsBlackModel(true);
+        m_model->setIsBlackMode(true);
         if (m_model->currentModeState() != SessionBaseModel::ModeStatus::PasswordMode)
             m_model->setCurrentModeState(SessionBaseModel::ModeStatus::PasswordMode);
         m_login1Inter->Suspend(true);
         break;
     case SessionBaseModel::PowerAction::RequireHibernate:
-        m_model->setIsBlackModel(true);
+        m_model->setIsBlackMode(true);
         if (m_model->currentModeState() != SessionBaseModel::ModeStatus::PasswordMode)
             m_model->setCurrentModeState(SessionBaseModel::ModeStatus::PasswordMode);
         m_login1Inter->Hibernate(true);
@@ -481,7 +481,7 @@ void GreeterWorker::checkAccount(const QString &account)
             startGreeterAuth();
             return;
         }
-    } else if (user_ptr == nullptr) {
+    } else if (!user_ptr) {
         // 判断账户第一次登录时的有效性
         std::string str = account.toStdString();
         passwd *pw = getpwnam(str.c_str());

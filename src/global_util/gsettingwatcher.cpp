@@ -25,6 +25,30 @@
 #include <QVariant>
 #include <QWidget>
 
+/* convert 'some-key' to 'someKey' or 'SomeKey'.
+ * the second form is needed for appending to 'set' for 'setSomeKey'
+ */
+inline QString qtify_name(const char *name)
+{
+    bool next_cap = false;
+    QString result;
+
+    while (*name) {
+        if (*name == '-') {
+            next_cap = true;
+        } else if (next_cap) {
+            result.append(QChar(*name).toUpper().toLatin1());
+            next_cap = false;
+        } else {
+            result.append(*name);
+        }
+
+        name++;
+    }
+
+    return result;
+}
+
 GSettingWatcher::GSettingWatcher(QObject *parent)
     : QObject(parent)
     , m_gsettings(new QGSettings("com.deepin.dde.session-shell", QByteArray(), this))
@@ -63,7 +87,7 @@ void GSettingWatcher::erase(const QString &gsettingsName, QWidget *binder)
 
 void GSettingWatcher::setStatus(const QString &gsettingsName, QWidget *binder)
 {
-    if (!binder)
+    if (!binder || !m_gsettings->keys().contains(qtify_name(gsettingsName.toUtf8().data())))
         return;
 
     const QString setting = m_gsettings->get(gsettingsName).toString();
@@ -78,6 +102,9 @@ void GSettingWatcher::setStatus(const QString &gsettingsName, QWidget *binder)
 
 const QString GSettingWatcher::getStatus(const QString &gsettingsName)
 {
+    if (!m_gsettings->keys().contains(qtify_name(gsettingsName.toUtf8().data())))
+        return QString();
+
     return m_gsettings->get(gsettingsName).toString();
 }
 

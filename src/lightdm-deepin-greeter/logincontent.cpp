@@ -29,6 +29,8 @@ LoginContent::LoginContent(SessionBaseModel *const model, QWidget *parent)
     : LockContent(model, parent)
     , m_resetPasswdWidget(nullptr)
 {
+    setAccessibleName("LoginContent");
+
     m_sessionFrame = new SessionWidget;
     m_sessionFrame->setModel(model);
     m_controlWidget->setSessionSwitchEnable(m_sessionFrame->sessionCount() > 1);
@@ -48,7 +50,8 @@ LoginContent::LoginContent(SessionBaseModel *const model, QWidget *parent)
 
 void LoginContent::onCurrentUserChanged(std::shared_ptr<User> user)
 {
-    if (user.get() == nullptr) return;
+    if (!user.get())
+        return;
 
     LockContent::onCurrentUserChanged(user);
     m_sessionFrame->switchToUser(user->name());

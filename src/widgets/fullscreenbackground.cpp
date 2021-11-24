@@ -71,7 +71,7 @@ FullscreenBackground::FullscreenBackground(SessionBaseModel *model, QWidget *par
     frameList.append(this);
     m_useSolidBackground = getDConfigValue("useSolidBackground", false).toBool();
     m_enableAnimation = DGuiApplicationHelper::isSpecialEffectsEnvironment();
-    if (m_enableAnimation && !m_useSolidBackground) { 
+    if (m_enableAnimation && !m_useSolidBackground) {
         m_fadeOutAni = new QVariantAnimation(this);
         m_fadeOutAni->setEasingCurve(QEasingCurve::InOutCubic);
         m_fadeOutAni->setDuration(2000);
@@ -143,7 +143,7 @@ bool FullscreenBackground::contentVisible() const
     return m_content && m_content->isVisible();
 }
 
-void FullscreenBackground::enableEnterEvent(bool enable)
+void FullscreenBackground::setEnterEnable(bool enable)
 {
     m_enableEnterEvent = enable;
 }
@@ -165,20 +165,20 @@ void FullscreenBackground::setScreen(QScreen *screen, bool isVisible)
     updateScreen(screen);
 }
 
-void FullscreenBackground::setContentVisible(bool contentVisible)
+void FullscreenBackground::setContentVisible(bool visible)
 {
-    if (this->contentVisible() == contentVisible)
+    if (this->contentVisible() == visible)
         return;
 
     if (!m_content)
         return;
 
-    if (!isVisible() && !contentVisible)
+    if (!isVisible() && !visible)
         return;
 
-    m_content->setVisible(contentVisible && !m_isBlackMode);
+    m_content->setVisible(visible && !m_isBlackMode);
 
-    emit contentVisibleChanged(contentVisible && !m_isBlackMode);
+    emit contentVisibleChanged(visible && !m_isBlackMode);
 }
 
 void FullscreenBackground::setContent(QWidget *const w)
@@ -191,21 +191,17 @@ void FullscreenBackground::setContent(QWidget *const w)
     setFocusProxy(m_content);
 }
 
-void FullscreenBackground::setIsBlackMode(bool is_black)
+void FullscreenBackground::setIsBlackMode(bool isBlack)
 {
-    if (m_isBlackMode == is_black) return;
+    if (m_isBlackMode == isBlack)
+        return;
 
-    if (is_black) {
-        //黑屏的同时隐藏鼠标
-        setCursor(Qt::BlankCursor);
-    } else {
-        //唤醒后显示鼠标
-        setCursor(m_originalCursor);
-    }
+    //黑屏的同时隐藏鼠标,唤醒后显示鼠标
+    setCursor(isBlack ? Qt::BlankCursor : m_originalCursor);
 
     //黑屏鼠标在多屏间移动时不显示界面
-    m_enableEnterEvent = !is_black;
-    m_isBlackMode = is_black;
+    m_enableEnterEvent = !isBlack;
+    m_isBlackMode = isBlack;
 
     m_content->setVisible(!m_isBlackMode);
     emit contentVisibleChanged(!m_isBlackMode);

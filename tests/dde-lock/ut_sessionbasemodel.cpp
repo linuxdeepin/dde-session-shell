@@ -108,17 +108,13 @@ TEST_F(UT_SessionBaseModel, init)
     m_sessionBaseModel->setIsServerModel(!isServer);
     EXPECT_EQ(m_sessionBaseModel->isServerModel(), !isServer);
 
-    bool isLock = m_sessionBaseModel->isLockNoPassword();
-    m_sessionBaseModel->setIsLockNoPassword(!isLock);
-    EXPECT_EQ(m_sessionBaseModel->isLockNoPassword(), !isLock);
-
     bool abortConfirm = m_sessionBaseModel->abortConfim();
     m_sessionBaseModel->abortConfirmChanged(!abortConfirm);
     m_sessionBaseModel->setAbortConfirm(!abortConfirm);
     EXPECT_EQ(m_sessionBaseModel->abortConfim(), !abortConfirm);
 
     bool isBlack = m_sessionBaseModel->isBlackMode();
-    m_sessionBaseModel->setIsBlackModel(!isBlack);
+    m_sessionBaseModel->setIsBlackMode(!isBlack);
     EXPECT_EQ(m_sessionBaseModel->isBlackMode(), !isBlack);
 
     bool isHibernate = m_sessionBaseModel->isHibernateMode();

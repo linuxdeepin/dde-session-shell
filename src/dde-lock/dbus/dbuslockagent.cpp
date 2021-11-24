@@ -13,7 +13,7 @@ void DBusLockAgent::setModel(SessionBaseModel *const model)
 
 void DBusLockAgent::Show()
 {
-    m_model->setIsBlackModel(false);
+    m_model->setIsBlackMode(false);
     m_model->setIsHibernateModel(false);
     m_model->setVisible(true);
 }
@@ -28,7 +28,7 @@ void DBusLockAgent::ShowAuth(bool active)
 void DBusLockAgent::Suspend(bool enable)
 {
     if (enable) {
-        m_model->setIsBlackModel(true);
+        m_model->setIsBlackMode(true);
         m_model->setVisible(true);
     } else {
         QDBusInterface infc("com.deepin.daemon.Power","/com/deepin/daemon/Power","com.deepin.daemon.Power");
@@ -36,7 +36,7 @@ void DBusLockAgent::Suspend(bool enable)
         bool bSuspendLock = infc.property("SleepLock").toBool();
 
         if (bSuspendLock) {
-            m_model->setIsBlackModel(false);
+            m_model->setIsBlackMode(false);
             m_model->setVisible(true);
         } else {
             m_model->setVisible(false);

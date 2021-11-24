@@ -105,6 +105,6 @@ void LoginTipsWindow::initUI()
 
 bool LoginTipsWindow::isValid()
 {
-    return (!m_tipString.isEmpty() || !m_contentString.isEmpty()) ? true : false;
+    return (!m_tipString.isEmpty() || !m_contentString.isEmpty());
 }
 

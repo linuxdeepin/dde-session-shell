@@ -38,7 +38,7 @@ AuthInterface::AuthInterface(SessionBaseModel *const model, QObject *parent)
     }
 }
 
-void AuthInterface::setLayout(std::shared_ptr<User> user, const QString &layout)
+void AuthInterface::setKeyboardLayout(std::shared_ptr<User> user, const QString &layout)
 {
     user->setKeyboardLayout(layout);
 }
