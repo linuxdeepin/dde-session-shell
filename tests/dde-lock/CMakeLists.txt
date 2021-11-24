@@ -7,6 +7,7 @@ set(LOCK_TEST_SRCS
     ${authority_DBUS_SCRS}
     ${GLOBAL_UTILS}
     ${GLOBAL_UTILS_DBUS}
+    ${GLOBAL_UTILS_KEYBOARDMONITOR}
     ${WIDGETS}
     ${SESSION_WIDGETS}
     ${haweiswitchos_DBUS_SCRS}

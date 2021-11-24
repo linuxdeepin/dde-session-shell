@@ -8,6 +8,7 @@ set(GREETER_TEST_SRCS
     ${transaction_DBUS_SCRS}
     ${GLOBAL_UTILS}
     ${GLOBAL_UTILS_DBUS}
+    ${GLOBAL_UTILS_KEYBOARDMONITOR}
     ${WIDGETS}
     ${SESSION_WIDGETS}
     ${haweiswitchos_DBUS_SCRS}

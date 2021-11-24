@@ -100,6 +100,7 @@ set(haweiswitchos_DBUS_SCRS
 
 include_directories(${PROJECT_SOURCE_DIR}/src/global_util)
 include_directories(${PROJECT_SOURCE_DIR}/src/global_util/dbus)
+include_directories(${PROJECT_SOURCE_DIR}/src/global_util/keyboardmonitor)
 include_directories(${PROJECT_SOURCE_DIR}/src/widgets)
 include_directories(${PROJECT_SOURCE_DIR}/src/session-widgets)
 include_directories(${PROJECT_SOURCE_DIR}/src/libdde-auth)
@@ -107,6 +108,7 @@ include_directories(${PROJECT_SOURCE_DIR}/interface)
 
 aux_source_directory(${PROJECT_SOURCE_DIR}/src/global_util GLOBAL_UTILS)
 aux_source_directory(${PROJECT_SOURCE_DIR}/src/global_util/dbus GLOBAL_UTILS_DBUS)
+aux_source_directory(${PROJECT_SOURCE_DIR}/src/global_util/keyboardmonitor GLOBAL_UTILS_KEYBOARDMONITOR)
 aux_source_directory(${PROJECT_SOURCE_DIR}/src/widgets WIDGETS)
 aux_source_directory(${PROJECT_SOURCE_DIR}/src/session-widgets SESSION_WIDGETS)
 aux_source_directory(${PROJECT_SOURCE_DIR}/src/libdde-auth AUTHENTICATE)
@@ -123,6 +125,7 @@ set(LOCK_SRCS
     ${transaction_DBUS_SCRS}
     ${GLOBAL_UTILS}
     ${GLOBAL_UTILS_DBUS}
+    ${GLOBAL_UTILS_KEYBOARDMONITOR}
     ${WIDGETS}
     ${SESSION_WIDGETS}
     ${haweiswitchos_DBUS_SCRS}
@@ -173,6 +176,7 @@ set(GREETER_SRCS
     ${transaction_DBUS_SCRS}
     ${GLOBAL_UTILS}
     ${GLOBAL_UTILS_DBUS}
+    ${GLOBAL_UTILS_KEYBOARDMONITOR}
     ${WIDGETS}
     ${SESSION_WIDGETS}
     ${haweiswitchos_DBUS_SCRS}
