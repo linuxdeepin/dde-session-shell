@@ -29,7 +29,6 @@
 #include "auth_ukey.h"
 #include "dlineeditex.h"
 #include "framedatabind.h"
-#include "kblayoutwidget.h"
 #include "keyboardmonitor.h"
 #include "sessionbasemodel.h"
 #include "useravatar.h"
@@ -326,8 +325,6 @@ void SFAWidget::initSingleAuth()
         }
         emit sendTokenToAuth(m_model->currentUser()->name(), AuthTypeSingle, m_singleAuth->lineEditText());
     });
-    connect(m_singleAuth, &AuthSingle::requestShowKeyboardList, this, &SFAWidget::showKeyboardList);
-    connect(m_keyboardTypeWidget, &KbLayoutWidget::setButtonClicked, m_singleAuth, &AuthSingle::setKeyboardButtonInfo);
     connect(m_capslockMonitor, &KeyboardMonitor::capslockStatusChanged, m_singleAuth, &AuthSingle::setCapsLockVisible);
     connect(m_lockButton, &QPushButton::clicked, m_singleAuth, &AuthSingle::requestAuthenticate);
     /* 输入框数据同步（可能是密码或PIN） */
@@ -387,7 +384,6 @@ void SFAWidget::initPasswdAuth()
         m_lockButton->setEnabled(false);
         emit sendTokenToAuth(m_user->name(), AuthTypePassword, text);
     });
-    connect(m_passwordAuth, &AuthPassword::requestShowKeyboardList, this, &SFAWidget::showKeyboardList);
     connect(m_lockButton, &QPushButton::clicked, m_passwordAuth, &AuthPassword::requestAuthenticate);
     connect(m_capslockMonitor, &KeyboardMonitor::capslockStatusChanged, m_passwordAuth, &AuthPassword::setCapsLockVisible);
     /* 输入框数据同步 */
@@ -404,15 +400,7 @@ void SFAWidget::initPasswdAuth()
         m_frameDataBind->updateValue("ResetPasswordVisible", value);
     });
 
-    connect(m_passwordAuth, &AuthPassword::focusChanged, this, [this](bool focus) {
-        if (!focus) {
-            m_keyboardTypeBorder->setVisible(focus);
-        }
-    });
-
     m_passwordAuth->setCapsLockVisible(m_capslockMonitor->isCapslockOn());
-    m_passwordAuth->setKeyboardButtonInfo(m_user->keyboardLayout());
-    m_passwordAuth->setKeyboardButtonVisible(m_user->keyboardLayoutList().size() > 1);
     m_passwordAuth->setPasswordHint(m_user->passwordHint());
     // m_passwordAuth->setAuthStatus(m_frameDataBind->getValue("SFPasswordAuthStatus").toInt(),
     //                               m_frameDataBind->getValue("SFPasswordAuthMsg").toString());

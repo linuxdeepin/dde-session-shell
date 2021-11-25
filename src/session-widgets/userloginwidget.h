@@ -110,8 +110,6 @@ public slots:
     void updateAuthStatus();
     void clearAuthStatus();
     void updateLoginState(const bool loginState);
-    void updateKeyboardInfo(const QString &text);
-    void updateKeyboardList(const QStringList &list);
     void updateNextFocusPosition();
     /////////////////////////////////////////////////////
     void updateAuthType(SessionBaseModel::AuthType type);

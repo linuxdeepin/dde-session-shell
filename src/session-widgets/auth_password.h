@@ -49,8 +49,6 @@ public:
     void setAnimationStatus(const bool start) override;
     void setAuthStatus(const int state, const QString &result) override;
     void setCapsLockVisible(const bool on);
-    void setKeyboardButtonInfo(const QString &text);
-    void setKeyboardButtonVisible(const bool visible);
     void setLimitsInfo(const LimitsInfo &info) override;
     void setLineEditEnabled(const bool enable);
     void setLineEditInfo(const QString &text, const TextType type);
@@ -85,7 +83,6 @@ private:
 private:
     DLabel *m_capsLock;             // 大小写状态
     DLineEditEx *m_lineEdit;        // 密码输入框
-    DPushButton *m_keyboardBtn;     // 键盘布局按钮
     DIconButton *m_passwordHintBtn; // 密码提示按钮
     QString m_passwordHint;         // 密码提示
     bool m_resetPasswordMessageVisible;

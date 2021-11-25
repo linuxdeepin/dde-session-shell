@@ -37,7 +37,6 @@ static const QString DEFAULT_CURSOR_THEME("/usr/share/icons/default/index.theme"
 static const QString LAST_USER_CONFIG("/var/lib/lightdm/lightdm-deepin-greeter");
 static const int PASSWDLINEEIDT_WIDTH = 280;
 static const int PASSWDLINEEDIT_HEIGHT = 36;
-static const int LAYOUTBUTTON_HEIGHT =  36;
 static const int LOCK_CONTENT_TOP_WIDGET_HEIGHT = 132; // 顶部控件（日期）的高度
 static const int LOCK_CONTENT_CENTER_LAYOUT_MARGIN = 33; // SessionBaseWindow 中mainlayout的上下间隔
 static const int BIO_AUTH_STATUS_PLACE_HOLDER_HEIGHT = 42; // 生物认证状态占位高度
@@ -45,6 +44,8 @@ static const int BIO_AUTH_STATUS_BOTTOM_SPACING = 40; // 生物识别状态底�
 static const int CHOOSE_AUTH_TYPE_BUTTON_PLACE_HOLDER_HEIGHT = 42; // 认证类型选择按钮占位高度
 static const int CHOOSE_AUTH_TYPE_BUTTON_BOTTOM_SPACING = 40; // 认证类型选择按钮底部间隔
 static const double AUTH_WIDGET_TOP_SPACING_PERCENT = 0.35; // 认证窗口顶部间隔占整个屏幕的百分比
+static const int LAYOUTBUTTON_HEIGHT =  34;
+static const int KEYBOARDLAYOUT_WIDTH = 200;
 
 static const int CapslockWarningWidth = 23;
 static const int CapslockWarningRightMargin = 8;

@@ -73,7 +73,6 @@ signals:
     void authFinished();
 
 protected:
-    void hideEvent(QHideEvent *event) override;
     void resizeEvent(QResizeEvent *event) override;
     void showEvent(QShowEvent *event) override;
 
@@ -89,15 +88,11 @@ protected:
     void setName(const QString &name);
     void setNameFont(const QFont &font);
     void setPasswordHint(const QString &hint);
-    void setKeyboardType(const QString &type);
-    void setKeyboardTypeList(const QStringList &list);
     void setLockButtonType(const int type);
 
     void updateBlurEffectGeometry();
-    void updateKeyboardTypeListGeometry();
     void updatePasswordExpiredStatus();
-
-    void showKeyboardList();
+    void updateExpiredStatus();
 
     void registerSyncFunctions(const QString &flag, std::function<void(QVariant)> function);
     void syncSingle(const QVariant &value);
@@ -120,8 +115,6 @@ protected:
     DLineEditEx *m_accountEdit;   // 用户名输入框
 
     KeyboardMonitor *m_capslockMonitor;    // 大小写
-    KbLayoutWidget *m_keyboardTypeWidget;  // 键盘布局类型
-    DArrowRectangle *m_keyboardTypeBorder; // 键盘布局类型菜单边界
     DClipEffectWidget *m_keyboardTypeClip; // 键盘布局类型菜单边界裁剪类
 
     AuthSingle *m_singleAuth;           // PAM

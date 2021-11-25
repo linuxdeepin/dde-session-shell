@@ -57,8 +57,6 @@ void UserLoginInfo::setUser(std::shared_ptr<User> user)
     m_currentUserConnects << connect(user.get(), &User::limitsInfoChanged, m_userLoginWidget, &UserLoginWidget::updateLimitsInfo);
     m_currentUserConnects << connect(user.get(), &User::avatarChanged, m_userLoginWidget, &UserLoginWidget::updateAvatar);
     m_currentUserConnects << connect(user.get(), &User::displayNameChanged, m_userLoginWidget, &UserLoginWidget::updateName);
-    m_currentUserConnects << connect(user.get(), &User::keyboardLayoutListChanged, m_userLoginWidget, &UserLoginWidget::updateKeyboardList, Qt::UniqueConnection);
-    m_currentUserConnects << connect(user.get(), &User::keyboardLayoutChanged, m_userLoginWidget, &UserLoginWidget::updateKeyboardInfo, Qt::UniqueConnection);
     m_currentUserConnects << connect(user.get(), &User::passwordHintChanged, m_userLoginWidget, &UserLoginWidget::setPasswordHint, Qt::UniqueConnection);
 
     //需要清除上一个用户的验证状态数据
@@ -78,8 +76,6 @@ void UserLoginInfo::setUser(std::shared_ptr<User> user)
 
     // m_userLoginWidget->updateIsLockNoPassword(m_model->isLockNoPassword());
     // m_userLoginWidget->disablePassword(user.get()->isLock(), user->lockTime());
-    m_userLoginWidget->updateKeyboardList(user->keyboardLayoutList());
-    m_userLoginWidget->updateKeyboardInfo(user->keyboardLayout());
 }
 
 void UserLoginInfo::initConnect()

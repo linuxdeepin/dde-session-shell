@@ -27,6 +27,9 @@
 #define CONTROLWIDGET_H
 
 #include <dtkwidget_global.h>
+#include "userinfo.h"
+
+#include <DBlurEffectWidget>
 
 #include <QWidget>
 #include <QEvent>
@@ -51,6 +54,11 @@ class QHBoxLayout;
 class QPropertyAnimation;
 class QLabel;
 class QMenu;
+class SessionBaseModel;
+class KBLayoutListView;
+
+const int BlurRadius = 15;
+const int BlurTransparency = 70;
 
 class FlotingButton : public DFloatingButton
 {
@@ -104,13 +112,19 @@ class ControlWidget : public QWidget
 {
     Q_OBJECT
 public:
-    explicit ControlWidget(QWidget *parent = nullptr);
+    explicit ControlWidget(const SessionBaseModel *model, QWidget *parent = nullptr);
+
+    void setModel(const SessionBaseModel *model);
+    void setUser(std::shared_ptr<User> user);
+
+    void initKeyboardLayoutList();
 
 signals:
     void requestSwitchUser();
     void requestShutdown();
     void requestSwitchSession();
     void requestSwitchVirtualKB();
+    void requestKeyboardLayout(const QPoint &pos);
     void requestShowModule(const QString &name);
 
 public slots:
@@ -122,6 +136,9 @@ public slots:
     void chooseToSession(const QString &session);
     void leftKeySwitch();
     void rightKeySwitch();
+    void setKBLayoutVisible();
+    void setKeyboardType(const QString& str);
+    void setKeyboardTypeList(const QStringList& str);
 
 protected:
     bool eventFilter(QObject *watched, QEvent *event) Q_DECL_OVERRIDE;
@@ -152,6 +169,12 @@ private:
     QMap<QString, QWidget *> m_modules;
     QMenu *m_contextMenu;
     DArrowRectangle *m_tipsWidget;
+    const SessionBaseModel *m_model;
+    QList<QMetaObject::Connection> m_connectionList;
+
+    DArrowRectangle *m_arrowRectWidget;
+    KBLayoutListView *m_kbLayoutListView;   // 键盘布局列表
+    DFloatingButton *m_keyboardBtn;         // 键盘布局按钮
 };
 
 #endif // CONTROLWIDGET_H

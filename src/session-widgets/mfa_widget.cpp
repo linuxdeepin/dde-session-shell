@@ -248,8 +248,6 @@ void MFAWidget::initPasswdAuth()
     }
     m_passwordAuth = new AuthPassword(this);
     m_passwordAuth->setCapsLockVisible(m_capslockMonitor->isCapslockOn());
-    m_passwordAuth->setKeyboardButtonInfo(m_user->keyboardLayout());
-    m_passwordAuth->setKeyboardButtonVisible(m_user->keyboardLayoutList().size() > 1);
     m_passwordAuth->setPasswordHint(m_user->passwordHint());
     m_mainLayout->insertWidget(m_index, m_passwordAuth);
 
@@ -266,7 +264,6 @@ void MFAWidget::initPasswdAuth()
         m_passwordAuth->setLineEditEnabled(false);
         emit sendTokenToAuth(m_model->currentUser()->name(), AuthTypePassword, text);
     });
-    connect(m_passwordAuth, &AuthPassword::requestShowKeyboardList, this, &MFAWidget::showKeyboardList);
     connect(m_passwordAuth, &AuthPassword::authFinished, this, [this](const int value) {
         checkAuthResult(AuthTypePassword, value);
     });
@@ -282,11 +279,6 @@ void MFAWidget::initPasswdAuth()
     FrameDataBind::Instance()->refreshData("MFPasswordAuth");
 
     connect(m_passwordAuth, &AuthPassword::requestChangeFocus, this, &MFAWidget::updateFocusPosition);
-    connect(m_passwordAuth, &AuthPassword::focusChanged, this, [this](bool focus) {
-        if (!focus) {
-            m_keyboardTypeBorder->setVisible(false);
-        }
-    });
 }
 
 /**

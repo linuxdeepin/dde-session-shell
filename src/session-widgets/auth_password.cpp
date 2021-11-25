@@ -51,7 +51,6 @@ AuthPassword::AuthPassword(QWidget *parent)
     : AuthModule(parent)
     , m_capsLock(new DLabel(this))
     , m_lineEdit(new DLineEditEx(this))
-    , m_keyboardBtn(new DPushButton(this))
     , m_passwordHintBtn(new DIconButton(this))
     , m_resetPasswordMessageVisible(false)
     , m_resetPasswordFloatingMessage(nullptr)
@@ -85,21 +84,16 @@ void AuthPassword::initUI()
     setLineEditInfo(tr("Password"), PlaceHolderText);
 
     QHBoxLayout *passwordLayout = new QHBoxLayout(m_lineEdit->lineEdit());
-    passwordLayout->setContentsMargins(0, 0, 10, 0);
+    passwordLayout->setContentsMargins(5, 0, 10, 0);
     passwordLayout->setSpacing(5);
-    /* 键盘布局按钮 */
-    m_keyboardBtn->setContentsMargins(5, 5, 5, 5);
-    m_keyboardBtn->setFocusPolicy(Qt::NoFocus);
-    m_keyboardBtn->setCursor(Qt::ArrowCursor);
-    m_keyboardBtn->setFlat(true);
-    passwordLayout->addWidget(m_keyboardBtn, 0, Qt::AlignLeft | Qt::AlignVCenter);
-    /* 缩放因子 */
-    passwordLayout->addStretch(1);
     /* 大小写状态 */
     QPixmap pixmap = DHiDPIHelper::loadNxPixmap(CAPS_LOCK);
     pixmap.setDevicePixelRatio(devicePixelRatioF());
     m_capsLock->setPixmap(pixmap);
-    passwordLayout->addWidget(m_capsLock, 0, Qt::AlignRight | Qt::AlignVCenter);
+    passwordLayout->addWidget(m_capsLock, 0, Qt::AlignLeft | Qt::AlignVCenter);
+    /* 缩放因子 */
+    passwordLayout->addStretch(1);
+
     /* 认证状态 */
     m_authStatusLabel = new DLabel(this);
     setAuthStatusStyle(LOGIN_WAIT);
@@ -123,8 +117,6 @@ void AuthPassword::initUI()
 void AuthPassword::initConnections()
 {
     AuthModule::initConnections();
-    /* 键盘布局按钮 */
-    connect(m_keyboardBtn, &QPushButton::clicked, this, &AuthPassword::requestShowKeyboardList);
     /* 密码提示 */
     connect(m_passwordHintBtn, &DIconButton::clicked, this, &AuthPassword::showPasswordHint);
     /* 密码输入框 */
@@ -346,31 +338,6 @@ void AuthPassword::setPasswordHint(const QString &hint)
 void AuthPassword::setCurrentUid(uid_t uid)
 {
     m_currentUid = uid;
-}
-
-/**
- * @brief 设置键盘布局按钮显示文案
- *
- * @param text
- */
-void AuthPassword::setKeyboardButtonInfo(const QString &text)
-{
-    QString currentText = text.split(";").first();
-    /* special mark in Japanese */
-    if (currentText.contains("/")) {
-        currentText = currentText.split("/").last();
-    }
-    m_keyboardBtn->setText(currentText);
-}
-
-/**
- * @brief 设置键盘布局按钮显示状态
- *
- * @param visible
- */
-void AuthPassword::setKeyboardButtonVisible(const bool visible)
-{
-    m_keyboardBtn->setVisible(visible);
 }
 
 /**

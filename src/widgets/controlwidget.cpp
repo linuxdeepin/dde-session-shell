@@ -24,6 +24,8 @@
  */
 
 #include "controlwidget.h"
+#include "sessionbasemodel.h"
+#include "kblayoutlistview.h"
 
 #include "mediawidget.h"
 #include "modules_loader.h"
@@ -31,6 +33,7 @@
 
 #include <DFloatingButton>
 #include <DArrowRectangle>
+#include <DPushButton>
 #include <dimagebutton.h>
 
 #include <QEvent>
@@ -45,14 +48,70 @@
 
 using namespace dss;
 
-ControlWidget::ControlWidget(QWidget *parent)
+ControlWidget::ControlWidget(const SessionBaseModel *model, QWidget *parent)
     : QWidget(parent)
     , m_contextMenu(new QMenu(this))
     , m_tipsWidget(new DArrowRectangle(DArrowRectangle::ArrowDirection::ArrowBottom, this))
+    , m_arrowRectWidget(new DArrowRectangle(DArrowRectangle::ArrowBottom, this))
+    , m_kbLayoutListView(nullptr)
+    , m_keyboardBtn(nullptr)
 {
-    setAccessibleName("ControlWidget");
+    setModel(model);
     initUI();
     initConnect();
+}
+
+void ControlWidget::setModel(const SessionBaseModel *model)
+{
+    m_model = model;
+    connect(m_model, &SessionBaseModel::currentUserChanged, this, &ControlWidget::setUser);
+}
+
+void ControlWidget::setUser(std::shared_ptr<User> user)
+{
+    for (const QMetaObject::Connection &connection : qAsConst(m_connectionList))
+        user.get()->disconnect(connection);
+
+    m_connectionList.clear();
+    m_connectionList << connect(user.get(), &User::keyboardLayoutChanged, this, &ControlWidget::setKeyboardType)
+                     << connect(user.get(), &User::keyboardLayoutListChanged, this, &ControlWidget::setKeyboardTypeList);
+}
+
+void ControlWidget::initKeyboardLayoutList()
+{
+    /* 键盘布局选择菜单 */
+    const QString language = m_model->currentUser()->keyboardLayout();
+    m_kbLayoutListView = new KBLayoutListView(language, this);
+    m_kbLayoutListView->setAccessibleName(QStringLiteral("KbLayoutlistview"));
+    m_kbLayoutListView->updateButtonList(m_model->currentUser()->keyboardLayoutList());
+    m_kbLayoutListView->setMinimumWidth(DDESESSIONCC::KEYBOARDLAYOUT_WIDTH);
+    m_kbLayoutListView->setMaximumSize(DDESESSIONCC::KEYBOARDLAYOUT_WIDTH, DDESESSIONCC::LAYOUTBUTTON_HEIGHT * 7);
+    m_kbLayoutListView->setFocusPolicy(Qt::NoFocus);
+
+    const QStringList languageList = language.split(";");
+    if (!languageList.isEmpty())
+        static_cast<QAbstractButton *>(m_keyboardBtn)->setText(languageList.at(0));
+
+    // 无特效模式时，让窗口圆角
+    m_arrowRectWidget->setProperty("_d_radius_force", true);
+    m_arrowRectWidget->setWindowFlags(Qt::Popup | Qt::FramelessWindowHint | Qt::NoDropShadowWindowHint | Qt::WindowStaysOnTopHint);
+    m_arrowRectWidget->setMargin(0);
+    m_arrowRectWidget->setShadowBlurRadius(20);
+    m_arrowRectWidget->setRadius(6);
+    m_arrowRectWidget->setShadowYOffset(2);
+    m_arrowRectWidget->setShadowXOffset(0);
+    m_arrowRectWidget->setArrowWidth(18);
+    m_arrowRectWidget->setArrowHeight(10);
+    m_arrowRectWidget->setMinimumWidth(DDESESSIONCC::KEYBOARDLAYOUT_WIDTH);
+    m_arrowRectWidget->setMaximumSize(DDESESSIONCC::KEYBOARDLAYOUT_WIDTH, DDESESSIONCC::LAYOUTBUTTON_HEIGHT * 7);
+    m_arrowRectWidget->setFocusPolicy(Qt::NoFocus);
+
+    QPalette pal = m_arrowRectWidget->palette();
+    pal.setColor(DPalette::Inactive, DPalette::Base, QColor(235, 235, 235, 0.05 * 255));
+    setPalette(pal);
+
+    m_arrowRectWidget->setContent(m_kbLayoutListView);
+    connect(m_kbLayoutListView, &KBLayoutListView::itemClicked, this, &ControlWidget::setKeyboardType);
 }
 
 void ControlWidget::setVirtualKBVisible(bool visible)
@@ -66,6 +125,22 @@ void ControlWidget::initUI()
     m_mainLayout->setContentsMargins(0, 0, 60, 0);
     m_mainLayout->setSpacing(26);
     m_mainLayout->setAlignment(Qt::AlignRight | Qt::AlignBottom);
+
+    m_keyboardBtn = new DFloatingButton(this);
+    m_keyboardBtn->setAccessibleName("KeyboardLayoutBtn");
+    m_keyboardBtn->setFixedSize(BUTTON_SIZE);
+    m_keyboardBtn->setAutoExclusive(true);
+    m_keyboardBtn->setBackgroundRole(DPalette::Button);
+    m_keyboardBtn->setAutoExclusive(true);
+    static_cast<QAbstractButton *>(m_keyboardBtn)->setText(QString());
+    m_keyboardBtn->installEventFilter(this);
+
+    // 给显示文字的按钮设置样式
+    QPalette pal = m_keyboardBtn->palette();
+    pal.setColor(QPalette::Window, QColor(Qt::red));
+    pal.setColor(QPalette::HighlightedText, QColor(Qt::white));
+    pal.setColor(QPalette::Active, QPalette::Highlight, QColor(Qt::white));
+    m_keyboardBtn->setPalette(pal);
 
     m_virtualKBBtn = new DFloatingButton(this);
     m_virtualKBBtn->setAccessibleName("VirtualKeyboardBtn");
@@ -95,10 +170,12 @@ void ControlWidget::initUI()
     m_powerBtn->setBackgroundRole(DPalette::Button);
     m_powerBtn->installEventFilter(this);
 
+    m_btnList.append(m_keyboardBtn);
     m_btnList.append(m_virtualKBBtn);
     m_btnList.append(m_switchUserBtn);
     m_btnList.append(m_powerBtn);
 
+    m_mainLayout->addWidget(m_keyboardBtn);
     m_mainLayout->addWidget(m_virtualKBBtn);
     m_mainLayout->addWidget(m_switchUserBtn);
     m_mainLayout->addWidget(m_powerBtn);
@@ -109,6 +186,9 @@ void ControlWidget::initUI()
     }
 
     updateLayout();
+
+    // 初始化键盘布局列表
+    initKeyboardLayoutList();
 }
 
 void ControlWidget::initConnect()
@@ -117,6 +197,7 @@ void ControlWidget::initConnect()
     connect(m_switchUserBtn, &DFloatingButton::clicked, this, &ControlWidget::requestSwitchUser);
     connect(m_powerBtn, &DFloatingButton::clicked, this, &ControlWidget::requestShutdown);
     connect(m_virtualKBBtn, &DFloatingButton::clicked, this, &ControlWidget::requestSwitchVirtualKB);
+    connect(m_keyboardBtn, &DFloatingButton::clicked, this, &ControlWidget::setKBLayoutVisible);
 }
 
 void ControlWidget::addModule(module::BaseModuleInterface *module)
@@ -405,6 +486,38 @@ void ControlWidget::rightKeySwitch()
     }
 
     m_btnList.at(m_index)->setFocus();
+}
+
+void ControlWidget::setKBLayoutVisible()
+{
+    DFloatingButton *layoutButton = static_cast<DFloatingButton *>(sender());
+    if (!layoutButton)
+        return;
+
+    QPoint pos = mapToGlobal(layoutButton->pos()) - QPoint((m_arrowRectWidget->width() - layoutButton->width())/2, m_arrowRectWidget->height());
+    m_arrowRectWidget->setGeometry(QRect(pos, m_arrowRectWidget->size()));
+    m_arrowRectWidget->setVisible(!m_arrowRectWidget->isVisible());
+}
+
+void ControlWidget::setKeyboardType(const QString &str)
+{
+    // 初始化当前键盘布局输入法类型
+    QString currentText = str.split(";").first();
+    /* special mark in Japanese */
+    if (currentText.contains("/"))
+        currentText = currentText.split("/").last();
+
+    static_cast<QAbstractButton *>(m_keyboardBtn)->setText(currentText);
+
+    m_arrowRectWidget->hide();
+    m_model->currentUser()->setKeyboardLayout(str);
+}
+
+void ControlWidget::setKeyboardTypeList(const QStringList &str)
+{
+    // 初始化当前键盘布局列表
+    if (m_kbLayoutListView)
+        m_kbLayoutListView->updateButtonList(str);
 }
 
 bool ControlWidget::eventFilter(QObject *watched, QEvent *event)

@@ -91,8 +91,6 @@ TEST_F(UT_UserloginWidget, init)
     m_userloginwidget->updateAuthStatus();
     m_userloginwidget->clearAuthStatus();
     m_userloginwidget->updateLoginState(true);
-    m_userloginwidget->updateKeyboardInfo("KeyBoard");
-    m_userloginwidget->updateKeyboardList(user_ptr->keyboardLayoutList());
     m_userloginwidget->updateNextFocusPosition();
     m_userloginwidget->updateAuthType(SessionBaseModel::AuthType::LockType);
     m_userloginwidget->unlockSuccessAni();

@@ -28,7 +28,6 @@
 #include "auth_single.h"
 #include "auth_ukey.h"
 #include "dlineeditex.h"
-#include "kblayoutwidget.h"
 #include "framedatabind.h"
 #include "keyboardmonitor.h"
 #include "sessionbasemodel.h"
@@ -54,8 +53,6 @@ AuthWidget::AuthWidget(QWidget *parent)
     , m_nameLabel(nullptr)
     , m_accountEdit(nullptr)
     , m_capslockMonitor(nullptr)
-    , m_keyboardTypeWidget(nullptr)
-    , m_keyboardTypeBorder(nullptr)
     , m_keyboardTypeClip(nullptr)
     , m_singleAuth(nullptr)
     , m_passwordAuth(nullptr)
@@ -131,16 +128,6 @@ void AuthWidget::initUI()
     m_blurEffectWidget->setMaskAlpha(BlurTransparency);
     m_blurEffectWidget->setBlurRectXRadius(BlurRadius);
     m_blurEffectWidget->setBlurRectYRadius(BlurRadius);
-    /* 键盘布局选择菜单 */
-    m_keyboardTypeWidget = new KbLayoutWidget(QStringList(), this);
-    m_keyboardTypeWidget->setAccessibleName(QStringLiteral("KbLayoutWidget"));
-    m_keyboardTypeWidget->updateButtonList(m_user->keyboardLayoutList());
-    m_keyboardTypeBorder = new DArrowRectangle(DArrowRectangle::ArrowTop, this);
-    m_keyboardTypeBorder->setAccessibleName(QStringLiteral("KeyboardTypeBorder"));
-    m_keyboardTypeBorder->setContentsMargins(0, 0, 0, 0);
-    m_keyboardTypeBorder->setBorderWidth(0);
-    m_keyboardTypeBorder->setContent(m_keyboardTypeWidget);
-    m_keyboardTypeBorder->setRadius(8);
 }
 
 void AuthWidget::initConnections()
@@ -192,17 +179,13 @@ void AuthWidget::setUser(std::shared_ptr<User> user)
     m_connectionList << connect(user.get(), &User::avatarChanged, this, &AuthWidget::setAvatar)
                      << connect(user.get(), &User::displayNameChanged, this, &AuthWidget::setName)
                      << connect(user.get(), &User::passwordHintChanged, this, &AuthWidget::setPasswordHint)
-                     << connect(user.get(), &User::keyboardLayoutChanged, this, &AuthWidget::setKeyboardType)
-                     << connect(user.get(), &User::keyboardLayoutListChanged, this, &AuthWidget::setKeyboardTypeList)
                      << connect(user.get(), &User::limitsInfoChanged, this, &AuthWidget::setLimitsInfo)
-                     << connect(m_keyboardTypeWidget, &KbLayoutWidget::setButtonClicked, user.get(), &User::setKeyboardLayout)
-                     << connect(user.get(), &User::passwordExpiredInfoChanged, this, &AuthWidget::updatePasswordExpiredStatus);
+                     << connect(user.get(), &User::passwordExpiredInfoChanged, this, &AuthWidget::updatePasswordExpiredStatus)
+                     << connect(user.get(), &User::limitsInfoChanged, this, &AuthWidget::setLimitsInfo);
 
     setAvatar(user->avatar());
     setName(user->displayName());
     setPasswordHint(user->passwordHint());
-    setKeyboardType(user->keyboardLayout());
-    setKeyboardTypeList(user->keyboardLayoutList());
     setLimitsInfo(user->limitsInfo());
     updatePasswordExpiredStatus();
 }
@@ -352,41 +335,6 @@ void AuthWidget::setPasswordHint(const QString &hint)
 }
 
 /**
- * @brief 设置键盘布局类型
- * @param type
- */
-void AuthWidget::setKeyboardType(const QString &type)
-{
-    m_keyboardTypeWidget->setDefault(type);
-
-    m_keyboardTypeBorder->hide();
-
-    if (m_singleAuth) {
-        m_singleAuth->setKeyboardButtonInfo(type);
-    }
-    if (m_passwordAuth) {
-        m_passwordAuth->setKeyboardButtonInfo(type);
-    }
-}
-
-/**
- * @brief 设置键盘布局列表
- * @param list
- */
-void AuthWidget::setKeyboardTypeList(const QStringList &list)
-{
-    m_keyboardTypeWidget->updateButtonList(list);
-
-    const bool visible = list.size() > 1;
-    if (m_singleAuth) {
-        m_singleAuth->setKeyboardButtonVisible(visible);
-    }
-    if (m_passwordAuth) {
-        m_passwordAuth->setKeyboardButtonVisible(visible);
-    }
-}
-
-/**
  * @brief 设置解锁按钮的样式
  * @param type
  */
@@ -438,17 +386,6 @@ void AuthWidget::updateBlurEffectGeometry()
 }
 
 /**
- * @brief 更新键盘布局列表菜单参数
- */
-void AuthWidget::updateKeyboardTypeListGeometry()
-{
-    if (m_passwordAuth) {
-        const QPoint &point = mapToGlobal(QPoint(m_blurEffectWidget->geometry().left() + 30, m_blurEffectWidget->geometry().bottom() - 10));
-        m_keyboardTypeBorder->move(point.x(), point.y());
-    }
-}
-
-/**
  * @brief 密码过期提示
  */
 void AuthWidget::updatePasswordExpiredStatus()
@@ -471,18 +408,6 @@ void AuthWidget::updatePasswordExpiredStatus()
         break;
     default:
         break;
-    }
-}
-
-/**
- * @brief 显示键盘布局菜单
- */
-void AuthWidget::showKeyboardList()
-{
-    if (m_keyboardTypeBorder->isVisible()) {
-        m_keyboardTypeBorder->hide();
-    } else {
-        m_keyboardTypeBorder->setVisible(true);
     }
 }
 
@@ -560,16 +485,9 @@ void AuthWidget::syncUKey(const QVariant &value)
         m_ukeyAuth->setLineEditInfo(value.toString(), AuthUKey::InputText);
 }
 
-void AuthWidget::hideEvent(QHideEvent *event)
-{
-    m_keyboardTypeBorder->hide();
-    QWidget::hideEvent(event);
-}
-
 void AuthWidget::resizeEvent(QResizeEvent *event)
 {
     updateBlurEffectGeometry();
-    updateKeyboardTypeListGeometry();
     QWidget::resizeEvent(event);
 }
 

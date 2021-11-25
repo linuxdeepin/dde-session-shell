@@ -34,7 +34,6 @@
 #include "dhidpihelper.h"
 #include "dlineeditex.h"
 #include "framedatabind.h"
-#include "kblayoutwidget.h"
 #include "keyboardmonitor.h"
 #include "useravatar.h"
 #include "userinfo.h"
@@ -178,19 +177,6 @@ void UserLoginWidget::initUI()
     m_blurEffectWidget->setMaskAlpha(76); // fix BUG 3400 设置模糊窗体的不透明度为30%
     m_blurEffectWidget->setBlurRectXRadius(BlurRectRadius);
     m_blurEffectWidget->setBlurRectYRadius(BlurRectRadius);
-    /* 键盘布局菜单 */
-    m_kbLayoutBorder = new DArrowRectangle(DArrowRectangle::ArrowTop);
-    m_kbLayoutBorder->setAccessibleName("KeyboardLayoutBorder");
-    m_kbLayoutWidget = new KbLayoutWidget(QStringList());
-    m_kbLayoutWidget->setAccessibleName("KeyboardWidget");
-    m_kbLayoutBorder->setContent(m_kbLayoutWidget);
-    m_kbLayoutBorder->setBackgroundColor(QColor(102, 102, 102)); //255*0.2
-    m_kbLayoutBorder->setBorderColor(QColor(0, 0, 0, 0));
-    m_kbLayoutBorder->setBorderWidth(0);
-    m_kbLayoutBorder->setContentsMargins(0, 0, 0, 0);
-    m_kbLayoutClip = new Dtk::Widget::DClipEffectWidget(m_kbLayoutBorder);
-    m_kbLayoutClip->setAccessibleName("KeyboardLayoutClip");
-    updateClipPath();
 }
 
 void UserLoginWidget::initConnections()
@@ -222,8 +208,6 @@ void UserLoginWidget::initConnections()
             emit m_accountEdit->returnPressed();
         }
     });
-    /* 键盘布局菜单 */
-    connect(m_kbLayoutWidget, &KbLayoutWidget::setButtonClicked, this, &UserLoginWidget::requestUserKBLayoutChanged);
     std::function<void(QVariant)> kblayoutChanged = std::bind(&UserLoginWidget::onOtherPageKBLayoutChanged, this, std::placeholders::_1);
     m_registerFunctionIndexs["UserLoginKBLayout"] = FrameDataBind::Instance()->registerFunction("UserLoginKBLayout", kblayoutChanged);
     FrameDataBind::Instance()->refreshData("UserLoginKBLayout");
@@ -422,7 +406,6 @@ void UserLoginWidget::initSingleAuth(const int index)
         checkAuthResult(AuthTypeSingle, status);
     });
 
-    connect(m_kbLayoutWidget, &KbLayoutWidget::setButtonClicked, m_singleAuth, &AuthSingle::setKeyboardButtonInfo);
     connect(m_capslockMonitor, &KeyboardMonitor::capslockStatusChanged, m_singleAuth, &AuthSingle::setCapsLockVisible);
     connect(m_lockButton, &QPushButton::clicked, m_singleAuth, &AuthSingle::requestAuthenticate);
 
@@ -458,8 +441,6 @@ void UserLoginWidget::initPasswdAuth(const int index)
     }
     m_passwordAuth = new AuthPassword(this);
     m_passwordAuth->setCapsLockVisible(m_capslockMonitor->isCapslockOn());
-    m_passwordAuth->setKeyboardButtonVisible(m_keyboardList.size() > 1 ? true : false);
-    m_passwordAuth->setKeyboardButtonInfo(m_keyboardInfo);
     m_passwordAuth->setPasswordHint(m_model->currentUser()->passwordHint());
     m_userLoginLayout->insertWidget(index, m_passwordAuth);
 
@@ -482,7 +463,6 @@ void UserLoginWidget::initPasswdAuth(const int index)
     });
     connect(m_lockButton, &QPushButton::clicked, m_passwordAuth, &AuthPassword::requestAuthenticate);
     connect(m_capslockMonitor, &KeyboardMonitor::capslockStatusChanged, m_passwordAuth, &AuthPassword::setCapsLockVisible);
-    connect(m_kbLayoutWidget, &KbLayoutWidget::setButtonClicked, m_passwordAuth, &AuthPassword::setKeyboardButtonInfo);
 
     /* 输入框数据同步 */
     std::function<void(QVariant)> passwordChanged = std::bind(&UserLoginWidget::onOtherPagePasswordChanged, this, std::placeholders::_1);
@@ -976,30 +956,6 @@ void UserLoginWidget::updateBlurEffectGeometry()
 }
 
 /**
- * @brief 用户改变键盘布局后，触发这里同步更新菜单列表
- *
- * @param kbLayoutList
- */
-void UserLoginWidget::updateKeyboardList(const QStringList &list)
-{
-    if (list == m_keyboardList) {
-        return;
-    }
-    m_keyboardList = list;
-    if (m_kbLayoutWidget && m_kbLayoutBorder) {
-        m_kbLayoutWidget->updateButtonList(list);
-        m_kbLayoutBorder->setContent(m_kbLayoutWidget);
-        updateClipPath();
-    }
-    if (m_passwordAuth) {
-        m_passwordAuth->setKeyboardButtonVisible(list.size() > 1 ? true : false);
-    }
-    if (m_singleAuth) {
-        m_singleAuth->setKeyboardButtonVisible(list.size() > 1 ? true : false);
-    }
-}
-
-/**
  * @brief 移动焦点到下一个输入框
  */
 void UserLoginWidget::updateNextFocusPosition()
@@ -1178,27 +1134,6 @@ void UserLoginWidget::clearAuthStatus()
     FrameDataBind::Instance()->clearValue("IrisAuthMsg");
     FrameDataBind::Instance()->clearValue("SingleAuthStatus");
     FrameDataBind::Instance()->clearValue("SingleAuthMsg");
-}
-
-/**
- * @brief 设置当前键盘布局
- *
- * @param layout
- */
-void UserLoginWidget::updateKeyboardInfo(const QString &text)
-{
-    m_kbLayoutBorder->hide();
-    if (text == m_keyboardInfo) {
-        return;
-    }
-    m_keyboardInfo = text;
-    m_kbLayoutWidget->setDefault(text);
-    if (m_passwordAuth) {
-        m_passwordAuth->setKeyboardButtonInfo(text);
-    }
-    if (m_singleAuth) {
-        m_singleAuth->setKeyboardButtonInfo(text);
-    }
 }
 
 /**

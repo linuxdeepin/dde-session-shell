@@ -1,4 +1,5 @@
 #include "controlwidget.h"
+#include "sessionbasemodel.h"
 #include <gtest/gtest.h>
 #include <QApplication>
 #include <QKeyEvent>
@@ -11,32 +12,36 @@ protected:
     void SetUp() override;
     void TearDown() override;
 
-    ControlWidget *controlWidget;
+    ControlWidget *m_controlWidget;
+    SessionBaseModel *m_model;
 };
 
 void UT_ControlWidget::SetUp()
 {
-    controlWidget = new ControlWidget();
+    m_model = new SessionBaseModel(SessionBaseModel::AuthType::LockType);
+    m_model->setAppType(AppTypeLock);
+    m_controlWidget = new ControlWidget(m_model);
 }
 
 void UT_ControlWidget::TearDown()
 {
-    delete controlWidget;
+    delete m_controlWidget;
+    delete m_model;
 }
 
 TEST_F(UT_ControlWidget, init)
 {
-    controlWidget->setVirtualKBVisible(true);
-    controlWidget->setUserSwitchEnable(true);
-    controlWidget->setUserSwitchEnable(false);
-    controlWidget->setSessionSwitchEnable(true);
-    controlWidget->chooseToSession("");
-    controlWidget->chooseToSession("aaaa");
-    controlWidget->rightKeySwitch();
+    m_controlWidget->setVirtualKBVisible(true);
+    m_controlWidget->setUserSwitchEnable(true);
+    m_controlWidget->setUserSwitchEnable(false);
+    m_controlWidget->setSessionSwitchEnable(true);
+    m_controlWidget->chooseToSession("");
+    m_controlWidget->chooseToSession("aaaa");
+    m_controlWidget->rightKeySwitch();
 
-    controlWidget->rightKeySwitch();
-    controlWidget->leftKeySwitch();
-    controlWidget->showTips();
-    controlWidget->hideTips();
-    QTest::keyRelease(controlWidget, Qt::Key_0, Qt::KeyboardModifier::NoModifier);
+    m_controlWidget->rightKeySwitch();
+    m_controlWidget->leftKeySwitch();
+    m_controlWidget->showTips();
+    m_controlWidget->hideTips();
+    QTest::keyRelease(m_controlWidget, Qt::Key_0, Qt::KeyboardModifier::NoModifier);
 }
