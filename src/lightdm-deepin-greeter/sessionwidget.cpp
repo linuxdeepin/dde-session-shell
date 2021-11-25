@@ -101,7 +101,7 @@ const QString SessionWidget::currentSessionKey() const
     return m_sessionModel->data(m_sessionModel->index(m_currentSessionIndex), QLightDM::SessionsModel::KeyRole).toString();
 }
 
-void SessionWidget::show()
+void SessionWidget::updateLayout()
 {
     const int itemPadding = 20;
     const int itemWidth = m_sessionBtns.first()->width();
@@ -148,8 +148,6 @@ void SessionWidget::show()
     }
 
     setFixedHeight(itemWidth * (row + 1));
-
-    QWidget::show();
 }
 
 int SessionWidget::sessionCount() const
@@ -205,7 +203,8 @@ void SessionWidget::mouseReleaseEvent(QMouseEvent *event)
 
 void SessionWidget::resizeEvent(QResizeEvent *event)
 {
-    QTimer::singleShot(0, this, &SessionWidget::show);
+    if (isVisible())
+        QTimer::singleShot(0, this, &SessionWidget::updateLayout);
 
     return QFrame::resizeEvent(event);
 }
@@ -336,4 +335,10 @@ QString SessionWidget::lastLoggedInSession(const QString &userName)
     }
 
     return DEFAULT_SESSION_NAME;
+}
+
+void SessionWidget::showEvent(QShowEvent *event)
+{
+    updateLayout();
+    QWidget::showEvent(event);
 }

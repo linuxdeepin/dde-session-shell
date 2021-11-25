@@ -46,7 +46,7 @@ public:
     void setModel(SessionBaseModel * const model);
     ~SessionWidget() override;
 
-    void show();
+    void updateLayout();
     int sessionCount() const;
     const QString currentSessionKey() const;
     const QString currentSessionOwner() const { return m_currentUser; }
@@ -67,6 +67,7 @@ protected:
     void resizeEvent(QResizeEvent *event) Q_DECL_OVERRIDE;
     void focusInEvent(QFocusEvent *event) Q_DECL_OVERRIDE;
     void focusOutEvent(QFocusEvent *event) Q_DECL_OVERRIDE;
+    void showEvent(QShowEvent *event) Q_DECL_OVERRIDE;
 
 private slots:
     void loadSessionList();
