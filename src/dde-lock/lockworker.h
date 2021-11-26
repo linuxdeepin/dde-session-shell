@@ -76,6 +76,7 @@ private:
     AccountsInter *m_accountsInter;
     LoginedInter *m_loginedInter;
     QString m_account;
+    QGSettings* m_gsettings;
 };
 
 #endif // LOCKWORKER_H
