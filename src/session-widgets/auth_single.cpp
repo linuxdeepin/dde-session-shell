@@ -128,6 +128,7 @@ void AuthSingle::initConnections()
     });
     connect(m_lineEdit, &DLineEditEx::textChanged, this, [this](const QString &text) {
         m_lineEdit->setAlert(false);
+        m_lineEdit->hideAlertMessage();
         emit lineEditTextChanged(text);
     });
     connect(m_lineEdit, &DLineEditEx::returnPressed, this, [this] {

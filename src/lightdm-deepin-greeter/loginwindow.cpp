@@ -26,7 +26,6 @@
 #include "loginwindow.h"
 #include "logincontent.h"
 #include "userinfo.h"
-#include "resetpasswdwidget.h"
 
 #include <QWindow>
 
@@ -75,9 +74,6 @@ LoginWindow::LoginWindow(SessionBaseModel *const model, QWidget *parent)
             m_loginContent->hide();
         emit authFinished();
     });
-    connect(m_loginContent, &LoginContent::respondPasswd, this, &LoginWindow::respondPasswd);
-    connect(this, &LoginWindow::requestShowPrompt, m_loginContent, &LoginContent::showPrompt);
-    connect(this, &LoginWindow::requestShowMessage, m_loginContent, &LoginContent::showMessage);
     connect(model, &SessionBaseModel::blackModeChanged, this, &FullscreenBackground::setIsBlackMode);
 }
 

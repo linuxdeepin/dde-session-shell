@@ -282,10 +282,7 @@ int main(int argc, char* argv[])
         QObject::connect(loginFrame, &LoginWindow::sendTokenToAuth, worker, &GreeterWorker::sendTokenToAuth);
         QObject::connect(loginFrame, &LoginWindow::requestEndAuthentication, worker, &GreeterWorker::endAuthentication);
         QObject::connect(loginFrame, &LoginWindow::authFinished, worker, &GreeterWorker::onAuthFinished);
-        QObject::connect(loginFrame, &LoginWindow::respondPasswd, worker, &GreeterWorker::onPasswdRespond);
         QObject::connect(worker, &GreeterWorker::requestUpdateBackground, loginFrame, &LoginWindow::updateBackground);
-        QObject::connect(worker, &GreeterWorker::requestShowPrompt, loginFrame, &LoginWindow::requestShowPrompt);
-        QObject::connect(worker, &GreeterWorker::requestShowMessage, loginFrame, &LoginWindow::requestShowMessage);
         loginFrame->show();
         return loginFrame;
     };

@@ -43,7 +43,7 @@ GreeterWorker::GreeterWorker(SessionBaseModel *const model, QObject *parent)
     , m_lockInter(new DBusLockService(LOCKSERVICE_NAME, LOCKSERVICE_PATH, QDBusConnection::systemBus(), this))
     , m_resetSessionTimer(new QTimer(this))
     , m_limitsUpdateTimer(new QTimer(this))
-    , m_haveRespondedToLightdm(false)
+    , m_retryAuth(false)
 {
 #ifndef QT_DEBUG
     if (!m_greeter->connectSync()) {
@@ -343,6 +343,7 @@ void GreeterWorker::createAuthentication(const QString &account)
         return;
     }
 
+    m_retryAuth = false;
     std::shared_ptr<User> user_ptr = m_model->findUserByName(account);
     if (user_ptr) {
         user_ptr->updatePasswordExpiredInfo();
@@ -414,14 +415,17 @@ void GreeterWorker::sendTokenToAuth(const QString &account, const int authType, 
              << "auth type: " << authType;
     switch (m_model->getAuthProperty().FrameworkState) {
     case Available:
-        m_authFramework->SendTokenToAuth(account, authType, token);
+        if (AT_PAM == authType) {
+            m_greeter->respond(token);
+        } else {
+            m_authFramework->SendTokenToAuth(account, authType, token);
+        }
         if (authType == AT_Password) {
             m_password = token; // 用于解锁密钥环
         }
         break;
     default:
         m_greeter->respond(token);
-        m_haveRespondedToLightdm = true;
         break;
     }
 }
@@ -532,13 +536,8 @@ void GreeterWorker::showPrompt(const QString &text, const QLightDM::Greeter::Pro
     qInfo() << "Greeter prompt:" << text << "type:" << type;
     switch (type) {
     case QLightDM::Greeter::PromptTypeSecret:
-        // 已经回应lightdm且当前用户的密码已过期，按照提示修改密码
-        if (m_haveRespondedToLightdm && User::ExpiredAlready == m_model->currentUser()->expiredStatus()) {
-            m_model->setCurrentModeState(SessionBaseModel::ResetPasswdMode);
-            emit requestShowPrompt(text);
-        } else if (!m_authFramework->isDeepinAuthValid()){
-            handleAuthStatusChanged(AT_PAM, AS_Prompt, text);
-        }
+        m_retryAuth = true;
+        m_model->updateAuthStatus(AT_PAM, AS_Prompt, text);
         break;
     case QLightDM::Greeter::PromptTypeQuestion:
         handleAuthStatusChanged(AT_PAM, AS_Prompt, text);
@@ -560,11 +559,12 @@ void GreeterWorker::showMessage(const QString &text, const QLightDM::Greeter::Me
         m_model->updateAuthStatus(AT_PAM, AS_Success, text);
         break;
     case QLightDM::Greeter::MessageTypeError:
-        // 验证完成且未验证通过的情况发送验证失败信息
-        if (!m_greeter->isAuthenticated() && !m_greeter->inAuthentication())
-            handleAuthStatusChanged(AT_PAM, AS_Failure, text);
-        else
-            emit requestShowMessage(text);
+        if (m_model->getAuthProperty().MFAFlag)
+            m_model->updateMFAFlag(false);
+
+        m_model->setAuthType(AT_PAM);
+        m_retryAuth = false;
+        m_model->updateAuthStatus(AT_PAM, AS_Failure, text);
         break;
     }
 }
@@ -575,10 +575,15 @@ void GreeterWorker::showMessage(const QString &text, const QLightDM::Greeter::Me
 void GreeterWorker::authenticationComplete()
 {
     const bool result = m_greeter->isAuthenticated();
-    qInfo() << "Authentication result:" << result;
+    qInfo() << "Authentication result:" << result << "retryAuth" << m_retryAuth;
 
     if (!result) {
-        showMessage(tr("Wrong Password"), QLightDM::Greeter::MessageTypeError);
+        if (m_retryAuth && !m_model->getAuthProperty().MFAFlag) {
+            showMessage(tr("Wrong Password"), QLightDM::Greeter::MessageTypeError);
+        }
+        if (!m_model->currentUser()->limitsInfo(AT_Password).locked) {
+            m_greeter->authenticate(m_model->currentUser()->name());
+        }
         return;
     }
 
@@ -617,7 +622,6 @@ void GreeterWorker::authenticationComplete()
 void GreeterWorker::onAuthFinished()
 {
     if (m_greeter->inAuthentication()) {
-        m_haveRespondedToLightdm = true;
         m_greeter->respond(m_authFramework->AuthSessionPath(m_account) + QString(";") + m_password);
     } else {
         qWarning() << "The lightdm is not in authentication!";
@@ -638,7 +642,6 @@ void GreeterWorker::handleAuthStatusChanged(const int type, const int status, co
                 m_model->updateAuthStatus(type, status, message);
                 m_resetSessionTimer->stop();
                 if (m_greeter->inAuthentication()) {
-                    m_haveRespondedToLightdm = true;
                     m_greeter->respond(m_authFramework->AuthSessionPath(m_account) + QString(";") + m_password);
                 } else {
                     qWarning() << "The lightdm is not in authentication!";
@@ -723,12 +726,6 @@ void GreeterWorker::handleAuthStatusChanged(const int type, const int status, co
     }
 }
 
-void GreeterWorker::onPasswdRespond(const QString &passwd)
-{
-    qDebug() << Q_FUNC_INFO;
-    m_greeter->respond(passwd);
-}
-
 void GreeterWorker::saveNumlockStatus(std::shared_ptr<User> user, const bool &on)
 {
     UserNumlockSettings(user->name()).set(on);
@@ -765,5 +762,4 @@ void GreeterWorker::restartResetSessionTimer()
 void GreeterWorker::startGreeterAuth(const QString &account)
 {
     m_greeter->authenticate(account);
-    m_haveRespondedToLightdm = false;
 }

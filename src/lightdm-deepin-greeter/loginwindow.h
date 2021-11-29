@@ -52,9 +52,6 @@ signals:
     void requestEndAuthentication(const QString &account, const int authType);
     void authFinished();
     void requestCheckAccount(const QString &account);
-    void requestShowPrompt(const QString &prompt);
-    void requestShowMessage(const QString &message);
-    void respondPasswd(const QString& );
 
 protected:
     void showEvent(QShowEvent *event) override;

@@ -197,7 +197,8 @@ void SFAWidget::setAuthType(const int type)
             ++iter;
         }
 
-        if (m_lastAuth) {
+        // 需要判断一下上次验证成功的类型是否还有效；由于上面使用deleteLater析构对象，无法只通过对象是否为空来判断
+        if (m_lastAuth && (type & m_lastAuth->authType())) {
             emit requestStartAuthentication(m_user->name(), m_lastAuth->authType());
         } else {
             m_chooesAuthButtonBox->button(m_authButtons.firstKey())->setChecked(true);
@@ -273,6 +274,7 @@ void SFAWidget::setAuthStatus(const int type, const int status, const QString &m
         break;
     case AT_All:
         // 等所有类型验证通过的时候在发送验证完成信息，否则DA的验证结果可能还没有刷新，导致lightdm调用pam验证失败
+        // 人脸和虹膜是手动点击解锁按钮后发送，无需处理
         if ((m_passwordAuth && AS_Success == m_passwordAuth->authStatus())
                 || (m_ukeyAuth && AS_Success == m_ukeyAuth->authStatus())
                 || (m_fingerprintAuth && AS_Success == m_fingerprintAuth->authStatus()))
@@ -337,9 +339,9 @@ void SFAWidget::initSingleAuth()
 
     /* 重置密码可见性数据同步 */
     std::function<void(QVariant)> resetPasswordVisibleChanged = std::bind(&SFAWidget::syncSingleResetPasswordVisibleChanged, this, std::placeholders::_1);
-    registerSyncFunctions("ResetPasswordVisible", resetPasswordVisibleChanged);
+    registerSyncFunctions("SingleResetPasswordVisible", resetPasswordVisibleChanged);
     connect(m_singleAuth, &AuthSingle::resetPasswordMessageVisibleChanged, this, [ this ] (const bool value) {
-        m_frameDataBind->updateValue("ResetPasswordVisible", value);
+        m_frameDataBind->updateValue("SingleResetPasswordVisible", value);
     });
 
     m_singleAuth->setKeyboardButtonVisible(m_keyboardList.size() > 1 ? true : false);
@@ -667,7 +669,9 @@ void SFAWidget::checkAuthResult(const int type, const int status)
  */
 void SFAWidget::syncAuthType(const QVariant &value)
 {
-    m_chooesAuthButtonBox->button(value.toInt())->setChecked(true);
+    QAbstractButton *btn = m_chooesAuthButtonBox->button(value.toInt());
+    if (btn)
+        btn->setChecked(true);
 }
 
 void SFAWidget::resizeEvent(QResizeEvent *event)

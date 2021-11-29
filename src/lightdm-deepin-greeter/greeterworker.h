@@ -47,7 +47,6 @@ public slots:
     void restartResetSessionTimer();
     void onAuthFinished();
     void handleAuthStatusChanged(const int type, const int status, const QString &message);
-    void onPasswdRespond(const QString &passwd);
 
 private:
     void initConnections();
@@ -73,7 +72,7 @@ private:
     QTimer *m_limitsUpdateTimer;
     QString m_account;
     QString m_password;
-    bool m_haveRespondedToLightdm;
+    bool m_retryAuth;
 };
 
 #endif  // GREETERWORKEK_H
