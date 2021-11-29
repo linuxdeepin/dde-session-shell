@@ -110,7 +110,7 @@ void SessionBaseModel::setUserListSize(int users_size)
 void SessionBaseModel::setHasVirtualKB(bool hasVirtualKB)
 {
     //锁屏显示时，加载初始化屏幕键盘onboard进程，锁屏完成后结束onboard进程
-    if (hasVirtualKB) {
+    if (hasVirtualKB && !qgetenv("XDG_SESSION_TYPE").contains("wayland")) {
         bool b = QProcess::execute("which", QStringList() << "onboard") == 0;
         emit hasVirtualKBChanged(b);
     } else {
