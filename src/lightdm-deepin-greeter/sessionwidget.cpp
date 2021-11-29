@@ -51,13 +51,19 @@ const QString session_standard_icon_name(const QString &realName)
         "gnome",
         "plasma",
         "ubuntu",
-        "xfce"
+        "xfce",
+        "wayland"
     };
 
-    for (const auto &name : standard_icon_list)
-        if (realName.contains(name, Qt::CaseInsensitive))
-            return name;
-
+    for (const auto &name : standard_icon_list) {
+        if (realName.contains(name, Qt::CaseInsensitive)) {
+            if (realName == "deepin") {
+                return "x11";
+            } else {
+                return name;
+            }
+        }
+    }
     return QStringLiteral("unknown");
 }
 
@@ -305,7 +311,12 @@ void SessionWidget::loadSessionList()
         const QString checkedIcon = QString(":/img/sessions_icon/%1_press.svg").arg(session_icon);
 
         qDebug() << "found session: " << session_name << session_icon;
-        RoundItemButton *sbtn = new RoundItemButton(session_name, this);
+        RoundItemButton *sbtn = nullptr;
+        if (session_name == "deepin") {
+            sbtn = new RoundItemButton("X11", this);
+        } else {
+            sbtn = new RoundItemButton(session_name, this);
+        }
         sbtn->setAccessibleName("RoundItemButton");
         sbtn->setFixedSize(SessionButtonWidth, SessionButtonHeight);
         sbtn->setAutoExclusive(true);

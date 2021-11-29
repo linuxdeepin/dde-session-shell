@@ -422,11 +422,18 @@ void ControlWidget::chooseToSession(const QString &session)
             return;
 
         m_sessionTip->setText(session);
+        if (session == "deepin") {
+            m_sessionTip->setText("X11");
+        }
+
         m_sessionTip->adjustSize();
         //当session长度改变时，应该移到它的width来隐藏
         m_sessionTip->move(m_sessionTip->size().width() + 1, 0);
         const QString sessionId = session.toLower();
-        const QString normalIcon = QString(":/img/sessions/%1_indicator_normal.svg").arg(sessionId);
+        QString normalIcon = QString(":/img/sessions/%1_indicator_normal.svg").arg(sessionId);
+        if (sessionId == "deepin") {
+            normalIcon = QString(":/img/sessions/%1_indicator_normal.svg").arg("x11");
+        }
 
         if (QFile(normalIcon).exists()) {
 #ifndef SHENWEI_PLATFORM

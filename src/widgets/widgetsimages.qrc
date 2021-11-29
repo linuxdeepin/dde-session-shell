@@ -26,6 +26,12 @@
         <file>img/sessions_icon/xfce_hover.svg</file>
         <file>img/sessions_icon/xfce_normal.svg</file>
         <file>img/sessions_icon/xfce_press.svg</file>
+        <file>img/sessions_icon/wayland_hover.svg</file>
+        <file>img/sessions_icon/wayland_normal.svg</file>
+        <file>img/sessions_icon/wayland_press.svg</file>
+        <file>img/sessions_icon/x11_hover.svg</file>
+        <file>img/sessions_icon/x11_normal.svg</file>
+        <file>img/sessions_icon/x11_press.svg</file>
         <file>img/action_icons/reboot_hover.svg</file>
         <file>img/action_icons/reboot_normal.svg</file>
         <file>img/action_icons/reboot_press.svg</file>
@@ -62,6 +68,8 @@
         <file>img/sessions/xfce_indicator_hover.svg</file>
         <file>img/sessions/xfce_indicator_normal.svg</file>
         <file>img/sessions/xfce_indicator_press.svg</file>
+        <file>img/sessions/wayland_indicator_normal.svg</file>
+        <file>img/sessions/x11_indicator_normal.svg</file>
         <file>img/mpris/mute_hover.svg</file>
         <file>img/mpris/mute_normal.svg</file>
         <file>img/mpris/mute_press.svg</file>
