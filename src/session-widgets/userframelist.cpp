@@ -177,6 +177,7 @@ void UserFrameList::onUserClicked()
             m_loginWidgets[i]->setFastSelected(false);
         }
     }
+    emit clicked();
     emit requestSwitchUser(m_model->findUserByUid(widget->uid()));
 }
 

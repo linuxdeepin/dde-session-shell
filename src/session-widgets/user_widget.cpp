@@ -96,6 +96,7 @@ void UserWidget::initConnections()
     connect(m_user.get(), &User::displayNameChanged, this, &UserWidget::setName);
     connect(m_user.get(), &User::loginStatusChanged, this, &UserWidget::setLoginStatus);
     connect(qGuiApp, &QGuiApplication::fontChanged, this, &UserWidget::setNameFont);
+    connect(m_avatar, &UserAvatar::clicked, this, &UserWidget::clicked);
 }
 
 /**
