@@ -25,5 +25,5 @@ void UT_KbLayoutWidget::TearDown()
 
 TEST_F(UT_KbLayoutWidget, BasicTest)
 {
-    m_kbLayoutWidget->updateButtonList(QStringList());
+    m_kbLayoutWidget->initData(QStringList());
 }

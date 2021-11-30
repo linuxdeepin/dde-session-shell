@@ -138,7 +138,9 @@ public slots:
     void rightKeySwitch();
     void setKBLayoutVisible();
     void setKeyboardType(const QString& str);
-    void setKeyboardTypeList(const QStringList& str);
+    void setKeyboardList(const QStringList& str);
+    void onItemClicked(const QString& str);
+    void resizeArrowWidget();
 
 protected:
     bool eventFilter(QObject *watched, QEvent *event) Q_DECL_OVERRIDE;
@@ -170,11 +172,12 @@ private:
     QMenu *m_contextMenu;
     DArrowRectangle *m_tipsWidget;
     const SessionBaseModel *m_model;
-    QList<QMetaObject::Connection> m_connectionList;
 
     DArrowRectangle *m_arrowRectWidget;
     KBLayoutListView *m_kbLayoutListView;   // 键盘布局列表
     DFloatingButton *m_keyboardBtn;         // 键盘布局按钮
+    std::shared_ptr<User> m_curUser;
+    QList<QMetaObject::Connection> m_connectionList;
 };
 
 #endif // CONTROLWIDGET_H

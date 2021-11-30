@@ -42,17 +42,21 @@ public:
     KBLayoutListView(const QString &language = QString(), QWidget *parent = nullptr);
     ~KBLayoutListView() override;
 
+    void initData(const QStringList &buttons);
+    void updateList(const QString &str);
+
 signals:
     void itemClicked(const QString &str);
+    void sizeChange();
 
 public slots:
-    void updateButtonList(const QStringList &buttons);
     void onItemClick(const QModelIndex &index);
 
 private:
     void initUI();
-    void updateButtonState(const QString &name);
+    void updateSelectState(const QString &name);
     void addItem(const QString &name);
+    void resizeEvent(QResizeEvent *event) override;
 
 private:
     QStringList m_buttons;
@@ -61,5 +65,6 @@ private:
 
     QStandardItemModel *m_buttonModel;
     QString m_curLanguage;
+    bool m_clickState;
 };
 #endif // KBLAYOUTLISTVIEW

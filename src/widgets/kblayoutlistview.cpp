@@ -31,12 +31,37 @@ KBLayoutListView::KBLayoutListView(const QString &language, QWidget *parent)
     , m_xkbParse(new XkbParser(this))
     , m_buttonModel(new QStandardItemModel(this))
     , m_curLanguage(language)
+    , m_clickState(false)
 {
     initUI();
 }
 
 KBLayoutListView::~KBLayoutListView()
 {
+}
+
+void KBLayoutListView::initData(const QStringList &buttons)
+{
+    if (buttons == m_buttons)
+        return;
+
+    m_buttons = buttons;
+    m_kbdParseList = m_xkbParse->lookUpKeyboardList(m_buttons);
+
+    if (m_kbdParseList.isEmpty())
+        m_kbdParseList = buttons;
+
+    // 获取当前输入法名称-全名,而不是简写的英文字符串
+    if (!m_xkbParse->lookUpKeyboardList(QStringList(m_curLanguage)).isEmpty())
+        m_curLanguage = m_xkbParse->lookUpKeyboardList(QStringList(m_curLanguage)).at(0);
+
+    m_buttonModel->clear();
+
+    resize(width(), DDESESSIONCC::LAYOUTBUTTON_HEIGHT * m_kbdParseList.count());
+    for (int i = 0; i < m_kbdParseList.size(); i++)
+        addItem(m_kbdParseList[i]);
+
+    updateSelectState(m_curLanguage);
 }
 
 void KBLayoutListView::initUI()
@@ -65,7 +90,7 @@ void KBLayoutListView::initUI()
     connect(this, &KBLayoutListView::clicked, this, &KBLayoutListView::onItemClick);
 }
 
-void KBLayoutListView::updateButtonState(const QString &name)
+void KBLayoutListView::updateSelectState(const QString &name)
 {
     for (int i = 0; i < m_buttonModel->rowCount(); i++) {
         auto item = static_cast<DStandardItem *>(m_buttonModel->item(i));
@@ -81,41 +106,34 @@ void KBLayoutListView::updateButtonState(const QString &name)
         setCurrentIndex(item->index());
         update(item->index());
 
+        // 告知外部,更新当前输入法显示内容
         QString kbd = m_buttons[m_kbdParseList.indexOf(name)];
-        emit itemClicked(kbd);
+        if (m_clickState)
+            emit itemClicked(kbd);
     }
 }
 
-void KBLayoutListView::updateButtonList(const QStringList &buttons)
+/**选中当前输入法
+ * @brief KBLayoutListView::updateList
+ * @param str
+ */
+void KBLayoutListView::updateList(const QString &str)
 {
-    if (buttons == m_buttons)
-        return;
+    if (!m_xkbParse->lookUpKeyboardList(QStringList(str)).isEmpty())
+        m_curLanguage = m_xkbParse->lookUpKeyboardList(QStringList(str)).at(0);
 
-    m_buttons = buttons;
-    m_kbdParseList = m_xkbParse->lookUpKeyboardList(m_buttons);
-
-    if (m_kbdParseList.isEmpty())
-        m_kbdParseList = buttons;
-
-    // 获取当前输入法名称-全名,而不是简写的英文字符串
-    if (!m_xkbParse->lookUpKeyboardList(QStringList(m_curLanguage)).isEmpty())
-        m_curLanguage = m_xkbParse->lookUpKeyboardList(QStringList(m_curLanguage)).at(0);
-
-    m_buttonModel->clear();
-
-    for (int i = 0; i < m_kbdParseList.size(); i++)
-        addItem(m_kbdParseList[i]);
-
-    updateButtonState(m_curLanguage);
-
-    resize(width(), DDESESSIONCC::LAYOUTBUTTON_HEIGHT * m_kbdParseList.count());
+    m_clickState = false;
+    updateSelectState(m_curLanguage);
 }
 
 void KBLayoutListView::onItemClick(const QModelIndex &index)
 {
     const QString &name = index.data().toString();
     m_curLanguage = name;
-    updateButtonState(name);
+    m_clickState = true;
+
+    // 更新选中状态
+    updateSelectState(name);
 }
 
 void KBLayoutListView::addItem(const QString &name)
@@ -134,4 +152,10 @@ void KBLayoutListView::addItem(const QString &name)
     leftAction->setIcon(icon);
     item->setActionList(Qt::Edge::LeftEdge, { leftAction });
     m_buttonModel->appendRow(item);
+}
+
+void KBLayoutListView::resizeEvent(QResizeEvent *event)
+{
+    emit sizeChange();
+    DListView::resizeEvent(event);
 }
