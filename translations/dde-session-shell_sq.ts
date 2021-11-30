@@ -18,12 +18,12 @@
         <translation>Verifikimi dështoi, edhe një provë</translation>
     </message>
     <message>
-        <source>Verify your FaceID</source>
-        <translation>Verifikoni FaceID-në tuaj</translation>
+        <source>Verify your Face ID</source>
+        <translation>Verifikoni Face ID-në tuaj</translation>
     </message>
     <message>
-        <source>FaceID locked, use password please</source>
-        <translation>FaceID e kyçur, ju lutemi, përdorni fjalëkalimin</translation>
+        <source>Face ID locked, use password please</source>
+        <translation>Face ID e kyçur, ju lutemi, përdorni fjalëkalim</translation>
     </message>
     <message numerus="yes">
         <source>Please try again %n minute(s) later</source>
@@ -80,12 +80,12 @@
         <translation>Verifikimi dështoi, edhe një provë</translation>
     </message>
     <message>
-        <source>Verify your IrisID</source>
-        <translation>Verifikoni IrisID-në tuaj</translation>
+        <source>Verify your Iris ID</source>
+        <translation>Verifikoni Iris ID-në tuaj</translation>
     </message>
     <message>
-        <source>IrisID locked, use password please</source>
-        <translation>IrisID e kyçur, ju lutemi, përdorni fjalëkalimin</translation>
+        <source>Iris ID locked, use password please</source>
+        <translation>Iris ID e kyçur, ju lutemi, përdorni fjalëkalimin</translation>
     </message>
     <message numerus="yes">
         <source>Please try again %n minute(s) later</source>
@@ -128,11 +128,11 @@
     </message>
     <message>
         <source>Reset Password</source>
-        <translation type="unfinished"/>
+        <translation>Ricaktoni Fjalëkalimin</translation>
     </message>
     <message>
         <source>Forgot password?</source>
-        <translation type="unfinished"/>
+        <translation>Harruat fjalëkalimin?</translation>
     </message>
 </context>
 <context>
@@ -147,11 +147,11 @@
     </message>
     <message>
         <source>Reset Password</source>
-        <translation type="unfinished"/>
+        <translation>Ricaktoni Fjalëkalimin</translation>
     </message>
     <message>
         <source>Forgot password?</source>
-        <translation type="unfinished"/>
+        <translation>Harruat fjalëkalimin?</translation>
     </message>
 </context>
 <context>
@@ -209,65 +209,14 @@
     </message>
 </context>
 <context>
-    <name>AuthenticationModule</name>
-    <message>
-        <source>Verification successful</source>
-        <translation>Verifikim i suksesshëm</translation>
-    </message>
-    <message numerus="yes">
-        <source>Verification failed, %n chances left</source>
-        <translation><numerusform>Verifikimi dështoi, edhe %n provë</numerusform><numerusform>Verifikimi dështoi, edhe %n prova</numerusform></translation>
-    </message>
-    <message>
-        <source>Verification failed, only one chance left</source>
-        <translation>Verifikimi dështoi, edhe një provë</translation>
-    </message>
-    <message>
-        <source>Wrong Password</source>
-        <translation>Fjalëkalim i Gabuar</translation>
-    </message>
-    <message>
-        <source>Wrong PIN</source>
-        <translation>PIN i Gabuar</translation>
-    </message>
-    <message>
-        <source>UKey is required</source>
-        <translation>Lypset UKey</translation>
-    </message>
-    <message>
-        <source>Verify your fingerprint</source>
-        <translation>Verifikoni shenjat tuaja të gishtave</translation>
-    </message>
-    <message>
-        <source>Password</source>
-        <translation>Fjalëkalim</translation>
-    </message>
-    <message>
-        <source>Enter your PIN</source>
-        <translation>Jepni PIN-in tuaj</translation>
-    </message>
-    <message>
-        <source>Fingerprint locked, use password please</source>
-        <translation>Shenja gishti të kyçura, ju lutemi, përdorni fjalëkalim</translation>
-    </message>
-    <message>
-        <source>Please try again 1 minute later</source>
-        <translation>Ju lutemi, riprovoni pas 1 minute</translation>
-    </message>
-    <message numerus="yes">
-        <source>Please try again %n minutes later</source>
-        <translation><numerusform>Ju lutemi, riprovoni pas %n minute</numerusform><numerusform>Ju lutemi, riprovoni pas %n minutash</numerusform></translation>
-    </message>
-</context>
-<context>
-    <name>GreeterWorkek</name>
+    <name>GreeterWorker</name>
     <message>
         <source>Wrong account</source>
-        <translation>Llogari e gabuar</translation>
+        <translation type="unfinished"/>
     </message>
     <message>
         <source>Wrong Password</source>
-        <translation>Fjalëkalim i Gabuar</translation>
+        <translation type="unfinished"/>
     </message>
 </context>
 <context>
@@ -357,21 +306,6 @@
     </message>
 </context>
 <context>
-    <name>UserLoginWidget</name>
-    <message>
-        <source>Account</source>
-        <translation>Llogari</translation>
-    </message>
-    <message numerus="yes">
-        <source>Your password will expire in %n days, please change it timely</source>
-        <translation><numerusform>Fjalëkalimi juaj do të skadojë për %n ditë, ju lutemi, ndryshojeni në kohë</numerusform><numerusform>Fjalëkalimi juaj do të skadojë për %n ditë, ju lutemi, ndryshojeni në kohë</numerusform></translation>
-    </message>
-    <message>
-        <source>Password expired, please change</source>
-        <translation>Fjalëkalimi ndryshoi, ju lutemi, ndryshojeni</translation>
-    </message>
-</context>
-<context>
     <name>WarningContent</name>
     <message>
         <source>The programs are preventing the computer from shutting down, and forcing shut down may cause data loss.</source>
@@ -434,11 +368,11 @@
     <name>dss::module::NetworkModule</name>
     <message>
         <source>Turn on</source>
-        <translation type="unfinished"/>
+        <translation>Aktivizoje</translation>
     </message>
     <message>
         <source>Turn off</source>
-        <translation type="unfinished"/>
+        <translation>Çaktivizoje</translation>
     </message>
 </context>
 </TS>

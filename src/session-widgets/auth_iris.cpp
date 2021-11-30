@@ -137,14 +137,14 @@ void AuthIris::setAuthStatus(const int state, const QString &result)
         setAuthStatusStyle(isMFA() ? LOGIN_WAIT : AUTH_LOCK);
         break;
     case AuthCommon::AS_Started:
-        m_textLabel->setText(tr("Verify your IrisID"));
+        m_textLabel->setText(tr("Verify your Iris ID"));
         break;
     case AuthCommon::AS_Ended:
         break;
     case AuthCommon::AS_Locked:
         setAnimationStatus(false);
         setAuthStatusStyle(isMFA() ? LOGIN_LOCK : AUTH_LOCK);
-        m_textLabel->setText(tr("IrisID locked, use password please"));
+        m_textLabel->setText(tr("Iris ID locked, use password please"));
         m_showPrompt = true;
         if (DDESESSIONCC::SingleAuthFactor == m_authFactorType)
             emit retryButtonVisibleChanged(false);

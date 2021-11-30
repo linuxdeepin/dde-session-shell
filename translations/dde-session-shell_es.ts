@@ -1,5 +1,36 @@
 <?xml version="1.0" ?><!DOCTYPE TS><TS language="es" version="2.1">
 <context>
+    <name>AuthFace</name>
+    <message>
+        <source>Face ID</source>
+        <translation>Face ID</translation>
+    </message>
+    <message>
+        <source>Verification successful</source>
+        <translation>Verificación exitosa</translation>
+    </message>
+    <message numerus="yes">
+        <source>Verification failed, %n chances left</source>
+        <translation><numerusform>Verificación fallida, queda %n oportunidad</numerusform><numerusform>Verificación fallida, quedan %n oportunidades</numerusform></translation>
+    </message>
+    <message>
+        <source>Verification failed, only one chance left</source>
+        <translation>Verificación fallida, sólo queda una oportunidad</translation>
+    </message>
+    <message>
+        <source>Verify your Face ID</source>
+        <translation>Verifique su Face ID</translation>
+    </message>
+    <message>
+        <source>Face ID locked, use password please</source>
+        <translation>Face ID bloqueado, utilice la contraseña por favor</translation>
+    </message>
+    <message numerus="yes">
+        <source>Please try again %n minute(s) later</source>
+        <translation><numerusform>Por favor, inténtelo de nuevo %n minuto(s) más tarde</numerusform><numerusform>Por favor, inténtelo de nuevo %n minuto(s) más tarde</numerusform></translation>
+    </message>
+</context>
+<context>
     <name>AuthFingerprint</name>
     <message>
         <source>Verify your fingerprint</source>
@@ -11,7 +42,7 @@
     </message>
     <message numerus="yes">
         <source>Verification failed, %n chances left</source>
-        <translation><numerusform>La verificación falló, quedan %d intento</numerusform><numerusform>La verificación falló, quedan %d intentos</numerusform></translation>
+        <translation><numerusform>Verificación fallida, quedan %n oportunidades</numerusform><numerusform>Verificación fallida, quedan %n oportunidades</numerusform></translation>
     </message>
     <message>
         <source>Verification failed, only one chance left</source>
@@ -23,7 +54,42 @@
     </message>
     <message numerus="yes">
         <source>Please try again %n minute(s) later</source>
-        <translation><numerusform>Vuelva a intentarlo en %n minuto</numerusform><numerusform>Vuelva a intentarlo en %n minuto(s)</numerusform></translation>
+        <translation><numerusform>Por favor, inténtelo de nuevo %n minuto(s) más tarde</numerusform><numerusform>Por favor, inténtelo de nuevo %n minuto(s) más tarde</numerusform></translation>
+    </message>
+    <message>
+        <source>Please try again 1 minute later</source>
+        <translation>Por favor, inténtelo de nuevo 1 minuto más tarde</translation>
+    </message>
+</context>
+<context>
+    <name>AuthIris</name>
+    <message>
+        <source>Iris ID</source>
+        <translation>Iris ID</translation>
+    </message>
+    <message>
+        <source>Verification successful</source>
+        <translation>Verificación exitosa</translation>
+    </message>
+    <message numerus="yes">
+        <source>Verification failed, %n chances left</source>
+        <translation><numerusform>Verificación fallida, queda %n oportunidad</numerusform><numerusform>Verificación fallida, quedan %n oportunidades</numerusform></translation>
+    </message>
+    <message>
+        <source>Verification failed, only one chance left</source>
+        <translation>Verificación fallida, sólo queda una oportunidad</translation>
+    </message>
+    <message>
+        <source>Verify your Iris ID</source>
+        <translation>Verifique su Iris ID</translation>
+    </message>
+    <message>
+        <source>Iris ID locked, use password please</source>
+        <translation>Iris ID bloqueado, utilice la contraseña por favor</translation>
+    </message>
+    <message numerus="yes">
+        <source>Please try again %n minute(s) later</source>
+        <translation><numerusform>Por favor, inténtelo de nuevo %n minuto(s) más tarde</numerusform><numerusform>Por favor, inténtelo de nuevo %n minuto(s) más tarde</numerusform></translation>
     </message>
 </context>
 <context>
@@ -34,7 +100,7 @@
     </message>
     <message numerus="yes">
         <source>Verification failed, %n chances left</source>
-        <translation><numerusform>La verificación falló, quedan %d intentos</numerusform><numerusform>La verificación falló, quedan %d intentos</numerusform></translation>
+        <translation><numerusform>Verificación fallida, queda %n oportunidad</numerusform><numerusform>Verificación fallida, quedan %n oportunidades</numerusform></translation>
     </message>
     <message>
         <source>Verification failed, only one chance left</source>
@@ -50,7 +116,23 @@
     </message>
     <message numerus="yes">
         <source>Please try again %n minute(s) later</source>
-        <translation><numerusform>Vuelva a intentarlo en %n minutos</numerusform><numerusform>Vuelva a intentarlo en %n minuto(s)</numerusform></translation>
+        <translation><numerusform>Por favor, inténtelo de nuevo %n minuto(s) más tarde</numerusform><numerusform>Por favor, inténtelo de nuevo %n minuto(s) más tarde</numerusform></translation>
+    </message>
+    <message>
+        <source>Please try again 1 minute later</source>
+        <translation>Por favor, inténtelo de nuevo 1 minuto más tarde</translation>
+    </message>
+    <message numerus="yes">
+        <source>Please try again %n minutes later</source>
+        <translation><numerusform>Por favor, inténtelo de nuevo %n minutos más tarde</numerusform><numerusform>Por favor, inténtelo de nuevo %n minutos más tarde</numerusform></translation>
+    </message>
+    <message>
+        <source>Reset Password</source>
+        <translation>Restablecer contraseña</translation>
+    </message>
+    <message>
+        <source>Forgot password?</source>
+        <translation>¿Ha olvidado su contraseña?</translation>
     </message>
 </context>
 <context>
@@ -61,7 +143,15 @@
     </message>
     <message numerus="yes">
         <source>Please try again %n minutes later</source>
-        <translation type="unfinished"><numerusform></numerusform><numerusform></numerusform></translation>
+        <translation><numerusform>Por favor, inténtelo de nuevo %n minutos más tarde</numerusform><numerusform>Por favor, inténtelo de nuevo %n minutos más tarde</numerusform></translation>
+    </message>
+    <message>
+        <source>Reset Password</source>
+        <translation>Reestablecer contraseña</translation>
+    </message>
+    <message>
+        <source>Forgot password?</source>
+        <translation>¿Ha olvidado su contraseña?</translation>
     </message>
 </context>
 <context>
@@ -72,7 +162,7 @@
     </message>
     <message numerus="yes">
         <source>Verification failed, %n chances left</source>
-        <translation><numerusform>La verificación falló, quedan %d intentos</numerusform><numerusform>La verificación falló, quedan %d intentos</numerusform></translation>
+        <translation><numerusform>Verificación fallida, queda %n oportunidad</numerusform><numerusform>Verificación fallida, quedan %n oportunidades</numerusform></translation>
     </message>
     <message>
         <source>Verification failed, only one chance left</source>
@@ -92,7 +182,30 @@
     </message>
     <message numerus="yes">
         <source>Please try again %n minute(s) later</source>
-        <translation><numerusform>Vuelva a intentarlo en %n minuto</numerusform><numerusform>Vuelva a intentarlo en %n minuto(s)</numerusform></translation>
+        <translation><numerusform>Por favor, inténtelo de nuevo %n minuto(s) más tarde</numerusform><numerusform>Por favor, inténtelo de nuevo %n minuto(s) más tarde</numerusform></translation>
+    </message>
+    <message>
+        <source>Please try again 1 minute later</source>
+        <translation>Por favor, inténtelo de nuevo 1 minuto más tarde</translation>
+    </message>
+    <message numerus="yes">
+        <source>Please try again %n minutes later</source>
+        <translation><numerusform>Por favor, inténtelo de nuevo %n minutos más tarde</numerusform><numerusform>Por favor, inténtelo de nuevo %n minutos más tarde</numerusform></translation>
+    </message>
+</context>
+<context>
+    <name>AuthWidget</name>
+    <message>
+        <source>Account</source>
+        <translation>Cuenta</translation>
+    </message>
+    <message numerus="yes">
+        <source>Your password will expire in %n days, please change it timely</source>
+        <translation><numerusform>Su contraseña expirará en %n día, por favor, cámbiela a tiempo</numerusform><numerusform>Su contraseña expirará en %n días, por favor, cámbiela a tiempo</numerusform></translation>
+    </message>
+    <message>
+        <source>Password expired, please change</source>
+        <translation>La contraseña ha caducado, por favor, cámbiela</translation>
     </message>
 </context>
 <context>
@@ -103,7 +216,7 @@
     </message>
     <message numerus="yes">
         <source>Verification failed, %n chances left</source>
-        <translation><numerusform>La verificación falló, quedan %d intentos</numerusform><numerusform>La verificación falló, quedan %d intentos</numerusform></translation>
+        <translation><numerusform>Verificación fallida, queda %n oportunidad</numerusform><numerusform>Verificación fallida, quedan %n oportunidades</numerusform></translation>
     </message>
     <message>
         <source>Verification failed, only one chance left</source>
@@ -143,78 +256,7 @@
     </message>
     <message numerus="yes">
         <source>Please try again %n minutes later</source>
-        <translation type="unfinished"><numerusform></numerusform><numerusform></numerusform></translation>
-    </message>
-</context>
-<context>
-    <name>ContentWidget</name>
-    <message>
-        <source>The programs are preventing the computer from shutting down, and forcing shut down may cause data loss.</source>
-        <translation>Una o más aplicaciones aún están abiertas y evitan que el equipo se apague.</translation>
-    </message>
-    <message>
-        <source>To close the program, click Cancel, and then close the program.</source>
-        <translation>Haga clic en Cancelar para cerrarlas correctamente.</translation>
-    </message>
-    <message>
-        <source>The programs are preventing the computer from reboot, and forcing reboot may cause data loss.</source>
-        <translation>Una o más aplicaciones aún están abiertas y evitan que el equipo se reinicie.</translation>
-    </message>
-    <message>
-        <source>The programs are preventing the computer from suspend, and forcing suspend may cause data loss.</source>
-        <translation>Una o más aplicaciones aún están abiertas y evitan que el equipo se suspenda.</translation>
-    </message>
-    <message>
-        <source>The programs are preventing the computer from hibernate, and forcing hibernate may cause data loss.</source>
-        <translation>Una o más aplicaciones aún están abiertas y evitan que el equipo hiberne.</translation>
-    </message>
-    <message>
-        <source>The programs are preventing the computer from log out, and forcing log out may cause data loss.</source>
-        <translation>Una o más aplicaciones aún están abiertas y evitan que el equipo cierre sesión.</translation>
-    </message>
-    <message>
-        <source>Shut down</source>
-        <translation>Apagar</translation>
-    </message>
-    <message>
-        <source>Reboot</source>
-        <translation>Reiniciar</translation>
-    </message>
-    <message>
-        <source>Suspend</source>
-        <translation>Suspender</translation>
-    </message>
-    <message>
-        <source>Hibernate</source>
-        <translation>Hibernar</translation>
-    </message>
-    <message>
-        <source>Log out</source>
-        <translation>Cerrar sesión</translation>
-    </message>
-    <message>
-        <source>Are you sure you want to shut down?</source>
-        <translation>¿Seguro que desea apagar?</translation>
-    </message>
-    <message>
-        <source>Are you sure you want to reboot?</source>
-        <translation>¿Seguro que desea reiniciar?</translation>
-    </message>
-    <message>
-        <source>Are you sure you want to log out?</source>
-        <translation>¿Seguro que desea cerrar sesión?</translation>
-    </message>
-    <message>
-        <source>Lock</source>
-        <translation>Bloquear</translation>
-    </message>
-    <message>
-        <source>Switch user</source>
-        <translation>Cambiar de usuario</translation>
-    </message>
-    <message>
-        <source>Switch system</source>
-        <translation>Cambiar de sistema</translation>
+        <translation><numerusform>Por favor, inténtelo de nuevo %n minutos más tarde</numerusform><numerusform>Por favor, inténtelo de nuevo %n minutos más tarde</numerusform></translation>
     </message>
 </context>
 <context>
@@ -320,17 +362,13 @@
         <source>Account</source>
         <translation>Cuenta</translation>
     </message>
-    <message>
-        <source>Verify your fingerprint</source>
-        <translation>Verifique su huella dactilar</translation>
-    </message>
     <message numerus="yes">
         <source>Your password will expire in %n days, please change it timely</source>
-        <translation type="unfinished"><numerusform></numerusform><numerusform></numerusform></translation>
+        <translation><numerusform>Su contraseña expirará en %n días, por favor, cámbiela a tiempo</numerusform><numerusform>Su contraseña expirará en %n días, por favor, cámbiela a tiempo</numerusform></translation>
     </message>
     <message>
         <source>Password expired, please change</source>
-        <translation type="unfinished"/>
+        <translation>La contraseña ha caducado, por favor cámbiela</translation>
     </message>
 </context>
 <context>
@@ -390,6 +428,17 @@
     <message>
         <source>Are you sure you want to log out?</source>
         <translation>¿Seguro que desea cerrar sesión?</translation>
+    </message>
+</context>
+<context>
+    <name>dss::module::NetworkModule</name>
+    <message>
+        <source>Turn on</source>
+        <translation>Activar</translation>
+    </message>
+    <message>
+        <source>Turn off</source>
+        <translation>Desactivar</translation>
     </message>
 </context>
 </TS>

@@ -18,12 +18,12 @@
         <translation>Verifica fallita, un solo tentativo rimanente</translation>
     </message>
     <message>
-        <source>Verify your FaceID</source>
-        <translation>Verifica con FaceID</translation>
+        <source>Verify your Face ID</source>
+        <translation type="unfinished"/>
     </message>
     <message>
-        <source>FaceID locked, use password please</source>
-        <translation>FaceID bloccato, utilizza la password per cortesia</translation>
+        <source>Face ID locked, use password please</source>
+        <translation type="unfinished"/>
     </message>
     <message numerus="yes">
         <source>Please try again %n minute(s) later</source>
@@ -80,12 +80,12 @@
         <translation>Verifica fallita, un solo tentativo rimanente</translation>
     </message>
     <message>
-        <source>Verify your IrisID</source>
-        <translation>Verifica con Iris ID</translation>
+        <source>Verify your Iris ID</source>
+        <translation type="unfinished"/>
     </message>
     <message>
-        <source>IrisID locked, use password please</source>
-        <translation>Iris ID bloccato, utilizza la password per cortesia</translation>
+        <source>Iris ID locked, use password please</source>
+        <translation type="unfinished"/>
     </message>
     <message numerus="yes">
         <source>Please try again %n minute(s) later</source>
@@ -209,65 +209,14 @@
     </message>
 </context>
 <context>
-    <name>AuthenticationModule</name>
-    <message>
-        <source>Verification successful</source>
-        <translation>Verifica completata con successo</translation>
-    </message>
-    <message numerus="yes">
-        <source>Verification failed, %n chances left</source>
-        <translation><numerusform>Verifica fallita, %n tentativi rimanenti</numerusform><numerusform>Verifica fallita, %n tentativi rimanenti</numerusform></translation>
-    </message>
-    <message>
-        <source>Verification failed, only one chance left</source>
-        <translation>Verifica fallita, un solo tentativo rimanente</translation>
-    </message>
-    <message>
-        <source>Wrong Password</source>
-        <translation>Password errata</translation>
-    </message>
-    <message>
-        <source>Wrong PIN</source>
-        <translation>PIN errato</translation>
-    </message>
-    <message>
-        <source>UKey is required</source>
-        <translation>UKey richiesta</translation>
-    </message>
-    <message>
-        <source>Verify your fingerprint</source>
-        <translation>Verifica la tua impronta digitale</translation>
-    </message>
-    <message>
-        <source>Password</source>
-        <translation>Password</translation>
-    </message>
-    <message>
-        <source>Enter your PIN</source>
-        <translation>Inserisci il PIN</translation>
-    </message>
-    <message>
-        <source>Fingerprint locked, use password please</source>
-        <translation>Sblocco con impronta bloccato, utilizza la password</translation>
-    </message>
-    <message>
-        <source>Please try again 1 minute later</source>
-        <translation>Riprova tra 1 minuto</translation>
-    </message>
-    <message numerus="yes">
-        <source>Please try again %n minutes later</source>
-        <translation><numerusform>Riprova tra %n minuti</numerusform><numerusform>Riprova tra %n minuti</numerusform></translation>
-    </message>
-</context>
-<context>
-    <name>GreeterWorkek</name>
+    <name>GreeterWorker</name>
     <message>
         <source>Wrong account</source>
-        <translation>Account errato</translation>
+        <translation type="unfinished"/>
     </message>
     <message>
         <source>Wrong Password</source>
-        <translation>Password errata</translation>
+        <translation type="unfinished"/>
     </message>
 </context>
 <context>
@@ -354,21 +303,6 @@
     <message>
         <source>Start system monitor</source>
         <translation>Avvia il System Monitor</translation>
-    </message>
-</context>
-<context>
-    <name>UserLoginWidget</name>
-    <message>
-        <source>Account</source>
-        <translation>Account</translation>
-    </message>
-    <message numerus="yes">
-        <source>Your password will expire in %n days, please change it timely</source>
-        <translation><numerusform>La tua password scadrà in %n giorni, ricordati di sostituirla</numerusform><numerusform>La tua password scadrà in %n giorni, ricordati di sostituirla</numerusform></translation>
-    </message>
-    <message>
-        <source>Password expired, please change</source>
-        <translation>Password scaduta, cambiala per cortesia</translation>
     </message>
 </context>
 <context>

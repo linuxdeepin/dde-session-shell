@@ -18,12 +18,12 @@
         <translation>Doğrulama alınmadı, yalnız bir cəhd qaldı</translation>
     </message>
     <message>
-        <source>Verify your FaceID</source>
-        <translation>FaceİD ilə doğrulamaq</translation>
+        <source>Verify your Face ID</source>
+        <translation>Face İD-nizi doğrulayın</translation>
     </message>
     <message>
-        <source>FaceID locked, use password please</source>
-        <translation>FaceİD kilidləndi, şifrəni istifadə edin</translation>
+        <source>Face ID locked, use password please</source>
+        <translation>Face İD kilidləndi, lütfən şifrədən istifadə edin</translation>
     </message>
     <message numerus="yes">
         <source>Please try again %n minute(s) later</source>
@@ -80,12 +80,12 @@
         <translation>Doğrulama alınmadı, yalnız bir cəhd qaldı</translation>
     </message>
     <message>
-        <source>Verify your IrisID</source>
-        <translation>IrisID-nizi doğrulayın</translation>
+        <source>Verify your Iris ID</source>
+        <translation>Iris ID-nizi doğrulayın</translation>
     </message>
     <message>
-        <source>IrisID locked, use password please</source>
-        <translation>İrisİD kilidləndi, şifrəni istifadə edin</translation>
+        <source>Iris ID locked, use password please</source>
+        <translation>İris İD kilidləndi, lütfən şifrədən istifadə edin</translation>
     </message>
     <message numerus="yes">
         <source>Please try again %n minute(s) later</source>
@@ -128,11 +128,11 @@
     </message>
     <message>
         <source>Reset Password</source>
-        <translation type="unfinished"/>
+        <translation>Şifrəni sıfırlayın</translation>
     </message>
     <message>
         <source>Forgot password?</source>
-        <translation type="unfinished"/>
+        <translation>Şifrəni unutmusunuz?</translation>
     </message>
 </context>
 <context>
@@ -147,11 +147,11 @@
     </message>
     <message>
         <source>Reset Password</source>
-        <translation type="unfinished"/>
+        <translation>Şifrəni sıfırlayın</translation>
     </message>
     <message>
         <source>Forgot password?</source>
-        <translation type="unfinished"/>
+        <translation>Şifrəni unutmusunuz?</translation>
     </message>
 </context>
 <context>
@@ -209,65 +209,14 @@
     </message>
 </context>
 <context>
-    <name>AuthenticationModule</name>
-    <message>
-        <source>Verification successful</source>
-        <translation>Doğrulama uğurlu oldu</translation>
-    </message>
-    <message numerus="yes">
-        <source>Verification failed, %n chances left</source>
-        <translation><numerusform>Doğrulana bilmədi, %n cəhd qaldı</numerusform><numerusform>Doğrulana bilmədi, %n cəhd qaldı</numerusform></translation>
-    </message>
-    <message>
-        <source>Verification failed, only one chance left</source>
-        <translation>Doğrulama alınmadı, yalnız bir cəhd qaldı</translation>
-    </message>
-    <message>
-        <source>Wrong Password</source>
-        <translation>Yanlış Şifrə</translation>
-    </message>
-    <message>
-        <source>Wrong PIN</source>
-        <translation>PİN kod səhvdir`</translation>
-    </message>
-    <message>
-        <source>UKey is required</source>
-        <translation>UKey tələb olunur</translation>
-    </message>
-    <message>
-        <source>Verify your fingerprint</source>
-        <translation>Barmaq izinizi doğrulayın</translation>
-    </message>
-    <message>
-        <source>Password</source>
-        <translation>Şifrə</translation>
-    </message>
-    <message>
-        <source>Enter your PIN</source>
-        <translation>PİN kodunuzu daxil edin</translation>
-    </message>
-    <message>
-        <source>Fingerprint locked, use password please</source>
-        <translation>Barmaq izi kilidləndi, şifrədən istifadə edin</translation>
-    </message>
-    <message>
-        <source>Please try again 1 minute later</source>
-        <translation>Lütfən, 1 dəqiqə sonra cəhd edin</translation>
-    </message>
-    <message numerus="yes">
-        <source>Please try again %n minutes later</source>
-        <translation><numerusform>Lütfən %n dəqiqə sonra cəhd edin</numerusform><numerusform>Lütfən %n dəqiqə sonra cəhd edin</numerusform></translation>
-    </message>
-</context>
-<context>
-    <name>GreeterWorkek</name>
+    <name>GreeterWorker</name>
     <message>
         <source>Wrong account</source>
-        <translation>Səhv istifadəçi hesabı</translation>
+        <translation type="unfinished"/>
     </message>
     <message>
         <source>Wrong Password</source>
-        <translation>Yanlış Şifrə</translation>
+        <translation type="unfinished"/>
     </message>
 </context>
 <context>
@@ -357,21 +306,6 @@
     </message>
 </context>
 <context>
-    <name>UserLoginWidget</name>
-    <message>
-        <source>Account</source>
-        <translation>İstifadəçi hesabı</translation>
-    </message>
-    <message numerus="yes">
-        <source>Your password will expire in %n days, please change it timely</source>
-        <translation><numerusform>Şifrənizin vaxtı %n gün sonra bitəcəkdir, lütfən onu vaxtında dəyişin</numerusform><numerusform>Şifrənizin vaxtı %n gün sonra bitəcəkdir, lütfən onu vaxtında dəyişin</numerusform></translation>
-    </message>
-    <message>
-        <source>Password expired, please change</source>
-        <translation>Şifrənin vaxtı bitib, lütfən onu dəyişin</translation>
-    </message>
-</context>
-<context>
     <name>WarningContent</name>
     <message>
         <source>The programs are preventing the computer from shutting down, and forcing shut down may cause data loss.</source>
@@ -434,11 +368,11 @@
     <name>dss::module::NetworkModule</name>
     <message>
         <source>Turn on</source>
-        <translation type="unfinished"/>
+        <translation>Açmaq</translation>
     </message>
     <message>
         <source>Turn off</source>
-        <translation type="unfinished"/>
+        <translation>Söndürmək</translation>
     </message>
 </context>
 </TS>

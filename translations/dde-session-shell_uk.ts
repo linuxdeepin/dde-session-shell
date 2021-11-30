@@ -18,12 +18,12 @@
         <translation>Перевірку не пройдено. Лишилася лише одна спроба.</translation>
     </message>
     <message>
-        <source>Verify your FaceID</source>
-        <translation>Перевірет ваш FaceID</translation>
+        <source>Verify your Face ID</source>
+        <translation>Перевірте ваш ідентифікатор обличчя</translation>
     </message>
     <message>
-        <source>FaceID locked, use password please</source>
-        <translation>FaceID заблоковано. Скористайтеся, будь ласка, паролем</translation>
+        <source>Face ID locked, use password please</source>
+        <translation>Ідентифікатор обличчя заблоковано. Скористайтеся, будь ласка, паролем</translation>
     </message>
     <message numerus="yes">
         <source>Please try again %n minute(s) later</source>
@@ -80,12 +80,12 @@
         <translation>Перевірку не пройдено. Лишилася лише одна спроба.</translation>
     </message>
     <message>
-        <source>Verify your IrisID</source>
-        <translation>Перевірте ваш IrisID</translation>
+        <source>Verify your Iris ID</source>
+        <translation>Перевірте ваш ідентифікатор райдужки</translation>
     </message>
     <message>
-        <source>IrisID locked, use password please</source>
-        <translation>IrisID заблоковано. Скористайтеся, будь ласка, паролем</translation>
+        <source>Iris ID locked, use password please</source>
+        <translation>Ідентифікатор райдужки заблоковано. Скористайтеся, будь ласка, паролем</translation>
     </message>
     <message numerus="yes">
         <source>Please try again %n minute(s) later</source>
@@ -128,11 +128,11 @@
     </message>
     <message>
         <source>Reset Password</source>
-        <translation type="unfinished"/>
+        <translation>Скинути пароль</translation>
     </message>
     <message>
         <source>Forgot password?</source>
-        <translation type="unfinished"/>
+        <translation>Забули пароль?</translation>
     </message>
 </context>
 <context>
@@ -147,11 +147,11 @@
     </message>
     <message>
         <source>Reset Password</source>
-        <translation type="unfinished"/>
+        <translation>Скинути пароль</translation>
     </message>
     <message>
         <source>Forgot password?</source>
-        <translation type="unfinished"/>
+        <translation>Забули пароль?</translation>
     </message>
 </context>
 <context>
@@ -209,65 +209,14 @@
     </message>
 </context>
 <context>
-    <name>AuthenticationModule</name>
-    <message>
-        <source>Verification successful</source>
-        <translation>Перевірку пройдено</translation>
-    </message>
-    <message numerus="yes">
-        <source>Verification failed, %n chances left</source>
-        <translation><numerusform>Перевірку не пройдено, лишилася %n спроба</numerusform><numerusform>Перевірку не пройдено, лишилася %n спроби</numerusform><numerusform>Перевірку не пройдено, лишилася %n спроб</numerusform><numerusform>Перевірку не пройдено, лишилася %n спроба</numerusform></translation>
-    </message>
-    <message>
-        <source>Verification failed, only one chance left</source>
-        <translation>Перевірку не пройдено. Лишилася одна спроба.</translation>
-    </message>
-    <message>
-        <source>Wrong Password</source>
-        <translation>Помилковий пароль</translation>
-    </message>
-    <message>
-        <source>Wrong PIN</source>
-        <translation>Помилковий пін-код</translation>
-    </message>
-    <message>
-        <source>UKey is required</source>
-        <translation>Потрібен UKey</translation>
-    </message>
-    <message>
-        <source>Verify your fingerprint</source>
-        <translation>Перевірити ваш відбиток</translation>
-    </message>
-    <message>
-        <source>Password</source>
-        <translation>Пароль</translation>
-    </message>
-    <message>
-        <source>Enter your PIN</source>
-        <translation>Введіть ваш пін-код</translation>
-    </message>
-    <message>
-        <source>Fingerprint locked, use password please</source>
-        <translation>Відбиток заблоковано. Будь ласка, скористайтеся паролем.</translation>
-    </message>
-    <message>
-        <source>Please try again 1 minute later</source>
-        <translation>Будь ласка, повторіть спробу за хвилину</translation>
-    </message>
-    <message numerus="yes">
-        <source>Please try again %n minutes later</source>
-        <translation><numerusform>Будь ласка, повторіть спробу за %n хвилину</numerusform><numerusform>Будь ласка, повторіть спробу за %n хвилини</numerusform><numerusform>Будь ласка, повторіть спробу за %n хвилин</numerusform><numerusform>Будь ласка, повторіть спробу за %n хвилину</numerusform></translation>
-    </message>
-</context>
-<context>
-    <name>GreeterWorkek</name>
+    <name>GreeterWorker</name>
     <message>
         <source>Wrong account</source>
-        <translation>Помилковий обліковий запис</translation>
+        <translation type="unfinished"/>
     </message>
     <message>
         <source>Wrong Password</source>
-        <translation>Невірний Пароль</translation>
+        <translation type="unfinished"/>
     </message>
 </context>
 <context>
@@ -357,21 +306,6 @@
     </message>
 </context>
 <context>
-    <name>UserLoginWidget</name>
-    <message>
-        <source>Account</source>
-        <translation>Обліковий запис</translation>
-    </message>
-    <message numerus="yes">
-        <source>Your password will expire in %n days, please change it timely</source>
-        <translation><numerusform>Строк дії вашого пароля буде вичерпано за %n день. Будь ласка, вчасно змініть його</numerusform><numerusform>Строк дії вашого пароля буде вичерпано за %n дні. Будь ласка, вчасно змініть його</numerusform><numerusform>Строк дії вашого пароля буде вичерпано за %n днів. Будь ласка, вчасно змініть його</numerusform><numerusform>Строк дії вашого пароля буде вичерпано за %n день. Будь ласка, вчасно змініть його</numerusform></translation>
-    </message>
-    <message>
-        <source>Password expired, please change</source>
-        <translation>Строк дії пароля вичерпано. Будь ласка, змініть</translation>
-    </message>
-</context>
-<context>
     <name>WarningContent</name>
     <message>
         <source>The programs are preventing the computer from shutting down, and forcing shut down may cause data loss.</source>
@@ -434,11 +368,11 @@
     <name>dss::module::NetworkModule</name>
     <message>
         <source>Turn on</source>
-        <translation type="unfinished"/>
+        <translation>Увімкнути</translation>
     </message>
     <message>
         <source>Turn off</source>
-        <translation type="unfinished"/>
+        <translation>Вимкнути</translation>
     </message>
 </context>
 </TS>

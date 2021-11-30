@@ -3,7 +3,7 @@
     <name>AuthFace</name>
     <message>
         <source>Face ID</source>
-        <translation>Face ID</translation>
+        <translation>ID Twarzy</translation>
     </message>
     <message>
         <source>Verification successful</source>
@@ -18,12 +18,12 @@
         <translation>Weryfikacja nie powiodła się, pozostała tylko jedna szansa </translation>
     </message>
     <message>
-        <source>Verify your FaceID</source>
-        <translation>Zweryfikuj swój FaceID</translation>
+        <source>Verify your Face ID</source>
+        <translation>Zweryfikuj swoje ID Twarzy</translation>
     </message>
     <message>
-        <source>FaceID locked, use password please</source>
-        <translation>FaceID jest zablokowany, proszę użyć hasła </translation>
+        <source>Face ID locked, use password please</source>
+        <translation>ID Twarzy zablokowane, proszę użyć hasła</translation>
     </message>
     <message numerus="yes">
         <source>Please try again %n minute(s) later</source>
@@ -65,7 +65,7 @@
     <name>AuthIris</name>
     <message>
         <source>Iris ID</source>
-        <translation>Iris ID</translation>
+        <translation>ID Tęczówki</translation>
     </message>
     <message>
         <source>Verification successful</source>
@@ -80,12 +80,12 @@
         <translation>Weryfikacja nie powiodła się, pozostała tylko jedna szansa </translation>
     </message>
     <message>
-        <source>Verify your IrisID</source>
-        <translation>Zweryfikuj swój IrisID</translation>
+        <source>Verify your Iris ID</source>
+        <translation>Zweryfikuj swoje ID Tęczówki</translation>
     </message>
     <message>
-        <source>IrisID locked, use password please</source>
-        <translation>IrisID jest zablokowany, proszę użyć hasła </translation>
+        <source>Iris ID locked, use password please</source>
+        <translation>ID Tęczówki zablokowane, proszę użyć hasła</translation>
     </message>
     <message numerus="yes">
         <source>Please try again %n minute(s) later</source>
@@ -108,7 +108,7 @@
     </message>
     <message>
         <source>Wrong Password</source>
-        <translation>Błędne hasło</translation>
+        <translation>Nieprawidłowe hasło</translation>
     </message>
     <message>
         <source>Password</source>
@@ -128,11 +128,11 @@
     </message>
     <message>
         <source>Reset Password</source>
-        <translation type="unfinished"/>
+        <translation>Zresetuj hasło</translation>
     </message>
     <message>
         <source>Forgot password?</source>
-        <translation type="unfinished"/>
+        <translation>Zapomniałeś hasła?</translation>
     </message>
 </context>
 <context>
@@ -147,11 +147,11 @@
     </message>
     <message>
         <source>Reset Password</source>
-        <translation type="unfinished"/>
+        <translation>Zresetuj hasło</translation>
     </message>
     <message>
         <source>Forgot password?</source>
-        <translation type="unfinished"/>
+        <translation>Zapomniałeś hasła?</translation>
     </message>
 </context>
 <context>
@@ -170,7 +170,7 @@
     </message>
     <message>
         <source>Wrong PIN</source>
-        <translation>Błędny PIN</translation>
+        <translation>Nieprawidłowy PIN</translation>
     </message>
     <message>
         <source>UKey is required</source>
@@ -209,65 +209,14 @@
     </message>
 </context>
 <context>
-    <name>AuthenticationModule</name>
-    <message>
-        <source>Verification successful</source>
-        <translation>Weryfikacja zakończona pomyślnie</translation>
-    </message>
-    <message numerus="yes">
-        <source>Verification failed, %n chances left</source>
-        <translation><numerusform>Weryfikacja nieudana, została %n próba</numerusform><numerusform>Weryfikacja nieudana, zostały %n próby</numerusform><numerusform>Weryfikacja nieudana, zostało %n prób</numerusform><numerusform>Weryfikacja nieudana, zostało %n prób</numerusform></translation>
-    </message>
-    <message>
-        <source>Verification failed, only one chance left</source>
-        <translation>Weryfikacja nie powiodła się, pozostała tylko jedna szansa </translation>
-    </message>
-    <message>
-        <source>Wrong Password</source>
-        <translation>Błędne hasło</translation>
-    </message>
-    <message>
-        <source>Wrong PIN</source>
-        <translation>Błędny PIN</translation>
-    </message>
-    <message>
-        <source>UKey is required</source>
-        <translation>UKey jest wymagany</translation>
-    </message>
-    <message>
-        <source>Verify your fingerprint</source>
-        <translation>Zweryfikuj odcisk palca </translation>
-    </message>
-    <message>
-        <source>Password</source>
-        <translation>Hasło</translation>
-    </message>
-    <message>
-        <source>Enter your PIN</source>
-        <translation>Wpisz swój PIN</translation>
-    </message>
-    <message>
-        <source>Fingerprint locked, use password please</source>
-        <translation>Odcisk palca zablokowany, użyj hasła</translation>
-    </message>
-    <message>
-        <source>Please try again 1 minute later</source>
-        <translation>Spróbuj ponownie za jedną minutę</translation>
-    </message>
-    <message numerus="yes">
-        <source>Please try again %n minutes later</source>
-        <translation><numerusform>Spróbuj ponownie za %n minute</numerusform><numerusform>Spróbuj ponownie za %n minuty</numerusform><numerusform>Spróbuj ponownie za %n minut</numerusform><numerusform>Spróbuj ponownie za %n minut</numerusform></translation>
-    </message>
-</context>
-<context>
-    <name>GreeterWorkek</name>
+    <name>GreeterWorker</name>
     <message>
         <source>Wrong account</source>
-        <translation>Złe konto</translation>
+        <translation type="unfinished"/>
     </message>
     <message>
         <source>Wrong Password</source>
-        <translation>Błędne hasło</translation>
+        <translation type="unfinished"/>
     </message>
 </context>
 <context>
@@ -292,7 +241,7 @@
     <name>LockWorker</name>
     <message>
         <source>Fingerprint verification timed out, please enter your password manually</source>
-        <translation>Weryfikacja poprzez odcisk palca przekroczyła wymagany czas, prosimy ręcznie wprowadzić hasło.</translation>
+        <translation>Weryfikacja poprzez odcisk palca przekroczyła czas oczekiwania, prosimy ręcznie wprowadzić hasło.</translation>
     </message>
     <message>
         <source>Failed to match fingerprint</source>
@@ -357,25 +306,10 @@
     </message>
 </context>
 <context>
-    <name>UserLoginWidget</name>
-    <message>
-        <source>Account</source>
-        <translation>Konto</translation>
-    </message>
-    <message numerus="yes">
-        <source>Your password will expire in %n days, please change it timely</source>
-        <translation><numerusform>Twoje hasło wygaśnie za %n dzień, zmień je jak najszybciej</numerusform><numerusform>Twoje hasło wygaśnie za %n dni, zmień je jak najszybciej</numerusform><numerusform>Twoje hasło wygaśnie za %n dni, zmień je jak najszybciej</numerusform><numerusform>Twoje hasło wygaśnie za %n dni, zmień je jak najszybciej</numerusform></translation>
-    </message>
-    <message>
-        <source>Password expired, please change</source>
-        <translation>Hasło wygasło, proszę je zmienić</translation>
-    </message>
-</context>
-<context>
     <name>WarningContent</name>
     <message>
         <source>The programs are preventing the computer from shutting down, and forcing shut down may cause data loss.</source>
-        <translation>Programy uniemożliwiają wyłączenie komputera, a wymuszenie wyłączenia może spowodować utratę danych.</translation>
+        <translation>Włączone są programy, które uniemożliwiają wyłączenie komputera, a wymuszenie wyłączenia może spowodować utratę danych.</translation>
     </message>
     <message>
         <source>To close the program, click Cancel, and then close the program.</source>
@@ -383,19 +317,19 @@
     </message>
     <message>
         <source>The programs are preventing the computer from reboot, and forcing reboot may cause data loss.</source>
-        <translation>Programy uniemożliwiają ponowne uruchomienie komputera, a wymuszenie ponownego uruchomienia może spowodować utratę danych.</translation>
+        <translation>Włączone są programy, które uniemożliwiają restart komputera, a wymuszenie restartu może spowodować utratę danych.</translation>
     </message>
     <message>
         <source>The programs are preventing the computer from suspend, and forcing suspend may cause data loss.</source>
-        <translation>Programy uniemożliwiają zawieszenie komputera, a wymuszenie zawieszenia może spowodować utratę danych.</translation>
+        <translation>Włączone są programy, które uniemożliwiają uśpienie komputera, a wymuszenie uśpienia może spowodować utratę danych.</translation>
     </message>
     <message>
         <source>The programs are preventing the computer from hibernate, and forcing hibernate may cause data loss.</source>
-        <translation>Programy zapobiegają hibernacji komputera, a wymuszenie hibernacji może spowodować utratę danych.</translation>
+        <translation>Włączone są programy, które uniemożliwiają hibernację komputera, a wymuszenie hibernacji może spowodować utratę danych.</translation>
     </message>
     <message>
         <source>The programs are preventing the computer from log out, and forcing log out may cause data loss.</source>
-        <translation>Programy uniemożliwiają wylogowanie się z komputera, a wymuszenie wylogowania może spowodować utratę danych.</translation>
+        <translation>Włączone są programy, które uniemożliwiają wylogowanie, a wymuszenie wylogowania może spowodować utratę danych.</translation>
     </message>
     <message>
         <source>Shut down</source>
@@ -403,11 +337,11 @@
     </message>
     <message>
         <source>Reboot</source>
-        <translation>Restart</translation>
+        <translation>Uruchom ponownie</translation>
     </message>
     <message>
         <source>Suspend</source>
-        <translation>Zawieś</translation>
+        <translation>Uśpij</translation>
     </message>
     <message>
         <source>Hibernate</source>
@@ -423,7 +357,7 @@
     </message>
     <message>
         <source>Are you sure you want to reboot?</source>
-        <translation>Czy na pewno chcesz zrestartować komputer?</translation>
+        <translation>Czy na pewno chcesz uruchomić ponownie komputer?</translation>
     </message>
     <message>
         <source>Are you sure you want to log out?</source>
@@ -434,11 +368,11 @@
     <name>dss::module::NetworkModule</name>
     <message>
         <source>Turn on</source>
-        <translation type="unfinished"/>
+        <translation>Włącz</translation>
     </message>
     <message>
         <source>Turn off</source>
-        <translation type="unfinished"/>
+        <translation>Wyłącz</translation>
     </message>
 </context>
 </TS>

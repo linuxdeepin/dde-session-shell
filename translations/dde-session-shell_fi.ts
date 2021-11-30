@@ -1,5 +1,36 @@
 <?xml version="1.0" ?><!DOCTYPE TS><TS language="fi" version="2.1">
 <context>
+    <name>AuthFace</name>
+    <message>
+        <source>Face ID</source>
+        <translation>Kasvojen tunnistus</translation>
+    </message>
+    <message>
+        <source>Verification successful</source>
+        <translation>Tarkistus onnistui</translation>
+    </message>
+    <message numerus="yes">
+        <source>Verification failed, %n chances left</source>
+        <translation><numerusform>Tarkistus epäonnistui, %n yritystä jäljellä</numerusform><numerusform>Tarkistus epäonnistui, %n yritystä jäljellä</numerusform></translation>
+    </message>
+    <message>
+        <source>Verification failed, only one chance left</source>
+        <translation>Tarkistus epäonnistui, yksi yritys jäljellä</translation>
+    </message>
+    <message>
+        <source>Verify your Face ID</source>
+        <translation>Vahvista kasvojen tunnistuksella</translation>
+    </message>
+    <message>
+        <source>Face ID locked, use password please</source>
+        <translation>Kasvojen tunnistus lukittu, käytä salasanaa</translation>
+    </message>
+    <message numerus="yes">
+        <source>Please try again %n minute(s) later</source>
+        <translation><numerusform>Yritä uudelleen %n minuuttia myöhemmin</numerusform><numerusform>Yritä uudelleen %n minuuttia myöhemmin</numerusform></translation>
+    </message>
+</context>
+<context>
     <name>AuthFingerprint</name>
     <message>
         <source>Verify your fingerprint</source>
@@ -20,6 +51,41 @@
     <message>
         <source>Fingerprint locked, use password please</source>
         <translation>Sormenjälki lukittu, käytä salasanaa</translation>
+    </message>
+    <message numerus="yes">
+        <source>Please try again %n minute(s) later</source>
+        <translation><numerusform>Yritä uudelleen %n minuuttia myöhemmin</numerusform><numerusform>Yritä uudelleen %n minuuttia myöhemmin</numerusform></translation>
+    </message>
+    <message>
+        <source>Please try again 1 minute later</source>
+        <translation>Yritä 1 minuutin jälkeen uudelleen</translation>
+    </message>
+</context>
+<context>
+    <name>AuthIris</name>
+    <message>
+        <source>Iris ID</source>
+        <translation>Iriksen tunnus</translation>
+    </message>
+    <message>
+        <source>Verification successful</source>
+        <translation>Tarkistus onnistui</translation>
+    </message>
+    <message numerus="yes">
+        <source>Verification failed, %n chances left</source>
+        <translation><numerusform>Tarkistus epäonnistui, %n yritystä jäljellä</numerusform><numerusform>Tarkistus epäonnistui, %n yritystä jäljellä</numerusform></translation>
+    </message>
+    <message>
+        <source>Verification failed, only one chance left</source>
+        <translation>Tarkistus epäonnistui, yksi yritys jäljellä</translation>
+    </message>
+    <message>
+        <source>Verify your Iris ID</source>
+        <translation>Vahvista iriksen tunnistuksella</translation>
+    </message>
+    <message>
+        <source>Iris ID locked, use password please</source>
+        <translation>Iriksen tunnistus lukittu, käytä salasanaa</translation>
     </message>
     <message numerus="yes">
         <source>Please try again %n minute(s) later</source>
@@ -52,6 +118,22 @@
         <source>Please try again %n minute(s) later</source>
         <translation><numerusform>Yritä uudelleen %n minuuttia myöhemmin</numerusform><numerusform>Yritä uudelleen %n minuuttia myöhemmin</numerusform></translation>
     </message>
+    <message>
+        <source>Please try again 1 minute later</source>
+        <translation>Yritä 1 minuutin jälkeen uudelleen</translation>
+    </message>
+    <message numerus="yes">
+        <source>Please try again %n minutes later</source>
+        <translation><numerusform>Yritä uudelleen %n minuuttia myöhemmin</numerusform><numerusform>Yritä uudelleen %n minuuttia myöhemmin</numerusform></translation>
+    </message>
+    <message>
+        <source>Reset Password</source>
+        <translation>Nollaa salasana</translation>
+    </message>
+    <message>
+        <source>Forgot password?</source>
+        <translation>Unohtuiko salasana?</translation>
+    </message>
 </context>
 <context>
     <name>AuthSingle</name>
@@ -62,6 +144,14 @@
     <message numerus="yes">
         <source>Please try again %n minutes later</source>
         <translation><numerusform>Yritä uudelleen %n minuuttia myöhemmin</numerusform><numerusform>Yritä uudelleen %n minuuttia myöhemmin</numerusform></translation>
+    </message>
+    <message>
+        <source>Reset Password</source>
+        <translation>Nollaa salasana</translation>
+    </message>
+    <message>
+        <source>Forgot password?</source>
+        <translation>Unohtuiko salasana?</translation>
     </message>
 </context>
 <context>
@@ -93,6 +183,29 @@
     <message numerus="yes">
         <source>Please try again %n minute(s) later</source>
         <translation><numerusform>Yritä uudelleen %n minuuttia myöhemmin</numerusform><numerusform>Yritä uudelleen %n minuuttia myöhemmin</numerusform></translation>
+    </message>
+    <message>
+        <source>Please try again 1 minute later</source>
+        <translation>Yritä 1 minuutin jälkeen uudelleen</translation>
+    </message>
+    <message numerus="yes">
+        <source>Please try again %n minutes later</source>
+        <translation><numerusform>Yritä uudelleen %n minuuttia myöhemmin</numerusform><numerusform>Yritä uudelleen %n minuuttia myöhemmin</numerusform></translation>
+    </message>
+</context>
+<context>
+    <name>AuthWidget</name>
+    <message>
+        <source>Account</source>
+        <translation>Käyttäjätili</translation>
+    </message>
+    <message numerus="yes">
+        <source>Your password will expire in %n days, please change it timely</source>
+        <translation><numerusform>Salasanasi vanhenee %n päivän kuluttua, vaihda se ajoissa</numerusform><numerusform>Salasanasi vanhenee %n päivän kuluttua, vaihda se ajoissa</numerusform></translation>
+    </message>
+    <message>
+        <source>Password expired, please change</source>
+        <translation>Salasana vanhentunut, vaihda</translation>
     </message>
 </context>
 <context>
@@ -144,77 +257,6 @@
     <message numerus="yes">
         <source>Please try again %n minutes later</source>
         <translation><numerusform>Yritä uudelleen %n minuuttia myöhemmin</numerusform><numerusform>Yritä uudelleen %n minuuttia myöhemmin</numerusform></translation>
-    </message>
-</context>
-<context>
-    <name>ContentWidget</name>
-    <message>
-        <source>The programs are preventing the computer from shutting down, and forcing shut down may cause data loss.</source>
-        <translation>Ohjelmat estävät tietokoneen sammutusta ja pakottaminen voi aiheuttaa tietojen menetyksen.</translation>
-    </message>
-    <message>
-        <source>To close the program, click Cancel, and then close the program.</source>
-        <translation>Valitse ensin Peruuta ja sulje sitten avoin ohjelma.</translation>
-    </message>
-    <message>
-        <source>The programs are preventing the computer from reboot, and forcing reboot may cause data loss.</source>
-        <translation>Avoimet ohjelmat estävät tietokonetta käynnistymästä uudelleen ja pakottaminen voi aiheuttaa tietojen menetyksen.</translation>
-    </message>
-    <message>
-        <source>The programs are preventing the computer from suspend, and forcing suspend may cause data loss.</source>
-        <translation>Avoimet ohjelmat estävät tietokoneen  valmiustilan ja pakottaminen voi aiheuttaa tietojen menetyksen.</translation>
-    </message>
-    <message>
-        <source>The programs are preventing the computer from hibernate, and forcing hibernate may cause data loss.</source>
-        <translation>Avoimet ohjelmat estävät tietokoneen lepotilan ja pakottaminen voi aiheuttaa tietojen menetyksen.</translation>
-    </message>
-    <message>
-        <source>The programs are preventing the computer from log out, and forcing log out may cause data loss.</source>
-        <translation>Avoimet ohjelmat estävät tietokonetta uloskirjautumasta ja pakottaminen voi aiheuttaa tietojen menetyksen.</translation>
-    </message>
-    <message>
-        <source>Shut down</source>
-        <translation>Sammuta</translation>
-    </message>
-    <message>
-        <source>Reboot</source>
-        <translation>Käynnistä</translation>
-    </message>
-    <message>
-        <source>Suspend</source>
-        <translation>Valmiustila</translation>
-    </message>
-    <message>
-        <source>Hibernate</source>
-        <translation>Lepotila</translation>
-    </message>
-    <message>
-        <source>Log out</source>
-        <translation>Kirjaudu ulos</translation>
-    </message>
-    <message>
-        <source>Are you sure you want to shut down?</source>
-        <translation>Haluatko varmasti sulkea?</translation>
-    </message>
-    <message>
-        <source>Are you sure you want to reboot?</source>
-        <translation>Haluatko varmasti käynnistää uudelleen?</translation>
-    </message>
-    <message>
-        <source>Are you sure you want to log out?</source>
-        <translation>Haluatko varmasti kirjautua ulos?</translation>
-    </message>
-    <message>
-        <source>Lock</source>
-        <translation>Lukitse</translation>
-    </message>
-    <message>
-        <source>Switch user</source>
-        <translation>Vaihda käyttäjää</translation>
-    </message>
-    <message>
-        <source>Switch system</source>
-        <translation>Vaihda järjestelmää</translation>
     </message>
 </context>
 <context>
@@ -318,11 +360,7 @@
     <name>UserLoginWidget</name>
     <message>
         <source>Account</source>
-        <translation>Tili</translation>
-    </message>
-    <message>
-        <source>Verify your fingerprint</source>
-        <translation>Vahvista sormenjälläsi</translation>
+        <translation>Käyttäjätili</translation>
     </message>
     <message numerus="yes">
         <source>Your password will expire in %n days, please change it timely</source>
@@ -390,6 +428,17 @@
     <message>
         <source>Are you sure you want to log out?</source>
         <translation>Haluatko kirjautua ulos?</translation>
+    </message>
+</context>
+<context>
+    <name>dss::module::NetworkModule</name>
+    <message>
+        <source>Turn on</source>
+        <translation>Kytke käyttöön</translation>
+    </message>
+    <message>
+        <source>Turn off</source>
+        <translation>Poista käytöstä</translation>
     </message>
 </context>
 </TS>

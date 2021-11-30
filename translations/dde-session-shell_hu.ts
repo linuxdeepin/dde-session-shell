@@ -18,12 +18,12 @@
         <translation>Az ellenőrzés sikertelen, csak egy próbálkozása maradt</translation>
     </message>
     <message>
-        <source>Verify your FaceID</source>
-        <translation>Hitelesítés Arcalapú azonosítással</translation>
+        <source>Verify your Face ID</source>
+        <translation>Hitelesítés Arc azonosítóval</translation>
     </message>
     <message>
-        <source>FaceID locked, use password please</source>
-        <translation>Az Arcalapú Azonosítás zárolva, kérjük használja a jelszavát</translation>
+        <source>Face ID locked, use password please</source>
+        <translation>Az Arc Azonosító zárolva, kérjük használja a jelszavát</translation>
     </message>
     <message numerus="yes">
         <source>Please try again %n minute(s) later</source>
@@ -80,12 +80,12 @@
         <translation>Az ellenőrzés sikertelen, csak egy próbálkozása maradt</translation>
     </message>
     <message>
-        <source>Verify your IrisID</source>
-        <translation>Hitelesítés Írisz Azonosítással</translation>
+        <source>Verify your Iris ID</source>
+        <translation>Hitelesítés Írisz Azonosítóval</translation>
     </message>
     <message>
-        <source>IrisID locked, use password please</source>
-        <translation>Az Írisz Azonosítás zárolva, kérjük használja a jelszavát</translation>
+        <source>Iris ID locked, use password please</source>
+        <translation>Az Írisz Azonosító zárolva, kérjük használja a jelszavát</translation>
     </message>
     <message numerus="yes">
         <source>Please try again %n minute(s) later</source>
@@ -132,7 +132,7 @@
     </message>
     <message>
         <source>Forgot password?</source>
-        <translation type="unfinished"/>
+        <translation>Elfelejtette a jelszavát?</translation>
     </message>
 </context>
 <context>
@@ -151,7 +151,7 @@
     </message>
     <message>
         <source>Forgot password?</source>
-        <translation type="unfinished"/>
+        <translation>Elfelejtette a jelszavát?</translation>
     </message>
 </context>
 <context>
@@ -209,65 +209,14 @@
     </message>
 </context>
 <context>
-    <name>AuthenticationModule</name>
-    <message>
-        <source>Verification successful</source>
-        <translation>Az ellenőrzés sikeres</translation>
-    </message>
-    <message numerus="yes">
-        <source>Verification failed, %n chances left</source>
-        <translation><numerusform>Az ellenőrzés sikertelen, %n próbálkozása maradt</numerusform><numerusform>Az ellenőrzés sikertelen, %n próbálkozása maradt</numerusform></translation>
-    </message>
-    <message>
-        <source>Verification failed, only one chance left</source>
-        <translation>Az ellenőrzés sikertelen, csak egy próbálkozása maradt</translation>
-    </message>
-    <message>
-        <source>Wrong Password</source>
-        <translation>Helytelen jelszó</translation>
-    </message>
-    <message>
-        <source>Wrong PIN</source>
-        <translation>Helytelen PIN</translation>
-    </message>
-    <message>
-        <source>UKey is required</source>
-        <translation>UKey szükséges</translation>
-    </message>
-    <message>
-        <source>Verify your fingerprint</source>
-        <translation>Az Ön ujjlenyomatának ellenőrzése</translation>
-    </message>
-    <message>
-        <source>Password</source>
-        <translation>Jelszó</translation>
-    </message>
-    <message>
-        <source>Enter your PIN</source>
-        <translation>Adja meg a PIN kódját</translation>
-    </message>
-    <message>
-        <source>Fingerprint locked, use password please</source>
-        <translation>Az ujjlenyomat zárolva, kérem használja a jelszavát</translation>
-    </message>
-    <message>
-        <source>Please try again 1 minute later</source>
-        <translation>Kérjük próbálja újra 1 perc múlva</translation>
-    </message>
-    <message numerus="yes">
-        <source>Please try again %n minutes later</source>
-        <translation><numerusform>Kérjük próbálja újra %n perc múlva</numerusform><numerusform>Kérjük próbálja újra %n perc múlva</numerusform></translation>
-    </message>
-</context>
-<context>
-    <name>GreeterWorkek</name>
+    <name>GreeterWorker</name>
     <message>
         <source>Wrong account</source>
-        <translation>Hibás Felhasználói fiók</translation>
+        <translation type="unfinished"/>
     </message>
     <message>
         <source>Wrong Password</source>
-        <translation>Helytelen jelszó</translation>
+        <translation type="unfinished"/>
     </message>
 </context>
 <context>
@@ -354,21 +303,6 @@
     <message>
         <source>Start system monitor</source>
         <translation>Rendszermonitor indítása</translation>
-    </message>
-</context>
-<context>
-    <name>UserLoginWidget</name>
-    <message>
-        <source>Account</source>
-        <translation>Felhasználói fiók</translation>
-    </message>
-    <message numerus="yes">
-        <source>Your password will expire in %n days, please change it timely</source>
-        <translation><numerusform>A jelszava %n nap múlva lejár, kérjük változtassa meg időben</numerusform><numerusform>A jelszava %n nap múlva lejár, kérjük változtassa meg időben</numerusform></translation>
-    </message>
-    <message>
-        <source>Password expired, please change</source>
-        <translation>Jelszava lejárt, kérjük változtassa meg</translation>
     </message>
 </context>
 <context>

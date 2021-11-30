@@ -18,12 +18,12 @@
         <translation>驗證失敗，您還可以嘗試1次</translation>
     </message>
     <message>
-        <source>Verify your FaceID</source>
-        <translation type="unfinished"/>
+        <source>Verify your Face ID</source>
+        <translation>請驗證人臉ID</translation>
     </message>
     <message>
-        <source>FaceID locked, use password please</source>
-        <translation type="unfinished"/>
+        <source>Face ID locked, use password please</source>
+        <translation>人臉ID已鎖定，請輸入密碼</translation>
     </message>
     <message numerus="yes">
         <source>Please try again %n minute(s) later</source>
@@ -80,12 +80,12 @@
         <translation>驗證失敗，您還可以嘗試1次</translation>
     </message>
     <message>
-        <source>Verify your IrisID</source>
-        <translation type="unfinished"/>
+        <source>Verify your Iris ID</source>
+        <translation>請驗證虹膜ID</translation>
     </message>
     <message>
-        <source>IrisID locked, use password please</source>
-        <translation type="unfinished"/>
+        <source>Iris ID locked, use password please</source>
+        <translation>虹膜ID已鎖定，請輸入密碼</translation>
     </message>
     <message numerus="yes">
         <source>Please try again %n minute(s) later</source>
@@ -209,58 +209,7 @@
     </message>
 </context>
 <context>
-    <name>AuthenticationModule</name>
-    <message>
-        <source>Verification successful</source>
-        <translation>驗證成功</translation>
-    </message>
-    <message numerus="yes">
-        <source>Verification failed, %n chances left</source>
-        <translation><numerusform>驗證失敗，您還可以嘗試%n次</numerusform></translation>
-    </message>
-    <message>
-        <source>Verification failed, only one chance left</source>
-        <translation>驗證失敗，您還可以嘗試1次</translation>
-    </message>
-    <message>
-        <source>Wrong Password</source>
-        <translation>密碼錯誤</translation>
-    </message>
-    <message>
-        <source>Wrong PIN</source>
-        <translation>PIN錯誤</translation>
-    </message>
-    <message>
-        <source>UKey is required</source>
-        <translation>需要使用UKEY認證</translation>
-    </message>
-    <message>
-        <source>Verify your fingerprint</source>
-        <translation>請驗證指紋</translation>
-    </message>
-    <message>
-        <source>Password</source>
-        <translation>請輸入密碼</translation>
-    </message>
-    <message>
-        <source>Enter your PIN</source>
-        <translation>識別到UKEY，需要輸入PIN</translation>
-    </message>
-    <message>
-        <source>Fingerprint locked, use password please</source>
-        <translation>指紋已鎖定，請輸入密碼</translation>
-    </message>
-    <message>
-        <source>Please try again 1 minute later</source>
-        <translation>請1分鐘後再試</translation>
-    </message>
-    <message numerus="yes">
-        <source>Please try again %n minutes later</source>
-        <translation><numerusform>請%n分鐘後再試</numerusform></translation>
-    </message>
-</context>
-<context>
-    <name>GreeterWorkek</name>
+    <name>GreeterWorker</name>
     <message>
         <source>Wrong account</source>
         <translation>帳戶錯誤</translation>
@@ -354,21 +303,6 @@
     <message>
         <source>Start system monitor</source>
         <translation>啟動系統監視器</translation>
-    </message>
-</context>
-<context>
-    <name>UserLoginWidget</name>
-    <message>
-        <source>Account</source>
-        <translation>帳戶</translation>
-    </message>
-    <message numerus="yes">
-        <source>Your password will expire in %n days, please change it timely</source>
-        <translation><numerusform>密碼將於%n天後過期，請及時修改密碼</numerusform></translation>
-    </message>
-    <message>
-        <source>Password expired, please change</source>
-        <translation>密碼已過期，請修改</translation>
     </message>
 </context>
 <context>
