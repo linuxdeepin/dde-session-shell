@@ -82,7 +82,7 @@ private:
 private:
     QVBoxLayout *m_mainLayout;
 
-    DButtonBox *m_chooesAuthButtonBox; // 认证选择按钮
+    DButtonBox *m_chooseAuthButtonBox; // 认证选择按钮
     DLabel *m_biometricAuthStatus;     // 生物认证状态
     AuthModule *m_currentAuth;         // 当前选中的认证，默认 single 用于兼容开源 PAM
     QPointer<AuthModule> m_lastAuth;   // 上次成功的认证

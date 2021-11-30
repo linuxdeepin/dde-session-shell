@@ -555,30 +555,30 @@ void LockWorker::lockServiceEvent(quint32 eventType, quint32 pid, const QString 
 
     if (msg == "Verification timed out") {
         m_isThumbAuth = true;
-        emit m_model->authFaildMessage(tr("Fingerprint verification timed out, please enter your password manually"));
+        emit m_model->authFailedMessage(tr("Fingerprint verification timed out, please enter your password manually"));
         return;
     }
 
     switch (eventType) {
     case DBusLockService::PromptQuestion:
-        qWarning() << "prompt quesiton from pam: " << message;
-        emit m_model->authFaildMessage(message);
+        qWarning() << "prompt question from pam: " << message;
+        emit m_model->authFailedMessage(message);
         break;
     case DBusLockService::PromptSecret:
         qWarning() << "prompt secret from pam: " << message;
         if (m_isThumbAuth && !msg.isEmpty()) {
-            emit m_model->authFaildMessage(msg);
+            emit m_model->authFailedMessage(msg);
         }
         break;
     case DBusLockService::ErrorMsg:
         qWarning() << "error message from pam: " << message;
         if (msg == "Failed to match fingerprint") {
-            emit m_model->authFaildTipsMessage(tr("Failed to match fingerprint"));
-            emit m_model->authFaildMessage("");
+            emit m_model->authFailedTipsMessage(tr("Failed to match fingerprint"));
+            emit m_model->authFailedMessage("");
         }
         break;
     case DBusLockService::TextInfo:
-        emit m_model->authFaildMessage(QString(dgettext("fprintd", message.toLatin1())));
+        emit m_model->authFailedMessage(QString(dgettext("fprintd", message.toLatin1())));
         break;
     case DBusLockService::Failure:
         onUnlockFinished(false);
@@ -609,7 +609,7 @@ void LockWorker::onUnlockFinished(bool unlocked)
 
     //    if (!unlocked && m_authFramework->GetAuthType() == AuthFlag::Password) {
     //        qWarning() << "Authorization password failed!";
-    //        emit m_model->authFaildTipsMessage(tr("Wrong Password"));
+    //        emit m_model->authFailedTipsMessage(tr("Wrong Password"));
     //        return;
     //    }
 

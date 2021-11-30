@@ -198,7 +198,7 @@ void GreeterWorker::initData()
     const bool allowShowCustomUser = valueByQSettings<bool>("", "loginPromptInput", false) || ifc.property("Enable").toBool();
     m_model->setAllowShowCustomUser(allowShowCustomUser);
 
-    /* init cureent user */
+    /* init current user */
     if (DSysInfo::deepinType() == DSysInfo::DeepinServer || m_model->allowShowCustomUser()) {
         std::shared_ptr<User> user(new User());
         m_model->setIsServerModel(DSysInfo::deepinType() == DSysInfo::DeepinServer);
@@ -472,7 +472,7 @@ void GreeterWorker::checkAccount(const QString &account)
         // 对于没有设置密码的账户,直接认定为错误账户
         if (!user_ptr->isPasswordValid()) {
             qWarning() << userPath;
-            emit m_model->authFaildTipsMessage(tr("Wrong account"));
+            emit m_model->authFailedTipsMessage(tr("Wrong account"));
             m_model->setAuthType(AT_None);
             startGreeterAuth();
             return;
@@ -490,7 +490,7 @@ void GreeterWorker::checkAccount(const QString &account)
             dynamic_cast<ADDomainUser *>(user_ptr.get())->setFullName(userFullName);
         } else {
             qWarning() << userPath;
-            emit m_model->authFaildTipsMessage(tr("Wrong account"));
+            emit m_model->authFailedTipsMessage(tr("Wrong account"));
             m_model->setAuthType(AT_None);
             startGreeterAuth();
             return;
@@ -512,9 +512,9 @@ void GreeterWorker::checkAccount(const QString &account)
     }
 }
 
-void GreeterWorker::checkDBusServer(bool isvalid)
+void GreeterWorker::checkDBusServer(bool isValid)
 {
-    if (isvalid) {
+    if (isValid) {
         m_accountsInter->userList();
     } else {
         // FIXME: 我不希望这样做，但是QThread::msleep会导致无限递归

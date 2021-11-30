@@ -79,10 +79,10 @@ TEST_F(UT_SessionBaseModel, init)
 
     m_sessionBaseModel->setCurrentModeState(SessionBaseModel::ModeStatus::NoStatus);
 
-    bool ishasSwap = m_sessionBaseModel->hasSwap();
-    m_sessionBaseModel->onHasSwapChanged(!ishasSwap);
-    m_sessionBaseModel->setHasSwap(!ishasSwap);
-    EXPECT_EQ(m_sessionBaseModel->hasSwap(), !ishasSwap);
+    bool hasSwap = m_sessionBaseModel->hasSwap();
+    m_sessionBaseModel->onHasSwapChanged(!hasSwap);
+    m_sessionBaseModel->setHasSwap(!hasSwap);
+    EXPECT_EQ(m_sessionBaseModel->hasSwap(), !hasSwap);
 
     bool isshow = m_sessionBaseModel->visible();
     m_sessionBaseModel->visibleChanged(!isshow);
@@ -107,10 +107,10 @@ TEST_F(UT_SessionBaseModel, init)
     m_sessionBaseModel->setIsServerModel(!isServer);
     EXPECT_EQ(m_sessionBaseModel->isServerModel(), !isServer);
 
-    bool abortConfirm = m_sessionBaseModel->abortConfim();
+    bool abortConfirm = m_sessionBaseModel->abortConfirm();
     m_sessionBaseModel->abortConfirmChanged(!abortConfirm);
     m_sessionBaseModel->setAbortConfirm(!abortConfirm);
-    EXPECT_EQ(m_sessionBaseModel->abortConfim(), !abortConfirm);
+    EXPECT_EQ(m_sessionBaseModel->abortConfirm(), !abortConfirm);
 
     bool isBlack = m_sessionBaseModel->isBlackMode();
     m_sessionBaseModel->setIsBlackMode(!isBlack);

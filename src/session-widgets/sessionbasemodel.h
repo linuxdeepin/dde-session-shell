@@ -17,11 +17,11 @@ class SessionBaseModel : public QObject
 {
     Q_OBJECT
 public:
-    enum AuthFaildType {
+    enum AuthFailedType {
         Fprint,
         KEYBOARD
     };
-    Q_ENUM(AuthFaildType)
+    Q_ENUM(AuthFailedType)
 
     enum PowerAction {
         None,
@@ -109,7 +109,7 @@ public:
     inline bool isServerModel() const { return m_isServerModel; }
     void setIsServerModel(bool server_model);
 
-    inline bool abortConfim() const { return m_abortConfirm; }
+    inline bool abortConfirm() const { return m_abortConfirm; }
     void setAbortConfirm(bool abortConfirm);
 
     inline bool isBlackMode() const { return m_isBlackMode; }
@@ -167,9 +167,9 @@ public slots:
     void updatePrompt(const QString &prompt);
 
 signals:
-    void authTipsMessage(const QString &message, AuthFaildType type = KEYBOARD);
-    void authFaildMessage(const QString &message, AuthFaildType type = KEYBOARD);
-    void authFaildTipsMessage(const QString &message, AuthFaildType type = KEYBOARD);
+    void authTipsMessage(const QString &message, AuthFailedType type = KEYBOARD);
+    void authFailedMessage(const QString &message, AuthFailedType type = KEYBOARD);
+    void authFailedTipsMessage(const QString &message, AuthFailedType type = KEYBOARD);
     void authFinished(bool success);
     void onPowerActionChanged(PowerAction poweraction);
     void onRequirePowerAction(PowerAction poweraction, bool needConfirm);

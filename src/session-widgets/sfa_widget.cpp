@@ -62,9 +62,9 @@ void SFAWidget::initUI()
     m_registerFunctions["SFAAccount"] = m_frameDataBind->registerFunction("SFAAccount", accountChanged);
     m_frameDataBind->refreshData("SFAAccount");
     /* 认证选择 */
-    m_chooesAuthButtonBox = new DButtonBox(this);
-    m_chooesAuthButtonBox->setOrientation(Qt::Horizontal);
-    m_chooesAuthButtonBox->setFocusPolicy(Qt::NoFocus);
+    m_chooseAuthButtonBox = new DButtonBox(this);
+    m_chooseAuthButtonBox->setOrientation(Qt::Horizontal);
+    m_chooseAuthButtonBox->setFocusPolicy(Qt::NoFocus);
     /* 生物认证状态 */
     m_biometricAuthStatus = new DLabel(this);
     m_biometricAuthStatus->hide();
@@ -78,7 +78,7 @@ void SFAWidget::initUI()
     m_mainLayout->addWidget(m_biometricAuthStatus, 0, Qt::AlignCenter);
     m_mainLayout->addItem(m_bioAuthStatusPlaceHolder);
     m_mainLayout->addSpacing(BIO_AUTH_STATUS_BOTTOM_SPACING);
-    m_mainLayout->addWidget(m_chooesAuthButtonBox, 0, Qt::AlignCenter);
+    m_mainLayout->addWidget(m_chooseAuthButtonBox, 0, Qt::AlignCenter);
     m_mainLayout->addItem(m_chooseAuthButtonBoxPlaceHolder);
     m_mainLayout->addSpacing(CHOOSE_AUTH_TYPE_BUTTON_BOTTOM_SPACING);
     m_mainLayout->addWidget(m_userAvatar);
@@ -188,11 +188,11 @@ void SFAWidget::setAuthType(const int type)
 
     if (count > 1) {
         m_chooseAuthButtonBoxPlaceHolder->changeSize(0, 0);
-        m_chooesAuthButtonBox->show();
-        m_chooesAuthButtonBox->setButtonList(m_authButtons.values(), true);
+        m_chooseAuthButtonBox->show();
+        m_chooseAuthButtonBox->setButtonList(m_authButtons.values(), true);
         QMap<int, DButtonBoxButton *>::const_iterator iter = m_authButtons.constBegin();
         while (iter != m_authButtons.constEnd()) {
-            m_chooesAuthButtonBox->setId(iter.value(), iter.key());
+            m_chooseAuthButtonBox->setId(iter.value(), iter.key());
             iter.value()->show();
             ++iter;
         }
@@ -201,8 +201,8 @@ void SFAWidget::setAuthType(const int type)
         if (m_lastAuth && (type & m_lastAuth->authType())) {
             emit requestStartAuthentication(m_user->name(), m_lastAuth->authType());
         } else {
-            m_chooesAuthButtonBox->button(m_authButtons.firstKey())->setChecked(true);
-            m_chooesAuthButtonBox->button(m_authButtons.firstKey())->toggled(true);
+            m_chooseAuthButtonBox->button(m_authButtons.firstKey())->setChecked(true);
+            m_chooseAuthButtonBox->button(m_authButtons.firstKey())->toggled(true);
         }
 
         std::function<void(QVariant)> authTypeChanged = std::bind(&SFAWidget::syncAuthType, this, std::placeholders::_1);
@@ -214,7 +214,7 @@ void SFAWidget::setAuthType(const int type)
             m_authButtons.first()->hide();
             m_authButtons.first()->toggled(true);
         }
-        m_chooesAuthButtonBox->hide();
+        m_chooseAuthButtonBox->hide();
     }
 
     m_lockButton->setEnabled(m_model->currentUser()->isNoPasswordLogin());
@@ -669,7 +669,7 @@ void SFAWidget::checkAuthResult(const int type, const int status)
  */
 void SFAWidget::syncAuthType(const QVariant &value)
 {
-    QAbstractButton *btn = m_chooesAuthButtonBox->button(value.toInt());
+    QAbstractButton *btn = m_chooseAuthButtonBox->button(value.toInt());
     if (btn)
         btn->setChecked(true);
 }

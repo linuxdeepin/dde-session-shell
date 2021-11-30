@@ -133,7 +133,7 @@ void AuthWidget::initUI()
 void AuthWidget::initConnections()
 {
     /* model */
-    connect(m_model, &SessionBaseModel::authFaildTipsMessage, this, &AuthWidget::setAccountErrorMsg);
+    connect(m_model, &SessionBaseModel::authFailedTipsMessage, this, &AuthWidget::setAccountErrorMsg);
     connect(m_model, &SessionBaseModel::currentUserChanged, this, &AuthWidget::setUser);
     connect(m_model, &SessionBaseModel::onPowerActionChanged, this, [this](SessionBaseModel::PowerAction action) {
         setLockButtonType(action);
@@ -340,15 +340,15 @@ void AuthWidget::setPasswordHint(const QString &hint)
  */
 void AuthWidget::setLockButtonType(const int type)
 {
-    QPalette lockPalatte;
+    QPalette lockPalette;
     switch (type) {
     case SessionBaseModel::RequireRestart:
         m_lockButton->setIcon(QIcon(":/img/bottom_actions/reboot.svg"));
-        lockPalatte.setColor(QPalette::Highlight, ShutdownColor);
+        lockPalette.setColor(QPalette::Highlight, ShutdownColor);
         break;
     case SessionBaseModel::RequireShutdown:
         m_lockButton->setIcon(QIcon(":/img/bottom_actions/shutdown.svg"));
-        lockPalatte.setColor(QPalette::Highlight, ShutdownColor);
+        lockPalette.setColor(QPalette::Highlight, ShutdownColor);
         break;
     default:
         if (m_model->appType() == Login) {
@@ -358,7 +358,7 @@ void AuthWidget::setLockButtonType(const int type)
         }
         break;
     }
-    m_lockButton->setPalette(lockPalatte);
+    m_lockButton->setPalette(lockPalette);
 }
 
 /**
