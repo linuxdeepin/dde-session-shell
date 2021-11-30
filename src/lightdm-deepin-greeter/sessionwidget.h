@@ -48,8 +48,6 @@ public:
 
     void show();
     int sessionCount() const;
-    const QString lastSessionName() const;
-    const QString currentSessionName() const;
     const QString currentSessionKey() const;
     const QString currentSessionOwner() const { return m_currentUser; }
 
@@ -88,6 +86,7 @@ private:
     QLightDM::SessionsModel *m_sessionModel;
     QList<RoundItemButton *> m_sessionBtns;
     QLightDM::UsersModel *m_userModel;
+    bool m_allowSwitchingToWayland;
 };
 
 #endif // SESSIONWIDGET_H

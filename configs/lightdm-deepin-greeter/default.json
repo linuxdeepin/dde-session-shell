@@ -13,6 +13,18 @@
             "description": "Use solid background",
             "permissions": "readwrite",
             "visibility": "private"
+        },
+        "allowSwitchingToWayland": {
+            "value": false,
+            "serial": 0,
+            "flags": [
+                "global"
+            ],
+            "name": "allowSwitchingToWayland",
+            "name[zh_CN]": "允许用户切换到wayland",
+            "description": "Allow user to switch session to wayland",
+            "permissions": "readwrite",
+            "visibility": "private"
         }
     }
 }

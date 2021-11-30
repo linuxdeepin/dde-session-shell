@@ -41,6 +41,7 @@
 static const int SessionButtonWidth = 160;
 static const int SessionButtonHeight = 160;
 static const QString DEFAULT_SESSION_NAME = "deepin";
+static const QString WAYLAND_SESSION_NAME = "Wayland";
 
 const QString session_standard_icon_name(const QString &realName)
 {
@@ -66,6 +67,7 @@ SessionWidget::SessionWidget(QWidget *parent)
     , m_frameDataBind(FrameDataBind::Instance())
     , m_sessionModel(new QLightDM::SessionsModel(this))
     , m_userModel(new QLightDM::UsersModel(this))
+    , m_allowSwitchingToWayland(getDConfigValue("allowSwitchingToWayland", false).toBool())
 {
     setSizePolicy(QSizePolicy::Expanding, QSizePolicy::Expanding);
     loadSessionList();
@@ -94,11 +96,6 @@ SessionWidget::~SessionWidget()
     qDeleteAll(m_sessionBtns);
 }
 
-const QString SessionWidget::currentSessionName() const
-{
-    return m_sessionModel->data(m_sessionModel->index(m_currentSessionIndex), QLightDM::SessionsModel::KeyRole).toString();
-}
-
 const QString SessionWidget::currentSessionKey() const
 {
     return m_sessionModel->data(m_sessionModel->index(m_currentSessionIndex), QLightDM::SessionsModel::KeyRole).toString();
@@ -113,14 +110,28 @@ void SessionWidget::show()
     // checked default session button
     m_sessionBtns.at(m_currentSessionIndex)->setChecked(true);
 
-    const int cout = m_sessionBtns.size();
+    bool isWaylandBtnExisted = false;
+    for (RoundItemButton *btn : m_sessionBtns) {
+        if (!WAYLAND_SESSION_NAME.compare(btn->text(), Qt::CaseInsensitive)) {
+            isWaylandBtnExisted = true;
+            break;
+        }
+    }
+
+    int count = m_sessionBtns.size();
+    if (isWaylandBtnExisted && !m_allowSwitchingToWayland)
+        --count;
+
     const int maxLineCap = width() / itemWidth - 1; // 1 for left-offset and right-offset.
-    const int offset = (width() - itemWidth * std::min(cout, maxLineCap)) / 2;
+    const int offset = (width() - itemWidth * std::min(count, maxLineCap)) / 2;
+
 
     int row = 0;
     int index = 0;
     for (auto it = m_sessionBtns.constBegin(); it != m_sessionBtns.constEnd(); ++it) {
         RoundItemButton *button = *it;
+        if (!m_allowSwitchingToWayland && !WAYLAND_SESSION_NAME.compare(button->text(), Qt::CaseInsensitive))
+            continue;
         // If the current value is the maximum, need to change the line.
         if (index >= maxLineCap) {
             index = 0;
@@ -146,22 +157,16 @@ int SessionWidget::sessionCount() const
     return m_sessionModel->rowCount(QModelIndex());
 }
 
-const QString SessionWidget::lastSessionName() const
-{
-    QSettings setting(DDESESSIONCC::CONFIG_FILE + m_currentUser, QSettings::IniFormat);
-    setting.beginGroup("User");
-    const QString &session = setting.value("XSession").toString();
-
-    return session.isEmpty() ? m_sessionModel->data(m_sessionModel->index(0), QLightDM::SessionsModel::KeyRole).toString() : session;
-}
-
 void SessionWidget::switchToUser(const QString &userName)
 {
     qDebug() << "switch to user" << userName;
     if (m_currentUser != userName)
         m_currentUser = userName;
 
-    const QString sessionName = lastLoggedInSession(userName);
+    QString sessionName = lastLoggedInSession(userName);
+    // 上次登录的是wayland，但是此次登录已经禁止使用wayland，那么使用默认的桌面
+    if (!m_allowSwitchingToWayland && !WAYLAND_SESSION_NAME.compare(sessionName, Qt::CaseInsensitive))
+        sessionName = DEFAULT_SESSION_NAME;
     m_currentSessionIndex = sessionIndex(sessionName);
 
     m_model->setSessionKey(currentSessionKey());
@@ -227,8 +232,6 @@ void SessionWidget::onSessionButtonClicked()
     m_model->setSessionKey(currentSessionKey());
 
     emit hideFrame();
-
-//    emit sessionChanged(currentSessionName());
 }
 
 int SessionWidget::sessionIndex(const QString &sessionName)
@@ -253,10 +256,8 @@ int SessionWidget::sessionIndex(const QString &sessionName)
 void SessionWidget::onOtherPageChanged(const QVariant &value)
 {
     const int index = value.toInt();
-
-    // qDebug() << index;
-
-    if (index == m_currentSessionIndex) return;
+    if (index == m_currentSessionIndex)
+        return;
 
     for (RoundItemButton *button : m_sessionBtns) {
         button->setChecked(false);
@@ -334,5 +335,5 @@ QString SessionWidget::lastLoggedInSession(const QString &userName)
         }
     }
 
-    return m_sessionModel->data(m_sessionModel->index(0), QLightDM::SessionsModel::KeyRole).toString();
+    return DEFAULT_SESSION_NAME;
 }

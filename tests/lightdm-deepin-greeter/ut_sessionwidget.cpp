@@ -29,8 +29,6 @@ TEST_F(TstSessionWidget, BasicTest)
 {
     //m_sessionwidget->show();
     m_sessionwidget->sessionCount();
-    m_sessionwidget->lastSessionName();
-    m_sessionwidget->currentSessionName();
     m_sessionwidget->currentSessionKey();
     m_sessionwidget->currentSessionOwner();
     m_sessionwidget->leftKeySwitch();
