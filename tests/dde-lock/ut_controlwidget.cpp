@@ -20,6 +20,8 @@ void UT_ControlWidget::SetUp()
 {
     m_model = new SessionBaseModel();
     m_model->setAppType(Lock);
+    std::shared_ptr<User> user_ptr(new User);
+    m_model->updateCurrentUser(user_ptr);
     m_controlWidget = new ControlWidget(m_model);
 }
 
