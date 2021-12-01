@@ -451,6 +451,13 @@ void LockWorker::createAuthentication(const QString &account)
         qWarning() << userPath;
         return;
     }
+
+    // 同步密码过期的信息
+    std::shared_ptr<User> user_ptr = m_model->findUserByName(account);
+    if (user_ptr) {
+        user_ptr->updatePasswordExpiredInfo();
+    }
+
     m_account = account;
     switch (m_model->getAuthProperty().FrameworkState) {
     case Available:
