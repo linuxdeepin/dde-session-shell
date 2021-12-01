@@ -30,6 +30,7 @@
 #include "mediawidget.h"
 #include "modules_loader.h"
 #include "tray_module_interface.h"
+#include "tipswidget.h"
 
 #include <DFloatingButton>
 #include <DArrowRectangle>
@@ -51,7 +52,7 @@ using namespace dss;
 ControlWidget::ControlWidget(const SessionBaseModel *model, QWidget *parent)
     : QWidget(parent)
     , m_contextMenu(new QMenu(this))
-    , m_tipsWidget(new DArrowRectangle(DArrowRectangle::ArrowDirection::ArrowBottom, this))
+    , m_tipsWidget(new TipsWidget(this))
     , m_arrowRectWidget(new DArrowRectangle(DArrowRectangle::ArrowBottom, this))
     , m_kbLayoutListView(nullptr)
     , m_keyboardBtn(nullptr)

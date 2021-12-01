@@ -56,6 +56,7 @@ class QLabel;
 class QMenu;
 class SessionBaseModel;
 class KBLayoutListView;
+class TipsWidget;
 
 const int BlurRadius = 15;
 const int BlurTransparency = 70;
@@ -170,7 +171,7 @@ private:
 #endif
     QMap<QString, QWidget *> m_modules;
     QMenu *m_contextMenu;
-    DArrowRectangle *m_tipsWidget;
+    TipsWidget *m_tipsWidget;
     const SessionBaseModel *m_model;
 
     DArrowRectangle *m_arrowRectWidget;
