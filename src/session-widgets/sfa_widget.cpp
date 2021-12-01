@@ -41,7 +41,6 @@
 SFAWidget::SFAWidget(QWidget *parent)
     : AuthWidget(parent)
     , m_mainLayout(new QVBoxLayout(this))
-    , m_currentAuth(new AuthModule(AuthCommon::AT_None, this))
     , m_lastAuth(nullptr)
     , m_retryButton(new DFloatingButton(this))
     , m_bioAuthStatusPlaceHolder(new QSpacerItem(0, BIO_AUTH_STATUS_PLACE_HOLDER_HEIGHT))
@@ -82,9 +81,8 @@ void SFAWidget::initUI()
     m_mainLayout->addItem(m_chooseAuthButtonBoxPlaceHolder);
     m_mainLayout->addSpacing(CHOOSE_AUTH_TYPE_BUTTON_BOTTOM_SPACING);
     m_mainLayout->addWidget(m_userAvatar);
-    m_mainLayout->addWidget(m_nameLabel, 0, Qt::AlignCenter);
-    m_mainLayout->addWidget(m_accountEdit, 0, Qt::AlignCenter);
-    m_mainLayout->addWidget(m_currentAuth);
+    m_mainLayout->addWidget(m_nameLabel, 0, Qt::AlignVCenter);
+    m_mainLayout->addWidget(m_accountEdit, 0, Qt::AlignVCenter);
     m_mainLayout->addSpacing(10);
     m_mainLayout->addWidget(m_expiredStatusLabel);
     m_mainLayout->addItem(m_expiredSpacerItem);
@@ -170,14 +168,12 @@ void SFAWidget::setAuthType(const int type)
         m_frameDataBind->clearValue("SFUKeyAuthStatus");
         m_frameDataBind->clearValue("SFUKeyAuthMsg");
     }
-
     if (type & AT_PAM) {
         initSingleAuth();
     } else if (m_singleAuth) {
         m_singleAuth->deleteLater();
         m_singleAuth = nullptr;
     }
-
 
     int count = 0;
     int typeTmp = type;
@@ -186,35 +182,30 @@ void SFAWidget::setAuthType(const int type)
         count++;
     }
 
-    if (count > 1) {
-        m_chooseAuthButtonBoxPlaceHolder->changeSize(0, 0);
-        m_chooseAuthButtonBox->show();
+    if (count > 0) {
         m_chooseAuthButtonBox->setButtonList(m_authButtons.values(), true);
         QMap<int, DButtonBoxButton *>::const_iterator iter = m_authButtons.constBegin();
         while (iter != m_authButtons.constEnd()) {
             m_chooseAuthButtonBox->setId(iter.value(), iter.key());
-            iter.value()->show();
             ++iter;
         }
-
-        // 需要判断一下上次验证成功的类型是否还有效；由于上面使用deleteLater析构对象，无法只通过对象是否为空来判断
-        if (m_lastAuth && (type & m_lastAuth->authType())) {
-            emit requestStartAuthentication(m_user->name(), m_lastAuth->authType());
+        if (count > 1) {
+            m_chooseAuthButtonBoxPlaceHolder->changeSize(0, 0);
+            m_chooseAuthButtonBox->show();
+            // 需要判断一下上次验证成功的类型是否还有效；由于上面使用deleteLater析构对象，无法只通过对象是否为空来判断
+            if (m_lastAuth && (type & m_lastAuth->authType())) {
+                emit requestStartAuthentication(m_user->name(), m_lastAuth->authType());
+            } else {
+                m_chooseAuthButtonBox->button(m_authButtons.firstKey())->setChecked(true);
+            }
         } else {
+            m_chooseAuthButtonBoxPlaceHolder->changeSize(0, CHOOSE_AUTH_TYPE_BUTTON_PLACE_HOLDER_HEIGHT);
             m_chooseAuthButtonBox->button(m_authButtons.firstKey())->setChecked(true);
-            m_chooseAuthButtonBox->button(m_authButtons.firstKey())->toggled(true);
+            m_chooseAuthButtonBox->hide();
         }
-
         std::function<void(QVariant)> authTypeChanged = std::bind(&SFAWidget::syncAuthType, this, std::placeholders::_1);
         m_registerFunctions["SFAType"] = m_frameDataBind->registerFunction("SFAType", authTypeChanged);
         m_frameDataBind->refreshData("SFAType");
-    } else {
-        m_chooseAuthButtonBoxPlaceHolder->changeSize(0, CHOOSE_AUTH_TYPE_BUTTON_PLACE_HOLDER_HEIGHT);
-        if (!m_authButtons.isEmpty() && m_authButtons.first()) {
-            m_authButtons.first()->hide();
-            m_authButtons.first()->toggled(true);
-        }
-        m_chooseAuthButtonBox->hide();
     }
 
     m_lockButton->setEnabled(m_model->currentUser()->isNoPasswordLogin());
@@ -350,6 +341,23 @@ void SFAWidget::initSingleAuth()
     m_singleAuth->setPasswordHint(m_model->currentUser()->passwordHint());
     // m_singleAuth->setAuthStatus(m_frameDataBind->getValue("SFSingleAuthStatus").toInt(),
     //                             m_frameDataBind->getValue("SFSingleAuthMsg").toString());
+
+    /* 认证选择按钮 */
+    DButtonBoxButton *btn = new DButtonBoxButton(QIcon(Password_Auth), QString(), this);
+    btn->setIconSize(QSize(24, 24));
+    btn->setFocusPolicy(Qt::NoFocus);
+    m_authButtons.insert(AT_PAM, btn);
+    connect(btn, &DButtonBoxButton::toggled, this, [this](const bool checked) {
+        if (checked) {
+            replaceWidget(m_passwordAuth);
+            m_frameDataBind->updateValue("SFAType", AT_PAM);
+            emit requestStartAuthentication(m_user->name(), AT_PAM);
+        } else {
+            m_passwordAuth->hide();
+            m_lockButton->setEnabled(false);
+            emit requestEndAuthentication(m_user->name(), AT_PAM);
+        }
+    });
 }
 
 /**
@@ -682,13 +690,7 @@ void SFAWidget::resizeEvent(QResizeEvent *event)
 
 void SFAWidget::replaceWidget(AuthModule *authModule)
 {
-    if (authModule == m_currentAuth)
-        return;
-
-    m_mainLayout->replaceWidget(m_currentAuth, authModule);
-    m_currentAuth->hide();
-    setBioAuthStatusVisible(m_currentAuth, false);
-    m_currentAuth = authModule;
+    m_mainLayout->insertWidget(layout()->indexOf(m_userAvatar) + 3, authModule);
     authModule->show();
     setFocusProxy(authModule);
     setFocus();

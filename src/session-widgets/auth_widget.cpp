@@ -103,14 +103,6 @@ void AuthWidget::initUI()
     m_accountEdit->lineEdit()->setAlignment(Qt::AlignCenter);
     m_accountEdit->setClearButtonEnabled(false);
     m_accountEdit->setPlaceholderText(tr("Account"));
-    /* 用户名和用户名输入框的可见性 */
-    if (m_model->appType() == Login && m_model->isServerModel()) {
-        m_accountEdit->show();
-        m_nameLabel->hide();
-    } else {
-        m_accountEdit->hide();
-        m_nameLabel->show();
-    }
     /* 密码过期提示 */
     m_expiredStatusLabel->setAccessibleName("ExpiredStatusLabel");
     m_expiredStatusLabel->setWordWrap(true);
@@ -188,6 +180,17 @@ void AuthWidget::setUser(std::shared_ptr<User> user)
     setPasswordHint(user->passwordHint());
     setLimitsInfo(user->limitsInfo());
     updatePasswordExpiredStatus();
+
+    /* 根据用户类型设置用户名和用户名输入框的可见性 */
+    if (user->type() == User::Default) {
+        m_nameLabel->hide();
+        m_accountEdit->show();
+        m_accountEdit->setFocus();
+    } else {
+        m_nameLabel->show();
+        m_accountEdit->hide();
+        m_accountEdit->clear();
+    }
 }
 
 /**
