@@ -68,6 +68,7 @@ SessionWidget::SessionWidget(QWidget *parent)
     , m_sessionModel(new QLightDM::SessionsModel(this))
     , m_userModel(new QLightDM::UsersModel(this))
     , m_allowSwitchingToWayland(getDConfigValue("allowSwitchingToWayland", false).toBool())
+    , m_isWaylandExisted(false)
 {
     setSizePolicy(QSizePolicy::Expanding, QSizePolicy::Expanding);
     loadSessionList();
@@ -110,16 +111,8 @@ void SessionWidget::updateLayout()
     // checked default session button
     m_sessionBtns.at(m_currentSessionIndex)->setChecked(true);
 
-    bool isWaylandBtnExisted = false;
-    for (RoundItemButton *btn : m_sessionBtns) {
-        if (!WAYLAND_SESSION_NAME.compare(btn->text(), Qt::CaseInsensitive)) {
-            isWaylandBtnExisted = true;
-            break;
-        }
-    }
-
     int count = m_sessionBtns.size();
-    if (isWaylandBtnExisted && !m_allowSwitchingToWayland)
+    if (m_isWaylandExisted && !m_allowSwitchingToWayland)
         --count;
 
     const int maxLineCap = width() / itemWidth - 1; // 1 for left-offset and right-offset.
@@ -152,7 +145,11 @@ void SessionWidget::updateLayout()
 
 int SessionWidget::sessionCount() const
 {
-    return m_sessionModel->rowCount(QModelIndex());
+    int count = m_sessionModel->rowCount(QModelIndex());
+    if (m_isWaylandExisted && !m_allowSwitchingToWayland)
+        --count;
+
+    return count;
 }
 
 void SessionWidget::switchToUser(const QString &userName)
@@ -321,6 +318,9 @@ void SessionWidget::loadSessionList()
         connect(sbtn, &RoundItemButton::clicked, this, &SessionWidget::onSessionButtonClicked);
 
         m_sessionBtns.append(sbtn);
+
+        if (!WAYLAND_SESSION_NAME.compare(session_name, Qt::CaseInsensitive))
+            m_isWaylandExisted = true;
     }
 }
 

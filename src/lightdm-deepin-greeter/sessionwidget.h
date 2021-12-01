@@ -88,6 +88,7 @@ private:
     QList<RoundItemButton *> m_sessionBtns;
     QLightDM::UsersModel *m_userModel;
     bool m_allowSwitchingToWayland;
+    bool m_isWaylandExisted;
 };
 
 #endif // SESSIONWIDGET_H
