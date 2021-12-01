@@ -55,6 +55,8 @@ public:
     void setPasswordHint(const QString &hint);
     void setCurrentUid(uid_t uid);
     void hide();
+    void showResetPasswordMessage();
+    void closeResetPasswordMessage();
 
 signals:
     void focusChanged(const bool);
@@ -76,8 +78,6 @@ private:
     void updateUnlockPrompt() override;
     void showPasswordHint();
     void setPasswordHintBtnVisible(const bool isVisible);
-    void showResetPasswordMessage();
-    void closeResetPasswordMessage();
     bool isUserAccountBinded();
 
 private:

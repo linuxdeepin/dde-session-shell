@@ -50,6 +50,8 @@ public:
     void setLineEditInfo(const QString &text, const TextType type);
     void setPasswordHint(const QString &hint);
     void setCurrentUid(uid_t uid);
+    void showResetPasswordMessage();
+    void closeResetPasswordMessage();
 
 signals:
     void focusChanged(const bool);
@@ -69,8 +71,6 @@ private:
     void updateUnlockPrompt();
     void showPasswordHint();
     void setPasswordHintBtnVisible(const bool isVisible);
-    void showResetPasswordMessage();
-    void closeResetPasswordMessage();
     bool isUserAccountBinded();
 private:
     DLabel *m_capsLock;             // 大小写状态

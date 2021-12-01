@@ -167,8 +167,6 @@ void AuthPassword::setAuthStatus(const int state, const QString &result)
         m_lineEdit->hideAlertMessage();
         emit authFinished(state);
         emit requestChangeFocus();
-        setResetPasswordMessageVisible(false);
-        updateResetPasswordUI();
         break;
     case AS_Failure: {
         setAnimationStatus(false);
@@ -234,11 +232,6 @@ void AuthPassword::setAuthStatus(const int state, const QString &result)
         } else {
             setLineEditInfo(tr("Please try again %n minutes later", "", static_cast<int>(m_integerMinutes)), PlaceHolderText);
         }
-        if (QFile::exists(ResetPassword_Exe_Path) && m_currentUid <= 9999 && isUserAccountBinded()) {
-            qDebug() << "begin reset passoword";
-            setResetPasswordMessageVisible(true);
-            updateResetPasswordUI();
-        }
         m_showPrompt = false;
         m_passwordHintBtn->hide();
         break;
@@ -297,8 +290,18 @@ void AuthPassword::setLimitsInfo(const LimitsInfo &info)
         updateUnlockPrompt();
 
     m_passwordHintBtn->setVisible(info.numFailures > 0 && !m_passwordHint.isEmpty());
-    if (m_limitsInfo->locked)
+    if (m_limitsInfo->locked) {
         setAuthStatus(AS_Locked, "Locked");
+        if (lockStateChanged && this->isVisible() && QFile::exists(ResetPassword_Exe_Path) &&
+            m_currentUid <= 9999 && isUserAccountBinded()) {
+            qDebug() << "begin reset passoword";
+            setResetPasswordMessageVisible(true);
+            updateResetPasswordUI();
+        }
+    } else {
+        setResetPasswordMessageVisible(false);
+        updateResetPasswordUI();
+    }
 }
 
 /**
@@ -479,7 +482,6 @@ void AuthPassword::showResetPasswordMessage()
         emit resetPasswordMessageVisibleChanged(false);
     });
     DMessageManager::instance()->sendMessage(centerFrame, m_resetPasswordFloatingMessage);
-    emit resetPasswordMessageVisibleChanged(true);
 }
 
 /**
@@ -491,7 +493,6 @@ void AuthPassword::closeResetPasswordMessage()
         m_resetPasswordFloatingMessage->close();
         delete  m_resetPasswordFloatingMessage;
         m_resetPasswordFloatingMessage = nullptr;
-        emit resetPasswordMessageVisibleChanged(false);
     }
 }
 
@@ -557,6 +558,7 @@ void AuthPassword::updateResetPasswordUI()
     } else {
         closeResetPasswordMessage();
     }
+    emit resetPasswordMessageVisibleChanged(m_resetPasswordMessageVisible);
 }
 
 void AuthPassword::hide()

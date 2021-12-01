@@ -171,8 +171,6 @@ void AuthSingle::setAuthStatus(const int state, const QString &result)
         setLineEditEnabled(false);
         setLineEditInfo(result, PlaceHolderText);
         emit authFinished(AS_Success);
-        setResetPasswordMessageVisible(false);
-        updateResetPasswordUI();
         break;
     case AS_Failure: {
         setAnimationStatus(false);
@@ -184,10 +182,6 @@ void AuthSingle::setAuthStatus(const int state, const QString &result)
                 setLineEditInfo(tr("Please try again 1 minute later"), PlaceHolderText);
             } else {
                 setLineEditInfo(tr("Please try again %n minutes later", "", static_cast<int>(m_integerMinutes)), PlaceHolderText);
-            }
-            if (QFile::exists(ResetPassword_Exe_Path) && m_currentUid <= 9999 && isUserAccountBinded()) {
-                setResetPasswordMessageVisible(true);
-                updateResetPasswordUI();
             }
         } else {
             setLineEditEnabled(true);
@@ -270,8 +264,20 @@ void AuthSingle::setAnimationStatus(const bool start)
 void AuthSingle::setLimitsInfo(const LimitsInfo &info)
 {
     qDebug() << "AuthSingle::setLimitsInfo" << info.unlockTime;
+    const bool lockStateChanged = (info.locked != m_limitsInfo->locked);
     AuthModule::setLimitsInfo(info);
     setPasswordHintBtnVisible(info.numFailures > 0 && !m_passwordHint.isEmpty());
+    if (m_limitsInfo->locked) {
+        if (lockStateChanged && this->isVisible() && QFile::exists(ResetPassword_Exe_Path) &&
+            m_currentUid <= 9999 && isUserAccountBinded()) {
+            qDebug() << "begin reset passoword";
+            setResetPasswordMessageVisible(true);
+            updateResetPasswordUI();
+        }
+    } else {
+        setResetPasswordMessageVisible(false);
+        updateResetPasswordUI();
+    }
 }
 
 /**
@@ -464,7 +470,6 @@ void AuthSingle::showResetPasswordMessage()
         }
         emit resetPasswordMessageVisibleChanged(false);
     });
-    emit resetPasswordMessageVisibleChanged(true);
 }
 
 /**
@@ -476,7 +481,6 @@ void AuthSingle::closeResetPasswordMessage()
         m_resetPasswordFloatingMessage->close();
         delete  m_resetPasswordFloatingMessage;
         m_resetPasswordFloatingMessage = nullptr;
-        emit resetPasswordMessageVisibleChanged(false);
     }
 }
 
@@ -538,11 +542,13 @@ void AuthSingle::updateResetPasswordUI()
     if (m_currentUid > 9999) {
         return;
     }
+
     if (m_resetPasswordMessageVisible) {
         showResetPasswordMessage();
     } else {
         closeResetPasswordMessage();
     }
+    emit resetPasswordMessageVisibleChanged(m_resetPasswordMessageVisible);
 }
 
 bool AuthSingle::eventFilter(QObject *watched, QEvent *event)

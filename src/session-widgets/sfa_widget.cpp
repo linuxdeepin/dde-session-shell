@@ -282,7 +282,7 @@ void SFAWidget::syncResetPasswordUI()
     if (m_singleAuth) {
         m_singleAuth->updateResetPasswordUI();
     }
-    if (m_passwordAuth) {
+    if (m_passwordAuth && m_passwordAuth->isVisible()) {
         m_passwordAuth->updateResetPasswordUI();
     }
 }
@@ -425,10 +425,12 @@ void SFAWidget::initPasswdAuth()
             replaceWidget(m_passwordAuth);
             m_frameDataBind->updateValue("SFAType", AT_Password);
             emit requestStartAuthentication(m_user->name(), AT_Password);
+            m_passwordAuth->updateResetPasswordUI();
         } else {
             m_passwordAuth->hide();
             m_lockButton->setEnabled(false);
             emit requestEndAuthentication(m_user->name(), AT_Password);
+            m_passwordAuth->closeResetPasswordMessage();
         }
     });
 }
