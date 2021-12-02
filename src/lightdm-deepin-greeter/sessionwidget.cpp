@@ -24,7 +24,6 @@
  */
 
 #include "sessionwidget.h"
-
 #include "constants.h"
 #include "sessionbasemodel.h"
 
@@ -75,11 +74,17 @@ SessionWidget::SessionWidget(QWidget *parent)
     , m_userModel(new QLightDM::UsersModel(this))
     , m_allowSwitchingToWayland(getDConfigValue("allowSwitchingToWayland", false).toBool())
     , m_isWaylandExisted(false)
+    , m_warningLabel(new QLabel(this))
 {
     setSizePolicy(QSizePolicy::Expanding, QSizePolicy::Expanding);
     loadSessionList();
     setFocusPolicy(Qt::StrongFocus);
     setAccessibleName("SessionWidget");
+    m_warningLabel->setText(tr("You have enabled the high system security level,thus cannot switch to the Wayland mode,"\
+                               "please disable the high security level in Security Center and try again."));
+    m_warningLabel->setSizePolicy(QSizePolicy::Expanding, QSizePolicy::Preferred);
+    m_warningLabel->setAlignment(Qt::AlignCenter);
+    m_warningLabel->hide();
 
     std::function<void (QVariant)> function = std::bind(&SessionWidget::onOtherPageChanged, this, std::placeholders::_1);
     int index = m_frameDataBind->registerFunction("SessionWidget", function);
@@ -115,6 +120,7 @@ void SessionWidget::updateLayout()
     const int itemTotal = itemPadding + itemWidth;
 
     // checked default session button
+    m_currentSessionIndex = sessionIndex(m_model->sessionKey());
     m_sessionBtns.at(m_currentSessionIndex)->setChecked(true);
 
     int count = m_sessionBtns.size();
@@ -138,15 +144,18 @@ void SessionWidget::updateLayout()
         }
 
         QPropertyAnimation *ani = new QPropertyAnimation(button, "pos");
-        ani->setStartValue(QPoint(width(), 0));
-        ani->setEndValue(QPoint(QPoint(offset + index * itemWidth, itemTotal * row)));
+        ani->setStartValue(QPoint(width(), 50));
+        ani->setEndValue(QPoint(QPoint(offset + index * itemWidth, itemTotal * row + 50)));
         button->show();
         ani->start(QAbstractAnimation::DeleteWhenStopped);
 
         index++;
     }
 
-    setFixedHeight(itemWidth * (row + 1));
+    m_warningLabel->setContentsMargins(0, 10, 0, 10);
+    m_warningLabel->setFixedSize(width() - SessionButtonWidth, 50);
+
+    setFixedHeight(itemWidth * (row + 1) + 50);
 }
 
 int SessionWidget::sessionCount() const
@@ -228,12 +237,20 @@ void SessionWidget::onSessionButtonClicked()
     Q_ASSERT(btn);
     Q_ASSERT(m_sessionBtns.contains(btn));
 
+    QString sessionKey = m_sessionModel->data(m_sessionModel->index(m_sessionBtns.indexOf(btn)), QLightDM::SessionsModel::KeyRole).toString();
+    if (!WAYLAND_SESSION_NAME.compare(sessionKey, Qt::CaseInsensitive) && m_model->isSecurityEnhanceOpen()) {
+        // 在开启等保（高）的情况下不允许切换到wayland环境
+        m_warningLabel->show();
+        return;
+    }
+
     btn->setChecked(true);
     m_currentSessionIndex = m_sessionBtns.indexOf(btn);
 
     m_model->setSessionKey(currentSessionKey());
 
     emit hideFrame();
+    m_warningLabel->hide();
 }
 
 int SessionWidget::sessionIndex(const QString &sessionName)

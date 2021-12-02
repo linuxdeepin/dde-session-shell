@@ -24,6 +24,9 @@ SessionBaseModel::SessionBaseModel(QObject *parent)
     , m_users(new QMap<QString, std::shared_ptr<User>>())
     , m_loginedUsers(new QMap<QString, std::shared_ptr<User>>())
 {
+    // 若开启等保，默认将当前显示模式切换为x11
+    if (isSecurityEnhanceOpen())
+        setSessionKey("deepin");
 }
 
 SessionBaseModel::~SessionBaseModel()
@@ -71,6 +74,20 @@ void SessionBaseModel::setSessionKey(const QString &sessionKey)
     m_sessionKey = sessionKey;
 
     emit onSessionKeyChanged(sessionKey);
+}
+
+bool SessionBaseModel::isSecurityEnhanceOpen()
+{
+    QDBusInterface securityEnhanceInterface("com.deepin.daemon.SecurityEnhance",
+                               "/com/deepin/daemon/SecurityEnhance",
+                               "com.deepin.daemon.SecurityEnhance",
+                               QDBusConnection::systemBus());
+    QDBusReply<QString> reply = securityEnhanceInterface.call("Status");
+    if (!reply.isValid()) {
+       qWarning() << "get security enhance status error: " << reply.error();
+       return false;
+    }
+    return reply.value() == "open" || reply.value() == "opening";
 }
 
 void SessionBaseModel::setPowerAction(const PowerAction &powerAction)

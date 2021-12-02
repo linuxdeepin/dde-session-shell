@@ -77,6 +77,8 @@ public:
     inline AppType appType() const { return m_appType; }
     void setAppType(const AppType type);
 
+    bool isSecurityEnhanceOpen();
+
     inline QString sessionKey() const { return m_sessionKey; }
     void setSessionKey(const QString &sessionKey);
 

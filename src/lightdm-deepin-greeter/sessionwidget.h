@@ -89,6 +89,7 @@ private:
     QLightDM::UsersModel *m_userModel;
     bool m_allowSwitchingToWayland;
     bool m_isWaylandExisted;
+    QLabel *m_warningLabel;
 };
 
 #endif // SESSIONWIDGET_H
