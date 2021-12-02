@@ -394,10 +394,20 @@ void LockWorker::switchToUser(std::shared_ptr<User> user)
         endAuthentication(m_account, AT_All);
         setCurrentUser(user);
     }
+
+    /**
+     * 切换用户时，需要先将当前用户的界面切换为密码输入框，再切换为下一用户。
+     * 当前用户界面还未更新完成，已经切换为下一用户界面了，导致切换回来时，闪现用户列表。
+     * 故使用 QTimer 将切换用户的操作放在事件队列最后处理。
+     */
     if (user->isLogin()) {
-        QProcess::startDetached("dde-switchtogreeter", QStringList() << user->name());
+        QTimer::singleShot(0, this, [user] {
+            QProcess::startDetached("dde-switchtogreeter", QStringList() << user->name());
+        });
     } else {
-        QProcess::startDetached("dde-switchtogreeter", QStringList());
+        QTimer::singleShot(0, this, [] {
+            QProcess::startDetached("dde-switchtogreeter", QStringList());
+        });
     }
 }
 
