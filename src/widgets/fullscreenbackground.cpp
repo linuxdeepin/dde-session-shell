@@ -271,7 +271,7 @@ void FullscreenBackground::paintEvent(QPaintEvent *e)
 
 void FullscreenBackground::tryActiveWindow(int count/* = 9*/)
 {
-    if (count < 0)
+    if (count < 0 || qgetenv("XDG_SESSION_TYPE").contains("wayland"))
         return;
 
     qCDebug(DDE_SS) << "try active window..." << count;
