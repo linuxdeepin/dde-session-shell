@@ -48,7 +48,7 @@ public slots:
     void setLocked(const bool locked);
     void restartResetSessionTimer();
     void onAuthFinished();
-    void handleAuthStatus(const int type, const int status, const QString &message);
+    void onAuthStateChanged(const int type, const int state, const QString &message);
 
 private:
     void initConnections();

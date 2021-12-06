@@ -41,7 +41,7 @@ public:
         Default
     };
 
-    enum ExpiredStatus {
+    enum ExpiredState {
         ExpiredNormal,
         ExpiredSoon,
         ExpiredAlready
@@ -69,7 +69,7 @@ public:
     inline bool isUse24HourFormat() const { return m_isUse24HourFormat; }
 
     inline int expiredDayLeft() const { return m_expiredDayLeft; }
-    inline int expiredStatus() const { return m_expiredStatus; }
+    inline int expiredState() const { return m_expiredState; }
     inline int shortDateFormat() const { return m_shortDateFormat; }
     inline int shortTimeFormat() const { return m_shortTimeFormat; }
     inline int weekdayFormat() const { return m_weekdayFormat; }
@@ -91,14 +91,14 @@ public:
     inline uid_t uid() const { return m_uid; }
 
     void updateLimitsInfo(const QString &info);
-    void updateLoginStatus(const bool isLogin);
+    void updateLoginState(const bool isLogin);
 
     virtual void setKeyboardLayout(const QString &keyboard) { Q_UNUSED(keyboard) }
     virtual void updatePasswordExpiredInfo() { }
 
 signals:
     void avatarChanged(const QString &);
-    void autoLoginStatusChanged(const bool);
+    void autoLoginStateChanged(const bool);
     void desktopBackgroundChanged(const QString &);
     void displayNameChanged(const QString &);
     void greeterBackgroundChanged(const QString &);
@@ -106,7 +106,7 @@ signals:
     void keyboardLayoutListChanged(const QStringList &);
     void limitsInfoChanged(const QMap<int, LimitsInfo> *);
     void localeChanged(const QString &locale);
-    void loginStatusChanged(const bool);
+    void loginStateChanged(const bool);
     void noPasswordLoginChanged(const bool);
     void passwordHintChanged(const QString &);
     void shortDateFormatChanged(const int);
@@ -128,7 +128,7 @@ protected:
     bool m_isPasswordValid;              // 用户是否设置密码
     bool m_isUse24HourFormat;            // 24小时制
     int m_expiredDayLeft;                // 密码过期剩余天数
-    int m_expiredStatus;                 // 密码过期状态
+    int m_expiredState;                  // 密码过期状态
     int m_shortDateFormat;               // 短日期格式
     int m_shortTimeFormat;               // 短时间格式
     int m_weekdayFormat;                 // 星期显示格式
@@ -174,7 +174,7 @@ private slots:
     void updateName(const QString &name);
     void updateNoPasswordLogin(const bool isNoPasswordLogin);
     void updatePasswordHint(const QString &hint);
-    void updatePasswordStatus(const QString &status);
+    void updatePasswordState(const QString &state);
     void updateShortDateFormat(const int format);
     void updateShortTimeFormat(const int format);
     void updateWeekdayFormat(const int format);

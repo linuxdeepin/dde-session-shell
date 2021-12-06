@@ -57,7 +57,7 @@ public:
 
     virtual void setModel(const SessionBaseModel *model);
     virtual void setAuthType(const int type);
-    virtual void setAuthStatus(const int type, const int status, const QString &message);
+    virtual void setAuthState(const int type, const int state, const QString &message);
     virtual void reset();
     virtual int getTopSpacing() const ;
 
@@ -80,7 +80,7 @@ protected:
     void initUI();
     void initConnections();
 
-    virtual void checkAuthResult(const int type, const int status);
+    virtual void checkAuthResult(const int type, const int state);
 
     void setUser(std::shared_ptr<User> user);
     void setLimitsInfo(const QMap<int, User::LimitsInfo> *limitsInfo);
@@ -91,8 +91,8 @@ protected:
     void setLockButtonType(const int type);
 
     void updateBlurEffectGeometry();
-    void updatePasswordExpiredStatus();
-    void updateExpiredStatus();
+    void updatePasswordExpiredState();
+    void updateExpiredState();
 
     void registerSyncFunctions(const QString &flag, std::function<void(QVariant)> function);
     void syncSingle(const QVariant &value);
@@ -109,7 +109,7 @@ protected:
     DFloatingButton *m_lockButton;         // 解锁按钮
     UserAvatar *m_userAvatar;              // 用户头像
 
-    DLabel *m_expiredStatusLabel; // 密码过期提示
+    DLabel *m_expiredStateLabel;           // 密码过期提示
     QSpacerItem *m_expiredSpacerItem;      // 密码过期提示与按钮的间隔
     DLabel *m_nameLabel;          // 用户名
     DLineEditEx *m_accountEdit;   // 用户名输入框

@@ -40,8 +40,8 @@ public:
     void reset();
     QString lineEditText() const;
 
-    void setAnimationStatus(const bool start) override;
-    void setAuthStatus(const int status, const QString &result) override;
+    void setAnimationState(const bool start) override;
+    void setAuthState(const int state, const QString &result) override;
     void setCapsLockVisible(const bool on);
     void setKeyboardButtonInfo(const QString &text);
     void setKeyboardButtonVisible(const bool visible);

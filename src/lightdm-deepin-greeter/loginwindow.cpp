@@ -70,7 +70,7 @@ LoginWindow::LoginWindow(SessionBaseModel *const model, QWidget *parent)
     connect(m_loginContent, &LockContent::requestEndAuthentication, this, &LoginWindow::requestEndAuthentication);
     connect(m_loginContent, &LockContent::authFinished, this, [this]{
         setEnterEnable(true);
-        if (m_model->currentUser()->expiredStatus() != User::ExpiredAlready)
+        if (m_model->currentUser()->expiredState() != User::ExpiredAlready)
             m_loginContent->hide();
         emit authFinished();
     });

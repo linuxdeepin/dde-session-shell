@@ -36,8 +36,8 @@ public:
 
     void setAuthFactorType(AuthFactorType authFactorType) override;
 public slots:
-    void setAuthStatus(const int state, const QString &result) override;
-    void setAnimationStatus(const bool start) override;
+    void setAuthState(const int state, const QString &result) override;
+    void setAnimationState(const bool start) override;
     void setLimitsInfo(const LimitsInfo &info) override;
 
 protected:

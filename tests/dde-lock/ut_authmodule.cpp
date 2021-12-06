@@ -24,10 +24,10 @@ void UT_AuthModule::TearDown()
 
 TEST_F(UT_AuthModule, BasicTest)
 {
-    m_authModule->authStatus();
+    m_authModule->authState();
     m_authModule->authType();
-    m_authModule->setAnimationStatus(false);
-    m_authModule->setAuthStatus(0, "test");
-    // m_authModule->setAuthStatus("");
+    m_authModule->setAnimationState(false);
+    m_authModule->setAuthState(0, "test");
+    // m_authModule->setAuthState("");
     m_authModule->setLimitsInfo(LimitsInfo());
 }

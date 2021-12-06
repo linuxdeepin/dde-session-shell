@@ -35,7 +35,7 @@ public:
 
     void setModel(const SessionBaseModel *model) override;
     void setAuthType(const int type) override;
-    void setAuthStatus(const int type, const int status, const QString &message) override;
+    void setAuthState(const int type, const int state, const QString &message) override;
     void autoUnlock();
 
 private:
@@ -48,7 +48,7 @@ private:
     void initFaceAuth();
     void initIrisAuth();
 
-    void checkAuthResult(const int type, const int status) override;
+    void checkAuthResult(const int type, const int state) override;
 
     void updateFocusPosition();
 

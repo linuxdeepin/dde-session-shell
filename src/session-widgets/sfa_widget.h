@@ -52,7 +52,7 @@ public:
 
     void setModel(const SessionBaseModel *model) override;
     void setAuthType(const int type) override;
-    void setAuthStatus(const int type, const int status, const QString &message) override;
+    void setAuthState(const int type, const int state, const QString &message) override;
     void syncResetPasswordUI();
     int getTopSpacing() const override;
 
@@ -73,22 +73,22 @@ private:
     void initFaceAuth();
     void initIrisAuth();
 
-    void checkAuthResult(const int type, const int status) override;
+    void checkAuthResult(const int type, const int state) override;
 
     void syncAuthType(const QVariant &value);
     void replaceWidget(AuthModule *authModule);
-    void setBioAuthStatusVisible(AuthModule *authModule, bool visible);
+    void setBioAuthStateVisible(AuthModule *authModule, bool visible);
 
 private:
     QVBoxLayout *m_mainLayout;
 
     DButtonBox *m_chooseAuthButtonBox; // 认证选择按钮
-    DLabel *m_biometricAuthStatus;     // 生物认证状态
+    DLabel *m_biometricAuthState;      // 生物认证状态
     QPointer<AuthModule> m_lastAuth;   // 上次成功的认证
 
     QMap<int, DButtonBoxButton *> m_authButtons;
     DFloatingButton *m_retryButton;
-    QSpacerItem *m_bioAuthStatusPlaceHolder;
+    QSpacerItem *m_bioAuthStatePlaceHolder;
     QSpacerItem *m_chooseAuthButtonBoxPlaceHolder;
 };
 

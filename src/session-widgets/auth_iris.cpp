@@ -50,10 +50,10 @@ void AuthIris::initUI()
     m_textLabel->setWordWrap(true);
     mainLayout->addWidget(m_textLabel, 1, Qt::AlignHCenter);
     /* 认证状态 */
-    m_authStatusLabel = new DLabel(this);
-    m_authStatusLabel->installEventFilter(this);
-    setAuthStatusStyle(LOGIN_WAIT);
-    mainLayout->addWidget(m_authStatusLabel, 0, Qt::AlignRight | Qt::AlignVCenter);
+    m_authStateLabel = new DLabel(this);
+    m_authStateLabel->installEventFilter(this);
+    setAuthStateStyle(LOGIN_WAIT);
+    mainLayout->addWidget(m_authStateLabel, 0, Qt::AlignRight | Qt::AlignVCenter);
 }
 
 /**
@@ -70,35 +70,35 @@ void AuthIris::initConnections()
 void AuthIris::reset()
 {
     m_textLabel->setText(tr("Iris ID"));
-    if (m_authStatusLabel) {
-        setAuthStatusStyle(isMFA() ? LOGIN_WAIT : AUTH_LOCK);
-        m_authStatusLabel->show();
+    if (m_authStateLabel) {
+        setAuthStateStyle(isMFA() ? LOGIN_WAIT : AUTH_LOCK);
+        m_authStateLabel->show();
     }
 }
 
 /**
  * @brief 设置认证状态
  *
- * @param status
+ * @param state
  * @param result
  */
-void AuthIris::setAuthStatus(const int state, const QString &result)
+void AuthIris::setAuthState(const int state, const QString &result)
 {
-    m_status = state;
+    m_state = state;
     switch (state) {
     case AuthCommon::AS_Success:
         if (isMFA())
-            setAuthStatusStyle(LOGIN_CHECK);
+            setAuthStateStyle(LOGIN_CHECK);
         else
-            setAnimationStatus(true);
+            setAnimationState(true);
         m_textLabel->setText(tr("Verification successful"));
         m_showPrompt = true;
         emit authFinished(state);
         emit retryButtonVisibleChanged(false);
         break;
     case AuthCommon::AS_Failure: {
-        setAnimationStatus(false);
-        setAuthStatusStyle(isMFA() ? LOGIN_RETRY : AUTH_LOCK);
+        setAnimationState(false);
+        setAuthStateStyle(isMFA() ? LOGIN_RETRY : AUTH_LOCK);
         m_showPrompt = false;
         const int leftTimes = static_cast<int>(m_limitsInfo->maxTries - m_limitsInfo->numFailures);
         if (leftTimes > 1) {
@@ -111,30 +111,30 @@ void AuthIris::setAuthStatus(const int state, const QString &result)
         break;
     }
     case AuthCommon::AS_Cancel:
-        setAnimationStatus(false);
+        setAnimationState(false);
         m_showPrompt = true;
         break;
     case AuthCommon::AS_Timeout:
     case AuthCommon::AS_Error:
-        setAnimationStatus(false);
-        setAuthStatusStyle(isMFA() ? LOGIN_SPINNER : AUTH_LOCK);
+        setAnimationState(false);
+        setAuthStateStyle(isMFA() ? LOGIN_SPINNER : AUTH_LOCK);
         m_textLabel->setText(result);
         m_showPrompt = true;
         break;
     case AuthCommon::AS_Verify:
-        setAnimationStatus(false);
-        setAuthStatusStyle(isMFA() ? LOGIN_WAIT : AUTH_LOCK);
+        setAnimationState(false);
+        setAuthStateStyle(isMFA() ? LOGIN_WAIT : AUTH_LOCK);
         m_textLabel->setText(result);
         break;
     case AuthCommon::AS_Exception:
-        setAnimationStatus(false);
-        setAuthStatusStyle(isMFA() ? LOGIN_WAIT : AUTH_LOCK);
+        setAnimationState(false);
+        setAuthStateStyle(isMFA() ? LOGIN_WAIT : AUTH_LOCK);
         m_textLabel->setText(result);
         m_showPrompt = true;
         break;
     case AuthCommon::AS_Prompt:
-        setAnimationStatus(false);
-        setAuthStatusStyle(isMFA() ? LOGIN_WAIT : AUTH_LOCK);
+        setAnimationState(false);
+        setAuthStateStyle(isMFA() ? LOGIN_WAIT : AUTH_LOCK);
         break;
     case AuthCommon::AS_Started:
         m_textLabel->setText(tr("Verify your Iris ID"));
@@ -142,28 +142,28 @@ void AuthIris::setAuthStatus(const int state, const QString &result)
     case AuthCommon::AS_Ended:
         break;
     case AuthCommon::AS_Locked:
-        setAnimationStatus(false);
-        setAuthStatusStyle(isMFA() ? LOGIN_LOCK : AUTH_LOCK);
+        setAnimationState(false);
+        setAuthStateStyle(isMFA() ? LOGIN_LOCK : AUTH_LOCK);
         m_textLabel->setText(tr("Iris ID locked, use password please"));
         m_showPrompt = true;
         if (DDESESSIONCC::SingleAuthFactor == m_authFactorType)
             emit retryButtonVisibleChanged(false);
         break;
     case AuthCommon::AS_Recover:
-        setAnimationStatus(false);
-        setAuthStatusStyle(isMFA() ? LOGIN_WAIT : AUTH_LOCK);
+        setAnimationState(false);
+        setAuthStateStyle(isMFA() ? LOGIN_WAIT : AUTH_LOCK);
         m_showPrompt = true;
         break;
     case AuthCommon::AS_Unlocked:
-        setAnimationStatus(false);
-        setAuthStatusStyle(isMFA() ? LOGIN_WAIT : AUTH_LOCK);
+        setAnimationState(false);
+        setAuthStateStyle(isMFA() ? LOGIN_WAIT : AUTH_LOCK);
         m_showPrompt = true;
         break;
     default:
-        setAnimationStatus(false);
-        setAuthStatusStyle(isMFA() ? LOGIN_WAIT : AUTH_LOCK);
+        setAnimationState(false);
+        setAuthStateStyle(isMFA() ? LOGIN_WAIT : AUTH_LOCK);
         m_textLabel->setText(result);
-        qWarning() << "Error! The status of Iris Auth is wrong!" << state << result;
+        qWarning() << "Error! The state of Iris Auth is wrong!" << state << result;
         break;
     }
     update();
@@ -174,7 +174,7 @@ void AuthIris::setAuthStatus(const int state, const QString &result)
  *
  * @param start
  */
-void AuthIris::setAnimationStatus(const bool start)
+void AuthIris::setAnimationState(const bool start)
 {
     m_aniIndex = 1;
 
@@ -217,23 +217,23 @@ void AuthIris::updateUnlockPrompt()
  */
 void AuthIris::doAnimation()
 {
-    if (m_status == AuthCommon::AS_Success) {
+    if (m_state == AuthCommon::AS_Success) {
         if (m_aniIndex > 10) {
             m_aniTimer->stop();
             emit authFinished(AuthCommon::AS_Success);
         } else {
-            setAuthStatusStyle(QStringLiteral(":/misc/images/unlock/unlock_%1.svg").arg(m_aniIndex++));
+            setAuthStateStyle(QStringLiteral(":/misc/images/unlock/unlock_%1.svg").arg(m_aniIndex++));
         }
     }
 }
 
 bool AuthIris::eventFilter(QObject *watched, QEvent *event)
 {
-    if (watched == m_authStatusLabel
-            && QEvent::MouseButtonRelease == event->type()
-            && !m_isAuthing
-            && AuthCommon::AS_Locked != m_status
-            && DDESESSIONCC::MultiAuthFactor == m_authFactorType) {
+    if (watched == m_authStateLabel
+        && QEvent::MouseButtonRelease == event->type()
+        && !m_isAuthing
+        && AuthCommon::AS_Locked != m_state
+        && DDESESSIONCC::MultiAuthFactor == m_authFactorType) {
         emit activeAuth(m_type);
     }
 

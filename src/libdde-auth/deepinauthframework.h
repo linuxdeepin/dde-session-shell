@@ -77,7 +77,7 @@ signals:
     void PromptChanged(const QString &);
     void FactorsInfoChanged(const MFAInfoList &);
     void PINLenChanged(const int);
-    void AuthStatusChanged(const int, const int, const QString &);
+    void AuthStateChanged(const int, const int, const QString &);
 
 public slots:
     /* New authentication framework */
@@ -93,7 +93,7 @@ private:
     static void *PAMAuthWorker(void *arg);
     void PAMAuthentication(const QString &account);
     static int PAMConversation(int num_msg, const struct pam_message **msg, struct pam_response **resp, void *app_data);
-    void UpdateAuthStatus(const int status, const QString &message);
+    void UpdateAuthState(const int state, const QString &message);
 
     void initEncryptionService();
     void encryptSymmtricKey(const QString &account);

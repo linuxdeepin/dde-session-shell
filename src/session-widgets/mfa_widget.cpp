@@ -57,7 +57,7 @@ void MFAWidget::initUI()
     m_mainLayout->addWidget(m_nameLabel, 0, Qt::AlignVCenter);
     m_mainLayout->addWidget(m_accountEdit, 0, Qt::AlignVCenter);
     m_mainLayout->addSpacing(10);
-    m_mainLayout->addWidget(m_expiredStatusLabel);
+    m_mainLayout->addWidget(m_expiredStateLabel);
     m_mainLayout->addItem(m_expiredSpacerItem);
     m_mainLayout->addWidget(m_lockButton, 0, Qt::AlignCenter);
 }
@@ -66,7 +66,7 @@ void MFAWidget::initConnections()
 {
     AuthWidget::initConnections();
     connect(m_model, &SessionBaseModel::authTypeChanged, this, &MFAWidget::setAuthType);
-    connect(m_model, &SessionBaseModel::authStatusChanged, this, &MFAWidget::setAuthStatus);
+    connect(m_model, &SessionBaseModel::authStateChanged, this, &MFAWidget::setAuthState);
     connect(m_accountEdit, &DLineEditEx::textChanged, this, [this](const QString &value) {
         FrameDataBind::Instance()->updateValue("MFAAccount", value);
     });
@@ -144,7 +144,7 @@ void MFAWidget::setAuthType(const int type)
         m_nameLabel->setVisible(!visible);
     }
 
-    updatePasswordExpiredStatus();
+    updatePasswordExpiredState();
     updateGeometry();
 
     if (m_lockButton->isVisible() && m_lockButton->isEnabled()) {
@@ -180,50 +180,50 @@ void MFAWidget::setAuthType(const int type)
 /**
  * @brief 认证状态
  * @param type    认证类型
- * @param status  认证结果
+ * @param state  认证结果
  * @param message 消息
  */
-void MFAWidget::setAuthStatus(const int type, const int status, const QString &message)
+void MFAWidget::setAuthState(const int type, const int state, const QString &message)
 {
-    qDebug() << "MFAWidget::setAuthStatus:" << type << status << message;
+    qDebug() << "MFAWidget::setAuthState:" << type << state << message;
     switch (type) {
     case AT_Password:
         if (m_passwordAuth) {
-            m_passwordAuth->setAuthStatus(status, message);
-            FrameDataBind::Instance()->updateValue("MFPasswordAuthStatus", status);
+            m_passwordAuth->setAuthState(state, message);
+            FrameDataBind::Instance()->updateValue("MFPasswordAuthState", state);
             FrameDataBind::Instance()->updateValue("MFPasswordAuthMsg", message);
         }
         break;
     case AT_Fingerprint:
         if (m_fingerprintAuth) {
-            m_fingerprintAuth->setAuthStatus(status, message);
-            FrameDataBind::Instance()->updateValue("MFFingerprintAuthStatus", status);
+            m_fingerprintAuth->setAuthState(state, message);
+            FrameDataBind::Instance()->updateValue("MFFingerprintAuthState", state);
             FrameDataBind::Instance()->updateValue("MFFingerprintAuthMsg", message);
         }
         break;
     case AT_Ukey:
         if (m_ukeyAuth) {
-            m_ukeyAuth->setAuthStatus(status, message);
-            FrameDataBind::Instance()->updateValue("MFUKeyAuthStatus", status);
+            m_ukeyAuth->setAuthState(state, message);
+            FrameDataBind::Instance()->updateValue("MFUKeyAuthState", state);
             FrameDataBind::Instance()->updateValue("MFUKeyAuthMsg", message);
         }
         break;
     case AT_Face:
         if (m_faceAuth) {
-            m_faceAuth->setAuthStatus(status, message);
-            FrameDataBind::Instance()->updateValue("MFFaceAuthStatus", status);
+            m_faceAuth->setAuthState(state, message);
+            FrameDataBind::Instance()->updateValue("MFFaceAuthState", state);
             FrameDataBind::Instance()->updateValue("MFFaceAuthMsg", message);
         }
         break;
     case AT_Iris:
         if (m_irisAuth) {
-            m_irisAuth->setAuthStatus(status, message);
-            FrameDataBind::Instance()->updateValue("MFIrisAuthStatus", status);
+            m_irisAuth->setAuthState(state, message);
+            FrameDataBind::Instance()->updateValue("MFIrisAuthState", state);
             FrameDataBind::Instance()->updateValue("MFIrisAuthMsg", message);
         }
         break;
     case AT_All:
-        checkAuthResult(type, status);
+        checkAuthResult(type, state);
         break;
     default:
         break;
@@ -259,8 +259,8 @@ void MFAWidget::initPasswdAuth()
         if (text.isEmpty()) {
             return;
         }
-        m_passwordAuth->setAuthStatusStyle(LOGIN_SPINNER);
-        m_passwordAuth->setAnimationStatus(true);
+        m_passwordAuth->setAuthStateStyle(LOGIN_SPINNER);
+        m_passwordAuth->setAnimationState(true);
         m_passwordAuth->setLineEditEnabled(false);
         emit sendTokenToAuth(m_model->currentUser()->name(), AT_Password, text);
     });
@@ -323,14 +323,14 @@ void MFAWidget::initUKeyAuth()
         if (text.isEmpty()) {
             return;
         }
-        m_ukeyAuth->setAuthStatusStyle(LOGIN_SPINNER);
-        m_ukeyAuth->setAnimationStatus(true);
+        m_ukeyAuth->setAuthStateStyle(LOGIN_SPINNER);
+        m_ukeyAuth->setAnimationState(true);
         m_ukeyAuth->setLineEditEnabled(false);
         emit sendTokenToAuth(m_model->currentUser()->name(), AT_Ukey, text);
     });
     connect(m_lockButton, &QPushButton::clicked, m_ukeyAuth, &AuthUKey::requestAuthenticate);
-    connect(m_ukeyAuth, &AuthUKey::authFinished, this, [this](const bool status) {
-        checkAuthResult(AT_Ukey, status);
+    connect(m_ukeyAuth, &AuthUKey::authFinished, this, [this](const bool state) {
+        checkAuthResult(AT_Ukey, state);
     });
     connect(m_capslockMonitor, &KeyboardMonitor::capslockStatusChanged, m_ukeyAuth, &AuthUKey::setCapsLockVisible);
 
@@ -364,8 +364,8 @@ void MFAWidget::initFaceAuth()
     connect(m_faceAuth, &AuthFace::activeAuth, this, [this] {
         emit requestStartAuthentication(m_model->currentUser()->name(), AT_Face);
     });
-    connect(m_faceAuth, &AuthFace::authFinished, this, [this](const bool status) {
-        checkAuthResult(AT_Face, status);
+    connect(m_faceAuth, &AuthFace::authFinished, this, [this](const bool state) {
+        checkAuthResult(AT_Face, state);
     });
 }
 
@@ -385,8 +385,8 @@ void MFAWidget::initIrisAuth()
     connect(m_irisAuth, &AuthIris::activeAuth, this, [this] {
         emit requestStartAuthentication(m_model->currentUser()->name(), AT_Iris);
     });
-    connect(m_irisAuth, &AuthIris::authFinished, this, [this](const bool status) {
-        checkAuthResult(AT_Iris, status);
+    connect(m_irisAuth, &AuthIris::authFinished, this, [this](const bool state) {
+        checkAuthResult(AT_Iris, state);
     });
 }
 
@@ -396,32 +396,32 @@ void MFAWidget::initIrisAuth()
  * @param type
  * @param succeed
  */
-void MFAWidget::checkAuthResult(const int type, const int status)
+void MFAWidget::checkAuthResult(const int type, const int state)
 {
-        if (type == AT_Password && status == AS_Success) {
-        if (m_fingerprintAuth && m_fingerprintAuth->authStatus() == AS_Locked) {
+    if (type == AT_Password && state == AS_Success) {
+        if (m_fingerprintAuth && m_fingerprintAuth->authState() == AS_Locked) {
             m_fingerprintAuth->reset();
             emit m_fingerprintAuth->activeAuth(AT_Fingerprint);
         }
-        if (m_faceAuth && m_faceAuth->authStatus() == AS_Locked) {
+        if (m_faceAuth && m_faceAuth->authState() == AS_Locked) {
             m_faceAuth->reset();
             emit m_faceAuth->activeAuth(AT_Face);
         }
-        if (m_irisAuth && m_irisAuth->authStatus() == AS_Locked) {
+        if (m_irisAuth && m_irisAuth->authState() == AS_Locked) {
             m_irisAuth->reset();
             emit m_irisAuth->activeAuth(AT_Iris);
         }
     }
 
-    if (status == AS_Cancel) {
+    if (state == AS_Cancel) {
         if (m_ukeyAuth) {
-            m_ukeyAuth->setAuthStatus(AS_Cancel, "Cancel");
+            m_ukeyAuth->setAuthState(AS_Cancel, "Cancel");
         }
         if (m_passwordAuth) {
-            m_passwordAuth->setAuthStatus(AS_Cancel, "Cancel");
+            m_passwordAuth->setAuthState(AS_Cancel, "Cancel");
         }
         if (m_fingerprintAuth) {
-            m_fingerprintAuth->setAuthStatus(AS_Cancel, "Cancel");
+            m_fingerprintAuth->setAuthState(AS_Cancel, "Cancel");
         }
     }
 }
@@ -430,7 +430,7 @@ void MFAWidget::updateFocusPosition()
 {
     AuthModule *module = static_cast<AuthModule *>(sender());
     if (module == m_passwordAuth) {
-        if (m_ukeyAuth && m_ukeyAuth->authStatus() == AS_Prompt) {
+        if (m_ukeyAuth && m_ukeyAuth->authState() == AS_Prompt) {
             setFocusProxy(m_ukeyAuth);
         } else {
             setFocusProxy(m_lockButton);

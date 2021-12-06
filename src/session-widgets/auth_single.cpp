@@ -93,7 +93,7 @@ void AuthSingle::initUI()
     /* 大小写状态 */
     QPixmap pixmap = DHiDPIHelper::loadNxPixmap(":/misc/images/caps_lock.svg");
     pixmap.setDevicePixelRatio(devicePixelRatioF());
-    m_capsLock->setAccessibleName(QStringLiteral("CapsStatusLabel"));
+    m_capsLock->setAccessibleName(QStringLiteral("CapsStateLabel"));
     m_capsLock->setPixmap(pixmap);
     passwordLayout->addWidget(m_capsLock, 0, Qt::AlignRight | Qt::AlignVCenter);
     /* 密码提示 */
@@ -133,7 +133,7 @@ void AuthSingle::initConnections()
     });
     connect(m_lineEdit, &DLineEditEx::returnPressed, this, [this] {
         if (!m_lineEdit->text().isEmpty() && !m_lineEdit->lineEdit()->isReadOnly()) {
-            setAnimationStatus(true);
+            setAnimationState(true);
             m_lineEdit->clearFocus();
             m_lineEdit->setFocusPolicy(Qt::NoFocus);
             m_lineEdit->lineEdit()->setReadOnly(true);
@@ -156,16 +156,16 @@ void AuthSingle::reset()
 /**
  * @brief 设置认证状态
  *
- * @param status
+ * @param state
  * @param result
  */
-void AuthSingle::setAuthStatus(const int state, const QString &result)
+void AuthSingle::setAuthState(const int state, const QString &result)
 {
     qDebug() << "AuthSingle::setAuthResult:" << state << result;
-    m_status = state;
+    m_state = state;
     switch (state) {
     case AS_Success:
-        setAnimationStatus(false);
+        setAnimationState(false);
         m_lineEdit->setAlert(false);
         m_lineEdit->clear();
         setLineEditEnabled(false);
@@ -173,7 +173,7 @@ void AuthSingle::setAuthStatus(const int state, const QString &result)
         emit authFinished(AS_Success);
         break;
     case AS_Failure: {
-        setAnimationStatus(false);
+        setAnimationState(false);
         m_lineEdit->clear();
         if (m_limitsInfo->locked) {
             m_lineEdit->setAlert(false);
@@ -190,27 +190,27 @@ void AuthSingle::setAuthStatus(const int state, const QString &result)
         break;
     }
     case AS_Cancel:
-        setAnimationStatus(false);
+        setAnimationState(false);
         m_lineEdit->setAlert(false);
         m_lineEdit->hideAlertMessage();
         break;
     case AS_Timeout:
-        setAnimationStatus(false);
+        setAnimationState(false);
         setLineEditInfo(result, AlertText);
         break;
     case AS_Error:
-        setAnimationStatus(false);
+        setAnimationState(false);
         setLineEditInfo(result, AlertText);
         break;
     case AS_Verify:
-        setAnimationStatus(true);
+        setAnimationState(true);
         break;
     case AS_Exception:
-        setAnimationStatus(false);
+        setAnimationState(false);
         setLineEditInfo(result, AlertText);
         break;
     case AS_Prompt:
-        setAnimationStatus(false);
+        setAnimationState(false);
         m_lineEdit->clear();
         setLineEditEnabled(true);
         setLineEditInfo(result, PlaceHolderText);
@@ -220,17 +220,17 @@ void AuthSingle::setAuthStatus(const int state, const QString &result)
     case AS_Ended:
         break;
     case AS_Locked:
-        setAnimationStatus(false);
+        setAnimationState(false);
         break;
     case AS_Recover:
-        setAnimationStatus(false);
+        setAnimationState(false);
         break;
     case AS_Unlocked:
         break;
     default:
-        setAnimationStatus(false);
+        setAnimationState(false);
         setLineEditInfo(result, AlertText);
-        qWarning() << "Error! The status of Password Auth is wrong!" << state << result;
+        qWarning() << "Error! The state of Password Auth is wrong!" << state << result;
         break;
     }
     update();
@@ -251,7 +251,7 @@ void AuthSingle::setCapsLockVisible(const bool on)
  *
  * @param start
  */
-void AuthSingle::setAnimationStatus(const bool start)
+void AuthSingle::setAnimationState(const bool start)
 {
     start ? m_lineEdit->startAnimation() : m_lineEdit->stopAnimation();
 }

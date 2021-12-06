@@ -38,13 +38,13 @@ void LimitsInfo::operator=(const LimitsInfo &info)
 
 AuthModule::AuthModule(const AuthCommon::AuthType type, QWidget *parent)
     : QWidget(parent)
-    , m_status(AuthCommon::AS_None)
+    , m_state(AuthCommon::AS_None)
     , m_type(type)
     , m_showPrompt(true)
     , m_limitsInfo(new LimitsInfo())
     , m_aniTimer(new QTimer(this))
     , m_unlockTimer(new QTimer(this))
-    , m_showAuthStatus(true)
+    , m_showAuthState(true)
     , m_isAuthing(false)
     , m_authFactorType(DDESESSIONCC::SingleAuthFactor)
 {
@@ -84,7 +84,7 @@ void AuthModule::initConnections()
  *
  * @param start
  */
-void AuthModule::setAnimationStatus(const bool start)
+void AuthModule::setAnimationState(const bool start)
 {
     Q_UNUSED(start)
 }
@@ -92,16 +92,16 @@ void AuthModule::setAnimationStatus(const bool start)
 /**
  * @brief 设置认证的状态，由派生类重载，自定义认证状态显示样式。
  *
- * @param status
+ * @param state
  * @param result
  */
-void AuthModule::setAuthStatus(const int status, const QString &result)
+void AuthModule::setAuthState(const int state, const QString &result)
 {
     Q_UNUSED(result)
 
-    if (AuthCommon::AS_Started == status)
+    if (AuthCommon::AS_Started == state)
         m_isAuthing = true;
-    else if (AuthCommon::AS_Ended == status)
+    else if (AuthCommon::AS_Ended == state)
         m_isAuthing = false;
 }
 
@@ -110,14 +110,14 @@ void AuthModule::setAuthStatus(const int status, const QString &result)
  *
  * @param path
  */
-void AuthModule::setAuthStatusStyle(const QString &path)
+void AuthModule::setAuthStateStyle(const QString &path)
 {
-    if (!m_authStatusLabel)
+    if (!m_authStateLabel)
         return;
 
     QPixmap pixmap = DHiDPIHelper::loadNxPixmap(path);
     pixmap.setDevicePixelRatio(devicePixelRatioF());
-    m_authStatusLabel->setPixmap(pixmap);
+    m_authStateLabel->setPixmap(pixmap);
 }
 
 /**
@@ -131,15 +131,15 @@ void AuthModule::setLimitsInfo(const LimitsInfo &info)
     updateUnlockTime();
 }
 
-void AuthModule::setShowAuthStatus(bool showAuthStatus)
+void AuthModule::setShowAuthState(bool showAuthState)
 {
-    m_showAuthStatus = showAuthStatus;
+    m_showAuthState = showAuthState;
 }
 
 void AuthModule::setAuthStatueVisible(bool visible)
 {
-    if (m_authStatusLabel)
-        m_authStatusLabel->setVisible(visible);
+    if (m_authStateLabel)
+        m_authStateLabel->setVisible(visible);
 }
 
 /**
@@ -176,19 +176,19 @@ void AuthModule::updateIntegerMinutes()
     }
 }
 
-void AuthModule::setAuthStatusLabel(DLabel *label)
+void AuthModule::setAuthStateLabel(DLabel *label)
 {
     if (!label)
         return;
 
-    if (m_authStatusLabel) {
-        delete m_authStatusLabel;
-        m_authStatusLabel = nullptr;
+    if (m_authStateLabel) {
+        delete m_authStateLabel;
+        m_authStateLabel = nullptr;
     }
 
     /* 认证状态 */
-    m_authStatusLabel = label;
-    setAuthStatusStyle(AUTH_LOCK);
+    m_authStateLabel = label;
+    setAuthStateStyle(AUTH_LOCK);
 }
 
 void AuthModule::setAuthFactorType(AuthFactorType authFactorType)

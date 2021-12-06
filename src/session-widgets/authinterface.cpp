@@ -72,7 +72,7 @@ void AuthInterface::onUserListChanged(const QStringList &list)
 void AuthInterface::onUserAdded(const QString &user)
 {
     std::shared_ptr<User> user_ptr(new NativeUser(user));
-    user_ptr->updateLoginStatus(isLogined(user_ptr->uid()));
+    user_ptr->updateLoginState(isLogined(user_ptr->uid()));
     m_model->addUser(user_ptr);
 }
 
@@ -154,7 +154,7 @@ void AuthInterface::onLoginUserListChanged(const QString &list)
         if (haveDisplay && find_it == availableUidList.end()) {
             // init addoman user
             std::shared_ptr<User> u(new ADDomainUser(uid));
-            u->updateLoginStatus(true);
+            u->updateLoginState(true);
 
             if (uid == m_currentUserUid && m_model->currentUser().get() == nullptr) {
                 m_model->updateCurrentUser(u);
@@ -167,7 +167,7 @@ void AuthInterface::onLoginUserListChanged(const QString &list)
     QList<std::shared_ptr<User>> uList = m_model->userList();
     for (auto it = uList.begin(); it != uList.end();) {
         std::shared_ptr<User> user = *it;
-        user->updateLoginStatus(isLogined(user->uid()));
+        user->updateLoginState(isLogined(user->uid()));
         ++it;
     }
 

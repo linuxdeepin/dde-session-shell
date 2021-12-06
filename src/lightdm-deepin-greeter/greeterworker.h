@@ -26,7 +26,7 @@ public:
     };
 
     explicit GreeterWorker(SessionBaseModel *const model, QObject *parent = nullptr);
-    ~GreeterWorker();
+    ~GreeterWorker() override;
 
     void switchToUser(std::shared_ptr<User> user) override;
 
@@ -46,7 +46,9 @@ public slots:
     void checkAccount(const QString &account);
     void restartResetSessionTimer();
     void onAuthFinished();
-    void handleAuthStatusChanged(const int type, const int status, const QString &message);
+
+private slots:
+    void onAuthStateChanged(const int type, const int state, const QString &message);
 
 private:
     void initConnections();

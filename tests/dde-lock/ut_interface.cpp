@@ -68,7 +68,7 @@ TEST_F(UT_Interface, user)
     nativeUser->updateLocale("");
     nativeUser->updateName("");
     nativeUser->updateNoPasswordLogin(false);
-    nativeUser->updatePasswordStatus("P");
+    nativeUser->updatePasswordState("P");
     nativeUser->updateShortDateFormat(0);
     nativeUser->updateShortTimeFormat(0);
     nativeUser->updateWeekdayFormat(0);

@@ -66,7 +66,7 @@ private:
     void setAvatar(const QString &avatar);
     void setName(const QString &name);
     void setNameFont(const QFont &font);
-    void setLoginStatus(const bool isLogin);
+    void setLoginState(const bool isLogin);
 
     void updateBlurEffectGeometry();
 
@@ -79,7 +79,7 @@ private:
     DBlurEffectWidget *m_blurEffectWidget; // 模糊背景
     UserAvatar *m_avatar;                  // 用户头像
 
-    DLabel *m_loginStatus; // 用户登录状态
+    DLabel *m_loginState;  // 用户登录状态
     DLabel *m_nameLabel;   // 用户名
     QWidget *m_nameWidget; // 用户名控件
 

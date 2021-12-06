@@ -39,7 +39,7 @@ User::User(QObject *parent)
     , m_isPasswordValid(true)
     , m_isUse24HourFormat(true)
     , m_expiredDayLeft(0)
-    , m_expiredStatus(ExpiredNormal)
+    , m_expiredState(ExpiredNormal)
     , m_shortDateFormat(0)
     , m_shortTimeFormat(0)
     , m_weekdayFormat(0)
@@ -64,7 +64,7 @@ User::User(const User &user)
     m_isUse24HourFormat = user.m_isUse24HourFormat;
 
     m_expiredDayLeft = user.m_expiredDayLeft;
-    m_expiredStatus = user.m_expiredStatus;
+    m_expiredState = user.m_expiredState;
     m_shortDateFormat = user.m_shortDateFormat;
     m_shortTimeFormat = user.m_shortTimeFormat;
     m_weekdayFormat = user.m_weekdayFormat;
@@ -96,13 +96,13 @@ bool User::operator==(const User &user) const
  *
  * @param isLogin
  */
-void User::updateLoginStatus(const bool isLogin)
+void User::updateLoginState(const bool isLogin)
 {
     if (isLogin == m_isLogin) {
         return;
     }
     m_isLogin = isLogin;
-    emit loginStatusChanged(isLogin);
+    emit loginStateChanged(isLogin);
 }
 
 /**
@@ -232,7 +232,7 @@ void NativeUser::initConnections()
     connect(m_userInter, &UserInter::LocaleChanged, this, &NativeUser::updateLocale);
     connect(m_userInter, &UserInter::NoPasswdLoginChanged, this, &NativeUser::updateNoPasswordLogin);
     connect(m_userInter, &UserInter::PasswordHintChanged, this, &NativeUser::updatePasswordHint);
-    connect(m_userInter, &UserInter::PasswordStatusChanged, this, &NativeUser::updatePasswordStatus);
+    connect(m_userInter, &UserInter::PasswordStatusChanged, this, &NativeUser::updatePasswordState);
     connect(m_userInter, &UserInter::PasswordHintChanged, this, &NativeUser::updatePasswordHint);
     connect(m_userInter, &UserInter::ShortDateFormatChanged, this, &NativeUser::updateShortDateFormat);
     connect(m_userInter, &UserInter::ShortTimeFormatChanged, this, &NativeUser::updateShortTimeFormat);
@@ -251,7 +251,7 @@ void NativeUser::initData()
     m_isPasswordValid = (m_userInter->passwordStatus() == "P");
     m_isUse24HourFormat = m_userInter->use24HourFormat();
 
-    m_expiredStatus = m_userInter->PasswordExpiredInfo(m_expiredDayLeft).value();
+    m_expiredState = m_userInter->PasswordExpiredInfo(m_expiredDayLeft).value();
     m_shortDateFormat = m_userInter->shortDateFormat();
     m_shortTimeFormat = m_userInter->shortTimeFormat();
     m_weekdayFormat = m_userInter->weekdayFormat();
@@ -337,7 +337,7 @@ void NativeUser::updateAutomaticLogin(const bool autoLoginState)
         return;
     }
     m_isAutomaticLogin = autoLoginState;
-    emit autoLoginStatusChanged(autoLoginState);
+    emit autoLoginStateChanged(autoLoginState);
 }
 
 /**
@@ -480,7 +480,7 @@ void NativeUser::updatePasswordHint(const QString &hint)
  */
 void NativeUser::updatePasswordExpiredInfo()
 {
-    m_expiredStatus = m_userInter->PasswordExpiredInfo(m_expiredDayLeft).value();
+    m_expiredState = m_userInter->PasswordExpiredInfo(m_expiredDayLeft).value();
 
     emit passwordExpiredInfoChanged();
 }
@@ -488,11 +488,11 @@ void NativeUser::updatePasswordExpiredInfo()
 /**
  * @brief 更新密码状态，用户是否设置了密码
  *
- * @param status 有密码：P 无密码：NP
+ * @param state 有密码：P 无密码：NP
  */
-void NativeUser::updatePasswordStatus(const QString &status)
+void NativeUser::updatePasswordState(const QString &state)
 {
-    const bool isPasswordValidTmp = status == "P" ? true : false;
+    const bool isPasswordValidTmp = state == "P" ? true : false;
     if (isPasswordValidTmp == m_isPasswordValid) {
         return;
     }

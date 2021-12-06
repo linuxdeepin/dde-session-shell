@@ -161,7 +161,7 @@ public slots:
     void updateSupportedMixAuthFlags(const int flags);
     void updateSupportedEncryptionType(const QString &type);
     /* com.deepin.daemon.Authenticate.Session */
-    void updateAuthStatus(const int type, const int status, const QString &message);
+    void updateAuthState(const int type, const int state, const QString &message);
     void updateFactorsInfo(const MFAInfoList &info);
     void updateFuzzyMFA(const bool fuzzMFA);
     void updateMFAFlag(const bool MFAFlag);
@@ -197,7 +197,7 @@ signals:
     void tipsShowed();
     void clearServerLoginWidgetContent();
 
-    void authStatusChanged(const int, const int, const QString &);
+    void authStateChanged(const int, const int, const QString &);
     void authTypeChanged(const int type);
 
 private:

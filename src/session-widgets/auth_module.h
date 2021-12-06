@@ -82,15 +82,15 @@ public:
     ~AuthModule() override;
 
     inline int authType() const { return m_type; }
-    inline int authStatus() const { return m_status; }
+    inline int authState() const { return m_state; }
 
-    virtual void setAnimationStatus(const bool start);
-    virtual void setAuthStatus(const int status, const QString &result);
-    void setAuthStatusStyle(const QString &path);
+    virtual void setAnimationState(const bool start);
+    virtual void setAuthState(const int state, const QString &result);
+    void setAuthStateStyle(const QString &path);
     virtual void setLimitsInfo(const LimitsInfo &info);
-    void setShowAuthStatus(bool showAuthStatus);
+    void setShowAuthState(bool showAuthState);
     void setAuthStatueVisible(bool visible);
-    void setAuthStatusLabel(DLabel *label);
+    void setAuthStateLabel(DLabel *label);
     virtual void setAuthFactorType(AuthFactorType authFactorType);
     inline bool isMFA() const { return m_authFactorType == DDESESSIONCC::MultiAuthFactor; }
 
@@ -109,15 +109,15 @@ protected:
 
 protected:
     int m_inputType;          // 认证信息输入设备类型
-    int m_status;             // 认证状态
+    int m_state;              // 认证状态
     int m_type;               // 认证类型
     bool m_showPrompt;        // 是否显示默认提示文案
     uint m_integerMinutes;    // 认证剩余解锁的整数分钟
     LimitsInfo *m_limitsInfo; // 认证限制相关信息
-    QPointer<DLabel> m_authStatusLabel;     // 认证状态图标
+    QPointer<DLabel> m_authStateLabel; // 认证状态图标
     QTimer *m_aniTimer;       // 动画执行定时器
     QTimer *m_unlockTimer;    // 认证解锁定时器
-    bool m_showAuthStatus;    // 是否显示认证状态
+    bool m_showAuthState;     // 是否显示认证状态
     bool m_isAuthing;         // 是否正在验证
     AuthFactorType m_authFactorType;    // 验证因子类型
 };

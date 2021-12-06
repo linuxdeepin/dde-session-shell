@@ -93,9 +93,9 @@ void AuthPassword::initUI()
     passwordLayout->addStretch(1);
 
     /* 认证状态 */
-    m_authStatusLabel = new DLabel(this);
-    setAuthStatusStyle(LOGIN_WAIT);
-    passwordLayout->addWidget(m_authStatusLabel, 0, Qt::AlignRight | Qt::AlignVCenter);
+    m_authStateLabel = new DLabel(this);
+    setAuthStateStyle(LOGIN_WAIT);
+    passwordLayout->addWidget(m_authStateLabel, 0, Qt::AlignRight | Qt::AlignVCenter);
     /* 密码提示 */
     m_passwordHintBtn->setAccessibleName(QStringLiteral("PasswordHint"));
     m_passwordHintBtn->setContentsMargins(0, 0, 0, 0);
@@ -120,7 +120,7 @@ void AuthPassword::initConnections()
     /* 密码输入框 */
     connect(m_lineEdit, &DLineEditEx::focusChanged, this, [this](const bool focus) {
         if (!focus) m_lineEdit->setAlert(false);
-        m_authStatusLabel->setVisible(!focus & m_showAuthStatus);
+        m_authStateLabel->setVisible(!focus & m_showAuthState);
         emit focusChanged(focus);
     });
     connect(m_lineEdit, &DLineEditEx::textChanged, this, [this](const QString &text) {
@@ -148,17 +148,17 @@ void AuthPassword::reset()
 /**
  * @brief 设置认证状态
  *
- * @param status
+ * @param state
  * @param result
  */
-void AuthPassword::setAuthStatus(const int state, const QString &result)
+void AuthPassword::setAuthState(const int state, const QString &result)
 {
     qDebug() << "AuthPassword::setAuthResult:" << state << result << m_currentUid;
-    m_status = state;
+    m_state = state;
     switch (state) {
     case AS_Success:
-        setAnimationStatus(false);
-        setAuthStatusStyle(LOGIN_CHECK);
+        setAnimationState(false);
+        setAuthStateStyle(LOGIN_CHECK);
         m_lineEdit->setAlert(false);
         m_lineEdit->clear();
         setLineEditEnabled(false);
@@ -169,8 +169,8 @@ void AuthPassword::setAuthStatus(const int state, const QString &result)
         emit requestChangeFocus();
         break;
     case AS_Failure: {
-        setAnimationStatus(false);
-        setAuthStatusStyle(LOGIN_WAIT);
+        setAnimationState(false);
+        setAuthStateStyle(LOGIN_WAIT);
         m_lineEdit->clear();
         setLineEditEnabled(true);
         const int leftTimes = static_cast<int>(m_limitsInfo->maxTries - m_limitsInfo->numFailures);
@@ -185,32 +185,32 @@ void AuthPassword::setAuthStatus(const int state, const QString &result)
         break;
     }
     case AS_Cancel:
-        setAnimationStatus(false);
-        setAuthStatusStyle(LOGIN_WAIT);
+        setAnimationState(false);
+        setAuthStateStyle(LOGIN_WAIT);
         m_showPrompt = true;
         break;
     case AS_Timeout:
-        setAnimationStatus(false);
-        setAuthStatusStyle(LOGIN_WAIT);
+        setAnimationState(false);
+        setAuthStateStyle(LOGIN_WAIT);
         setLineEditInfo(result, AlertText);
         break;
     case AS_Error:
-        setAnimationStatus(false);
-        setAuthStatusStyle(LOGIN_WAIT);
+        setAnimationState(false);
+        setAuthStateStyle(LOGIN_WAIT);
         setLineEditInfo(result, AlertText);
         break;
     case AS_Verify:
-        setAnimationStatus(true);
-        setAuthStatusStyle(LOGIN_SPINNER);
+        setAnimationState(true);
+        setAuthStateStyle(LOGIN_SPINNER);
         break;
     case AS_Exception:
-        setAnimationStatus(false);
-        setAuthStatusStyle(LOGIN_WAIT);
+        setAnimationState(false);
+        setAuthStateStyle(LOGIN_WAIT);
         setLineEditInfo(result, AlertText);
         break;
     case AS_Prompt:
-        setAnimationStatus(false);
-        setAuthStatusStyle(LOGIN_WAIT);
+        setAnimationState(false);
+        setAuthStateStyle(LOGIN_WAIT);
         setLineEditEnabled(true);
         if (m_showPrompt) {
             setLineEditInfo(tr("Password"), PlaceHolderText);
@@ -222,8 +222,8 @@ void AuthPassword::setAuthStatus(const int state, const QString &result)
         m_lineEdit->clear();
         break;
     case AS_Locked:
-        setAnimationStatus(false);
-        setAuthStatusStyle(LOGIN_LOCK);
+        setAnimationState(false);
+        setAuthStateStyle(LOGIN_LOCK);
         setLineEditEnabled(false);
         m_lineEdit->setAlert(false);
         m_lineEdit->hideAlertMessage();
@@ -236,20 +236,20 @@ void AuthPassword::setAuthStatus(const int state, const QString &result)
         m_passwordHintBtn->hide();
         break;
     case AS_Recover:
-        setAnimationStatus(false);
-        setAuthStatusStyle(LOGIN_WAIT);
+        setAnimationState(false);
+        setAuthStateStyle(LOGIN_WAIT);
         break;
     case AS_Unlocked:
-        setAuthStatusStyle(LOGIN_WAIT);
+        setAuthStateStyle(LOGIN_WAIT);
         setLineEditEnabled(true);
         m_showPrompt = true;
         break;
     default:
-        setAnimationStatus(false);
-        setAuthStatusStyle(LOGIN_WAIT);
+        setAnimationState(false);
+        setAuthStateStyle(LOGIN_WAIT);
         setLineEditEnabled(true);
         setLineEditInfo(result, AlertText);
-        qWarning() << "Error! The status of Password Auth is wrong!" << state << result;
+        qWarning() << "Error! The state of Password Auth is wrong!" << state << result;
         break;
     }
     update();
@@ -260,7 +260,7 @@ void AuthPassword::setAuthStatus(const int state, const QString &result)
  *
  * @param start
  */
-void AuthPassword::setAnimationStatus(const bool start)
+void AuthPassword::setAnimationState(const bool start)
 {
     start ? m_lineEdit->startAnimation() : m_lineEdit->stopAnimation();
 }
@@ -291,7 +291,7 @@ void AuthPassword::setLimitsInfo(const LimitsInfo &info)
 
     m_passwordHintBtn->setVisible(info.numFailures > 0 && !m_passwordHint.isEmpty());
     if (m_limitsInfo->locked) {
-        setAuthStatus(AS_Locked, "Locked");
+        setAuthState(AS_Locked, "Locked");
         if (lockStateChanged && this->isVisible() && QFile::exists(ResetPassword_Exe_Path) &&
             m_currentUid <= 9999 && isUserAccountBinded()) {
             qDebug() << "begin reset passoword";

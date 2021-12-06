@@ -60,7 +60,7 @@ void UserButton::initConnect()
     connect(m_user.get(), &User::avatarChanged, this, [=] (const QString avatar) {
         m_userAvatar->setIcon(avatar);
     });
-    connect(m_user.get(), &User::loginStatusChanged, m_checkedMark, &QLabel::setVisible);
+    connect(m_user.get(), &User::loginStateChanged, m_checkedMark, &QLabel::setVisible);
 
     m_checkedMark->setVisible(m_user.get()->isLogin());
 }

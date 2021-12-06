@@ -477,7 +477,7 @@ void SessionBaseModel::updateLoginedUserList(const QString &list)
                 // 因此在登录时，对于新增的账户，调用addUser先将账户添加进来，然后再去更新对应账户的登录状态
                 addUser(path);
                 m_loginedUsers->insert(path, m_users->value(path));
-                m_users->value(path)->updateLoginStatus(true);
+                m_users->value(path)->updateLoginState(true);
             } else {
                 loginedUsersTmp.removeAll(path);
             }
@@ -485,7 +485,7 @@ void SessionBaseModel::updateLoginedUserList(const QString &list)
     }
     for (const QString &path : qAsConst(loginedUsersTmp)) {
         m_loginedUsers->remove(path);
-        m_users->value(path)->updateLoginStatus(false);
+        m_users->value(path)->updateLoginState(false);
     }
 
     qInfo() << "Logined users: " << m_loginedUsers->keys();
@@ -626,19 +626,19 @@ void SessionBaseModel::updateFactorsInfo(const MFAInfoList &infoList)
  * @brief 更新认证状态
  *
  * @param currentAuthType
- * @param status
+ * @param state
  * @param result
  */
-void SessionBaseModel::updateAuthStatus(const int type, const int status, const QString &result)
+void SessionBaseModel::updateAuthState(const int type, const int state, const QString &result)
 {
-    qDebug("update auth status, type: %d, status: %d, result: %s", type, status, qPrintable(result));
+    qDebug("update auth state, type: %d, state: %d, result: %s", type, state, qPrintable(result));
 
     switch (m_authProperty.FrameworkState) {
     case Available:
-        emit authStatusChanged(type, status, result);
+        emit authStateChanged(type, state, result);
         break;
     default:
-        emit authStatusChanged(AT_PAM, status, result);
+        emit authStateChanged(AT_PAM, state, result);
         break;
     }
 }

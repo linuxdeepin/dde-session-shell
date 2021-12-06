@@ -112,7 +112,7 @@ void UserFrameList::handlerBeforeAddUser(std::shared_ptr<User> user)
     if (m_model->isServerModel()) {
         if (user->isLogin() || user->type() == User::Default)
             addUser(user);
-        connect(user.get(), &User::loginStatusChanged, this, [=](bool is_login) {
+        connect(user.get(), &User::loginStateChanged, this, [=](bool is_login) {
             if (is_login) {
                 addUser(user);
             } else {

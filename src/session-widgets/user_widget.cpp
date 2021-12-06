@@ -35,7 +35,7 @@ UserWidget::UserWidget(QWidget *parent)
     , m_mainLayout(new QVBoxLayout(this))
     , m_blurEffectWidget(new DBlurEffectWidget(this))
     , m_avatar(new UserAvatar(this))
-    , m_loginStatus(new DLabel(this))
+    , m_loginState(new DLabel(this))
     , m_nameLabel(new DLabel(this))
     , m_nameWidget(new QWidget(this))
 {
@@ -63,10 +63,10 @@ void UserWidget::initUI()
 
     QPixmap pixmap = DHiDPIHelper::loadNxPixmap(":/misc/images/select.svg");
     pixmap.setDevicePixelRatio(devicePixelRatioF());
-    m_loginStatus->setAccessibleName("LoginStatus");
-    m_loginStatus->setPixmap(pixmap);
-    m_loginStatus->setVisible(m_user->isLogin());
-    nameLayout->addWidget(m_loginStatus, 0, Qt::AlignVCenter | Qt::AlignRight);
+    m_loginState->setAccessibleName("LoginState");
+    m_loginState->setPixmap(pixmap);
+    m_loginState->setVisible(m_user->isLogin());
+    nameLayout->addWidget(m_loginState, 0, Qt::AlignVCenter | Qt::AlignRight);
 
     m_nameLabel->setAccessibleName("NameLabel");
     m_nameLabel->setTextFormat(Qt::TextFormat::PlainText);
@@ -94,7 +94,7 @@ void UserWidget::initConnections()
 {
     connect(m_user.get(), &User::avatarChanged, this, &UserWidget::setAvatar);
     connect(m_user.get(), &User::displayNameChanged, this, &UserWidget::setName);
-    connect(m_user.get(), &User::loginStatusChanged, this, &UserWidget::setLoginStatus);
+    connect(m_user.get(), &User::loginStateChanged, this, &UserWidget::setLoginState);
     connect(qGuiApp, &QGuiApplication::fontChanged, this, &UserWidget::setNameFont);
     connect(m_avatar, &UserAvatar::clicked, this, &UserWidget::clicked);
 }
@@ -185,9 +185,9 @@ void UserWidget::setNameFont(const QFont &font)
  * @brief 设置登录状态
  * @param isLogin
  */
-void UserWidget::setLoginStatus(const bool isLogin)
+void UserWidget::setLoginState(const bool isLogin)
 {
-    m_loginStatus->setVisible(isLogin);
+    m_loginState->setVisible(isLogin);
 }
 
 /**

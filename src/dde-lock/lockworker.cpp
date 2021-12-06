@@ -91,7 +91,7 @@ void LockWorker::initConnections()
     connect(m_authFramework, &DeepinAuthFramework::MFAFlagChanged, m_model, &SessionBaseModel::updateMFAFlag);
     connect(m_authFramework, &DeepinAuthFramework::PINLenChanged, m_model, &SessionBaseModel::updatePINLen);
     connect(m_authFramework, &DeepinAuthFramework::PromptChanged, m_model, &SessionBaseModel::updatePrompt);
-    connect(m_authFramework, &DeepinAuthFramework::AuthStatusChanged, this, &LockWorker::handleAuthStatus);
+    connect(m_authFramework, &DeepinAuthFramework::AuthStateChanged, this, &LockWorker::onAuthStateChanged);
     connect(m_authFramework, &DeepinAuthFramework::FactorsInfoChanged, m_model, &SessionBaseModel::updateFactorsInfo);
     /* com.deepin.dde.LockService */
     connect(m_lockInter, &DBusLockService::UserChanged, this, [=](const QString &json) {
@@ -151,8 +151,8 @@ void LockWorker::initConnections()
         }
         setLocked(visible);
     });
-    connect(m_model, &SessionBaseModel::onStatusChanged, this, [=](SessionBaseModel::ModeStatus status) {
-        if (status == SessionBaseModel::ModeStatus::PowerMode || status == SessionBaseModel::ModeStatus::ShutDownMode) {
+    connect(m_model, &SessionBaseModel::onStatusChanged, this, [=](SessionBaseModel::ModeStatus state) {
+        if (state == SessionBaseModel::ModeStatus::PowerMode || state == SessionBaseModel::ModeStatus::ShutDownMode) {
             checkPowerInfo();
         }
     });
@@ -212,39 +212,42 @@ void LockWorker::initConfiguration()
     checkPowerInfo();
 }
 
-void LockWorker::handleAuthStatus(const int type, const int status, const QString &message)
+/**
+ * @brief 处理认证状态
+ *
+ * @param type      认证类型
+ * @param state     认证状态
+ * @param message   认证消息
+ */
+void LockWorker::onAuthStateChanged(const int type, const int state, const QString &message)
 {
-    qDebug() << Q_FUNC_INFO
-             << ", type: " << type
-             << ", status: " << status
-             << ", message: " << message
-             << ", MFAFlag: " << m_model->getAuthProperty().MFAFlag;
+    qDebug() << "LockWorker::onAuthStateChanged:" << type << state << message;
 
     if (m_model->getAuthProperty().MFAFlag) {
         if (type == AT_All) {
-            switch (status) {
+            switch (state) {
             case AS_Success:
-                m_model->updateAuthStatus(type, status, message);
+                m_model->updateAuthState(type, state, message);
                 destoryAuthentication(m_account);
                 onUnlockFinished(true);
                 m_resetSessionTimer->stop();
                 break;
             case AS_Cancel:
-                m_model->updateAuthStatus(type, status, message);
+                m_model->updateAuthState(type, state, message);
                 destoryAuthentication(m_account);
                 break;
             default:
                 break;
             }
         } else {
-            switch (status) {
+            switch (state) {
             case AS_Success:
                 if (m_model->currentModeState() != SessionBaseModel::ModeStatus::PasswordMode
                     && m_model->currentModeState() != SessionBaseModel::ModeStatus::ConfirmPasswordMode) {
                     m_model->setCurrentModeState(SessionBaseModel::ModeStatus::PasswordMode);
                 }
                 m_resetSessionTimer->start();
-                m_model->updateAuthStatus(type, status, message);
+                m_model->updateAuthState(type, state, message);
                 break;
             case AS_Failure:
                 if (m_model->currentModeState() != SessionBaseModel::ModeStatus::PasswordMode
@@ -259,8 +262,8 @@ void LockWorker::handleAuthStatus(const int type, const int status, const QStrin
                         startAuthentication(m_account, type);
                     });
                 }
-                QTimer::singleShot(50, this, [ this, type, status, message ] {
-                    m_model->updateAuthStatus(type, status, message);
+                QTimer::singleShot(50, this, [this, type, state, message] {
+                    m_model->updateAuthState(type, state, message);
                 });
                 break;
             case AS_Locked:
@@ -270,17 +273,17 @@ void LockWorker::handleAuthStatus(const int type, const int status, const QStrin
                 }
                 endAuthentication(m_account, type);
                 // TODO: 信号时序问题,考虑优化,Bug 89056
-                QTimer::singleShot(50, this, [ this, type, status, message ] {
-                    m_model->updateAuthStatus(type, status, message);
+                QTimer::singleShot(50, this, [this, type, state, message] {
+                    m_model->updateAuthState(type, state, message);
                 });
                 break;
             case AS_Timeout:
             case AS_Error:
                 endAuthentication(m_account, type);
-                m_model->updateAuthStatus(type, status, message);
+                m_model->updateAuthState(type, state, message);
                 break;
             default:
-                m_model->updateAuthStatus(type, status, message);
+                m_model->updateAuthState(type, state, message);
                 break;
             }
         }
@@ -290,8 +293,8 @@ void LockWorker::handleAuthStatus(const int type, const int status, const QStrin
             m_model->setCurrentModeState(SessionBaseModel::ModeStatus::PasswordMode);
         }
         m_model->updateLimitedInfo(m_authFramework->GetLimitedInfo(m_model->currentUser()->name()));
-        m_model->updateAuthStatus(type, status, message);
-        switch (status) {
+        m_model->updateAuthState(type, state, message);
+        switch (state) {
         case AS_Failure:
             // 单因失败会返回明确的失败类型，不关注type为-1的情况
             if (AT_All != type) {
@@ -616,7 +619,7 @@ void LockWorker::onAuthFinished()
 
 void LockWorker::onUnlockFinished(bool unlocked)
 {
-    qInfo() << "LockWorker::onUnlockFinished -- unlocked status : " << unlocked;
+    qInfo() << "LockWorker::onUnlockFinished -- unlocked state : " << unlocked;
 
     m_authenticating = false;
 

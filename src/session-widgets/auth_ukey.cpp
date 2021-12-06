@@ -71,9 +71,9 @@ void AuthUKey::initUI()
     m_capsLock->setPixmap(pixmap);
     UKeyLayout->addWidget(m_capsLock, 0, Qt::AlignRight | Qt::AlignVCenter);
     /* 认证状态 */
-    m_authStatusLabel = new DLabel(m_lineEdit);
-    setAuthStatusStyle(LOGIN_WAIT);
-    UKeyLayout->addWidget(m_authStatusLabel, 0, Qt::AlignRight | Qt::AlignVCenter);
+    m_authStateLabel = new DLabel(m_lineEdit);
+    setAuthStateStyle(LOGIN_WAIT);
+    UKeyLayout->addWidget(m_authStateLabel, 0, Qt::AlignRight | Qt::AlignVCenter);
 
     mainLayout->addWidget(m_lineEdit);
 }
@@ -87,7 +87,7 @@ void AuthUKey::initConnections()
     /* PIN 码输入框 */
     connect(m_lineEdit, &DLineEditEx::focusChanged, this, [this](const bool focus) {
         if (!focus) m_lineEdit->setAlert(false);
-        m_authStatusLabel->setVisible(!focus);
+        m_authStateLabel->setVisible(!focus);
         emit focusChanged(focus);
     });
     connect(m_lineEdit, &DLineEditEx::textChanged, this, [this](const QString &text) {
@@ -115,17 +115,17 @@ void AuthUKey::reset()
 /**
  * @brief 设置认证状态
  *
- * @param status
+ * @param state
  * @param result
  */
-void AuthUKey::setAuthStatus(const int state, const QString &result)
+void AuthUKey::setAuthState(const int state, const QString &result)
 {
     qDebug() << "AuthUKey::setAuthResult:" << state << result;
-    m_status = state;
+    m_state = state;
     switch (state) {
     case AuthCommon::AS_Success:
-        setAnimationStatus(false);
-        setAuthStatusStyle(LOGIN_CHECK);
+        setAnimationState(false);
+        setAuthStateStyle(LOGIN_CHECK);
         m_lineEdit->setAlert(false);
         m_lineEdit->clear();
         setLineEditEnabled(false);
@@ -136,8 +136,8 @@ void AuthUKey::setAuthStatus(const int state, const QString &result)
         emit requestChangeFocus();
         break;
     case AuthCommon::AS_Failure:
-        setAnimationStatus(false);
-        setAuthStatusStyle(LOGIN_WAIT);
+        setAnimationState(false);
+        setAuthStateStyle(LOGIN_WAIT);
         m_lineEdit->clear();
         m_lineEdit->setFocus();
         if (m_limitsInfo->locked) {
@@ -162,32 +162,32 @@ void AuthUKey::setAuthStatus(const int state, const QString &result)
         emit authFinished(state);
         break;
     case AuthCommon::AS_Cancel:
-        setAnimationStatus(false);
-        setAuthStatusStyle(LOGIN_WAIT);
+        setAnimationState(false);
+        setAuthStateStyle(LOGIN_WAIT);
         m_showPrompt = true;
         break;
     case AuthCommon::AS_Timeout:
-        setAnimationStatus(false);
-        setAuthStatusStyle(LOGIN_WAIT);
+        setAnimationState(false);
+        setAuthStateStyle(LOGIN_WAIT);
         setLineEditInfo(result, AlertText);
         break;
     case AuthCommon::AS_Error:
-        setAnimationStatus(false);
-        setAuthStatusStyle(LOGIN_WAIT);
+        setAnimationState(false);
+        setAuthStateStyle(LOGIN_WAIT);
         setLineEditInfo(result, AlertText);
         break;
     case AuthCommon::AS_Verify:
-        setAnimationStatus(true);
-        setAuthStatusStyle(LOGIN_SPINNER);
+        setAnimationState(true);
+        setAuthStateStyle(LOGIN_SPINNER);
         break;
     case AuthCommon::AS_Exception:
-        setAnimationStatus(false);
-        setAuthStatusStyle(LOGIN_WAIT);
+        setAnimationState(false);
+        setAuthStateStyle(LOGIN_WAIT);
         setLineEditInfo(tr("UKey is required"), PlaceHolderText);
         break;
     case AuthCommon::AS_Prompt:
-        setAnimationStatus(false);
-        setAuthStatusStyle(LOGIN_WAIT);
+        setAnimationState(false);
+        setAuthStateStyle(LOGIN_WAIT);
         if (m_showPrompt) {
             setLineEditInfo(tr("Enter your PIN"), PlaceHolderText);
         }
@@ -197,25 +197,25 @@ void AuthUKey::setAuthStatus(const int state, const QString &result)
     case AuthCommon::AS_Ended:
         break;
     case AuthCommon::AS_Locked:
-        setAnimationStatus(false);
-        setAuthStatusStyle(LOGIN_LOCK);
+        setAnimationState(false);
+        setAuthStateStyle(LOGIN_LOCK);
         m_showPrompt = true;
         break;
     case AuthCommon::AS_Recover:
-        setAnimationStatus(false);
-        setAuthStatusStyle(LOGIN_WAIT);
+        setAnimationState(false);
+        setAuthStateStyle(LOGIN_WAIT);
         m_showPrompt = true;
         break;
     case AuthCommon::AS_Unlocked:
-        setAuthStatusStyle(LOGIN_WAIT);
+        setAuthStateStyle(LOGIN_WAIT);
         m_showPrompt = true;
         break;
     default:
-        setAnimationStatus(false);
-        setAuthStatusStyle(LOGIN_WAIT);
+        setAnimationState(false);
+        setAuthStateStyle(LOGIN_WAIT);
         setLineEditInfo(result, AlertText);
         m_showPrompt = true;
-        qWarning() << "Error! The status of UKey Auth is wrong!" << state << result;
+        qWarning() << "Error! The state of UKey Auth is wrong!" << state << result;
         break;
     }
     update();
@@ -226,7 +226,7 @@ void AuthUKey::setAuthStatus(const int state, const QString &result)
  *
  * @param start
  */
-void AuthUKey::setAnimationStatus(const bool start)
+void AuthUKey::setAnimationState(const bool start)
 {
     start ? m_lineEdit->startAnimation() : m_lineEdit->stopAnimation();
 }

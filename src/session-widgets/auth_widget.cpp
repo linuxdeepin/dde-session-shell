@@ -48,7 +48,7 @@ AuthWidget::AuthWidget(QWidget *parent)
     , m_blurEffectWidget(new DBlurEffectWidget(this))
     , m_lockButton(nullptr)
     , m_userAvatar(nullptr)
-    , m_expiredStatusLabel(new DLabel(this))
+    , m_expiredStateLabel(new DLabel(this))
     , m_expiredSpacerItem(new QSpacerItem(0, 0))
     , m_nameLabel(nullptr)
     , m_accountEdit(nullptr)
@@ -104,10 +104,10 @@ void AuthWidget::initUI()
     m_accountEdit->setClearButtonEnabled(false);
     m_accountEdit->setPlaceholderText(tr("Account"));
     /* 密码过期提示 */
-    m_expiredStatusLabel->setAccessibleName("ExpiredStatusLabel");
-    m_expiredStatusLabel->setWordWrap(true);
-    m_expiredStatusLabel->setAlignment(Qt::AlignHCenter);
-    m_expiredStatusLabel->hide();
+    m_expiredStateLabel->setAccessibleName("ExpiredStateLabel");
+    m_expiredStateLabel->setWordWrap(true);
+    m_expiredStateLabel->setAlignment(Qt::AlignHCenter);
+    m_expiredStateLabel->hide();
     /* 解锁按钮 */
     m_lockButton = new DFloatingButton(this);
     if (m_model->appType() == Lock) {
@@ -172,14 +172,14 @@ void AuthWidget::setUser(std::shared_ptr<User> user)
                      << connect(user.get(), &User::displayNameChanged, this, &AuthWidget::setName)
                      << connect(user.get(), &User::passwordHintChanged, this, &AuthWidget::setPasswordHint)
                      << connect(user.get(), &User::limitsInfoChanged, this, &AuthWidget::setLimitsInfo)
-                     << connect(user.get(), &User::passwordExpiredInfoChanged, this, &AuthWidget::updatePasswordExpiredStatus)
+                     << connect(user.get(), &User::passwordExpiredInfoChanged, this, &AuthWidget::updatePasswordExpiredState)
                      << connect(user.get(), &User::limitsInfoChanged, this, &AuthWidget::setLimitsInfo);
 
     setAvatar(user->avatar());
     setName(user->displayName());
     setPasswordHint(user->passwordHint());
     setLimitsInfo(user->limitsInfo());
-    updatePasswordExpiredStatus();
+    updatePasswordExpiredState();
 
     /* 根据用户类型设置用户名和用户名输入框的可见性 */
     if (user->type() == User::Default) {
@@ -205,13 +205,13 @@ void AuthWidget::setAuthType(const int type)
 /**
  * @brief 设置认证状态
  * @param type
- * @param status
+ * @param state
  * @param message
  */
-void AuthWidget::setAuthStatus(const int type, const int status, const QString &message)
+void AuthWidget::setAuthState(const int type, const int state, const QString &message)
 {
     Q_UNUSED(type)
-    Q_UNUSED(status)
+    Q_UNUSED(state)
     Q_UNUSED(message)
 }
 
@@ -220,10 +220,10 @@ void AuthWidget::setAuthStatus(const int type, const int status, const QString &
  * @param type
  * @param state
  */
-void AuthWidget::checkAuthResult(const int type, const int status)
+void AuthWidget::checkAuthResult(const int type, const int state)
 {
     Q_UNUSED(type)
-    Q_UNUSED(status)
+    Q_UNUSED(state)
 }
 
 /**
@@ -383,7 +383,7 @@ void AuthWidget::updateBlurEffectGeometry()
     rect.setRight(this->geometry().width());
     rect.setTop(m_userAvatar->geometry().top() + m_userAvatar->height() / 2);
 
-    const QRect &geo = m_user->expiredStatus() ? m_expiredStatusLabel->geometry() : m_lockButton->geometry();
+    const QRect &geo = m_user->expiredState() ? m_expiredStateLabel->geometry() : m_lockButton->geometry();
     rect.setBottom(geo.top() - BLUR_WIDGET_BOTTOM_MARGIN);
     m_blurEffectWidget->setGeometry(rect);
 }
@@ -391,22 +391,22 @@ void AuthWidget::updateBlurEffectGeometry()
 /**
  * @brief 密码过期提示
  */
-void AuthWidget::updatePasswordExpiredStatus()
+void AuthWidget::updatePasswordExpiredState()
 {
-    switch (m_user->expiredStatus()) {
+    switch (m_user->expiredState()) {
     case User::ExpiredNormal:
         m_expiredSpacerItem->changeSize(0, 0);
-        m_expiredStatusLabel->clear();
-        m_expiredStatusLabel->hide();
+        m_expiredStateLabel->clear();
+        m_expiredStateLabel->hide();
         break;
     case User::ExpiredSoon:
-        m_expiredStatusLabel->setText(tr("Your password will expire in %n days, please change it timely", "", m_user->expiredDayLeft()));
-        m_expiredStatusLabel->show();
+        m_expiredStateLabel->setText(tr("Your password will expire in %n days, please change it timely", "", m_user->expiredDayLeft()));
+        m_expiredStateLabel->show();
         m_expiredSpacerItem->changeSize(0, EXPIRED_SPACER_ITEM_HEIGHT);
         break;
     case User::ExpiredAlready:
-        m_expiredStatusLabel->setText(tr("Password expired, please change"));
-        m_expiredStatusLabel->show();
+        m_expiredStateLabel->setText(tr("Password expired, please change"));
+        m_expiredStateLabel->show();
         m_expiredSpacerItem->changeSize(0, EXPIRED_SPACER_ITEM_HEIGHT);
         break;
     default:

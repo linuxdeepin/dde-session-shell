@@ -30,20 +30,20 @@ TEST_F(UT_AuthSingle, basic)
 
 TEST_F(UT_AuthSingle, AuthResultTest)
 {
-    m_authSingle->setAuthStatus(INT_MAX, "default");
-    m_authSingle->setAuthStatus(AuthCommon::AS_Success, "Success");
-    m_authSingle->setAuthStatus(AuthCommon::AS_Failure, "Failure");
-    m_authSingle->setAuthStatus(AuthCommon::AS_Cancel, "Cancel");
-    m_authSingle->setAuthStatus(AuthCommon::AS_Timeout, "Timeout");
-    m_authSingle->setAuthStatus(AuthCommon::AS_Error, "Error");
-    m_authSingle->setAuthStatus(AuthCommon::AS_Verify, "Verify");
-    m_authSingle->setAuthStatus(AuthCommon::AS_Exception, "Exception");
-    m_authSingle->setAuthStatus(AuthCommon::AS_Prompt, "Prompt");
-    m_authSingle->setAuthStatus(AuthCommon::AS_Started, "Started");
-    m_authSingle->setAuthStatus(AuthCommon::AS_Ended, "Ended");
-    m_authSingle->setAuthStatus(AuthCommon::AS_Locked, "Locked");
-    m_authSingle->setAuthStatus(AuthCommon::AS_Recover, "Recover");
-    m_authSingle->setAuthStatus(AuthCommon::AS_Unlocked, "Unlocked");
+    m_authSingle->setAuthState(INT_MAX, "default");
+    m_authSingle->setAuthState(AuthCommon::AS_Success, "Success");
+    m_authSingle->setAuthState(AuthCommon::AS_Failure, "Failure");
+    m_authSingle->setAuthState(AuthCommon::AS_Cancel, "Cancel");
+    m_authSingle->setAuthState(AuthCommon::AS_Timeout, "Timeout");
+    m_authSingle->setAuthState(AuthCommon::AS_Error, "Error");
+    m_authSingle->setAuthState(AuthCommon::AS_Verify, "Verify");
+    m_authSingle->setAuthState(AuthCommon::AS_Exception, "Exception");
+    m_authSingle->setAuthState(AuthCommon::AS_Prompt, "Prompt");
+    m_authSingle->setAuthState(AuthCommon::AS_Started, "Started");
+    m_authSingle->setAuthState(AuthCommon::AS_Ended, "Ended");
+    m_authSingle->setAuthState(AuthCommon::AS_Locked, "Locked");
+    m_authSingle->setAuthState(AuthCommon::AS_Recover, "Recover");
+    m_authSingle->setAuthState(AuthCommon::AS_Unlocked, "Unlocked");
 }
 
 TEST_F(UT_AuthSingle, CapsStatusTest)
@@ -54,8 +54,8 @@ TEST_F(UT_AuthSingle, CapsStatusTest)
 
 TEST_F(UT_AuthSingle, AnimationStateTest)
 {
-    m_authSingle->setAnimationStatus(true);
-    m_authSingle->setAnimationStatus(false);
+    m_authSingle->setAnimationState(true);
+    m_authSingle->setAnimationState(false);
 }
 
 TEST_F(UT_AuthSingle, LineEditInfoTest)
