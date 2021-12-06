@@ -559,11 +559,8 @@ void GreeterWorker::showMessage(const QString &text, const QLightDM::Greeter::Me
         m_model->updateAuthStatus(AT_PAM, AS_Success, text);
         break;
     case QLightDM::Greeter::MessageTypeError:
-        if (m_model->getAuthProperty().MFAFlag)
-            m_model->updateMFAFlag(false);
-
-        m_model->setAuthType(AT_PAM);
         m_retryAuth = false;
+        m_model->updateMFAFlag(false);
         m_model->updateAuthStatus(AT_PAM, AS_Failure, text);
         break;
     }
