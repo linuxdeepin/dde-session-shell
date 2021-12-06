@@ -24,43 +24,39 @@
  */
 
 #include "systemmonitor.h"
+
 #include <QHBoxLayout>
-#include <QLabel>
-#include <QEvent>
+#include <QKeyEvent>
 #include <QPainter>
-#include <QtSvg/QSvgRenderer>
-#include <QPaintEvent>
-#include <QApplication>
-#include <QScreen>
-#include <QDebug>
 
-SystemMonitor::SystemMonitor(QWidget *parent) : QWidget(parent)
+SystemMonitor::SystemMonitor(QWidget *parent)
+    : QWidget(parent)
+    , m_icon(new QLabel(this))
+    , m_text(new QLabel(this))
+    , m_state(Leave)
 {
-    m_state = Leave;
+    setObjectName(QStringLiteral("SystemMonitor"));
+    setAccessibleName(QStringLiteral("SystemMonitor"));
 
-    m_icon = new QWidget;
-    m_icon->setAccessibleName("IconWidget");
-    m_icon->installEventFilter(this);
-    m_icon->setFixedSize(24, 24);
-
-    m_text = new QLabel(tr("Start system monitor"));
-    m_text->setStyleSheet("color: white;"
-                          "font-weight: 400;");
-
-    QHBoxLayout *layout = new QHBoxLayout;
-    layout->setMargin(0);
-    layout->setSpacing(0);
-    layout->setContentsMargins(30, 0, 30, 0);
-
-    layout->addWidget(m_icon, 0, Qt::AlignVCenter);
-    layout->addSpacing(10);
-    layout->addWidget(m_text, 0, Qt::AlignVCenter);
-
-    setLayout(layout);
     setMinimumHeight(40);
+
+    initUI();
 }
 
-void SystemMonitor::setState(SystemMonitor::State state)
+void SystemMonitor::initUI()
+{
+    QHBoxLayout *mainLayout = new QHBoxLayout(this);
+    mainLayout->setSpacing(5);
+    mainLayout->setContentsMargins(10, 0, 10, 0);
+
+    m_icon->setPixmap(QPixmap(":/img/deepin-system-monitor.svg"));
+    m_text->setText(tr("Start system monitor"));
+
+    mainLayout->addWidget(m_icon, 0, Qt::AlignVCenter | Qt::AlignRight);
+    mainLayout->addWidget(m_text, 1, Qt::AlignVCenter | Qt::AlignLeft);
+}
+
+void SystemMonitor::setState(const State state)
 {
     m_state = state;
     update();
@@ -68,89 +64,80 @@ void SystemMonitor::setState(SystemMonitor::State state)
 
 void SystemMonitor::enterEvent(QEvent *event)
 {
-    QWidget::enterEvent(event);
-
-    m_text->setStyleSheet("color: white;"
-                          "font-weight: 400;");
-
     m_state = Enter;
     update();
+
+    QWidget::enterEvent(event);
 }
 
 void SystemMonitor::leaveEvent(QEvent *event)
 {
-    QWidget::leaveEvent(event);
-
-    m_text->setStyleSheet("color: white;"
-                          "font-weight: 400;");
-
     m_state = Leave;
     update();
+
+    QWidget::leaveEvent(event);
 }
 
 void SystemMonitor::mouseReleaseEvent(QMouseEvent *event)
 {
-    QWidget::mouseReleaseEvent(event);
-
-    m_text->setStyleSheet("color: white;"
-                          "font-weight: 400;");
-
     m_state = Release;
+    emit requestShowSystemMonitor();
     update();
 
-    emit clicked();
+    QWidget::mouseReleaseEvent(event);
 }
 
 void SystemMonitor::mousePressEvent(QMouseEvent *event)
 {
-    QWidget::mousePressEvent(event);
-
-    m_text->setStyleSheet("color: #2ca7f8;"
-                          "font-weight: 400;");
-
     m_state = Press;
     update();
 
-    event->accept();
+    QWidget::mousePressEvent(event);
 }
 
-bool SystemMonitor::eventFilter(QObject *watched, QEvent *event)
+void SystemMonitor::keyPressEvent(QKeyEvent *event)
 {
-    if (watched == m_icon) {
-        if (event->type() == QEvent::Paint) {
-            QPainter painter(m_icon);
-            QSvgRenderer render(QString(":/img/deepin-system-monitor.svg"), m_icon);
-            render.render(&painter, m_icon->rect());
-        }
+    if (event->key() == Qt::Key_Enter || event->key() == Qt::Key_Return) {
+        m_state = Press;
     }
+    update();
 
-    return false;
+    QWidget::keyReleaseEvent(event);
+}
+
+void SystemMonitor::keyReleaseEvent(QKeyEvent *event)
+{
+    if (event->key() == Qt::Key_Enter || event->key() == Qt::Key_Return) {
+        emit requestShowSystemMonitor();
+        m_state = Release;
+    }
+    update();
+
+    QWidget::keyReleaseEvent(event);
 }
 
 void SystemMonitor::paintEvent(QPaintEvent *event)
 {
-    Q_UNUSED(event);
-
     QPainter painter(this);
-    painter.setBrush(QColor(0, 0 , 0, 76));
+
+    painter.setPen(Qt::NoPen);
     painter.setRenderHint(QPainter::Antialiasing, true);
 
-    switch(m_state) {
+    switch (m_state) {
     case Enter:
-    case Release:{
-        painter.setPen(Qt::NoPen);
-        painter.setBrush(QColor(0, 0, 0, 105));
-        painter.drawRoundedRect(QRect(1, 1, width() - 2, height() - 2), 10, 10);
+        painter.setBrush(QColor(0, 0, 0, 75));
         break;
-    }
-    case Press: {
-        painter.setPen(Qt::NoPen);
-        painter.setBrush(QColor(0, 0, 0, 105));
-        painter.drawRoundedRect(QRect(1, 1, width() - 2, height() - 2), 10, 10);
-        break;
-    }
     case Leave:
-    default:
+        painter.setBrush(QColor(0, 0, 0, 0));
+        break;
+    case Release:
+        painter.setBrush(QColor(0, 0, 0, 75));
+        break;
+    case Press:
+        painter.setBrush(QColor(0, 0, 0, 105));
         break;
     }
+    painter.drawRoundedRect(QRect(1, 1, width() - 2, height() - 2), 10, 10);
+
+    QWidget::paintEvent(event);
 }

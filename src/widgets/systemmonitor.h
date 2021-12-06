@@ -26,40 +26,42 @@
 #ifndef SYSTEMMONITOR_H
 #define SYSTEMMONITOR_H
 
-#include <QWidget>
 #include <QLabel>
+#include <QWidget>
 
 class SystemMonitor : public QWidget
 {
     Q_OBJECT
 public:
-    explicit SystemMonitor(QWidget *parent = 0);
-
-    enum State{
+    enum State {
         Enter,
         Leave,
         Press,
         Release
     };
 
+    explicit SystemMonitor(QWidget *parent = nullptr);
+
     inline State state() { return m_state; }
+    void setState(const State state);
 
 signals:
-    void clicked();
-
-public slots:
-    void setState(State state);
+    void requestShowSystemMonitor();
 
 protected:
-    void enterEvent(QEvent *event) Q_DECL_OVERRIDE;
-    void leaveEvent(QEvent *event) Q_DECL_OVERRIDE;
-    void mouseReleaseEvent(QMouseEvent *event) Q_DECL_OVERRIDE;
-    void mousePressEvent(QMouseEvent *event) Q_DECL_OVERRIDE;
-    bool eventFilter(QObject *watched, QEvent *event) Q_DECL_OVERRIDE;
-    void paintEvent(QPaintEvent *event) Q_DECL_OVERRIDE;
+    void enterEvent(QEvent *event) override;
+    void leaveEvent(QEvent *event) override;
+    void mouseReleaseEvent(QMouseEvent *event) override;
+    void mousePressEvent(QMouseEvent *event) override;
+    void keyPressEvent(QKeyEvent *event) override;
+    void keyReleaseEvent(QKeyEvent *event) override;
+    void paintEvent(QPaintEvent *event) override;
 
 private:
-    QWidget *m_icon;
+    void initUI();
+
+private:
+    QLabel *m_icon;
     QLabel *m_text;
     State m_state;
 };

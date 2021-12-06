@@ -107,7 +107,7 @@ void ShutdownWidget::initConnect()
     connect(GSettingWatcher::instance(), &GSettingWatcher::enableChanged, this, &ShutdownWidget::onEnable);
 
     if (m_systemMonitor) {
-        connect(m_systemMonitor, &SystemMonitor::clicked, this, &ShutdownWidget::runSystemMonitor);
+        connect(m_systemMonitor, &SystemMonitor::requestShowSystemMonitor, this, &ShutdownWidget::runSystemMonitor);
     }
 }
 
