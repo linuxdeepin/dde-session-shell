@@ -90,6 +90,7 @@ private:
     bool m_allowSwitchingToWayland;
     bool m_isWaylandExisted;
     QLabel *m_warningLabel;
+    QString m_defaultSession;
 };
 
 #endif // SESSIONWIDGET_H

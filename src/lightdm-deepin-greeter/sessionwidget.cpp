@@ -75,6 +75,7 @@ SessionWidget::SessionWidget(QWidget *parent)
     , m_allowSwitchingToWayland(getDConfigValue("allowSwitchingToWayland", false).toBool())
     , m_isWaylandExisted(false)
     , m_warningLabel(new QLabel(this))
+    , m_defaultSession(getDConfigValue("defaultSessionName", DEFAULT_SESSION_NAME).toString())
 {
     setSizePolicy(QSizePolicy::Expanding, QSizePolicy::Expanding);
     loadSessionList();
@@ -176,7 +177,7 @@ void SessionWidget::switchToUser(const QString &userName)
     QString sessionName = lastLoggedInSession(userName);
     // 上次登录的是wayland，但是此次登录已经禁止使用wayland，那么使用默认的桌面
     if (!m_allowSwitchingToWayland && !WAYLAND_SESSION_NAME.compare(sessionName, Qt::CaseInsensitive))
-        sessionName = DEFAULT_SESSION_NAME;
+        sessionName = m_defaultSession;
     m_currentSessionIndex = sessionIndex(sessionName);
 
     m_model->setSessionKey(currentSessionKey());
@@ -362,7 +363,7 @@ QString SessionWidget::lastLoggedInSession(const QString &userName)
         }
     }
 
-    return DEFAULT_SESSION_NAME;
+    return m_defaultSession;
 }
 
 void SessionWidget::showEvent(QShowEvent *event)
