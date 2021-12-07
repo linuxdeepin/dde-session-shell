@@ -363,7 +363,7 @@ void SessionBaseModel::updateCurrentUser(const std::shared_ptr<User> user)
 
     qDebug("update current user: %s", qPrintable(user->name()));
 
-    if (m_currentUser == user) {
+    if (m_currentUser && *m_currentUser == *user) {
         return;
     }
 
