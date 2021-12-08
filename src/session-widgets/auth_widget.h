@@ -58,8 +58,7 @@ public:
     virtual void setModel(const SessionBaseModel *model);
     virtual void setAuthType(const int type);
     virtual void setAuthState(const int type, const int state, const QString &message);
-    virtual void reset();
-    virtual int getTopSpacing() const ;
+    virtual int getTopSpacing() const;
 
     void setAccountErrorMsg(const QString &message);
     void syncPasswordResetPasswordVisibleChanged(const QVariant &value);

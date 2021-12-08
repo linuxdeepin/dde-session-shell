@@ -44,6 +44,7 @@ const QColor ShutdownColor(QColor(247, 68, 68));
 
 AuthWidget::AuthWidget(QWidget *parent)
     : QWidget(parent)
+    , m_model(nullptr)
     , m_frameDataBind(FrameDataBind::Instance())
     , m_blurEffectWidget(new DBlurEffectWidget(this))
     , m_lockButton(nullptr)
@@ -419,7 +420,7 @@ void AuthWidget::updatePasswordExpiredState()
  * @param flag
  * @param function
  */
-void AuthWidget::registerSyncFunctions(const QString &flag, std::function<void (QVariant)> function)
+void AuthWidget::registerSyncFunctions(const QString &flag, std::function<void(QVariant)> function)
 {
     m_registerFunctions[flag] = m_frameDataBind->registerFunction(flag, function);
     m_frameDataBind->refreshData(flag);
@@ -498,22 +499,6 @@ void AuthWidget::showEvent(QShowEvent *event)
 {
     activateWindow();
     QWidget::showEvent(event);
-}
-
-void AuthWidget::reset()
-{
-    if (m_singleAuth)
-        m_singleAuth->reset();
-    if (m_passwordAuth)
-        m_passwordAuth->reset();
-    if (m_fingerprintAuth)
-        m_fingerprintAuth->reset();
-    if (m_ukeyAuth)
-        m_ukeyAuth->reset();
-    if (m_faceAuth)
-        m_faceAuth->reset();
-    if (m_irisAuth)
-        m_irisAuth->reset();
 }
 
 int AuthWidget::getTopSpacing() const
