@@ -84,8 +84,7 @@ protected:
     void setUser(std::shared_ptr<User> user);
     void setLimitsInfo(const QMap<int, User::LimitsInfo> *limitsInfo);
     void setAvatar(const QString &avatar);
-    void setName(const QString &name);
-    void setNameFont(const QFont &font);
+    void updateUserNameLabel();
     void setPasswordHint(const QString &hint);
     void setLockButtonType(const int type);
 

@@ -64,8 +64,7 @@ private:
     void initConnections();
 
     void setAvatar(const QString &avatar);
-    void setName(const QString &name);
-    void setNameFont(const QFont &font);
+    void updateUserNameLabel();
     void setLoginState(const bool isLogin);
 
     void updateBlurEffectGeometry();

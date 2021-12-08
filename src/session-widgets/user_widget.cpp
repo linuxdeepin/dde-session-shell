@@ -93,9 +93,9 @@ void UserWidget::initUI()
 void UserWidget::initConnections()
 {
     connect(m_user.get(), &User::avatarChanged, this, &UserWidget::setAvatar);
-    connect(m_user.get(), &User::displayNameChanged, this, &UserWidget::setName);
+    connect(m_user.get(), &User::displayNameChanged, this, &UserWidget::updateUserNameLabel);
     connect(m_user.get(), &User::loginStateChanged, this, &UserWidget::setLoginState);
-    connect(qGuiApp, &QGuiApplication::fontChanged, this, &UserWidget::setNameFont);
+    connect(qGuiApp, &QGuiApplication::fontChanged, this, &UserWidget::updateUserNameLabel);
     connect(m_avatar, &UserAvatar::clicked, this, &UserWidget::clicked);
 }
 
@@ -111,6 +111,7 @@ void UserWidget::setUser(std::shared_ptr<User> user)
     initConnections();
 
     setUid(user->uid());
+    updateUserNameLabel();
 }
 
 /**
@@ -152,26 +153,14 @@ void UserWidget::setAvatar(const QString &avatar)
 }
 
 /**
- * @brief 设置用户名
- * @param name
- */
-void UserWidget::setName(const QString &name)
-{
-    m_nameLabel->setText(name);
-}
-
-/**
  * @brief 设置用户名字体
  * @param font
  */
-void UserWidget::setNameFont(const QFont &font)
+void UserWidget::updateUserNameLabel()
 {
-    const QString &name = m_user->name();
-    if (font != m_nameLabel->font()) {
-        m_nameLabel->setFont(font);
-    }
-    int nameWidth = m_nameLabel->fontMetrics().width(name);
-    int labelMaxWidth = width() - 10 * 2;
+    const QString &name = m_user->displayName();
+    int nameWidth = m_nameLabel->fontMetrics().boundingRect(name).width();
+    int labelMaxWidth = width() - 25 * 2;
 
     if (nameWidth > labelMaxWidth) {
         QString str = m_nameLabel->fontMetrics().elidedText(name, Qt::ElideRight, labelMaxWidth);

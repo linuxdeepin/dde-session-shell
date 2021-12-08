@@ -132,7 +132,7 @@ void AuthWidget::initConnections()
         setLockButtonType(action);
     });
     /* 用户名 */
-    connect(qGuiApp, &QGuiApplication::fontChanged, this, &AuthWidget::setNameFont);
+    connect(qGuiApp, &QGuiApplication::fontChanged, this, &AuthWidget::updateUserNameLabel);
     /* 用户名输入框 */
     connect(m_accountEdit, &DLineEditEx::returnPressed, this, [this] {
         if (m_accountEdit->isVisible() && !m_accountEdit->text().isEmpty()) {
@@ -170,17 +170,17 @@ void AuthWidget::setUser(std::shared_ptr<User> user)
     m_connectionList.clear();
     m_user = user;
     m_connectionList << connect(user.get(), &User::avatarChanged, this, &AuthWidget::setAvatar)
-                     << connect(user.get(), &User::displayNameChanged, this, &AuthWidget::setName)
+                     << connect(user.get(), &User::displayNameChanged, this, &AuthWidget::updateUserNameLabel)
                      << connect(user.get(), &User::passwordHintChanged, this, &AuthWidget::setPasswordHint)
                      << connect(user.get(), &User::limitsInfoChanged, this, &AuthWidget::setLimitsInfo)
                      << connect(user.get(), &User::passwordExpiredInfoChanged, this, &AuthWidget::updatePasswordExpiredState)
                      << connect(user.get(), &User::limitsInfoChanged, this, &AuthWidget::setLimitsInfo);
 
     setAvatar(user->avatar());
-    setName(user->displayName());
     setPasswordHint(user->passwordHint());
     setLimitsInfo(user->limitsInfo());
     updatePasswordExpiredState();
+    updateUserNameLabel();
 
     /* 根据用户类型设置用户名和用户名输入框的可见性 */
     if (user->type() == User::Default) {
@@ -295,25 +295,13 @@ void AuthWidget::setAvatar(const QString &avatar)
 }
 
 /**
- * @brief 设置用户名
- * @param name
- */
-void AuthWidget::setName(const QString &name)
-{
-    m_nameLabel->setText(name);
-}
-
-/**
  * @brief 设置用户名字体
  * @param font
  */
-void AuthWidget::setNameFont(const QFont &font)
+void AuthWidget::updateUserNameLabel()
 {
-    const QString &name = m_user->name();
-    if (font != m_nameLabel->font()) {
-        m_nameLabel->setFont(font);
-    }
-    int nameWidth = m_nameLabel->fontMetrics().width(name);
+    const QString &name = m_user->displayName();
+    int nameWidth = m_nameLabel->fontMetrics().boundingRect(name).width();
     int labelMaxWidth = width() - 10 * 2;
 
     if (nameWidth > labelMaxWidth) {
