@@ -264,10 +264,9 @@ void ControlWidget::addModule(module::BaseModuleInterface *module)
             m_contextMenu->addAction(action);
         }
 
-        connect(m_contextMenu, &QMenu::triggered, this, [ = ] (QAction *action) {
-            trayModule->invokedMenuItem( action->data().toString(), true);
-        });
-        m_contextMenu->exec(QCursor::pos());
+        QAction *action = m_contextMenu->exec(QCursor::pos());
+        if (action)
+            trayModule->invokedMenuItem(action->data().toString(), true);
     });
 
     connect(button, &FlotingButton::requestShowTips, this, [ = ] {
