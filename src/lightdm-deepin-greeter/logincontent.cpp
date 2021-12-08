@@ -32,6 +32,7 @@ LoginContent::LoginContent(SessionBaseModel *const model, QWidget *parent)
     m_sessionFrame = new SessionWidget;
     m_sessionFrame->setModel(model);
     m_controlWidget->setSessionSwitchEnable(m_sessionFrame->sessionCount() > 1);
+    m_controlWidget->chooseToSession(model->sessionKey());
 
     m_loginTipsWindow = new LoginTipsWindow;
     connect(m_loginTipsWindow, &LoginTipsWindow::requestClosed, m_model, &SessionBaseModel::tipsShowed);
