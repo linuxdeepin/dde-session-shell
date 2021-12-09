@@ -351,11 +351,11 @@ void SFAWidget::initSingleAuth()
     m_authButtons.insert(AT_PAM, btn);
     connect(btn, &DButtonBoxButton::toggled, this, [this](const bool checked) {
         if (checked) {
-            replaceWidget(m_passwordAuth);
+            replaceWidget(m_singleAuth);
             m_frameDataBind->updateValue("SFAType", AT_PAM);
             emit requestStartAuthentication(m_user->name(), AT_PAM);
         } else {
-            m_passwordAuth->hide();
+            m_singleAuth->hide();
             m_lockButton->setEnabled(false);
             emit requestEndAuthentication(m_user->name(), AT_PAM);
         }
