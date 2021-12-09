@@ -67,6 +67,7 @@ int main(int argc, char *argv[])
     //注册全局事件过滤器
     AppEventFilter appEventFilter;
     app->installEventFilter(&appEventFilter);
+    setAppType(APP_TYPE_LOCK);
 
     DGuiApplicationHelper::instance()->setPaletteType(DGuiApplicationHelper::LightType);
     DPalette pa = DGuiApplicationHelper::instance()->applicationPalette();

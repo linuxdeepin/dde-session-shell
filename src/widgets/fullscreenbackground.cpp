@@ -69,7 +69,7 @@ FullscreenBackground::FullscreenBackground(SessionBaseModel *model, QWidget *par
     }
 #endif
     frameList.append(this);
-    m_useSolidBackground = getDConfigValue("useSolidBackground", false).toBool();
+    m_useSolidBackground = getDConfigValue(getDefaultConfigFileName(), "use-solid-background", false).toBool();
     m_enableAnimation = DGuiApplicationHelper::isSpecialEffectsEnvironment();
     if (m_enableAnimation && !m_useSolidBackground) {
         m_fadeOutAni = new QVariantAnimation(this);

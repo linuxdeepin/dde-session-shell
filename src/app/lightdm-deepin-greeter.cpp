@@ -205,6 +205,7 @@ int main(int argc, char* argv[])
     //注册全局事件过滤器
     AppEventFilter appEventFilter;
     a.installEventFilter(&appEventFilter);
+    setAppType(APP_TYPE_LOGIN);
 
     DPalette pa = DGuiApplicationHelper::instance()->standardPalette(DGuiApplicationHelper::LightType);
     pa.setColor(QPalette::Normal, DPalette::WindowText, QColor("#FFFFFF"));

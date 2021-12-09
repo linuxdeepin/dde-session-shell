@@ -110,7 +110,7 @@ LockFrame::LockFrame(SessionBaseModel *const model, QWidget *parent)
         m_enablePowerOffKey = true;
     });
 
-    if (getDConfigValue("autoExit", false).toBool()) {
+    if (getDConfigValue(getDefaultConfigFileName(), "auto-exit", false).toBool()) {
         m_autoExitTimer = new QTimer(this);
         m_autoExitTimer->setInterval(1000*60); //1分钟
         m_autoExitTimer->setSingleShot(true);

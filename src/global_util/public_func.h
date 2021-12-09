@@ -37,6 +37,9 @@
 
 #define ACCOUNTS_DBUS_PREFIX "/com/deepin/daemon/Accounts/User"
 
+static const int APP_TYPE_LOCK = 0;
+static const int APP_TYPE_LOGIN = 1;
+
 QPixmap loadPixmap(const QString &file, const QSize& size = QSize());
 
 template <typename T>
@@ -74,6 +77,16 @@ bool isDeepinAuth();
  */
 uint timeFromString(QString time);
 
-QVariant getDConfigValue(const QString &key, const QVariant &defaultValue, const QString &configFileName = DDESESSIONCC::DEFAULT_META_CONFIG_NAME);
+QVariant getDConfigValue(const QString &configFileName, const QString &key, const QVariant &defaultValue);
+
+/**
+ * @brief 设置app类型，让程序知道应该获取哪个配置文件
+ */
+void setAppType(int appType);
+
+/**
+ * @brief 获取默认的配置文件名称
+ */
+QString getDefaultConfigFileName();
 
 #endif // PUBLIC_FUNC_H

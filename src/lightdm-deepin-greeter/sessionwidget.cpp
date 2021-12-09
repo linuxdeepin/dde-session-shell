@@ -72,10 +72,10 @@ SessionWidget::SessionWidget(QWidget *parent)
     , m_frameDataBind(FrameDataBind::Instance())
     , m_sessionModel(new QLightDM::SessionsModel(this))
     , m_userModel(new QLightDM::UsersModel(this))
-    , m_allowSwitchingToWayland(getDConfigValue("allowSwitchingToWayland", false).toBool())
+    , m_allowSwitchingToWayland(getDConfigValue(getDefaultConfigFileName(), "allow-switching-to-wayland", false).toBool())
     , m_isWaylandExisted(false)
     , m_warningLabel(new QLabel(this))
-    , m_defaultSession(getDConfigValue("defaultSessionName", DEFAULT_SESSION_NAME).toString())
+    , m_defaultSession(getDConfigValue(getDefaultConfigFileName(),"default-session-name", DEFAULT_SESSION_NAME).toString())
 {
     setSizePolicy(QSizePolicy::Expanding, QSizePolicy::Expanding);
     loadSessionList();

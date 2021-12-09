@@ -49,6 +49,8 @@ using namespace std;
 
 DCORE_USE_NAMESPACE
 
+static int appType = APP_TYPE_LOCK;
+
 QPixmap loadPixmap(const QString &file, const QSize& size)
 {
     qreal ratio = 1.0;
@@ -108,10 +110,12 @@ uint timeFromString(QString time)
  * @param configFileName 配置文件名称
  * @return 配置项的值
  */
-QVariant getDConfigValue(const QString &key, const QVariant &defaultValue, const QString &configFileName)
+QVariant getDConfigValue(const QString &configFileName, const QString &key, const QVariant &defaultValue)
 {
-    DConfig config(configFileName);
+    if (configFileName.isEmpty())
+        return defaultValue;
 
+    DConfig config(configFileName);
     if (!config.isValid() || !config.keyList().contains(key)) {
         qWarning() << "dconfig parse failed, name: " << config.name()
                    << "subpath: " << config.subpath()
@@ -120,4 +124,14 @@ QVariant getDConfigValue(const QString &key, const QVariant &defaultValue, const
     }
 
     return config.value(key);
+}
+
+void setAppType(int type)
+{
+    appType = type;
+}
+
+QString getDefaultConfigFileName()
+{
+    return APP_TYPE_LOCK == appType ? DDESESSIONCC::LOCK_DCONFIG_SOURCE : DDESESSIONCC::LOGIN_DCONFIG_SOURCE;
 }

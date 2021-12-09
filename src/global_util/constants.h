@@ -64,8 +64,9 @@ const QStringList SHUTDOWN_CONFIGS {
     "/usr/share/dde-session-ui/dde-shutdown.conf"
 };
 
-static const QString DEFAULT_META_CONFIG_NAME = "default";      // 默认配置文件名称
 static const QString SOLID_BACKGROUND_COLOR = "#000F27";        // 纯色背景色号
+static const QString LOCK_DCONFIG_SOURCE = "com.deepin.dde.dde-lock.dconfig"; // 锁屏配置文件
+static const QString LOGIN_DCONFIG_SOURCE = "com.deepin.dde.lightdm-deepin-greeter.dconfig"; // 登录配置文件
 
 enum AuthFactorType {
     SingleAuthFactor,
