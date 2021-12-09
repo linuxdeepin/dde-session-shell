@@ -21,9 +21,12 @@
 
 #include "dlineeditex.h"
 
+#include <DFontSizeManager>
+
+#include <QGuiApplication>
 #include <QPainter>
-#include <QVariantAnimation>
 #include <QPropertyAnimation>
+#include <QVariantAnimation>
 
 LoadSlider::LoadSlider(QWidget *parent)
     : QWidget(parent)
@@ -64,6 +67,8 @@ DLineEditEx::DLineEditEx(QWidget *parent)
 #endif
     this->lineEdit()->installEventFilter(this);
     this->installEventFilter(this);
+
+    connect(qGuiApp, &QGuiApplication::fontChanged, this, &DLineEditEx::setPlaceholderTextFont);
 }
 
 /**
@@ -78,6 +83,20 @@ void DLineEditEx::initAnimation()
     m_animation->setLoopCount(-1);
     m_animation->setEasingCurve(QEasingCurve::Linear);
     m_animation->targetObject();
+}
+
+/**
+ * @brief 设置字体
+ * @param font
+ */
+void DLineEditEx::setPlaceholderTextFont(const QFont &font)
+{
+    const QString &text = lineEdit()->text();
+    QFont fontTmp = font;
+    while (QFontMetrics(fontTmp).boundingRect(text).width() > width()) {
+        fontTmp.setPointSize(fontTmp.pointSize() - 1);
+    }
+    setFont(fontTmp);
 }
 
 /**
@@ -114,6 +133,7 @@ void DLineEditEx::stopAnimation()
  */
 void DLineEditEx::paintEvent(QPaintEvent *event)
 {
+    setPlaceholderTextFont(font());
     if (lineEdit()->hasFocus() && lineEdit()->alignment() == Qt::AlignCenter
         && !lineEdit()->placeholderText().isEmpty() && lineEdit()->text().isEmpty()) {
         QPainter pa(this);
@@ -133,9 +153,9 @@ bool DLineEditEx::eventFilter(QObject *watched, QEvent *event)
 {
     // 禁止输入法
     if ((watched == this || watched == this->lineEdit())
-            && event->type() == QEvent::InputMethodQuery) {
+        && event->type() == QEvent::InputMethodQuery) {
         return true;
     }
 
-    return DLineEdit::eventFilter(watched,event);
+    return DLineEdit::eventFilter(watched, event);
 }

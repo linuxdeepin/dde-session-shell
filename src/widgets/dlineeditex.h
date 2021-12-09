@@ -61,6 +61,7 @@ protected:
 
 private:
     void initAnimation();
+    void setPlaceholderTextFont(const QFont &font);
 
 private:
     LoadSlider *m_loadSlider;
