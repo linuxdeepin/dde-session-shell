@@ -202,7 +202,7 @@ void SFAWidget::setAuthType(const int type)
             }
         } else {
             m_chooseAuthButtonBoxPlaceHolder->changeSize(0, CHOOSE_AUTH_TYPE_BUTTON_PLACE_HOLDER_HEIGHT);
-            m_chooseAuthButtonBox->button(m_authButtons.firstKey())->setChecked(true);
+            emit m_chooseAuthButtonBox->button(m_authButtons.firstKey())->toggled(true);
             m_chooseAuthButtonBox->hide();
         }
         std::function<void(QVariant)> authTypeChanged = std::bind(&SFAWidget::syncAuthType, this, std::placeholders::_1);
