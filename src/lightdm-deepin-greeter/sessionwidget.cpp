@@ -176,7 +176,8 @@ void SessionWidget::switchToUser(const QString &userName)
 
     QString sessionName = lastLoggedInSession(userName);
     // 上次登录的是wayland，但是此次登录已经禁止使用wayland，那么使用默认的桌面
-    if (!m_allowSwitchingToWayland && !WAYLAND_SESSION_NAME.compare(sessionName, Qt::CaseInsensitive))
+    if ((!m_allowSwitchingToWayland && !WAYLAND_SESSION_NAME.compare(sessionName, Qt::CaseInsensitive)) ||
+         !WAYLAND_SESSION_NAME.compare(m_defaultSession, Qt::CaseInsensitive))
         sessionName = m_defaultSession;
     m_currentSessionIndex = sessionIndex(sessionName);
 
