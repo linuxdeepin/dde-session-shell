@@ -1,3 +1,4 @@
-files/wayland/deepin-greeter usr/bin
-files/wayland/lightdm-deepin-greeter etc/deepin/greeters.d
-files/wayland/lightdm-deepin-greeter.desktop usr/share/xgreeters
+files/wayland/deepin-greeter-wayland usr/bin
+files/wayland/lightdm-deepin-greeter-wayland var
+files/wayland/lightdm-deepin-greeter-wayland.desktop usr/share/xgreeters
+files/wayland/lightdm-deepin-greeter-default-wayland.json usr/share/dsg/apps/lightdm-deepin-greeter/configs

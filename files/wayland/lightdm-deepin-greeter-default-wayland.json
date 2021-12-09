@@ -1,0 +1,42 @@
+{
+    "magic": "dsg.config.meta",
+    "version": "1.0",
+    "contents": {
+        "useSolidBackground": {
+            "value": false,
+            "serial": 0,
+            "flags": [
+                "global"
+            ],
+            "name": "useSolidBackground",
+            "name[zh_CN]": "使用纯色背景",
+            "description": "Use solid background",
+            "permissions": "readwrite",
+            "visibility": "private"
+        },
+        "allowSwitchingToWayland": {
+            "value": false,
+            "serial": 0,
+            "flags": [
+                "global"
+            ],
+            "name": "allowSwitchingToWayland",
+            "name[zh_CN]": "允许用户切换到wayland",
+            "description": "Allow user to switch session to wayland",
+            "permissions": "readwrite",
+            "visibility": "private"
+        },
+        "defaultSessionName": {
+            "value": "Wayland",
+            "serial": 0,
+            "flags": [
+                "global"
+            ],
+            "name": "defaultSessionName",
+            "name[zh_CN]": "默认桌面环境名称",
+            "description": "Default desktop session name",
+            "permissions": "readwrite",
+            "visibility": "private"
+        }
+    }
+}
