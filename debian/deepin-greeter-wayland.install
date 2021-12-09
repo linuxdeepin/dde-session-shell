@@ -1,0 +1,3 @@
+files/wayland/deepin-greeter usr/bin
+files/wayland/lightdm-deepin-greeter etc/deepin/greeters.d
+files/wayland/lightdm-deepin-greeter.desktop usr/share/xgreeters

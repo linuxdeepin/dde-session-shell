@@ -271,8 +271,3 @@ install(FILES ${CMAKE_CONFIG} DESTINATION ${CMAKE_INSTALL_LIBDIR}/cmake/DdeSessi
 # config
 dconfig_meta_files(APPID dde-lock BASE configs/dde-lock FILES configs/dde-lock/default.json)
 dconfig_meta_files(APPID lightdm-deepin-greeter BASE configs/lightdm-deepin-greeter FILES configs/lightdm-deepin-greeter/default.json)
-
-# greeter in wayland
-install(FILES files/wayland/deepin-greeter DESTINATION bin)
-install(FILES files/wayland/lightdm-deepin-greeter.desktop DESTINATION share/xgreeters/)
-install(PROGRAMS files/wayland/lightdm-deepin-greeter DESTINATION /etc/deepin/greeters.d)
