@@ -1,4 +1,4 @@
-<?xml version="1.0" ?><!DOCTYPE TS><TS language="zh_TW" version="2.1">
+<?xml version="1.0" ?><!DOCTYPE TS><TS version="2.1" language="zh_TW">
 <context>
     <name>AuthFace</name>
     <message>
@@ -261,6 +261,13 @@
     <message>
         <source>The above users are still logged in and data will be lost due to reboot, are you sure you want to reboot?</source>
         <translation>以上的使用者仍在登入，且重開機後這些使用者的資料將會遺失。確定重啟？</translation>
+    </message>
+</context>
+<context>
+    <name>SessionWidget</name>
+    <message>
+        <source>You have enabled the high system security level, thus cannot switch to the Wayland mode, please disable the high security level in Security Center and try again.</source>
+        <translation>您已開啟進階別等級保護，無法切換Wayland模式，請於“安全中心”關閉進階別等級保護後再試</translation>
     </message>
 </context>
 <context>

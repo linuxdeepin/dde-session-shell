@@ -1,4 +1,4 @@
-<?xml version="1.0" ?><!DOCTYPE TS><TS language="it" version="2.1">
+<?xml version="1.0" ?><!DOCTYPE TS><TS version="2.1" language="it">
 <context>
     <name>AuthFace</name>
     <message>
@@ -261,6 +261,13 @@
     <message>
         <source>The above users are still logged in and data will be lost due to reboot, are you sure you want to reboot?</source>
         <translation>Gli utenti sopra indicati sono loggati ed i dati andranno persi col riavvio, sicuro di voler riavviare?</translation>
+    </message>
+</context>
+<context>
+    <name>SessionWidget</name>
+    <message>
+        <source>You have enabled the high system security level, thus cannot switch to the Wayland mode, please disable the high security level in Security Center and try again.</source>
+        <translation type="unfinished"/>
     </message>
 </context>
 <context>

@@ -1,4 +1,4 @@
-<?xml version="1.0" ?><!DOCTYPE TS><TS language="tr" version="2.1">
+<?xml version="1.0" ?><!DOCTYPE TS><TS version="2.1" language="tr">
 <context>
     <name>AuthFingerprint</name>
     <message>
@@ -270,6 +270,13 @@
     <message>
         <source>The above users are still logged in and data will be lost due to reboot, are you sure you want to reboot?</source>
         <translation>Yukarıdaki kullanıcıların oturumu açık ve yeniden başlatılınca veriler kaybolacak, yeniden başlatmak istediğinize emin misiniz?</translation>
+    </message>
+</context>
+<context>
+    <name>SessionWidget</name>
+    <message>
+        <source>You have enabled the high system security level, thus cannot switch to the Wayland mode, please disable the high security level in Security Center and try again.</source>
+        <translation type="unfinished"/>
     </message>
 </context>
 <context>

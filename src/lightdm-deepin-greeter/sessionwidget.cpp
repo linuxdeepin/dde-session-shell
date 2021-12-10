@@ -81,7 +81,7 @@ SessionWidget::SessionWidget(QWidget *parent)
     loadSessionList();
     setFocusPolicy(Qt::StrongFocus);
     setAccessibleName("SessionWidget");
-    m_warningLabel->setText(tr("You have enabled the high system security level,thus cannot switch to the Wayland mode,"\
+    m_warningLabel->setText(tr("You have enabled the high system security level, thus cannot switch to the Wayland mode, "\
                                "please disable the high security level in Security Center and try again."));
     m_warningLabel->setSizePolicy(QSizePolicy::Expanding, QSizePolicy::Preferred);
     m_warningLabel->setAlignment(Qt::AlignCenter);
