@@ -77,7 +77,8 @@ public:
     inline AppType appType() const { return m_appType; }
     void setAppType(const AppType type);
 
-    bool isSecurityEnhanceOpen();
+    void setSEType(bool state) { m_SEOpen = state; }
+    bool getSEType() const { return m_SEOpen; }
 
     inline QString sessionKey() const { return m_sessionKey; }
     void setSessionKey(const QString &sessionKey);
@@ -213,6 +214,7 @@ private:
     bool m_isHibernateMode;
     bool m_isLock = false;
     bool m_allowShowCustomUser;
+    bool m_SEOpen; // 保存等保开启、关闭的状态
     int m_userListSize = 0;
     AppType m_appType;
     QList<std::shared_ptr<User>> m_userList;

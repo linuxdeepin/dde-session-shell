@@ -29,6 +29,7 @@ public:
     ~GreeterWorker() override;
 
     void switchToUser(std::shared_ptr<User> user) override;
+    bool isSecurityEnhanceOpen();
 
 signals:
     void requestUpdateBackground(const QString &path);
@@ -49,6 +50,7 @@ public slots:
 
 private slots:
     void onAuthStateChanged(const int type, const int state, const QString &message);
+    void onReceiptChanged(bool state);
 
 private:
     void initConnections();

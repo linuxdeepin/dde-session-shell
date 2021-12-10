@@ -13,6 +13,8 @@
 
 #define LOCKSERVICE_PATH "/com/deepin/dde/LockService"
 #define LOCKSERVICE_NAME "com.deepin.dde.LockService"
+#define SECURITYENHANCE_PATH "/com/deepin/daemon/SecurityEnhance"
+#define SECURITYENHANCE_NAME "com.deepin.daemon.SecurityEnhance"
 
 using PowerInter = com::deepin::system::Power;
 using namespace Auth;
@@ -184,10 +186,17 @@ void GreeterWorker::initConnections()
         if (m_authFramework->isDeepinAuthValid())
             m_model->updateLimitedInfo(m_authFramework->GetLimitedInfo(m_account));
     });
+
+    // 等保服务开启/关闭时更新
+    QDBusConnection::systemBus().connect(SECURITYENHANCE_NAME, SECURITYENHANCE_PATH, SECURITYENHANCE_NAME,
+                                         "Receipt", this, SLOT(onReceiptChanged(bool)));
 }
 
 void GreeterWorker::initData()
 {
+    if (isSecurityEnhanceOpen())
+        m_model->setSEType(true);
+
     /* com.deepin.daemon.Accounts */
     m_model->updateUserList(m_accountsInter->userList());
     m_model->updateLastLogoutUser(m_loginedInter->lastLogoutUser());
@@ -327,6 +336,20 @@ void GreeterWorker::switchToUser(std::shared_ptr<User> user)
             createAuthentication(user->name());
         }
     }
+}
+
+bool GreeterWorker::isSecurityEnhanceOpen()
+{
+    QDBusInterface securityEnhanceInterface(SECURITYENHANCE_NAME,
+                               SECURITYENHANCE_PATH,
+                               SECURITYENHANCE_NAME,
+                               QDBusConnection::systemBus());
+    QDBusReply<QString> reply = securityEnhanceInterface.call("Status");
+    if (!reply.isValid()) {
+       qWarning() << "get security enhance status error: " << reply.error();
+       return false;
+    }
+    return reply.value() == "open" || reply.value() == "opening";
 }
 
 /**
@@ -722,6 +745,13 @@ void GreeterWorker::onAuthStateChanged(const int type, const int state, const QS
             break;
         }
     }
+}
+
+void GreeterWorker::onReceiptChanged(bool state)
+{
+    Q_UNUSED(state);
+
+    m_model->setSEType(isSecurityEnhanceOpen());
 }
 
 void GreeterWorker::saveNumlockStatus(std::shared_ptr<User> user, const bool &on)
