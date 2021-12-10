@@ -359,6 +359,15 @@ void LockContent::mouseReleaseEvent(QMouseEvent *event)
         hideToplevelWindow();
     }
 
+    if (m_model->currentModeState() == SessionBaseModel::UserMode) {
+        // 触屏点击空白处不退出用户列表界面
+        if (event->source() == Qt::MouseEventSynthesizedByQt)
+            return SessionBaseWindow::mouseReleaseEvent(event);
+
+        // 点击空白处的时候切换到当前用户，以开启验证。
+        emit requestSwitchToUser(m_model->currentUser());
+    }
+
     m_model->setCurrentModeState(SessionBaseModel::ModeStatus::PasswordMode);
 
     return SessionBaseWindow::mouseReleaseEvent(event);

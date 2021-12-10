@@ -196,6 +196,12 @@ void UserWidget::mousePressEvent(QMouseEvent *event)
     QWidget::mousePressEvent(event);
 }
 
+void UserWidget::mouseReleaseEvent(QMouseEvent *event)
+{
+    // 不再向上传递mouseReleaseEvent信号，避免影响用户列表模式处理点击空白处的逻辑
+    Q_UNUSED(event);
+}
+
 void UserWidget::paintEvent(QPaintEvent *event)
 {
     if (m_isSelected) {

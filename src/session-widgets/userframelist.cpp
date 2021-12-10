@@ -281,19 +281,6 @@ void UserFrameList::updateLayout()
     }
 }
 
-void UserFrameList::mouseReleaseEvent(QMouseEvent *event)
-{
-    // 触屏点击空白处不退出用户列表界面
-    if (event->source() == Qt::MouseEventSynthesizedByQt) {
-        return;
-    }
-
-    emit clicked();
-    hide();
-
-    return QWidget::mouseReleaseEvent(event);
-}
-
 void UserFrameList::hideEvent(QHideEvent *event)
 {
     return QWidget::hideEvent(event);
