@@ -701,6 +701,9 @@ void GreeterWorker::onAuthStateChanged(const int type, const int state, const QS
         m_model->updateLimitedInfo(m_authFramework->GetLimitedInfo(m_model->currentUser()->name()));
         m_model->updateAuthState(type, state, message);
         switch (state) {
+        case AS_Success:
+            m_resetSessionTimer->start();
+            break;
         case AS_Failure:
             if (AT_All != type) {
                 endAuthentication(m_account, type);
