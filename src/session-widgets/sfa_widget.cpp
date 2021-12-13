@@ -41,7 +41,9 @@
 SFAWidget::SFAWidget(QWidget *parent)
     : AuthWidget(parent)
     , m_mainLayout(new QVBoxLayout(this))
-    , m_lastAuth(nullptr)
+    , m_chooseAuthButtonBox(nullptr)
+    , m_biometricAuthState(nullptr)
+    , m_lastAuthType(AT_None)
     , m_retryButton(new DFloatingButton(this))
     , m_bioAuthStatePlaceHolder(new QSpacerItem(0, BIO_AUTH_STATE_PLACE_HOLDER_HEIGHT))
     , m_chooseAuthButtonBoxPlaceHolder(new QSpacerItem(0, CHOOSE_AUTH_TYPE_BUTTON_PLACE_HOLDER_HEIGHT))
@@ -194,15 +196,26 @@ void SFAWidget::setAuthType(const int type)
         if (count > 1) {
             m_chooseAuthButtonBoxPlaceHolder->changeSize(0, 0);
             m_chooseAuthButtonBox->show();
-            // 需要判断一下上次验证成功的类型是否还有效；由于上面使用deleteLater析构对象，无法只通过对象是否为空来判断
-            if (m_lastAuth && (type & m_lastAuth->authType())) {
-                emit requestStartAuthentication(m_user->name(), m_lastAuth->authType());
+            if (type & m_lastAuthType) {
+                if (m_chooseAuthButtonBox->checkedId() == m_lastAuthType) {
+                    emit m_chooseAuthButtonBox->button(m_lastAuthType)->toggled(true);
+                } else {
+                    m_chooseAuthButtonBox->button(m_authButtons.firstKey())->setChecked(true);
+                }
             } else {
-                m_chooseAuthButtonBox->button(m_authButtons.firstKey())->setChecked(true);
+                if (m_chooseAuthButtonBox->checkedId() == m_authButtons.firstKey()) {
+                    emit m_chooseAuthButtonBox->button(m_authButtons.firstKey())->toggled(true);
+                } else {
+                    m_chooseAuthButtonBox->button(m_authButtons.firstKey())->setChecked(true);
+                }
             }
         } else {
             m_chooseAuthButtonBoxPlaceHolder->changeSize(0, CHOOSE_AUTH_TYPE_BUTTON_PLACE_HOLDER_HEIGHT);
-            emit m_chooseAuthButtonBox->button(m_authButtons.firstKey())->toggled(true);
+            if (m_chooseAuthButtonBox->checkedId() == m_authButtons.firstKey()) {
+                emit m_chooseAuthButtonBox->button(m_authButtons.firstKey())->toggled(true);
+            } else {
+                m_chooseAuthButtonBox->button(m_authButtons.firstKey())->setChecked(true);
+            }
             m_chooseAuthButtonBox->hide();
         }
         std::function<void(QVariant)> authTypeChanged = std::bind(&SFAWidget::syncAuthType, this, std::placeholders::_1);
@@ -309,7 +322,7 @@ void SFAWidget::initSingleAuth()
     });
     connect(m_singleAuth, &AuthSingle::authFinished, this, [this](const int authState) {
         if (authState == AS_Success) {
-            m_lastAuth = m_singleAuth;
+            m_lastAuthType = AT_PAM;
             m_lockButton->setEnabled(true);
             emit authFinished();
         }
@@ -381,7 +394,7 @@ void SFAWidget::initPasswdAuth()
     });
     connect(m_passwordAuth, &AuthPassword::authFinished, this, [this](const int authState) {
         if (authState == AS_Success) {
-            m_lastAuth = m_passwordAuth;
+            m_lastAuthType = AT_Password;
             m_lockButton->setEnabled(true);
         }
     });
@@ -456,7 +469,7 @@ void SFAWidget::initFingerprintAuth()
     });
     connect(m_fingerprintAuth, &AuthFingerprint::authFinished, this, [this](const int authState) {
         if (authState == AS_Success) {
-            m_lastAuth = m_fingerprintAuth;
+            m_lastAuthType = AT_Fingerprint;
             m_lockButton->setEnabled(true);
             m_lockButton->setFocus();
         } else {
@@ -503,7 +516,7 @@ void SFAWidget::initUKeyAuth()
     });
     connect(m_ukeyAuth, &AuthUKey::authFinished, this, [this](const int authState) {
         if (authState == AS_Success) {
-            m_lastAuth = m_ukeyAuth;
+            m_lastAuthType = AT_Ukey;
             m_lockButton->setEnabled(true);
             m_lockButton->setFocus();
         } else {
@@ -577,7 +590,7 @@ void SFAWidget::initFaceAuth()
     });
     connect(m_faceAuth, &AuthFace::authFinished, this, [this](const int authState) {
         if (authState == AS_Success) {
-            m_lastAuth = m_faceAuth;
+            m_lastAuthType = AT_Face;
             m_lockButton->setEnabled(true);
             m_lockButton->setFocus();
         }
@@ -634,7 +647,7 @@ void SFAWidget::initIrisAuth()
     });
     connect(m_irisAuth, &AuthIris::authFinished, this, [this](const int authState) {
         if (authState == AS_Success) {
-            m_lastAuth = m_irisAuth;
+            m_lastAuthType = AT_Iris;
             m_lockButton->setEnabled(true);
             m_lockButton->setFocus();
         }

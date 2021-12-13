@@ -60,7 +60,7 @@ public slots:
     void onRetryButtonVisibleChanged(bool visible);
 
 protected:
-    void resizeEvent(QResizeEvent *event);
+    void resizeEvent(QResizeEvent *event) override;
 
 private:
     void initUI();
@@ -84,7 +84,7 @@ private:
 
     DButtonBox *m_chooseAuthButtonBox; // 认证选择按钮
     DLabel *m_biometricAuthState;      // 生物认证状态
-    QPointer<AuthModule> m_lastAuth;   // 上次成功的认证
+    int m_lastAuthType;                // 上次成功的认证
 
     QMap<int, DButtonBoxButton *> m_authButtons;
     DFloatingButton *m_retryButton;
