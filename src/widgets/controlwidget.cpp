@@ -131,6 +131,12 @@ void ControlWidget::initUI()
     m_mainLayout->setSpacing(26);
     m_mainLayout->setAlignment(Qt::AlignRight | Qt::AlignBottom);
 
+    m_sessionBtn = new DFloatingButton(this);
+    m_sessionBtn->setIconSize(BUTTON_ICON_SIZE);
+    m_sessionBtn->setFixedSize(BUTTON_SIZE);
+    m_sessionBtn->setAutoExclusive(true);
+    m_sessionBtn->setBackgroundRole(DPalette::Button);
+
     m_keyboardBtn = new DFloatingButton(this);
     m_keyboardBtn->setAccessibleName("KeyboardLayoutBtn");
     m_keyboardBtn->setFixedSize(BUTTON_SIZE);
@@ -175,6 +181,7 @@ void ControlWidget::initUI()
     m_powerBtn->setBackgroundRole(DPalette::Button);
     m_powerBtn->installEventFilter(this);
 
+    m_btnList.append(m_sessionBtn);
     m_btnList.append(m_keyboardBtn);
     m_btnList.append(m_virtualKBBtn);
     m_btnList.append(m_switchUserBtn);
@@ -183,6 +190,7 @@ void ControlWidget::initUI()
     if (m_curUser->keyboardLayoutList().size() < 2)
         m_keyboardBtn->hide();
 
+    m_mainLayout->addWidget(m_sessionBtn);
     m_mainLayout->addWidget(m_keyboardBtn);
     m_mainLayout->addWidget(m_virtualKBBtn);
     m_mainLayout->addWidget(m_switchUserBtn);
@@ -202,6 +210,7 @@ void ControlWidget::initUI()
 void ControlWidget::initConnect()
 {
     connect(&module::ModulesLoader::instance(), &module::ModulesLoader::moduleFound, this, &ControlWidget::addModule);
+    connect(m_sessionBtn, &DFloatingButton::clicked, this, &ControlWidget::requestSwitchSession);
     connect(m_switchUserBtn, &DFloatingButton::clicked, this, &ControlWidget::requestSwitchUser);
     connect(m_powerBtn, &DFloatingButton::clicked, this, &ControlWidget::requestShutdown);
     connect(m_virtualKBBtn, &DFloatingButton::clicked, this, &ControlWidget::requestSwitchVirtualKB);
@@ -316,7 +325,7 @@ void ControlWidget::updateLayout()
         if (moduleWidgetList.contains(moduleWidget)) {
             moduleWidgetList.removeAll(moduleWidget);
         }
-        m_mainLayout->insertWidget(0, moduleWidget);
+        m_mainLayout->insertWidget(1, moduleWidget);
     }
     for (QObject *moduleWidget : moduleWidgetList) {
         m_mainLayout->removeWidget(qobject_cast<QWidget *>(moduleWidget));
@@ -358,14 +367,12 @@ void ControlWidget::setUserSwitchEnable(const bool visible)
 
 void ControlWidget::setSessionSwitchEnable(const bool visible)
 {
-    if (!visible) return;
+    if (!visible)  {
+        m_sessionBtn->hide();
+        return;
+    }
 
-    if (!m_sessionBtn) {
-        m_sessionBtn = new DFloatingButton(this);
-        m_sessionBtn->setIconSize(BUTTON_ICON_SIZE);
-        m_sessionBtn->setFixedSize(BUTTON_SIZE);
-        m_sessionBtn->setAutoExclusive(true);
-        m_sessionBtn->setBackgroundRole(DPalette::Button);
+        m_sessionBtn->show();
 #ifndef SHENWEI_PLATFORM
         m_sessionBtn->installEventFilter(this);
 #else
@@ -375,17 +382,10 @@ void ControlWidget::setSessionSwitchEnable(const bool visible)
 
 #endif
 
-        m_mainLayout->insertWidget(1, m_sessionBtn);
-        m_mainLayout->setAlignment(m_sessionBtn, Qt::AlignBottom);
-        m_btnList.push_front(m_sessionBtn);
-
-        connect(m_sessionBtn, &DFloatingButton::clicked, this, &ControlWidget::requestSwitchSession);
-    }
-
     if (!m_tipWidget) {
         m_tipWidget = new QWidget;
         m_tipWidget->setAccessibleName("TipWidget");
-        m_mainLayout->insertWidget(1, m_tipWidget);
+        m_mainLayout->insertWidget(0, m_tipWidget);
         m_mainLayout->setAlignment(m_tipWidget, Qt::AlignCenter);
     }
 
