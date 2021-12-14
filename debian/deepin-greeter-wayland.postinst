@@ -3,4 +3,4 @@
 mv /usr/bin/deepin-greeter-wayland /usr/bin/deepin-greeter
 mv /var/lightdm-deepin-greeter-wayland /etc/deepin/greeters.d/lightdm-deepin-greeter
 mv /usr/share/xgreeters/lightdm-deepin-greeter-wayland.desktop /usr/share/xgreeters/lightdm-deepin-greeter.desktop
-mv /usr/share/dsg/apps/lightdm-deepin-greeter/configs/lightdm-deepin-greeter-default-wayland.json /usr/share/dsg/apps/lightdm-deepin-greeter/configs/default.json
+mv /usr/share/dsg/apps/lightdm-deepin-greeter/configs/lightdm-deepin-greeter-default-wayland.json /usr/share/dsg/apps/lightdm-deepin-greeter/configs/com.deepin.dde.lightdm-deepin-greeter.dconfig.json
