@@ -298,7 +298,7 @@ void MFAWidget::initFingerprintAuth()
         emit requestStartAuthentication(m_model->currentUser()->name(), AT_Fingerprint);
     });
     connect(m_fingerprintAuth, &AuthFingerprint::authFinished, this, [this](const int value) {
-        checkAuthResult(AT_Password, value);
+        checkAuthResult(AT_Fingerprint, value);
     });
 }
 

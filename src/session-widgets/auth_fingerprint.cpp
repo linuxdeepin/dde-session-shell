@@ -153,6 +153,7 @@ void AuthFingerprint::setAuthState(const int state, const QString &result)
     case AuthCommon::AS_Unlocked:
         setAnimationState(false);
         setAuthStateStyle(isMFA() ? LOGIN_WAIT : AUTH_LOCK);
+        emit activeAuth(AuthCommon::AT_Fingerprint);
         break;
     default:
         setAnimationState(false);

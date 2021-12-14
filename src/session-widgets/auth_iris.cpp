@@ -158,6 +158,7 @@ void AuthIris::setAuthState(const int state, const QString &result)
         setAnimationState(false);
         setAuthStateStyle(isMFA() ? LOGIN_WAIT : AUTH_LOCK);
         m_showPrompt = true;
+        emit activeAuth(AuthCommon::AT_Iris);
         break;
     default:
         setAnimationState(false);
