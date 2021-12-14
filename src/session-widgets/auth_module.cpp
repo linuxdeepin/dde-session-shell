@@ -158,6 +158,8 @@ void AuthModule::updateUnlockTime()
     if (QDateTime::fromString(m_limitsInfo->unlockTime, Qt::ISODateWithMs) <= QDateTime::currentDateTime()) {
         m_integerMinutes = 0;
         m_unlockTimer->stop();
+        if (m_limitsInfo->locked)
+            updateUnlockPrompt();
         return;
     }
     updateIntegerMinutes();

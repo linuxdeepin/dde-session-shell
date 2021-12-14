@@ -202,8 +202,8 @@ void AuthIris::setLimitsInfo(const LimitsInfo &info)
 void AuthIris::updateUnlockPrompt()
 {
     AuthModule::updateUnlockPrompt();
-    if (m_integerMinutes > 0) {
-        m_textLabel->setText(tr("Please try again %n minute(s) later", "", static_cast<int>(m_integerMinutes)));
+    if (m_limitsInfo->locked) {
+        m_textLabel->setText(tr("Iris ID locked, use password please"));
     } else {
         QTimer::singleShot(1000, this, [this] {
             emit activeAuth(m_type);
