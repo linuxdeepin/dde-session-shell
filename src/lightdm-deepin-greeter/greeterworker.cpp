@@ -160,8 +160,8 @@ void GreeterWorker::initConnections()
         });
     });
     /* model */
-    connect(m_model, &SessionBaseModel::authTypeChanged, this, [ = ](const int type) {
-        if (type > 0 && !m_model->currentUser()->limitsInfo()->value(type).locked && m_model->getAuthProperty().MFAFlag) {
+    connect(m_model, &SessionBaseModel::authTypeChanged, this, [=](const int type) {
+        if (type > 0 && m_model->getAuthProperty().MFAFlag) {
             startAuthentication(m_account, m_model->getAuthProperty().AuthType);
         }
         m_limitsUpdateTimer->start();
@@ -433,9 +433,7 @@ void GreeterWorker::startAuthentication(const QString &account, const int authTy
  */
 void GreeterWorker::sendTokenToAuth(const QString &account, const int authType, const QString &token)
 {
-    qDebug() << Q_FUNC_INFO
-             << "account: " << account
-             << "auth type: " << authType;
+    qDebug() << "GreeterWorker::sendTokenToAuth:" << account << authType;
     switch (m_model->getAuthProperty().FrameworkState) {
     case Available:
         if (AT_PAM == authType) {
@@ -584,7 +582,6 @@ void GreeterWorker::showMessage(const QString &text, const QLightDM::Greeter::Me
     case QLightDM::Greeter::MessageTypeError:
         m_retryAuth = false;
         m_model->updateMFAFlag(false);
-        m_model->setAuthType(AT_PAM);
         m_model->updateAuthState(AT_PAM, AS_Failure, text);
         break;
     }
@@ -642,8 +639,12 @@ void GreeterWorker::authenticationComplete()
 
 void GreeterWorker::onAuthFinished()
 {
+    qDebug() << "GreeterWorker::onAuthFinished";
     if (m_greeter->inAuthentication()) {
         m_greeter->respond(m_authFramework->AuthSessionPath(m_account) + QString(";") + m_password);
+        if (m_model->currentUser()->expiredState() == User::ExpiredAlready) {
+            m_model->setAuthType(AT_PAM);
+        }
     } else {
         qWarning() << "The lightdm is not in authentication!";
     }
@@ -661,6 +662,9 @@ void GreeterWorker::onAuthStateChanged(const int type, const int state, const QS
                 m_resetSessionTimer->stop();
                 if (m_greeter->inAuthentication()) {
                     m_greeter->respond(m_authFramework->AuthSessionPath(m_account) + QString(";") + m_password);
+                    if (m_model->currentUser()->expiredState() == User::ExpiredAlready) {
+                        m_model->setAuthType(AT_PAM);
+                    }
                 } else {
                     qWarning() << "The lightdm is not in authentication!";
                 }
