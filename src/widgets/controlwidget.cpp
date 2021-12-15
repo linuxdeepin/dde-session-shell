@@ -136,6 +136,7 @@ void ControlWidget::initUI()
     m_sessionBtn->setFixedSize(BUTTON_SIZE);
     m_sessionBtn->setAutoExclusive(true);
     m_sessionBtn->setBackgroundRole(DPalette::Button);
+    m_sessionBtn->hide();
 
     m_keyboardBtn = new DFloatingButton(this);
     m_keyboardBtn->setAccessibleName("KeyboardLayoutBtn");
