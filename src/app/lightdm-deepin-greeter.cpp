@@ -257,9 +257,9 @@ int main(int argc, char* argv[])
 
     // 加载对应用户语言的翻译
     if (model->currentUser()) {
-        QTranslator translator;
-        translator.load("/usr/share/dde-session-shell/translations/dde-session-shell_" + model->currentUser()->locale().split(".").first());
-        DApplication::installTranslator(&translator);
+        QTranslator *translator = new QTranslator(qApp);
+        translator->load("/usr/share/dde-session-shell/translations/dde-session-shell_" + model->currentUser()->locale().split(".").first());
+        DApplication::installTranslator(translator);
     }
 
     // 设置系统登录成功的加载光标
