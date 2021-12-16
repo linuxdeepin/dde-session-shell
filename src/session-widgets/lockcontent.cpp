@@ -522,24 +522,23 @@ void LockContent::tryGrabKeyboard()
 
     if (m_failures == 15) {
         qDebug() << "Trying grabkeyboard has exceeded the upper limit. dde-lock will quit.";
-        emit requestSetLocked(false);
 
         DDBusSender()
-                .service("org.freedesktop.Notifications")
-                .path("/org/freedesktop/Notifications")
-                .interface("org.freedesktop.Notifications")
-                .method(QString("Notify"))
-                .arg(tr("Lock Screen"))
-                .arg(static_cast<uint>(0))
-                .arg(QString(""))
-                .arg(QString(""))
-                .arg(tr("Failed to lock screen"))
-                .arg(QStringList())
-                .arg(QVariantMap())
-                .arg(5000)
-                .call();
+            .service("org.freedesktop.Notifications")
+            .path("/org/freedesktop/Notifications")
+            .interface("org.freedesktop.Notifications")
+            .method(QString("Notify"))
+            .arg(tr("Lock Screen"))
+            .arg(static_cast<uint>(0))
+            .arg(QString(""))
+            .arg(QString(""))
+            .arg(tr("Failed to lock screen"))
+            .arg(QStringList())
+            .arg(QVariantMap())
+            .arg(5000)
+            .call();
 
-        return qApp->quit();
+        hide();
     }
 
     QTimer::singleShot(100, this, &LockContent::tryGrabKeyboard);

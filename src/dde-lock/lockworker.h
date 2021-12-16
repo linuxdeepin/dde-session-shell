@@ -29,12 +29,10 @@ class LockWorker : public Auth::AuthInterface
     Q_OBJECT
 public:
     explicit LockWorker(SessionBaseModel *const model, QObject *parent = nullptr);
-    ~LockWorker();
 
     void enableZoneDetected(bool disable);
 
-    //获取当前Session是否被锁定
-    bool isLocked();
+    bool isLocked() const;
 
 public slots:
     /* New authentication framework */
@@ -45,7 +43,6 @@ public slots:
     void sendTokenToAuth(const QString &account, const int authType, const QString &token);
 
     void switchToUser(std::shared_ptr<User> user) override;
-    void setLocked(const bool locked);
     void restartResetSessionTimer();
     void onAuthFinished();
     void onAuthStateChanged(const int type, const int state, const QString &message);
@@ -57,6 +54,7 @@ private:
 
     void doPowerAction(const SessionBaseModel::PowerAction action);
     void setCurrentUser(const std::shared_ptr<User> user);
+    void setLocked(const bool locked);
 
     // lock
     void lockServiceEvent(quint32 eventType, quint32 pid, const QString &username, const QString &message);

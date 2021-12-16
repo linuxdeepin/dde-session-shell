@@ -53,7 +53,6 @@ public:
     LockFrame(SessionBaseModel *const model, QWidget *parent = nullptr);
 
 signals:
-    void requestSetLocked(const bool);
     void requestSwitchToUser(std::shared_ptr<User> user);
     void requestSetLayout(std::shared_ptr<User> user, const QString &layout);
     void requestEnableHotzone(bool disable);

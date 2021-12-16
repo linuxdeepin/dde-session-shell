@@ -54,7 +54,6 @@ LockFrame::LockFrame(SessionBaseModel *const model, QWidget *parent)
     m_lockContent->hide();
     setContent(m_lockContent);
 
-    connect(m_lockContent, &LockContent::requestSetLocked, this, &LockFrame::requestSetLocked);
     connect(m_lockContent, &LockContent::requestSwitchToUser, this, &LockFrame::requestSwitchToUser);
     connect(m_lockContent, &LockContent::requestSetLayout, this, &LockFrame::requestSetLayout);
     connect(m_lockContent, &LockContent::requestBackground, this, static_cast<void (LockFrame::*)(const QString &)>(&LockFrame::updateBackground));

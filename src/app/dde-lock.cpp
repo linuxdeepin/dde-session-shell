@@ -158,7 +158,6 @@ int main(int argc, char *argv[])
         LockFrame *lockFrame = new LockFrame(model);
         lockFrame->setScreen(screen, count <= 0);
         property_group->addObject(lockFrame);
-        QObject::connect(lockFrame, &LockFrame::requestSetLocked, worker, &LockWorker::setLocked);
         QObject::connect(lockFrame, &LockFrame::requestSwitchToUser, worker, &LockWorker::switchToUser);
         QObject::connect(model, &SessionBaseModel::visibleChanged, lockFrame, &LockFrame::setVisible);
         QObject::connect(model, &SessionBaseModel::visibleChanged, lockFrame,[&](bool visible) {

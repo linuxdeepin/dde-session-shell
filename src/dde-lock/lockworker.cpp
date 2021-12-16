@@ -61,10 +61,6 @@ LockWorker::LockWorker(SessionBaseModel *const model, QObject *parent)
     });
 }
 
-LockWorker::~LockWorker()
-{
-}
-
 /**
  * @brief 初始化信号连接
  */
@@ -127,7 +123,6 @@ void LockWorker::initConnections()
         } else {
             createAuthentication(m_model->currentUser()->name());
         }
-        setLocked(isSleep);
         emit m_model->prepareForSleep(isSleep);
     });
     /* model */
@@ -140,11 +135,11 @@ void LockWorker::initConnections()
     });
     connect(m_model, &SessionBaseModel::onPowerActionChanged, this, &LockWorker::doPowerAction);
     connect(m_model, &SessionBaseModel::visibleChanged, this, [=](bool visible) {
-        if (visible
-                && SessionBaseModel::ShutDownMode != m_model->currentModeState()
-                && SessionBaseModel::UserMode != m_model->currentModeState()) {
-            createAuthentication(m_model->currentUser()->name());
-        } else if (!visible) {
+        if (visible) {
+            if (m_model->currentModeState() != SessionBaseModel::ShutDownMode) {
+                createAuthentication(m_model->currentUser()->name());
+            }
+        } else {
             m_resetSessionTimer->stop();
             endAuthentication(m_account, AT_All);
             destoryAuthentication(m_model->currentUser()->name());
@@ -351,7 +346,6 @@ void LockWorker::doPowerAction(const SessionBaseModel::PowerAction action)
         }
         return;
     case SessionBaseModel::PowerAction::RequireLock:
-        m_sessionManagerInter->SetLocked(true);
         m_model->setCurrentModeState(SessionBaseModel::ModeStatus::PasswordMode);
         createAuthentication(m_model->currentUser()->name());
         break;
@@ -415,6 +409,22 @@ void LockWorker::switchToUser(std::shared_ptr<User> user)
     }
 }
 
+void LockWorker::enableZoneDetected(bool disable)
+{
+    m_hotZoneInter->EnableZoneDetected(disable);
+}
+
+/**
+ * @brief 获取当前 Session 是否被锁定
+ *
+ * @return true
+ * @return false
+ */
+bool LockWorker::isLocked() const
+{
+    return m_sessionManagerInter->locked();
+}
+
 /**
  * @brief 设置 Locked 的状态
  *
@@ -422,34 +432,11 @@ void LockWorker::switchToUser(std::shared_ptr<User> user)
  */
 void LockWorker::setLocked(const bool locked)
 {
-#ifndef QT_DEBUG
-    if (m_model->currentModeState() != SessionBaseModel::ShutDownMode) {
-        /** FIXME
-         * 在执行待机操作时，后端监听的是这里设置的“Locked”，当设置为“true”时，后端认为锁屏完全起来了，执行冻结进程等接下来的操作；
-         * 但是锁屏界面的显示“show”监听的是“visibleChanged”，这个信号发出后，在性能较差的机型上（arm），前端需要更长的时间来使锁屏界面显示出来，
-         * 导致后端收到了“Locked=true”的信号时，锁屏界面还没有完全起来。
-         * 唤醒时，锁屏接着待机前的步骤努力显示界面，但由于桌面界面在待机前一直在，不存在创建的过程，所以唤醒时直接就显示了，
-         * 而这时候锁屏还在处理信号跟其它进程抢占CPU资源努力显示界面中。
-         * 故增加这个延时，在待机前多给锁屏一点时间去处理显示界面的信号，尽量保证执行待机时，锁屏界面显示完成。
-         * 建议后端修改监听信号或前端修改这块逻辑。
-         */
-        QTimer::singleShot(200, this, [=] {
-            m_sessionManagerInter->SetLocked(locked);
-        });
-    }
-#else
+#ifdef QT_DEBUG
     Q_UNUSED(locked)
+#else
+    m_sessionManagerInter->SetLocked(locked);
 #endif
-}
-
-void LockWorker::enableZoneDetected(bool disable)
-{
-    m_hotZoneInter->EnableZoneDetected(disable);
-}
-
-bool LockWorker::isLocked()
-{
-    return m_sessionManagerInter->locked();
 }
 
 /**
