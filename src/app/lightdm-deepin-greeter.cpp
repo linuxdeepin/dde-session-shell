@@ -23,31 +23,30 @@
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-#include "loginwindow.h"
-#include "constants.h"
-#include "greeterworker.h"
-#include "sessionbasemodel.h"
-#include "propertygroup.h"
-#include "multiscreenmanager.h"
 #include "accessibilitycheckerex.h"
 #include "appeventfilter.h"
+#include "constants.h"
+#include "greeterworker.h"
+#include "loginwindow.h"
 #include "modules_loader.h"
+#include "multiscreenmanager.h"
+#include "propertygroup.h"
+#include "sessionbasemodel.h"
 
 #include <DApplication>
-#include <QtCore/QTranslator>
+#include <DGuiApplicationHelper>
+#include <DLog>
+#include <DPlatformTheme>
+
 #include <QSettings>
 
-#include <DLog>
-#include <DGuiApplicationHelper>
-#include <DPlatformTheme>
-#include <cstdlib>
-
-#include <X11/Xlib.h>
-#include <X11/extensions/Xrandr.h>
-#include <X11/Xlib-xcb.h>
-#include <X11/cursorfont.h>
 #include <X11/Xcursor/Xcursor.h>
+#include <X11/Xlib-xcb.h>
+#include <X11/Xlib.h>
+#include <X11/cursorfont.h>
 #include <X11/extensions/Xfixes.h>
+#include <X11/extensions/Xrandr.h>
+#include <cstdlib>
 
 DCORE_USE_NAMESPACE
 DWIDGET_USE_NAMESPACE
@@ -255,12 +254,8 @@ int main(int argc, char* argv[])
     GreeterWorker *worker = new GreeterWorker(model);
     QObject::connect(&appEventFilter, &AppEventFilter::userIsActive, worker, &GreeterWorker::restartResetSessionTimer);
 
-    // 加载对应用户语言的翻译
-    if (model->currentUser()) {
-        QTranslator *translator = new QTranslator(qApp);
-        translator->load("/usr/share/dde-session-shell/translations/dde-session-shell_" + model->currentUser()->locale().split(".").first());
-        DApplication::installTranslator(translator);
-    }
+    /* load translation files */
+    loadTranslation(model->currentUser()->locale());
 
     // 设置系统登录成功的加载光标
     QObject::connect(model, &SessionBaseModel::authFinished, model, [ = ](bool is_success) {

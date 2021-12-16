@@ -564,12 +564,6 @@ void ShutdownWidget::updateLocale(std::shared_ptr<User> user)
     //只有登陆界面才需要根据系统切换语言
     if(qApp->applicationName() == "dde-lock") return;
 
-    auto locale = user->locale();
-
-    QTranslator translator;
-    translator.load("/usr/share/dde-session-shell/translations/dde-session-shell_" + locale.split(".").first());
-    qApp->installTranslator(&translator);
-
     // refresh language
     for (auto it = m_trList.constBegin(); it != m_trList.constEnd(); ++it) {
         it->first(qApp->translate("ShutdownWidget", it->second.toUtf8()));

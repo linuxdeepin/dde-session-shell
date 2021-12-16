@@ -51,6 +51,7 @@ public slots:
 private slots:
     void onAuthStateChanged(const int type, const int state, const QString &message);
     void onReceiptChanged(bool state);
+    void onCurrentUserChanged(const std::shared_ptr<User> &user);
 
 private:
     void initConnections();

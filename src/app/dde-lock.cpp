@@ -97,9 +97,8 @@ int main(int argc, char *argv[])
     DLogManager::registerConsoleAppender();
     DLogManager::registerFileAppender();
 
-    QTranslator translator;
-    translator.load("/usr/share/dde-session-shell/translations/dde-session-shell_" + QLocale::system().name());
-    app->installTranslator(&translator);
+    /* load translation files */
+    loadTranslation(QLocale::system().name());
 
     dss::module::ModulesLoader *modulesLoader = &dss::module::ModulesLoader::instance();
     modulesLoader->start(QThread::LowestPriority);

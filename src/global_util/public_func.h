@@ -66,7 +66,7 @@ T findValueByQSettings(const QStringList &configFiles,
 
 /**
  * @brief 是否使用深度认证，不使用域管认证。
- * 
+ *
  * @return true 使用深度认证
  * @return false 使用域管认证
  */
@@ -88,5 +88,7 @@ void setAppType(int appType);
  * @brief 获取默认的配置文件名称
  */
 QString getDefaultConfigFileName();
+
+void loadTranslation(const QString &locale);
 
 #endif // PUBLIC_FUNC_H

@@ -24,26 +24,28 @@
  */
 
 #include "public_func.h"
+
 #include "constants.h"
 
 #include <DConfig>
 
-#include <QFile>
-#include <QDBusMessage>
 #include <QDBusConnection>
+#include <QDBusMessage>
 #include <QDBusReply>
-#include <QDebug>
-#include <QGSettings>
-#include <QStandardPaths>
-#include <QProcess>
 #include <QDateTime>
+#include <QDebug>
 #include <QDir>
+#include <QFile>
+#include <QGSettings>
+#include <QProcess>
+#include <QStandardPaths>
+#include <QTranslator>
 
-#include <stdio.h>
-#include <time.h>
 #include <execinfo.h>
-#include <sys/stat.h>
 #include <signal.h>
+#include <stdio.h>
+#include <sys/stat.h>
+#include <time.h>
 
 using namespace std;
 
@@ -134,4 +136,22 @@ void setAppType(int type)
 QString getDefaultConfigFileName()
 {
     return APP_TYPE_LOCK == appType ? DDESESSIONCC::LOCK_DCONFIG_SOURCE : DDESESSIONCC::LOGIN_DCONFIG_SOURCE;
+}
+
+/**
+ * @brief 加载翻译文件
+ *
+ * @param locale
+ */
+void loadTranslation(const QString &locale)
+{
+    static QTranslator translator;
+    static QString localTmp;
+    if (localTmp == locale) {
+        return;
+    }
+    localTmp = locale;
+    qApp->removeTranslator(&translator);
+    translator.load("/usr/share/dde-session-shell/translations/dde-session-shell_" + locale.split(".").first());
+    qApp->installTranslator(&translator);
 }

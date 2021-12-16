@@ -92,7 +92,6 @@ protected:
     QWidget *m_virtualKB;
     std::shared_ptr<User> m_user;
     QList<QMetaObject::Connection> m_currentUserConnects;
-    QTranslator *m_translator;
     LogoWidget *m_logoWidget;
     TimeWidget *m_timeWidget;
     MediaWidget *m_mediaWidget = nullptr;

@@ -167,7 +167,7 @@ void GreeterWorker::initConnections()
         m_limitsUpdateTimer->start();
     });
     connect(m_model, &SessionBaseModel::onPowerActionChanged, this, &GreeterWorker::doPowerAction);
-    connect(m_model, &SessionBaseModel::currentUserChanged, this, &GreeterWorker::recoveryUserKBState);
+    connect(m_model, &SessionBaseModel::currentUserChanged, this, &GreeterWorker::onCurrentUserChanged);
     connect(m_model, &SessionBaseModel::visibleChanged, this, [=](bool visible) {
         if (visible) {
             if (!m_model->isServerModel()
@@ -753,9 +753,15 @@ void GreeterWorker::onAuthStateChanged(const int type, const int state, const QS
 
 void GreeterWorker::onReceiptChanged(bool state)
 {
-    Q_UNUSED(state);
+    Q_UNUSED(state)
 
     m_model->setSEType(isSecurityEnhanceOpen());
+}
+
+void GreeterWorker::onCurrentUserChanged(const std::shared_ptr<User> &user)
+{
+    recoveryUserKBState(user);
+    loadTranslation(user->locale());
 }
 
 void GreeterWorker::saveNumlockStatus(std::shared_ptr<User> user, const bool &on)

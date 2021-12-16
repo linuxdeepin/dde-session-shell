@@ -24,7 +24,6 @@ LockContent::LockContent(SessionBaseModel *const model, QWidget *parent)
     : SessionBaseWindow(parent)
     , m_model(model)
     , m_virtualKB(nullptr)
-    , m_translator(new QTranslator(this))
     , m_wmInter(new com::deepin::wm("com.deepin.wm", "/com/deepin/wm", QDBusConnection::sessionBus(), this))
     , m_sfaWidget(nullptr)
     , m_mfaWidget(nullptr)
@@ -216,14 +215,6 @@ void LockContent::onCurrentUserChanged(std::shared_ptr<User> user)
     auto locale = qApp->applicationName() == "dde-lock" ? QLocale::system().name() : user->locale();
     m_logoWidget->updateLocale(locale);
     m_timeWidget->updateLocale(locale);
-    qApp->removeTranslator(m_translator);
-    m_translator->load("/usr/share/dde-session-shell/translations/dde-session-shell_"+ QLocale(locale).name());
-    qApp->installTranslator(m_translator);
-
-    //服务器登录界面,更新了翻译,所以需要再次初始化accontLineEdit
-    //    if (qApp->applicationName() != "dde-lock") {
-    //        m_userLoginInfo->updateLocale();
-    //    }
 
     for (auto connect : m_currentUserConnects) {
         m_user.get()->disconnect(connect);
