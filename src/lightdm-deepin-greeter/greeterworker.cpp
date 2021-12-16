@@ -322,11 +322,9 @@ void GreeterWorker::switchToUser(std::shared_ptr<User> user)
 
     setCurrentUser(user);
     if (user->uid() == INT_MAX) {
-        startGreeterAuth();
         m_model->setAuthType(AT_None);
     }
     if (user->isLogin()) { // switch to user Xorg
-        startGreeterAuth();
         QProcess::startDetached("dde-switchtogreeter", QStringList() << user->name());
     } else {
         m_model->updateAuthState(AT_All, AS_Cancel, "Cancel");
@@ -495,7 +493,6 @@ void GreeterWorker::checkAccount(const QString &account)
             qWarning() << userPath;
             emit m_model->authFailedTipsMessage(tr("Wrong account"));
             m_model->setAuthType(AT_None);
-            startGreeterAuth();
             return;
         }
     } else if (!user_ptr) {
@@ -513,7 +510,6 @@ void GreeterWorker::checkAccount(const QString &account)
             qWarning() << userPath;
             emit m_model->authFailedTipsMessage(tr("Wrong account"));
             m_model->setAuthType(AT_None);
-            startGreeterAuth();
             return;
         }
     }
