@@ -66,6 +66,9 @@ FullscreenBackground::FullscreenBackground(SessionBaseModel *model, QWidget *par
         setWindowFlags(Qt::WindowStaysOnTopHint | Qt::X11BypassWindowManagerHint);
     } else {
         setWindowFlags(windowFlags() | Qt::WindowStaysOnTopHint | Qt::FramelessWindowHint | Qt::Window);
+
+        setAttribute(Qt::WA_NativeWindow); // 创建窗口 handle
+        windowHandle()->setProperty("_d_dwayland_window-type", "standAlone"); // 禁止移动
     }
 #endif
     frameList.append(this);
