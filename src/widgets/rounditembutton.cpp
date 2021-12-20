@@ -89,7 +89,8 @@ void RoundItemButton::initConnect()
     //    });
 }
 
-void RoundItemButton::initUI() {
+void RoundItemButton::initUI()
+{
     setFocusPolicy(Qt::NoFocus);
     setFixedSize(144, 164);
     setCheckable(true);
@@ -220,6 +221,12 @@ void RoundItemButton::paintEvent(QPaintEvent* event)
         // 绘制鼠标选中的白色背景
         painter.drawRoundedRect(textRect, m_rectRadius, m_rectRadius);
         painter.drawEllipse(iconRect);
+    } else if (m_state == Normal) {
+        // 绘制鼠标选中的白色背景
+        painter.setPen(Qt::NoPen);
+        painter.setBrush(QColor(255, 255, 255, 0.1 * 255));
+        painter.setRenderHint(QPainter::Antialiasing, true);
+        painter.drawEllipse(iconRect);
     }
 
     // 图标
@@ -241,6 +248,8 @@ void RoundItemButton::paintEvent(QPaintEvent* event)
             painter.setPen(Qt::white);
         } else if (m_state == Hover) {
             painter.setPen(Qt::black);
+        } else if (m_state == Normal) {
+            painter.setPen(Qt::white);
         }
 
         if (!isEnabled())
