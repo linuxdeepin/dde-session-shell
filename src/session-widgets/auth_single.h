@@ -81,6 +81,7 @@ private:
     bool m_resetPasswordMessageVisible;
     DFloatingMessage *m_resetPasswordFloatingMessage;
     uid_t m_currentUid; // 当前用户uid
+    QTimer *m_bindCheckTimer;
 };
 
 #endif // AUTHSINGLE_H

@@ -52,6 +52,7 @@ AuthSingle::AuthSingle(QWidget *parent)
     , m_passwordHintBtn(new DIconButton(this))
     , m_resetPasswordMessageVisible(false)
     , m_resetPasswordFloatingMessage(nullptr)
+    , m_bindCheckTimer(nullptr)
 {
     setObjectName(QStringLiteral("AuthSingle"));
     setAccessibleName(QStringLiteral("AuthSingle"));
@@ -522,9 +523,27 @@ bool AuthSingle::isUserAccountBinded()
     QString ubid;
     if (retLocalBindCheck.error().message().isEmpty()) {
         ubid = retLocalBindCheck.value();
+        if (m_bindCheckTimer) {
+            m_bindCheckTimer->stop();
+        }
     } else {
         qWarning() << "UOSID:" << uosid << "uuid:" << uuid;
         qWarning() << retLocalBindCheck.error().message();
+        if (retLocalBindCheck.error().message().contains("network error")) {
+            if (m_bindCheckTimer == nullptr) {
+                m_bindCheckTimer = new QTimer(this);
+                connect(m_bindCheckTimer, &QTimer::timeout, this, [this] {
+                    qWarning() << "BindCheck retry!";
+                    if(isUserAccountBinded()) {
+                        setResetPasswordMessageVisible(true);
+                        updateResetPasswordUI();
+                    }
+                });
+            }
+            if (!m_bindCheckTimer->isActive()) {
+                m_bindCheckTimer->start(1000);
+            }
+        }
         return false;
     }
     if(!ubid.isEmpty()) {
