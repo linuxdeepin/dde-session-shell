@@ -369,8 +369,9 @@ void FullscreenBackground::showEvent(QShowEvent *event)
             updateScreen(w->screen());
         }
 
-        if (!isWayLand)
-            connect(w, &QWindow::screenChanged, this, &FullscreenBackground::updateScreen);
+        if (!isWayLand) {
+            connect(w, &QWindow::screenChanged, this, &FullscreenBackground::updateScreen, Qt::DirectConnection);
+        }
     }
 
     return QWidget::showEvent(event);
