@@ -120,7 +120,7 @@ void AuthPassword::initConnections()
     /* 密码输入框 */
     connect(m_lineEdit, &DLineEditEx::focusChanged, this, [this](const bool focus) {
         if (!focus) m_lineEdit->setAlert(false);
-        m_authStateLabel->setVisible(!focus & m_showAuthState);
+        m_authStateLabel->setVisible(!focus && m_showAuthState);
         emit focusChanged(focus);
     });
     connect(m_lineEdit, &DLineEditEx::textChanged, this, [this](const QString &text) {
@@ -410,19 +410,6 @@ void AuthPassword::setPasswordHintBtnVisible(const bool isVisible)
     m_passwordHintBtn->setVisible(isVisible);
 }
 
-bool AuthPassword::eventFilter(QObject *watched, QEvent *event)
-{
-    if (qobject_cast<DLineEditEx *>(watched) == m_lineEdit && event->type() == QEvent::KeyPress) {
-        QKeyEvent *keyEvent = static_cast<QKeyEvent *>(event);
-        if (keyEvent->matches(QKeySequence::Cut)
-            || keyEvent->matches(QKeySequence::Copy)
-            || keyEvent->matches(QKeySequence::Paste)) {
-            return true;
-        }
-    }
-    return false;
-}
-
 /**
  * @brief 设置重置密码消息框的显示状态数据
  *
@@ -561,8 +548,21 @@ void AuthPassword::updateResetPasswordUI()
     emit resetPasswordMessageVisibleChanged(m_resetPasswordMessageVisible);
 }
 
-void AuthPassword::hide()
+bool AuthPassword::eventFilter(QObject *watched, QEvent *event)
 {
-    m_lineEdit->hideAlertMessage();
-    AuthModule::hide();
+    if (qobject_cast<DLineEditEx *>(watched) == m_lineEdit && event->type() == QEvent::KeyPress) {
+        QKeyEvent *keyEvent = static_cast<QKeyEvent *>(event);
+        if (keyEvent->matches(QKeySequence::Cut)
+            || keyEvent->matches(QKeySequence::Copy)
+            || keyEvent->matches(QKeySequence::Paste)) {
+            return true;
+        }
+    }
+    return false;
+}
+
+void AuthPassword::hideEvent(QHideEvent *event)
+{
+    reset();
+    AuthModule::hideEvent(event);
 }

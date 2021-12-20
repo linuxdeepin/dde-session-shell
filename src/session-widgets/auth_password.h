@@ -54,7 +54,6 @@ public:
     void setLineEditInfo(const QString &text, const TextType type);
     void setPasswordHint(const QString &hint);
     void setCurrentUid(uid_t uid);
-    void hide();
     void showResetPasswordMessage();
     void closeResetPasswordMessage();
 
@@ -71,6 +70,7 @@ public slots:
 
 protected:
     bool eventFilter(QObject *watched, QEvent *event) override;
+    void hideEvent(QHideEvent *event) override;
 
 private:
     void initUI();
