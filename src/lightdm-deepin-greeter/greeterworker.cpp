@@ -320,13 +320,13 @@ void GreeterWorker::switchToUser(std::shared_ptr<User> user)
     qInfo() << "switch user from" << m_account << " to " << user->name() << user->uid() << user->isLogin();
     endAuthentication(m_account, AT_All);
 
-    setCurrentUser(user);
     if (user->uid() == INT_MAX) {
         m_model->setAuthType(AT_None);
     }
     if (user->isLogin()) { // switch to user Xorg
         QProcess::startDetached("dde-switchtogreeter", QStringList() << user->name());
     } else {
+        setCurrentUser(user);
         m_model->updateAuthState(AT_All, AS_Cancel, "Cancel");
         destoryAuthentication(m_account);
         m_model->updateCurrentUser(user);

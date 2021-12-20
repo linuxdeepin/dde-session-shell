@@ -143,6 +143,7 @@ void LockWorker::initConnections()
             m_resetSessionTimer->stop();
             endAuthentication(m_account, AT_All);
             destoryAuthentication(m_model->currentUser()->name());
+            setCurrentUser(m_model->currentUser());
         }
         setLocked(visible);
     });
@@ -377,7 +378,7 @@ void LockWorker::setCurrentUser(const std::shared_ptr<User> user)
     json["Name"] = user->name();
     json["Type"] = user->type();
     json["Uid"] = static_cast<int>(user->uid());
-    m_lockInter->SwitchToUser(QString(QJsonDocument(json).toJson(QJsonDocument::Compact))).waitForFinished();
+    m_lockInter->SwitchToUser(QString(QJsonDocument(json).toJson(QJsonDocument::Compact)));
 }
 
 void LockWorker::switchToUser(std::shared_ptr<User> user)
