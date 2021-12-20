@@ -38,6 +38,8 @@
 #include <DLog>
 #include <DPlatformTheme>
 
+#include <QGuiApplication>
+#include <QScreen>
 #include <QSettings>
 
 #include <X11/Xcursor/Xcursor.h>
@@ -179,6 +181,31 @@ static void set_auto_QT_SCALE_FACTOR() {
     }
 }
 
+// 初次启动时，设置一下鼠标的默认位置
+void set_pointer() {
+    auto set_position = [ = ] (QPoint p) {
+        Display *dpy;
+        Window root_window;
+
+        dpy = XOpenDisplay(0);
+        root_window = XRootWindow(dpy, 0);
+        XSelectInput(dpy, root_window, KeyReleaseMask);
+        XWarpPointer(dpy, None, root_window, 0, 0, 0, 0, p.x(), p.y());
+        XFlush(dpy);
+    };
+
+    if (!qApp->primaryScreen()) {
+        QObject::connect(qApp, &QGuiApplication::primaryScreenChanged, [ = ] {
+            static bool first = true;
+            if (first) {
+                set_position(qApp->primaryScreen()->geometry().center());
+                first = false;
+            }
+        });
+    } else {
+        set_position(qApp->primaryScreen()->geometry().center());
+    }
+}
 
 int main(int argc, char* argv[])
 {
@@ -200,6 +227,8 @@ int main(int argc, char* argv[])
     qApp->setApplicationName("lightdm-deepin-greeter");
     qApp->setApplicationVersion("2015.1.0");
     qApp->setAttribute(Qt::AA_ForceRasterWidgets);
+
+    set_pointer();
 
     //注册全局事件过滤器
     AppEventFilter appEventFilter;
