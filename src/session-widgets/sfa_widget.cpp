@@ -99,6 +99,7 @@ void SFAWidget::initConnections()
     connect(m_model, &SessionBaseModel::authStateChanged, this, &SFAWidget::setAuthState);
     connect(m_accountEdit, &DLineEditEx::textChanged, this, [this](const QString &value) {
         m_frameDataBind->updateValue(QStringLiteral("SFAAccount"), value);
+        m_lockButton->setEnabled(!value.isEmpty());
     });
 }
 
