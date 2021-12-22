@@ -148,13 +148,6 @@ void GreeterWorker::initConnections()
     connect(m_lockInter, &DBusLockService::UserChanged, this, [=](const QString &json) {
         qDebug() << "DBusLockService::UserChanged:" << json;
         m_resetSessionTimer->stop();
-        m_model->updateCurrentUser(json);
-        std::shared_ptr<User> user_ptr = m_model->currentUser();
-        const QString &account = user_ptr->name();
-        if (user_ptr.get()->isNoPasswordLogin()) {
-            emit m_model->authTypeChanged(AT_None);
-            m_account = account;
-        }
         QTimer::singleShot(100, this, [ = ] {
             m_model->setCurrentModeState(SessionBaseModel::ModeStatus::PasswordMode);
         });
