@@ -69,6 +69,7 @@ void AuthIris::initConnections()
  */
 void AuthIris::reset()
 {
+    m_state = AuthCommon::AS_Ended;
     m_textLabel->setText(tr("Iris ID"));
     if (m_authStateLabel) {
         setAuthStateStyle(isMFA() ? LOGIN_WAIT : AUTH_LOCK);

@@ -33,6 +33,7 @@ public:
     explicit AuthFace(QWidget *parent = nullptr);
 
     void reset();
+
 public slots:
     void setAuthState(const int state, const QString &result) override;
     void setAnimationState(const bool start) override;
@@ -40,7 +41,7 @@ public slots:
     void setAuthFactorType(AuthFactorType authFactorType) override;
 
 protected:
-    virtual bool eventFilter(QObject *watched, QEvent *event);
+    bool eventFilter(QObject *watched, QEvent *event) override;
 
 private:
     void initUI();

@@ -280,13 +280,7 @@ void SFAWidget::setAuthState(const int type, const int state, const QString &mes
         }
         break;
     case AT_All:
-        // 等所有类型验证通过的时候在发送验证完成信息，否则DA的验证结果可能还没有刷新，导致lightdm调用pam验证失败
-        // 人脸和虹膜是手动点击解锁按钮后发送，无需处理
-        if ((m_passwordAuth && AS_Success == m_passwordAuth->authState())
-            || (m_ukeyAuth && AS_Success == m_ukeyAuth->authState())
-            || (m_fingerprintAuth && AS_Success == m_fingerprintAuth->authState()))
-            emit authFinished();
-
+        checkAuthResult(AT_All, state);
         break;
     default:
         break;
@@ -394,10 +388,7 @@ void SFAWidget::initPasswdAuth()
         emit requestStartAuthentication(m_user->name(), AT_Password);
     });
     connect(m_passwordAuth, &AuthPassword::authFinished, this, [this](const int authState) {
-        if (authState == AS_Success) {
-            m_lastAuthType = AT_Password;
-            m_lockButton->setEnabled(true);
-        }
+        checkAuthResult(AT_Password, authState);
     });
     connect(m_passwordAuth, &AuthPassword::requestAuthenticate, this, [this] {
         const QString &text = m_passwordAuth->lineEditText();
@@ -469,13 +460,7 @@ void SFAWidget::initFingerprintAuth()
         emit requestStartAuthentication(m_model->currentUser()->name(), AT_Fingerprint);
     });
     connect(m_fingerprintAuth, &AuthFingerprint::authFinished, this, [this](const int authState) {
-        if (authState == AS_Success) {
-            m_lastAuthType = AT_Fingerprint;
-            m_lockButton->setEnabled(true);
-            m_lockButton->setFocus();
-        } else {
-            m_lockButton->setEnabled(false);
-        }
+        checkAuthResult(AT_Fingerprint, authState);
     });
 
     // m_fingerprintAuth->setAuthState(m_frameDataBind->getValue("SFPasswordAuthState").toInt(),
@@ -516,13 +501,7 @@ void SFAWidget::initUKeyAuth()
         emit requestStartAuthentication(m_model->currentUser()->name(), AT_Ukey);
     });
     connect(m_ukeyAuth, &AuthUKey::authFinished, this, [this](const int authState) {
-        if (authState == AS_Success) {
-            m_lastAuthType = AT_Ukey;
-            m_lockButton->setEnabled(true);
-            m_lockButton->setFocus();
-        } else {
-            m_lockButton->setEnabled(false);
-        }
+        checkAuthResult(AT_Ukey, authState);
     });
     connect(m_ukeyAuth, &AuthUKey::requestAuthenticate, this, [=] {
         const QString &text = m_ukeyAuth->lineEditText();
@@ -590,14 +569,11 @@ void SFAWidget::initFaceAuth()
         emit requestStartAuthentication(m_model->currentUser()->name(), AT_Face);
     });
     connect(m_faceAuth, &AuthFace::authFinished, this, [this](const int authState) {
-        if (authState == AS_Success) {
-            m_lastAuthType = AT_Face;
-            m_lockButton->setEnabled(true);
-            m_lockButton->setFocus();
-        }
+        checkAuthResult(AT_Face, authState);
     });
     connect(m_lockButton, &QPushButton::clicked, this, [this] {
         if (m_faceAuth->authState() == AS_Success) {
+            m_faceAuth->setAuthState(AS_Ended, "Ended");
             emit authFinished();
         }
     });
@@ -615,11 +591,17 @@ void SFAWidget::initFaceAuth()
             replaceWidget(m_faceAuth);
             setBioAuthStateVisible(m_faceAuth, true);
             m_frameDataBind->updateValue("SFAType", AT_Face);
-            emit requestStartAuthentication(m_user->name(), AT_Face);
+            if (m_faceAuth->authState() != AS_Success) {
+                emit requestStartAuthentication(m_user->name(), AT_Face);
+            } else {
+                m_lockButton->setEnabled(true);
+            }
         } else {
             m_faceAuth->hide();
-            m_lockButton->setEnabled(false);
-            emit requestEndAuthentication(m_user->name(), AT_Face);
+            if (m_faceAuth->authState() != AS_Success) {
+                m_lockButton->setEnabled(false);
+                emit requestEndAuthentication(m_user->name(), AT_Face);
+            }
         }
     });
 }
@@ -647,14 +629,11 @@ void SFAWidget::initIrisAuth()
         emit requestStartAuthentication(m_model->currentUser()->name(), AT_Iris);
     });
     connect(m_irisAuth, &AuthIris::authFinished, this, [this](const int authState) {
-        if (authState == AS_Success) {
-            m_lastAuthType = AT_Iris;
-            m_lockButton->setEnabled(true);
-            m_lockButton->setFocus();
-        }
+        checkAuthResult(AT_Iris, authState);
     });
     connect(m_lockButton, &QPushButton::clicked, this, [this] {
         if (m_irisAuth->authState() == AS_Success) {
+            m_irisAuth->setAuthState(AS_Ended, "Ended");
             emit authFinished();
         }
     });
@@ -669,24 +648,44 @@ void SFAWidget::initIrisAuth()
             replaceWidget(m_irisAuth);
             setBioAuthStateVisible(m_irisAuth, true);
             m_frameDataBind->updateValue("SFAType", AT_Iris);
-            emit requestStartAuthentication(m_user->name(), AT_Iris);
+            if (m_irisAuth->authState() != AS_Success) {
+                emit requestStartAuthentication(m_user->name(), AT_Iris);
+            } else {
+                m_lockButton->setEnabled(true);
+            }
         } else {
             m_irisAuth->hide();
-            m_lockButton->setEnabled(false);
-            emit requestEndAuthentication(m_user->name(), AT_Iris);
+            if (m_irisAuth->authState() != AS_Success) {
+                m_lockButton->setEnabled(false);
+                emit requestEndAuthentication(m_user->name(), AT_Iris);
+            }
         }
     });
 }
 
 /**
  * @brief SFAWidget::checkAuthResult
- * @param type
- * @param state
+ *
+ * @param type  认证类型
+ * @param state 认证状态
  */
 void SFAWidget::checkAuthResult(const int type, const int state)
 {
-    Q_UNUSED(type)
-    Q_UNUSED(state)
+    // 等所有类型验证通过的时候在发送验证完成信息，否则DA的验证结果可能还没有刷新，导致lightdm调用pam验证失败
+    // 人脸和虹膜是手动点击解锁按钮后发送，无需处理
+    if (type == AT_All && state == AS_Success) {
+        if ((m_passwordAuth && AS_Success == m_passwordAuth->authState())
+            || (m_ukeyAuth && AS_Success == m_ukeyAuth->authState())
+            || (m_fingerprintAuth && AS_Success == m_fingerprintAuth->authState())) {
+            if (m_faceAuth) m_faceAuth->setAuthState(AS_Ended, "Ended");
+            if (m_irisAuth) m_irisAuth->setAuthState(AS_Ended, "Ended");
+            emit authFinished();
+        }
+    } else if (type != AT_All && state == AS_Success) {
+        m_lastAuthType = type;
+        m_lockButton->setEnabled(true);
+        m_lockButton->setFocus();
+    }
 }
 
 /**

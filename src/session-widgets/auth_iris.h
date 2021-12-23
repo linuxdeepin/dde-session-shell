@@ -35,13 +35,15 @@ public:
     void reset();
 
     void setAuthFactorType(AuthFactorType authFactorType) override;
+
 public slots:
     void setAuthState(const int state, const QString &result) override;
     void setAnimationState(const bool start) override;
     void setLimitsInfo(const LimitsInfo &info) override;
 
 protected:
-    bool eventFilter(QObject *watched, QEvent *event);
+    bool eventFilter(QObject *watched, QEvent *event) override;
+
 private:
     void initUI();
     void initConnections();
