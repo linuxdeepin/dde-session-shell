@@ -38,6 +38,9 @@
 
 #include <QSpacerItem>
 
+const QSize AuthButtonSize(60, 36);
+const QSize AuthButtonIconSize(24, 24);
+
 SFAWidget::SFAWidget(QWidget *parent)
     : AuthWidget(parent)
     , m_mainLayout(new QVBoxLayout(this))
@@ -66,6 +69,9 @@ void SFAWidget::initUI()
     m_chooseAuthButtonBox = new DButtonBox(this);
     m_chooseAuthButtonBox->setOrientation(Qt::Horizontal);
     m_chooseAuthButtonBox->setFocusPolicy(Qt::NoFocus);
+    m_chooseAuthButtonBox->setContentsMargins(0, 0, 0, 0);
+    m_chooseAuthButtonBox->setMaximumHeight(36);
+
     /* 生物认证状态 */
     m_biometricAuthState = new DLabel(this);
     m_biometricAuthState->hide();
@@ -354,7 +360,8 @@ void SFAWidget::initSingleAuth()
 
     /* 认证选择按钮 */
     DButtonBoxButton *btn = new DButtonBoxButton(QIcon(Password_Auth), QString(), this);
-    btn->setIconSize(QSize(24, 24));
+    btn->setIconSize(AuthButtonIconSize);
+    btn->setFixedSize(AuthButtonSize);
     btn->setFocusPolicy(Qt::NoFocus);
     m_authButtons.insert(AT_PAM, btn);
     connect(btn, &DButtonBoxButton::toggled, this, [this](const bool checked) {
@@ -424,7 +431,8 @@ void SFAWidget::initPasswdAuth()
 
     /* 认证选择按钮 */
     DButtonBoxButton *btn = new DButtonBoxButton(QIcon(Password_Auth), QString(), this);
-    btn->setIconSize(QSize(24, 24));
+    btn->setIconSize(AuthButtonIconSize);
+    btn->setFixedSize(AuthButtonSize);
     btn->setFocusPolicy(Qt::NoFocus);
     m_authButtons.insert(AT_Password, btn);
     connect(btn, &DButtonBoxButton::toggled, this, [this](const bool checked) {
@@ -468,7 +476,8 @@ void SFAWidget::initFingerprintAuth()
 
     /* 认证选择按钮 */
     DButtonBoxButton *btn = new DButtonBoxButton(QIcon(Fingerprint_Auth), QString(), this);
-    btn->setIconSize(QSize(24, 24));
+    btn->setIconSize(AuthButtonIconSize);
+    btn->setFixedSize(AuthButtonSize);
     btn->setFocusPolicy(Qt::NoFocus);
     m_authButtons.insert(AT_Fingerprint, btn);
     connect(btn, &DButtonBoxButton::toggled, this, [this](const bool checked) {
@@ -530,7 +539,8 @@ void SFAWidget::initUKeyAuth()
 
     /* 认证选择按钮 */
     DButtonBoxButton *btn = new DButtonBoxButton(QIcon(UKey_Auth), QString(), this);
-    btn->setIconSize(QSize(24, 24));
+    btn->setIconSize(AuthButtonIconSize);
+    btn->setFixedSize(AuthButtonSize);
     btn->setFocusPolicy(Qt::NoFocus);
     m_authButtons.insert(AT_Ukey, btn);
     connect(btn, &DButtonBoxButton::toggled, this, [this](const bool checked) {
@@ -583,7 +593,8 @@ void SFAWidget::initFaceAuth()
 
     /* 认证选择按钮 */
     DButtonBoxButton *btn = new DButtonBoxButton(QIcon(Face_Auth), QString(), this);
-    btn->setIconSize(QSize(24, 24));
+    btn->setIconSize(AuthButtonIconSize);
+    btn->setFixedSize(AuthButtonSize);
     btn->setFocusPolicy(Qt::NoFocus);
     m_authButtons.insert(AT_Face, btn);
     connect(btn, &DButtonBoxButton::toggled, this, [this](const bool checked) {
@@ -640,7 +651,8 @@ void SFAWidget::initIrisAuth()
 
     /* 认证选择按钮 */
     DButtonBoxButton *btn = new DButtonBoxButton(QIcon(Iris_Auth), QString(), this);
-    btn->setIconSize(QSize(24, 24));
+    btn->setIconSize(AuthButtonIconSize);
+    btn->setFixedSize(AuthButtonSize);
     btn->setFocusPolicy(Qt::NoFocus);
     m_authButtons.insert(AT_Iris, btn);
     connect(btn, &DButtonBoxButton::toggled, this, [this](const bool checked) {
