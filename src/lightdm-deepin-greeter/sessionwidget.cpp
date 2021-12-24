@@ -154,10 +154,10 @@ void SessionWidget::updateLayout()
     }
 
     m_warningLabel->setContentsMargins(0, 10, 0, 10);
-    m_warningLabel->setFixedSize(width() - SessionButtonWidth, 50);
+    m_warningLabel->setFixedSize(width(), 50);
+    m_warningLabel->hide();
 
     setFixedHeight(itemWidth * (row + 1) + 50);
-    m_warningLabel->hide();
 }
 
 int SessionWidget::sessionCount() const
@@ -241,6 +241,7 @@ void SessionWidget::onSessionButtonClicked()
     Q_ASSERT(m_sessionBtns.contains(btn));
 
     QString sessionKey = m_sessionModel->data(m_sessionModel->index(m_sessionBtns.indexOf(btn)), QLightDM::SessionsModel::KeyRole).toString();
+
     if (!WAYLAND_SESSION_NAME.compare(sessionKey, Qt::CaseInsensitive) && m_model->getSEType()) {
         // 在开启等保（高）的情况下不允许切换到wayland环境
         m_warningLabel->show();
