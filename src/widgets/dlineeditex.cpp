@@ -91,7 +91,7 @@ void DLineEditEx::initAnimation()
  */
 void DLineEditEx::setPlaceholderTextFont(const QFont &font)
 {
-    const QString &text = lineEdit()->text();
+    const QString &text = lineEdit()->placeholderText();
     QFont fontTmp = font;
     while (QFontMetrics(fontTmp).boundingRect(text).width() > width()) {
         fontTmp.setPointSize(fontTmp.pointSize() - 1);
