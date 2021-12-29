@@ -184,6 +184,10 @@ void SFAWidget::setAuthType(const int type)
     } else if (m_singleAuth) {
         m_singleAuth->deleteLater();
         m_singleAuth = nullptr;
+        m_authButtons.value(AT_PAM)->deleteLater();
+        m_authButtons.remove(AT_PAM);
+        m_frameDataBind->clearValue("SFSingleAuthState");
+        m_frameDataBind->clearValue("SFSingleAuthMsg");
     }
 
     int count = 0;
