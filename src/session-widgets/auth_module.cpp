@@ -48,6 +48,8 @@ AuthModule::AuthModule(const AuthCommon::AuthType type, QWidget *parent)
     , m_isAuthing(false)
     , m_authFactorType(DDESESSIONCC::SingleAuthFactor)
 {
+    setMinimumHeight(37);
+
     m_limitsInfo->locked = false;
     m_limitsInfo->maxTries = 0;
     m_limitsInfo->numFailures = 0;

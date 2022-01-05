@@ -367,13 +367,13 @@ void AuthWidget::setAccountErrorMsg(const QString &message)
  */
 void AuthWidget::updateBlurEffectGeometry()
 {
-    QRect rect;
-    rect.setLeft(0);
-    rect.setRight(this->geometry().width());
+    QRect rect = this->rect();
     rect.setTop(m_userAvatar->geometry().top() + m_userAvatar->height() / 2);
-
-    const QRect &geo = m_user->expiredState() ? m_expiredStateLabel->geometry() : m_lockButton->geometry();
-    rect.setBottom(geo.top() - BLUR_WIDGET_BOTTOM_MARGIN);
+    if (m_user->expiredState() == User::ExpiredNormal) {
+        rect.setBottom(m_lockButton->geometry().top() - 10);
+    } else {
+        rect.setBottom(m_expiredStateLabel->geometry().top() - 10);
+    }
     m_blurEffectWidget->setGeometry(rect);
 }
 

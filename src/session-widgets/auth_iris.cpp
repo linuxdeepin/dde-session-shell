@@ -245,7 +245,7 @@ bool AuthIris::eventFilter(QObject *watched, QEvent *event)
 void AuthIris::setAuthFactorType(AuthFactorType authFactorType)
 {
     if (DDESESSIONCC::SingleAuthFactor == authFactorType)
-        layout()->setContentsMargins(10, 7, 10, 7);
+        layout()->setContentsMargins(10, 0, 10, 0);
 
     AuthModule::setAuthFactorType(authFactorType);
 }
