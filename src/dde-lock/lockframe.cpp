@@ -38,24 +38,6 @@
 #include <QGSettings>
 #include <QScreen>
 #include <QWindow>
-#include <QX11Info>
-
-xcb_atom_t internAtom(xcb_connection_t *connection, const char *name, bool only_if_exists)
-{
-    if (!name || *name == 0)
-        return XCB_NONE;
-
-    xcb_intern_atom_cookie_t cookie = xcb_intern_atom(connection, only_if_exists, static_cast<uint16_t>(strlen(name)), name);
-    xcb_intern_atom_reply_t *reply = xcb_intern_atom_reply(connection, cookie, nullptr);
-
-    if (!reply)
-        return XCB_NONE;
-
-    xcb_atom_t atom = reply->atom;
-    free(reply);
-
-    return atom;
-}
 
 LockFrame::LockFrame(SessionBaseModel *const model, QWidget *parent)
     : FullscreenBackground(model, parent)
@@ -65,13 +47,6 @@ LockFrame::LockFrame(SessionBaseModel *const model, QWidget *parent)
     , m_enablePowerOffKey(false)
     , m_autoExitTimer(nullptr)
 {
-    xcb_connection_t *connection = QX11Info::connection();
-    if (connection) {
-        xcb_atom_t cook = internAtom(connection, "_DEEPIN_LOCK_SCREEN", false);
-        xcb_change_property(connection, XCB_PROP_MODE_REPLACE, static_cast<xcb_window_t>(winId()),
-                            cook, XCB_ATOM_ATOM, 32, 1, &cook);
-    }
-
     updateBackground(m_model->currentUser()->greeterBackground());
 
     setAccessibleName("LockFrame");
