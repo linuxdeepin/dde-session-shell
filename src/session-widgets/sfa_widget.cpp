@@ -230,8 +230,7 @@ void SFAWidget::setAuthType(const int type)
             m_chooseAuthButtonBox->hide();
         }
         std::function<void(QVariant)> authTypeChanged = std::bind(&SFAWidget::syncAuthType, this, std::placeholders::_1);
-        m_registerFunctions["SFAType"] = m_frameDataBind->registerFunction("SFAType", authTypeChanged);
-        m_frameDataBind->refreshData("SFAType");
+        registerSyncFunctions("SFAType", authTypeChanged);
     }
 
     m_lockButton->setEnabled(m_model->currentUser()->isNoPasswordLogin());

@@ -410,7 +410,8 @@ void AuthWidget::updatePasswordExpiredState()
  */
 void AuthWidget::registerSyncFunctions(const QString &flag, std::function<void(QVariant)> function)
 {
-    m_registerFunctions[flag] = m_frameDataBind->registerFunction(flag, function);
+    if (!m_registerFunctions.contains(flag))
+        m_registerFunctions[flag] = m_frameDataBind->registerFunction(flag, function);
     m_frameDataBind->refreshData(flag);
 }
 
