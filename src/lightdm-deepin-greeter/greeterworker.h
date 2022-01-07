@@ -1,18 +1,19 @@
 #ifndef GREETERWORKEK_H
 #define GREETERWORKEK_H
 
+#include "authinterface.h"
+#include "dbuslockservice.h"
+#include "dbuslogin1manager.h"
+#include "deepinauthframework.h"
+#include "sessionbasemodel.h"
+
 #include <QLightDM/Greeter>
 #include <QLightDM/SessionsModel>
 #include <QObject>
 
-#include "dbuslockservice.h"
-#include "authinterface.h"
-#include "deepinauthframework.h"
-#include "dbuslogin1manager.h"
-#include "sessionbasemodel.h"
-#include <com_deepin_daemon_authenticate.h>
+#include <com_deepin_api_soundthemeplayer.h>
 
-using com::deepin::daemon::Authenticate;
+using SoundThemePlayerInter = com::deepin::api::SoundThemePlayer;
 
 class GreeterWorker : public Auth::AuthInterface
 {
@@ -73,6 +74,7 @@ private:
     QLightDM::Greeter *m_greeter;
     DeepinAuthFramework *m_authFramework;
     DBusLockService *m_lockInter;
+    SoundThemePlayerInter *m_soundPlayerInter;
     QTimer *m_resetSessionTimer;
     QTimer *m_limitsUpdateTimer;
     QString m_account;

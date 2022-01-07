@@ -43,6 +43,7 @@ GreeterWorker::GreeterWorker(SessionBaseModel *const model, QObject *parent)
     , m_greeter(new QLightDM::Greeter(this))
     , m_authFramework(new DeepinAuthFramework(this))
     , m_lockInter(new DBusLockService(LOCKSERVICE_NAME, LOCKSERVICE_PATH, QDBusConnection::systemBus(), this))
+    , m_soundPlayerInter(new SoundThemePlayerInter("com.deepin.api.SoundThemePlayer", "/com/deepin/api/SoundThemePlayer", QDBusConnection::systemBus(), this))
     , m_resetSessionTimer(new QTimer(this))
     , m_limitsUpdateTimer(new QTimer(this))
     , m_retryAuth(false)
@@ -271,9 +272,11 @@ void GreeterWorker::doPowerAction(const SessionBaseModel::PowerAction action)
 {
     switch (action) {
     case SessionBaseModel::PowerAction::RequireShutdown:
+        m_soundPlayerInter->PrepareShutdownSound(static_cast<int>(m_model->currentUser()->uid()));
         m_login1Inter->PowerOff(true);
         break;
     case SessionBaseModel::PowerAction::RequireRestart:
+        m_soundPlayerInter->PrepareShutdownSound(static_cast<int>(m_model->currentUser()->uid()));
         m_login1Inter->Reboot(true);
         break;
     // 在登录界面请求待机或者休眠时，通过显示假黑屏挡住输入密码界面，防止其闪现
