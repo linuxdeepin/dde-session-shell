@@ -330,6 +330,8 @@ void GreeterWorker::switchToUser(std::shared_ptr<User> user)
         m_model->updateCurrentUser(user);
         if (!user->isNoPasswordLogin()) {
             createAuthentication(user->name());
+        } else {
+            m_model->setAuthType(AT_None);
         }
     }
 }

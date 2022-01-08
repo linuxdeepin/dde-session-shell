@@ -233,7 +233,11 @@ void SFAWidget::setAuthType(const int type)
         registerSyncFunctions("SFAType", authTypeChanged);
     }
 
-    m_lockButton->setEnabled(m_model->currentUser()->isNoPasswordLogin());
+    if (m_model->currentUser()->isNoPasswordLogin()) {
+        m_lockButton->setEnabled(true);
+        setFocusProxy(m_lockButton);
+        setFocus();
+    }
 }
 
 /**
