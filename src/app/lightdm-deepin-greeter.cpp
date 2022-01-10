@@ -185,9 +185,11 @@ static void set_auto_QT_SCALE_FACTOR() {
 void set_pointer() {
     auto set_position = [ = ] (QPoint p) {
         Display *dpy;
-        Window root_window;
-
         dpy = XOpenDisplay(0);
+
+        if (!dpy) return;
+
+        Window root_window;
         root_window = XRootWindow(dpy, 0);
         XSelectInput(dpy, root_window, KeyReleaseMask);
         XWarpPointer(dpy, None, root_window, 0, 0, 0, 0, p.x(), p.y());
