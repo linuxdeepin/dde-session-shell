@@ -728,7 +728,9 @@ void GreeterWorker::onAuthStateChanged(const int type, const int state, const QS
         m_model->updateAuthState(type, state, message);
         switch (state) {
         case AS_Success:
-            m_resetSessionTimer->start();
+            if (type == AT_Face || type == AT_Iris)
+                m_resetSessionTimer->start();
+
             break;
         case AS_Failure:
             if (AT_All != type) {

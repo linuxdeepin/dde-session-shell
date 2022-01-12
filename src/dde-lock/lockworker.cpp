@@ -307,7 +307,9 @@ void LockWorker::onAuthStateChanged(const int type, const int state, const QStri
         m_model->updateAuthState(type, state, message);
         switch (state) {
         case AS_Success:
-            m_resetSessionTimer->start();
+            if ((type == AT_Face || type == AT_Iris) && m_model->visible())
+                m_resetSessionTimer->start();
+
             break;
         case AS_Failure:
             // 单因失败会返回明确的失败类型，不关注type为-1的情况
