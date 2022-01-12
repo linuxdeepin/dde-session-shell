@@ -418,6 +418,10 @@ void GreeterWorker::startAuthentication(const QString &account, const int authTy
     switch (m_model->getAuthProperty().FrameworkState) {
     case Available:
         m_authFramework->StartAuthentication(account, authType, -1);
+        // 如果密码被锁定了，lightdm会停止验证，在开启验证的时候需要判断一下lightdm是否在验证中。
+        if (!m_greeter->inAuthentication())
+            startGreeterAuth(account);
+
         break;
     default:
         startGreeterAuth(account);
