@@ -171,6 +171,14 @@ void LockWorker::initConnections()
             createAuthentication(m_model->currentUser()->name());
         }
     });
+
+    connect(m_model, &SessionBaseModel::activeAuthChanged, this, [this] (const bool active) {
+        if (!active || m_model->currentModeState() == SessionBaseModel::ModeStatus::PasswordMode)
+            return;
+
+        createAuthentication(m_model->currentUser()->name());
+        m_model->setCurrentModeState(SessionBaseModel::ModeStatus::PasswordMode);
+    });
 }
 
 void LockWorker::initData()

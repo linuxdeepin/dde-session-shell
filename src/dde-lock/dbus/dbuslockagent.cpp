@@ -21,7 +21,7 @@ void DBusLockAgent::Show()
 void DBusLockAgent::ShowAuth(bool active)
 {
     Show();
-    emit m_model->activeAuthChanged(!active);
+    m_model->activeAuthChanged(active);
 }
 
 // 待机，enable=true：进入待机；enable=false：待机恢复
