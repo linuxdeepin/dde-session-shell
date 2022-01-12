@@ -293,6 +293,10 @@ void LockWorker::onAuthStateChanged(const int type, const int state, const QStri
                 endAuthentication(m_account, type);
                 m_model->updateAuthState(type, state, message);
                 break;
+            case AS_Unlocked:
+                m_model->updateLimitedInfo(m_authFramework->GetLimitedInfo(m_model->currentUser()->name()));
+                m_model->updateAuthState(type, state, message);
+                break;
             default:
                 m_model->updateAuthState(type, state, message);
                 break;
