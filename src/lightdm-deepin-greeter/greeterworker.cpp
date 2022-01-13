@@ -101,6 +101,14 @@ void GreeterWorker::initConnections()
     connect(m_accountsInter, &AccountsInter::UserDeleted, this, [this](const QString &path) {
         if (path == m_model->currentUser()->path()) {
             m_model->updateCurrentUser(m_lockInter->CurrentUser());
+            m_model->updateAuthState(AT_All, AS_Cancel, "Cancel");
+            destoryAuthentication(m_account);
+            if (!m_model->currentUser()->isNoPasswordLogin()) {
+                createAuthentication(m_model->currentUser()->name());
+            } else {
+                m_model->setAuthType(AT_None);
+            }
+            m_soundPlayerInter->PrepareShutdownSound(static_cast<int>(m_model->currentUser()->uid()));
         }
     });
     connect(m_loginedInter, &LoginedInter::LastLogoutUserChanged, m_model, static_cast<void (SessionBaseModel::*)(const uid_t)>(&SessionBaseModel::updateLastLogoutUser));
@@ -149,6 +157,18 @@ void GreeterWorker::initConnections()
         } else {
             createAuthentication(m_model->currentUser()->name());
         }
+    });
+    connect(m_login1Inter, &DBusLogin1Manager::SessionRemoved, this, [this] {
+        qDebug() << "DBusLogin1Manager::SessionRemoved";
+        m_model->updateCurrentUser(m_lockInter->CurrentUser());
+        m_model->updateAuthState(AT_All, AS_Cancel, "Cancel");
+        destoryAuthentication(m_account);
+        if (!m_model->currentUser()->isNoPasswordLogin()) {
+            createAuthentication(m_model->currentUser()->name());
+        } else {
+            m_model->setAuthType(AT_None);
+        }
+        m_soundPlayerInter->PrepareShutdownSound(static_cast<int>(m_model->currentUser()->uid()));
     });
     /* com.deepin.dde.LockService */
     connect(m_lockInter, &DBusLockService::UserChanged, this, [=](const QString &json) {
@@ -218,20 +238,6 @@ void GreeterWorker::initData()
             m_model->updateCurrentUser(m_lockInter->CurrentUser());
         }
     } else {
-        connect(m_login1Inter, &DBusLogin1Manager::SessionRemoved, this, [=] {
-            qDebug() << "DBusLogin1Manager::SessionRemoved";
-            // lockservice sometimes fails to call on olar server
-            QDBusPendingReply<QString> replay = m_lockInter->CurrentUser();
-            replay.waitForFinished();
-
-            if (!replay.isError()) {
-                const QJsonObject obj = QJsonDocument::fromJson(replay.value().toUtf8()).object();
-                auto user_ptr = m_model->findUserByUid(static_cast<uint>(obj["Uid"].toInt()));
-
-                m_model->updateCurrentUser(user_ptr);
-            }
-        });
-
         /* com.deepin.dde.LockService */
         m_model->updateCurrentUser(m_lockInter->CurrentUser());
     }
