@@ -723,13 +723,13 @@ void SFAWidget::resizeEvent(QResizeEvent *event)
     AuthWidget::resizeEvent(event);
 }
 
-
 void SFAWidget::replaceWidget(AuthModule *authModule)
 {
     m_mainLayout->insertWidget(layout()->indexOf(m_userAvatar) + 3, authModule);
     authModule->show();
-    setFocusProxy(authModule);
     setFocus();
+    authModule->setFocus();
+    m_lockButton->setEnabled(false);
     onRetryButtonVisibleChanged(false);
 }
 
