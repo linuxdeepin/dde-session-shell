@@ -8,11 +8,4 @@ if [ "$1" = "configure" ];then
 fi
 
 #DEBHELPER#
-# determine dde-lock process is existed
-ProcNumber=$(pgrep -f dde-lock | wc -l)
-
-# dde-shutdown not exist after the system upgrade, we need to restart dde-lock process
-if [ ! -f /usr/bin/dde-shutdown ] && [ "$ProcNumber" -gt 0 ] ; then
-	pkill -ef dde-lock
-fi
 exit 0
