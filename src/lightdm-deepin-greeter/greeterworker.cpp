@@ -235,6 +235,7 @@ void GreeterWorker::initData()
         /* com.deepin.dde.LockService */
         m_model->updateCurrentUser(m_lockInter->CurrentUser());
     }
+    m_soundPlayerInter->PrepareShutdownSound(static_cast<int>(m_model->currentUser()->uid()));
 
     /* com.deepin.daemon.Authenticate */
     if (m_authFramework->isDeepinAuthValid()) {
@@ -272,11 +273,9 @@ void GreeterWorker::doPowerAction(const SessionBaseModel::PowerAction action)
 {
     switch (action) {
     case SessionBaseModel::PowerAction::RequireShutdown:
-        m_soundPlayerInter->PrepareShutdownSound(static_cast<int>(m_model->currentUser()->uid()));
         m_login1Inter->PowerOff(true);
         break;
     case SessionBaseModel::PowerAction::RequireRestart:
-        m_soundPlayerInter->PrepareShutdownSound(static_cast<int>(m_model->currentUser()->uid()));
         m_login1Inter->Reboot(true);
         break;
     // 在登录界面请求待机或者休眠时，通过显示假黑屏挡住输入密码界面，防止其闪现
@@ -336,6 +335,7 @@ void GreeterWorker::switchToUser(std::shared_ptr<User> user)
         } else {
             m_model->setAuthType(AT_None);
         }
+        m_soundPlayerInter->PrepareShutdownSound(static_cast<int>(m_model->currentUser()->uid()));
     }
 }
 
