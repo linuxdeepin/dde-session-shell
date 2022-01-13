@@ -69,6 +69,7 @@ private:
     void saveNumlockStatus(std::shared_ptr<User> user, const bool &on);
     void recoveryUserKBState(std::shared_ptr<User> user);
     void startGreeterAuth(const QString &account = QString());
+    void changePasswd();
 
 private:
     QLightDM::Greeter *m_greeter;

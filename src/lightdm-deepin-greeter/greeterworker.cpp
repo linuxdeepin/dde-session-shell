@@ -524,7 +524,7 @@ void GreeterWorker::checkAccount(const QString &account)
     m_model->updateCurrentUser(user_ptr);
     if (user_ptr->isNoPasswordLogin()) {
         if (user_ptr->expiredState() == User::ExpiredAlready) {
-            m_model->setAuthType(AT_PAM);
+            changePasswd();
         }
         startGreeterAuth(user_ptr->name());
     } else {
@@ -584,7 +584,6 @@ void GreeterWorker::showMessage(const QString &text, const QLightDM::Greeter::Me
         break;
     case QLightDM::Greeter::MessageTypeError:
         m_retryAuth = false;
-        m_model->updateMFAFlag(false);
         m_model->updateAuthState(AT_PAM, AS_Failure, text);
         break;
     }
@@ -646,7 +645,7 @@ void GreeterWorker::onAuthFinished()
     if (m_greeter->inAuthentication()) {
         m_greeter->respond(m_authFramework->AuthSessionPath(m_account) + QString(";") + m_password);
         if (m_model->currentUser()->expiredState() == User::ExpiredAlready) {
-            m_model->setAuthType(AT_PAM);
+            changePasswd();
         }
     } else {
         qWarning() << "The lightdm is not in authentication!";
@@ -656,7 +655,6 @@ void GreeterWorker::onAuthFinished()
 void GreeterWorker::onAuthStateChanged(const int type, const int state, const QString &message)
 {
     qDebug() << "GreeterWorker::onAuthStateChanged:" << type << state << message;
-
     if (m_model->getAuthProperty().MFAFlag) {
         if (type == AT_All) {
             switch (state) {
@@ -666,7 +664,7 @@ void GreeterWorker::onAuthStateChanged(const int type, const int state, const QS
                 if (m_greeter->inAuthentication()) {
                     m_greeter->respond(m_authFramework->AuthSessionPath(m_account) + QString(";") + m_password);
                     if (m_model->currentUser()->expiredState() == User::ExpiredAlready) {
-                        m_model->setAuthType(AT_PAM);
+                        changePasswd();
                     }
                 } else {
                     qWarning() << "The lightdm is not in authentication!";
@@ -695,7 +693,7 @@ void GreeterWorker::onAuthStateChanged(const int type, const int state, const QS
                 endAuthentication(m_account, type);
                 // 人脸和虹膜需要手动重启验证
                 if (!m_model->currentUser()->limitsInfo(type).locked && type != AT_Face && type != AT_Iris) {
-                    QTimer::singleShot(50, this, [this, &type] {
+                    QTimer::singleShot(50, this, [this, type] {
                         startAuthentication(m_account, type);
                     });
                 }
@@ -716,6 +714,10 @@ void GreeterWorker::onAuthStateChanged(const int type, const int state, const QS
             case AS_Error:
                 m_model->updateAuthState(type, state, message);
                 endAuthentication(m_account, type);
+                break;
+            case AS_Unlocked:
+                m_model->updateLimitedInfo(m_authFramework->GetLimitedInfo(m_model->currentUser()->name()));
+                m_model->updateAuthState(type, state, message);
                 break;
             default:
                 m_model->updateAuthState(type, state, message);
@@ -805,4 +807,10 @@ void GreeterWorker::restartResetSessionTimer()
 void GreeterWorker::startGreeterAuth(const QString &account)
 {
     m_greeter->authenticate(account);
+}
+
+void GreeterWorker::changePasswd()
+{
+    m_model->updateMFAFlag(false);
+    m_model->setAuthType(AT_PAM);
 }
