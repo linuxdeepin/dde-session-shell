@@ -306,6 +306,7 @@ void UserFrameList::keyPressEvent(QKeyEvent *event)
         break;
     case Qt::Key_Escape:
         emit clicked();
+        emit requestSwitchUser(m_model->currentUser());
         break;
     default:
         break;
