@@ -151,7 +151,6 @@ void ControlWidget::initUI()
     QPalette pal = m_keyboardBtn->palette();
     pal.setColor(QPalette::Window, QColor(Qt::red));
     pal.setColor(QPalette::HighlightedText, QColor(Qt::white));
-    pal.setColor(QPalette::Active, QPalette::Highlight, QColor(Qt::white));
     m_keyboardBtn->setPalette(pal);
 
     m_virtualKBBtn = new DFloatingButton(this);
@@ -249,7 +248,8 @@ void ControlWidget::addModule(module::BaseModuleInterface *module)
     }
 
     m_modules.insert(trayModule->key(), button);
-    m_btnList.append(button);
+    // button的顺序与layout插入顺序保持一直
+    m_btnList.insert(1, button);
 
     connect(button, &FlotingButton::requestShowMenu, this, [ = ] {
         const QString menuJson = trayModule->itemContextMenu();
@@ -598,6 +598,14 @@ void ControlWidget::keyReleaseEvent(QKeyEvent *event)
         break;
     case Qt::Key_Right:
         rightKeySwitch();
+        break;
+    case Qt::Key_Tab:
+        for (const auto btn : m_btnList) {
+            if (btn->hasFocus()) {
+                m_index = m_btnList.indexOf(btn);
+                break;
+            }
+        }
         break;
     default:
         break;
