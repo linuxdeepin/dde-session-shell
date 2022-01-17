@@ -306,6 +306,11 @@ void SFAWidget::setAuthState(const int type, const int state, const QString &mes
             m_frameDataBind->updateValue("SFSingleAuthMsg", message);
         }
         break;
+    case AT_Custom:
+        if (m_customAuth) {
+            m_customAuth->setAuthState(state, message);
+        }
+        break;
     case AT_All:
         checkAuthResult(AT_All, state);
         break;
@@ -718,7 +723,6 @@ void SFAWidget::initCustomAuth()
     connect(m_customAuth, &AuthCustom::authFinished, this, [ this ] (const int authStatus) {
         if (authStatus == AS_Success) {
             m_lockButton->setEnabled(true);
-            emit authFinished();
         }
     });
 
@@ -756,7 +760,8 @@ void SFAWidget::checkAuthResult(const int type, const int state)
     if (type == AT_All && state == AS_Success) {
         if ((m_passwordAuth && AS_Success == m_passwordAuth->authState())
             || (m_ukeyAuth && AS_Success == m_ukeyAuth->authState())
-            || (m_fingerprintAuth && AS_Success == m_fingerprintAuth->authState())) {
+            || (m_fingerprintAuth && AS_Success == m_fingerprintAuth->authState())
+            || (m_customAuth && m_customAuth->authState() == AS_Success)) {
             if (m_faceAuth) m_faceAuth->setAuthState(AS_Ended, "Ended");
             if (m_irisAuth) m_irisAuth->setAuthState(AS_Ended, "Ended");
             emit authFinished();
