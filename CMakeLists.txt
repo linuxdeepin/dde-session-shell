@@ -259,7 +259,6 @@ install(FILES ${SERVICES} DESTINATION share/dbus-1/services)
 
 #schemas
 install(FILES xml/com.deepin.dde.session-shell.gschema.xml DESTINATION share/glib-2.0/schemas)
-install(CODE "execute_process(COMMAND glib-compile-schemas ${CMAKE_INSTALL_PREFIX}/share/glib-2.0/schemas)")
 
 # dev
 file(GLOB INTERFACE interface/*.h)
