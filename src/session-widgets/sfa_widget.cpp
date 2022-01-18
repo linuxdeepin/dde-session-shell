@@ -120,8 +120,6 @@ void SFAWidget::setModel(const SessionBaseModel *model)
 
     setAuthType(model->getAuthProperty().AuthType);
     setUser(model->currentUser());
-
-    setFocusProxy(m_lockButton);
 }
 
 /**
