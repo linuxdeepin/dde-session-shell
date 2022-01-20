@@ -131,9 +131,9 @@ void SessionBaseWindow::initUI()
     QHBoxLayout *bottomLayout = new QHBoxLayout;
     bottomLayout->setMargin(0);
     bottomLayout->setSpacing(0);
-    bottomLayout->addLayout(m_leftBottomLayout, 1);
-    bottomLayout->addLayout(m_centerBottomLayout, 3);
-    bottomLayout->addLayout(m_rightBottomLayout, 1);
+    bottomLayout->addLayout(m_leftBottomLayout, 3);
+    bottomLayout->addLayout(m_centerBottomLayout, 2);
+    bottomLayout->addLayout(m_rightBottomLayout, 3);
 
     m_bottomFrame = new QFrame;
     m_bottomFrame->setAccessibleName("BottomFrame");
