@@ -391,6 +391,8 @@ void SFAWidget::initSingleAuth()
         if (checked) {
             replaceWidget(m_singleAuth);
             m_frameDataBind->updateValue("SFAType", AT_PAM);
+            m_biometricAuthState->hide();
+            m_bioAuthStatePlaceHolder->changeSize(0, BIO_AUTH_STATE_PLACE_HOLDER_HEIGHT);
             emit requestStartAuthentication(m_user->name(), AT_PAM);
         } else {
             m_singleAuth->hide();
@@ -462,6 +464,8 @@ void SFAWidget::initPasswdAuth()
         if (checked) {
             replaceWidget(m_passwordAuth);
             m_frameDataBind->updateValue("SFAType", AT_Password);
+            m_biometricAuthState->hide();
+            m_bioAuthStatePlaceHolder->changeSize(0, BIO_AUTH_STATE_PLACE_HOLDER_HEIGHT);
             emit requestStartAuthentication(m_user->name(), AT_Password);
             m_passwordAuth->updateResetPasswordUI();
         } else {
@@ -570,6 +574,8 @@ void SFAWidget::initUKeyAuth()
         if (checked) {
             replaceWidget(m_ukeyAuth);
             m_frameDataBind->updateValue("SFAType", AT_Ukey);
+            m_biometricAuthState->hide();
+            m_bioAuthStatePlaceHolder->changeSize(0, BIO_AUTH_STATE_PLACE_HOLDER_HEIGHT);
             emit requestStartAuthentication(m_user->name(), AT_Ukey);
         } else {
             m_ukeyAuth->hide();
@@ -733,6 +739,8 @@ void SFAWidget::initCustomAuth()
         if (checked) {
             replaceWidget(m_customAuth);
             m_frameDataBind->updateValue("SFAType", AT_Custom);
+            m_biometricAuthState->hide();
+            m_bioAuthStatePlaceHolder->changeSize(0, BIO_AUTH_STATE_PLACE_HOLDER_HEIGHT);
             emit requestStartAuthentication(m_user->name(), AT_Custom);
             m_nameLabel->hide();
         } else {
