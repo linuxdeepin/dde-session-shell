@@ -583,6 +583,8 @@ bool AuthPassword::eventFilter(QObject *watched, QEvent *event)
 
 void AuthPassword::hideEvent(QHideEvent *event)
 {
-    reset();
+    m_lineEdit->setAlert(false);
+    m_lineEdit->hideAlertMessage();
+    setLineEditInfo(tr("Password"), PlaceHolderText);
     AuthModule::hideEvent(event);
 }

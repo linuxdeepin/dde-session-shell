@@ -341,6 +341,8 @@ bool AuthUKey::eventFilter(QObject *watched, QEvent *event)
 
 void AuthUKey::hide()
 {
+    m_lineEdit->setAlert(false);
     m_lineEdit->hideAlertMessage();
+    setLineEditInfo(tr("Enter your PIN"), PlaceHolderText);
     AuthModule::hide();
 }
