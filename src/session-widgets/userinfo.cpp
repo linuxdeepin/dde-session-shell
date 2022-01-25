@@ -40,6 +40,7 @@ User::User(QObject *parent)
     , m_isUse24HourFormat(true)
     , m_expiredDayLeft(0)
     , m_expiredState(ExpiredNormal)
+    , m_lastAuthType(0)
     , m_shortDateFormat(0)
     , m_shortTimeFormat(0)
     , m_weekdayFormat(0)
@@ -125,6 +126,19 @@ void User::updateLimitsInfo(const QString &info)
         m_limitsInfo->insert(limitsInfoObj["flag"].toInt(), limitsInfoTmp);
     }
     emit limitsInfoChanged(m_limitsInfo);
+}
+
+/**
+ * @brief 设置上次成功的认证
+ *
+ * @param type
+ */
+void User::setLastAuthType(const int type)
+{
+    if (m_lastAuthType == type) {
+        return;
+    }
+    m_lastAuthType = type;
 }
 
 bool User::checkUserIsNoPWGrp(const User *user) const

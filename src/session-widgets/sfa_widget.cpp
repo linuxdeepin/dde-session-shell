@@ -48,7 +48,6 @@ SFAWidget::SFAWidget(QWidget *parent)
     , m_mainLayout(new QVBoxLayout(this))
     , m_chooseAuthButtonBox(nullptr)
     , m_biometricAuthState(nullptr)
-    , m_lastAuthType(AT_None)
     , m_retryButton(new DFloatingButton(this))
     , m_bioAuthStatePlaceHolder(new QSpacerItem(0, BIO_AUTH_STATE_PLACE_HOLDER_HEIGHT))
     , m_chooseAuthButtonBoxPlaceHolder(new QSpacerItem(0, CHOOSE_AUTH_TYPE_BUTTON_PLACE_HOLDER_HEIGHT))
@@ -219,11 +218,11 @@ void SFAWidget::setAuthType(const int type)
         if (count > 1) {
             m_chooseAuthButtonBoxPlaceHolder->changeSize(0, 0);
             m_chooseAuthButtonBox->show();
-            if (type & m_lastAuthType) {
-                if (m_chooseAuthButtonBox->checkedId() == m_lastAuthType) {
-                    emit m_chooseAuthButtonBox->button(m_lastAuthType)->toggled(true);
+            if (type & m_user->lastAuthType()) {
+                if (m_chooseAuthButtonBox->checkedId() == m_user->lastAuthType()) {
+                    emit m_chooseAuthButtonBox->button(m_user->lastAuthType())->toggled(true);
                 } else {
-                    m_chooseAuthButtonBox->button(m_authButtons.firstKey())->setChecked(true);
+                    m_chooseAuthButtonBox->button(m_user->lastAuthType())->setChecked(true);
                 }
             } else {
                 if (m_chooseAuthButtonBox->checkedId() == m_authButtons.firstKey()) {
@@ -347,7 +346,7 @@ void SFAWidget::initSingleAuth()
     });
     connect(m_singleAuth, &AuthSingle::authFinished, this, [this](const int authState) {
         if (authState == AS_Success) {
-            m_lastAuthType = AT_PAM;
+            m_user->setLastAuthType(AT_PAM);
             m_lockButton->setEnabled(true);
             emit authFinished();
         }
@@ -765,7 +764,7 @@ void SFAWidget::checkAuthResult(const int type, const int state)
             emit authFinished();
         }
     } else if (type != AT_All && state == AS_Success) {
-        m_lastAuthType = type;
+        m_user->setLastAuthType(type);
         m_lockButton->setEnabled(true);
         m_lockButton->setFocus();
     }

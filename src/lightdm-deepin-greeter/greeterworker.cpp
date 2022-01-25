@@ -312,6 +312,7 @@ void GreeterWorker::doPowerAction(const SessionBaseModel::PowerAction action)
 void GreeterWorker::setCurrentUser(const std::shared_ptr<User> user)
 {
     QJsonObject json;
+    json["AuthType"] = user->lastAuthType();
     json["Name"] = user->name();
     json["Type"] = user->type();
     json["Uid"] = static_cast<int>(user->uid());

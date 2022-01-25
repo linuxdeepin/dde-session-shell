@@ -204,6 +204,15 @@ void LockWorker::initData()
     std::shared_ptr<User> user_ptr = m_model->findUserByUid(getuid());
     if (user_ptr.get()) {
         m_model->updateCurrentUser(user_ptr);
+        const QString &userJson = m_lockInter->CurrentUser();
+        QJsonParseError jsonParseError;
+        const QJsonDocument userDoc = QJsonDocument::fromJson(userJson.toUtf8(), &jsonParseError);
+        if (jsonParseError.error != QJsonParseError::NoError || userDoc.isEmpty()) {
+            qWarning() << "Failed to obtain current user information from LockService!";
+        } else {
+            const QJsonObject userObj = userDoc.object();
+            m_model->currentUser()->setLastAuthType(userObj["AuthType"].toInt());
+        }
     } else {
         m_model->updateCurrentUser(m_lockInter->CurrentUser());
     }
@@ -416,6 +425,7 @@ void LockWorker::doPowerAction(const SessionBaseModel::PowerAction action)
 void LockWorker::setCurrentUser(const std::shared_ptr<User> user)
 {
     QJsonObject json;
+    json["AuthType"] = user->lastAuthType();
     json["Name"] = user->name();
     json["Type"] = user->type();
     json["Uid"] = static_cast<int>(user->uid());
@@ -645,6 +655,7 @@ void LockWorker::onAuthFinished()
 {
     m_model->setVisible(false);
     onUnlockFinished(true);
+    setCurrentUser(m_model->currentUser());
 }
 
 void LockWorker::onUnlockFinished(bool unlocked)

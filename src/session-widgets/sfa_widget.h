@@ -82,7 +82,6 @@ private:
 
     DButtonBox *m_chooseAuthButtonBox; // 认证选择按钮
     DLabel *m_biometricAuthState;      // 生物认证状态
-    int m_lastAuthType;                // 上次成功的认证
 
     QMap<int, DButtonBoxButton *> m_authButtons;
     DFloatingButton *m_retryButton;

@@ -346,6 +346,9 @@ void SessionBaseModel::updateCurrentUser(const QString &userJson)
             qWarning("failed to find user!");
             user_ptr = m_lastLogoutUser ? m_lastLogoutUser : m_users->first();
         }
+        if (user_ptr) {
+            user_ptr->setLastAuthType(userObj["AuthType"].toInt());
+        }
     }
     updateCurrentUser(user_ptr);
 }
@@ -358,11 +361,11 @@ void SessionBaseModel::updateCurrentUser(const QString &userJson)
 void SessionBaseModel::updateCurrentUser(const std::shared_ptr<User> user)
 {
     if (!user) {
-        qDebug() << "Failed to set current user: " << user.get();
+        qWarning() << "Failed to set current user!" << user.get();
         return;
     }
 
-    qDebug("update current user: %s", qPrintable(user->name()));
+    qDebug() << "SessionBaseModel::updateCurrentUser:" << user->name();
 
     if (m_currentUser && *m_currentUser == *user) {
         return;
