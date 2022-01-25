@@ -188,12 +188,9 @@ void SFAWidget::setAuthType(const int type)
         m_frameDataBind->clearValue("SFSingleAuthState");
         m_frameDataBind->clearValue("SFSingleAuthMsg");
     }
-    int count = 0;
-    if (dss::module::ModulesLoader::instance().findModulesByType(0).size() > 0) {
-        count++;
+    if (dss::module::ModulesLoader::instance().findModulesByType(dss::module::BaseModuleInterface::LoginType).size() > 0) {
         initCustomAuth();
     } else if (m_customAuth) {
-        count--;
         m_customAuth->deleteLater();
         m_customAuth = nullptr;
         m_authButtons.value(AT_Custom)->deleteLater();
@@ -202,12 +199,7 @@ void SFAWidget::setAuthType(const int type)
         m_frameDataBind->clearValue("SFCustomAuthMsg");
     }
 
-    int typeTmp = type;
-    while (typeTmp) {
-        typeTmp &= typeTmp - 1;
-        count++;
-    }
-
+    const int count = m_authButtons.values().size();
     if (count > 0) {
         m_chooseAuthButtonBox->setButtonList(m_authButtons.values(), true);
         QMap<int, DButtonBoxButton *>::const_iterator iter = m_authButtons.constBegin();
@@ -242,6 +234,8 @@ void SFAWidget::setAuthType(const int type)
         }
         std::function<void(QVariant)> authTypeChanged = std::bind(&SFAWidget::syncAuthType, this, std::placeholders::_1);
         registerSyncFunctions("SFAType", authTypeChanged);
+    } else {
+        m_chooseAuthButtonBox->hide();
     }
 
     if (m_model->currentUser()->isNoPasswordLogin()) {
