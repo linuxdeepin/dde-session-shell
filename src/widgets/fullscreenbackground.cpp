@@ -125,27 +125,27 @@ void FullscreenBackground::updateBackground(const QString &path)
 
 void FullscreenBackground::updateBlurBackground(const QString &path)
 {
-    QDBusPendingCall call = m_imageEffectInter->Get("", path);
-    QDBusPendingCallWatcher *watcher = new QDBusPendingCallWatcher(call, this);
-    connect(watcher, &QDBusPendingCallWatcher::finished, [=] {
-        if (!call.isError()) {
-            QDBusReply<QString> reply = call.reply();
-            QString path = reply.value();
-            if (!isPicture(path)) {
-                path = "/usr/share/backgrounds/default_background.jpg";
+    QDBusPendingCall async = m_imageEffectInter->Get("", path);
+    QDBusPendingCallWatcher *watcher = new QDBusPendingCallWatcher(async, this);
+    connect(watcher, &QDBusPendingCallWatcher::finished, this, [this] (QDBusPendingCallWatcher *call) {
+        const QDBusPendingReply<QString> reply = *call;
+        if (!reply.isError()) {
+            QString blurPath = reply.value();
+            if (!isPicture(blurPath)) {
+                blurPath = "/usr/share/backgrounds/default_background.jpg";
             }
-            blurBackgroundPath = path;
-            addPixmap(pixmapHandle(QPixmap(path)), PIXMAP_TYPE_BLUR_BACKGROUND);
+            blurBackgroundPath = blurPath;
+            addPixmap(pixmapHandle(QPixmap(blurPath)), PIXMAP_TYPE_BLUR_BACKGROUND);
             // 只播放一次动画，后续背景图片变更直接更新模糊壁纸即可
             if (m_fadeOutAni && !m_fadeOutAniFinished)
                 m_fadeOutAni->start();
             else
                 update();
         } else {
-            qWarning() << "get blur background image error: " << call.error().message();
+            qWarning() << "get blur background image error: " << reply.error().message();
         }
-        watcher->deleteLater();
-    });
+        call->deleteLater();
+    }, Qt::QueuedConnection);
 }
 
 bool FullscreenBackground::contentVisible() const
