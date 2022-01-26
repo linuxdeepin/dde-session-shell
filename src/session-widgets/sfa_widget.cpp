@@ -708,9 +708,10 @@ void SFAWidget::initCustomAuth()
     }
 
     m_customAuth = new AuthCustom(this);
-    dss::module::BaseModuleInterface *module = dss::module::ModulesLoader::instance().findModulesByType(0).values().first();
+
+    dss::module::LoginModuleInterface *module = dynamic_cast<dss::module::LoginModuleInterface *>(dss::module::ModulesLoader::instance().findModulesByType(0).values().first());
     module->init();
-    m_customAuth->setModule(dynamic_cast<dss::module::LoginModuleInterface *>(module));
+    m_customAuth->setModule(module);
     m_customAuth->hide();
 
     connect(m_customAuth, &AuthCustom::requestAuthenticate, this, [this] {
@@ -725,6 +726,10 @@ void SFAWidget::initCustomAuth()
 
     /* 认证选择按钮 */
     DButtonBoxButton *btn = new DButtonBoxButton(DStyle::SP_SelectElement, QString(), this);
+    const QIcon icon(QString::fromStdString(module->icon()));
+    if (!icon.isNull()) {
+        btn->setIcon(icon);
+    }
     btn->setIconSize(AuthButtonIconSize);
     btn->setFixedSize(AuthButtonSize);
     btn->setFocusPolicy(Qt::NoFocus);

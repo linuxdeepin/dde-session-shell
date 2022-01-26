@@ -63,6 +63,12 @@ public:
     ModuleType type() const override { return LoginType; }
 
     /**
+     * @brief 模块图标的路径
+     * @return std::string
+     */
+    virtual std::string icon() const { return nullptr; }
+
+    /**
      * @brief 认证完成后，需要调用回调函数 CallbackFun
      */
     virtual void setAuthFinishedCallback(AuthCallback *) = 0;
