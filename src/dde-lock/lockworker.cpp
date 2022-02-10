@@ -313,6 +313,7 @@ void LockWorker::onAuthStateChanged(const int type, const int state, const QStri
         }
     } else {
         if (m_model->currentModeState() != SessionBaseModel::ModeStatus::PasswordMode
+            && (state == AS_Success || state == AS_Failure)
             && m_model->currentModeState() != SessionBaseModel::ModeStatus::ConfirmPasswordMode) {
             m_model->setCurrentModeState(SessionBaseModel::ModeStatus::PasswordMode);
         }
