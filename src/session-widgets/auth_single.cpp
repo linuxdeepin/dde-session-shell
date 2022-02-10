@@ -269,8 +269,7 @@ void AuthSingle::setLimitsInfo(const LimitsInfo &info)
     AuthModule::setLimitsInfo(info);
     setPasswordHintBtnVisible(info.numFailures > 0 && !m_passwordHint.isEmpty());
     if (m_limitsInfo->locked) {
-        auto isWayland = qEnvironmentVariable("XDG_SESSION_TYPE").contains("wayland");
-        if (!isWayland && lockStateChanged && this->isVisible() && QFile::exists(ResetPassword_Exe_Path) &&
+        if (lockStateChanged && this->isVisible() && QFile::exists(ResetPassword_Exe_Path) &&
             m_currentUid <= 9999 && isUserAccountBinded()) {
             qDebug() << "begin reset passoword";
             setResetPasswordMessageVisible(true);
