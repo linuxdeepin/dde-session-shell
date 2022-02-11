@@ -498,10 +498,7 @@ void LockContent::onUserListChanged(QList<std::shared_ptr<User> > list)
 
 void LockContent::tryGrabKeyboard()
 {
-#ifdef QT_DEBUG
-    return;
-#endif
-
+#ifndef QT_DEBUG
     if (qgetenv("XDG_SESSION_TYPE").contains("wayland"))
         return;
 
@@ -534,6 +531,7 @@ void LockContent::tryGrabKeyboard()
     }
 
     QTimer::singleShot(100, this, &LockContent::tryGrabKeyboard);
+#endif
 }
 
 void LockContent::hideToplevelWindow()
@@ -596,13 +594,13 @@ void LockContent::refreshLayout(SessionBaseModel::ModeStatus status)
 void LockContent::keyPressEvent(QKeyEvent *event)
 {
     switch (event->key()) {
-    case Qt::Key_Return ... Qt::Key_Enter: {
+    case Qt::Key_Return:
+    case Qt::Key_Enter:
         if (m_mfaWidget) {
             m_mfaWidget->autoUnlock();
         }
         break;
-    }
-    case Qt::Key_Escape: {
+    case Qt::Key_Escape:
         if (m_model->currentModeState() == SessionBaseModel::ModeStatus::ConfirmPasswordMode) {
             m_model->setAbortConfirm(false);
             m_model->setPowerAction(SessionBaseModel::PowerAction::None);
@@ -613,6 +611,5 @@ void LockContent::keyPressEvent(QKeyEvent *event)
             m_model->setCurrentModeState(SessionBaseModel::ModeStatus::PasswordMode);
         }
         break;
-    }
     }
 }

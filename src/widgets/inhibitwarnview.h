@@ -37,7 +37,7 @@ class InhibitorRow : public QWidget
 {
     Q_OBJECT
 public:
-    InhibitorRow(QString who, QString why, const QIcon &icon = QIcon(), QWidget *parent = nullptr);
+    InhibitorRow(const QString &who, const QString &why, const QIcon &icon = QIcon(), QWidget *parent = nullptr);
     ~InhibitorRow() override;
 
 protected:

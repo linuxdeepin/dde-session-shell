@@ -33,9 +33,6 @@ LockWorker::LockWorker(SessionBaseModel *const model, QObject *parent)
     , m_limitsUpdateTimer(new QTimer(this))
     , m_sessionManagerInter(new SessionManagerInter("com.deepin.SessionManager", "/com/deepin/SessionManager", QDBusConnection::sessionBus(), this))
     , m_switchosInterface(new HuaWeiSwitchOSInterface("com.huawei", "/com/huawei/switchos", QDBusConnection::sessionBus(), this))
-    , m_accountsInter(new AccountsInter("com.deepin.daemon.Accounts", "/com/deepin/daemon/Accounts", QDBusConnection::systemBus(), this))
-    , m_loginedInter(new LoginedInter("com.deepin.daemon.Accounts", "/com/deepin/daemon/Logined", QDBusConnection::systemBus(), this))
-    , m_gsettings(nullptr)
 {
     initConnections();
     initData();
@@ -165,6 +162,7 @@ void LockWorker::initConnections()
             m_model->updateLimitedInfo(m_authFramework->GetLimitedInfo(m_account));
     });
     connect(m_dbusInter, &DBusObjectInter::NameOwnerChanged, this, [=](const QString &name, const QString &oldOwner, const QString &newOwner) {
+        Q_UNUSED(oldOwner)
         if (name == "com.deepin.daemon.Authenticate" && newOwner != "" && m_model->visible() && m_sessionManagerInter->locked()) {
             m_resetSessionTimer->stop();
             endAuthentication(m_account, AT_All);
@@ -278,7 +276,7 @@ void LockWorker::onAuthStateChanged(const int type, const int state, const QStri
                 endAuthentication(m_account, type);
                 if (!m_model->currentUser()->limitsInfo(type).locked
                         && type != AT_Face && type != AT_Iris) {
-                    QTimer::singleShot(50, this, [ this, type ] {
+                    QTimer::singleShot(50, this, [this, type] {
                         startAuthentication(m_account, type);
                     });
                 }
@@ -331,7 +329,7 @@ void LockWorker::onAuthStateChanged(const int type, const int state, const QStri
                 endAuthentication(m_account, type);
                 // 人脸和虹膜需要手动重新开启验证
                 if (!m_model->currentUser()->limitsInfo(type).locked && type != AT_Face && type != AT_Iris) {
-                    QTimer::singleShot(50, this, [ this, type ] {
+                    QTimer::singleShot(50, this, [this, type] {
                         startAuthentication(m_account, type);
                     });
                 }
@@ -602,6 +600,7 @@ void LockWorker::endAuthentication(const QString &account, const int authType)
 
 void LockWorker::lockServiceEvent(quint32 eventType, quint32 pid, const QString &username, const QString &message)
 {
+    Q_UNUSED(pid)
     if (!m_model->currentUser())
         return;
 

@@ -30,7 +30,6 @@ using namespace dss::module;
 AuthCustom::AuthCustom(QWidget *parent)
     : AuthModule(AuthCommon::AT_Custom, parent)
     , m_mainLayout(new QVBoxLayout(this))
-    , m_authCallback(new AuthCallback)
     , m_module(nullptr)
 {
     setObjectName(QStringLiteral("AuthCutom"));
@@ -52,9 +51,9 @@ void AuthCustom::setModule(dss::module::LoginModuleInterface *module)
 
 void AuthCustom::init()
 {
-    m_authCallback->app_data = this;
-    m_authCallback->callbackFun = AuthCustom::authCallBack;
-    m_module->setAuthFinishedCallback(m_authCallback);
+    m_authCallback.app_data = this;
+    m_authCallback.callbackFun = AuthCustom::authCallBack;
+    m_module->setAuthFinishedCallback(&m_authCallback);
 
     if (m_module->content()->parent() == nullptr) {
         m_mainLayout->addWidget(m_module->content());

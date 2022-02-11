@@ -126,14 +126,14 @@ void RoundItemButton::leaveEvent(QEvent* event)
 
 void RoundItemButton::mousePressEvent(QMouseEvent* event)
 {
-    Q_UNUSED(event);
+    Q_UNUSED(event)
 
     updateState(Pressed);
 }
 
 void RoundItemButton::mouseReleaseEvent(QMouseEvent* e)
 {
-    Q_UNUSED(e);
+    Q_UNUSED(e)
 
     if (m_state == Checked)
         updateState(Hover);
@@ -224,7 +224,7 @@ void RoundItemButton::paintEvent(QPaintEvent* event)
     } else if (m_state == Normal) {
         // 绘制鼠标选中的白色背景
         painter.setPen(Qt::NoPen);
-        painter.setBrush(QColor(255, 255, 255, 0.1 * 255));
+        painter.setBrush(QColor(255, 255, 255, int(0.1 * 255)));
         painter.setRenderHint(QPainter::Antialiasing, true);
         painter.drawEllipse(iconRect);
     }

@@ -29,8 +29,11 @@
 #include <QFile>
 #include <QPainterPath>
 
-UserAvatar::UserAvatar(QWidget *parent, bool deleteable) :
-    QPushButton(parent), m_deleteable(deleteable)
+UserAvatar::UserAvatar(QWidget *parent, bool deleteable)
+    : QPushButton(parent)
+    , m_deleteable(deleteable)
+    , m_showAnimation(nullptr)
+    , m_hideAnimation(nullptr)
 {
     setGeometry(0, 0, AvatarLargeSize, AvatarLargeSize);
 
@@ -106,27 +109,23 @@ QImage UserAvatar::imageToGray(const QImage &image)
     for(int i = 0; i < 256; i++)
         targetImg.setColor(i, qRgb(i, i, i));
 
-    switch(image.format())
-    {
+    switch (image.format()) {
     case QImage::Format_Indexed8:
-        for(int i = 0; i < height; i ++)
-        {
-            const uchar *pSrc = (uchar *)image.constScanLine(i);
-            uchar *pDest = (uchar *)targetImg.scanLine(i);
-            memcpy(pDest, pSrc, width);
+        for (int i = 0; i < height; i++) {
+            const uchar *pSrc = static_cast<const uchar *>(image.constScanLine(i));
+            uchar *pDest = static_cast<uchar *>(targetImg.scanLine(i));
+            memcpy(pDest, pSrc, static_cast<size_t>(width));
         }
         break;
     case QImage::Format_RGB32:
     case QImage::Format_ARGB32:
     case QImage::Format_ARGB32_Premultiplied:
-        for(int i = 0; i < height; i ++)
-        {
-            const QRgb *pSrc = (QRgb *)image.constScanLine(i);
-            uchar *pDest = (uchar *)targetImg.scanLine(i);
+        for (int i = 0; i < height; i++) {
+            const QRgb *pSrc = reinterpret_cast<const QRgb *>(image.constScanLine(i));
+            uchar *pDest = targetImg.scanLine(i);
 
-            for( int j = 0; j < width; j ++)
-            {
-                 pDest[j] = qGray(pSrc[j]);
+            for (int j = 0; j < width; j++) {
+                pDest[j] = static_cast<uchar>(qGray(pSrc[j]));
             }
         }
         break;

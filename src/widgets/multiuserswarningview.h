@@ -44,8 +44,9 @@ class MultiUsersWarningView : public WarningView
 {
     Q_OBJECT
 public:
-    MultiUsersWarningView(SessionBaseModel::PowerAction inhibitType, QWidget *parent = 0);
-    ~MultiUsersWarningView();
+    MultiUsersWarningView(SessionBaseModel::PowerAction inhibitType, QWidget *parent = nullptr);
+    ~MultiUsersWarningView() override;
+
     void setUsers(QList<std::shared_ptr<User>> users);
     SessionBaseModel::PowerAction action() const;
     void toggleButtonState() Q_DECL_OVERRIDE;

@@ -29,8 +29,7 @@ class AppEventFilter : public QObject
     Q_OBJECT
 public:
     explicit AppEventFilter(QObject *parent = nullptr);
-
-    virtual bool eventFilter(QObject *watched, QEvent *event);
+    bool eventFilter(QObject *watched, QEvent *event) override;
 
 signals:
     void userIsActive();

@@ -256,7 +256,7 @@ void FullscreenBackground::paintEvent(QPaintEvent *e)
     } else {
         if (m_fadeOutAni) {
             const double currentAniValue = m_fadeOutAni->currentValue().toDouble();
-            if (!background.isNull() && currentAniValue != 1) {
+            if (!background.isNull() && currentAniValue != 1.0) {
                 painter.setOpacity(1);
                 painter.drawPixmap(trueRect,
                                 background,
@@ -445,13 +445,10 @@ const QPixmap& FullscreenBackground::getPixmap(int type)
     static QPixmap pixmap;
 
     const QSize &size = trueSize();
-    auto findPixmap = [ this, size ] (QList<QPair<QSize, QPixmap>> &list) -> const QPixmap & {
-        for (const auto &pair : list) {
-            if (pair.first == size)
-                return pair.second;
-        }
-
-        return pixmap;
+    auto findPixmap = [size](QList<QPair<QSize, QPixmap>> &list) -> const QPixmap & {
+        auto it = std::find_if(list.begin(), list.end(),
+                               [size](QPair<QSize, QPixmap> pair) { return pair.first == size; });
+        return it != list.end() ? it.i->t().second : pixmap;
     };
 
     if (PIXMAP_TYPE_BACKGROUND == type)
@@ -498,13 +495,11 @@ void FullscreenBackground::addPixmap(const QPixmap &pixmap, const int type)
  */
 void FullscreenBackground::updatePixmap()
 {
-    auto isNoUsefunc = [ ] (const QSize &size) -> bool {
-        for (FullscreenBackground * frame : frameList) {
-            if (frame->trueSize() == size) {
-                return false;
-            }
-        }
-        return true;
+    auto isNoUsefunc = [](const QSize &size) -> bool {
+        bool b = std::any_of(frameList.begin(), frameList.end(), [size](FullscreenBackground *frame) {
+            return frame->trueSize() == size;
+        });
+        return !b;
     };
 
     auto updateFunc = [ isNoUsefunc ] (QList<QPair<QSize, QPixmap>> &list) {
@@ -520,12 +515,11 @@ void FullscreenBackground::updatePixmap()
 
 bool FullscreenBackground::contains(int type)
 {
-    auto containsFunc = [ this ] (QList<QPair<QSize, QPixmap>> &list) -> bool {
-        for (const auto &pair : list) {
-            if (pair.first == trueSize())
-                return true;
-        }
-        return false;
+    auto containsFunc = [this](QList<QPair<QSize, QPixmap>> &list) -> bool {
+        bool b = std::any_of(list.begin(), list.end(), [this](QPair<QSize, QPixmap> &pair) {
+            return pair.first == trueSize();
+        });
+        return b;
     };
 
     if (PIXMAP_TYPE_BACKGROUND == type)

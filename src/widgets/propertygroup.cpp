@@ -50,11 +50,11 @@ int PropertyGroup::addObject(QObject *obj)
             Q_ASSERT(p.isReadable() && p.isWritable() && p.hasNotifySignal());
 
             // 如果目前已存在对象的这个属性为真，则将新加入对象的此属性设置为假
-            for (const QObject *oo : m_objList) {
-                if (oo != obj && oo->property(p.name()).toBool()) {
-                    p.write(obj, QVariant());
-                    break;
-                }
+            bool b = std::any_of(m_objList.begin(), m_objList.end(), [obj, &p](const QObject *object) {
+                return object != obj && object->property(p.name()).toBool();
+            });
+            if (b) {
+                p.write(obj, QVariant());
             }
 
             static int mapper_mapping_index = mapper->metaObject()->indexOfSlot("map()");

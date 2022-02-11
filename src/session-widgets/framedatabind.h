@@ -42,7 +42,7 @@ public:
 
 private:
     FrameDataBind();
-    ~FrameDataBind();
+    ~FrameDataBind() override;
     FrameDataBind(const FrameDataBind &) = delete;
 
 private:

@@ -92,22 +92,7 @@ Q_SIGNALS:
     void requestHideTips();
 
 protected:
-    bool eventFilter(QObject *watch, QEvent *event) {
-        if (watch == this) {
-            if (event->type() == QEvent::MouseButtonRelease) {
-                QMouseEvent *e = static_cast<QMouseEvent *>(event);
-                if (e->button() == Qt::RightButton) {
-                    Q_EMIT requestShowMenu();
-                }
-            } else if (event->type() == QEvent::Enter) {
-                Q_EMIT requestShowTips();
-            } else if (event->type() == QEvent::Leave) {
-                Q_EMIT requestHideTips();
-            }
-        }
-
-        return false;
-    }
+    bool eventFilter(QObject *watch, QEvent *event) override;
 };
 class ControlWidget : public QWidget
 {

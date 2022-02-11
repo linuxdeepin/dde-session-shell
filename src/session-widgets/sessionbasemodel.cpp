@@ -16,12 +16,19 @@ SessionBaseModel::SessionBaseModel(QObject *parent)
     , m_visible(false)
     , m_isServerModel(false)
     , m_canSleep(false)
+    , m_allowShowUserSwitchButton(false)
+    , m_alwaysShowUserSwitchButton(false)
+    , m_abortConfirm(false)
     , m_isLockNoPassword(false)
+    , m_isBlackMode(false)
+    , m_isHibernateMode(false)
+    , m_allowShowCustomUser(false)
     , m_SEOpen(false)
     , m_appType(AuthCommon::None)
     , m_currentUser(nullptr)
     , m_powerAction(PowerAction::RequireNormal)
     , m_currentModeState(ModeStatus::NoStatus)
+    , m_authProperty {false, false, Unavailable, AuthCommon::None, AuthCommon::None, 0, "", "", ""}
     , m_users(new QMap<QString, std::shared_ptr<User>>())
     , m_loginedUsers(new QMap<QString, std::shared_ptr<User>>())
 {
@@ -408,12 +415,10 @@ void SessionBaseModel::updateLastLogoutUser(const uid_t uid)
 {
     qDebug("update logout user, id: %d", uid);
 
-    for (const std::shared_ptr<User> &user : m_users->values()) {
-        if (uid == user->uid()) {
-            updateLastLogoutUser(user);
-            break;
-        }
-    }
+    auto it = std::find_if(m_users->values().begin(), m_users->values().end(), [uid](const std::shared_ptr<User> &user) {
+        return user->uid() == uid;
+    });
+    updateLastLogoutUser(it.i->t());
 }
 
 /**
@@ -616,16 +621,16 @@ void SessionBaseModel::updateFactorsInfo(const MFAInfoList &infoList)
  * @param state
  * @param result
  */
-void SessionBaseModel::updateAuthState(const int type, const int state, const QString &result)
+void SessionBaseModel::updateAuthState(const int type, const int state, const QString &message)
 {
-    qDebug("update auth state, type: %d, state: %d, result: %s", type, state, qPrintable(result));
+    qDebug("update auth state, type: %d, state: %d, result: %s", type, state, qPrintable(message));
 
     switch (m_authProperty.FrameworkState) {
     case Available:
-        emit authStateChanged(type, state, result);
+        emit authStateChanged(type, state, message);
         break;
     default:
-        emit authStateChanged(AT_PAM, state, result);
+        emit authStateChanged(AT_PAM, state, message);
         break;
     }
 }

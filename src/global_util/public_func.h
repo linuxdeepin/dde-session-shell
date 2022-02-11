@@ -82,7 +82,7 @@ QVariant getDConfigValue(const QString &configFileName, const QString &key, cons
 /**
  * @brief 设置app类型，让程序知道应该获取哪个配置文件
  */
-void setAppType(int appType);
+void setAppType(int type);
 
 /**
  * @brief 获取默认的配置文件名称

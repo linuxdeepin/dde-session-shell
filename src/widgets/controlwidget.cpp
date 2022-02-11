@@ -49,6 +49,24 @@
 
 using namespace dss;
 
+bool FlotingButton::eventFilter(QObject *watch, QEvent *event)
+{
+    if (watch == this) {
+        if (event->type() == QEvent::MouseButtonRelease) {
+            QMouseEvent *e = static_cast<QMouseEvent *>(event);
+            if (e->button() == Qt::RightButton) {
+                Q_EMIT requestShowMenu();
+            }
+        } else if (event->type() == QEvent::Enter) {
+            Q_EMIT requestShowTips();
+        } else if (event->type() == QEvent::Leave) {
+            Q_EMIT requestHideTips();
+        }
+    }
+
+    return false;
+}
+
 ControlWidget::ControlWidget(const SessionBaseModel *model, QWidget *parent)
     : QWidget(parent)
     , m_contextMenu(new QMenu(this))
@@ -111,7 +129,7 @@ void ControlWidget::initKeyboardLayoutList()
     m_arrowRectWidget->setFocusPolicy(Qt::NoFocus);
 
     QPalette pal = m_arrowRectWidget->palette();
-    pal.setColor(DPalette::Inactive, DPalette::Base, QColor(235, 235, 235, 0.05 * 255));
+    pal.setColor(DPalette::Inactive, DPalette::Base, QColor(235, 235, 235, int(0.05 * 255)));
     setPalette(pal);
 
     m_arrowRectWidget->setContent(m_kbLayoutListView);
@@ -600,14 +618,9 @@ void ControlWidget::keyReleaseEvent(QKeyEvent *event)
         rightKeySwitch();
         break;
     case Qt::Key_Tab:
-        for (const auto btn : m_btnList) {
-            if (btn->hasFocus()) {
-                m_index = m_btnList.indexOf(btn);
-                break;
-            }
-        }
-        break;
-    default:
+        auto it = std::find_if(m_btnList.begin(), m_btnList.end(),
+                               [](DFloatingButton *btn) { return btn->hasFocus(); });
+        m_index = it != m_btnList.end() ? m_btnList.indexOf(it.i->t()) : 0;
         break;
     }
 }

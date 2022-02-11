@@ -56,30 +56,29 @@ User::User(QObject *parent)
 
 User::User(const User &user)
     : QObject(user.parent())
-    , m_limitsInfo(new QMap<int, LimitsInfo>())
+    , m_isAutomaticLogin(user.m_isAutomaticLogin)
+    , m_isLogin(user.m_isLogin)
+    , m_isNoPasswordLogin(user.m_isNoPasswordLogin)
+    , m_isPasswordValid(user.m_isPasswordValid)
+    , m_isUse24HourFormat(user.m_isUse24HourFormat)
+    , m_expiredDayLeft(user.m_expiredDayLeft)
+    , m_expiredState(user.m_expiredState)
+    , m_lastAuthType(0)
+    , m_shortDateFormat(user.m_shortDateFormat)
+    , m_shortTimeFormat(user.m_shortTimeFormat)
+    , m_weekdayFormat(user.m_weekdayFormat)
+    , m_uid(user.m_uid)
+    , m_avatar(user.m_avatar)
+    , m_fullName(user.m_fullName)
+    , m_greeterBackground(user.m_greeterBackground)
+    , m_keyboardLayout(user.m_keyboardLayout)
+    , m_locale(user.m_locale)
+    , m_name(user.m_name)
+    , m_passwordHint(user.m_passwordHint)
+    , m_desktopBackgrounds(user.m_desktopBackgrounds)
+    , m_keyboardLayoutList(user.m_keyboardLayoutList)
+    , m_limitsInfo(new QMap<int, LimitsInfo>(*user.m_limitsInfo))
 {
-    m_isAutomaticLogin = user.m_isAutomaticLogin;
-    m_isLogin = user.m_isLogin;
-    m_isNoPasswordLogin = user.m_isNoPasswordLogin;
-    m_isPasswordValid = user.m_isPasswordValid;
-    m_isUse24HourFormat = user.m_isUse24HourFormat;
-
-    m_expiredDayLeft = user.m_expiredDayLeft;
-    m_expiredState = user.m_expiredState;
-    m_shortDateFormat = user.m_shortDateFormat;
-    m_shortTimeFormat = user.m_shortTimeFormat;
-    m_weekdayFormat = user.m_weekdayFormat;
-
-    m_uid = user.m_uid;
-    m_avatar = user.m_avatar;
-    m_desktopBackgrounds = user.m_desktopBackgrounds;
-    m_fullName = user.m_fullName;
-    m_greeterBackground = user.m_greeterBackground;
-    m_keyboardLayout = user.m_keyboardLayout;
-    m_locale = user.m_locale;
-    m_name = user.m_name;
-    m_keyboardLayoutList = user.m_keyboardLayoutList;
-    *m_limitsInfo = *user.m_limitsInfo;
 }
 
 User::~User()
@@ -228,9 +227,9 @@ NativeUser::NativeUser(const uid_t &uid, QObject *parent)
 
 NativeUser::NativeUser(const NativeUser &user)
     : User(user)
+    , m_path(user.path())
+    , m_userInter(new UserInter("com.deepin.daemon.Accounts", m_path, QDBusConnection::systemBus(), this))
 {
-    m_path = user.m_path;
-    m_userInter = new UserInter("com.deepin.daemon.Accounts", m_path, QDBusConnection::systemBus(), this);
     initConnections();
 }
 

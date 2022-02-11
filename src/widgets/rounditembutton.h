@@ -50,7 +50,7 @@ class RoundItemButton: public QAbstractButton
 public:
     RoundItemButton(QWidget* parent = nullptr);
     RoundItemButton(const QString &text, QWidget* parent = nullptr);
-    ~RoundItemButton();
+    ~RoundItemButton() override;
 
     enum State {Default, Normal, Hover, Checked, Pressed, Disabled};
 
@@ -87,14 +87,15 @@ private:
     void initUI();
     void initConnect();
 
-    QString m_text;
+private:
     State m_state = Normal;
+    int m_penWidth = 1;
+    int m_rectRadius = 8;
 
+    QString m_text;
     QString m_normalIcon;
     QString m_hoverIcon;
     QString m_pressedIcon;
     QString m_currentIcon;
-    int m_penWidth = 1;
-    int m_rectRadius = 8;
 };
 #endif // ROUNDITEMBUTTON

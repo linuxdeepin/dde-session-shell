@@ -58,7 +58,7 @@ UserFrameList::UserFrameList(QWidget *parent)
     std::function<void(QVariant)> function = std::bind(&UserFrameList::onOtherPageChanged, this, std::placeholders::_1);
     int index = m_frameDataBind->registerFunction("UserFrameList", function);
 
-    connect(this, &UserFrameList::destroyed, this, [=] {
+    connect(this, &UserFrameList::destroyed, this, [this, index] {
         m_frameDataBind->unRegisterFunction("UserFrameList", index);
     });
 }

@@ -34,8 +34,9 @@
 class XkbParser: public QObject
 {
 public:
-    XkbParser(QObject* parent = 0);
-    ~XkbParser();
+    XkbParser(QObject *parent = nullptr);
+    ~XkbParser() override;
+
     struct VariantItem {
         QString name;
         QString description;
@@ -49,7 +50,7 @@ public:
 
 public slots:
     QStringList lookUpKeyboardList(QStringList keyboardList_key);
-    QString lookUpKeyboardKey(QString keyboard_value);
+    QString lookUpKeyboardKey(const QString &keyboard_value);
 
 private:
     const char* kBaseFile = "/usr/share/X11/xkb/rules/base.xml";

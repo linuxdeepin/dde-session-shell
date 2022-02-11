@@ -67,8 +67,8 @@ void KBLayoutListView::initData(const QStringList &buttons)
 void KBLayoutListView::initUI()
 {
     QPalette pal = palette();
-    pal.setColor(DPalette::Base, QColor(235, 235, 235, 0.05 * 255));
-    pal.setColor(QPalette::Active, QPalette::Highlight, QColor(235, 235, 235, 0.15 * 255));
+    pal.setColor(DPalette::Base, QColor(235, 235, 235, int(0.05 * 255)));
+    pal.setColor(QPalette::Active, QPalette::Highlight, QColor(235, 235, 235, int(0.15 * 255)));
     setPalette(pal);
 
     setFrameShape(QFrame::NoFrame);

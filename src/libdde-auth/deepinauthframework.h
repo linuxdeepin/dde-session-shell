@@ -38,7 +38,7 @@ public:
     Q_ENUM(AuthQuitFlag)
 
     explicit DeepinAuthFramework(QObject *parent = nullptr);
-    ~DeepinAuthFramework();
+    ~DeepinAuthFramework() override;
 
     /* Compatible with old authentication methods */
     void CreateAuthenticate(const QString &account);

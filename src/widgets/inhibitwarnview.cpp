@@ -33,7 +33,7 @@ const int ButtonIconSize = 28;
 const int ButtonWidth = 200;
 const int ButtonHeight = 64;
 
-InhibitorRow::InhibitorRow(QString who, QString why, const QIcon &icon, QWidget *parent)
+InhibitorRow::InhibitorRow(const QString &who, const QString &why, const QIcon &icon, QWidget *parent)
     : QWidget(parent)
 {
     QHBoxLayout *layout = new QHBoxLayout;
@@ -143,7 +143,7 @@ void InhibitWarnView::setInhibitorList(const QList<InhibitorData> &list)
     for (QWidget *widget : m_inhibitorPtrList) {
         m_inhibitorListLayout->removeWidget(widget);
         widget->deleteLater();
-    };
+    }
     m_inhibitorPtrList.clear();
 
     for (const InhibitorData &inhibitor : list) {

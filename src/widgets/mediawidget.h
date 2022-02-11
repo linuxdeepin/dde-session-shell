@@ -38,7 +38,7 @@ class MediaWidget : public QWidget
 {
     Q_OBJECT
 public:
-    explicit MediaWidget(QWidget *parent = 0);
+    explicit MediaWidget(QWidget *parent = nullptr);
     void initMediaPlayer();
 
 private slots:

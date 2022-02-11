@@ -40,7 +40,7 @@ void VirtualKBInstance::init()
             if (output.isEmpty()) return;
 
             int xid = atoi(output.trimmed().toStdString().c_str());
-            QWindow * w = QWindow::fromWinId(xid);
+            QWindow *w = QWindow::fromWinId(static_cast<WId>(xid));
             m_virtualKBWidget = QWidget::createWindowContainer(w);
             m_virtualKBWidget->setAccessibleName("VirtualKBWidget");
             m_virtualKBWidget->setFixedSize(600, 200);
@@ -83,6 +83,6 @@ VirtualKBInstance::VirtualKBInstance(QObject *parent)
 
 void VirtualKBInstance::onVirtualKBProcessFinished(int exitCode)
 {
-    Q_UNUSED(exitCode);
+    Q_UNUSED(exitCode)
     m_virtualKBProcess = nullptr;
 }

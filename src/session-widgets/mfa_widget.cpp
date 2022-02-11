@@ -34,6 +34,7 @@
 
 MFAWidget::MFAWidget(QWidget *parent)
     : AuthWidget(parent)
+    , m_index(0)
     , m_mainLayout(new QVBoxLayout(this))
 {
     setObjectName(QStringLiteral("MFAWidget"));
@@ -67,7 +68,7 @@ void MFAWidget::initConnections()
     AuthWidget::initConnections();
     connect(m_model, &SessionBaseModel::authTypeChanged, this, &MFAWidget::setAuthType);
     connect(m_model, &SessionBaseModel::authStateChanged, this, &MFAWidget::setAuthState);
-    connect(m_accountEdit, &DLineEditEx::textChanged, this, [this](const QString &value) {
+    connect(m_accountEdit, &DLineEditEx::textChanged, this, [](const QString &value) {
         FrameDataBind::Instance()->updateValue("MFAAccount", value);
     });
 }
@@ -273,7 +274,7 @@ void MFAWidget::initPasswdAuth()
     /* 输入框数据同步 */
     std::function<void(QVariant)> passwordChanged = std::bind(&MFAWidget::syncPassword, this, std::placeholders::_1);
     m_registerFunctions["MFPasswordAuth"] = FrameDataBind::Instance()->registerFunction("MFPasswordAuth", passwordChanged);
-    connect(m_passwordAuth, &AuthPassword::lineEditTextChanged, this, [this](const QString &value) {
+    connect(m_passwordAuth, &AuthPassword::lineEditTextChanged, this, [](const QString &value) {
         FrameDataBind::Instance()->updateValue("MFPasswordAuth", value);
     });
     FrameDataBind::Instance()->refreshData("MFPasswordAuth");

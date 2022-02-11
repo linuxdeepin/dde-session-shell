@@ -59,7 +59,7 @@ public:
     };
     Q_ENUM(AvatarSize)
 
-    explicit UserAvatar(QWidget *parent = 0, bool deleteable = false);
+    explicit UserAvatar(QWidget *parent = nullptr, bool deleteable = false);
     void setIcon(const QString &iconPath);
     void setAvatarSize(const int size);
     void setDisabled(bool disable);
@@ -81,24 +81,25 @@ public:
     void showButton();
     void hideButton();
     void setColor(QColor color);
+
 signals:
     void mousePress();
     void requestDelete();
     void userAvatarClicked();
     void alphaChanged();
 
-signals:
     void showFinished();
     void hideFinished();
+
 protected:
-    void paintEvent(QPaintEvent *);
+    void paintEvent(QPaintEvent *) override;
 
 private:
     QImage imageToGray(const QImage &image);
     void initDeleteButton();
 
 //    AvatarDeleteButton *m_deleteButton = NULL;
-    QLabel *m_iconLabel = NULL;
+    QLabel *m_iconLabel = nullptr;
     QString m_iconPath = "";
     QColor m_borderColor;
     QColor m_borderSelectedColor;

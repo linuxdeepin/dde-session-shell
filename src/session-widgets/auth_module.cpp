@@ -38,9 +38,11 @@ void LimitsInfo::operator=(const LimitsInfo &info)
 
 AuthModule::AuthModule(const AuthCommon::AuthType type, QWidget *parent)
     : QWidget(parent)
+    , m_inputType(AuthCommon::IT_Default)
     , m_state(AuthCommon::AS_None)
     , m_type(type)
     , m_showPrompt(true)
+    , m_integerMinutes(0)
     , m_limitsInfo(new LimitsInfo())
     , m_aniTimer(new QTimer(this))
     , m_unlockTimer(new QTimer(this))
@@ -73,7 +75,7 @@ void AuthModule::initConnections()
     /* 认证解锁时间 */
     connect(m_unlockTimer, &QTimer::timeout, this, [ this ] {
         updateIntegerMinutes();
-        if (m_integerMinutes <= 0)
+        if (m_integerMinutes == 0)
             m_unlockTimer->stop();
         updateUnlockPrompt();
     });

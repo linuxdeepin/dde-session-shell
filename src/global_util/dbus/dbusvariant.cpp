@@ -54,7 +54,10 @@ const QDBusArgument &operator>>(const QDBusArgument &argument, Inhibit &obj)
     return argument;
 }
 
-UserInfo::UserInfo() {}
+UserInfo::UserInfo()
+    : pid(-1)
+{
+}
 UserInfo::~UserInfo() {}
 
 void UserInfo::registerMetaType()
@@ -107,7 +110,10 @@ const QDBusArgument &operator>>(const QDBusArgument &argument, SeatInfo &obj)
     return argument;
 }
 
-SessionInfo::SessionInfo() {}
+SessionInfo::SessionInfo()
+    : pid(-1)
+{
+}
 SessionInfo::~SessionInfo() {}
 
 void SessionInfo::registerMetaType() {

@@ -182,10 +182,11 @@ static void set_auto_QT_SCALE_FACTOR() {
 }
 
 // 初次启动时，设置一下鼠标的默认位置
-void set_pointer() {
+void set_pointer()
+{
     auto set_position = [ = ] (QPoint p) {
         Display *dpy;
-        dpy = XOpenDisplay(0);
+        dpy = XOpenDisplay(nullptr);
 
         if (!dpy) return;
 

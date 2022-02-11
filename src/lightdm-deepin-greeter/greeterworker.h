@@ -62,7 +62,7 @@ private:
     void doPowerAction(const SessionBaseModel::PowerAction action);
     void setCurrentUser(const std::shared_ptr<User> user);
 
-    void checkDBusServer(bool isvalid);
+    void checkDBusServer(bool isValid);
     void showPrompt(const QString &text, const QLightDM::Greeter::PromptType type);
     void showMessage(const QString &text, const QLightDM::Greeter::MessageType type);
     void authenticationComplete();

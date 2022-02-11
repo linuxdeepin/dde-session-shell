@@ -15,8 +15,8 @@ class AccessibilityCheckerEx : public DAccessibilityChecker
     Q_OBJECT
 public:
     void addIgnoreName(const QString &name);
-    void addIgnoreClasses(const QStringList &names);
-    
+    void addIgnoreClasses(const QStringList &classes);
+
 protected:
     virtual bool isIgnore(Role role, const QWidget *w) override ;
 

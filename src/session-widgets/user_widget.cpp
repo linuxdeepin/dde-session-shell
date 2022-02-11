@@ -32,6 +32,7 @@ const int UserNameHeight = 42;
 UserWidget::UserWidget(QWidget *parent)
     : QWidget(parent)
     , m_isSelected(false)
+    , m_uid(UINT_MAX)
     , m_mainLayout(new QVBoxLayout(this))
     , m_blurEffectWidget(new DBlurEffectWidget(this))
     , m_avatar(new UserAvatar(this))
@@ -199,7 +200,7 @@ void UserWidget::mousePressEvent(QMouseEvent *event)
 void UserWidget::mouseReleaseEvent(QMouseEvent *event)
 {
     // 不再向上传递mouseReleaseEvent信号，避免影响用户列表模式处理点击空白处的逻辑
-    Q_UNUSED(event);
+    Q_UNUSED(event)
 }
 
 void UserWidget::paintEvent(QPaintEvent *event)

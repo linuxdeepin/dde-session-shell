@@ -54,7 +54,7 @@ ShutdownWidget::ShutdownWidget(QWidget *parent)
     std::function<void (QVariant)> function = std::bind(&ShutdownWidget::onOtherPageChanged, this, std::placeholders::_1);
     int index = m_frameDataBind->registerFunction("ShutdownWidget", function);
 
-    connect(this, &ShutdownWidget::destroyed, this, [ = ] {
+    connect(this, &ShutdownWidget::destroyed, this, [this, index] {
         m_frameDataBind->unRegisterFunction("ShutdownWidget", index);
     });
     installEventFilter(this);
@@ -561,6 +561,7 @@ void ShutdownWidget::showEvent(QShowEvent *event)
 
 void ShutdownWidget::updateLocale(std::shared_ptr<User> user)
 {
+    Q_UNUSED(user)
     //只有登陆界面才需要根据系统切换语言
     if(qApp->applicationName() == "dde-lock") return;
 

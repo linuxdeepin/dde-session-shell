@@ -10,7 +10,7 @@ class VirtualKBInstance : public QObject
 public:
     static VirtualKBInstance &Instance();
     QWidget *virtualKBWidget();
-    ~VirtualKBInstance();
+    ~VirtualKBInstance() override;
 
     void init();
     void stopVirtualKBProcess();

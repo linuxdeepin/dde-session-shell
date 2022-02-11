@@ -197,13 +197,8 @@ void WarningContent::beforeInvokeAction(bool needConfirm)
             return;
         }
 
-        bool isAccept = true;
-        for (auto inhib : inhibitors) {
-            if (inhib.mode.compare("block") == 0) {
-                isAccept = false;
-                break;
-            }
-        }
+        bool isAccept = std::any_of(inhibitors.begin(), inhibitors.end(),
+                                    [](const InhibitWarnView::InhibitorData &inhib) { return inhib.mode.compare("block") == 0; });
 
         if (m_powerAction == SessionBaseModel::PowerAction::RequireShutdown) {
             view->setAcceptReason(tr("Shut down"));

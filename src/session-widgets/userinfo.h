@@ -48,6 +48,7 @@ public:
     };
 
     struct LimitsInfo {
+        bool reserved[3];   // 用于内存对齐
         bool locked;        // 认证锁定状态 --- true: 锁定  false: 解锁
         uint maxTries;      // 最大重试次数
         uint numFailures;   // 失败次数，一直累加

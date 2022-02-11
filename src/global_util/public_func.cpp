@@ -84,8 +84,8 @@ QPixmap loadPixmap(const QString &file, const QSize& size)
 bool isDeepinAuth()
 {
     const char* controlId = "com.deepin.dde.auth.control";
-    const char* controlPath = "/com/deepin/dde/auth/control/";
-    if (QGSettings::isSchemaInstalled (controlId)) {
+    if (QGSettings::isSchemaInstalled(controlId)) {
+        const char *controlPath = "/com/deepin/dde/auth/control/";
         QGSettings controlObj(controlId, controlPath);
         const QString &key = "useDeepinAuth";
         bool useDeepinAuth = controlObj.keys().contains(key) && controlObj.get(key).toBool();

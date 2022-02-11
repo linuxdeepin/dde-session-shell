@@ -24,7 +24,7 @@ DCORE_USE_NAMESPACE
 class UserNumlockSettings
 {
 public:
-    UserNumlockSettings(const QString &username)
+    explicit UserNumlockSettings(const QString &username)
         : m_username(username)
         , m_settings(QSettings::UserScope, "deepin", "greeter")
     {

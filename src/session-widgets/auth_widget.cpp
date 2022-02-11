@@ -38,7 +38,6 @@
 const int BlurRadius = 15;
 const int BlurTransparency = 70;
 const int EXPIRED_SPACER_ITEM_HEIGHT = 10;
-const int BLUR_WIDGET_BOTTOM_MARGIN = 10;
 
 const QColor ShutdownColor(QColor(247, 68, 68));
 

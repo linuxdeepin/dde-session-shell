@@ -23,6 +23,7 @@ AuthInterface::AuthInterface(SessionBaseModel *const model, QObject *parent)
     , m_authenticateInter(new Authenticate("com.deepin.daemon.Authenticate", "/com/deepin/daemon/Authenticate", QDBusConnection::systemBus(), this))
     , m_dbusInter(new DBusObjectInter("org.freedesktop.DBus", "/org/freedesktop/DBus", QDBusConnection::systemBus(), this))
     , m_lastLogoutUid(0)
+    , m_currentUserUid(0)
     , m_loginUserList(0)
 {
     if (m_login1Inter->isValid()) {
@@ -31,10 +32,6 @@ AuthInterface::AuthInterface(SessionBaseModel *const model, QObject *parent)
        m_login1SessionSelf->setSync(false);
     } else {
         qWarning() << "m_login1Inter:" << m_login1Inter->lastError().type();
-    }
-
-    if (m_model->appType() != Login && QGSettings::isSchemaInstalled("com.deepin.dde.session-shell")) {
-        m_gsettings = new QGSettings("com.deepin.dde.session-shell", "/com/deepin/dde/session-shell/", this);
     }
 }
 
@@ -133,9 +130,8 @@ void AuthInterface::onLoginUserListChanged(const QString &list)
     m_loginUserList.clear();
 
     std::list<uint> availableUidList;
-    for (std::shared_ptr<User> user : m_model->userList()) {
-        availableUidList.push_back(user->uid());
-    }
+    std::transform(std::begin(m_model->userList()), std::end(m_model->userList()), std::back_inserter(availableUidList),
+                   [](std::shared_ptr<User> user) -> uint { return user->uid(); });
 
     QJsonObject userList = QJsonDocument::fromJson(list.toUtf8()).object();
     for (auto it = userList.constBegin(); it != userList.constEnd(); ++it) {

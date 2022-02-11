@@ -93,7 +93,7 @@ const QString NetworkModule::itemContextMenu() const
 
 void NetworkModule::invokedMenuItem(const QString &menuId, const bool checked) const
 {
-    Q_UNUSED(checked);
+    Q_UNUSED(checked)
 
     if (menuId == "SHIFT") {
         qDebug() << "shift clicked";

@@ -76,7 +76,8 @@ QStringList XkbParser::lookUpKeyboardList(QStringList keyboardList_key) {
 
     return result;
 }
-QString XkbParser::lookUpKeyboardKey(QString keyboard_value) {
+QString XkbParser::lookUpKeyboardKey(const QString &keyboard_value)
+{
     if (KeyboardLayoutList.isEmpty()) {
         parse();
     }

@@ -51,15 +51,15 @@ public:
 
     /* com.deepin.daemon.Authenticate */
     struct AuthProperty {
-        bool FuzzyMFA;                        // Reserved
-        bool MFAFlag = false;                 // 多因子标志位
-        int FrameworkState = Unavailable;     // 认证框架是否可用标志位
-        int AuthType = 0;                     // 账户开启的认证类型
-        int MixAuthFlags;                     // 受支持的认证类型
-        int PINLen = 0;                       // PIN 码的最大长度
-        QString EncryptionType;               // 加密类型
-        QString Prompt;                       // 提示语
-        QString UserName;                     // 账户名
+        bool FuzzyMFA;          // Reserved
+        bool MFAFlag;           // 多因子标志位
+        int FrameworkState;     // 认证框架是否可用标志位
+        int AuthType;           // 账户开启的认证类型
+        int MixAuthFlags;       // 受支持的认证类型
+        int PINLen;             // PIN 码的最大长度
+        QString EncryptionType; // 加密类型
+        QString Prompt;         // 提示语
+        QString UserName;       // 账户名
     };
 
     explicit SessionBaseModel(QObject *parent = nullptr);
@@ -163,7 +163,7 @@ public slots:
     void updateSupportedEncryptionType(const QString &type);
     /* com.deepin.daemon.Authenticate.Session */
     void updateAuthState(const int type, const int state, const QString &message);
-    void updateFactorsInfo(const MFAInfoList &info);
+    void updateFactorsInfo(const MFAInfoList &infoList);
     void updateFuzzyMFA(const bool fuzzMFA);
     void updateMFAFlag(const bool MFAFlag);
     void updatePINLen(const int PINLen);

@@ -43,7 +43,7 @@ private:
 
 private:
     QVBoxLayout *m_mainLayout;
-    dss::module::AuthCallback *m_authCallback;
+    dss::module::AuthCallback m_authCallback;
     dss::module::LoginModuleInterface *m_module;
 };
 
