@@ -588,7 +588,7 @@ void GreeterWorker::showMessage(const QString &text, const QLightDM::Greeter::Me
     qInfo() << "Greeter message:" << text << "type:" << type;
     switch (type) {
     case QLightDM::Greeter::MessageTypeInfo:
-        m_model->updateAuthState(AT_PAM, AS_Success, text);
+        m_model->updateAuthState(AT_PAM, AS_Prompt, text);
         break;
     case QLightDM::Greeter::MessageTypeError:
         m_retryAuth = false;
