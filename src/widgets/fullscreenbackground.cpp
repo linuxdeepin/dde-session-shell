@@ -91,6 +91,13 @@ FullscreenBackground::FullscreenBackground(SessionBaseModel *model, QWidget *par
             }
         });
     }
+
+    connect(qApp, &QGuiApplication::primaryScreenChanged, this, [this](QScreen *screen) {
+        qDebug() << "QGuiApplication::primaryScreenChanged:" << m_screen << screen << m_content;
+        if (m_screen && m_screen == screen && m_content) {
+            m_primaryShowFinished = true;
+        }
+    });
 }
 
 FullscreenBackground::~FullscreenBackground()
