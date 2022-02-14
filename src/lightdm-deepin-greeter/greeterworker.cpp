@@ -322,7 +322,9 @@ void GreeterWorker::setCurrentUser(const std::shared_ptr<User> user)
 void GreeterWorker::switchToUser(std::shared_ptr<User> user)
 {
     if (*user == *m_model->currentUser()) {
-        createAuthentication(user->name());
+        if (!m_model->currentUser()->isNoPasswordLogin()) {
+            createAuthentication(user->name());
+        }
         return;
     }
     qInfo() << "switch user from" << m_account << " to " << user->name() << user->uid() << user->isLogin();
