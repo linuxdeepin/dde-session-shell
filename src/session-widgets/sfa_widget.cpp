@@ -131,7 +131,7 @@ void SFAWidget::setAuthType(const int type)
     if (type & AT_Password) {
         initPasswdAuth();
     } else if (m_passwordAuth) {
-        m_passwordAuth->deleteLater();
+        delete m_passwordAuth;
         m_passwordAuth = nullptr;
         m_authButtons.value(AT_Password)->deleteLater();
         m_authButtons.remove(AT_Password);
@@ -141,7 +141,7 @@ void SFAWidget::setAuthType(const int type)
     if (type & AT_Face) {
         initFaceAuth();
     } else if (m_faceAuth) {
-        m_faceAuth->deleteLater();
+        delete m_faceAuth;
         m_faceAuth = nullptr;
         m_authButtons.value(AT_Face)->deleteLater();
         m_authButtons.remove(AT_Face);
@@ -151,7 +151,7 @@ void SFAWidget::setAuthType(const int type)
     if (type & AT_Iris) {
         initIrisAuth();
     } else if (m_irisAuth) {
-        m_irisAuth->deleteLater();
+        delete m_irisAuth;
         m_irisAuth = nullptr;
         m_authButtons.value(AT_Iris)->deleteLater();
         m_authButtons.remove(AT_Iris);
@@ -161,7 +161,7 @@ void SFAWidget::setAuthType(const int type)
     if (type & AT_Fingerprint) {
         initFingerprintAuth();
     } else if (m_fingerprintAuth) {
-        m_fingerprintAuth->deleteLater();
+        delete m_fingerprintAuth;
         m_fingerprintAuth = nullptr;
         m_authButtons.value(AT_Fingerprint)->deleteLater();
         m_authButtons.remove(AT_Fingerprint);
@@ -171,7 +171,7 @@ void SFAWidget::setAuthType(const int type)
     if (type & AT_Ukey) {
         initUKeyAuth();
     } else if (m_ukeyAuth) {
-        m_ukeyAuth->deleteLater();
+        delete m_ukeyAuth;
         m_ukeyAuth = nullptr;
         m_authButtons.value(AT_Ukey)->deleteLater();
         m_authButtons.remove(AT_Ukey);
@@ -181,7 +181,7 @@ void SFAWidget::setAuthType(const int type)
     if (type & AT_PAM) {
         initSingleAuth();
     } else if (m_singleAuth) {
-        m_singleAuth->deleteLater();
+        delete m_singleAuth;
         m_singleAuth = nullptr;
         m_authButtons.value(AT_PAM)->deleteLater();
         m_authButtons.remove(AT_PAM);
@@ -191,7 +191,7 @@ void SFAWidget::setAuthType(const int type)
     if (dss::module::ModulesLoader::instance().findModulesByType(dss::module::BaseModuleInterface::LoginType).size() > 0) {
         initCustomAuth();
     } else if (m_customAuth) {
-        m_customAuth->deleteLater();
+        delete m_customAuth;
         m_customAuth = nullptr;
         m_authButtons.value(AT_Custom)->deleteLater();
         m_authButtons.remove(AT_Custom);
