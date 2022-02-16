@@ -26,6 +26,7 @@ SessionBaseModel::SessionBaseModel(QObject *parent)
     , m_SEOpen(false)
     , m_appType(AuthCommon::None)
     , m_currentUser(nullptr)
+    , m_lastLogoutUser(nullptr)
     , m_powerAction(PowerAction::RequireNormal)
     , m_currentModeState(ModeStatus::NoStatus)
     , m_authProperty {false, false, Unavailable, AuthCommon::None, AuthCommon::None, 0, "", "", ""}
@@ -413,12 +414,13 @@ void SessionBaseModel::updateUserList(const QStringList &list)
  */
 void SessionBaseModel::updateLastLogoutUser(const uid_t uid)
 {
-    qDebug("update logout user, id: %d", uid);
-
-    auto it = std::find_if(m_users->values().begin(), m_users->values().end(), [uid](const std::shared_ptr<User> &user) {
-        return user->uid() == uid;
+    qDebug() << "SessionBaseModel::updateLastLogoutUser:" << uid;
+    auto it = std::find_if(m_users->values().begin(), m_users->values().end(), [uid](std::shared_ptr<User> &user) {
+        return user.get() && user->uid() == uid;
     });
-    updateLastLogoutUser(it.i->t());
+    if (it != m_users->values().end()) {
+        updateLastLogoutUser(it.i->t());
+    }
 }
 
 /**
@@ -428,11 +430,11 @@ void SessionBaseModel::updateLastLogoutUser(const uid_t uid)
  */
 void SessionBaseModel::updateLastLogoutUser(const std::shared_ptr<User> lastLogoutUser)
 {
-    qDebug("update logout user, name: %s, id: %d", qPrintable(lastLogoutUser->name()), lastLogoutUser->uid());
-
-    if (m_lastLogoutUser && m_lastLogoutUser == lastLogoutUser) {
+    if (!lastLogoutUser.get() || m_lastLogoutUser == lastLogoutUser) {
         return;
     }
+    qInfo() << "last logout user:" << lastLogoutUser->name() << lastLogoutUser->uid();
+
     m_lastLogoutUser = lastLogoutUser;
 }
 

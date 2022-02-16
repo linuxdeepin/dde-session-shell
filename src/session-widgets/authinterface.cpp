@@ -198,10 +198,8 @@ QVariant AuthInterface::getGSettings(const QString& node, const QString& key)
 
 bool AuthInterface::isLogined(uint uid)
 {
-    auto isLogind = std::find_if(m_loginUserList.begin(), m_loginUserList.end(),
-                                 [=] (uint UID) { return uid == UID; });
-
-    return isLogind != m_loginUserList.end();
+    return std::any_of(m_loginUserList.begin(), m_loginUserList.end(),
+                       [uid](const uint UID) { return UID == uid; });
 }
 
 bool AuthInterface::isDeepin()
