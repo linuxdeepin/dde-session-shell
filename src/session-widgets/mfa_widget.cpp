@@ -245,6 +245,7 @@ void MFAWidget::initPasswdAuth()
 {
     if (m_passwordAuth) {
         m_passwordAuth->reset();
+        m_mainLayout->insertWidget(m_index, m_passwordAuth);
         return;
     }
     m_passwordAuth = new AuthPassword(this);
@@ -289,6 +290,7 @@ void MFAWidget::initFingerprintAuth()
 {
     if (m_fingerprintAuth) {
         m_fingerprintAuth->reset();
+        m_mainLayout->insertWidget(m_index, m_fingerprintAuth);
         return;
     }
     m_fingerprintAuth = new AuthFingerprint(this);
@@ -310,6 +312,7 @@ void MFAWidget::initUKeyAuth()
 {
     if (m_ukeyAuth) {
         m_ukeyAuth->reset();
+        m_mainLayout->insertWidget(m_index, m_ukeyAuth);
         return;
     }
     m_ukeyAuth = new AuthUKey(this);
@@ -356,6 +359,7 @@ void MFAWidget::initFaceAuth()
 {
     if (m_faceAuth) {
         m_faceAuth->reset();
+        m_mainLayout->insertWidget(m_index, m_faceAuth);
         return;
     }
     m_faceAuth = new AuthFace(this);
@@ -377,6 +381,7 @@ void MFAWidget::initIrisAuth()
 {
     if (m_irisAuth) {
         m_irisAuth->reset();
+        m_mainLayout->insertWidget(m_index, m_irisAuth);
         return;
     }
     m_irisAuth = new AuthIris(this);
