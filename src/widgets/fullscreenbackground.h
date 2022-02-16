@@ -35,6 +35,7 @@ Q_DECLARE_LOGGING_CATEGORY(DDE_SS)
 
 using ImageEffectInter = com::deepin::daemon::ImageEffect;
 
+class BlackWidget;
 class SessionBaseModel;
 class FullscreenBackground : public QWidget
 {
@@ -43,7 +44,7 @@ class FullscreenBackground : public QWidget
 
 public:
     explicit FullscreenBackground(SessionBaseModel *model, QWidget *parent = nullptr);
-    ~FullscreenBackground();
+    ~FullscreenBackground() override;
 
     bool contentVisible() const;
     void setEnterEnable(bool enable);
@@ -53,7 +54,6 @@ public slots:
     void updateBlurBackground(const QString &path);
     void setScreen(QScreen *screen, bool isVisible = true);
     void setContentVisible(bool visible);
-    void setIsBlackMode(bool isBlack);
     void setIsHibernateMode();
 
 signals:
@@ -98,12 +98,12 @@ private:
     QScreen *m_screen = nullptr;
     SessionBaseModel *m_model = nullptr;
     bool m_primaryShowFinished = false;
-    bool m_isBlackMode = false;
     bool m_enableEnterEvent = true;
-    QCursor m_originalCursor;
     bool m_useSolidBackground;
     bool m_fadeOutAniFinished;
     bool m_enableAnimation;
+
+    BlackWidget *m_blackWidget;
 };
 
 #endif // FULLSCREENBACKGROUND_H

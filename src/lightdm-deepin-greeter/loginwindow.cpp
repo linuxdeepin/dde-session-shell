@@ -74,7 +74,6 @@ LoginWindow::LoginWindow(SessionBaseModel *const model, QWidget *parent)
             m_loginContent->hide();
         emit authFinished();
     });
-    connect(model, &SessionBaseModel::blackModeChanged, this, &FullscreenBackground::setIsBlackMode);
 }
 
 void LoginWindow::showEvent(QShowEvent *event)

@@ -90,7 +90,6 @@ LockFrame::LockFrame(SessionBaseModel *const model, QWidget *parent)
         emit requestEnableHotzone(true);
         emit authFinished();
     });
-    connect(model, &SessionBaseModel::blackModeChanged, this, &FullscreenBackground::setIsBlackMode);
     connect(model, &SessionBaseModel::showUserList, this, &LockFrame::showUserList);
     connect(model, &SessionBaseModel::showLockScreen, this, &LockFrame::showLockScreen);
     connect(model, &SessionBaseModel::showShutdown, this, &LockFrame::showShutdown);

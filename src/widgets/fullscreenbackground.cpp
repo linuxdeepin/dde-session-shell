@@ -24,8 +24,10 @@
  */
 
 #include "fullscreenbackground.h"
-#include "sessionbasemodel.h"
+
+#include "black_widget.h"
 #include "public_func.h"
+#include "sessionbasemodel.h"
 
 #include <DGuiApplicationHelper>
 
@@ -56,10 +58,10 @@ FullscreenBackground::FullscreenBackground(SessionBaseModel *model, QWidget *par
     , m_fadeOutAni(nullptr)
     , m_imageEffectInter(new ImageEffectInter("com.deepin.daemon.ImageEffect", "/com/deepin/daemon/ImageEffect", QDBusConnection::systemBus(), this))
     , m_model(model)
-    , m_originalCursor(cursor())
     , m_useSolidBackground(false)
     , m_fadeOutAniFinished(false)
     , m_enableAnimation(true)
+    , m_blackWidget(new BlackWidget(this))
 {
 #ifndef QT_DEBUG
     if (!qEnvironmentVariable("XDG_SESSION_TYPE").contains("wayland")) {
@@ -98,6 +100,9 @@ FullscreenBackground::FullscreenBackground(SessionBaseModel *model, QWidget *par
             m_primaryShowFinished = true;
         }
     });
+
+    m_blackWidget->setBlackMode(m_model->isBlackMode());
+    connect(m_model, &SessionBaseModel::blackModeChanged, m_blackWidget, &BlackWidget::setBlackMode);
 }
 
 FullscreenBackground::~FullscreenBackground()
@@ -161,7 +166,7 @@ void FullscreenBackground::setEnterEnable(bool enable)
 void FullscreenBackground::setScreen(QScreen *screen, bool isVisible)
 {
     QScreen *primary_screen = QGuiApplication::primaryScreen();
-    if (primary_screen == screen && !m_isBlackMode && isVisible) {
+    if (primary_screen == screen && isVisible) {
         m_content->show();
         m_primaryShowFinished = true;
         emit contentVisibleChanged(true);
@@ -186,9 +191,9 @@ void FullscreenBackground::setContentVisible(bool visible)
     if (!isVisible() && !visible)
         return;
 
-    m_content->setVisible(visible && !m_isBlackMode);
+    m_content->setVisible(visible);
 
-    emit contentVisibleChanged(visible && !m_isBlackMode);
+    emit contentVisibleChanged(visible);
 }
 
 void FullscreenBackground::setContent(QWidget *const w)
@@ -199,25 +204,6 @@ void FullscreenBackground::setContent(QWidget *const w)
     m_content->move(0, 0);
     m_content->setFocus();
     setFocusProxy(m_content);
-}
-
-void FullscreenBackground::setIsBlackMode(bool isBlack)
-{
-    if (m_isBlackMode == isBlack)
-        return;
-
-    //黑屏的同时隐藏鼠标,唤醒后显示鼠标
-    setCursor(isBlack ? Qt::BlankCursor : m_originalCursor);
-
-    //黑屏鼠标在多屏间移动时不显示界面
-    m_enableEnterEvent = !isBlack;
-    m_isBlackMode = isBlack;
-
-    m_content->setVisible(!m_isBlackMode);
-    emit contentVisibleChanged(!m_isBlackMode);
-
-    update();
-    raise();
 }
 
 void FullscreenBackground::setIsHibernateMode()
@@ -249,9 +235,7 @@ void FullscreenBackground::paintEvent(QPaintEvent *e)
     const QPixmap &blurBackground = getPixmap(PIXMAP_TYPE_BLUR_BACKGROUND);
 
     const QRect trueRect(QPoint(0, 0), QSize(size() * devicePixelRatioF()));
-    if (m_isBlackMode) {
-        painter.fillRect(trueRect, Qt::black);
-    } else if (m_useSolidBackground) {
+    if (m_useSolidBackground) {
         painter.fillRect(trueRect, QColor(DDESESSIONCC::SOLID_BACKGROUND_COLOR));
     } else {
         if (m_fadeOutAni) {
@@ -321,6 +305,7 @@ void FullscreenBackground::leaveEvent(QEvent *event)
 
 void FullscreenBackground::resizeEvent(QResizeEvent *event)
 {
+    m_blackWidget->resize(size());
     m_content->resize(size());
     if (isPicture(backgroundPath) && !contains(PIXMAP_TYPE_BACKGROUND))
         addPixmap(pixmapHandle(QPixmap(backgroundPath)), PIXMAP_TYPE_BACKGROUND);
@@ -338,12 +323,12 @@ void FullscreenBackground::resizeEvent(QResizeEvent *event)
  */
 void FullscreenBackground::mouseMoveEvent(QMouseEvent *event)
 {
-    if (!m_isBlackMode && m_model->visible()) {
+    if (m_model->visible()) {
         m_content->show();
         emit contentVisibleChanged(true);
     }
 
-    return QWidget::mouseMoveEvent(event);
+    QWidget::mouseMoveEvent(event);
 }
 
 void FullscreenBackground::keyPressEvent(QKeyEvent *e)
