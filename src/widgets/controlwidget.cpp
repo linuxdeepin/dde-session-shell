@@ -59,7 +59,7 @@ bool FlotingButton::eventFilter(QObject *watch, QEvent *event)
             }
         } else if (event->type() == QEvent::Enter) {
             Q_EMIT requestShowTips();
-        } else if (event->type() == QEvent::Leave) {
+        } else if (event->type() == QEvent::Leave || event->type() == QEvent::MouseButtonPress) {
             Q_EMIT requestHideTips();
         }
     }
