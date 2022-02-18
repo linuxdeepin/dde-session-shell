@@ -415,10 +415,11 @@ void SessionBaseModel::updateUserList(const QStringList &list)
 void SessionBaseModel::updateLastLogoutUser(const uid_t uid)
 {
     qDebug() << "SessionBaseModel::updateLastLogoutUser:" << uid;
-    auto it = std::find_if(m_users->values().begin(), m_users->values().end(), [uid](std::shared_ptr<User> &user) {
-        return user.get() && user->uid() == uid;
+    QList<std::shared_ptr<User>> userList = m_users->values();
+    auto it = std::find_if(userList.begin(), userList.end(), [uid](std::shared_ptr<User> &user) {
+        return user->uid() == uid;
     });
-    if (it != m_users->values().end()) {
+    if (it != userList.end()) {
         updateLastLogoutUser(it.i->t());
     }
 }

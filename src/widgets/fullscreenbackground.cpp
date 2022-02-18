@@ -420,6 +420,7 @@ void FullscreenBackground::updateScreen(QScreen *screen)
 
 void FullscreenBackground::updateGeometry()
 {
+    qInfo() << "set background geometry:" << m_screen << m_screen->geometry();
     setGeometry(m_screen->geometry());
 }
 
