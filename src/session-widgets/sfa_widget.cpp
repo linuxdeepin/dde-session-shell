@@ -605,6 +605,7 @@ void SFAWidget::initFaceAuth()
         checkAuthResult(AT_Face, authState);
     });
     connect(m_lockButton, &QPushButton::clicked, this, [this] {
+        if (m_faceAuth == nullptr) return;
         if (m_faceAuth->authState() == AS_Success) {
             m_faceAuth->setAuthState(AS_Ended, "Ended");
             emit authFinished();
@@ -666,6 +667,7 @@ void SFAWidget::initIrisAuth()
         checkAuthResult(AT_Iris, authState);
     });
     connect(m_lockButton, &QPushButton::clicked, this, [this] {
+        if (m_irisAuth == nullptr) return;
         if (m_irisAuth->authState() == AS_Success) {
             m_irisAuth->setAuthState(AS_Ended, "Ended");
             emit authFinished();
