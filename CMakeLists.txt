@@ -209,6 +209,13 @@ target_include_directories(lightdm-deepin-greeter PUBLIC
 target_compile_definitions(lightdm-deepin-greeter
     PRIVATE ENABLE_SESSION
 )
+
+if (WAIT_DEEPIN_ACCOUNTS_SERVICE)
+    target_compile_definitions(lightdm-deepin-greeter
+        PUBLIC ENABLE_WAITING_ACCOUNTS_SERVICE
+    )
+endif()
+
 target_link_libraries(lightdm-deepin-greeter PRIVATE
     ${Qt_LIBS}
     ${PAM_LIBRARIES}

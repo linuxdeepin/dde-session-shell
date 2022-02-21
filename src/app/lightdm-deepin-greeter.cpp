@@ -264,21 +264,24 @@ int main(int argc, char* argv[])
     QDBusConnectionInterface *interface = QDBusConnection::systemBus().interface();
     if (!interface->isServiceRegistered(serviceName)) {
         qWarning() << "accounts service is not registered wait...";
-        QEventLoop eventLoop;
 
         QDBusServiceWatcher *serviceWatcher = new QDBusServiceWatcher(serviceName, QDBusConnection::systemBus());
-        QObject::connect(serviceWatcher, &QDBusServiceWatcher::serviceRegistered, &eventLoop, &QEventLoop::quit);
         QObject::connect(serviceWatcher, &QDBusServiceWatcher::serviceUnregistered, [ = ] (const QString &service) {
             if (service == serviceName) {
                 qCritical() << "ERROR, accounts service unregistered, what should I do?";
             }
         });
 
+#ifdef ENABLE_WAITING_ACCOUNTS_SERVICE
+        qDebug() << "waiting for deepin accounts service";
+        QEventLoop eventLoop;
+        QObject::connect(serviceWatcher, &QDBusServiceWatcher::serviceRegistered, &eventLoop, &QEventLoop::quit);
 #ifdef  QT_DEBUG
         QTimer::singleShot(10000, &eventLoop, &QEventLoop::quit);
 #endif
         eventLoop.exec();
-        qDebug() << "service OK!";
+        qDebug() << "service registered!";
+#endif
     }
 
     SessionBaseModel *model = new SessionBaseModel();
