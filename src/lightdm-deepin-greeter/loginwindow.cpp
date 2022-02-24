@@ -48,11 +48,10 @@ LoginWindow::LoginWindow(SessionBaseModel *const model, QWidget *parent)
 #endif
     });
 
-    connect(model, &SessionBaseModel::authFinished, this, [ = ](bool successd) {
-        setEnterEnable(!successd);
-        if (successd) {
-            m_loginContent->setVisible(!successd);
-        }
+    connect(model, &SessionBaseModel::authFinished, this, [ = ](bool successful) {
+        setEnterEnable(!successful);
+        if (successful)
+            m_loginContent->setVisible(false);
 
 #ifdef DISABLE_LOGIN_ANI
         // 在认证成功以后会通过更改背景来实现登录动画，但是禁用登录动画的情况下，会立即调用startSession，
@@ -68,12 +67,7 @@ LoginWindow::LoginWindow(SessionBaseModel *const model, QWidget *parent)
     connect(m_loginContent, &LockContent::requestStartAuthentication, this, &LoginWindow::requestStartAuthentication);
     connect(m_loginContent, &LockContent::sendTokenToAuth, this, &LoginWindow::sendTokenToAuth);
     connect(m_loginContent, &LockContent::requestEndAuthentication, this, &LoginWindow::requestEndAuthentication);
-    connect(m_loginContent, &LockContent::authFinished, this, [this]{
-        setEnterEnable(true);
-        if (m_model->currentUser()->expiredState() != User::ExpiredAlready)
-            m_loginContent->hide();
-        emit authFinished();
-    });
+    connect(m_loginContent, &LockContent::authFinished, this, &LoginWindow::authFinished);
 }
 
 void LoginWindow::showEvent(QShowEvent *event)
