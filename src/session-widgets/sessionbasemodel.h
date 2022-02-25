@@ -132,6 +132,8 @@ public:
     inline const AuthProperty &getAuthProperty() const { return m_authProperty; }
     void setAuthType(const int type);
 
+    std::shared_ptr<User> json2User(const QString &userJson);
+
 signals:
     /* com.deepin.daemon.Accounts */
     void currentUserChanged(const std::shared_ptr<User>);

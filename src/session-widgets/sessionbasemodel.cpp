@@ -328,6 +328,36 @@ void SessionBaseModel::removeUser(const std::shared_ptr<User> user)
 }
 
 /**
+ * @brief json数据转成user对象
+ *
+ * @param userJson
+ */
+std::shared_ptr<User> SessionBaseModel::json2User(const QString &userJson)
+{
+    qDebug("user json data: %s", qPrintable(userJson));
+
+    std::shared_ptr<User> user_ptr;
+    QJsonParseError jsonParseError;
+    const QJsonDocument userDoc = QJsonDocument::fromJson(userJson.toUtf8(), &jsonParseError);
+    if (jsonParseError.error != QJsonParseError::NoError || userDoc.isEmpty()) {
+        qWarning("failed to obtain current user information from LockService!");
+        return user_ptr;
+    }
+
+    const QJsonObject userObj = userDoc.object();
+    const QString &name = userObj["Name"].toString();
+    user_ptr = findUserByName(name);
+    if (name.isEmpty() || user_ptr == nullptr) {
+        const uid_t uid = static_cast<uid_t>(userObj["Uid"].toInt());
+        user_ptr = findUserByUid(uid);
+    }
+    if (user_ptr)
+        user_ptr->setLastAuthType(userObj["AuthType"].toInt());
+
+    return user_ptr;
+}
+
+/**
  * @brief 保存当前用户信息
  *
  * @param userJson
@@ -336,28 +366,10 @@ void SessionBaseModel::updateCurrentUser(const QString &userJson)
 {
     qDebug("update current user, data: %s", qPrintable(userJson));
 
-    std::shared_ptr<User> user_ptr;
-    QJsonParseError jsonParseError;
-    const QJsonDocument userDoc = QJsonDocument::fromJson(userJson.toUtf8(), &jsonParseError);
-    if (jsonParseError.error != QJsonParseError::NoError || userDoc.isEmpty()) {
-        qWarning("failed to obtain current user information from LockService!");
+    std::shared_ptr<User> user_ptr = json2User(userJson);
+    if (!user_ptr)
         user_ptr = m_lastLogoutUser ? m_lastLogoutUser : m_users->first();
-    } else {
-        const QJsonObject userObj = userDoc.object();
-        const QString &name = userObj["Name"].toString();
-        user_ptr = findUserByName(name);
-        if (name.isEmpty() || user_ptr == nullptr) {
-            const uid_t uid = static_cast<uid_t>(userObj["Uid"].toInt());
-            user_ptr = findUserByUid(uid);
-        }
-        if (user_ptr == nullptr) {
-            qWarning("failed to find user!");
-            user_ptr = m_lastLogoutUser ? m_lastLogoutUser : m_users->first();
-        }
-        if (user_ptr) {
-            user_ptr->setLastAuthType(userObj["AuthType"].toInt());
-        }
-    }
+
     updateCurrentUser(user_ptr);
 }
 

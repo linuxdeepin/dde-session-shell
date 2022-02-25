@@ -173,7 +173,18 @@ void GreeterWorker::initConnections()
     /* com.deepin.dde.LockService */
     connect(m_lockInter, &DBusLockService::UserChanged, this, [=](const QString &json) {
         qDebug() << "DBusLockService::UserChanged:" << json;
+        // 如果是已登录用户则返回，否则已登录用户和未登录用户来回切换时会造成用户信息错误
+        std::shared_ptr<User> user_ptr = m_model->json2User(json);
+        if (!user_ptr || user_ptr->isLogin())
+            return;
+
         m_resetSessionTimer->stop();
+        m_model->updateCurrentUser(user_ptr);
+        const QString &account = user_ptr->name();
+        if (user_ptr.get()->isNoPasswordLogin()) {
+            emit m_model->authTypeChanged(AT_None);
+            m_account = account;
+        }
         QTimer::singleShot(100, this, [ = ] {
             m_model->setCurrentModeState(SessionBaseModel::ModeStatus::PasswordMode);
         });
