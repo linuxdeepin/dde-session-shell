@@ -450,3 +450,24 @@ void MFAWidget::updateFocusPosition()
     }
     setFocus();
 }
+
+/**
+ * @brief 计算需要增加的顶部间隔(加在用户头像的上方)，以实现用户头像到屏幕顶端的距离为屏幕高度的35%
+ */
+int MFAWidget::getTopSpacing() const
+{
+    const int calcTopHeight = static_cast<int>(topLevelWidget()->geometry().height() * AUTH_WIDGET_TOP_SPACING_PERCENT);
+    // 验证类型数量*高度
+    const int authWidgetHeight = (m_index - 2) * 47 + MIN_AUTH_WIDGET_HEIGHT;
+
+    // 当分辨率过低时，如果仍然保持用户头像到屏幕顶端的距离为屏幕高度的35%，那么验证窗口整体时偏下的。
+    // 计算当验证窗口居中时距离屏幕顶端的高度，与屏幕高度*0.35对比取较小值。
+    const int centerTop = static_cast<int>((topLevelWidget()->geometry().height() - authWidgetHeight) / 2);
+    const int topHeight = qMin(calcTopHeight, centerTop);
+
+    // 需要额外增加的顶部间隔高度 = 屏幕高度*0.35 - 验证窗口高度 - 时间控件高度 - 布局间隔
+    const int deltaY = topHeight - calcCurrentHeight(LOCK_CONTENT_TOP_WIDGET_HEIGHT)
+            - calcCurrentHeight(LOCK_CONTENT_CENTER_LAYOUT_MARGIN);
+
+    return qMax(15, deltaY);
+}

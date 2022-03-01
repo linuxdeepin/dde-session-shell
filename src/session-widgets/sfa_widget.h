@@ -59,6 +59,9 @@ public:
 public slots:
     void onRetryButtonVisibleChanged(bool visible);
 
+protected:
+    void resizeEvent(QResizeEvent *event) Q_DECL_OVERRIDE;
+
 private:
     void initUI();
     void initConnections();
@@ -76,6 +79,7 @@ private:
     void syncAuthType(const QVariant &value);
     void replaceWidget(AuthModule *authModule);
     void setBioAuthStateVisible(AuthModule *authModule, bool visible);
+    void updateSpaceItem();
 
 private:
     QVBoxLayout *m_mainLayout;
@@ -86,7 +90,8 @@ private:
     QMap<int, DButtonBoxButton *> m_authButtons;
     DFloatingButton *m_retryButton;
     QSpacerItem *m_bioAuthStatePlaceHolder;
-    QSpacerItem *m_chooseAuthButtonBoxPlaceHolder;
+    QSpacerItem *m_bioBottomSpacingHolder;
+    QSpacerItem *m_authTypeBottomSpacingHolder;
 };
 
 #endif // SFAWIDGET_H

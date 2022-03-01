@@ -49,6 +49,8 @@ static const int KEYBOARDLAYOUT_WIDTH = 200;
 
 static const int CapslockWarningWidth = 23;
 static const int CapslockWarningRightMargin = 8;
+static const int BASE_SCREEN_HEIGHT = 1080;
+static const int MIN_AUTH_WIDGET_HEIGHT = 276; // 密码验证时整个登录控件的大小，默认为最小高度（不考虑无密码登录的情况，稍许影响）
 
 const QStringList session_ui_configs {
     "/etc/lightdm/lightdm-deepin-greeter.conf",

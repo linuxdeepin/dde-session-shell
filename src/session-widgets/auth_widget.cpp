@@ -494,7 +494,14 @@ void AuthWidget::showEvent(QShowEvent *event)
 int AuthWidget::getTopSpacing() const
 {
     const int topHeight = static_cast<int>(topLevelWidget()->geometry().height() * AUTH_WIDGET_TOP_SPACING_PERCENT);
-    const int deltaY = topHeight - (LOCK_CONTENT_TOP_WIDGET_HEIGHT + LOCK_CONTENT_CENTER_LAYOUT_MARGIN);
+    const int deltaY = topHeight - calcCurrentHeight(LOCK_CONTENT_TOP_WIDGET_HEIGHT) 
+            - calcCurrentHeight(LOCK_CONTENT_CENTER_LAYOUT_MARGIN);
 
-    return qMax(0, deltaY);
+    return qMax(15, deltaY);
+}
+
+int AuthWidget::calcCurrentHeight(const int height) const
+{
+    const int h = static_cast<int>(((double) height / (double) BASE_SCREEN_HEIGHT) * topLevelWidget()->geometry().height());
+    return qMin(h, height);
 }

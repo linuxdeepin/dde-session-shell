@@ -71,6 +71,7 @@ signals:
     void sendTokenToAuth(const QString &account, const int authType, const QString &token);
     void requestEndAuthentication(const QString &account, const int authType);
     void authFinished();
+    void updateParentLayout();
 
 protected:
     void resizeEvent(QResizeEvent *event) override;
@@ -99,6 +100,8 @@ protected:
     void syncAccount(const QVariant &value);
     void syncPassword(const QVariant &value);
     void syncUKey(const QVariant &value);
+    int calcCurrentHeight(const int height) const;
+    int getAuthWidgetHeight();
 
 protected:
     const SessionBaseModel *m_model;

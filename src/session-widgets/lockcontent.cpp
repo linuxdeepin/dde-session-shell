@@ -191,6 +191,9 @@ void LockContent::initSFAWidget()
     connect(m_sfaWidget, &SFAWidget::requestEndAuthentication, this, &LockContent::requestEndAuthentication);
     connect(m_sfaWidget, &SFAWidget::requestCheckAccount, this, &LockContent::requestCheckAccount);
     connect(m_sfaWidget, &SFAWidget::authFinished, this, &LockContent::authFinished);
+    connect(m_sfaWidget, &SFAWidget::updateParentLayout, this, [this] {
+        m_centerSpacerItem->changeSize(0, m_sfaWidget->getTopSpacing());
+    });
 }
 
 /**

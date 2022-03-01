@@ -99,7 +99,7 @@ void SessionBaseWindow::initUI()
     m_centerTopFrame = new QFrame;
     m_centerTopFrame->setAccessibleName("CenterTopFrame");
     m_centerTopFrame->setLayout(m_centerTopLayout);
-    m_centerTopFrame->setFixedHeight(LOCK_CONTENT_TOP_WIDGET_HEIGHT);
+    m_centerTopFrame->setFixedHeight(calcCurrentHeight(LOCK_CONTENT_TOP_WIDGET_HEIGHT));
     m_centerTopFrame->setAutoFillBackground(false);
 
     m_centerLayout = new QHBoxLayout;
@@ -142,7 +142,8 @@ void SessionBaseWindow::initUI()
     m_bottomFrame->setAutoFillBackground(false);
 
     m_mainLayout = new QVBoxLayout;
-    m_mainLayout->setContentsMargins(0, LOCK_CONTENT_CENTER_LAYOUT_MARGIN, 0, LOCK_CONTENT_CENTER_LAYOUT_MARGIN);
+    const int margin = calcCurrentHeight(LOCK_CONTENT_CENTER_LAYOUT_MARGIN);
+    m_mainLayout->setContentsMargins(0, margin, 0, margin);
     m_mainLayout->setSpacing(0);
     m_mainLayout->addWidget(m_centerTopFrame);
     m_mainLayout->addWidget(m_centerFrame);
@@ -169,6 +170,10 @@ QSize SessionBaseWindow::getCenterContentSize()
 
 void SessionBaseWindow::resizeEvent(QResizeEvent *event)
 {
+    const int margin = calcCurrentHeight(LOCK_CONTENT_CENTER_LAYOUT_MARGIN);
+    m_mainLayout->setContentsMargins(0, margin, 0, margin);
+    m_centerTopFrame->setFixedHeight(calcCurrentHeight(LOCK_CONTENT_TOP_WIDGET_HEIGHT));
+
     QFrame::resizeEvent(event);
 }
 
@@ -180,4 +185,10 @@ void SessionBaseWindow::setTopFrameVisible(bool visible)
 void SessionBaseWindow::setBottomFrameVisible(bool visible)
 {
     m_bottomFrame->setVisible(visible);
+}
+
+int SessionBaseWindow::calcCurrentHeight(const int height)
+{
+    int h = static_cast<int>(((double) height / (double) BASE_SCREEN_HEIGHT) * topLevelWidget()->geometry().height());
+    return qMin(h, height);
 }

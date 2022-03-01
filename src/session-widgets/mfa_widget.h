@@ -37,6 +37,7 @@ public:
     void setAuthType(const int type) override;
     void setAuthState(const int type, const int state, const QString &message) override;
     void autoUnlock();
+    int getTopSpacing() const override;
 
 private:
     void initUI();
