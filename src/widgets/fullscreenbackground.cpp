@@ -117,7 +117,7 @@ void FullscreenBackground::updateBackground(const QString &path)
 
     if (isPicture(path)) {
         // 动画播放完毕不再需要清晰的背景图片
-        if (!m_fadeOutAniFinished) {
+        if (!m_fadeOutAniFinished && !(backgroundPath == path && contains(PIXMAP_TYPE_BACKGROUND))) {
             backgroundPath = path;
             addPixmap(pixmapHandle(QPixmap(path)), PIXMAP_TYPE_BACKGROUND);
         }
@@ -136,11 +136,16 @@ void FullscreenBackground::updateBlurBackground(const QString &path)
         const QDBusPendingReply<QString> reply = *call;
         if (!reply.isError()) {
             QString blurPath = reply.value();
+
             if (!isPicture(blurPath)) {
                 blurPath = "/usr/share/backgrounds/default_background.jpg";
             }
-            blurBackgroundPath = blurPath;
-            addPixmap(pixmapHandle(QPixmap(blurPath)), PIXMAP_TYPE_BLUR_BACKGROUND);
+
+            if (blurBackgroundPath != blurPath || !contains(PIXMAP_TYPE_BLUR_BACKGROUND)) {
+                blurBackgroundPath = blurPath;
+                addPixmap(pixmapHandle(QPixmap(blurPath)), PIXMAP_TYPE_BLUR_BACKGROUND);
+            }
+
             // 只播放一次动画，后续背景图片变更直接更新模糊壁纸即可
             if (m_fadeOutAni && !m_fadeOutAniFinished)
                 m_fadeOutAni->start();
