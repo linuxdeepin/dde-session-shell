@@ -201,3 +201,8 @@ void AuthModule::setAuthFactorType(AuthFactorType authFactorType)
 {
     m_authFactorType = authFactorType;
 }
+
+bool AuthModule::isLocked() const
+{
+    return m_limitsInfo->locked;
+}

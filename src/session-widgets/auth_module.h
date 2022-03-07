@@ -93,6 +93,7 @@ public:
     void setAuthStateLabel(DLabel *label);
     virtual void setAuthFactorType(AuthFactorType authFactorType);
     inline bool isMFA() const { return m_authFactorType == DDESESSIONCC::MultiAuthFactor; }
+    bool isLocked() const;
 
 signals:
     void activeAuth(const int);

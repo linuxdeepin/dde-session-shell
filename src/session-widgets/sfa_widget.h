@@ -61,6 +61,7 @@ public slots:
 
 protected:
     void resizeEvent(QResizeEvent *event) Q_DECL_OVERRIDE;
+    void showEvent(QShowEvent *event) Q_DECL_OVERRIDE;
 
 private:
     void initUI();
@@ -80,6 +81,7 @@ private:
     void replaceWidget(AuthModule *authModule);
     void setBioAuthStateVisible(AuthModule *authModule, bool visible);
     void updateSpaceItem();
+    void updateFocus();
 
 private:
     QVBoxLayout *m_mainLayout;

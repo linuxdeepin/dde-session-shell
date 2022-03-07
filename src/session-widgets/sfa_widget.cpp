@@ -795,7 +795,10 @@ void SFAWidget::replaceWidget(AuthModule *authModule)
     m_mainLayout->insertWidget(layout()->indexOf(m_userAvatar) + 3, authModule);
     authModule->show();
     setFocus();
-    authModule->setFocus();
+    if (authModule->isLocked())
+        authModule->clearFocus();
+    else
+        authModule->setFocus();
     m_lockButton->setEnabled(false);
     onRetryButtonVisibleChanged(false);
 }
@@ -840,8 +843,9 @@ int SFAWidget::getTopSpacing() const
 
 void SFAWidget::resizeEvent(QResizeEvent *event)
 {
-    updateSpaceItem();
     AuthWidget::resizeEvent(event);
+
+    updateSpaceItem();
 }
 
 /**
@@ -860,4 +864,27 @@ void SFAWidget::updateSpaceItem()
     }
 
     emit updateParentLayout();
+}
+
+void SFAWidget::updateFocus()
+{
+    for (int i = 0; i < m_mainLayout->layout()->count(); ++i) {
+        AuthModule *authModule = qobject_cast<AuthModule *>(m_mainLayout->layout()->itemAt(i)->widget());
+        if (authModule && authModule->authType() == m_chooseAuthButtonBox->checkedId()) {
+            setFocus();
+            if (authModule->isLocked())
+                authModule->clearFocus();
+            else
+                authModule->setFocus();
+
+            break;
+        }
+    }
+}
+
+void SFAWidget::showEvent(QShowEvent *event)
+{
+    AuthWidget::showEvent(event);
+
+    QTimer::singleShot(0, this, &SFAWidget::updateFocus);
 }
