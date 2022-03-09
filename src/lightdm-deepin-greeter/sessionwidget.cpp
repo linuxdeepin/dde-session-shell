@@ -97,6 +97,17 @@ SessionWidget::SessionWidget(QWidget *parent)
     QTimer::singleShot(0, this, [ = ] {
         m_frameDataBind->refreshData("SessionWidget");
     });
+
+    // 判断显卡是否支持wayland
+    if (m_allowSwitchingToWayland) {
+        QDBusInterface systemDisplayInter("com.deepin.system.Display", "/com/deepin/system/Display",
+                "com.deepin.system.Display", QDBusConnection::systemBus(), this);
+        QDBusReply<bool> reply  = systemDisplayInter.call("SupportWayland");
+        if (QDBusError::NoError == reply.error().type())
+            m_allowSwitchingToWayland = reply.value();
+        else
+            qWarning() << "Get support wayland property failed: " << reply.error().message();
+    }
 }
 
 void SessionWidget::setModel(SessionBaseModel *const model)
