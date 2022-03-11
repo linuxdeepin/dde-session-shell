@@ -275,5 +275,5 @@ file(GLOB CMAKE_CONFIG cmake/*.cmake)
 install(FILES ${CMAKE_CONFIG} DESTINATION ${CMAKE_INSTALL_LIBDIR}/cmake/DdeSessionShell)
 
 # config
-dconfig_meta_files(APPID dde-lock FILES configs/com.deepin.dde.dde-lock.dconfig.json)
-dconfig_meta_files(APPID lightdm-deepin-greeter FILES configs/com.deepin.dde.lightdm-deepin-greeter.dconfig.json)
+dconfig_meta_files(APPID dde-lock FILES configs/org.deepin.lock.json)
+dconfig_meta_files(APPID lightdm-deepin-greeter FILES configs/org.deepin.greeter.json)
