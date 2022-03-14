@@ -67,8 +67,8 @@ const QStringList SHUTDOWN_CONFIGS {
 };
 
 static const QString SOLID_BACKGROUND_COLOR = "#000F27";        // 纯色背景色号
-static const QString LOCK_DCONFIG_SOURCE = "org.deepin.lock"; // 锁屏配置文件
-static const QString LOGIN_DCONFIG_SOURCE = "org.deepin.greeter"; // 登录配置文件
+static const QString LOCK_DCONFIG_SOURCE = "org.deepin.dde.lock"; // 锁屏配置文件
+static const QString LOGIN_DCONFIG_SOURCE = "org.deepin.dde.lightdm-deepin-greeter"; // 登录配置文件
 
 enum AuthFactorType {
     SingleAuthFactor,
