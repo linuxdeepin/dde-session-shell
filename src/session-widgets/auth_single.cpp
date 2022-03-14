@@ -310,7 +310,7 @@ void AuthSingle::setLineEditInfo(const QString &text, const TextType type)
 {
     switch (type) {
     case AlertText:
-        m_lineEdit->showAlertMessage(text, this, 3000);
+        m_lineEdit->showAlertMessage(text, this, 5000);
         m_lineEdit->setAlert(true);
         break;
     case InputText: {
@@ -411,7 +411,7 @@ void AuthSingle::updateUnlockPrompt()
  */
 void AuthSingle::showPasswordHint()
 {
-    m_lineEdit->showAlertMessage(m_passwordHint, this, 3000);
+    m_lineEdit->showAlertMessage(m_passwordHint, this, 5000);
 }
 
 /**

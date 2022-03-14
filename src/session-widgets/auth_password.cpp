@@ -125,6 +125,7 @@ void AuthPassword::initConnections()
         emit focusChanged(focus);
     });
     connect(m_lineEdit, &DLineEditEx::textChanged, this, [this](const QString &text) {
+        m_lineEdit->hideAlertMessage();
         m_lineEdit->setAlert(false);
         emit lineEditTextChanged(text);
     });
@@ -315,7 +316,7 @@ void AuthPassword::setLineEditInfo(const QString &text, const TextType type)
 {
     switch (type) {
     case AlertText:
-        m_lineEdit->showAlertMessage(text, this, 3000);
+        m_lineEdit->showAlertMessage(text, this, 5000);
         m_lineEdit->setAlert(true);
         break;
     case InputText: {
@@ -399,7 +400,7 @@ void AuthPassword::updateUnlockPrompt()
  */
 void AuthPassword::showPasswordHint()
 {
-    m_lineEdit->showAlertMessage(m_passwordHint, this, 3000);
+    m_lineEdit->showAlertMessage(m_passwordHint, this, 5000);
 }
 
 /**

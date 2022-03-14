@@ -92,6 +92,7 @@ void AuthUKey::initConnections()
     });
     connect(m_lineEdit, &DLineEditEx::textChanged, this, [this](const QString &text) {
         m_lineEdit->setAlert(false);
+        m_lineEdit->hideAlertMessage();
         emit lineEditTextChanged(text);
     });
     connect(m_lineEdit, &DLineEditEx::returnPressed, this, [ this ] {
@@ -280,7 +281,7 @@ void AuthUKey::setLineEditInfo(const QString &text, const TextType type)
 {
     switch (type) {
     case AlertText:
-        m_lineEdit->showAlertMessage(text, this, 3000);
+        m_lineEdit->showAlertMessage(text, this, 5000);
         m_lineEdit->setAlert(true);
         break;
     case InputText: {
