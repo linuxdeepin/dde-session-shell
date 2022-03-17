@@ -418,7 +418,11 @@ void AuthPassword::setPasswordHintBtnVisible(const bool isVisible)
  */
 void AuthPassword::setResetPasswordMessageVisible(const bool isVisible)
 {
+    if (m_resetPasswordMessageVisible == isVisible)
+        return;
+
     m_resetPasswordMessageVisible = isVisible;
+    emit resetPasswordMessageVisibleChanged(m_resetPasswordMessageVisible);
 }
 
 /**
@@ -564,7 +568,6 @@ void AuthPassword::updateResetPasswordUI()
     } else {
         closeResetPasswordMessage();
     }
-    emit resetPasswordMessageVisibleChanged(m_resetPasswordMessageVisible);
 }
 
 bool AuthPassword::eventFilter(QObject *watched, QEvent *event)

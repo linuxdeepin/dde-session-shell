@@ -433,8 +433,10 @@ void AuthWidget::syncSingle(const QVariant &value)
  */
 void AuthWidget::syncSingleResetPasswordVisibleChanged(const QVariant &value)
 {
-    if (m_singleAuth)
+    if (m_singleAuth) {
         m_singleAuth->setResetPasswordMessageVisible(value.toBool());
+        m_singleAuth->updateResetPasswordUI();
+    }
 }
 
 /**
@@ -465,8 +467,11 @@ void AuthWidget::syncPassword(const QVariant &value)
  */
 void AuthWidget::syncPasswordResetPasswordVisibleChanged(const QVariant &value)
 {
-    if (m_passwordAuth)
+    if (m_passwordAuth) {
         m_passwordAuth->setResetPasswordMessageVisible(value.toBool());
+        if (m_passwordAuth->isVisible())
+            m_passwordAuth->updateResetPasswordUI();
+    }
 }
 
 /**
@@ -494,7 +499,7 @@ void AuthWidget::showEvent(QShowEvent *event)
 int AuthWidget::getTopSpacing() const
 {
     const int topHeight = static_cast<int>(topLevelWidget()->geometry().height() * AUTH_WIDGET_TOP_SPACING_PERCENT);
-    const int deltaY = topHeight - calcCurrentHeight(LOCK_CONTENT_TOP_WIDGET_HEIGHT) 
+    const int deltaY = topHeight - calcCurrentHeight(LOCK_CONTENT_TOP_WIDGET_HEIGHT)
             - calcCurrentHeight(LOCK_CONTENT_CENTER_LAYOUT_MARGIN);
 
     return qMax(15, deltaY);

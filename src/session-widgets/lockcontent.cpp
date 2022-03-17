@@ -49,16 +49,13 @@ LockContent::LockContent(SessionBaseModel *const model, QWidget *parent)
     m_localServer->setSocketOptions(QLocalServer::WorldAccessOption);
     static bool once = false;
     if (!once) {
-        if (!m_localServer->listen("GrabKeyboard")) { // 监听特定的连接
+        // 将greeter和lock的服务名称分开
+        // 如果服务相同，但是创建套接字文件的用户不一样，greeter和lock不能删除对方的套接字文件，造成锁屏无法监听服务。
+        QString serverName = QString("GrabKeyboard_") + (m_model->appType() == Login ? "greeter" : "lock");
+        // 将之前的server删除，如果是旧文件，即使监听成功，客户端也无法连接。
+        QLocalServer::removeServer(serverName);
+        if (!m_localServer->listen(serverName)) { // 监听特定的连接
             qWarning() << "listen failed!" << m_localServer->errorString();
-            if(m_localServer->serverError() == QAbstractSocket::AddressInUseError) {
-                QLocalServer::removeServer("GrabKeyboard");
-                if (!m_localServer->listen("GrabKeyboard")) {
-                    qWarning() << "listen failed again!" << m_localServer->serverName() << m_localServer->errorString();
-                } else {
-                    qDebug() << "listen success!";
-                }
-            }
         } else {
             qDebug() << "listen success!";
         }
@@ -299,7 +296,7 @@ void LockContent::onNewConnection()
     if (m_localServer->hasPendingConnections()) {
         QLocalSocket *socket = m_localServer->nextPendingConnection();
         connect(socket, &QLocalSocket::disconnected, this, &LockContent::onDisConnect);
-        connect(socket, &QLocalSocket::readyRead, this, [socket, this]{
+        connect(socket, &QLocalSocket::readyRead, this, [socket, this] {
             auto content = socket->readAll();
             if (content == "close") {
                 m_sfaWidget->syncPasswordResetPasswordVisibleChanged(QVariant::fromValue(true));
