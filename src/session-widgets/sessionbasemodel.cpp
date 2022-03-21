@@ -361,8 +361,9 @@ std::shared_ptr<User> SessionBaseModel::json2User(const QString &userJson)
  * @brief 保存当前用户信息
  *
  * @param userJson
+ * @return 是否更新了用户
  */
-void SessionBaseModel::updateCurrentUser(const QString &userJson)
+bool SessionBaseModel::updateCurrentUser(const QString &userJson)
 {
     qDebug("update current user, data: %s", qPrintable(userJson));
 
@@ -370,29 +371,32 @@ void SessionBaseModel::updateCurrentUser(const QString &userJson)
     if (!user_ptr)
         user_ptr = m_lastLogoutUser ? m_lastLogoutUser : m_users->first();
 
-    updateCurrentUser(user_ptr);
+    return updateCurrentUser(user_ptr);
 }
 
 /**
  * @brief 保存当前用户信息
  *
  * @param user
+ * @return 是否更新了用户
  */
-void SessionBaseModel::updateCurrentUser(const std::shared_ptr<User> user)
+bool SessionBaseModel::updateCurrentUser(const std::shared_ptr<User> user)
 {
     if (!user) {
         qWarning() << "Failed to set current user!" << user.get();
-        return;
+        return false;
     }
 
     qDebug() << "SessionBaseModel::updateCurrentUser:" << user->name();
 
     if (m_currentUser && *m_currentUser == *user) {
-        return;
+        return false;
     }
 
     m_currentUser = user;
     emit currentUserChanged(user);
+
+    return true;
 }
 
 /**

@@ -160,13 +160,14 @@ void GreeterWorker::initConnections()
     });
     connect(m_login1Inter, &DBusLogin1Manager::SessionRemoved, this, [this] {
         qDebug() << "DBusLogin1Manager::SessionRemoved";
-        m_model->updateCurrentUser(m_lockInter->CurrentUser());
-        m_model->updateAuthState(AT_All, AS_Cancel, "Cancel");
-        destoryAuthentication(m_account);
-        if (!m_model->currentUser()->isNoPasswordLogin()) {
-            createAuthentication(m_model->currentUser()->name());
-        } else {
-            m_model->setAuthType(AT_None);
+        if (m_model->updateCurrentUser(m_lockInter->CurrentUser())) {
+            m_model->updateAuthState(AT_All, AS_Cancel, "Cancel");
+            destoryAuthentication(m_account);
+            if (!m_model->currentUser()->isNoPasswordLogin()) {
+                createAuthentication(m_model->currentUser()->name());
+            } else {
+                m_model->setAuthType(AT_None);
+            }
         }
         m_soundPlayerInter->PrepareShutdownSound(static_cast<int>(m_model->currentUser()->uid()));
     });

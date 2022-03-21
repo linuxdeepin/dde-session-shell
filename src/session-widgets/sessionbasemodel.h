@@ -152,8 +152,8 @@ public slots:
     void addUser(const std::shared_ptr<User> user);
     void removeUser(const QString &path);
     void removeUser(const std::shared_ptr<User> user);
-    void updateCurrentUser(const QString &userJson);
-    void updateCurrentUser(const std::shared_ptr<User> user);
+    bool updateCurrentUser(const QString &userJson);
+    bool updateCurrentUser(const std::shared_ptr<User> user);
     void updateUserList(const QStringList &list);
     void updateLastLogoutUser(const uid_t uid);
     void updateLastLogoutUser(const std::shared_ptr<User> lastLogoutUser);
