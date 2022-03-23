@@ -294,8 +294,7 @@ void AuthPassword::setLimitsInfo(const LimitsInfo &info)
     m_passwordHintBtn->setVisible(info.numFailures > 0 && !m_passwordHint.isEmpty());
     if (m_limitsInfo->locked) {
         setAuthState(AS_Locked, "Locked");
-        if (lockStateChanged && this->isVisible() && QFile::exists(ResetPassword_Exe_Path) &&
-            m_currentUid <= 9999) {
+        if (this->isVisible() && QFile::exists(ResetPassword_Exe_Path) && m_currentUid <= 9999) {
             qDebug() << "begin reset passoword";
             setResetPasswordMessageVisible(true);
             updateResetPasswordUI();
@@ -419,7 +418,12 @@ void AuthPassword::setPasswordHintBtnVisible(const bool isVisible)
  */
 void AuthPassword::setResetPasswordMessageVisible(const bool isVisible)
 {
+    qDebug() << "set reset password message visible: " << isVisible;
     if (m_resetPasswordMessageVisible == isVisible)
+        return;
+
+    // 如果设置为显示重置按钮，但是实际上并没有锁定，直接退出，是是否锁定为准
+    if (isVisible && !isLocked())
         return;
 
     m_resetPasswordMessageVisible = isVisible;
@@ -456,14 +460,15 @@ void AuthPassword::showResetPasswordMessage()
     m_resetPasswordFloatingMessage->setMessage(tr("Forgot password?"));
     connect(suggestButton, &QPushButton::clicked, this, [ this ] {
         if (window()->windowHandle() && window()->windowHandle()->setKeyboardGrabEnabled(false)) {
-            qDebug() << "setKeyboardGrabEnabled(false) success！";
+            qDebug() << "setKeyboardGrabEnabled(false) success!";
         }
         const QString AccountsService("com.deepin.daemon.Accounts");
         const QString path = QString("/com/deepin/daemon/Accounts/User%1").arg(m_currentUid);
         com::deepin::daemon::accounts::User user(AccountsService, path, QDBusConnection::systemBus());
         auto reply = user.SetPassword("");
         reply.waitForFinished();
-        qWarning() << "reply setpassword:" << reply.error().message();
+        if (reply.isError())
+            qWarning() << "reply setpassword:" << reply.error().message();
 
         emit m_resetPasswordFloatingMessage->closeButtonClicked();
     });
@@ -589,5 +594,6 @@ void AuthPassword::hideEvent(QHideEvent *event)
     m_lineEdit->setAlert(false);
     m_lineEdit->hideAlertMessage();
     setLineEditInfo(tr("Password"), PlaceHolderText);
+    closeResetPasswordMessage();
     AuthModule::hideEvent(event);
 }
