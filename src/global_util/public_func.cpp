@@ -128,6 +128,28 @@ QVariant getDConfigValue(const QString &configFileName, const QString &key, cons
     return config.value(key);
 }
 
+/**
+ * @brief setDConfigValue 根据传入的\a key设置对应的值
+ * @param configFileName 配置文件名称
+ * @param key 配置项键值
+ * @param value 值
+ * @return 配置项的值
+ */
+void setDConfigValue(const QString &configFileName, const QString &key, const QVariant &value)
+{
+    if (configFileName.isEmpty())
+        return;
+
+    DConfig config(configFileName);
+    if (!config.isValid() || !config.keyList().contains(key)) {
+        qWarning() << "dconfig parse failed, name: " << config.name()
+                   << "subpath: " << config.subpath();
+        return;
+    }
+
+    config.setValue(key, value);
+}
+
 void setAppType(int type)
 {
     appType = type;

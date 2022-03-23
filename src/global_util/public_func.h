@@ -79,6 +79,8 @@ uint timeFromString(QString time);
 
 QVariant getDConfigValue(const QString &configFileName, const QString &key, const QVariant &defaultValue);
 
+void setDConfigValue(const QString &configFileName, const QString &key, const QVariant &value);
+
 /**
  * @brief 设置app类型，让程序知道应该获取哪个配置文件
  */

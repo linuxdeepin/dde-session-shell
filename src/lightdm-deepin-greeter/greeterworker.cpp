@@ -21,22 +21,9 @@ using namespace Auth;
 using namespace AuthCommon;
 DCORE_USE_NAMESPACE
 
-class UserNumlockSettings
-{
-public:
-    explicit UserNumlockSettings(const QString &username)
-        : m_username(username)
-        , m_settings(QSettings::UserScope, "deepin", "greeter")
-    {
-    }
-
-    int get(const int defaultValue) { return m_settings.value(m_username, defaultValue).toInt(); }
-    void set(const int value) { m_settings.setValue(m_username, value); }
-
-private:
-    QString m_username;
-    QSettings m_settings;
-};
+const int NUM_LOCKED = 0;   // 禁用小键盘
+const int NUM_UNLOCKED = 1; // 启用小键盘
+const int NUM_LOCK_UNKNOWN = 2; // 未知状态
 
 GreeterWorker::GreeterWorker(SessionBaseModel *const model, QObject *parent)
     : AuthInterface(model, parent)
@@ -211,7 +198,7 @@ void GreeterWorker::initConnections()
     });
     /* others */
     connect(KeyboardMonitor::instance(), &KeyboardMonitor::numlockStatusChanged, this, [=](bool on) {
-        saveNumlockStatus(m_model->currentUser(), on);
+        saveNumlockState(m_model->currentUser(), on);
     });
     connect(m_limitsUpdateTimer, &QTimer::timeout, this, [this] {
         if (m_authFramework->isDeepinAuthValid())
@@ -275,16 +262,16 @@ void GreeterWorker::initConfiguration()
         m_model->setCanSleep(false);
     }
 
-    //当这个配置不存在是，如果是不是笔记本就打开小键盘，否则就关闭小键盘 0关闭键盘 1打开键盘 2默认值（用来判断是不是有这个key）
-    if (m_model->currentUser() != nullptr && UserNumlockSettings(m_model->currentUser()->name()).get(2) == 2) {
+    // 当这个配置不存在是，如果是不是笔记本就打开小键盘，否则就关闭小键盘 0关闭键盘 1打开键盘 2默认值（用来判断是不是有这个key）
+    if (m_model->currentUser() != nullptr && getNumLockState(m_model->currentUser()->name()) == NUM_LOCK_UNKNOWN) {
         PowerInter powerInter("com.deepin.system.Power", "/com/deepin/system/Power", QDBusConnection::systemBus(), this);
         if (powerInter.hasBattery()) {
-            saveNumlockStatus(m_model->currentUser(), 0);
+            saveNumlockState(m_model->currentUser(), false);
         } else {
-            saveNumlockStatus(m_model->currentUser(), 1);
+            saveNumlockState(m_model->currentUser(), true);
         }
-        recoveryUserKBState(m_model->currentUser());
     }
+    recoveryUserKBState(m_model->currentUser());
 }
 
 void GreeterWorker::doPowerAction(const SessionBaseModel::PowerAction action)
@@ -793,9 +780,37 @@ void GreeterWorker::onCurrentUserChanged(const std::shared_ptr<User> &user)
     loadTranslation(user->locale());
 }
 
-void GreeterWorker::saveNumlockStatus(std::shared_ptr<User> user, const bool &on)
+void GreeterWorker::saveNumlockState(std::shared_ptr<User> user, bool on)
 {
-    UserNumlockSettings(user->name()).set(on);
+    QStringList list = getDConfigValue(getDefaultConfigFileName(), "numLockState", QStringList()).toStringList();
+    const QString &userName = user->name();
+
+    // 移除当前用户的记录
+    for (const QString &numLockState : list) {
+        QStringList tmpList = numLockState.split(":");
+        if (tmpList.size() == 2 && tmpList.at(0) == userName) {
+            list.removeAll(numLockState);
+            break;
+        }
+    }
+
+    // 插入当前用户的记录
+    list.append(user->name() + ":" + (on ? "True" : "False"));
+    setDConfigValue(getDefaultConfigFileName(), "numLockState", list);
+}
+
+int GreeterWorker::getNumLockState(const QString &userName)
+{
+    QStringList list = getDConfigValue(getDefaultConfigFileName(), "numLockState", QStringList()).toStringList();
+
+    for (const QString &numLockState : list) {
+        QStringList tmpList = numLockState.split(":");
+        if (tmpList.size() == 2 && tmpList.at(0) == userName) {
+            return "True" == tmpList.at(1) ? NUM_UNLOCKED : NUM_LOCKED;
+        }
+    }
+
+    return NUM_LOCK_UNKNOWN;
 }
 
 void GreeterWorker::recoveryUserKBState(std::shared_ptr<User> user)
@@ -807,7 +822,7 @@ void GreeterWorker::recoveryUserKBState(std::shared_ptr<User> user)
     if (user.get() == nullptr)
         return;
 
-    const bool enabled = UserNumlockSettings(user->name()).get(false);
+    const bool enabled = getNumLockState(user->name()) == NUM_UNLOCKED;
 
     qWarning() << "restore numlock state to " << enabled;
 

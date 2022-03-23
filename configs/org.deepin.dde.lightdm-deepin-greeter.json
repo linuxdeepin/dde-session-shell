@@ -31,6 +31,16 @@
             "description": "默认的桌面环境名称，默认为deepin。新建用户首次登录的时候，默认的桌面由此配置决定",
             "permissions": "readwrite",
             "visibility": "private"
+        },
+        "numLockState": {
+            "value": [],
+            "serial": 0,
+            "flags": ["global"],
+            "name": "NumLockState",
+            "name[zh_CN]": "数字键盘状态",
+            "description": "用户的小键盘状态，True为打开，False为关闭，与用户绑定，格式为：\"用户名:状态\"，例如\"uos:True\"。当用户改变状态时会记录下来，切换用户时会跟随用户改变。",
+            "permissions": "readwrite",
+            "visibility": "private"
         }
     }
 }

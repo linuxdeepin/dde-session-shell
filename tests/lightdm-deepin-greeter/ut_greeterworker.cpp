@@ -47,6 +47,6 @@ TEST_F(UT_GreeterWorker, AuthTest)
     m_worker->showPrompt("", QLightDM::Greeter::PromptType::PromptTypeQuestion);
     m_worker->showMessage("", QLightDM::Greeter::MessageType::MessageTypeInfo);
     m_worker->authenticationComplete();
-    m_worker->saveNumlockStatus(user_ptr, false);
+    m_worker->saveNumlockState(user_ptr, false);
     m_worker->recoveryUserKBState(user_ptr);
 }

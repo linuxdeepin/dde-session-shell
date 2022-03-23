@@ -66,7 +66,8 @@ private:
     void showPrompt(const QString &text, const QLightDM::Greeter::PromptType type);
     void showMessage(const QString &text, const QLightDM::Greeter::MessageType type);
     void authenticationComplete();
-    void saveNumlockStatus(std::shared_ptr<User> user, const bool &on);
+    void saveNumlockState(std::shared_ptr<User> user, bool on);
+    int getNumLockState(const QString &userName);
     void recoveryUserKBState(std::shared_ptr<User> user);
     void startGreeterAuth(const QString &account = QString());
     void changePasswd();
