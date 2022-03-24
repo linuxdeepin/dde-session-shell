@@ -36,6 +36,8 @@
 #include <QDesktopWidget>
 #include <QDBusReply>
 #include <QWindow>
+#include <QValidator>
+#include <QRegExp>
 
 #include <unistd.h>
 
@@ -80,6 +82,8 @@ void AuthPassword::initUI()
     m_lineEdit->setContextMenuPolicy(Qt::NoContextMenu);
     m_lineEdit->setFocusPolicy(Qt::StrongFocus);
     m_lineEdit->lineEdit()->setAlignment(Qt::AlignCenter);
+    m_lineEdit->lineEdit()->setValidator(new QRegExpValidator(QRegExp("^[ -~]+$")));
+
     setLineEditInfo(tr("Password"), PlaceHolderText);
 
     QHBoxLayout *passwordLayout = new QHBoxLayout(m_lineEdit->lineEdit());

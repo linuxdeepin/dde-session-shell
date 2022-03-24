@@ -34,6 +34,8 @@
 #include <QDesktopWidget>
 #include <QDBusReply>
 #include <QWindow>
+#include <QValidator>
+#include <QRegExp>
 
 #include <unistd.h>
 #include <com_deepin_daemon_accounts_user.h>
@@ -78,6 +80,7 @@ void AuthSingle::initUI()
     m_lineEdit->setContextMenuPolicy(Qt::NoContextMenu);
     m_lineEdit->setFocusPolicy(Qt::StrongFocus);
     m_lineEdit->lineEdit()->setAlignment(Qt::AlignCenter);
+    m_lineEdit->lineEdit()->setValidator(new QRegExpValidator(QRegExp("^[ -~]+$")));
 
     QHBoxLayout *passwordLayout = new QHBoxLayout(m_lineEdit->lineEdit());
     passwordLayout->setContentsMargins(0, 0, 10, 0);
