@@ -53,7 +53,6 @@ public:
     void setModel(const SessionBaseModel *model) override;
     void setAuthType(const int type) override;
     void setAuthState(const int type, const int state, const QString &message) override;
-    void syncResetPasswordUI();
     int getTopSpacing() const override;
 
 public slots:

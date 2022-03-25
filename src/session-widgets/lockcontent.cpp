@@ -249,10 +249,7 @@ void LockContent::pushPasswordFrame()
 {
     setCenterContent(m_authWidget, Qt::AlignTop, m_authWidget->getTopSpacing());
 
-    SFAWidget *sfaWidget = qobject_cast<SFAWidget *>(m_authWidget);
-    if (sfaWidget) {
-        sfaWidget->syncResetPasswordUI();
-    }
+    m_authWidget->syncResetPasswordUI();
 }
 
 void LockContent::pushUserFrame()

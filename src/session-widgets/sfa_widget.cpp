@@ -310,16 +310,6 @@ void SFAWidget::setAuthState(const int type, const int state, const QString &mes
     }
 }
 
-void SFAWidget::syncResetPasswordUI()
-{
-    if (m_singleAuth) {
-        m_singleAuth->updateResetPasswordUI();
-    }
-    if (m_passwordAuth && m_passwordAuth->isVisible()) {
-        m_passwordAuth->updateResetPasswordUI();
-    }
-}
-
 /**
  * @brief 初始化单因认证
  * 用于兼容开源 PAM

@@ -249,6 +249,7 @@ void MFAWidget::initPasswdAuth()
         return;
     }
     m_passwordAuth = new AuthPassword(this);
+    m_passwordAuth->setCurrentUid(m_model->currentUser()->uid());
     m_passwordAuth->setCapsLockVisible(m_capslockMonitor->isCapslockOn());
     m_passwordAuth->setPasswordHint(m_user->passwordHint());
     m_mainLayout->insertWidget(m_index, m_passwordAuth);
@@ -279,6 +280,13 @@ void MFAWidget::initPasswdAuth()
         FrameDataBind::Instance()->updateValue("MFPasswordAuth", value);
     });
     FrameDataBind::Instance()->refreshData("MFPasswordAuth");
+    /* 重置密码可见性数据同步 */
+    std::function<void(QVariant)> resetPasswordVisibleChanged = std::bind(&AuthWidget::syncPasswordResetPasswordVisibleChanged, this, std::placeholders::_1);
+    m_registerFunctions["MFResetPasswordVisible"] = FrameDataBind::Instance()->registerFunction("MFResetPasswordVisible", resetPasswordVisibleChanged);
+    connect(m_passwordAuth, &AuthPassword::resetPasswordMessageVisibleChanged, this, [ = ](const bool value) {
+        FrameDataBind::Instance()->updateValue("MFResetPasswordVisible", value);
+    });
+    FrameDataBind::Instance()->refreshData("MFResetPasswordVisible");
 
     connect(m_passwordAuth, &AuthPassword::requestChangeFocus, this, &MFAWidget::updateFocusPosition);
 }

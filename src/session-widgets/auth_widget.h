@@ -63,6 +63,7 @@ public:
 
     void setAccountErrorMsg(const QString &message);
     void syncPasswordResetPasswordVisibleChanged(const QVariant &value);
+    void syncResetPasswordUI();
 
 signals:
     void requestCheckAccount(const QString &account);

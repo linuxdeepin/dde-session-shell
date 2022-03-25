@@ -475,6 +475,19 @@ void AuthWidget::syncPasswordResetPasswordVisibleChanged(const QVariant &value)
 }
 
 /**
+ * @brief 密码重置密码可见性UI同步
+ */
+void AuthWidget::syncResetPasswordUI()
+{
+    if (m_singleAuth) {
+        m_singleAuth->updateResetPasswordUI();
+    }
+    if (m_passwordAuth && m_passwordAuth->isVisible()) {
+        m_passwordAuth->updateResetPasswordUI();
+    }
+}
+
+/**
  * @brief UKey 编辑框数据同步
  * @param value
  */
