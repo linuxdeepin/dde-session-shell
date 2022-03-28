@@ -130,7 +130,7 @@ void AuthFace::setAuthState(const int state, const QString &result)
     case AuthCommon::AS_Exception:
         setAnimationState(false);
         setAuthStateStyle(isMFA() ? LOGIN_WAIT : AUTH_LOCK);
-        m_textLabel->setText(result);
+        m_textLabel->setText(tr("Device unavailable!"));
         m_showPrompt = true;
         break;
     case AuthCommon::AS_Prompt:
