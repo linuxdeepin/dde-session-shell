@@ -25,9 +25,9 @@
         <source>Face ID locked, use password please</source>
         <translation>Az Arc Azonosító zárolva, kérjük használja a jelszavát</translation>
     </message>
-    <message numerus="yes">
-        <source>Please try again %n minute(s) later</source>
-        <translation><numerusform>Kérjük próbálja újra %n perc múlva</numerusform><numerusform>Kérjük próbálja újra %n perc múlva</numerusform></translation>
+    <message>
+        <source>Device unavailable!</source>
+        <translation type="unfinished"/>
     </message>
 </context>
 <context>
@@ -51,14 +51,6 @@
     <message>
         <source>Fingerprint locked, use password please</source>
         <translation>Az ujjlenyomat zárolva, kérem használja a jelszavát</translation>
-    </message>
-    <message numerus="yes">
-        <source>Please try again %n minute(s) later</source>
-        <translation><numerusform>Kérjük próbálja újra %n perc múlva</numerusform><numerusform>Kérjük próbálja újra %n perc múlva</numerusform></translation>
-    </message>
-    <message>
-        <source>Please try again 1 minute later</source>
-        <translation>Kérjük próbálja újra 1 perc múlva</translation>
     </message>
 </context>
 <context>
@@ -87,10 +79,6 @@
         <source>Iris ID locked, use password please</source>
         <translation>Az Írisz Azonosító zárolva, kérjük használja a jelszavát</translation>
     </message>
-    <message numerus="yes">
-        <source>Please try again %n minute(s) later</source>
-        <translation><numerusform>Kérjük próbálja újra %n perc múlva</numerusform><numerusform>Kérjük próbálja újra %n perc múlva</numerusform></translation>
-    </message>
 </context>
 <context>
     <name>AuthPassword</name>
@@ -113,10 +101,6 @@
     <message>
         <source>Password</source>
         <translation>Jelszó</translation>
-    </message>
-    <message numerus="yes">
-        <source>Please try again %n minute(s) later</source>
-        <translation><numerusform>Kérjük próbálja újra %n perc múlva</numerusform><numerusform>Kérjük próbálja újra %n perc múlva</numerusform></translation>
     </message>
     <message>
         <source>Please try again 1 minute later</source>
@@ -212,11 +196,11 @@
     <name>GreeterWorker</name>
     <message>
         <source>Wrong account</source>
-        <translation type="unfinished"/>
+        <translation>Hibás Felhasználói fiók</translation>
     </message>
     <message>
         <source>Wrong Password</source>
-        <translation type="unfinished"/>
+        <translation>Helytelen jelszó</translation>
     </message>
 </context>
 <context>
@@ -267,7 +251,7 @@
     <name>SessionWidget</name>
     <message>
         <source>You have enabled the high system security level, thus cannot switch to the Wayland mode, please disable the high security level in Security Center and try again.</source>
-        <translation type="unfinished"/>
+        <translation>Engedélyezte a magas rendszer biztonsági szintet, így nem tud Wayland módra váltani. Kérjük tiltsa le a magas biztonsági szintet a Biztonsági Központban, és próbálkozzon újra.</translation>
     </message>
 </context>
 <context>

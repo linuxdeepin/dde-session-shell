@@ -1,4 +1,6 @@
-<?xml version="1.0" ?><!DOCTYPE TS><TS version="2.1" language="en">
+<?xml version="1.0" encoding="utf-8"?>
+<!DOCTYPE TS>
+<TS version="2.1" language="en">
 <context>
     <name>AuthFace</name>
     <message>
@@ -28,12 +30,9 @@
         <source>Face ID locked, use password please</source>
         <translation>Face ID locked, use password please</translation>
     </message>
-    <message numerus="yes">
-        <source>Please try again %n minute(s) later</source>
-        <translation>
-            <numerusform>Please try again %n minute(s) later</numerusform>
-            <numerusform>Please try again %n minute(s) later</numerusform>
-        </translation>
+    <message>
+        <source>Device unavailable!</source>
+        <translation type="unfinished"></translation>
     </message>
 </context>
 <context>
@@ -60,17 +59,6 @@
     <message>
         <source>Fingerprint locked, use password please</source>
         <translation>Fingerprint locked, use password please</translation>
-    </message>
-    <message numerus="yes">
-        <source>Please try again %n minute(s) later</source>
-        <translation>
-            <numerusform>Please try again %n minute(s) later</numerusform>
-            <numerusform>Please try again %n minute(s) later</numerusform>
-        </translation>
-    </message>
-    <message>
-        <source>Please try again 1 minute later</source>
-        <translation>Please try again 1 minute later</translation>
     </message>
 </context>
 <context>
@@ -102,13 +90,6 @@
         <source>Iris ID locked, use password please</source>
         <translation>Iris ID locked, use password please</translation>
     </message>
-    <message numerus="yes">
-        <source>Please try again %n minute(s) later</source>
-        <translation>
-            <numerusform>Please try again %n minute(s) later</numerusform>
-            <numerusform>Please try again %n minute(s) later</numerusform>
-        </translation>
-    </message>
 </context>
 <context>
     <name>AuthPassword</name>
@@ -134,13 +115,6 @@
     <message>
         <source>Password</source>
         <translation>Password</translation>
-    </message>
-    <message numerus="yes">
-        <source>Please try again %n minute(s) later</source>
-        <translation>
-            <numerusform>Please try again %n minute(s) later</numerusform>
-            <numerusform>Please try again %n minute(s) later</numerusform>
-        </translation>
     </message>
     <message>
         <source>Please try again 1 minute later</source>

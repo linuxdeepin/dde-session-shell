@@ -25,9 +25,9 @@
         <source>Face ID locked, use password please</source>
         <translation>ངོ་གདོང་IDསྒོ་ལྕགས་བརྒྱབ་ཟིན་པས། གསང་ཨང་ནང་འཇུག་བྱེད།</translation>
     </message>
-    <message numerus="yes">
-        <source>Please try again %n minute(s) later</source>
-        <translation><numerusform>སྐར་མ་%nརྗེས་ཡང་བསྐྱར་(གཅིག)ཚོད་ལྟ་བྱེད།</numerusform></translation>
+    <message>
+        <source>Device unavailable!</source>
+        <translation type="unfinished"/>
     </message>
 </context>
 <context>
@@ -51,14 +51,6 @@
     <message>
         <source>Fingerprint locked, use password please</source>
         <translation>མཛུབ་རིས་སྒོ་ལྕགས་བརྒྱབ་ཟིན་པས། གསང་ཨང་ནང་འཇུག་བྱེད་རོགས།</translation>
-    </message>
-    <message numerus="yes">
-        <source>Please try again %n minute(s) later</source>
-        <translation><numerusform>སྐར་མ་ %n རྗེས་ཡང་བསྐྱར་ཚོད་ལྟ(གཅིག)བྱེད།</numerusform></translation>
-    </message>
-    <message>
-        <source>Please try again 1 minute later</source>
-        <translation>སྐར་མ་1རྗེས་ཡང་བསྐྱར་ཚོད་ལྟ་བྱེད།</translation>
     </message>
 </context>
 <context>
@@ -87,10 +79,6 @@
         <source>Iris ID locked, use password please</source>
         <translation>མིག་འབྲས་IDསྒོ་ལྕགས་བརྒྱབ་ཟིན་པས། གསང་ཨང་ནང་འཇུག་བྱེད།</translation>
     </message>
-    <message numerus="yes">
-        <source>Please try again %n minute(s) later</source>
-        <translation><numerusform>སྐར་མ་ %n རྗེས་ཡང་བསྐྱར་ཚོད་ལྟ་བྱེད།</numerusform></translation>
-    </message>
 </context>
 <context>
     <name>AuthPassword</name>
@@ -113,10 +101,6 @@
     <message>
         <source>Password</source>
         <translation>གསང་ཨང་། </translation>
-    </message>
-    <message numerus="yes">
-        <source>Please try again %n minute(s) later</source>
-        <translation><numerusform>སྐར་མ་ %n རྗེས་ཡང་བསྐྱར་ཚོད་ལྟ(གཅིག) བྱེད།</numerusform></translation>
     </message>
     <message>
         <source>Please try again 1 minute later</source>

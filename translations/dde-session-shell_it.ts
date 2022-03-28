@@ -19,15 +19,15 @@
     </message>
     <message>
         <source>Verify your Face ID</source>
-        <translation type="unfinished"/>
+        <translation>Verifica il tuo Face ID</translation>
     </message>
     <message>
         <source>Face ID locked, use password please</source>
-        <translation type="unfinished"/>
+        <translation>Face ID bloccato, utilizza la password per cortesia</translation>
     </message>
-    <message numerus="yes">
-        <source>Please try again %n minute(s) later</source>
-        <translation><numerusform>Riprova tra %n minuto(i)</numerusform><numerusform>Riprova tra %n minuto(i)</numerusform></translation>
+    <message>
+        <source>Device unavailable!</source>
+        <translation type="unfinished"/>
     </message>
 </context>
 <context>
@@ -52,14 +52,6 @@
         <source>Fingerprint locked, use password please</source>
         <translation>Sblocco con impronta bloccato, utilizza la password</translation>
     </message>
-    <message numerus="yes">
-        <source>Please try again %n minute(s) later</source>
-        <translation><numerusform>Riprova tra %n minuto(i)</numerusform><numerusform>Riprova tra %n minuto(i)</numerusform></translation>
-    </message>
-    <message>
-        <source>Please try again 1 minute later</source>
-        <translation>Riprova tra 1 minuto</translation>
-    </message>
 </context>
 <context>
     <name>AuthIris</name>
@@ -81,15 +73,11 @@
     </message>
     <message>
         <source>Verify your Iris ID</source>
-        <translation type="unfinished"/>
+        <translation>Verifica il tuo Iris ID</translation>
     </message>
     <message>
         <source>Iris ID locked, use password please</source>
-        <translation type="unfinished"/>
-    </message>
-    <message numerus="yes">
-        <source>Please try again %n minute(s) later</source>
-        <translation><numerusform>Riprova tra %n minuto(i)</numerusform><numerusform>Riprova tra %n minuto(i)</numerusform></translation>
+        <translation>Iris ID bloccato, utilizza la password per cortesia</translation>
     </message>
 </context>
 <context>
@@ -113,10 +101,6 @@
     <message>
         <source>Password</source>
         <translation>Password</translation>
-    </message>
-    <message numerus="yes">
-        <source>Please try again %n minute(s) later</source>
-        <translation><numerusform>Riprova tra %n minuto(i)</numerusform><numerusform>Riprova tra %n minuto(i)</numerusform></translation>
     </message>
     <message>
         <source>Please try again 1 minute later</source>
@@ -212,11 +196,11 @@
     <name>GreeterWorker</name>
     <message>
         <source>Wrong account</source>
-        <translation type="unfinished"/>
+        <translation>Account errato</translation>
     </message>
     <message>
         <source>Wrong Password</source>
-        <translation type="unfinished"/>
+        <translation>Password errata</translation>
     </message>
 </context>
 <context>
@@ -267,7 +251,7 @@
     <name>SessionWidget</name>
     <message>
         <source>You have enabled the high system security level, thus cannot switch to the Wayland mode, please disable the high security level in Security Center and try again.</source>
-        <translation type="unfinished"/>
+        <translation>Hai abilitato il livello di sicurezza elevato del sistema, quindi non puoi passare alla modalità Wayland, disabilita il livello di sicurezza elevato in Centro sicurezza e riprova.</translation>
     </message>
 </context>
 <context>

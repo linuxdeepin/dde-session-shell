@@ -11,7 +11,7 @@
     </message>
     <message numerus="yes">
         <source>Verification failed, %n chances left</source>
-        <translation><numerusform>Nieudana weryfikacja, została %n próba</numerusform><numerusform>Nieudana weryfikacja, zostały %n próby</numerusform><numerusform>Nieudana weryfikacja, zostało %n prób </numerusform><numerusform>Nieudana weryfikacja, zostało %n prób </numerusform></translation>
+        <translation><numerusform>Weryfikacja nie powiodła się, pozostała %n próba</numerusform><numerusform>Weryfikacja nie powiodła się, pozostały %n próby</numerusform><numerusform>Weryfikacja nie powiodła się, pozostało %n prób </numerusform><numerusform>Weryfikacja nie powiodła się, pozostało %n prób </numerusform></translation>
     </message>
     <message>
         <source>Verification failed, only one chance left</source>
@@ -25,9 +25,9 @@
         <source>Face ID locked, use password please</source>
         <translation>ID Twarzy zablokowane, proszę użyć hasła</translation>
     </message>
-    <message numerus="yes">
-        <source>Please try again %n minute(s) later</source>
-        <translation><numerusform>Spróbuj ponownie za %n minute</numerusform><numerusform>Spróbuj ponownie za %n minuty</numerusform><numerusform>Spróbuj ponownie za %n minut</numerusform><numerusform>Spróbuj ponownie za %n minut</numerusform></translation>
+    <message>
+        <source>Device unavailable!</source>
+        <translation type="unfinished"/>
     </message>
 </context>
 <context>
@@ -42,7 +42,7 @@
     </message>
     <message numerus="yes">
         <source>Verification failed, %n chances left</source>
-        <translation><numerusform>Nieudana weryfikacja, została %n próba </numerusform><numerusform>Nieudana weryfikacja, zostały %n próby </numerusform><numerusform>Nieudana weryfikacja, zostało %n prób </numerusform><numerusform>Nieudana weryfikacja, zostało %n prób </numerusform></translation>
+        <translation><numerusform>Weryfikacja nie powiodła się, pozostała %n próba </numerusform><numerusform>Weryfikacja nie powiodła się, pozostały %n próby </numerusform><numerusform>Weryfikacja nie powiodła się, pozostało %n prób </numerusform><numerusform>Weryfikacja nie powiodła się, pozostało %n prób </numerusform></translation>
     </message>
     <message>
         <source>Verification failed, only one chance left</source>
@@ -51,14 +51,6 @@
     <message>
         <source>Fingerprint locked, use password please</source>
         <translation>Odcisk palca zablokowany, użyj hasła</translation>
-    </message>
-    <message numerus="yes">
-        <source>Please try again %n minute(s) later</source>
-        <translation><numerusform>Spróbuj ponownie za %n minute</numerusform><numerusform>Spróbuj ponownie za %n minuty</numerusform><numerusform>Spróbuj ponownie za %n minut</numerusform><numerusform>Spróbuj ponownie za %n minut</numerusform></translation>
-    </message>
-    <message>
-        <source>Please try again 1 minute later</source>
-        <translation>Spróbuj ponownie za 1 minutę</translation>
     </message>
 </context>
 <context>
@@ -73,7 +65,7 @@
     </message>
     <message numerus="yes">
         <source>Verification failed, %n chances left</source>
-        <translation><numerusform>Weryfikacja nieudana, została %n próba</numerusform><numerusform>Weryfikacja nieudana, zostały %n próby</numerusform><numerusform>Weryfikacja nieudana, zostało %n prób </numerusform><numerusform>Weryfikacja nieudana, zostało %n prób </numerusform></translation>
+        <translation><numerusform>Weryfikacja nie powiodła się, pozostała %n próba</numerusform><numerusform>Weryfikacja nie powiodła się, pozostały %n próby</numerusform><numerusform>Weryfikacja nie powiodła się, pozostało %n prób </numerusform><numerusform>Weryfikacja nie powiodła się, pozostało %n prób </numerusform></translation>
     </message>
     <message>
         <source>Verification failed, only one chance left</source>
@@ -87,10 +79,6 @@
         <source>Iris ID locked, use password please</source>
         <translation>ID Tęczówki zablokowane, proszę użyć hasła</translation>
     </message>
-    <message numerus="yes">
-        <source>Please try again %n minute(s) later</source>
-        <translation><numerusform>Spróbuj ponownie za %n minute</numerusform><numerusform>Spróbuj ponownie za %n minuty</numerusform><numerusform>Spróbuj ponownie za %n minut</numerusform><numerusform>Spróbuj ponownie za %n minut</numerusform></translation>
-    </message>
 </context>
 <context>
     <name>AuthPassword</name>
@@ -100,7 +88,7 @@
     </message>
     <message numerus="yes">
         <source>Verification failed, %n chances left</source>
-        <translation><numerusform>Nieudana weryfikacja, została %n próba</numerusform><numerusform>Nieudana weryfikacja, zostały %n próby</numerusform><numerusform>Nieudana weryfikacja, zostało %n prób </numerusform><numerusform>Nieudana weryfikacja, zostało %n prób </numerusform></translation>
+        <translation><numerusform>Weryfikacja nie powiodła się, pozostała %n próba</numerusform><numerusform>Weryfikacja nie powiodła się, pozostały %n próby</numerusform><numerusform>Weryfikacja nie powiodła się, pozostało %n prób </numerusform><numerusform>Weryfikacja nie powiodła się, pozostało %n prób </numerusform></translation>
     </message>
     <message>
         <source>Verification failed, only one chance left</source>
@@ -113,10 +101,6 @@
     <message>
         <source>Password</source>
         <translation>Hasło</translation>
-    </message>
-    <message numerus="yes">
-        <source>Please try again %n minute(s) later</source>
-        <translation><numerusform>Spróbuj ponownie za %n minute</numerusform><numerusform>Spróbuj ponownie za %n minuty</numerusform><numerusform>Spróbuj ponownie za %n minut</numerusform><numerusform>Spróbuj ponownie za %n minut</numerusform></translation>
     </message>
     <message>
         <source>Please try again 1 minute later</source>
@@ -162,7 +146,7 @@
     </message>
     <message numerus="yes">
         <source>Verification failed, %n chances left</source>
-        <translation><numerusform>Weryfikacja nieudana, została %n próba</numerusform><numerusform>Weryfikacja nieudana, zostały %n próby</numerusform><numerusform>Weryfikacja nieudana, zostało %n prób</numerusform><numerusform>Weryfikacja nieudana, zostało %n prób</numerusform></translation>
+        <translation><numerusform>Weryfikacja nie powiodła się, pozostała %n próba</numerusform><numerusform>Weryfikacja nie powiodła się, pozostały %n próby</numerusform><numerusform>Weryfikacja nie powiodła się, pozostało %n prób</numerusform><numerusform>Weryfikacja nie powiodła się, pozostało %n prób</numerusform></translation>
     </message>
     <message>
         <source>Verification failed, only one chance left</source>
@@ -212,11 +196,11 @@
     <name>GreeterWorker</name>
     <message>
         <source>Wrong account</source>
-        <translation type="unfinished"/>
+        <translation>Nieprawidłowe konto</translation>
     </message>
     <message>
         <source>Wrong Password</source>
-        <translation type="unfinished"/>
+        <translation>Nieprawidłowe Hasło</translation>
     </message>
 </context>
 <context>
@@ -267,7 +251,7 @@
     <name>SessionWidget</name>
     <message>
         <source>You have enabled the high system security level, thus cannot switch to the Wayland mode, please disable the high security level in Security Center and try again.</source>
-        <translation type="unfinished"/>
+        <translation>Wysoki poziom został włączony, z tego powodu nie jesteś w stanie przełączyć się na sesję Wayland. Wyłącz wysoki poziom zabezpieczeń w Centrum Bezpieczeństwa, a następnie spróbuj ponownie.</translation>
     </message>
 </context>
 <context>
@@ -282,7 +266,7 @@
     </message>
     <message>
         <source>Suspend</source>
-        <translation>Uśpij</translation>
+        <translation>Wstrzymaj</translation>
     </message>
     <message>
         <source>Hibernate</source>
@@ -328,7 +312,7 @@
     </message>
     <message>
         <source>The programs are preventing the computer from suspend, and forcing suspend may cause data loss.</source>
-        <translation>Włączone są programy, które uniemożliwiają uśpienie komputera, a wymuszenie uśpienia może spowodować utratę danych.</translation>
+        <translation>Włączone są programy, które uniemożliwiają wstrzymanie komputera, a wymuszenie wstrzymania może spowodować utratę danych.</translation>
     </message>
     <message>
         <source>The programs are preventing the computer from hibernate, and forcing hibernate may cause data loss.</source>
@@ -348,7 +332,7 @@
     </message>
     <message>
         <source>Suspend</source>
-        <translation>Uśpij</translation>
+        <translation>Wstrzymaj</translation>
     </message>
     <message>
         <source>Hibernate</source>

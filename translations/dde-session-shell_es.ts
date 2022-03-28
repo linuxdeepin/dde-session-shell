@@ -3,7 +3,7 @@
     <name>AuthFace</name>
     <message>
         <source>Face ID</source>
-        <translation>Face ID</translation>
+        <translation>ID de cara</translation>
     </message>
     <message>
         <source>Verification successful</source>
@@ -19,15 +19,15 @@
     </message>
     <message>
         <source>Verify your Face ID</source>
-        <translation>Verifique su Face ID</translation>
+        <translation>Verifique su ID de cara</translation>
     </message>
     <message>
         <source>Face ID locked, use password please</source>
-        <translation>Face ID bloqueado, utilice la contraseña por favor</translation>
+        <translation>ID de cara bloqueado, utilice la contraseña por favor</translation>
     </message>
-    <message numerus="yes">
-        <source>Please try again %n minute(s) later</source>
-        <translation><numerusform>Por favor, inténtelo de nuevo %n minuto(s) más tarde</numerusform><numerusform>Por favor, inténtelo de nuevo %n minuto(s) más tarde</numerusform></translation>
+    <message>
+        <source>Device unavailable!</source>
+        <translation type="unfinished"/>
     </message>
 </context>
 <context>
@@ -52,20 +52,12 @@
         <source>Fingerprint locked, use password please</source>
         <translation>Huella dactilar bloqueada, use la contraseña por favor</translation>
     </message>
-    <message numerus="yes">
-        <source>Please try again %n minute(s) later</source>
-        <translation><numerusform>Por favor, inténtelo de nuevo %n minuto(s) más tarde</numerusform><numerusform>Por favor, inténtelo de nuevo %n minuto(s) más tarde</numerusform></translation>
-    </message>
-    <message>
-        <source>Please try again 1 minute later</source>
-        <translation>Por favor, inténtelo de nuevo 1 minuto más tarde</translation>
-    </message>
 </context>
 <context>
     <name>AuthIris</name>
     <message>
         <source>Iris ID</source>
-        <translation>Iris ID</translation>
+        <translation>ID de Iris</translation>
     </message>
     <message>
         <source>Verification successful</source>
@@ -81,15 +73,11 @@
     </message>
     <message>
         <source>Verify your Iris ID</source>
-        <translation>Verifique su Iris ID</translation>
+        <translation>Verifique su ID de Iris</translation>
     </message>
     <message>
         <source>Iris ID locked, use password please</source>
-        <translation>Iris ID bloqueado, utilice la contraseña por favor</translation>
-    </message>
-    <message numerus="yes">
-        <source>Please try again %n minute(s) later</source>
-        <translation><numerusform>Por favor, inténtelo de nuevo %n minuto(s) más tarde</numerusform><numerusform>Por favor, inténtelo de nuevo %n minuto(s) más tarde</numerusform></translation>
+        <translation>ID de Iris bloqueado, utilice la contraseña por favor</translation>
     </message>
 </context>
 <context>
@@ -113,10 +101,6 @@
     <message>
         <source>Password</source>
         <translation>Contraseña</translation>
-    </message>
-    <message numerus="yes">
-        <source>Please try again %n minute(s) later</source>
-        <translation><numerusform>Por favor, inténtelo de nuevo %n minuto(s) más tarde</numerusform><numerusform>Por favor, inténtelo de nuevo %n minuto(s) más tarde</numerusform></translation>
     </message>
     <message>
         <source>Please try again 1 minute later</source>
@@ -209,65 +193,14 @@
     </message>
 </context>
 <context>
-    <name>AuthenticationModule</name>
-    <message>
-        <source>Verification successful</source>
-        <translation>Verificación exitosa</translation>
-    </message>
-    <message numerus="yes">
-        <source>Verification failed, %n chances left</source>
-        <translation><numerusform>Verificación fallida, queda %n oportunidad</numerusform><numerusform>Verificación fallida, quedan %n oportunidades</numerusform></translation>
-    </message>
-    <message>
-        <source>Verification failed, only one chance left</source>
-        <translation>La verificación falló, solo queda un intento</translation>
-    </message>
-    <message>
-        <source>Wrong Password</source>
-        <translation>Contraseña Incorrecta</translation>
-    </message>
-    <message>
-        <source>Wrong PIN</source>
-        <translation>PIN Incorrecto</translation>
-    </message>
-    <message>
-        <source>UKey is required</source>
-        <translation>Se requiere UKey</translation>
-    </message>
-    <message>
-        <source>Verify your fingerprint</source>
-        <translation>Verifique su huella dactilar</translation>
-    </message>
-    <message>
-        <source>Password</source>
-        <translation>Contraseña</translation>
-    </message>
-    <message>
-        <source>Enter your PIN</source>
-        <translation>Introduzca su PIN</translation>
-    </message>
-    <message>
-        <source>Fingerprint locked, use password please</source>
-        <translation>Huella dactilar bloqueada, use la contraseña por favor</translation>
-    </message>
-    <message>
-        <source>Please try again 1 minute later</source>
-        <translation>Vuelve a intentarlo después de 1 minuto.</translation>
-    </message>
-    <message numerus="yes">
-        <source>Please try again %n minutes later</source>
-        <translation><numerusform>Por favor, inténtelo de nuevo %n minutos más tarde</numerusform><numerusform>Por favor, inténtelo de nuevo %n minutos más tarde</numerusform></translation>
-    </message>
-</context>
-<context>
-    <name>GreeterWorkek</name>
+    <name>GreeterWorker</name>
     <message>
         <source>Wrong account</source>
         <translation>Cuenta errónea</translation>
     </message>
     <message>
         <source>Wrong Password</source>
-        <translation>Contraseña incorrecta</translation>
+        <translation>Contraseña Incorrecta</translation>
     </message>
 </context>
 <context>
@@ -318,7 +251,7 @@
     <name>SessionWidget</name>
     <message>
         <source>You have enabled the high system security level, thus cannot switch to the Wayland mode, please disable the high security level in Security Center and try again.</source>
-        <translation type="unfinished"/>
+        <translation>Ha habilitado el nivel alto de seguridad del sistema, por lo que no puede cambiar al modo Wayland, desactive el nivel alto de seguridad en el Centro de seguridad e intente nuevamente.</translation>
     </message>
 </context>
 <context>
@@ -361,21 +294,6 @@
     <message>
         <source>Start system monitor</source>
         <translation>Iniciar el monitor del sistema</translation>
-    </message>
-</context>
-<context>
-    <name>UserLoginWidget</name>
-    <message>
-        <source>Account</source>
-        <translation>Cuenta</translation>
-    </message>
-    <message numerus="yes">
-        <source>Your password will expire in %n days, please change it timely</source>
-        <translation><numerusform>Su contraseña expirará en %n días, por favor, cámbiela a tiempo</numerusform><numerusform>Su contraseña expirará en %n días, por favor, cámbiela a tiempo</numerusform></translation>
-    </message>
-    <message>
-        <source>Password expired, please change</source>
-        <translation>La contraseña ha caducado, por favor cámbiela</translation>
     </message>
 </context>
 <context>

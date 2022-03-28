@@ -25,9 +25,9 @@
         <source>Face ID locked, use password please</source>
         <translation>چىرايدا قۇلۇپ ئېچىش قۇلۇپلىنىپ قالدى، پارولنى كىرگۈزۈپ ئېچىڭ</translation>
     </message>
-    <message numerus="yes">
-        <source>Please try again %n minute(s) later</source>
-        <translation><numerusform>%n مىنۇتتىن كېيىن قايتا سىناڭ</numerusform><numerusform>يەنە %n% مىنۇتتىن كېيىن قايتا سىناڭ </numerusform></translation>
+    <message>
+        <source>Device unavailable!</source>
+        <translation type="unfinished"/>
     </message>
 </context>
 <context>
@@ -51,14 +51,6 @@
     <message>
         <source>Fingerprint locked, use password please</source>
         <translation>بارماق ئىزى قۇلۇپلاندى، پارول كىرگۈزۈڭ</translation>
-    </message>
-    <message numerus="yes">
-        <source>Please try again %n minute(s) later</source>
-        <translation><numerusform>%n مىنۇتتىن كېيىن قايتا سىناڭ</numerusform><numerusform>%n مىنۇتتىن كېيىن قايتا سىناڭ</numerusform></translation>
-    </message>
-    <message>
-        <source>Please try again 1 minute later</source>
-        <translation>1 مىنۇتتىن كېيىن قايتا سىناڭ</translation>
     </message>
 </context>
 <context>
@@ -87,10 +79,6 @@
         <source>Iris ID locked, use password please</source>
         <translation> كۆز رەڭدار پەردىسىنى تونۇپ قۇلۇپنى ئېچىش مەغلۇپ بولدى ، پارولنى كىرگۈزۈڭ </translation>
     </message>
-    <message numerus="yes">
-        <source>Please try again %n minute(s) later</source>
-        <translation><numerusform>%n مىنۇتتىن كېيىن قايتا سىناڭ</numerusform><numerusform>يەنە %n% مىنۇتتىن كېيىن قايتا سىناڭ </numerusform></translation>
-    </message>
 </context>
 <context>
     <name>AuthPassword</name>
@@ -113,10 +101,6 @@
     <message>
         <source>Password</source>
         <translation>پارول</translation>
-    </message>
-    <message numerus="yes">
-        <source>Please try again %n minute(s) later</source>
-        <translation><numerusform>%n مىنۇتتىن كېيىن قايتا سىناڭ</numerusform><numerusform>%n مىنۇتتىن كېيىن قايتا سىناڭ</numerusform></translation>
     </message>
     <message>
         <source>Please try again 1 minute later</source>

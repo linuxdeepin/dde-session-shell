@@ -25,9 +25,9 @@
         <source>Face ID locked, use password please</source>
         <translation>人臉ID已鎖定，請輸入密碼</translation>
     </message>
-    <message numerus="yes">
-        <source>Please try again %n minute(s) later</source>
-        <translation><numerusform>請%n分鐘後再試</numerusform></translation>
+    <message>
+        <source>Device unavailable!</source>
+        <translation>設備不可用！</translation>
     </message>
 </context>
 <context>
@@ -51,14 +51,6 @@
     <message>
         <source>Fingerprint locked, use password please</source>
         <translation>指紋已鎖定，請輸入密碼</translation>
-    </message>
-    <message numerus="yes">
-        <source>Please try again %n minute(s) later</source>
-        <translation><numerusform>請%n分鐘後再試</numerusform></translation>
-    </message>
-    <message>
-        <source>Please try again 1 minute later</source>
-        <translation>請1分鐘後再試</translation>
     </message>
 </context>
 <context>
@@ -87,10 +79,6 @@
         <source>Iris ID locked, use password please</source>
         <translation>虹膜ID已鎖定，請輸入密碼</translation>
     </message>
-    <message numerus="yes">
-        <source>Please try again %n minute(s) later</source>
-        <translation><numerusform>請%n分鐘後再試</numerusform></translation>
-    </message>
 </context>
 <context>
     <name>AuthPassword</name>
@@ -113,10 +101,6 @@
     <message>
         <source>Password</source>
         <translation>請輸入密碼</translation>
-    </message>
-    <message numerus="yes">
-        <source>Please try again %n minute(s) later</source>
-        <translation><numerusform>請%n分鐘後再試</numerusform></translation>
     </message>
     <message>
         <source>Please try again 1 minute later</source>

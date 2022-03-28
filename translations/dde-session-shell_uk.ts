@@ -25,9 +25,9 @@
         <source>Face ID locked, use password please</source>
         <translation>Ідентифікатор обличчя заблоковано. Скористайтеся, будь ласка, паролем</translation>
     </message>
-    <message numerus="yes">
-        <source>Please try again %n minute(s) later</source>
-        <translation><numerusform>Будь ласка, повторіть спробу за %n хвилину</numerusform><numerusform>Будь ласка, повторіть спробу за %n хвилини</numerusform><numerusform>Будь ласка, повторіть спробу за %n хвилин</numerusform><numerusform>Будь ласка, повторіть спробу за %n хвилину</numerusform></translation>
+    <message>
+        <source>Device unavailable!</source>
+        <translation type="unfinished"/>
     </message>
 </context>
 <context>
@@ -51,14 +51,6 @@
     <message>
         <source>Fingerprint locked, use password please</source>
         <translation>Відбиток заблоковано. Будь ласка, скористайтеся паролем.</translation>
-    </message>
-    <message numerus="yes">
-        <source>Please try again %n minute(s) later</source>
-        <translation><numerusform>Будь ласка, повторіть спробу за %n хвилину</numerusform><numerusform>Будь ласка, повторіть спробу за %n хвилини</numerusform><numerusform>Будь ласка, повторіть спробу за %n хвилин</numerusform><numerusform>Будь ласка, повторіть спробу за %n хвилину</numerusform></translation>
-    </message>
-    <message>
-        <source>Please try again 1 minute later</source>
-        <translation>Будь ласка, повторіть спробу за хвилину</translation>
     </message>
 </context>
 <context>
@@ -87,10 +79,6 @@
         <source>Iris ID locked, use password please</source>
         <translation>Ідентифікатор райдужки заблоковано. Скористайтеся, будь ласка, паролем</translation>
     </message>
-    <message numerus="yes">
-        <source>Please try again %n minute(s) later</source>
-        <translation><numerusform>Будь ласка, повторіть спробу за %n хвилину</numerusform><numerusform>Будь ласка, повторіть спробу за %n хвилини</numerusform><numerusform>Будь ласка, повторіть спробу за %n хвилин</numerusform><numerusform>Будь ласка, повторіть спробу за %n хвилину</numerusform></translation>
-    </message>
 </context>
 <context>
     <name>AuthPassword</name>
@@ -113,10 +101,6 @@
     <message>
         <source>Password</source>
         <translation>Пароль</translation>
-    </message>
-    <message numerus="yes">
-        <source>Please try again %n minute(s) later</source>
-        <translation><numerusform>Будь ласка, повторіть спробу за %n хвилину</numerusform><numerusform>Будь ласка, повторіть спробу за %n хвилини</numerusform><numerusform>Будь ласка, повторіть спробу за %n хвилин</numerusform><numerusform>Будь ласка, повторіть спробу за %n хвилину</numerusform></translation>
     </message>
     <message>
         <source>Please try again 1 minute later</source>
@@ -212,11 +196,11 @@
     <name>GreeterWorker</name>
     <message>
         <source>Wrong account</source>
-        <translation type="unfinished"/>
+        <translation>Помилковий обліковий запис</translation>
     </message>
     <message>
         <source>Wrong Password</source>
-        <translation type="unfinished"/>
+        <translation>Помилковий пароль</translation>
     </message>
 </context>
 <context>
@@ -267,7 +251,7 @@
     <name>SessionWidget</name>
     <message>
         <source>You have enabled the high system security level, thus cannot switch to the Wayland mode, please disable the high security level in Security Center and try again.</source>
-        <translation type="unfinished"/>
+        <translation>Вами увімкнено високий рівень захисту системи, тому перемикання на режим Wayland неможливе. Будь ласка, вимкніть високий рівень захисту у «Центрі безпеки» і повторіть спробу.</translation>
     </message>
 </context>
 <context>

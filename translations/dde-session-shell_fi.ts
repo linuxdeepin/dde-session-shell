@@ -25,9 +25,9 @@
         <source>Face ID locked, use password please</source>
         <translation>Kasvojen tunnistus lukittu, käytä salasanaa</translation>
     </message>
-    <message numerus="yes">
-        <source>Please try again %n minute(s) later</source>
-        <translation><numerusform>Yritä uudelleen %n minuuttia myöhemmin</numerusform><numerusform>Yritä uudelleen %n minuuttia myöhemmin</numerusform></translation>
+    <message>
+        <source>Device unavailable!</source>
+        <translation type="unfinished"/>
     </message>
 </context>
 <context>
@@ -51,14 +51,6 @@
     <message>
         <source>Fingerprint locked, use password please</source>
         <translation>Sormenjälki lukittu, käytä salasanaa</translation>
-    </message>
-    <message numerus="yes">
-        <source>Please try again %n minute(s) later</source>
-        <translation><numerusform>Yritä uudelleen %n minuuttia myöhemmin</numerusform><numerusform>Yritä uudelleen %n minuuttia myöhemmin</numerusform></translation>
-    </message>
-    <message>
-        <source>Please try again 1 minute later</source>
-        <translation>Yritä 1 minuutin jälkeen uudelleen</translation>
     </message>
 </context>
 <context>
@@ -87,10 +79,6 @@
         <source>Iris ID locked, use password please</source>
         <translation>Iriksen tunnistus lukittu, käytä salasanaa</translation>
     </message>
-    <message numerus="yes">
-        <source>Please try again %n minute(s) later</source>
-        <translation><numerusform>Yritä uudelleen %n minuuttia myöhemmin</numerusform><numerusform>Yritä uudelleen %n minuuttia myöhemmin</numerusform></translation>
-    </message>
 </context>
 <context>
     <name>AuthPassword</name>
@@ -113,10 +101,6 @@
     <message>
         <source>Password</source>
         <translation>Salasana</translation>
-    </message>
-    <message numerus="yes">
-        <source>Please try again %n minute(s) later</source>
-        <translation><numerusform>Yritä uudelleen %n minuuttia myöhemmin</numerusform><numerusform>Yritä uudelleen %n minuuttia myöhemmin</numerusform></translation>
     </message>
     <message>
         <source>Please try again 1 minute later</source>
@@ -209,58 +193,7 @@
     </message>
 </context>
 <context>
-    <name>AuthenticationModule</name>
-    <message>
-        <source>Verification successful</source>
-        <translation>Tarkistus onnistui</translation>
-    </message>
-    <message numerus="yes">
-        <source>Verification failed, %n chances left</source>
-        <translation><numerusform>Tarkistus epäonnistui, %n yritystä jäljellä</numerusform><numerusform>Tarkistus epäonnistui, %n yritystä jäljellä</numerusform></translation>
-    </message>
-    <message>
-        <source>Verification failed, only one chance left</source>
-        <translation>Tarkistus epäonnistui, yksi yritys jäljellä</translation>
-    </message>
-    <message>
-        <source>Wrong Password</source>
-        <translation>Väärä salasana</translation>
-    </message>
-    <message>
-        <source>Wrong PIN</source>
-        <translation>Väärä PIN</translation>
-    </message>
-    <message>
-        <source>UKey is required</source>
-        <translation>UKey vaaditaan</translation>
-    </message>
-    <message>
-        <source>Verify your fingerprint</source>
-        <translation>Vahvista sormenjälläsi</translation>
-    </message>
-    <message>
-        <source>Password</source>
-        <translation>Salasana</translation>
-    </message>
-    <message>
-        <source>Enter your PIN</source>
-        <translation>Anna PIN-koodisi</translation>
-    </message>
-    <message>
-        <source>Fingerprint locked, use password please</source>
-        <translation>Sormenjälki lukittu, käytä salasanaa</translation>
-    </message>
-    <message>
-        <source>Please try again 1 minute later</source>
-        <translation>Yritä 1 minuutin jälkeen uudelleen</translation>
-    </message>
-    <message numerus="yes">
-        <source>Please try again %n minutes later</source>
-        <translation><numerusform>Yritä uudelleen %n minuuttia myöhemmin</numerusform><numerusform>Yritä uudelleen %n minuuttia myöhemmin</numerusform></translation>
-    </message>
-</context>
-<context>
-    <name>GreeterWorkek</name>
+    <name>GreeterWorker</name>
     <message>
         <source>Wrong account</source>
         <translation>Väärä tili</translation>
@@ -318,7 +251,7 @@
     <name>SessionWidget</name>
     <message>
         <source>You have enabled the high system security level, thus cannot switch to the Wayland mode, please disable the high security level in Security Center and try again.</source>
-        <translation type="unfinished"/>
+        <translation>Olet ottanut käyttöön korkean järjestelmän suojaustason, joten et voi vaihtaa Wayland-tilaan. Poista suojaustaso Turvakeskuksesta ja yritä uudelleen.</translation>
     </message>
 </context>
 <context>
@@ -361,21 +294,6 @@
     <message>
         <source>Start system monitor</source>
         <translation>Käynnistä järjestelmänhallinta</translation>
-    </message>
-</context>
-<context>
-    <name>UserLoginWidget</name>
-    <message>
-        <source>Account</source>
-        <translation>Käyttäjätili</translation>
-    </message>
-    <message numerus="yes">
-        <source>Your password will expire in %n days, please change it timely</source>
-        <translation><numerusform>Salasanasi vanhenee %n päivän kuluttua, vaihda se ajoissa</numerusform><numerusform>Salasanasi vanhenee %n päivän kuluttua, vaihda se ajoissa</numerusform></translation>
-    </message>
-    <message>
-        <source>Password expired, please change</source>
-        <translation>Salasana vanhentunut, vaihda</translation>
     </message>
 </context>
 <context>

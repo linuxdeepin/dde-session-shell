@@ -25,9 +25,9 @@
         <source>Face ID locked, use password please</source>
         <translation>Face ID is vergrendeld - voer je wachtwoord in</translation>
     </message>
-    <message numerus="yes">
-        <source>Please try again %n minute(s) later</source>
-        <translation><numerusform>Probeer het over %n minuut opnieuw</numerusform><numerusform>Probeer het over %n minuten opnieuw</numerusform></translation>
+    <message>
+        <source>Device unavailable!</source>
+        <translation type="unfinished"/>
     </message>
 </context>
 <context>
@@ -51,14 +51,6 @@
     <message>
         <source>Fingerprint locked, use password please</source>
         <translation>Vingerafdruklezer vergrendeld - voer je wachtwoord in</translation>
-    </message>
-    <message numerus="yes">
-        <source>Please try again %n minute(s) later</source>
-        <translation><numerusform>Probeer het over %n minuut opnieuw</numerusform><numerusform>Probeer het over %n minuten opnieuw</numerusform></translation>
-    </message>
-    <message>
-        <source>Please try again 1 minute later</source>
-        <translation>Probeer het over 1 minuut opnieuw</translation>
     </message>
 </context>
 <context>
@@ -87,10 +79,6 @@
         <source>Iris ID locked, use password please</source>
         <translation>Iris ID is vergrendeld - voer je wachtwoord in</translation>
     </message>
-    <message numerus="yes">
-        <source>Please try again %n minute(s) later</source>
-        <translation><numerusform>Probeer het over %n minuut opnieuw</numerusform><numerusform>Probeer het over %n minuten opnieuw</numerusform></translation>
-    </message>
 </context>
 <context>
     <name>AuthPassword</name>
@@ -113,10 +101,6 @@
     <message>
         <source>Password</source>
         <translation>Wachtwoord</translation>
-    </message>
-    <message numerus="yes">
-        <source>Please try again %n minute(s) later</source>
-        <translation><numerusform>Probeer het over %n minuut opnieuw</numerusform><numerusform>Probeer het over %n minuten opnieuw</numerusform></translation>
     </message>
     <message>
         <source>Please try again 1 minute later</source>
@@ -212,11 +196,11 @@
     <name>GreeterWorker</name>
     <message>
         <source>Wrong account</source>
-        <translation type="unfinished"/>
+        <translation>Verkeerd account</translation>
     </message>
     <message>
         <source>Wrong Password</source>
-        <translation type="unfinished"/>
+        <translation>Het wachtwoord is onjuist</translation>
     </message>
 </context>
 <context>
@@ -267,7 +251,7 @@
     <name>SessionWidget</name>
     <message>
         <source>You have enabled the high system security level, thus cannot switch to the Wayland mode, please disable the high security level in Security Center and try again.</source>
-        <translation type="unfinished"/>
+        <translation>Je kunt de Wayland-modus niet gebruiken omdat je het hoogste beveiligingsniveau hebt ingeschakeld. Schakel dit niveau uit in het beveiligingscentrum en probeer het opnieuw.</translation>
     </message>
 </context>
 <context>

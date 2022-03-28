@@ -1,189 +1,211 @@
-<?xml version="1.0" ?><!DOCTYPE TS><TS language="de" version="2.1">
+<?xml version="1.0" ?><!DOCTYPE TS><TS version="2.1" language="de">
 <context>
-    <name>AuthenticationModule</name>
-    <message numerus="yes">
-        <location filename="../src/session-widgets/authenticationmodule.cpp" line="102"/>
-        <location filename="../src/session-widgets/authenticationmodule.cpp" line="146"/>
-        <location filename="../src/session-widgets/authenticationmodule.cpp" line="169"/>
-        <source>Please try again %n minute(s) later</source>
-        <translation type="unfinished"><numerusform></numerusform><numerusform></numerusform></translation>
-    </message>
+    <name>AuthFace</name>
     <message>
-        <location filename="../src/session-widgets/authenticationmodule.cpp" line="200"/>
-        <location filename="../src/session-widgets/authenticationmodule.cpp" line="203"/>
-        <source>Verification successful</source>
+        <source>Face ID</source>
         <translation type="unfinished"/>
     </message>
+    <message>
+        <source>Verification successful</source>
+        <translation>Verifizierung erfolgreich</translation>
+    </message>
     <message numerus="yes">
-        <location filename="../src/session-widgets/authenticationmodule.cpp" line="218"/>
-        <location filename="../src/session-widgets/authenticationmodule.cpp" line="220"/>
-        <location filename="../src/session-widgets/authenticationmodule.cpp" line="231"/>
-        <location filename="../src/session-widgets/authenticationmodule.cpp" line="233"/>
         <source>Verification failed, %n chances left</source>
         <translation type="unfinished"><numerusform></numerusform><numerusform></numerusform></translation>
     </message>
     <message>
-        <location filename="../src/session-widgets/authenticationmodule.cpp" line="222"/>
-        <location filename="../src/session-widgets/authenticationmodule.cpp" line="235"/>
         <source>Verification failed, only one chance left</source>
+        <translation>Verifizierung fehlgeschlagen, nur noch eine Chance übrig</translation>
+    </message>
+    <message>
+        <source>Verify your Face ID</source>
         <translation type="unfinished"/>
     </message>
     <message>
-        <location filename="../src/session-widgets/authenticationmodule.cpp" line="237"/>
-        <source>Wrong Password</source>
+        <source>Face ID locked, use password please</source>
         <translation type="unfinished"/>
     </message>
     <message>
-        <location filename="../src/session-widgets/authenticationmodule.cpp" line="239"/>
-        <source>Wrong PIN</source>
+        <source>Device unavailable!</source>
         <translation type="unfinished"/>
     </message>
+</context>
+<context>
+    <name>AuthFingerprint</name>
     <message>
-        <location filename="../src/session-widgets/authenticationmodule.cpp" line="309"/>
-        <source>UKey is required</source>
-        <translation type="unfinished"/>
-    </message>
-    <message>
-        <location filename="../src/session-widgets/authenticationmodule.cpp" line="321"/>
         <source>Verify your fingerprint</source>
-        <translation type="unfinished"/>
+        <translation>Verifizieren Sie Ihren Fingerabdruck</translation>
     </message>
     <message>
-        <location filename="../src/session-widgets/authenticationmodule.cpp" line="328"/>
-        <source>Password</source>
-        <translation type="unfinished"/>
+        <source>Verification successful</source>
+        <translation>Verifizierung erfolgreich</translation>
+    </message>
+    <message numerus="yes">
+        <source>Verification failed, %n chances left</source>
+        <translation type="unfinished"><numerusform></numerusform><numerusform></numerusform></translation>
     </message>
     <message>
-        <location filename="../src/session-widgets/authenticationmodule.cpp" line="330"/>
-        <source>Enter your PIN</source>
-        <translation type="unfinished"/>
+        <source>Verification failed, only one chance left</source>
+        <translation>Verifizierung fehlgeschlagen, nur noch eine Chance übrig</translation>
     </message>
     <message>
-        <location filename="../src/session-widgets/authenticationmodule.cpp" line="351"/>
         <source>Fingerprint locked, use password please</source>
+        <translation>Fingerabdruck gesperrt, bitte Passwort verwenden</translation>
+    </message>
+</context>
+<context>
+    <name>AuthIris</name>
+    <message>
+        <source>Iris ID</source>
+        <translation type="unfinished"/>
+    </message>
+    <message>
+        <source>Verification successful</source>
+        <translation>Verifizierung erfolgreich</translation>
+    </message>
+    <message numerus="yes">
+        <source>Verification failed, %n chances left</source>
+        <translation type="unfinished"><numerusform></numerusform><numerusform></numerusform></translation>
+    </message>
+    <message>
+        <source>Verification failed, only one chance left</source>
+        <translation>Verifizierung fehlgeschlagen, nur noch eine Chance übrig</translation>
+    </message>
+    <message>
+        <source>Verify your Iris ID</source>
+        <translation type="unfinished"/>
+    </message>
+    <message>
+        <source>Iris ID locked, use password please</source>
         <translation type="unfinished"/>
     </message>
 </context>
 <context>
-    <name>ContentWidget</name>
+    <name>AuthPassword</name>
     <message>
-        <location filename="../src/dde-shutdown/view/contentwidget.cpp" line="357"/>
-        <source>The programs are preventing the computer from shutting down, and forcing shut down may cause data loss.</source>
-        <translation>Die Programme verhindern das Herunterfahren des Computers und das Erzwingen des Herunterfahrens kann zu Datenverlust führen.</translation>
+        <source>Verification successful</source>
+        <translation>Verifizierung erfolgreich</translation>
+    </message>
+    <message numerus="yes">
+        <source>Verification failed, %n chances left</source>
+        <translation><numerusform>Verifizierung fehlgeschlagen, nur noch %n Chance übrig</numerusform><numerusform>Verifizierung fehlgeschlagen, nur noch %n Chancen übrig</numerusform></translation>
     </message>
     <message>
-        <location filename="../src/dde-shutdown/view/contentwidget.cpp" line="358"/>
-        <location filename="../src/dde-shutdown/view/contentwidget.cpp" line="363"/>
-        <location filename="../src/dde-shutdown/view/contentwidget.cpp" line="367"/>
-        <location filename="../src/dde-shutdown/view/contentwidget.cpp" line="371"/>
-        <location filename="../src/dde-shutdown/view/contentwidget.cpp" line="375"/>
-        <source>To close the program, click Cancel, and then close the program.</source>
-        <translation>Klicken Sie zum Schließen des Programms auf Abbrechen und schließen Sie danach das Programm.</translation>
+        <source>Verification failed, only one chance left</source>
+        <translation>Verifizierung fehlgeschlagen, nur noch eine Chance übrig</translation>
     </message>
     <message>
-        <location filename="../src/dde-shutdown/view/contentwidget.cpp" line="362"/>
-        <source>The programs are preventing the computer from reboot, and forcing reboot may cause data loss.</source>
-        <translation>Die Programme verhindern einen Neustart des Computers und das Erzwingen eines Neustarts kann zu Datenverlust führen.</translation>
-    </message>
-    <message>
-        <location filename="../src/dde-shutdown/view/contentwidget.cpp" line="366"/>
-        <source>The programs are preventing the computer from suspend, and forcing suspend may cause data loss.</source>
-        <translation>Die Programme verhindern den Bereitschaftszustand des Computers und das Erzwingen des Bereitschaftszustand kann zu Datenverlust führen.</translation>
-    </message>
-    <message>
-        <location filename="../src/dde-shutdown/view/contentwidget.cpp" line="370"/>
-        <source>The programs are preventing the computer from hibernate, and forcing hibernate may cause data loss.</source>
-        <translation>Die Programme verhindern den Ruhezustand des Computers und das Erzwingen des Ruhezustands kann zu Datenverlust führen.</translation>
-    </message>
-    <message>
-        <location filename="../src/dde-shutdown/view/contentwidget.cpp" line="374"/>
-        <source>The programs are preventing the computer from log out, and forcing log out may cause data loss.</source>
-        <translation>Die Programme verhindern das Abmelden vom Computer und das Erzwingen der Abmeldung kann zu Datenverlust führen.</translation>
-    </message>
-    <message>
-        <location filename="../src/dde-shutdown/view/contentwidget.cpp" line="391"/>
-        <location filename="../src/dde-shutdown/view/contentwidget.cpp" line="437"/>
-        <location filename="../src/dde-shutdown/view/contentwidget.cpp" line="462"/>
-        <location filename="../src/dde-shutdown/view/contentwidget.cpp" line="616"/>
-        <source>Shut down</source>
-        <translation>Herunterfahren</translation>
-    </message>
-    <message>
-        <location filename="../src/dde-shutdown/view/contentwidget.cpp" line="394"/>
-        <location filename="../src/dde-shutdown/view/contentwidget.cpp" line="439"/>
-        <location filename="../src/dde-shutdown/view/contentwidget.cpp" line="465"/>
-        <location filename="../src/dde-shutdown/view/contentwidget.cpp" line="619"/>
-        <source>Reboot</source>
-        <translation>Neu starten</translation>
-    </message>
-    <message>
-        <location filename="../src/dde-shutdown/view/contentwidget.cpp" line="397"/>
-        <location filename="../src/dde-shutdown/view/contentwidget.cpp" line="622"/>
-        <source>Suspend</source>
-        <translation>Bereitschaftszustand</translation>
-    </message>
-    <message>
-        <location filename="../src/dde-shutdown/view/contentwidget.cpp" line="400"/>
-        <location filename="../src/dde-shutdown/view/contentwidget.cpp" line="625"/>
-        <source>Hibernate</source>
-        <translation>Ruhezustand</translation>
-    </message>
-    <message>
-        <location filename="../src/dde-shutdown/view/contentwidget.cpp" line="403"/>
-        <location filename="../src/dde-shutdown/view/contentwidget.cpp" line="468"/>
-        <location filename="../src/dde-shutdown/view/contentwidget.cpp" line="631"/>
-        <source>Log out</source>
-        <translation>Abmelden</translation>
-    </message>
-    <message>
-        <location filename="../src/dde-shutdown/view/contentwidget.cpp" line="463"/>
-        <source>Are you sure you want to shut down?</source>
-        <translation>Sind Sie sicher, dass Sie Herunterfahren möchten?</translation>
-    </message>
-    <message>
-        <location filename="../src/dde-shutdown/view/contentwidget.cpp" line="466"/>
-        <source>Are you sure you want to reboot?</source>
-        <translation>Sind Sie sicher, dass Sie neu starten möchten?</translation>
-    </message>
-    <message>
-        <location filename="../src/dde-shutdown/view/contentwidget.cpp" line="469"/>
-        <source>Are you sure you want to log out?</source>
-        <translation>Sind Sie sicher, dass Sie sich abmelden möchten?</translation>
-    </message>
-    <message>
-        <location filename="../src/dde-shutdown/view/contentwidget.cpp" line="628"/>
-        <source>Lock</source>
-        <translation>Sperren</translation>
-    </message>
-    <message>
-        <location filename="../src/dde-shutdown/view/contentwidget.cpp" line="634"/>
-        <source>Switch user</source>
-        <translation>Benutzer wechseln</translation>
-    </message>
-    <message>
-        <location filename="../src/dde-shutdown/view/contentwidget.cpp" line="639"/>
-        <source>Switch system</source>
-        <translation>System wechseln</translation>
-    </message>
-</context>
-<context>
-    <name>GreeterWorkek</name>
-    <message>
-        <location filename="../src/lightdm-deepin-greeter/greeterworkek.cpp" line="559"/>
         <source>Wrong Password</source>
         <translation>Falsches Passwort</translation>
     </message>
     <message>
-        <location filename="../src/lightdm-deepin-greeter/greeterworkek.cpp" line="563"/>
-        <source>The account or password is not correct. Please enter again.</source>
-        <translation>Das Konto oder Passwort ist nicht korrekt. Bitte erneut eingeben.</translation>
+        <source>Password</source>
+        <translation>Passwort</translation>
+    </message>
+    <message>
+        <source>Please try again 1 minute later</source>
+        <translation>Bitte versuchen Sie es 1 Minute später erneut</translation>
+    </message>
+    <message numerus="yes">
+        <source>Please try again %n minutes later</source>
+        <translation><numerusform>Bitte versuchen Sie es %n Minute später erneut</numerusform><numerusform>Bitte versuchen Sie es %n Minuten später erneut</numerusform></translation>
+    </message>
+    <message>
+        <source>Reset Password</source>
+        <translation>Passwort zurücksetzen</translation>
+    </message>
+    <message>
+        <source>Forgot password?</source>
+        <translation>Passwort vergessen?</translation>
+    </message>
+</context>
+<context>
+    <name>AuthSingle</name>
+    <message>
+        <source>Please try again 1 minute later</source>
+        <translation>Bitte versuchen Sie es 1 Minute später erneut</translation>
+    </message>
+    <message numerus="yes">
+        <source>Please try again %n minutes later</source>
+        <translation><numerusform>Bitte versuchen Sie es 1 Minute später erneut</numerusform><numerusform>Bitte versuchen Sie es %n Minuten später erneut</numerusform></translation>
+    </message>
+    <message>
+        <source>Reset Password</source>
+        <translation>Passwort zurücksetzen</translation>
+    </message>
+    <message>
+        <source>Forgot password?</source>
+        <translation>Passwort vergessen?</translation>
+    </message>
+</context>
+<context>
+    <name>AuthUKey</name>
+    <message>
+        <source>Verification successful</source>
+        <translation>Verifizierung erfolgreich</translation>
+    </message>
+    <message numerus="yes">
+        <source>Verification failed, %n chances left</source>
+        <translation><numerusform>Verifizierung fehlgeschlagen, nur noch 1 Chance übrig</numerusform><numerusform>Verifizierung fehlgeschlagen, nur noch %n Chancen übrig</numerusform></translation>
+    </message>
+    <message>
+        <source>Verification failed, only one chance left</source>
+        <translation>Verifizierung fehlgeschlagen, nur noch eine Chance übrig</translation>
+    </message>
+    <message>
+        <source>Wrong PIN</source>
+        <translation>Falsche PIN</translation>
+    </message>
+    <message>
+        <source>UKey is required</source>
+        <translation>UKey ist erforderlich</translation>
+    </message>
+    <message>
+        <source>Enter your PIN</source>
+        <translation>Geben Sie Ihre PIN ein</translation>
+    </message>
+    <message numerus="yes">
+        <source>Please try again %n minute(s) later</source>
+        <translation><numerusform>Bitte versuchen Sie es 1 Minute später erneut</numerusform><numerusform>Bitte versuchen Sie es %n Minute(n) später erneut</numerusform></translation>
+    </message>
+    <message>
+        <source>Please try again 1 minute later</source>
+        <translation>Bitte versuchen Sie es 1 Minute später erneut</translation>
+    </message>
+    <message numerus="yes">
+        <source>Please try again %n minutes later</source>
+        <translation><numerusform>Bitte versuchen Sie es %n Minute später erneut</numerusform><numerusform>Bitte versuchen Sie es %n Minuten später erneut</numerusform></translation>
+    </message>
+</context>
+<context>
+    <name>AuthWidget</name>
+    <message>
+        <source>Account</source>
+        <translation>Konto</translation>
+    </message>
+    <message numerus="yes">
+        <source>Your password will expire in %n days, please change it timely</source>
+        <translation><numerusform>Ihr Passwort läuft in %d Tage ab, bitte ändern Sie es rechtzeitig</numerusform><numerusform>Ihr Passwort läuft in %d Tagen ab, bitte ändern Sie es rechtzeitig</numerusform></translation>
+    </message>
+    <message>
+        <source>Password expired, please change</source>
+        <translation>Passwort abgelaufen, bitte ändern</translation>
+    </message>
+</context>
+<context>
+    <name>GreeterWorker</name>
+    <message>
+        <source>Wrong account</source>
+        <translation>Falsches Konto</translation>
+    </message>
+    <message>
+        <source>Wrong Password</source>
+        <translation>Falsches Passwort</translation>
     </message>
 </context>
 <context>
     <name>InhibitWarnView</name>
     <message>
-        <location filename="../src/dde-shutdown/view/inhibitwarnview.cpp" line="90"/>
-        <location filename="../src/widgets/inhibitwarnview.cpp" line="91"/>
         <source>Cancel</source>
         <translation>Abbrechen</translation>
     </message>
@@ -191,12 +213,10 @@
 <context>
     <name>LockContent</name>
     <message>
-        <location filename="../src/session-widgets/lockcontent.cpp" line="403"/>
         <source>Lock Screen</source>
         <translation>Bildschirm sperren</translation>
     </message>
     <message>
-        <location filename="../src/session-widgets/lockcontent.cpp" line="407"/>
         <source>Failed to lock screen</source>
         <translation>Bildschirm konnte nicht gesperrt werden</translation>
     </message>
@@ -204,12 +224,10 @@
 <context>
     <name>LockWorker</name>
     <message>
-        <location filename="../src/dde-lock/lockworker.cpp" line="443"/>
         <source>Fingerprint verification timed out, please enter your password manually</source>
         <translation>Fingerabdruck-Überprüfung abgelaufen, bitte geben Sie Ihr Passwort manuell ein. </translation>
     </message>
     <message>
-        <location filename="../src/dde-lock/lockworker.cpp" line="461"/>
         <source>Failed to match fingerprint</source>
         <translation>Fingerabdruck stimmt nicht überein</translation>
     </message>
@@ -217,66 +235,56 @@
 <context>
     <name>MultiUsersWarningView</name>
     <message>
-        <location filename="../src/dde-shutdown/view/multiuserswarningview.cpp" line="45"/>
-        <location filename="../src/widgets/multiuserswarningview.cpp" line="45"/>
         <source>Cancel</source>
         <translation>Abbrechen</translation>
     </message>
     <message>
-        <location filename="../src/dde-shutdown/view/multiuserswarningview.cpp" line="130"/>
-        <location filename="../src/widgets/multiuserswarningview.cpp" line="135"/>
         <source>The above users are still logged in and data will be lost due to shutdown, are you sure you want to shut down?</source>
         <translation>Die oben genannten Benutzer sind immer noch angemeldet und es gehen Daten durch das Herunterfahren verloren. Sind Sie sicher, dass Sie das System herunterfahren möchten?</translation>
     </message>
     <message>
-        <location filename="../src/dde-shutdown/view/multiuserswarningview.cpp" line="134"/>
-        <location filename="../src/widgets/multiuserswarningview.cpp" line="139"/>
         <source>The above users are still logged in and data will be lost due to reboot, are you sure you want to reboot?</source>
         <translation>Die oben genannten Benutzer sind immer noch angemeldet und es gehen Daten durch einen Neustart verloren. Sind Sie sicher, dass Sie einen Neustart durchführen möchten?</translation>
     </message>
 </context>
 <context>
+    <name>SessionWidget</name>
+    <message>
+        <source>You have enabled the high system security level, thus cannot switch to the Wayland mode, please disable the high security level in Security Center and try again.</source>
+        <translation>Sie haben die Systemsicherheitsstufe auf hoch gesetzt, weshalb nicht zum Wayland-Modus gewechselt werden kann. Bitte deaktivieren Sie die hohe Systemsicherheitsstufe im Sicherheitszentrum und versuchen Sie es erneut.</translation>
+    </message>
+</context>
+<context>
     <name>ShutdownWidget</name>
     <message>
-        <location filename="../src/widgets/shutdownwidget.cpp" line="31"/>
         <source>Shut down</source>
         <translation>Herunterfahren</translation>
     </message>
     <message>
-        <location filename="../src/widgets/shutdownwidget.cpp" line="32"/>
-        <location filename="../src/widgets/shutdownwidget.cpp" line="211"/>
         <source>Reboot</source>
         <translation>Neu starten</translation>
     </message>
     <message>
-        <location filename="../src/widgets/shutdownwidget.cpp" line="33"/>
-        <location filename="../src/widgets/shutdownwidget.cpp" line="217"/>
         <source>Suspend</source>
         <translation>Bereitschaftszustand</translation>
     </message>
     <message>
-        <location filename="../src/widgets/shutdownwidget.cpp" line="34"/>
-        <location filename="../src/widgets/shutdownwidget.cpp" line="224"/>
         <source>Hibernate</source>
         <translation>Ruhezustand</translation>
     </message>
     <message>
-        <location filename="../src/widgets/shutdownwidget.cpp" line="231"/>
         <source>Lock</source>
         <translation>Sperren</translation>
     </message>
     <message>
-        <location filename="../src/widgets/shutdownwidget.cpp" line="238"/>
         <source>Log out</source>
         <translation>Abmelden</translation>
     </message>
     <message>
-        <location filename="../src/widgets/shutdownwidget.cpp" line="244"/>
         <source>Switch user</source>
         <translation>Benutzer wechseln</translation>
     </message>
     <message>
-        <location filename="../src/widgets/shutdownwidget.cpp" line="252"/>
         <source>Switch system</source>
         <translation>System wechseln</translation>
     </message>
@@ -284,117 +292,78 @@
 <context>
     <name>SystemMonitor</name>
     <message>
-        <location filename="../src/dde-shutdown/view/systemmonitor.cpp" line="45"/>
-        <location filename="../src/widgets/systemmonitor.cpp" line="45"/>
         <source>Start system monitor</source>
         <translation>Systemmonitor starten</translation>
     </message>
 </context>
 <context>
-    <name>UserLoginWidget</name>
-    <message>
-        <location filename="../src/session-widgets/userloginwidget.cpp" line="147"/>
-        <location filename="../src/session-widgets/userloginwidget.cpp" line="647"/>
-        <source>Account</source>
-        <translation>Konto</translation>
-    </message>
-    <message>
-        <location filename="../src/session-widgets/userloginwidget.cpp" line="297"/>
-        <location filename="../src/session-widgets/userloginwidget.cpp" line="646"/>
-        <source>Password</source>
-        <translation>Passwort</translation>
-    </message>
-    <message>
-        <location filename="../src/session-widgets/userloginwidget.cpp" line="356"/>
-        <source>Verify your fingerprint</source>
-        <translation type="unfinished"/>
-    </message>
-    <message numerus="yes">
-        <location filename="../src/session-widgets/userloginwidget.cpp" line="768"/>
-        <source>Please try again %n minute(s) later</source>
-        <translation type="unfinished"><numerusform></numerusform><numerusform></numerusform></translation>
-    </message>
-</context>
-<context>
     <name>WarningContent</name>
     <message>
-        <location filename="../src/widgets/warningcontent.cpp" line="172"/>
         <source>The programs are preventing the computer from shutting down, and forcing shut down may cause data loss.</source>
         <translation>Die Programme verhindern das Herunterfahren des Computers und das Erzwingen des Herunterfahrens kann zu Datenverlust führen.</translation>
     </message>
     <message>
-        <location filename="../src/widgets/warningcontent.cpp" line="173"/>
-        <location filename="../src/widgets/warningcontent.cpp" line="178"/>
-        <location filename="../src/widgets/warningcontent.cpp" line="182"/>
-        <location filename="../src/widgets/warningcontent.cpp" line="186"/>
-        <location filename="../src/widgets/warningcontent.cpp" line="190"/>
         <source>To close the program, click Cancel, and then close the program.</source>
         <translation>Klicken Sie zum Schließen des Programms auf Abbrechen und schließen Sie danach das Programm.</translation>
     </message>
     <message>
-        <location filename="../src/widgets/warningcontent.cpp" line="177"/>
         <source>The programs are preventing the computer from reboot, and forcing reboot may cause data loss.</source>
         <translation>Die Programme verhindern einen Neustart des Computers und das Erzwingen eines Neustarts kann zu Datenverlust führen.</translation>
     </message>
     <message>
-        <location filename="../src/widgets/warningcontent.cpp" line="181"/>
         <source>The programs are preventing the computer from suspend, and forcing suspend may cause data loss.</source>
         <translation>Die Programme verhindern den Bereitschaftszustand des Computers und das Erzwingen des Bereitschaftszustand kann zu Datenverlust führen.</translation>
     </message>
     <message>
-        <location filename="../src/widgets/warningcontent.cpp" line="185"/>
         <source>The programs are preventing the computer from hibernate, and forcing hibernate may cause data loss.</source>
         <translation>Die Programme verhindern den Ruhezustand des Computers und das Erzwingen des Ruhezustands kann zu Datenverlust führen.</translation>
     </message>
     <message>
-        <location filename="../src/widgets/warningcontent.cpp" line="189"/>
         <source>The programs are preventing the computer from log out, and forcing log out may cause data loss.</source>
         <translation>Die Programme verhindern das Abmelden vom Computer und das Erzwingen der Abmeldung kann zu Datenverlust führen.</translation>
     </message>
     <message>
-        <location filename="../src/widgets/warningcontent.cpp" line="205"/>
-        <location filename="../src/widgets/warningcontent.cpp" line="252"/>
-        <location filename="../src/widgets/warningcontent.cpp" line="276"/>
         <source>Shut down</source>
         <translation>Herunterfahren</translation>
     </message>
     <message>
-        <location filename="../src/widgets/warningcontent.cpp" line="208"/>
-        <location filename="../src/widgets/warningcontent.cpp" line="254"/>
-        <location filename="../src/widgets/warningcontent.cpp" line="279"/>
         <source>Reboot</source>
         <translation>Neu starten</translation>
     </message>
     <message>
-        <location filename="../src/widgets/warningcontent.cpp" line="211"/>
         <source>Suspend</source>
         <translation>Bereitschaftszustand</translation>
     </message>
     <message>
-        <location filename="../src/widgets/warningcontent.cpp" line="214"/>
         <source>Hibernate</source>
         <translation>Ruhezustand</translation>
     </message>
     <message>
-        <location filename="../src/widgets/warningcontent.cpp" line="217"/>
-        <location filename="../src/widgets/warningcontent.cpp" line="282"/>
         <source>Log out</source>
         <translation>Abmelden</translation>
     </message>
     <message>
-        <location filename="../src/widgets/warningcontent.cpp" line="277"/>
         <source>Are you sure you want to shut down?</source>
         <translation>Sind Sie sicher, dass Sie Herunterfahren möchten?</translation>
     </message>
     <message>
-        <location filename="../src/widgets/warningcontent.cpp" line="280"/>
         <source>Are you sure you want to reboot?</source>
         <translation>Sind Sie sicher, dass Sie neu starten möchten?</translation>
     </message>
     <message>
-        <location filename="../src/widgets/warningcontent.cpp" line="283"/>
         <source>Are you sure you want to log out?</source>
         <translation>Sind Sie sicher, dass Sie sich abmelden möchten?</translation>
+    </message>
+</context>
+<context>
+    <name>dss::module::NetworkModule</name>
+    <message>
+        <source>Turn on</source>
+        <translation>Einschalten</translation>
+    </message>
+    <message>
+        <source>Turn off</source>
+        <translation>Ausschalten</translation>
     </message>
 </context>
 </TS>

@@ -25,9 +25,9 @@
         <source>Face ID locked, use password please</source>
         <translation>Identificació facial blocada. Useu la contrasenya.</translation>
     </message>
-    <message numerus="yes">
-        <source>Please try again %n minute(s) later</source>
-        <translation><numerusform>Torneu-ho a intentar d&apos;aquí a %n minut.</numerusform><numerusform>Torneu-ho a intentar d&apos;aquí a %n minuts.</numerusform></translation>
+    <message>
+        <source>Device unavailable!</source>
+        <translation type="unfinished"/>
     </message>
 </context>
 <context>
@@ -51,14 +51,6 @@
     <message>
         <source>Fingerprint locked, use password please</source>
         <translation>Empremta blocada. Si us plau, useu la contrasenya.</translation>
-    </message>
-    <message numerus="yes">
-        <source>Please try again %n minute(s) later</source>
-        <translation><numerusform>Torneu-ho a intentar d&apos;aquí a %n minut.</numerusform><numerusform>Torneu-ho a intentar d&apos;aquí a %n minuts.</numerusform></translation>
-    </message>
-    <message>
-        <source>Please try again 1 minute later</source>
-        <translation>Si us plau, torneu-ho a intentar d&apos;aquí a 1 minut.</translation>
     </message>
 </context>
 <context>
@@ -87,10 +79,6 @@
         <source>Iris ID locked, use password please</source>
         <translation>Identificació d&apos;iris blocada. Useu la contrasenya.</translation>
     </message>
-    <message numerus="yes">
-        <source>Please try again %n minute(s) later</source>
-        <translation><numerusform>Torneu-ho a intentar d&apos;aquí a %n minut.</numerusform><numerusform>Torneu-ho a intentar d&apos;aquí a %n minuts.</numerusform></translation>
-    </message>
 </context>
 <context>
     <name>AuthPassword</name>
@@ -113,10 +101,6 @@
     <message>
         <source>Password</source>
         <translation>Contrasenya</translation>
-    </message>
-    <message numerus="yes">
-        <source>Please try again %n minute(s) later</source>
-        <translation><numerusform>Torneu-ho a intentar d&apos;aquí a %n minut.</numerusform><numerusform>Torneu-ho a intentar d&apos;aquí a %n minuts.</numerusform></translation>
     </message>
     <message>
         <source>Please try again 1 minute later</source>
@@ -209,58 +193,7 @@
     </message>
 </context>
 <context>
-    <name>AuthenticationModule</name>
-    <message>
-        <source>Verification successful</source>
-        <translation>Verificació correcta</translation>
-    </message>
-    <message numerus="yes">
-        <source>Verification failed, %n chances left</source>
-        <translation><numerusform>Ha fallat la verificació. Resta %n intent.</numerusform><numerusform>Ha fallat la verificació. Resten %n intents.</numerusform></translation>
-    </message>
-    <message>
-        <source>Verification failed, only one chance left</source>
-        <translation>Ha fallat la verificació. Només resta un intent.</translation>
-    </message>
-    <message>
-        <source>Wrong Password</source>
-        <translation>Contrasenya incorrecta</translation>
-    </message>
-    <message>
-        <source>Wrong PIN</source>
-        <translation>PIN incorrecte</translation>
-    </message>
-    <message>
-        <source>UKey is required</source>
-        <translation>Cal la clau</translation>
-    </message>
-    <message>
-        <source>Verify your fingerprint</source>
-        <translation>Verifiqueu l&apos;empremta</translation>
-    </message>
-    <message>
-        <source>Password</source>
-        <translation>Contrasenya</translation>
-    </message>
-    <message>
-        <source>Enter your PIN</source>
-        <translation>Marqueu el PIN</translation>
-    </message>
-    <message>
-        <source>Fingerprint locked, use password please</source>
-        <translation>Empremta blocada. Si us plau, useu la contrasenya.</translation>
-    </message>
-    <message>
-        <source>Please try again 1 minute later</source>
-        <translation>Si us plau, torneu-ho a intentar d&apos;aquí a 1 minut.</translation>
-    </message>
-    <message numerus="yes">
-        <source>Please try again %n minutes later</source>
-        <translation><numerusform>Si us plau, torneu-ho a intentar d&apos;aquí a %n minut.</numerusform><numerusform>Si us plau, torneu-ho a intentar d&apos;aquí a %n minuts.</numerusform></translation>
-    </message>
-</context>
-<context>
-    <name>GreeterWorkek</name>
+    <name>GreeterWorker</name>
     <message>
         <source>Wrong account</source>
         <translation>Compte incorrecte</translation>
@@ -318,7 +251,7 @@
     <name>SessionWidget</name>
     <message>
         <source>You have enabled the high system security level, thus cannot switch to the Wayland mode, please disable the high security level in Security Center and try again.</source>
-        <translation type="unfinished"/>
+        <translation>Heu activat el nivell de seguretat del sistema alt i, per tant, no podeu canviar al mode Wayland. Desactiveu el nivell de seguretat alt al Centre de seguretat i torneu-ho a provar.</translation>
     </message>
 </context>
 <context>
@@ -361,21 +294,6 @@
     <message>
         <source>Start system monitor</source>
         <translation>Inicia el monitor del sistema</translation>
-    </message>
-</context>
-<context>
-    <name>UserLoginWidget</name>
-    <message>
-        <source>Account</source>
-        <translation>Compte</translation>
-    </message>
-    <message numerus="yes">
-        <source>Your password will expire in %n days, please change it timely</source>
-        <translation><numerusform>La contrasenya caducarà d&apos;aquí a %d dia; canvieu-la oportunament.</numerusform><numerusform>La contrasenya caducarà d&apos;aquí a %d dies; canvieu-la oportunament.</numerusform></translation>
-    </message>
-    <message>
-        <source>Password expired, please change</source>
-        <translation>La contrasenya ha caducat. Si us plau, canvieu-la.</translation>
     </message>
 </context>
 <context>

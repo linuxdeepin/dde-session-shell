@@ -25,9 +25,9 @@
         <source>Face ID locked, use password please</source>
         <translation>Face İD kilidləndi, lütfən şifrədən istifadə edin</translation>
     </message>
-    <message numerus="yes">
-        <source>Please try again %n minute(s) later</source>
-        <translation><numerusform>Lütfən %n dəqiqə(lər) sonra cəhd edin</numerusform><numerusform>Lütfən %n dəqiqə(lər) sonra cəhd edin</numerusform></translation>
+    <message>
+        <source>Device unavailable!</source>
+        <translation type="unfinished"/>
     </message>
 </context>
 <context>
@@ -51,14 +51,6 @@
     <message>
         <source>Fingerprint locked, use password please</source>
         <translation>Barmaq izi kilidləndi, şifrədən istifadə edin</translation>
-    </message>
-    <message numerus="yes">
-        <source>Please try again %n minute(s) later</source>
-        <translation><numerusform>Lütfən %n dəqiqə(lər) sonra cəhd edin</numerusform><numerusform>Lütfən %n dəqiqə(lər) sonra cəhd edin</numerusform></translation>
-    </message>
-    <message>
-        <source>Please try again 1 minute later</source>
-        <translation>Lütfən, 1 dəqiqə sonra cəhd edin</translation>
     </message>
 </context>
 <context>
@@ -87,10 +79,6 @@
         <source>Iris ID locked, use password please</source>
         <translation>İris İD kilidləndi, lütfən şifrədən istifadə edin</translation>
     </message>
-    <message numerus="yes">
-        <source>Please try again %n minute(s) later</source>
-        <translation><numerusform>Lütfən %n dəqiqə(lər) sonra cəhd edin</numerusform><numerusform>Lütfən %n dəqiqə(lər) sonra cəhd edin</numerusform></translation>
-    </message>
 </context>
 <context>
     <name>AuthPassword</name>
@@ -113,10 +101,6 @@
     <message>
         <source>Password</source>
         <translation>Şifrə</translation>
-    </message>
-    <message numerus="yes">
-        <source>Please try again %n minute(s) later</source>
-        <translation><numerusform>Lütfən %n dəqiqə(lər) sonra cəhd edin</numerusform><numerusform>Lütfən %n dəqiqə(lər) sonra cəhd edin</numerusform></translation>
     </message>
     <message>
         <source>Please try again 1 minute later</source>
@@ -212,11 +196,11 @@
     <name>GreeterWorker</name>
     <message>
         <source>Wrong account</source>
-        <translation type="unfinished"/>
+        <translation>Yalnış hesab</translation>
     </message>
     <message>
         <source>Wrong Password</source>
-        <translation type="unfinished"/>
+        <translation>Yanlış Şifrə</translation>
     </message>
 </context>
 <context>
@@ -267,7 +251,7 @@
     <name>SessionWidget</name>
     <message>
         <source>You have enabled the high system security level, thus cannot switch to the Wayland mode, please disable the high security level in Security Center and try again.</source>
-        <translation type="unfinished"/>
+        <translation>Sisteminiz aktiv edilmiş yüksək təhlükəsizlik səviyyəsindədir, buna görə də Wayland rejiminə keçmək mümkün deyil. Lütfən Təhlükəsizlik Mərkəzində təhlükəsizlik səviyyəsini söndürün və yenidən cəhd edin.</translation>
     </message>
 </context>
 <context>
