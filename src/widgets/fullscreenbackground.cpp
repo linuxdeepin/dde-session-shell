@@ -205,10 +205,12 @@ void FullscreenBackground::setContent(QWidget *const w)
 {
     m_content = w;
     m_content->setParent(this);
-    m_content->raise();
     m_content->move(0, 0);
     m_content->setFocus();
     setFocusProxy(m_content);
+    // 如果是黑屏状态则不置顶
+    if (!m_blackWidget->isVisible())
+        m_content->raise();
 }
 
 void FullscreenBackground::setIsHibernateMode()
