@@ -197,24 +197,25 @@ void WarningContent::beforeInvokeAction(bool needConfirm)
             return;
         }
 
-        bool isAccept = std::any_of(inhibitors.begin(), inhibitors.end(),
+        // 如果有阻止关机、重启、待机或休眠的进程，则不允许手动强制执行
+        bool isBlock = std::any_of(inhibitors.begin(), inhibitors.end(),
                                     [](const InhibitWarnView::InhibitorData &inhib) { return inhib.mode.compare("block") == 0; });
 
         if (m_powerAction == SessionBaseModel::PowerAction::RequireShutdown) {
             view->setAcceptReason(tr("Shut down"));
-            view->setAcceptVisible(isAccept);
+            view->setAcceptVisible(!isBlock);
         } else if (m_powerAction == SessionBaseModel::PowerAction::RequireRestart || m_powerAction == SessionBaseModel::PowerAction::RequireSwitchSystem) {
             view->setAcceptReason(tr("Reboot"));
-            view->setAcceptVisible(isAccept);
+            view->setAcceptVisible(!isBlock);
         } else if (m_powerAction == SessionBaseModel::PowerAction::RequireSuspend) {
             view->setAcceptReason(tr("Suspend"));
-            view->setAcceptVisible(isAccept);
+            view->setAcceptVisible(!isBlock);
         } else if (m_powerAction == SessionBaseModel::PowerAction::RequireHibernate) {
             view->setAcceptReason(tr("Hibernate"));
-            view->setAcceptVisible(isAccept);
+            view->setAcceptVisible(!isBlock);
         } else if (m_powerAction == SessionBaseModel::PowerAction::RequireLogout) {
             view->setAcceptReason(tr("Log out"));
-            view->setAcceptVisible(isAccept);
+            view->setAcceptVisible(!isBlock);
         }
 
         m_warningView = view;
