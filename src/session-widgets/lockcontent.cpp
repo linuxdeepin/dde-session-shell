@@ -203,6 +203,7 @@ void LockContent::initUserListWidget()
     }
     m_userListWidget = new UserFrameList(this);
     m_userListWidget->setModel(m_model);
+    m_userListWidget->setVisible(false);
 
     connect(m_userListWidget, &UserFrameList::clicked, this, &LockContent::restoreMode);
     connect(m_userListWidget, &UserFrameList::requestSwitchUser, this, &LockContent::requestSwitchToUser);
