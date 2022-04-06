@@ -192,6 +192,13 @@ void AuthWidget::setUser(std::shared_ptr<User> user)
         m_accountEdit->hide();
         m_accountEdit->clear();
     }
+
+    if (m_singleAuth) {
+        m_singleAuth->setCurrentUid(user->uid());
+    }
+    if (m_passwordAuth) {
+        m_passwordAuth->setCurrentUid(user->uid());
+    }
 }
 
 /**
