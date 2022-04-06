@@ -29,6 +29,10 @@
 #include <QKeyEvent>
 #include <QPainter>
 
+#include <DHiDPIHelper>
+
+DWIDGET_USE_NAMESPACE
+
 SystemMonitor::SystemMonitor(QWidget *parent)
     : QWidget(parent)
     , m_icon(new QLabel(this))
@@ -49,7 +53,7 @@ void SystemMonitor::initUI()
     mainLayout->setSpacing(5);
     mainLayout->setContentsMargins(10, 0, 10, 0);
 
-    m_icon->setPixmap(QPixmap(":/img/deepin-system-monitor.svg"));
+    m_icon->setPixmap(DHiDPIHelper::loadNxPixmap(":/img/deepin-system-monitor.svg"));
     m_text->setText(tr("Start system monitor"));
 
     mainLayout->addWidget(m_icon, 0, Qt::AlignVCenter | Qt::AlignRight);
