@@ -64,6 +64,7 @@ public:
     void setEncryption(const int type, const ArrayInt method);
     bool authSessionExist(const QString &account) const;
     bool isDeepinAuthValid() const ;
+    bool inAuthentication() const;
 
 signals:
     /* com.deepin.daemon.Authenticate */

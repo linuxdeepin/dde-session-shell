@@ -382,14 +382,14 @@ void LockWorker::doPowerAction(const SessionBaseModel::PowerAction action)
     }
         break;
     case SessionBaseModel::PowerAction::RequireRestart:
-        if (m_model->currentModeState() == SessionBaseModel::ModeStatus::ShutDownMode) {
+        if (m_model->currentModeState() == SessionBaseModel::ModeStatus::ShutDownMode || !m_authFramework->inAuthentication()) {
             m_sessionManagerInter->RequestReboot();
         } else {
             m_model->setCurrentModeState(SessionBaseModel::ModeStatus::ConfirmPasswordMode);
         }
         return;
     case SessionBaseModel::PowerAction::RequireShutdown:
-        if (m_model->currentModeState() == SessionBaseModel::ModeStatus::ShutDownMode) {
+        if (m_model->currentModeState() == SessionBaseModel::ModeStatus::ShutDownMode || !m_authFramework->inAuthentication()) {
             m_sessionManagerInter->RequestShutdown();
         } else {
             m_model->setCurrentModeState(SessionBaseModel::ModeStatus::ConfirmPasswordMode);
