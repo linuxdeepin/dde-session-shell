@@ -368,13 +368,13 @@ void LockContent::showEvent(QShowEvent *event)
 {
     onStatusChanged(m_model->currentModeState());
     tryGrabKeyboard();
-    return QFrame::showEvent(event);
+    QFrame::showEvent(event);
 }
 
 void LockContent::hideEvent(QHideEvent *event)
 {
     m_shutdownFrame->recoveryLayout();
-    return QFrame::hideEvent(event);
+    QFrame::hideEvent(event);
 }
 
 void LockContent::resizeEvent(QResizeEvent *event)
@@ -498,8 +498,9 @@ void LockContent::onUserListChanged(QList<std::shared_ptr<User> > list)
 void LockContent::tryGrabKeyboard()
 {
 #ifndef QT_DEBUG
-    if (qgetenv("XDG_SESSION_TYPE").contains("wayland"))
+    if (m_model->isUseWayland()) {
         return;
+    }
 
     if (window()->windowHandle() && window()->windowHandle()->setKeyboardGrabEnabled(true)) {
         m_failures = 0;

@@ -58,11 +58,13 @@ public slots:
 
 signals:
     void contentVisibleChanged(bool contentVisible);
+    void requestBlockGlobalShortcutsForWayland(bool enable);
 
 protected:
     void setContent(QWidget *const w);
     void keyPressEvent(QKeyEvent *e) Q_DECL_OVERRIDE;
     void showEvent(QShowEvent *event) override;
+    void hideEvent(QHideEvent *event) override;
     bool event(QEvent *e) override;
     void resizeEvent(QResizeEvent *event) Q_DECL_OVERRIDE;
 

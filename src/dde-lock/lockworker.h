@@ -47,6 +47,8 @@ public slots:
     void onAuthFinished();
     void onAuthStateChanged(const int type, const int state, const QString &message);
 
+    void blockGlobalShortcutsForWayland(bool enable);
+
 private:
     void initConnections();
     void initData();
@@ -74,6 +76,7 @@ private:
     HuaWeiSwitchOSInterface *m_switchosInterface = nullptr;
     bool m_canAuthenticate = false;
     QString m_account;
+    QDBusInterface *m_kglobalaccelInter;
 };
 
 #endif // LOCKWORKER_H

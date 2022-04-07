@@ -64,7 +64,7 @@ FullscreenBackground::FullscreenBackground(SessionBaseModel *model, QWidget *par
     , m_blackWidget(new BlackWidget(this))
 {
 #ifndef QT_DEBUG
-    if (!qEnvironmentVariable("XDG_SESSION_TYPE").contains("wayland")) {
+    if (!m_model->isUseWayland()) {
         setWindowFlags(Qt::WindowStaysOnTopHint | Qt::X11BypassWindowManagerHint);
     } else {
         setWindowFlags(windowFlags() | Qt::WindowStaysOnTopHint | Qt::FramelessWindowHint | Qt::Window);
@@ -273,7 +273,7 @@ void FullscreenBackground::paintEvent(QPaintEvent *e)
 
 void FullscreenBackground::tryActiveWindow(int count/* = 9*/)
 {
-    if (count < 0 || qgetenv("XDG_SESSION_TYPE").contains("wayland"))
+    if (count < 0 || m_model->isUseWayland())
         return;
 
     qCDebug(DDE_SS) << "try active window..." << count;
@@ -355,7 +355,9 @@ void FullscreenBackground::keyPressEvent(QKeyEvent *e)
 
 void FullscreenBackground::showEvent(QShowEvent *event)
 {
-    bool isWayLand = qgetenv("XDG_SESSION_TYPE").contains("wayland");
+    if (m_model->isUseWayland()) {
+        Q_EMIT requestBlockGlobalShortcutsForWayland(true);
+    }
     if (QWindow *w = windowHandle()) {
         if (m_screen) {
             if (w->screen() != m_screen) {
@@ -368,12 +370,20 @@ void FullscreenBackground::showEvent(QShowEvent *event)
             updateScreen(w->screen());
         }
 
-        if (!isWayLand) {
+        if (!m_model->isUseWayland()) {
             connect(w, &QWindow::screenChanged, this, &FullscreenBackground::updateScreen, Qt::DirectConnection);
         }
     }
 
     return QWidget::showEvent(event);
+}
+
+void FullscreenBackground::hideEvent(QHideEvent *event)
+{
+    if (m_model->isUseWayland()) {
+        Q_EMIT requestBlockGlobalShortcutsForWayland(false);
+    }
+    QWidget::hideEvent(event);
 }
 
 const QPixmap FullscreenBackground::pixmapHandle(const QPixmap &pixmap)

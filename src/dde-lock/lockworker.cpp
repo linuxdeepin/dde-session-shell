@@ -33,6 +33,7 @@ LockWorker::LockWorker(SessionBaseModel *const model, QObject *parent)
     , m_limitsUpdateTimer(new QTimer(this))
     , m_sessionManagerInter(new SessionManagerInter("com.deepin.SessionManager", "/com/deepin/SessionManager", QDBusConnection::sessionBus(), this))
     , m_switchosInterface(new HuaWeiSwitchOSInterface("com.huawei", "/com/huawei/switchos", QDBusConnection::sessionBus(), this))
+    , m_kglobalaccelInter(nullptr)
 {
     initConnections();
     initData();
@@ -220,6 +221,9 @@ void LockWorker::initData()
     m_model->updateSupportedEncryptionType(m_authFramework->GetSupportedEncrypts());
     m_model->updateSupportedMixAuthFlags(m_authFramework->GetSupportedMixAuthFlags());
     m_model->updateLimitedInfo(m_authFramework->GetLimitedInfo(m_model->currentUser()->name()));
+    if (m_model->isUseWayland()) {
+        m_kglobalaccelInter = new QDBusInterface("org.kde.kglobalaccel","/kglobalaccel","org.kde.KGlobalAccel", QDBusConnection::sessionBus(), this);
+    }
 }
 
 void LockWorker::initConfiguration()
@@ -696,5 +700,21 @@ void LockWorker::restartResetSessionTimer()
 {
     if (m_model->visible() && m_resetSessionTimer->isActive()) {
         m_resetSessionTimer->start();
+    }
+}
+
+void LockWorker::blockGlobalShortcutsForWayland(bool enable)
+{
+    if (!m_kglobalaccelInter->isValid()) {
+        qWarning() << "kglobalaccelInter is not valid";
+        return;
+    }
+    QDBusReply<void> reply = m_kglobalaccelInter->call("blockGlobalShortcuts", enable);
+    if (!reply.isValid()) {
+        qWarning() << "call blockGlobalShortcuts failed" << reply.error();
+    }
+    reply = m_kglobalaccelInter->call("setActiveByUniqueName", "Screenshot", true);
+    if (!reply.isValid()) {
+        qWarning() << "call setActiveByUniqueName failed" << reply.error();
     }
 }

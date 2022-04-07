@@ -172,6 +172,9 @@ int main(int argc, char *argv[])
         QObject::connect(lockFrame, &LockFrame::sendTokenToAuth, worker, &LockWorker::sendTokenToAuth);
         QObject::connect(lockFrame, &LockFrame::requestEndAuthentication, worker, &LockWorker::endAuthentication);
         QObject::connect(lockFrame, &LockFrame::authFinished, worker, &LockWorker::onAuthFinished);
+        if (model->isUseWayland()) {
+            QObject::connect(lockFrame, &LockFrame::requestBlockGlobalShortcutsForWayland, worker, &LockWorker::blockGlobalShortcutsForWayland);
+        }
         lockFrame->setVisible(model->visible());
         emit lockService.Visible(true);
         return lockFrame;

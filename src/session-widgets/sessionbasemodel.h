@@ -97,6 +97,8 @@ public:
     void setHasSwap(bool hasSwap);
     inline bool hasSwap() { return m_hasSwap; }
 
+    inline bool isUseWayland() const { return m_isUseWayland; }
+
     inline bool visible() const { return m_visible; }
     void setVisible(const bool visible);
 
@@ -217,6 +219,7 @@ private:
     bool m_isLock = false;
     bool m_allowShowCustomUser;
     bool m_SEOpen; // 保存等保开启、关闭的状态
+    bool m_isUseWayland;
     int m_userListSize = 0;
     AppType m_appType;
     QList<std::shared_ptr<User>> m_userList;
