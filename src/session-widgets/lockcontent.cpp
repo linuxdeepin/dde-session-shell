@@ -527,7 +527,8 @@ void LockContent::tryGrabKeyboard()
             .arg(5000)
             .call();
 
-        hide();
+        emit requestLockFrameHide();
+        return;
     }
 
     QTimer::singleShot(100, this, &LockContent::tryGrabKeyboard);

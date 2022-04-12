@@ -85,6 +85,7 @@ LockFrame::LockFrame(SessionBaseModel *const model, QWidget *parent)
     connect(m_lockContent, &LockContent::requestStartAuthentication, this, &LockFrame::requestStartAuthentication);
     connect(m_lockContent, &LockContent::sendTokenToAuth, this, &LockFrame::sendTokenToAuth);
     connect(m_lockContent, &LockContent::requestEndAuthentication, this, &LockFrame::requestEndAuthentication);
+    connect(m_lockContent, &LockContent::requestLockFrameHide, this, &LockFrame::hide);
     connect(m_lockContent, &LockContent::authFinished, this, [this] {
         hide();
         emit requestEnableHotzone(true);
