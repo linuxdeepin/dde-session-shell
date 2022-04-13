@@ -668,7 +668,7 @@ QString DeepinAuthFramework::AuthSessionPath(const QString &account) const
 
 bool DeepinAuthFramework::authSessionExist(const QString &account) const
 {
-    return m_authenticateControllers->contains(account);
+    return m_authenticateControllers->contains(account) && m_authenticateControllers->value(account)->isValid();
 }
 
 /**

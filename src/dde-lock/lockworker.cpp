@@ -441,7 +441,13 @@ void LockWorker::switchToUser(std::shared_ptr<User> user)
     qDebug() << "LockWorker::switchToUser:" << m_account << user->name();
     if (user->name() == m_account || *user == *m_model->currentUser()) {
         qInfo() << "switch to current user:" << user->name() << user->isLogin();
-        createAuthentication(user->name());
+        if (!m_authFramework->authSessionExist(m_account)) {
+            createAuthentication(user->name());
+        } else {
+            endAuthentication(m_account, AT_All);
+            destoryAuthentication(m_account);
+            createAuthentication(m_account);
+        }
         return;
     } else {
         qInfo() << "switch user from" << m_account << "to" << user->name() << user->isLogin();
