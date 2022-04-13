@@ -150,7 +150,6 @@ void LockWorker::initConnections()
             destoryAuthentication(m_model->currentUser()->name());
             setCurrentUser(m_model->currentUser());
         }
-        setLocked(visible);
     });
     connect(m_model, &SessionBaseModel::onStatusChanged, this, [=](SessionBaseModel::ModeStatus state) {
         if (state == SessionBaseModel::ModeStatus::PowerMode || state == SessionBaseModel::ModeStatus::ShutDownMode) {
@@ -386,16 +385,18 @@ void LockWorker::doPowerAction(const SessionBaseModel::PowerAction action)
     }
         break;
     case SessionBaseModel::PowerAction::RequireRestart:
-        if (m_model->currentModeState() == SessionBaseModel::ModeStatus::ShutDownMode || !m_authFramework->inAuthentication()) {
+        if (m_model->currentModeState() == SessionBaseModel::ModeStatus::ShutDownMode || !isLocked()) {
             m_sessionManagerInter->RequestReboot();
         } else {
+            createAuthentication(m_account);
             m_model->setCurrentModeState(SessionBaseModel::ModeStatus::ConfirmPasswordMode);
         }
         return;
     case SessionBaseModel::PowerAction::RequireShutdown:
-        if (m_model->currentModeState() == SessionBaseModel::ModeStatus::ShutDownMode || !m_authFramework->inAuthentication()) {
+        if (m_model->currentModeState() == SessionBaseModel::ModeStatus::ShutDownMode || !isLocked()) {
             m_sessionManagerInter->RequestShutdown();
         } else {
+            createAuthentication(m_account);
             m_model->setCurrentModeState(SessionBaseModel::ModeStatus::ConfirmPasswordMode);
         }
         return;
@@ -524,6 +525,8 @@ void LockWorker::createAuthentication(const QString &account)
         m_model->setAuthType(AT_PAM);
         break;
     }
+
+    setLocked(true);
 }
 
 /**
@@ -693,6 +696,7 @@ void LockWorker::onUnlockFinished(bool unlocked)
         break;
     }
 
+    setLocked(!unlocked);
     emit m_model->authFinished(unlocked);
 }
 

@@ -684,8 +684,3 @@ bool DeepinAuthFramework::isDeepinAuthValid() const
     return QDBusConnection::systemBus().interface()->isServiceRegistered(AUTHRNTICATESERVICE)
             && Available == GetFrameworkState();
 }
-
-bool DeepinAuthFramework::inAuthentication() const
-{
-    return m_PAMAuthThread || !m_authenticateControllers->isEmpty();
-}
