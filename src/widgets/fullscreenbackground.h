@@ -58,7 +58,7 @@ public slots:
 
 signals:
     void contentVisibleChanged(bool contentVisible);
-    void requestBlockGlobalShortcutsForWayland(bool enable);
+    void requestDisableGlobalShortcutsForWayland(bool enable);
 
 protected:
     void setContent(QWidget *const w);

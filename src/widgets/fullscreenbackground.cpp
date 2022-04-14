@@ -356,7 +356,7 @@ void FullscreenBackground::keyPressEvent(QKeyEvent *e)
 void FullscreenBackground::showEvent(QShowEvent *event)
 {
     if (m_model->isUseWayland()) {
-        Q_EMIT requestBlockGlobalShortcutsForWayland(true);
+        Q_EMIT requestDisableGlobalShortcutsForWayland(true);
     }
     if (QWindow *w = windowHandle()) {
         if (m_screen) {
@@ -381,7 +381,7 @@ void FullscreenBackground::showEvent(QShowEvent *event)
 void FullscreenBackground::hideEvent(QHideEvent *event)
 {
     if (m_model->isUseWayland()) {
-        Q_EMIT requestBlockGlobalShortcutsForWayland(false);
+        Q_EMIT requestDisableGlobalShortcutsForWayland(false);
     }
     QWidget::hideEvent(event);
 }

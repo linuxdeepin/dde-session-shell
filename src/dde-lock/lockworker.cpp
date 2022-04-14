@@ -34,6 +34,7 @@ LockWorker::LockWorker(SessionBaseModel *const model, QObject *parent)
     , m_sessionManagerInter(new SessionManagerInter("com.deepin.SessionManager", "/com/deepin/SessionManager", QDBusConnection::sessionBus(), this))
     , m_switchosInterface(new HuaWeiSwitchOSInterface("com.huawei", "/com/huawei/switchos", QDBusConnection::sessionBus(), this))
     , m_kglobalaccelInter(nullptr)
+    , m_kwinInter(nullptr)
 {
     initConnections();
     initData();
@@ -222,6 +223,7 @@ void LockWorker::initData()
     m_model->updateLimitedInfo(m_authFramework->GetLimitedInfo(m_model->currentUser()->name()));
     if (m_model->isUseWayland()) {
         m_kglobalaccelInter = new QDBusInterface("org.kde.kglobalaccel","/kglobalaccel","org.kde.KGlobalAccel", QDBusConnection::sessionBus(), this);
+        m_kwinInter = new QDBusInterface("org.kde.KWin","/KWin","org.kde.KWin", QDBusConnection::sessionBus(), this);
     }
 }
 
@@ -713,15 +715,22 @@ void LockWorker::restartResetSessionTimer()
     }
 }
 
-void LockWorker::blockGlobalShortcutsForWayland(bool enable)
+void LockWorker::disableGlobalShortcutsForWayland(const bool enable)
 {
+    if (m_kwinInter == nullptr || m_kglobalaccelInter == nullptr) {
+        return;
+    }
+    if (!m_kwinInter->isValid()) {
+        qWarning() << "kwinInter is not valid";
+        return;
+    }
+    QDBusReply<void> reply = m_kwinInter->call("disableGlobalShortcutsForClient", enable);
+    if (!reply.isValid()) {
+        qWarning() << "call disableGlobalShortcutsForClient failed" << reply.error();
+    }
     if (!m_kglobalaccelInter->isValid()) {
         qWarning() << "kglobalaccelInter is not valid";
         return;
-    }
-    QDBusReply<void> reply = m_kglobalaccelInter->call("blockGlobalShortcuts", enable);
-    if (!reply.isValid()) {
-        qWarning() << "call blockGlobalShortcuts failed" << reply.error();
     }
     reply = m_kglobalaccelInter->call("setActiveByUniqueName", "Screenshot", true);
     if (!reply.isValid()) {

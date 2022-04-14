@@ -47,7 +47,7 @@ public slots:
     void onAuthFinished();
     void onAuthStateChanged(const int type, const int state, const QString &message);
 
-    void blockGlobalShortcutsForWayland(bool enable);
+    void disableGlobalShortcutsForWayland(const bool enable);
 
 private:
     void initConnections();
@@ -77,6 +77,7 @@ private:
     bool m_canAuthenticate = false;
     QString m_account;
     QDBusInterface *m_kglobalaccelInter;
+    QDBusInterface *m_kwinInter;
 };
 
 #endif // LOCKWORKER_H
