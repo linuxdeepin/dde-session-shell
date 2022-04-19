@@ -46,6 +46,7 @@ void DBusShutdownAgent::show()
 
 void DBusShutdownAgent::Shutdown()
 {
+    qInfo() << "Shutdown";
     if (!canShowShutDown()) {
          //锁屏时允许关机
         emit m_model->onRequirePowerAction(SessionBaseModel::PowerAction::RequireShutdown, false);
@@ -58,6 +59,7 @@ void DBusShutdownAgent::Shutdown()
 
 void DBusShutdownAgent::Restart()
 {
+    qInfo() << "Restart";
     if (!canShowShutDown()) {
         //锁屏时允许重启
         emit m_model->onRequirePowerAction(SessionBaseModel::PowerAction::RequireRestart, false);
@@ -70,6 +72,7 @@ void DBusShutdownAgent::Restart()
 
 void DBusShutdownAgent::Logout()
 {
+    qInfo() << "Logout";
     if (!canShowShutDown()) {
         return;
     }
@@ -81,6 +84,7 @@ void DBusShutdownAgent::Logout()
 
 void DBusShutdownAgent::Suspend()
 {
+    qInfo() << "Suspend";
     if (!canShowShutDown()) {
         //锁屏时允许待机
         m_model->setPowerAction(SessionBaseModel::RequireSuspend);
@@ -93,6 +97,7 @@ void DBusShutdownAgent::Suspend()
 
 void DBusShutdownAgent::Hibernate()
 {
+    qInfo() << "Hibernate";
     if (!canShowShutDown()) {
         //锁屏时允许休眠
         m_model->setPowerAction(SessionBaseModel::RequireHibernate);
@@ -105,6 +110,7 @@ void DBusShutdownAgent::Hibernate()
 
 void DBusShutdownAgent::SwitchUser()
 {
+    qInfo() << "SwitchUser";
     if (!canShowShutDown()) {
         return;
     }
@@ -114,6 +120,7 @@ void DBusShutdownAgent::SwitchUser()
 
 void DBusShutdownAgent::Lock()
 {
+    qInfo() << "Lock";
     if (!canShowShutDown()) {
         return;
     }

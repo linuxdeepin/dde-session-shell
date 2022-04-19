@@ -31,7 +31,7 @@ MultiScreenManager::MultiScreenManager(QObject *parent)
 void MultiScreenManager::register_for_mutil_screen(std::function<QWidget *(QScreen *, int)> function)
 {
     m_registerFunction = function;
-
+    qInfo() << Q_FUNC_INFO << ", is copy mode: " << m_isCopyMode;
     // update all screen
     if (m_isCopyMode) {
         if (!qApp->screens().isEmpty())
@@ -50,6 +50,7 @@ void MultiScreenManager::startRaiseContentFrame()
 
 void MultiScreenManager::onScreenAdded(QScreen *screen)
 {
+    qInfo() << Q_FUNC_INFO << ", is copy mode: " << m_isCopyMode << ", screen name: " << screen->name();
     if (!m_registerFunction) {
         return;
     }
@@ -68,11 +69,11 @@ void MultiScreenManager::onScreenAdded(QScreen *screen)
 
 void MultiScreenManager::onScreenRemoved(QScreen *screen)
 {
+    qDebug() << Q_FUNC_INFO << " is copy mode: " << m_isCopyMode << ", screen name: " << screen->name();
     if (!m_registerFunction) {
         return;
     }
 
-    qDebug() << Q_FUNC_INFO << " is copy mode: " << m_isCopyMode;
     if (m_isCopyMode) {
         if (m_frames.contains(screen)) {
             QWidget *frame = m_frames[screen];
@@ -104,6 +105,8 @@ void MultiScreenManager::raiseContentFrame()
 void MultiScreenManager::onDisplayModeChanged(const QString &)
 {
     m_isCopyMode = (COPY_MODE == getDisplayModeByConfig(m_systemDisplay->GetConfig()));
+
+    qInfo() << Q_FUNC_INFO << ", copy mode: " << m_isCopyMode << ", screen size: " << qApp->screens().size();
     if (m_isCopyMode) {
         for (QScreen *screen : qApp->screens()) {
             // 留下一个屏即可

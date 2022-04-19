@@ -97,7 +97,7 @@ void LockWorker::initConnections()
     connect(m_authFramework, &DeepinAuthFramework::FactorsInfoChanged, m_model, &SessionBaseModel::updateFactorsInfo);
     /* com.deepin.dde.LockService */
     connect(m_lockInter, &DBusLockService::UserChanged, this, [=](const QString &json) {
-        qDebug() << "DBusLockService::UserChanged:" << json;
+        qInfo() << "DBusLockService::UserChanged:" << json;
         QTimer::singleShot(100, this, [ = ] {
             m_model->setCurrentModeState(SessionBaseModel::ModeStatus::PasswordMode);
         });
@@ -112,7 +112,7 @@ void LockWorker::initConnections()
     });
     /* org.freedesktop.login1.Session */
     connect(m_login1SessionSelf, &Login1SessionSelf::ActiveChanged, this, [=](bool active) {
-        qDebug() << "DBusLockService::ActiveChanged:" << active;
+        qInfo() << "DBusLockService::ActiveChanged:" << active;
         if (active) {
             createAuthentication(m_model->currentUser()->name());
         } else {
@@ -122,7 +122,7 @@ void LockWorker::initConnections()
     });
     /* org.freedesktop.login1.Manager */
     connect(m_login1Inter, &DBusLogin1Manager::PrepareForSleep, this, [=](bool isSleep) {
-        qDebug() << "DBusLogin1Manager::PrepareForSleep:" << isSleep;
+        qInfo() << "DBusLogin1Manager::PrepareForSleep:" << isSleep;
         if (isSleep) {
             endAuthentication(m_account, AT_All);
             destoryAuthentication(m_account);
@@ -133,6 +133,7 @@ void LockWorker::initConnections()
     });
     /* model */
     connect(m_model, &SessionBaseModel::authTypeChanged, this, [=](const int type) {
+        qInfo() << "Auth type changed: " << type;
         if (type > 0 && m_model->getAuthProperty().MFAFlag) {
             startAuthentication(m_account, type);
         }
@@ -302,6 +303,7 @@ void LockWorker::onAuthStateChanged(const int type, const int state, const QStri
                 break;
             case AS_Timeout:
             case AS_Error:
+                qWarning() << "Auth error, type: " << type << ", state: " << state << ", message: " << message;
                 endAuthentication(m_account, type);
                 m_model->updateAuthState(type, state, message);
                 break;
@@ -430,6 +432,7 @@ void LockWorker::doPowerAction(const SessionBaseModel::PowerAction action)
  */
 void LockWorker::setCurrentUser(const std::shared_ptr<User> user)
 {
+    qInfo() << "Set current user: " << user->name();
     QJsonObject json;
     json["AuthType"] = user->lastAuthType();
     json["Name"] = user->name();
@@ -510,7 +513,7 @@ void LockWorker::setLocked(const bool locked)
  */
 void LockWorker::createAuthentication(const QString &account)
 {
-    qDebug() << "LockWorker::createAuthentication:" << account;
+    qInfo() << "LockWorker::createAuthentication:" << account;
     QString userPath = m_accountsInter->FindUserByName(account);
     if (!userPath.startsWith("/")) {
         qWarning() << userPath;
@@ -544,7 +547,7 @@ void LockWorker::createAuthentication(const QString &account)
  */
 void LockWorker::destoryAuthentication(const QString &account)
 {
-    qDebug() << "LockWorker::destoryAuthentication:" << account;
+    qInfo() << "LockWorker::destoryAuthentication:" << account;
     switch (m_model->getAuthProperty().FrameworkState) {
     case Available:
         m_authFramework->DestoryAuthController(account);
@@ -564,7 +567,7 @@ void LockWorker::destoryAuthentication(const QString &account)
  */
 void LockWorker::startAuthentication(const QString &account, const int authType)
 {
-    qDebug() << "LockWorker::startAuthentication:" << account << authType;
+    qInfo() << "LockWorker::startAuthentication:" << account << authType;
     switch (m_model->getAuthProperty().FrameworkState) {
     case Available:
         m_authFramework->StartAuthentication(account, authType, -1);
@@ -584,7 +587,7 @@ void LockWorker::startAuthentication(const QString &account, const int authType)
  */
 void LockWorker::sendTokenToAuth(const QString &account, const int authType, const QString &token)
 {
-    qDebug() << "LockWorker::sendTokenToAuth:" << account << authType;
+    qInfo() << "LockWorker::sendTokenToAuth:" << account << authType;
     switch (m_model->getAuthProperty().FrameworkState) {
     case Available:
         m_authFramework->SendTokenToAuth(account, authType, token);

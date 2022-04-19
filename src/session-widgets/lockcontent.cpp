@@ -510,7 +510,7 @@ void LockContent::tryGrabKeyboard()
     m_failures++;
 
     if (m_failures == 15) {
-        qDebug() << "Trying grabkeyboard has exceeded the upper limit. dde-lock will quit.";
+        qWarning() << "Trying grabkeyboard has exceeded the upper limit. dde-lock will quit.";
 
         m_failures = 0;
 
