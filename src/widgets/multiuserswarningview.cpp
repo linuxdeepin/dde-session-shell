@@ -90,7 +90,6 @@ MultiUsersWarningView::MultiUsersWarningView(SessionBaseModel::PowerAction inhib
     m_vLayout->addLayout(btnLayout);
     m_vLayout->addStretch();
     m_cancelBtn->setCheckable(true);
-    m_actionBtn->setCheckable(true);
 
     m_cancelBtn->setChecked(true);
     m_currentBtn = m_cancelBtn;
