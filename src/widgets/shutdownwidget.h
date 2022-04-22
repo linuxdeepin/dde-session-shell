@@ -29,6 +29,7 @@
 #include <QFrame>
 
 #include <functional>
+#include <dtkcore_global.h>
 
 #include "util_updateui.h"
 #include "rounditembutton.h"
@@ -37,6 +38,11 @@
 #include "dbuslogin1manager.h"
 #include "switchos_interface.h"
 #include "systemmonitor.h"
+#include "public_func.h"
+
+DCORE_BEGIN_NAMESPACE
+class DConfig;
+DCORE_END_NAMESPACE
 
 class ShutdownWidget: public QFrame
 {
@@ -97,6 +103,7 @@ private:
     RoundItemButton* m_requireSwitchUserBtn;
     RoundItemButton* m_requireSwitchSystemBtn = nullptr;
     HuaWeiSwitchOSInterface *m_switchosInterface = nullptr;
+    DTK_CORE_NAMESPACE::DConfig *m_dconfig;
 };
 
 #endif // SHUTDOWNWIDGET

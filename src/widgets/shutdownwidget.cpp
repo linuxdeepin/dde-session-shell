@@ -26,6 +26,9 @@
 #include "shutdownwidget.h"
 #include "multiuserswarningview.h"
 #include "../global_util/gsettingwatcher.h"
+#include "../global_util/public_func.h"
+
+#include <DConfig>
 
 #if 0 // storage i10n
 QT_TRANSLATE_NOOP("ShutdownWidget", "Shut down"),
@@ -34,12 +37,15 @@ QT_TRANSLATE_NOOP("ShutdownWidget", "Suspend"),
 QT_TRANSLATE_NOOP("ShutdownWidget", "Hibernate")
 #endif
 
+DCORE_USE_NAMESPACE
+
 ShutdownWidget::ShutdownWidget(QWidget *parent)
     : QFrame(parent)
     , m_index(-1)
     , m_model(nullptr)
     , m_systemMonitor(nullptr)
     , m_switchosInterface(new HuaWeiSwitchOSInterface("com.huawei", "/com/huawei/switchos", QDBusConnection::sessionBus(), this))
+    , m_dconfig(DConfig::create(getDefaultConfigFileName(), getDefaultConfigFileName(), QString(), this))
 {
     m_frameDataBind = FrameDataBind::Instance();
 
@@ -109,6 +115,14 @@ void ShutdownWidget::initConnect()
     if (m_systemMonitor) {
         connect(m_systemMonitor, &SystemMonitor::requestShowSystemMonitor, this, &ShutdownWidget::runSystemMonitor);
     }
+
+    connect(m_dconfig, &DConfig::valueChanged, this, [this] (const QString &key) {
+        if (key == "hideLogoutButton") {
+            if (m_requireLogoutButton && m_model->currentModeState() == SessionBaseModel::ModeStatus::ShutDownMode) {
+                m_requireLogoutButton->setVisible(!m_dconfig->value("hideLogoutButton", false).toBool());
+            }
+        }
+    });
 }
 
 void ShutdownWidget::updateTr(RoundItemButton *widget, const QString &tr)
@@ -246,6 +260,7 @@ void ShutdownWidget::initUI()
     m_requireLogoutButton->setAccessibleName("RequireLogoutButton");
     m_requireLogoutButton->setObjectName("RequireLogoutButton");
     m_requireLogoutButton->setAutoExclusive(true);
+    m_requireLogoutButton->setVisible(!m_dconfig->value("hideLogoutButton", false).toBool());
     updateTr(m_requireLogoutButton, "Log out");
 
     m_requireSwitchUserBtn = new RoundItemButton(tr("Switch user"));
@@ -404,7 +419,7 @@ void ShutdownWidget::onStatusChanged(SessionBaseModel::ModeStatus status)
         if (m_requireSwitchSystemBtn) {
             m_requireSwitchSystemBtn->setVisible(true);
         }
-        m_requireLogoutButton->setVisible(true);
+        m_requireLogoutButton->setVisible(!m_dconfig->value("hideLogoutButton", false).toBool());
         roundItemButton = m_requireLockButton;
     } else {
         m_requireLockButton->setVisible(false);
