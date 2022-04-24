@@ -31,11 +31,13 @@
 #include "modules_loader.h"
 #include "tray_module_interface.h"
 #include "tipswidget.h"
+#include "public_func.h"
 
 #include <DFloatingButton>
 #include <DArrowRectangle>
 #include <DPushButton>
 #include <dimagebutton.h>
+#include <DConfig>
 
 #include <QEvent>
 #include <QGraphicsDropShadowEffect>
@@ -48,6 +50,7 @@
 #define BUTTON_SIZE QSize(52,52)
 
 using namespace dss;
+DCORE_USE_NAMESPACE
 
 bool FlotingButton::eventFilter(QObject *watch, QEvent *event)
 {
@@ -74,6 +77,8 @@ ControlWidget::ControlWidget(const SessionBaseModel *model, QWidget *parent)
     , m_arrowRectWidget(new DArrowRectangle(DArrowRectangle::ArrowBottom, this))
     , m_kbLayoutListView(nullptr)
     , m_keyboardBtn(nullptr)
+    , m_onboardBtnVisible(true)
+    , m_dconfig(DConfig::create(getDefaultConfigFileName(), getDefaultConfigFileName(), QString(), this))
 {
     setModel(model);
     initUI();
@@ -139,7 +144,8 @@ void ControlWidget::initKeyboardLayoutList()
 
 void ControlWidget::setVirtualKBVisible(bool visible)
 {
-    m_virtualKBBtn->setVisible(visible);
+    m_onboardBtnVisible = visible;
+    m_virtualKBBtn->setVisible(visible && !m_dconfig->value("hideOnboard", false).toBool());
 }
 
 void ControlWidget::initUI()
@@ -234,6 +240,11 @@ void ControlWidget::initConnect()
     connect(m_virtualKBBtn, &DFloatingButton::clicked, this, &ControlWidget::requestSwitchVirtualKB);
     connect(m_keyboardBtn, &DFloatingButton::clicked, this, &ControlWidget::setKBLayoutVisible);
     connect(m_model, &SessionBaseModel::currentUserChanged, this, &ControlWidget::setUser);
+    connect(m_dconfig, &DConfig::valueChanged, this, [this] (const QString &key) {
+        if (m_virtualKBBtn && key == "hideOnboard") {
+            m_virtualKBBtn->setVisible(m_onboardBtnVisible && !m_dconfig->value("hideOnboard", false).toBool());
+        }
+    });
 }
 
 void ControlWidget::addModule(module::BaseModuleInterface *module)

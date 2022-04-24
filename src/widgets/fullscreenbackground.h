@@ -67,6 +67,7 @@ protected:
     void hideEvent(QHideEvent *event) override;
     bool event(QEvent *e) override;
     void resizeEvent(QResizeEvent *event) Q_DECL_OVERRIDE;
+    void moveEvent(QMoveEvent *event) Q_DECL_OVERRIDE;
 
 private:
     void paintEvent(QPaintEvent *e) Q_DECL_OVERRIDE;

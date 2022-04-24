@@ -41,6 +41,16 @@
             "description": "用户的小键盘状态，True为打开，False为关闭，与用户绑定，格式为：\"用户名:状态\"，例如\"uos:True\"。当用户改变状态时会记录下来，切换用户时会跟随用户改变。",
             "permissions": "readwrite",
             "visibility": "private"
+        },
+        "hideOnboard":{
+            "value": false,
+            "serial": 0,
+            "flags": ["global"],
+            "name": "HideOnboard",
+            "name[zh_CN]": "隐藏屏幕键盘",
+            "description": "登录界面隐藏屏幕键盘；false：不隐藏，true：隐藏。默认值为false；",
+            "permissions": "readwrite",
+            "visibility": "private"
         }
     }
 }

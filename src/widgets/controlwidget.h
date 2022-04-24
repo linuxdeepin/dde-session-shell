@@ -27,15 +27,15 @@
 #define CONTROLWIDGET_H
 
 #include <dtkwidget_global.h>
+#include <dtkcore_global.h>
 #include "userinfo.h"
 
+#include <DFloatingButton>
 #include <DBlurEffectWidget>
 
 #include <QWidget>
 #include <QEvent>
 #include <QMouseEvent>
-
-#include <DFloatingButton>
 
 namespace dss {
 namespace module {
@@ -48,6 +48,10 @@ DWIDGET_USE_NAMESPACE
 DWIDGET_BEGIN_NAMESPACE
 class DArrowRectangle;
 DWIDGET_END_NAMESPACE
+
+DCORE_BEGIN_NAMESPACE
+class DConfig;
+DCORE_END_NAMESPACE
 
 class MediaWidget;
 class QHBoxLayout;
@@ -164,6 +168,8 @@ private:
     DFloatingButton *m_keyboardBtn;         // 键盘布局按钮
     std::shared_ptr<User> m_curUser;
     QList<QMetaObject::Connection> m_connectionList;
+    bool m_onboardBtnVisible;
+    DTK_CORE_NAMESPACE::DConfig *m_dconfig;
 };
 
 #endif // CONTROLWIDGET_H

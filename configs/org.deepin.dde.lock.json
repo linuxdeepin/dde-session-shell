@@ -29,6 +29,13 @@
             "name": "HideLogoutButton",
             "name[zh_CN]": "隐藏注销按钮",
             "description": "锁屏界面隐藏注销按钮；false：不隐藏，true：隐藏。默认值为false，修改后即时生效。",
+        "hideOnboard":{
+            "value": false,
+            "serial": 0,
+            "flags": [],
+            "name": "HideOnboard",
+            "name[zh_CN]": "隐藏屏幕键盘",
+            "description": "锁屏界面隐藏屏幕键盘；false：不隐藏，true：隐藏。默认值为false，修改后即时生效。",
             "permissions": "readwrite",
             "visibility": "private"
         }

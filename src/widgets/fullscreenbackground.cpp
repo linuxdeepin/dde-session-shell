@@ -530,3 +530,9 @@ bool FullscreenBackground::contains(int type)
     else
         return containsFunc(blurBackgroundCacheList);
 }
+
+void FullscreenBackground::moveEvent(QMoveEvent *event)
+{
+    qInfo() << "FullscreenBackground::moveEvent: " << ", old pos: " << event->oldPos() << ", pos: " << event->pos();
+    QWidget::moveEvent(event);
+}
