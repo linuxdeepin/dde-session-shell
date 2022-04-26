@@ -24,8 +24,8 @@ public:
     void startRaiseContentFrame();
 
 private:
-    void onScreenAdded(QScreen *screen);
-    void onScreenRemoved(QScreen *screen);
+    void onScreenAdded(QPointer<QScreen> screen);
+    void onScreenRemoved(QPointer<QScreen> screen);
     void raiseContentFrame();
     int getDisplayModeByConfig(const QString &config) const;
 
@@ -33,7 +33,7 @@ private slots:
     void onDisplayModeChanged(const QString &);
 
 private:
-    std::function<QWidget* (QScreen *, int)> m_registerFunction;
+    std::function<QWidget* (QPointer<QScreen> , int)> m_registerFunction;
     QMap<QScreen*, QWidget*> m_frames;
     QTimer *m_raiseContentFrameTimer;
     SystemDisplayInter *m_systemDisplay;

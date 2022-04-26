@@ -52,7 +52,7 @@ public:
 public slots:
     void updateBackground(const QString &path);
     void updateBlurBackground(const QString &path);
-    void setScreen(QScreen *screen, bool isVisible = true);
+    void setScreen(QPointer<QScreen> screen, bool isVisible = true);
     void setContentVisible(bool visible);
     void setIsHibernateMode();
 
@@ -98,7 +98,7 @@ private:
     ImageEffectInter *m_imageEffectInter; // 获取模糊背景服务
 
     QPointer<QWidget> m_content;
-    QScreen *m_screen = nullptr;
+    QPointer<QScreen> m_screen;
     SessionBaseModel *m_model = nullptr;
     bool m_primaryShowFinished = false;
     bool m_enableEnterEvent = true;

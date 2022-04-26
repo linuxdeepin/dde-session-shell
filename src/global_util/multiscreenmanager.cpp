@@ -1,4 +1,5 @@
 #include "multiscreenmanager.h"
+#include "fullscreenbackground.h"
 
 #include <QApplication>
 #include <QDesktopWidget>
@@ -48,45 +49,61 @@ void MultiScreenManager::startRaiseContentFrame()
     m_raiseContentFrameTimer->start();
 }
 
-void MultiScreenManager::onScreenAdded(QScreen *screen)
+void MultiScreenManager::onScreenAdded(QPointer<QScreen> screen)
 {
-    qInfo() << Q_FUNC_INFO << ", is copy mode: " << m_isCopyMode << ", screen name: " << screen->name();
+    qInfo() << Q_FUNC_INFO << ", is copy mode: " << m_isCopyMode << ", screen: " << screen;
     if (!m_registerFunction) {
         return;
     }
 
+    QWidget* w = nullptr;
     if (m_isCopyMode) {
         // 如果m_frames不为空则直接退出
         if (m_frames.isEmpty()) {
-            m_frames[screen] = m_registerFunction(screen, m_frames.size());
+            w = m_registerFunction(screen, m_frames.size());
         }
     } else {
-        m_frames[screen] = m_registerFunction(screen, m_frames.size());
+        w = m_registerFunction(screen, m_frames.size());
+    }
+
+    // 创建全屏窗口的时间较长，可能在此期间屏幕已经被移除了且指针被析构了（手动操作比较难出现，如果显卡或驱动有问题则会出现），
+    // 如果指针为空，则不加入Map中，并析构创建的全屏窗口。
+    if (w && !screen.isNull()) {
+        m_frames[screen] = w;
+    } else if (w) {
+        w->deleteLater();
     }
 
     startRaiseContentFrame();
 }
 
-void MultiScreenManager::onScreenRemoved(QScreen *screen)
+void MultiScreenManager::onScreenRemoved(QPointer<QScreen> screen)
 {
-    qDebug() << Q_FUNC_INFO << " is copy mode: " << m_isCopyMode << ", screen name: " << screen->name();
+    qDebug() << Q_FUNC_INFO << " is copy mode: " << m_isCopyMode << ", screen: " << screen;
     if (!m_registerFunction) {
         return;
     }
 
-    if (m_isCopyMode) {
-        if (m_frames.contains(screen)) {
+    if (m_frames.contains(screen)) {
+        if (m_isCopyMode) {
             QWidget *frame = m_frames[screen];
             m_frames.remove(screen);
             // 如果此时m_frames为空则其它的屏幕继续使用此frame，不重新创建
-            if (!qApp->screens().isEmpty() && m_frames.isEmpty())
-                m_frames[qApp->screens().first()] = frame;
-            else
+            if (!qApp->screens().isEmpty() && m_frames.isEmpty()) {
+                QScreen *screen = qApp->screens().first();
+                // 更新frame绑定的屏幕
+                m_frames[screen] = frame;
+                FullscreenBackground *fullScreenFrame = qobject_cast<FullscreenBackground*>(frame);
+                if (fullScreenFrame) {
+                    fullScreenFrame->setScreen(screen, true);
+                }
+            } else {
                 frame->deleteLater();
+            }
+        }else {
+            m_frames[screen]->deleteLater();
+            m_frames.remove(screen);
         }
-    } else {
-        m_frames[screen]->deleteLater();
-        m_frames.remove(screen);
     }
 
     startRaiseContentFrame();

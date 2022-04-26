@@ -302,7 +302,7 @@ int main(int argc, char* argv[])
     PropertyGroup *property_group = new PropertyGroup(worker);
     property_group->addProperty("contentVisible");
 
-    auto createFrame = [&](QScreen *screen, int count) -> QWidget * {
+    auto createFrame = [&](QPointer<QScreen> screen, int count) -> QWidget * {
         LoginWindow *loginFrame = new LoginWindow(model);
         loginFrame->setScreen(screen, count <= 0);
         property_group->addObject(loginFrame);

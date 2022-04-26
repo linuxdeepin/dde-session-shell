@@ -168,8 +168,11 @@ void FullscreenBackground::setEnterEnable(bool enable)
     m_enableEnterEvent = enable;
 }
 
-void FullscreenBackground::setScreen(QScreen *screen, bool isVisible)
+void FullscreenBackground::setScreen(QPointer<QScreen> screen, bool isVisible)
 {
+    if (screen.isNull())
+        return;
+
     QScreen *primary_screen = QGuiApplication::primaryScreen();
     if (primary_screen == screen && isVisible) {
         m_content->show();
