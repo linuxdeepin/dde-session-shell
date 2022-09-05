@@ -13,9 +13,11 @@ class LoginTipsWindow;
 class LoginContent : public LockContent
 {
     Q_OBJECT
-public:
-    explicit LoginContent(SessionBaseModel *const model, QWidget *parent = nullptr);
 
+public:
+    explicit LoginContent(QWidget *parent = nullptr);
+    static LoginContent *instance();
+    void init(SessionBaseModel *model);
     void onCurrentUserChanged(std::shared_ptr<User> user) override;
     void onStatusChanged(SessionBaseModel::ModeStatus status) override;
     void pushSessionFrame();

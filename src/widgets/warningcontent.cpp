@@ -3,13 +3,18 @@
 // SPDX-License-Identifier: GPL-3.0-or-later
 
 #include "warningcontent.h"
+#include "fullscreenbackground.h"
+#include "lockcontent.h"
 
-WarningContent::WarningContent(SessionBaseModel * const model, const SessionBaseModel::PowerAction action, QWidget *parent)
+Q_GLOBAL_STATIC(WarningContent, warningContent)
+
+WarningContent::WarningContent(QWidget *parent)
     : SessionBaseWindow(parent)
-    , m_model(model)
+    , m_model(nullptr)
     , m_login1Inter(new DBusLogin1Manager("org.freedesktop.login1", "/org/freedesktop/login1", QDBusConnection::systemBus(), this))
-    , m_powerAction(action)
+    , m_powerAction(SessionBaseModel::PowerAction::None)
 {
+    setAccessibleName("WarningContent");
     m_inhibitorBlacklists << "NetworkManager" << "ModemManager" << "com.deepin.daemon.Power";
     setTopFrameVisible(false);
     setBottomFrameVisible(false);
@@ -20,13 +25,22 @@ WarningContent::~WarningContent()
 
 }
 
+WarningContent *WarningContent::instance()
+{
+    return warningContent;
+}
+
+void WarningContent::setModel(SessionBaseModel * const model)
+{
+    m_model = model;
+    connect(m_model, &SessionBaseModel::shutdownInhibit, this, &WarningContent::shutdownInhibit);
+}
+
 QList<InhibitWarnView::InhibitorData> WarningContent::listInhibitors(const SessionBaseModel::PowerAction action)
 {
     QList<InhibitWarnView::InhibitorData> inhibitorList;
 
     if (m_login1Inter->isValid()) {
-        qDebug() <<  "m_login1Inter is valid!";
-
         QDBusPendingReply<InhibitorsList> reply = m_login1Inter->ListInhibitors();
         reply.waitForFinished();
 
@@ -108,7 +122,7 @@ QList<InhibitWarnView::InhibitorData> WarningContent::listInhibitors(const Sessi
             qWarning() << "D-Bus request reply error:" << reply.error().message();
         }
     } else {
-        qWarning() << "shutdown login1Manager error!";
+        qDebug() <<  "Login1 interface is invalid";
     }
 
     return inhibitorList;
@@ -116,22 +130,22 @@ QList<InhibitWarnView::InhibitorData> WarningContent::listInhibitors(const Sessi
 
 void WarningContent::doCancelShutdownInhibit()
 {
-    if (m_model->isCheckedInhibit()) return;
-
-    m_model->setIsCheckedInhibit(true);
     m_model->setPowerAction(SessionBaseModel::PowerAction::None);
-    // 在关机界面点击取消时需要回到桌面，其他情况直接退回原界面
-    emit m_model->cancelShutdownInhibit(m_model->currentModeState() == SessionBaseModel::ModeStatus::ShutDownMode);
+    FullScreenBackground::setContent(LockContent::instance());
+    // 从lock点的power btn，不能隐藏锁屏而进入桌面
+    if (m_model->currentModeState() == SessionBaseModel::ModeStatus::ShutDownMode) {
+        m_model->setVisible(false);
+        m_model->setCurrentModeState(SessionBaseModel::PasswordMode);
+    }
 }
 
-void WarningContent::doAccecpShutdownInhibit()
+void WarningContent::doAcceptShutdownInhibit()
 {
-    if (m_model->isCheckedInhibit()) return;
-
-    m_model->setIsCheckedInhibit(true);
+    qInfo() << "m_powerAction: " << m_powerAction;
     m_model->setPowerAction(m_powerAction);
-    if (m_model->currentModeState() != SessionBaseModel::ModeStatus::ShutDownMode)
-        emit m_model->cancelShutdownInhibit(false);
+    if (m_model->currentModeState() != SessionBaseModel::ModeStatus::ShutDownMode) {
+        FullScreenBackground::setContent(LockContent::instance());
+    }
 }
 
 void WarningContent::beforeInvokeAction(bool needConfirm)
@@ -140,6 +154,7 @@ void WarningContent::beforeInvokeAction(bool needConfirm)
     const QList<std::shared_ptr<User>> &loginUsers = m_model->loginedUserList();
 
     if (m_warningView != nullptr) {
+        qInfo() << "delete warning view: " << m_warningView;
         m_warningView->deleteLater();
         m_warningView = nullptr;
     }
@@ -149,6 +164,7 @@ void WarningContent::beforeInvokeAction(bool needConfirm)
         InhibitWarnView *view = new InhibitWarnView(m_powerAction, this);
         view->setFocusPolicy(Qt::StrongFocus);
         setFocusPolicy(Qt::NoFocus);
+        setFocusProxy(view);
         view->setInhibitorList(inhibitors);
 
         switch (m_powerAction) {
@@ -199,11 +215,12 @@ void WarningContent::beforeInvokeAction(bool needConfirm)
         }
 
         m_warningView = view;
-        m_warningView->setFixedSize(getCenterContentSize());
         setCenterContent(m_warningView);
 
+        qInfo() << "Warning view: " << m_warningView;
+
         connect(view, &InhibitWarnView::cancelled, this, &WarningContent::doCancelShutdownInhibit);
-        connect(view, &InhibitWarnView::actionInvoked, this, &WarningContent::doAccecpShutdownInhibit);
+        connect(view, &InhibitWarnView::actionInvoked, this, &WarningContent::doAcceptShutdownInhibit);
 
         return;
     }
@@ -233,7 +250,7 @@ void WarningContent::beforeInvokeAction(bool needConfirm)
         setCenterContent(m_warningView);
 
         connect(view, &MultiUsersWarningView::cancelled, this, &WarningContent::doCancelShutdownInhibit);
-        connect(view, &MultiUsersWarningView::actionInvoked, this, &WarningContent::doAccecpShutdownInhibit);
+        connect(view, &MultiUsersWarningView::actionInvoked, this, &WarningContent::doAcceptShutdownInhibit);
 
         return;
     }
@@ -260,18 +277,19 @@ void WarningContent::beforeInvokeAction(bool needConfirm)
         setCenterContent(m_warningView);
 
         connect(view, &InhibitWarnView::cancelled, this, &WarningContent::doCancelShutdownInhibit);
-        connect(view, &InhibitWarnView::actionInvoked, this, &WarningContent::doAccecpShutdownInhibit);
+        connect(view, &InhibitWarnView::actionInvoked, this, &WarningContent::doAcceptShutdownInhibit);
 
         return;
     }
 
-    doAccecpShutdownInhibit();
+    doAcceptShutdownInhibit();
 }
 
 void WarningContent::setPowerAction(const SessionBaseModel::PowerAction action)
 {
     if (m_powerAction == action)
         return;
+
     m_powerAction = action;
 }
 
@@ -289,4 +307,13 @@ void WarningContent::keyPressEvent(QKeyEvent *event)
         break;
     }
     QWidget::keyPressEvent(event);
+}
+
+void WarningContent::shutdownInhibit(const SessionBaseModel::PowerAction action, bool needConfirm)
+{
+    qInfo() << Q_FUNC_INFO << ", action: " << action;
+    setPowerAction(action);
+    //检查是否允许关机
+    FullScreenBackground::setContent(WarningContent::instance());
+    beforeInvokeAction(needConfirm);
 }

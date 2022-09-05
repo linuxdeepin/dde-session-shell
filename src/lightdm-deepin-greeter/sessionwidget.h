@@ -13,7 +13,6 @@
 #include <QLightDM/UsersModel>
 
 #include "rounditembutton.h"
-#include "framedatabind.h"
 
 class SessionBaseModel;
 class SessionWidget : public QFrame
@@ -32,7 +31,7 @@ public:
 
 signals:
     void sessionChanged(const QString &sessionName);
-    void hideFrame();
+    void notifyHideSessionFrame();
 
 public slots:
     void switchToUser(const QString &userName);
@@ -54,14 +53,13 @@ private slots:
 
 private:
     int sessionIndex(const QString &sessionName);
-    void onOtherPageChanged(const QVariant &value);
     QString lastLoggedInSession(const QString &userName);
+    void hideSessionFrame();
 
 private:
     int m_currentSessionIndex;
     QString m_currentUser;
     SessionBaseModel *m_model;
-    FrameDataBind *m_frameDataBind;
 
     QLightDM::SessionsModel *m_sessionModel;
     QList<RoundItemButton *> m_sessionBtns;
@@ -70,6 +68,7 @@ private:
     bool m_isWaylandExisted;
     QLabel *m_warningLabel;
     QString m_defaultSession;
+    bool m_resetSessionIndex;
 };
 
 #endif // SESSIONWIDGET_H

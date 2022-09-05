@@ -12,7 +12,6 @@
 #include "auth_ukey.h"
 #include "auth_custom.h"
 #include "dlineeditex.h"
-#include "framedatabind.h"
 #include "keyboardmonitor.h"
 #include "sessionbasemodel.h"
 #include "useravatar.h"
@@ -28,7 +27,6 @@ const QColor ShutdownColor(QColor(247, 68, 68));
 AuthWidget::AuthWidget(QWidget *parent)
     : QWidget(parent)
     , m_model(nullptr)
-    , m_frameDataBind(FrameDataBind::Instance())
     , m_blurEffectWidget(new DBlurEffectWidget(this))
     , m_lockButton(nullptr)
     , m_userAvatar(nullptr)
@@ -45,6 +43,7 @@ AuthWidget::AuthWidget(QWidget *parent)
     , m_faceAuth(nullptr)
     , m_irisAuth(nullptr)
     , m_customAuth(nullptr)
+    , m_authState(AuthCommon::AS_None)
 {
     setObjectName(QStringLiteral("AuthWidget"));
     setAccessibleName(QStringLiteral("AuthWidget"));
@@ -54,14 +53,11 @@ AuthWidget::AuthWidget(QWidget *parent)
 
     m_capslockMonitor = KeyboardMonitor::instance();
     m_capslockMonitor->start(QThread::LowestPriority);
-    m_frameDataBind = FrameDataBind::Instance();
 }
 
 AuthWidget::~AuthWidget()
 {
-    for (auto it = m_registerFunctions.constBegin(); it != m_registerFunctions.constEnd(); ++it) {
-        m_frameDataBind->unRegisterFunction(it.key(), it.value());
-    }
+
 }
 
 void AuthWidget::initUI()
@@ -201,6 +197,8 @@ void AuthWidget::setAuthState(const int type, const int state, const QString &me
     Q_UNUSED(type)
     Q_UNUSED(state)
     Q_UNUSED(message)
+
+    m_authState = static_cast<AuthCommon::AuthState>(state);
 }
 
 /**
@@ -410,9 +408,7 @@ void AuthWidget::updatePasswordExpiredState()
  */
 void AuthWidget::registerSyncFunctions(const QString &flag, std::function<void(QVariant)> function)
 {
-    if (!m_registerFunctions.contains(flag))
-        m_registerFunctions[flag] = m_frameDataBind->registerFunction(flag, function);
-    m_frameDataBind->refreshData(flag);
+
 }
 
 /**

@@ -37,10 +37,8 @@ xcb_atom_t internAtom(xcb_connection_t *connection, const char *name, bool only_
 }
 
 LockFrame::LockFrame(SessionBaseModel *const model, QWidget *parent)
-    : FullscreenBackground(model, parent)
+    : FullScreenBackground(model, parent)
     , m_model(model)
-    , m_lockContent(new LockContent(model))
-    , m_warningContent(nullptr)
     , m_enablePowerOffKey(false)
     , m_autoExitTimer(nullptr)
 {
@@ -54,30 +52,9 @@ LockFrame::LockFrame(SessionBaseModel *const model, QWidget *parent)
     updateBackground(m_model->currentUser()->greeterBackground());
 
     setAccessibleName("LockFrame");
-    m_lockContent->setAccessibleName("LockContent");
-    m_lockContent->hide();
-    setContent(m_lockContent);
+    setContent(LockContent::instance());
 
-    connect(m_lockContent, &LockContent::requestSwitchToUser, this, &LockFrame::requestSwitchToUser);
-    connect(m_lockContent, &LockContent::requestSetLayout, this, &LockFrame::requestSetLayout);
-    connect(m_lockContent, &LockContent::requestBackground, this, static_cast<void (LockFrame::*)(const QString &)>(&LockFrame::updateBackground));
-    connect(m_lockContent, &LockContent::requestStartAuthentication, this, &LockFrame::requestStartAuthentication);
-    connect(m_lockContent, &LockContent::sendTokenToAuth, this, &LockFrame::sendTokenToAuth);
-    connect(m_lockContent, &LockContent::requestEndAuthentication, this, &LockFrame::requestEndAuthentication);
-    connect(m_lockContent, &LockContent::requestLockFrameHide, this, [this] {
-        m_model->setVisible(false);
-    });
-    connect(m_lockContent, &LockContent::authFinished, this, [this] {
-        m_model->setVisible(false);
-        emit requestEnableHotzone(true);
-        emit authFinished();
-    });
-    connect(m_lockContent, &LockContent::requestCheckAccount, this, &LockFrame::requestCheckAccount);
-    connect(model, &SessionBaseModel::showUserList, this, &LockFrame::showUserList);
-    connect(model, &SessionBaseModel::showLockScreen, this, &LockFrame::showLockScreen);
-    connect(model, &SessionBaseModel::showShutdown, this, &LockFrame::showShutdown);
-    connect(model, &SessionBaseModel::shutdownInhibit, this, &LockFrame::shutdownInhibit);
-    connect(model, &SessionBaseModel::cancelShutdownInhibit, this, &LockFrame::cancelShutdownInhibit);
+    connect(LockContent::instance(), &LockContent::requestBackground, this, static_cast<void (LockFrame::*)(const QString &)>(&LockFrame::updateBackground));
     connect(model, &SessionBaseModel::prepareForSleep, this, [ = ](bool isSleep) {
         //不管是待机还是唤醒均不响应电源按键信号
         m_enablePowerOffKey = false;
@@ -121,6 +98,17 @@ LockFrame::LockFrame(SessionBaseModel *const model, QWidget *parent)
         m_autoExitTimer->setInterval(1000*60); //1分钟
         m_autoExitTimer->setSingleShot(true);
         connect(m_autoExitTimer, &QTimer::timeout, qApp, &QApplication::quit);
+    }
+}
+
+LockFrame::~LockFrame()
+{
+    if (LockContent::instance()->parent() == this) {
+        LockContent::instance()->setParent(nullptr);
+    }
+
+    if (WarningContent::instance()->parent() == this) {
+        WarningContent::instance()->setParent(nullptr);
     }
 }
 
@@ -186,13 +174,15 @@ bool LockFrame::event(QEvent *event)
             emit sendKeyValue(keyValue);
         }
     }
-    return FullscreenBackground::event(event);
+    return FullScreenBackground::event(event);
 }
 
 void LockFrame::resizeEvent(QResizeEvent *event)
 {
-    m_lockContent->resize(size());
-    FullscreenBackground::resizeEvent(event);
+    if (contentVisible()) {
+        LockContent::instance()->resize(size());
+    }
+    FullScreenBackground::resizeEvent(event);
 }
 
 bool LockFrame::handlePoweroffKey()
@@ -229,76 +219,6 @@ bool LockFrame::handlePoweroffKey()
     return false;
 }
 
-void LockFrame::showUserList()
-{
-    m_model->setCurrentModeState(SessionBaseModel::ModeStatus::UserMode);
-    QTimer::singleShot(10, this, [ = ] {
-        m_model->setVisible(true);
-    });
-}
-
-void LockFrame::showLockScreen()
-{
-    m_model->setCurrentModeState(SessionBaseModel::ModeStatus::PasswordMode);
-    m_model->setVisible(true);
-}
-
-void LockFrame::showShutdown()
-{
-    m_model->setCurrentModeState(SessionBaseModel::ModeStatus::ShutDownMode);
-    m_model->setVisible(true);
-}
-
-void LockFrame::shutdownInhibit(const SessionBaseModel::PowerAction action, bool needConfirm)
-{
-    //如果其他显示屏界面已经检查过是否允许关机，此显示屏上的界面不再显示，避免重复检查并触发信号
-    if (m_model->isCheckedInhibit()) return;
-    //记录多屏状态下当前显示屏是否显示内容
-    bool old_visible = contentVisible();
-
-    if (!m_warningContent) {
-        m_warningContent = new WarningContent(m_model, action, this);
-        m_warningContent->setAccessibleName("WarningContent");
-    } else {
-        m_warningContent->setPowerAction(action);
-    }
-    m_warningContent->resize(size());
-    setContent(m_warningContent);
-
-    //多屏状态下，当前界面显示内容时才显示提示界面
-    if (old_visible) {
-        setContentVisible(true);
-        m_lockContent->hide();
-    }
-
-    //检查是否允许关机
-    m_warningContent->beforeInvokeAction(needConfirm);
-}
-
-void LockFrame::cancelShutdownInhibit(bool hideFrame)
-{
-    //允许关机检查结束后切换界面
-    //记录多屏状态下当前显示屏是否显示内容
-    bool old_visible = contentVisible();
-
-    setContent(m_lockContent);
-
-    //隐藏提示界面
-    if (m_warningContent) {
-        m_warningContent->hide();
-    }
-
-    //多屏状态下，当前界面显示内容时才显示
-    if (old_visible) {
-        setContentVisible(true);
-    }
-
-    if (hideFrame) {
-        m_model->setVisible(false);
-        m_model->setCurrentModeState(SessionBaseModel::PasswordMode);
-    }
-}
-
 void LockFrame::keyPressEvent(QKeyEvent *e)
 {
     switch (e->key()) {
@@ -315,7 +235,7 @@ void LockFrame::showEvent(QShowEvent *event)
     if (m_autoExitTimer)
         m_autoExitTimer->stop();
 
-    return FullscreenBackground::showEvent(event);
+    return FullScreenBackground::showEvent(event);
 }
 
 void LockFrame::hideEvent(QHideEvent *event)
@@ -325,5 +245,5 @@ void LockFrame::hideEvent(QHideEvent *event)
     if (m_autoExitTimer)
         m_autoExitTimer->start();
 
-    return FullscreenBackground::hideEvent(event);
+    return FullScreenBackground::hideEvent(event);
 }

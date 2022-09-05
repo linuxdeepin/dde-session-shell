@@ -24,8 +24,8 @@ void UT_LockContent::SetUp()
     m_model = new SessionBaseModel();
     std::shared_ptr<User> user_ptr(new User);
     m_model->updateCurrentUser(user_ptr);
-
-    m_content = new LockContent(m_model);
+    LockContent::instance()->init(m_model);
+    m_content = LockContent::instance();
 }
 
 void UT_LockContent::TearDown()

@@ -33,7 +33,7 @@ MultiScreenManager::MultiScreenManager(QObject *parent)
     }
 }
 
-void MultiScreenManager::register_for_mutil_screen(std::function<QWidget *(QScreen *, int)> function)
+void MultiScreenManager::register_for_multi_screen(std::function<QWidget *(QScreen *, int)> function)
 {
     m_registerFunction = function;
     qInfo() << Q_FUNC_INFO << ", is copy mode: " << m_isCopyMode;
@@ -150,7 +150,7 @@ void MultiScreenManager::onScreenRemoved(QPointer<QScreen> screen)
                 }
                 // 更新frame绑定的屏幕
                 m_frames[validScreen] = frame;
-                FullscreenBackground *fullScreenFrame = qobject_cast<FullscreenBackground*>(frame);
+                FullScreenBackground *fullScreenFrame = qobject_cast<FullScreenBackground*>(frame);
                 if (fullScreenFrame) {
                     fullScreenFrame->setScreen(validScreen, true);
                 }

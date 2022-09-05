@@ -25,11 +25,12 @@ class DBusLockService;
 class LockContent;
 class WarningContent;
 class User;
-class LockFrame: public FullscreenBackground
+class LockFrame: public FullScreenBackground
 {
     Q_OBJECT
 public:
-    LockFrame(SessionBaseModel *const model, QWidget *parent = nullptr);
+    explicit LockFrame(SessionBaseModel *const model, QWidget *parent = nullptr);
+    ~LockFrame();
 
 signals:
     void requestSwitchToUser(std::shared_ptr<User> user);
@@ -40,15 +41,6 @@ signals:
     void requestStartAuthentication(const QString &account, const int authType);
     void sendTokenToAuth(const QString &account, const int authType, const QString &token);
     void requestEndAuthentication(const QString &account, const int authType);
-    void authFinished();
-    void requestCheckAccount(const QString &account);
-
-public slots:
-    void showUserList();
-    void showLockScreen();
-    void showShutdown();
-    void shutdownInhibit(const SessionBaseModel::PowerAction action, bool needConfirm);
-    void cancelShutdownInhibit(bool hideFrame);
 
 protected:
     void keyPressEvent(QKeyEvent *e) Q_DECL_OVERRIDE;
@@ -62,8 +54,7 @@ private:
 
 private:
     SessionBaseModel *m_model;
-    LockContent *m_lockContent;
-    WarningContent *m_warningContent;
+    static QPointer<WarningContent> m_warningContent;
     bool m_enablePowerOffKey;
     QTimer *m_autoExitTimer;
 };

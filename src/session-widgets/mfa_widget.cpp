@@ -10,7 +10,6 @@
 #include "auth_password.h"
 #include "auth_ukey.h"
 #include "dlineeditex.h"
-#include "framedatabind.h"
 #include "keyboardmonitor.h"
 #include "sessionbasemodel.h"
 #include "useravatar.h"
@@ -30,10 +29,6 @@ MFAWidget::MFAWidget(QWidget *parent)
 void MFAWidget::initUI()
 {
     AuthWidget::initUI();
-    /* 用户名输入框 */
-    std::function<void(QVariant)> accountChanged = std::bind(&MFAWidget::syncAccount, this, std::placeholders::_1);
-    m_registerFunctions["MFAAccount"] = FrameDataBind::Instance()->registerFunction("MFAAccount", accountChanged);
-    FrameDataBind::Instance()->refreshData("MFAAccount");
 
     m_mainLayout->setContentsMargins(10, 0, 10, 0);
     m_mainLayout->setSpacing(10);
@@ -51,9 +46,6 @@ void MFAWidget::initConnections()
     AuthWidget::initConnections();
     connect(m_model, &SessionBaseModel::authTypeChanged, this, &MFAWidget::setAuthType);
     connect(m_model, &SessionBaseModel::authStateChanged, this, &MFAWidget::setAuthState);
-    connect(m_accountEdit, &DLineEditEx::textChanged, this, [](const QString &value) {
-        FrameDataBind::Instance()->updateValue("MFAAccount", value);
-    });
 }
 
 void MFAWidget::setModel(const SessionBaseModel *model)
@@ -174,36 +166,26 @@ void MFAWidget::setAuthState(const int type, const int state, const QString &mes
     case AT_Password:
         if (m_passwordAuth) {
             m_passwordAuth->setAuthState(state, message);
-            FrameDataBind::Instance()->updateValue("MFPasswordAuthState", state);
-            FrameDataBind::Instance()->updateValue("MFPasswordAuthMsg", message);
         }
         break;
     case AT_Fingerprint:
         if (m_fingerprintAuth) {
             m_fingerprintAuth->setAuthState(state, message);
-            FrameDataBind::Instance()->updateValue("MFFingerprintAuthState", state);
-            FrameDataBind::Instance()->updateValue("MFFingerprintAuthMsg", message);
         }
         break;
     case AT_Ukey:
         if (m_ukeyAuth) {
             m_ukeyAuth->setAuthState(state, message);
-            FrameDataBind::Instance()->updateValue("MFUKeyAuthState", state);
-            FrameDataBind::Instance()->updateValue("MFUKeyAuthMsg", message);
         }
         break;
     case AT_Face:
         if (m_faceAuth) {
             m_faceAuth->setAuthState(state, message);
-            FrameDataBind::Instance()->updateValue("MFFaceAuthState", state);
-            FrameDataBind::Instance()->updateValue("MFFaceAuthMsg", message);
         }
         break;
     case AT_Iris:
         if (m_irisAuth) {
             m_irisAuth->setAuthState(state, message);
-            FrameDataBind::Instance()->updateValue("MFIrisAuthState", state);
-            FrameDataBind::Instance()->updateValue("MFIrisAuthMsg", message);
         }
         break;
     case AT_All:
@@ -258,22 +240,6 @@ void MFAWidget::initPasswdAuth()
     });
     connect(m_lockButton, &QPushButton::clicked, m_passwordAuth, &AuthPassword::requestAuthenticate);
     connect(m_capslockMonitor, &KeyboardMonitor::capslockStatusChanged, m_passwordAuth, &AuthPassword::setCapsLockVisible);
-
-    /* 输入框数据同步 */
-    std::function<void(QVariant)> passwordChanged = std::bind(&MFAWidget::syncPassword, this, std::placeholders::_1);
-    m_registerFunctions["MFPasswordAuth"] = FrameDataBind::Instance()->registerFunction("MFPasswordAuth", passwordChanged);
-    connect(m_passwordAuth, &AuthPassword::lineEditTextChanged, this, [](const QString &value) {
-        FrameDataBind::Instance()->updateValue("MFPasswordAuth", value);
-    });
-    FrameDataBind::Instance()->refreshData("MFPasswordAuth");
-    /* 重置密码可见性数据同步 */
-    std::function<void(QVariant)> resetPasswordVisibleChanged = std::bind(&AuthWidget::syncPasswordResetPasswordVisibleChanged, this, std::placeholders::_1);
-    m_registerFunctions["MFResetPasswordVisible"] = FrameDataBind::Instance()->registerFunction("MFResetPasswordVisible", resetPasswordVisibleChanged);
-    connect(m_passwordAuth, &AuthPassword::resetPasswordMessageVisibleChanged, this, [ = ](const bool value) {
-        FrameDataBind::Instance()->updateValue("MFResetPasswordVisible", value);
-    });
-    FrameDataBind::Instance()->refreshData("MFResetPasswordVisible");
-
     connect(m_passwordAuth, &AuthPassword::requestChangeFocus, this, &MFAWidget::updateFocusPosition);
 }
 
@@ -332,18 +298,11 @@ void MFAWidget::initUKeyAuth()
         checkAuthResult(AT_Ukey, state);
     });
     connect(m_capslockMonitor, &KeyboardMonitor::capslockStatusChanged, m_ukeyAuth, &AuthUKey::setCapsLockVisible);
-
-    /* 输入框数据同步 */
-    std::function<void(QVariant)> PINChanged = std::bind(&MFAWidget::syncUKey, this, std::placeholders::_1);
-    m_registerFunctions["MFUKeyAuth"] = FrameDataBind::Instance()->registerFunction("MFUKeyAuth", PINChanged);
     connect(m_ukeyAuth, &AuthUKey::lineEditTextChanged, this, [this](const QString &value) {
-        FrameDataBind::Instance()->updateValue("MFUKeyAuth", value);
         if (m_model->getAuthProperty().PINLen > 0 && value.size() >= m_model->getAuthProperty().PINLen) {
             emit m_ukeyAuth->requestAuthenticate();
         }
     });
-    FrameDataBind::Instance()->refreshData("MFUKeyAuth");
-
     connect(m_ukeyAuth, &AuthUKey::requestChangeFocus, this, &MFAWidget::updateFocusPosition);
 }
 

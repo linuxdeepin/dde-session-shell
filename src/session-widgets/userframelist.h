@@ -15,7 +15,6 @@
 class UserWidget;
 class User;
 class SessionBaseModel;
-class FrameDataBind;
 class QVBoxLayout;
 class QScrollArea;
 
@@ -61,7 +60,6 @@ private:
     QMap<uid_t, UserWidget *> m_userWidgets;
     QPointer<UserWidget> currentSelectedUser;
     SessionBaseModel *m_model;
-    FrameDataBind *m_frameDataBind;
     QWidget *m_centerWidget;
     int m_colCount;
     int m_rowCount;

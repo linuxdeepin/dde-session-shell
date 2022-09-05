@@ -20,8 +20,10 @@ class WarningContent : public SessionBaseWindow
     Q_OBJECT
 
 public:
-    explicit WarningContent(SessionBaseModel *const model, const SessionBaseModel::PowerAction action, QWidget *parent = nullptr);
+    explicit WarningContent(QWidget *parent = nullptr);
     ~WarningContent() override;
+    static WarningContent *instance();
+    void setModel(SessionBaseModel * const model);
     void beforeInvokeAction(bool needConfirm);
     void setPowerAction(const SessionBaseModel::PowerAction action);
 
@@ -30,7 +32,10 @@ protected:
     void keyPressEvent(QKeyEvent *event) Q_DECL_OVERRIDE;
     QList<InhibitWarnView::InhibitorData> listInhibitors(const SessionBaseModel::PowerAction action);
     void doCancelShutdownInhibit();
-    void doAccecpShutdownInhibit();
+    void doAcceptShutdownInhibit();
+
+private slots:
+    void shutdownInhibit(const SessionBaseModel::PowerAction action, bool needConfirm);
 
 private:
     SessionBaseModel *m_model;

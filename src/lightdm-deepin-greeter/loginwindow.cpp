@@ -9,17 +9,16 @@
 #include <QWindow>
 #include <QKeyEvent>
 
+
 LoginWindow::LoginWindow(SessionBaseModel *const model, QWidget *parent)
-    : FullscreenBackground(model, parent)
-    , m_loginContent(new LoginContent(model, this))
+    : FullScreenBackground(model, parent)
     , m_model(model)
 {
     setAccessibleName("LoginWindow");
     updateBackground(m_model->currentUser()->greeterBackground());
-    setContent(m_loginContent);
-    m_loginContent->setVisible(false);
+    setContent(LoginContent::instance());
 
-    connect(m_loginContent, &LockContent::requestBackground, this, [ = ](const QString & wallpaper) {
+    connect(LoginContent::instance(), &LockContent::requestBackground, this, [ this ](const QString & wallpaper) {
         updateBackground(wallpaper);
         // 在认证成功以后会通过更改背景来实现登录动画，但是禁用登录动画的情况下，会立即调用startSession，
         // 导致当前进程被lightdm退掉，X上会残留上一帧的画面，可以看到输入框等画面。使用repaint()强制刷新背景来避免这个问题。
@@ -27,29 +26,26 @@ LoginWindow::LoginWindow(SessionBaseModel *const model, QWidget *parent)
     });
 
     connect(model, &SessionBaseModel::visibleChanged, this, &LoginWindow::setVisible);
-    connect(model, &SessionBaseModel::authFinished, this, [ = ](bool successful) {
+    connect(model, &SessionBaseModel::authFinished, this, [ this ] (bool successful) {
         setEnterEnable(!successful);
-        if (successful)
-            m_loginContent->setVisible(false);
 
         // 在认证成功以后会通过更改背景来实现登录动画，但是禁用登录动画的情况下，会立即调用startSession，
         // 导致当前进程被lightdm退掉，X上会残留上一帧的画面，可以看到输入框等画面。使用repaint()强制刷新背景来避免这个问题。
         repaint();
     });
+}
 
-    connect(m_loginContent, &LockContent::requestSwitchToUser, this, &LoginWindow::requestSwitchToUser);
-    connect(m_loginContent, &LockContent::requestSetLayout, this, &LoginWindow::requestSetKeyboardLayout);
-
-    connect(m_loginContent, &LockContent::requestCheckAccount, this, &LoginWindow::requestCheckAccount);
-    connect(m_loginContent, &LockContent::requestStartAuthentication, this, &LoginWindow::requestStartAuthentication);
-    connect(m_loginContent, &LockContent::sendTokenToAuth, this, &LoginWindow::sendTokenToAuth);
-    connect(m_loginContent, &LockContent::requestEndAuthentication, this, &LoginWindow::requestEndAuthentication);
-    connect(m_loginContent, &LockContent::authFinished, this, &LoginWindow::authFinished);
+LoginWindow::~LoginWindow()
+{
+    // 防止对象析构的时候把多屏共享的content对象也析构了
+    if (LoginContent::instance()->parent() == this) {
+        LoginContent::instance()->setParent(nullptr);
+    }
 }
 
 void LoginWindow::showEvent(QShowEvent *event)
 {
-    FullscreenBackground::showEvent(event);
+    FullScreenBackground::showEvent(event);
 
     //greeter界面显示时，需要调用虚拟键盘
     m_model->setHasVirtualKB(true);
@@ -57,7 +53,7 @@ void LoginWindow::showEvent(QShowEvent *event)
 
 void LoginWindow::hideEvent(QHideEvent *event)
 {
-    FullscreenBackground::hideEvent(event);
+    FullScreenBackground::hideEvent(event);
 
     //greeter界面隐藏时，需要结束虚拟键盘
     m_model->setHasVirtualKB(false);
@@ -87,5 +83,5 @@ bool LoginWindow::event(QEvent *event)
             break;
         }
     }
-    return FullscreenBackground::event(event);
+    return FullScreenBackground::event(event);
 }

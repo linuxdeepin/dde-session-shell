@@ -127,9 +127,6 @@ public:
     inline bool isHibernateMode() const { return m_isHibernateMode; }
     void setIsHibernateModel(bool is_Hibernate);
 
-    inline bool isCheckedInhibit() const { return m_isCheckedInhibit; }
-    void setIsCheckedInhibit(bool checked);
-
     inline bool allowShowCustomUser() const { return m_allowShowCustomUser; }
     void setAllowShowCustomUser(const bool allowShowCustomUser);
 
@@ -202,7 +199,6 @@ signals:
     void HibernateModeChanged(bool is_hibernate); //休眠信号改变
     void prepareForSleep(bool is_Sleep);          //待机信号改变
     void shutdownInhibit(const SessionBaseModel::PowerAction action, bool needConfirm);
-    void cancelShutdownInhibit(bool hideFrame);
     void tipsShowed();
     void clearServerLoginWidgetContent();
 
@@ -235,7 +231,6 @@ private:
     QString m_sessionKey;
     PowerAction m_powerAction;
     ModeStatus m_currentModeState;
-    bool m_isCheckedInhibit = false;
     AuthProperty m_authProperty; // 认证相关属性的值，初始时通过dbus获取，暂存在model中，供widget初始化界面使用
     QMap<QString, std::shared_ptr<User>> *m_users;
     QMap<QString, std::shared_ptr<User>> *m_loginedUsers;

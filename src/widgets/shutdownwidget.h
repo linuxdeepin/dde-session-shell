@@ -13,7 +13,6 @@
 #include "util_updateui.h"
 #include "rounditembutton.h"
 #include "sessionbasemodel.h"
-#include "framedatabind.h"
 #include "dbuslogin1manager.h"
 #include "switchos_interface.h"
 #include "systemmonitor.h"
@@ -48,13 +47,11 @@ protected:
     void keyPressEvent(QKeyEvent *event) Q_DECL_OVERRIDE;
     bool event(QEvent *e) Q_DECL_OVERRIDE;
     void showEvent(QShowEvent *event) Q_DECL_OVERRIDE;
-    void hideEvent(QHideEvent *event) Q_DECL_OVERRIDE;
 
 private:
     void initUI();
     void initConnect();
     void updateTr(RoundItemButton * widget, const QString &tr);
-    void onOtherPageChanged(const QVariant &value);
     void enterKeyPushed();
     void enableHibernateBtn(bool enable);
     void enableSleepBtn(bool enable);
@@ -65,7 +62,6 @@ private:
     QList<RoundItemButton *> m_btnList;
     QList<std::pair<std::function<void (QString)>, QString>> m_trList;
     SessionBaseModel* m_model;
-    FrameDataBind *m_frameDataBind;
     QFrame* m_shutdownFrame = nullptr;
     SystemMonitor* m_systemMonitor = nullptr;
     QFrame* m_actionFrame = nullptr;
@@ -83,6 +79,7 @@ private:
     RoundItemButton* m_requireSwitchSystemBtn = nullptr;
     HuaWeiSwitchOSInterface *m_switchosInterface = nullptr;
     DTK_CORE_NAMESPACE::DConfig *m_dconfig;
+    SessionBaseModel::ModeStatus m_modeStatus;
 };
 
 #endif // SHUTDOWNWIDGET

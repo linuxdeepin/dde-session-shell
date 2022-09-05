@@ -219,7 +219,6 @@ QString AuthCustom::messageCallback(const QString &message, void *app_data)
  * @param app_data 从插件回传的AuthCustom对象指针
  * @return AuthCustom* AuthCustom对象指针
  */
-// TODO 考虑多屏使用一个不会释放的对象管理插件
 AuthCustom *AuthCustom::getAuthCustomObj(void *app_data)
 {
     AuthCustom *authCustom = static_cast<AuthCustom *>(app_data);

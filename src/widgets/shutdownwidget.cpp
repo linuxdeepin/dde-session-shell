@@ -25,9 +25,8 @@ ShutdownWidget::ShutdownWidget(QWidget *parent)
     , m_systemMonitor(nullptr)
     , m_switchosInterface(new HuaWeiSwitchOSInterface("com.huawei", "/com/huawei/switchos", QDBusConnection::sessionBus(), this))
     , m_dconfig(DConfig::create(getDefaultConfigFileName(), getDefaultConfigFileName(), QString(), this))
+    , m_modeStatus(SessionBaseModel::ModeStatus::NoStatus)
 {
-    m_frameDataBind = FrameDataBind::Instance();
-
     initUI();
     initConnect();
 
@@ -36,12 +35,6 @@ ShutdownWidget::ShutdownWidget(QWidget *parent)
     onEnable("systemHibernate", enableState(GSettingWatcher::instance()->getStatus("systemHibernate")));
     onEnable("systemLock", enableState(GSettingWatcher::instance()->getStatus("systemLock")));
 
-    std::function<void (QVariant)> function = std::bind(&ShutdownWidget::onOtherPageChanged, this, std::placeholders::_1);
-    int index = m_frameDataBind->registerFunction("ShutdownWidget", function);
-
-    connect(this, &ShutdownWidget::destroyed, this, [this, index] {
-        m_frameDataBind->unRegisterFunction("ShutdownWidget", index);
-    });
     installEventFilter(this);
 }
 
@@ -132,18 +125,6 @@ void ShutdownWidget::onEnable(const QString &gsettingsName, bool enable)
     }
 }
 
-void ShutdownWidget::onOtherPageChanged(const QVariant &value)
-{
-    m_index = value.toInt();
-
-    for (auto it = m_btnList.constBegin(); it != m_btnList.constEnd(); ++it) {
-        (*it)->updateState(RoundItemButton::Normal);
-    }
-
-    m_currentSelectedBtn = m_btnList.at(m_index);
-    m_currentSelectedBtn->updateState(RoundItemButton::Checked);
-}
-
 void ShutdownWidget::enterKeyPushed()
 {
     if (m_systemMonitor && m_systemMonitor->state() == SystemMonitor::Enter) {
@@ -151,7 +132,8 @@ void ShutdownWidget::enterKeyPushed()
         return;
     }
 
-    if (!m_currentSelectedBtn->isEnabled())
+    // 在按回车键时，若m_currentSelectedBtn不存在，则退出
+    if (!m_currentSelectedBtn || !m_currentSelectedBtn->isEnabled())
         return;
 
     if (m_currentSelectedBtn == m_requireShutdownButton)
@@ -367,8 +349,6 @@ void ShutdownWidget::leftKeySwitch()
     m_currentSelectedBtn = m_btnList.at(m_index);
     m_currentSelectedBtn->updateState(RoundItemButton::Checked);
 
-    m_frameDataBind->updateValue("ShutdownWidget", m_index);
-
     if (m_systemMonitor && m_systemMonitor->isVisible()) {
         m_systemMonitor->setState(SystemMonitor::Leave);
     }
@@ -396,8 +376,6 @@ void ShutdownWidget::rightKeySwitch()
     m_currentSelectedBtn = m_btnList.at(m_index);
     m_currentSelectedBtn->updateState(RoundItemButton::Checked);
 
-    m_frameDataBind->updateValue("ShutdownWidget", m_index);
-
     if (m_systemMonitor && m_systemMonitor->isVisible()) {
         m_systemMonitor->setState(SystemMonitor::Leave);
     }
@@ -405,7 +383,14 @@ void ShutdownWidget::rightKeySwitch()
 
 void ShutdownWidget::onStatusChanged(SessionBaseModel::ModeStatus status)
 {
+    qInfo() << Q_FUNC_INFO << status;
     RoundItemButton *roundItemButton;
+    if (m_modeStatus == status) {
+        qInfo() << "Shutdown widget status not being changed";
+        return;
+    }
+    m_modeStatus = status;
+
     if (m_model->currentModeState() == SessionBaseModel::ModeStatus::ShutDownMode) {
         m_requireLockButton->setVisible(GSettingWatcher::instance()->getStatus("systemLock") != "Hiden");
         m_requireSwitchUserBtn->setVisible(m_switchUserEnable);
@@ -424,17 +409,9 @@ void ShutdownWidget::onStatusChanged(SessionBaseModel::ModeStatus status)
         roundItemButton = m_requireShutdownButton;
     }
 
-    // 同步显示另一个显示器关机界面上当前选中的按钮，若还未同步则显示关机或锁屏默认按钮
-    if (m_index >= 0 && m_index < m_btnList.size()) {
-        RoundItemButton * tmpBtn = m_btnList.at(m_index);
-        if (tmpBtn && tmpBtn->isVisible()) {
-            roundItemButton = tmpBtn;
-        }
-    }
-
-    int index =  m_btnList.indexOf(roundItemButton);
-    roundItemButton->updateState(RoundItemButton::Checked);
-    m_frameDataBind->updateValue("ShutdownWidget", index);
+    m_index = m_btnList.indexOf(roundItemButton);
+    m_currentSelectedBtn = m_btnList.at(m_index);
+    m_currentSelectedBtn->updateState(RoundItemButton::Checked);
 
     if (m_systemMonitor) {
         m_systemMonitor->setVisible(status == SessionBaseModel::ModeStatus::ShutDownMode);
@@ -455,25 +432,26 @@ void ShutdownWidget::runSystemMonitor()
 
 void ShutdownWidget::recoveryLayout()
 {
-    //关机或重启确认前会隐藏所有按钮,取消重启或关机后隐藏界面时重置按钮可见状态
-    //同时需要判断切换用户按钮是否允许可见
+    // 关机或重启确认前会隐藏所有按钮,取消重启或关机后隐藏界面时重置按钮可见状态
+    // 同时需要判断切换用户按钮是否允许可见
     m_requireShutdownButton->setVisible(true && (GSettingWatcher::instance()->getStatus("systemShutdown") != "Hiden"));
     m_requireRestartButton->setVisible(true);
     enableHibernateBtn(m_model->hasSwap());
     enableSleepBtn(m_model->canSleep());
-    m_requireLockButton->setVisible(true && (GSettingWatcher::instance()->getStatus("systemLock") != "Hiden"));
-    m_requireSwitchUserBtn->setVisible(m_switchUserEnable);
+    if (m_modeStatus == SessionBaseModel::ModeStatus::PowerMode)
+        return;
 
+    m_requireSwitchUserBtn->setVisible(m_switchUserEnable);
     if (m_systemMonitor) {
         m_systemMonitor->setVisible(false);
     }
-
     m_mainLayout->setCurrentWidget(m_actionFrame);
     setFocusPolicy(Qt::StrongFocus);
 }
 
 void ShutdownWidget::onRequirePowerAction(SessionBaseModel::PowerAction powerAction, bool needConfirm)
 {
+    qInfo() << "Require power action: " << powerAction << ", need confirm: " << needConfirm;
     //锁屏或关机模式时，需要确认是否关机或检查是否有阻止关机
     if (m_model->appType() == Lock) {
         switch (powerAction) {
@@ -483,7 +461,6 @@ void ShutdownWidget::onRequirePowerAction(SessionBaseModel::PowerAction powerAct
         case SessionBaseModel::PowerAction::RequireLogout:
         case SessionBaseModel::PowerAction::RequireSuspend:
         case SessionBaseModel::PowerAction::RequireHibernate:
-            m_model->setIsCheckedInhibit(false);
             emit m_model->shutdownInhibit(powerAction, needConfirm);
             break;
         default:
@@ -498,7 +475,7 @@ void ShutdownWidget::onRequirePowerAction(SessionBaseModel::PowerAction powerAct
 
 void ShutdownWidget::setUserSwitchEnable(bool enable)
 {
-    //接收到用户列表变更信号号,记录切换用户是否允许可见,再根据当前是锁屏还是关机设置切换按钮可见状态
+    // 接收到用户列表变更信号号,记录切换用户是否允许可见,再根据当前是锁屏还是关机设置切换按钮可见状态
     if (m_switchUserEnable == enable) {
         return;
     }
@@ -556,25 +533,6 @@ bool ShutdownWidget::event(QEvent *e)
         }
     }
 
-    if (e->type() == QEvent::FocusIn) {
-        if (m_index < 0 || m_index >= m_btnList.size()) {
-            m_index = 0;
-        }
-        m_frameDataBind->updateValue("ShutdownWidget", m_index);
-        m_btnList.at(m_index)->updateState(RoundItemButton::Checked);
-    } else if (e->type() == QEvent::FocusOut) {
-        if (m_model->currentModeState() == SessionBaseModel::ModeStatus::ShutDownMode) {
-            // 丢失焦点后，获取焦点。双屏拔掉一个显示器会导致焦点丢失
-            if (this->isVisible())
-                this->activateWindow();
-        } else {
-            if (m_index < 0 || m_index >= m_btnList.size()) {
-                m_index = 0;
-            }
-            m_btnList.at(m_index)->updateState(RoundItemButton::Normal);
-        }
-    }
-
     return QFrame::event(e);
 }
 
@@ -582,12 +540,6 @@ void ShutdownWidget::showEvent(QShowEvent *event)
 {
     setFocus();
     QFrame::showEvent(event);
-}
-
-void ShutdownWidget::hideEvent(QHideEvent *event)
-{
-    m_index = -1;
-    QFrame::hideEvent(event);
 }
 
 void ShutdownWidget::updateLocale(std::shared_ptr<User> user)
@@ -613,6 +565,9 @@ void ShutdownWidget::setModel(SessionBaseModel *const model)
 
     connect(model, &SessionBaseModel::canSleepChanged, this, &ShutdownWidget::enableSleepBtn);
     connect(model, &SessionBaseModel::currentUserChanged, this, &ShutdownWidget::updateLocale);
+    connect(m_model, &SessionBaseModel::visibleChanged, this, [this] (bool visible) {
+        m_modeStatus = visible? m_modeStatus : SessionBaseModel::ModeStatus::NoStatus;
+    });
 
     enableSleepBtn(model->canSleep());
 }

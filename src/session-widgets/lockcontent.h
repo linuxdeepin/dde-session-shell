@@ -16,6 +16,10 @@
 #include <QWidget>
 #include <QLocalServer>
 
+#include <QWidget>
+#include <QLocalServer>
+
+#include <memory>
 #include <com_deepin_wm.h>
 #include <memory>
 
@@ -34,13 +38,15 @@ class LockContent : public SessionBaseWindow
     Q_OBJECT
 
 public:
-    explicit LockContent(SessionBaseModel *const model, QWidget *parent = nullptr);
-
+    explicit LockContent(QWidget *parent = nullptr);
+    static LockContent *instance();
+    void init(SessionBaseModel *model);
     virtual void onCurrentUserChanged(std::shared_ptr<User> user);
     virtual void onStatusChanged(SessionBaseModel::ModeStatus status);
     virtual void restoreMode();
     void updateGreeterBackgroundPath(const QString &path);
     void updateDesktopBackgroundPath(const QString &path);
+    void hideEvent(QHideEvent *event) override;
 
 signals:
     void requestBackground(const QString &path);
@@ -54,7 +60,6 @@ signals:
     void authFinished();
 
     void requestCheckAccount(const QString &account);
-    void requestLockFrameHide();
 
 public slots:
     void pushPasswordFrame();
@@ -64,11 +69,13 @@ public slots:
     void setMPRISEnable(const bool state);
     void onNewConnection();
     void onDisConnect();
+    void showUserList();
+    void showLockScreen();
+    void showShutdown();
 
 protected:
     void mouseReleaseEvent(QMouseEvent *event) Q_DECL_OVERRIDE;
     void showEvent(QShowEvent *event) Q_DECL_OVERRIDE;
-    void hideEvent(QHideEvent *event) Q_DECL_OVERRIDE;
     void resizeEvent(QResizeEvent *event) Q_DECL_OVERRIDE;
     void keyPressEvent(QKeyEvent *event) Q_DECL_OVERRIDE;
 
@@ -102,7 +109,6 @@ protected:
     MediaWidget *m_mediaWidget = nullptr;
     com::deepin::wm *m_wmInter;
     QWidget *m_loginWidget;
-    QMap<QString, QWidget *> m_centeralWidgets;
 
     SFAWidget *m_sfaWidget;
     MFAWidget *m_mfaWidget;
@@ -111,6 +117,8 @@ protected:
 
     int m_failures = 0;
     QLocalServer *m_localServer;
+    SessionBaseModel::ModeStatus m_currentModeStatus;
+    bool m_initialized;
 };
 
 #endif // LOCKCONTENT_H

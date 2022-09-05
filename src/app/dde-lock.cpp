@@ -15,6 +15,7 @@
 #include "multiscreenmanager.h"
 #include "propertygroup.h"
 #include "sessionbasemodel.h"
+#include "warningcontent.h"
 
 #include <DApplication>
 #include <DGuiApplicationHelper>
@@ -114,7 +115,6 @@ int main(int argc, char *argv[])
     model->setAppType(Lock);
     LockWorker *worker = new LockWorker(model);
     QObject::connect(&appEventFilter, &AppEventFilter::userIsActive, worker, &LockWorker::restartResetSessionTimer);
-    PropertyGroup *property_group = new PropertyGroup(worker);
 
     if (worker->isLocked()) {
         //如果当前Session被锁定，则启动dde-lock时直接进入锁屏状态
@@ -123,8 +123,6 @@ int main(int argc, char *argv[])
         showLockScreen = true;
     }
 
-    property_group->addProperty("contentVisible");
-
     DBusLockAgent lockAgent;
     lockAgent.setModel(model);
     DBusLockFrontService lockService(&lockAgent);
@@ -132,6 +130,20 @@ int main(int argc, char *argv[])
     DBusShutdownAgent shutdownAgent;
     shutdownAgent.setModel(model);
     DBusShutdownFrontService shutdownServices(&shutdownAgent);
+
+    LockContent::instance()->init(model);
+    WarningContent::instance()->setModel(model);
+
+    QObject::connect(LockContent::instance(), &LockContent::requestSwitchToUser, worker, &LockWorker::switchToUser);
+    QObject::connect(LockContent::instance(), &LockContent::requestSetLayout, worker, &LockWorker::setKeyboardLayout);
+    QObject::connect(LockContent::instance(), &LockContent::requestStartAuthentication, worker, &LockWorker::startAuthentication);
+    QObject::connect(LockContent::instance(), &LockContent::sendTokenToAuth, worker, &LockWorker::sendTokenToAuth);
+    QObject::connect(LockContent::instance(), &LockContent::requestEndAuthentication, worker, &LockWorker::onEndAuthentication);
+    QObject::connect(LockContent::instance(), &LockContent::authFinished, worker, [worker] {
+        worker->onAuthFinished();
+        worker->enableZoneDetected(true);
+    });
+    QObject::connect(LockContent::instance(), &LockContent::requestCheckAccount, worker, &LockWorker::checkAccount);
 
     auto createFrame = [&] (QPointer<QScreen> screen, int count) -> QWidget* {
         LockFrame *lockFrame = new LockFrame(model);
@@ -144,8 +156,6 @@ int main(int argc, char *argv[])
             return nullptr;
         }
         lockFrame->setScreen(screen, count <= 0);
-        property_group->addObject(lockFrame);
-        QObject::connect(lockFrame, &LockFrame::requestSwitchToUser, worker, &LockWorker::switchToUser);
         QObject::connect(model, &SessionBaseModel::visibleChanged, lockFrame, [=](const bool visible) {
             lockFrame->setVisible(visible);
             QTimer::singleShot(300, [=]() {
@@ -156,20 +166,13 @@ int main(int argc, char *argv[])
         QObject::connect(model, &SessionBaseModel::visibleChanged, lockFrame,[&](bool visible) {
             emit lockService.Visible(visible);
         });
-        QObject::connect(lockFrame, &LockFrame::requestSetLayout, worker, &LockWorker::setKeyboardLayout);
         QObject::connect(lockFrame, &LockFrame::requestEnableHotzone, worker, &LockWorker::enableZoneDetected, Qt::UniqueConnection);
-        QObject::connect(lockFrame, &LockFrame::destroyed, property_group, &PropertyGroup::removeObject);
         QObject::connect(lockFrame, &LockFrame::sendKeyValue, [&](QString key) {
              emit lockService.ChangKey(key);
         });
-        QObject::connect(lockFrame, &LockFrame::requestStartAuthentication, worker, &LockWorker::startAuthentication);
-        QObject::connect(lockFrame, &LockFrame::sendTokenToAuth, worker, &LockWorker::sendTokenToAuth);
-        QObject::connect(lockFrame, &LockFrame::requestEndAuthentication, worker, &LockWorker::onEndAuthentication);
-        QObject::connect(lockFrame, &LockFrame::authFinished, worker, &LockWorker::onAuthFinished);
         if (model->isUseWayland()) {
             QObject::connect(lockFrame, &LockFrame::requestDisableGlobalShortcutsForWayland, worker, &LockWorker::disableGlobalShortcutsForWayland);
         }
-        QObject::connect(lockFrame, &LockFrame::requestCheckAccount, worker, &LockWorker::checkAccount);
 
         lockFrame->setVisible(model->visible());
         emit lockService.Visible(model->visible());
@@ -177,7 +180,7 @@ int main(int argc, char *argv[])
     };
 
     MultiScreenManager multi_screen_manager;
-    multi_screen_manager.register_for_mutil_screen(createFrame);
+    multi_screen_manager.register_for_multi_screen(createFrame);
 
 #if defined(DSS_CHECK_ACCESSIBILITY) && defined(QT_DEBUG)
     AccessibilityCheckerEx checker;

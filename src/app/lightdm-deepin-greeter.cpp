@@ -6,6 +6,7 @@
 #include "appeventfilter.h"
 #include "constants.h"
 #include "greeterworker.h"
+#include "logincontent.h"
 #include "loginwindow.h"
 #include "modules_loader.h"
 #include "multiscreenmanager.h"
@@ -374,10 +375,17 @@ int main(int argc, char* argv[])
             set_rootwindow_cursor();
     });
 
-    // 保证多个屏幕的情况下，始终只有一个屏幕显示
-    PropertyGroup *property_group = new PropertyGroup(worker);
-    property_group->addProperty("contentVisible");
+    // 初始化LoginContent
+    LoginContent::instance()->init(model);
+    QObject::connect(LoginContent::instance(), &LoginContent::requestSwitchToUser, worker, &GreeterWorker::switchToUser);
+    QObject::connect(LoginContent::instance(), &LoginContent::requestSetLayout, worker, &GreeterWorker::setKeyboardLayout);
+    QObject::connect(LoginContent::instance(), &LoginContent::requestCheckAccount, worker, &GreeterWorker::checkAccount);
+    QObject::connect(LoginContent::instance(), &LoginContent::requestStartAuthentication, worker, &GreeterWorker::startAuthentication);
+    QObject::connect(LoginContent::instance(), &LoginContent::sendTokenToAuth, worker, &GreeterWorker::sendTokenToAuth);
+    QObject::connect(LoginContent::instance(), &LoginContent::requestEndAuthentication, worker, &GreeterWorker::endAuthentication);
+    QObject::connect(LoginContent::instance(), &LoginContent::authFinished, worker, &GreeterWorker::onAuthFinished);
 
+    // 根据屏幕创建全屏背景窗口
     auto createFrame = [&](QPointer<QScreen> screen, int count) -> QWidget * {
         LoginWindow *loginFrame = new LoginWindow(model);
         // 创建Frame可能会花费数百毫秒，这个和机器性能有关，在此过程完成后，screen可能已经析构了
@@ -389,14 +397,6 @@ int main(int argc, char* argv[])
             return nullptr;
         }
         loginFrame->setScreen(screen, count <= 0);
-        property_group->addObject(loginFrame);
-        QObject::connect(loginFrame, &LoginWindow::requestSwitchToUser, worker, &GreeterWorker::switchToUser);
-        QObject::connect(loginFrame, &LoginWindow::requestSetKeyboardLayout, worker, &GreeterWorker::setKeyboardLayout);
-        QObject::connect(loginFrame, &LoginWindow::requestCheckAccount, worker, &GreeterWorker::checkAccount);
-        QObject::connect(loginFrame, &LoginWindow::requestStartAuthentication, worker, &GreeterWorker::startAuthentication);
-        QObject::connect(loginFrame, &LoginWindow::sendTokenToAuth, worker, &GreeterWorker::sendTokenToAuth);
-        QObject::connect(loginFrame, &LoginWindow::requestEndAuthentication, worker, &GreeterWorker::endAuthentication);
-        QObject::connect(loginFrame, &LoginWindow::authFinished, worker, &GreeterWorker::onAuthFinished);
         QObject::connect(worker, &GreeterWorker::requestUpdateBackground, loginFrame, &LoginWindow::updateBackground);
         if (!IsWayland) {
             loginFrame->setVisible(model->visible());
@@ -407,7 +407,7 @@ int main(int argc, char* argv[])
     };
 
     MultiScreenManager multi_screen_manager;
-    multi_screen_manager.register_for_mutil_screen(createFrame);
+    multi_screen_manager.register_for_multi_screen(createFrame);
     QObject::connect(model, &SessionBaseModel::visibleChanged, &multi_screen_manager, &MultiScreenManager::startRaiseContentFrame);
 
 #if defined(DSS_CHECK_ACCESSIBILITY) && defined(QT_DEBUG)

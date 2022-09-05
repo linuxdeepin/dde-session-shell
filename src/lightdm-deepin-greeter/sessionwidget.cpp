@@ -48,13 +48,13 @@ const QString session_standard_icon_name(const QString &realName)
 SessionWidget::SessionWidget(QWidget *parent)
     : QFrame(parent)
     , m_currentSessionIndex(0)
-    , m_frameDataBind(FrameDataBind::Instance())
     , m_sessionModel(new QLightDM::SessionsModel(this))
     , m_userModel(new QLightDM::UsersModel(this))
     , m_allowSwitchingToWayland(getDConfigValue(getDefaultConfigFileName(), "allowSwitchingToWayland", false).toBool())
     , m_isWaylandExisted(false)
     , m_warningLabel(new QLabel(this))
     , m_defaultSession(getDConfigValue(getDefaultConfigFileName(),"defaultSession", DEFAULT_SESSION_NAME).toString())
+    , m_resetSessionIndex(true)
 {
     setSizePolicy(QSizePolicy::Expanding, QSizePolicy::Expanding);
     loadSessionList();
@@ -65,17 +65,6 @@ SessionWidget::SessionWidget(QWidget *parent)
     m_warningLabel->setSizePolicy(QSizePolicy::Expanding, QSizePolicy::Preferred);
     m_warningLabel->setAlignment(Qt::AlignCenter);
     m_warningLabel->hide();
-
-    std::function<void (QVariant)> function = std::bind(&SessionWidget::onOtherPageChanged, this, std::placeholders::_1);
-    int index = m_frameDataBind->registerFunction("SessionWidget", function);
-
-    connect(this, &SessionWidget::destroyed, this, [ = ] {
-        m_frameDataBind->unRegisterFunction("SessionWidget", index);
-    });
-
-    QTimer::singleShot(0, this, [ = ] {
-        m_frameDataBind->refreshData("SessionWidget");
-    });
 
     // 判断显卡是否支持wayland
     if (m_allowSwitchingToWayland) {
@@ -111,8 +100,10 @@ void SessionWidget::updateLayout()
     const int itemTotal = itemPadding + itemWidth;
 
     // checked default session button
-    m_currentSessionIndex = sessionIndex(m_model->sessionKey());
+    if (m_resetSessionIndex)
+        m_currentSessionIndex = sessionIndex(m_model->sessionKey());
     m_sessionBtns.at(m_currentSessionIndex)->setChecked(true);
+    m_resetSessionIndex = false;
 
     int count = m_sessionBtns.size();
     if (m_isWaylandExisted && !m_allowSwitchingToWayland)
@@ -173,7 +164,6 @@ void SessionWidget::switchToUser(const QString &userName)
     m_currentSessionIndex = sessionIndex(sessionName);
 
     m_model->setSessionKey(currentSessionKey());
-    m_frameDataBind->updateValue("SessionWidget", m_currentSessionIndex);
 
     qDebug() << userName << "default session is: " << sessionName << m_currentSessionIndex;
 }
@@ -192,7 +182,7 @@ void SessionWidget::keyPressEvent(QKeyEvent *event)
         rightKeySwitch();
         break;
     case Qt::Key_Escape:
-        emit hideFrame();
+        hideSessionFrame();
         break;
     default:
         break;
@@ -201,7 +191,7 @@ void SessionWidget::keyPressEvent(QKeyEvent *event)
 
 void SessionWidget::mouseReleaseEvent(QMouseEvent *event)
 {
-    emit hideFrame();
+    hideSessionFrame();
 
     return QFrame::mouseReleaseEvent(event);
 }
@@ -243,7 +233,7 @@ void SessionWidget::onSessionButtonClicked()
 
     m_model->setSessionKey(currentSessionKey());
 
-    emit hideFrame();
+    hideSessionFrame();
     m_warningLabel->hide();
 }
 
@@ -266,20 +256,6 @@ int SessionWidget::sessionIndex(const QString &sessionName)
     return defaultSessionIndex;
 }
 
-void SessionWidget::onOtherPageChanged(const QVariant &value)
-{
-    const int index = value.toInt();
-    if (index == m_currentSessionIndex)
-        return;
-
-    for (RoundItemButton *button : m_sessionBtns) {
-        button->setChecked(false);
-    }
-
-    m_sessionBtns.at(index)->setChecked(true);
-    m_currentSessionIndex = index;
-}
-
 void SessionWidget::leftKeySwitch()
 {
     if (m_currentSessionIndex == 0) {
@@ -289,7 +265,6 @@ void SessionWidget::leftKeySwitch()
     }
 
     m_sessionBtns.at(m_currentSessionIndex)->setChecked(true);
-    m_frameDataBind->updateValue("SessionWidget", m_currentSessionIndex);
 }
 
 void SessionWidget::rightKeySwitch()
@@ -301,13 +276,12 @@ void SessionWidget::rightKeySwitch()
     }
 
     m_sessionBtns.at(m_currentSessionIndex)->setChecked(true);
-    m_frameDataBind->updateValue("SessionWidget", m_currentSessionIndex);
 }
 
 void SessionWidget::chooseSession()
 {
     emit m_sessionBtns.at(m_currentSessionIndex)->clicked();
-    emit hideFrame();
+    hideSessionFrame();
 }
 
 void SessionWidget::loadSessionList()
@@ -362,4 +336,10 @@ void SessionWidget::showEvent(QShowEvent *event)
 {
     updateLayout();
     QWidget::showEvent(event);
+}
+
+void SessionWidget::hideSessionFrame()
+{
+    m_resetSessionIndex = true;
+    emit notifyHideSessionFrame();
 }

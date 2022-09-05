@@ -25,9 +25,11 @@ using namespace dss;
 using namespace dss::module;
 DCORE_USE_NAMESPACE
 
-LockContent::LockContent(SessionBaseModel *const model, QWidget *parent)
+Q_GLOBAL_STATIC(LockContent, lockContent)
+
+LockContent::LockContent(QWidget *parent)
     : SessionBaseWindow(parent)
-    , m_model(model)
+    , m_model(nullptr)
     , m_controlWidget(nullptr)
     , m_centerTopWidget(nullptr)
     , m_virtualKB(nullptr)
@@ -37,7 +39,24 @@ LockContent::LockContent(SessionBaseModel *const model, QWidget *parent)
     , m_authWidget(nullptr)
     , m_userListWidget(nullptr)
     , m_localServer(new QLocalServer(this))
+    , m_currentModeStatus(SessionBaseModel::ModeStatus::NoStatus)
+    , m_initialized(false)
 {
+
+}
+
+LockContent* LockContent::instance()
+{
+    return lockContent;
+}
+
+void LockContent::init(SessionBaseModel *model)
+{
+    if (m_initialized) {
+        return;
+    }
+    m_initialized = true;
+    m_model = model;
     // 在已显示关机或用户列表界面时，再插入另外一个显示器，会新构建一个LockContent，此时会设置为PasswordMode造成界面状态异常
     if (!m_model->visible()) {
         m_model->setCurrentModeState(SessionBaseModel::ModeStatus::PasswordMode);
@@ -55,22 +74,19 @@ LockContent::LockContent(SessionBaseModel *const model, QWidget *parent)
         onUserListChanged(model->isServerModel() ? model->loginedUserList() : model->userList());
     });
 
+    // 创建套接字连接，用于与重置密码弹窗通讯
     m_localServer->setMaxPendingConnections(1);
     m_localServer->setSocketOptions(QLocalServer::WorldAccessOption);
-    static bool once = false;
-    if (!once) {
-        // 将greeter和lock的服务名称分开
-        // 如果服务相同，但是创建套接字文件的用户不一样，greeter和lock不能删除对方的套接字文件，造成锁屏无法监听服务。
-        QString serverName = QString("GrabKeyboard_") + (m_model->appType() == AuthCommon::Login ? "greeter" : ("lock_" + m_model->currentUser()->name()));
-        // 将之前的server删除，如果是旧文件，即使监听成功，客户端也无法连接。
-        QLocalServer::removeServer(serverName);
-        if (!m_localServer->listen(serverName)) { // 监听特定的连接
-            qWarning() << "listen failed!" << m_localServer->errorString();
-        } else {
-            qDebug() << "listen success!";
-        }
+    // 将greeter和lock的服务名称分开
+    // 如果服务相同，但是创建套接字文件的用户不一样，greeter和lock不能删除对方的套接字文件，造成锁屏无法监听服务。
+    QString serverName = QString("GrabKeyboard_") + (m_model->appType() == AuthCommon::Login ? "greeter" : ("lock_" + m_model->currentUser()->name()));
+    // 将之前的server删除，如果是旧文件，即使监听成功，客户端也无法连接。
+    QLocalServer::removeServer(serverName);
+    if (!m_localServer->listen(serverName)) { // 监听特定的连接
+        qWarning() << "listen failed!" << m_localServer->errorString();
+    } else {
+        qDebug() << "listen success!";
     }
-    once = true;
 }
 
 void LockContent::initUI()
@@ -113,12 +129,12 @@ void LockContent::initConnections()
     connect(m_controlWidget, &ControlWidget::requestSwitchVirtualKB, this, &LockContent::toggleVirtualKB);
     connect(m_controlWidget, &ControlWidget::requestShowModule, this, &LockContent::showModule);
 
-    //刷新背景单独与onStatusChanged信号连接，避免在showEvent事件时调用onStatusChanged而重复刷新背景，减少刷新次数
+    // 刷新背景单独与onStatusChanged信号连接，避免在showEvent事件时调用onStatusChanged而重复刷新背景，减少刷新次数
     connect(m_model, &SessionBaseModel::onStatusChanged, this, &LockContent::onStatusChanged);
 
-    // 在锁屏显示时，启动onborad进程，锁屏结束时结束onboard进程
-    auto initVirtualKB = [&](bool hasvirtualkb) {
-        if (hasvirtualkb && !m_virtualKB) {
+    //在锁屏显示时，启动onboard进程，锁屏结束时结束onboard进程
+    auto initVirtualKB = [&](bool hasVirtualKB) {
+        if (hasVirtualKB && !m_virtualKB) {
             connect(&VirtualKBInstance::Instance(), &VirtualKBInstance::initFinished, this, [&] {
                 m_virtualKB = VirtualKBInstance::Instance().virtualKBWidget();
                 m_controlWidget->setVirtualKBVisible(true);
@@ -134,7 +150,11 @@ void LockContent::initConnections()
     connect(m_model, &SessionBaseModel::hasVirtualKBChanged, this, initVirtualKB, Qt::QueuedConnection);
     connect(m_model, &SessionBaseModel::userListChanged, this, &LockContent::onUserListChanged);
     connect(m_model, &SessionBaseModel::userListLoginedChanged, this, &LockContent::onUserListChanged);
-    connect(m_model, &SessionBaseModel::authFinished, this, &LockContent::restoreMode);
+    connect(m_model, &SessionBaseModel::authFinished, this, [ this ] (bool successful) {
+        if (successful)
+            setVisible(false);
+        restoreMode();
+    });
     connect(m_model, &SessionBaseModel::MFAFlagChanged, this, [this](const bool isMFA) {
         isMFA ? initMFAWidget() : initSFAWidget();
         // 当前中间窗口为空或者中间窗口就是验证窗口的时候显示验证窗口
@@ -150,6 +170,10 @@ void LockContent::initConnections()
             window()->windowHandle()->setKeyboardGrabEnabled(true);
         }
     });
+
+    connect(m_model, &SessionBaseModel::showUserList, this, &LockContent::showUserList);
+    connect(m_model, &SessionBaseModel::showLockScreen, this, &LockContent::showLockScreen);
+    connect(m_model, &SessionBaseModel::showShutdown, this, &LockContent::showShutdown);
 }
 
 /**
@@ -200,7 +224,10 @@ void LockContent::initSFAWidget()
     connect(m_sfaWidget, &SFAWidget::sendTokenToAuth, this, &LockContent::sendTokenToAuth);
     connect(m_sfaWidget, &SFAWidget::requestEndAuthentication, this, &LockContent::requestEndAuthentication);
     connect(m_sfaWidget, &SFAWidget::requestCheckAccount, this, &LockContent::requestCheckAccount);
-    connect(m_sfaWidget, &SFAWidget::authFinished, this, &LockContent::authFinished);
+    connect(m_sfaWidget, &SFAWidget::authFinished, this, [this] {
+        m_model->setVisible(false);
+        emit authFinished();
+    });
     connect(m_sfaWidget, &SFAWidget::updateParentLayout, this, [this] {
         m_centerSpacerItem->changeSize(0, calcTopSpacing(m_sfaWidget->getTopSpacing()));
         m_centerVLayout->invalidate();
@@ -242,7 +269,6 @@ void LockContent::onCurrentUserChanged(std::shared_ptr<User> user)
     m_currentUserConnects << connect(user.get(), &User::greeterBackgroundChanged, this, &LockContent::updateGreeterBackgroundPath, Qt::UniqueConnection)
                           << connect(user.get(), &User::desktopBackgroundChanged, this, &LockContent::updateDesktopBackgroundPath, Qt::UniqueConnection);
 
-    //TODO: refresh blur image
     m_centerTopWidget->setCurrentUser(user.get());
     m_logoWidget->updateLocale(locale);
 }
@@ -256,6 +282,7 @@ void LockContent::pushPasswordFrame()
 
 void LockContent::pushUserFrame()
 {
+    qInfo() << "Push user frame";
     if(m_model->isServerModel())
         m_controlWidget->setUserSwitchEnable(false);
 
@@ -270,11 +297,10 @@ void LockContent::pushConfirmFrame()
 
 void LockContent::pushShutdownFrame()
 {
-    //设置关机选项界面大小为中间区域的大小,并移动到左上角，避免显示后出现移动现象
+    qInfo() << "Push shutdown frame";
+    // 设置关机选项界面大小为中间区域的大小,并移动到左上角，避免显示后出现移动现象
     m_shutdownFrame->onStatusChanged(m_model->currentModeState());
-    const QSize size = getCenterContentSize();
-    m_shutdownFrame->setFixedSize(size);
-    setCenterContent(m_shutdownFrame, 2);
+    setCenterContent(m_shutdownFrame);
 }
 
 void LockContent::setMPRISEnable(const bool state)
@@ -316,27 +342,22 @@ void LockContent::onNewConnection()
 
 void LockContent::onDisConnect()
 {
-    for (auto w : FullscreenBackground::frames()) {
-        if (w->contentVisible()) {
-            // 由于socket连接只会创建一个，断开连接的时候并不一定是socket对象所在LockContent对象处于显示的状态
-            // 需要找出当前显示LockContent，让它抓取键盘
-            // TODO 只创建一个LockContent的话则无需这样处理了
-            LockContent* lockContent = qobject_cast<LockContent*>(w->content());
-            if (lockContent) {
-                // 这种情况下不必强制要求可以抓取到键盘，因为可能是网络弹窗抓取了键盘
-                lockContent->tryGrabKeyboard(false);
-            }
-            break;
-        }
-    }
+    // 这种情况下不必强制要求可以抓取到键盘，因为可能是网络弹窗抓取了键盘
+    tryGrabKeyboard(false);
 }
 
 void LockContent::onStatusChanged(SessionBaseModel::ModeStatus status)
 {
+    qInfo() << Q_FUNC_INFO << status << ", current status: " << m_currentModeStatus;
     refreshLayout(status);
 
     if(m_model->isServerModel())
         onUserListChanged(m_model->loginedUserList());
+
+    if (m_currentModeStatus == status)
+        return;
+    m_currentModeStatus = status;
+
     switch (status) {
     case SessionBaseModel::ModeStatus::PasswordMode:
         pushPasswordFrame();
@@ -389,6 +410,10 @@ void LockContent::mouseReleaseEvent(QMouseEvent *event)
 void LockContent::showEvent(QShowEvent *event)
 {
     onStatusChanged(m_model->currentModeState());
+    // 重新设置一下焦点，否则用户列表界面切换屏幕的时候焦点异常
+    if (m_centerWidget)
+        m_centerWidget->setFocus();
+
     tryGrabKeyboard();
     QFrame::showEvent(event);
 }
@@ -413,12 +438,6 @@ void LockContent::resizeEvent(QResizeEvent *event)
     }
 
     SessionBaseWindow::resizeEvent(event);
-
-    // 在SessionBaseWindow中重新计算上下边距后，需要重新设置关机界面大小，避免显示时自动调整大小造成界面移动
-    if (m_shutdownFrame == m_centerWidget) {
-        const QSize size = getCenterContentSize();
-        m_shutdownFrame->setFixedSize(size);
-    }
 }
 
 void LockContent::restoreMode()
@@ -498,16 +517,16 @@ void LockContent::onUserListChanged(QList<std::shared_ptr<User> > list)
 {
     const bool allowShowUserSwitchButton = m_model->allowShowUserSwitchButton();
     const bool alwaysShowUserSwitchButton = m_model->alwaysShowUserSwitchButton();
-    bool haveLogindUser = true;
+    bool haveLoginedUser = true;
 
     if (m_model->isServerModel() && m_model->appType() == AuthCommon::Login) {
-        haveLogindUser = !m_model->loginedUserList().isEmpty();
+        haveLoginedUser = !m_model->loginedUserList().isEmpty();
     }
 
     bool enable = (alwaysShowUserSwitchButton ||
                    (allowShowUserSwitchButton &&
                     (list.size() > (m_model->isServerModel() ? 0 : 1)))) &&
-                  haveLogindUser;
+                  haveLoginedUser;
 
     m_controlWidget->setUserSwitchEnable(enable);
     m_shutdownFrame->setUserSwitchEnable(enable);
@@ -516,9 +535,9 @@ void LockContent::onUserListChanged(QList<std::shared_ptr<User> > list)
 /**
  * @brief 抓取键盘,失败后继续抓取,最多尝试15次.
  *
- * @param exitIfFalied true: 发送失败通知，并隐藏锁屏。 false：不做任何处理。
+ * @param exitIfFailed true: 发送失败通知，并隐藏锁屏。 false：不做任何处理。
  */
-void LockContent::tryGrabKeyboard(bool exitIfFalied)
+void LockContent::tryGrabKeyboard(bool exitIfFailed)
 {
 #ifndef QT_DEBUG
     if (m_model->isUseWayland() || !isVisible()) {
@@ -533,11 +552,11 @@ void LockContent::tryGrabKeyboard(bool exitIfFalied)
     m_failures++;
 
     if (m_failures == 15) {
-        qWarning() << "Trying grabkeyboard has exceeded the upper limit. dde-lock will quit.";
+        qWarning() << "Trying to grab keyboard has exceeded the upper limit. dde-lock will quit.";
 
         m_failures = 0;
 
-        if (!exitIfFalied) {
+        if (!exitIfFailed) {
             return;
         }
 
@@ -563,12 +582,12 @@ void LockContent::tryGrabKeyboard(bool exitIfFalied)
             .method(QString("SimulateUserActivity"))
             .call();
 
-        emit requestLockFrameHide();
+        m_model->setVisible(false);
         return;
     }
 
-    QTimer::singleShot(100, this, [this, exitIfFalied] {
-        tryGrabKeyboard(exitIfFalied);
+    QTimer::singleShot(100, this, [this, exitIfFailed] {
+        tryGrabKeyboard(exitIfFailed);
     });
 #endif
 }
@@ -641,4 +660,24 @@ void LockContent::keyPressEvent(QKeyEvent *event)
         }
         break;
     }
+}
+
+void LockContent::showUserList()
+{
+    m_model->setCurrentModeState(SessionBaseModel::ModeStatus::UserMode);
+    QTimer::singleShot(10, this, [ = ] {
+        m_model->setVisible(true);
+    });
+}
+
+void LockContent::showLockScreen()
+{
+    m_model->setCurrentModeState(SessionBaseModel::ModeStatus::PasswordMode);
+    m_model->setVisible(true);
+}
+
+void LockContent::showShutdown()
+{
+    m_model->setCurrentModeState(SessionBaseModel::ModeStatus::ShutDownMode);
+    m_model->setVisible(true);
 }

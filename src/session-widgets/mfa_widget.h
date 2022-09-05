@@ -23,7 +23,7 @@ public:
     int getTopSpacing() const override;
 
 protected:
-    void resizeEvent(QResizeEvent *event);
+    void resizeEvent(QResizeEvent *event) override;
 
 private:
     void initUI();

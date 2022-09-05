@@ -7,9 +7,29 @@
 #include "sessionwidget.h"
 #include "controlwidget.h"
 
-LoginContent::LoginContent(SessionBaseModel *const model, QWidget *parent)
-    : LockContent(model, parent)
+
+Q_GLOBAL_STATIC(LoginContent, loginContent)
+
+LoginContent::LoginContent(QWidget *parent)
+    : LockContent(parent)
 {
+
+}
+
+LoginContent *LoginContent::instance()
+{
+    return loginContent;
+}
+
+void LoginContent::init(SessionBaseModel *model)
+{
+    static bool initialized = false;
+    if (initialized) {
+        return;
+    }
+    initialized = true;
+
+    LockContent::init(model);
     setAccessibleName("LoginContent");
 
     m_sessionFrame = new SessionWidget;
@@ -20,7 +40,7 @@ LoginContent::LoginContent(SessionBaseModel *const model, QWidget *parent)
     m_loginTipsWindow = new LoginTipsWindow;
     connect(m_loginTipsWindow, &LoginTipsWindow::requestClosed, m_model, &SessionBaseModel::tipsShowed);
 
-    connect(m_sessionFrame, &SessionWidget::hideFrame, this, &LockContent::restoreMode);
+    connect(m_sessionFrame, &SessionWidget::notifyHideSessionFrame, this, &LockContent::restoreMode);
     connect(m_sessionFrame, &SessionWidget::sessionChanged, this, &LockContent::restoreMode);
     connect(m_controlWidget, &ControlWidget::requestSwitchSession, this, [ = ] {
         m_model->setCurrentModeState(SessionBaseModel::ModeStatus::SessionMode);
@@ -41,8 +61,13 @@ void LoginContent::onCurrentUserChanged(std::shared_ptr<User> user)
 
 void LoginContent::onStatusChanged(SessionBaseModel::ModeStatus status)
 {
+    qInfo() << Q_FUNC_INFO << status << ", current status: " << status;
     switch (status) {
     case SessionBaseModel::ModeStatus::SessionMode:
+        if (m_currentModeStatus == status)
+            break;
+        
+        m_currentModeStatus = status;
         pushSessionFrame();
         break;
     default:
