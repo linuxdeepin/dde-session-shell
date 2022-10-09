@@ -54,7 +54,7 @@ private:
     void initUI();
     void initConnect();
     void updateTr(RoundItemButton * widget, const QString &tr);
-    void onPowerBtnIndexChanged(const int index);
+    void onOtherPageChanged(const QVariant &value);
     void enterKeyPushed();
     void enableHibernateBtn(bool enable);
     void enableSleepBtn(bool enable);
@@ -62,7 +62,6 @@ private:
 private:
     int m_index;
     bool m_switchUserEnable= false;
-    SessionBaseModel::ModeStatus m_status;
     QList<RoundItemButton *> m_btnList;
     QList<std::pair<std::function<void (QString)>, QString>> m_trList;
     SessionBaseModel* m_model;
