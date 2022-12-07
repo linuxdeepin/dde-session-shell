@@ -148,7 +148,8 @@ void AuthWidget::setUser(std::shared_ptr<User> user)
                      << connect(user.get(), &User::displayNameChanged, this, &AuthWidget::updateUserDisplayNameLabel)
                      << connect(user.get(), &User::passwordHintChanged, this, &AuthWidget::setPasswordHint)
                      << connect(user.get(), &User::limitsInfoChanged, this, &AuthWidget::setLimitsInfo)
-                     << connect(user.get(), &User::passwordExpiredInfoChanged, this, &AuthWidget::updatePasswordExpiredState);
+                     << connect(user.get(), &User::passwordExpiredInfoChanged, this, &AuthWidget::updatePasswordExpiredState)
+                     << connect(user.get(), &User::noPasswordLoginChanged, this, &AuthWidget::onNoPasswordLoginChanged);
 
     setAvatar(user->avatar());
     setPasswordHint(user->passwordHint());
@@ -307,6 +308,12 @@ void AuthWidget::setPasswordHint(const QString &hint)
     if (m_passwordAuth) {
         m_passwordAuth->setPasswordHint(hint);
     }
+}
+
+void AuthWidget::onNoPasswordLoginChanged(bool noPassword)
+{
+    if (noPassword)
+        setAuthType(AT_None);
 }
 
 /**

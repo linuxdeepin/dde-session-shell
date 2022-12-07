@@ -116,6 +116,7 @@ protected:
 
 protected Q_SLOTS:
     void updateBlurEffectGeometry();
+    void onNoPasswordLoginChanged(bool noPassword);
 
 protected:
     const SessionBaseModel *m_model;
