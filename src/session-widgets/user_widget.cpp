@@ -72,9 +72,8 @@ void UserWidget::initUI()
     m_displayNameLabel->setPalette(palette);
     nameLayout->addWidget(m_displayNameLabel, 1, Qt::AlignVCenter | Qt::AlignLeft);
     // 用户名，根据配置决定是否构造对象
-    DConfigHelper::instance()->bind(this, SHOW_USER_NAME);
     if (DConfigHelper::instance()->getConfig(SHOW_USER_NAME, false).toBool()) {
-        m_userNameWidget = new UserNameWidget(false, this);
+        m_userNameWidget = new UserNameWidget(true, false, this);
         m_userNameWidget->updateFullName(m_user->fullName());
         setFixedHeight(heightHint());
     }
@@ -89,6 +88,9 @@ void UserWidget::initUI()
     if (m_userNameWidget)
         m_mainLayout->addWidget(m_userNameWidget);
     m_mainLayout->addSpacing(20);
+
+    DConfigHelper::instance()->bind(this, SHOW_USER_NAME);
+    DConfigHelper::instance()->bind(this, USER_FRAME_MAX_WIDTH);
 }
 
 void UserWidget::initConnections()
@@ -159,17 +161,25 @@ void UserWidget::setAvatar(const QString &avatar)
  */
 void UserWidget::updateUserNameLabel()
 {
+    qInfo() << Q_FUNC_INFO;
     const bool showUserName = DConfigHelper::instance()->getConfig(SHOW_USER_NAME, false).toBool();
     const QString &name = showUserName ? m_user->name() : m_user->displayName();
     int nameWidth = m_displayNameLabel->fontMetrics().boundingRect(name).width();
-    int labelMaxWidth = width() - 25 * 2;
 
-    if (nameWidth > labelMaxWidth) {
+    //切换账号时，是否显示全部账号
+    bool ok;
+    int userFrameMaxWidth = DConfigHelper::instance()->getConfig(USER_FRAME_MAX_WIDTH, UserFrameWidth).toInt(&ok);
+    if (!ok) userFrameMaxWidth = UserFrameWidth;
+    int maxFontWidth = nameWidth + 25 * 2;
+    int labelMaxWidth = userFrameMaxWidth - 25 * 2;
+    setFixedWidth(maxFontWidth >= userFrameMaxWidth ? userFrameMaxWidth : maxFontWidth >= UserFrameWidth ? maxFontWidth : UserFrameWidth);
+    if (maxFontWidth > userFrameMaxWidth) {
         QString str = m_displayNameLabel->fontMetrics().elidedText(name, Qt::ElideRight, labelMaxWidth);
         m_displayNameLabel->setText(str);
     } else {
         m_displayNameLabel->setText(name);
     }
+
     if (m_userNameWidget)
         m_userNameWidget->updateFullName(m_user->fullName());
 }
@@ -240,7 +250,7 @@ void UserWidget::OnDConfigPropertyChanged(const QString &key, const QVariant &va
         const bool showUserName = value.toBool();
         if (showUserName) {
             if (!m_userNameWidget) {
-                m_userNameWidget = new UserNameWidget(false, this);
+                m_userNameWidget = new UserNameWidget(true, false, this);
             }
             m_mainLayout->insertWidget(m_mainLayout->indexOf(m_displayNameWidget) + 1, m_userNameWidget);
             m_userNameWidget->show();
@@ -253,6 +263,8 @@ void UserWidget::OnDConfigPropertyChanged(const QString &key, const QVariant &va
                 m_userNameWidget = nullptr;
             }
         }
+    } else if (key == USER_FRAME_MAX_WIDTH) {
+        updateUserNameLabel();
     }
 
     // 刷新界面

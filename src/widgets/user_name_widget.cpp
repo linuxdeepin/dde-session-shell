@@ -20,16 +20,16 @@ DWIDGET_USE_NAMESPACE
 DCORE_USE_NAMESPACE
 using namespace DDESESSIONCC;
 
-UserNameWidget::UserNameWidget(bool showDisplayName, QWidget *parent)
+UserNameWidget::UserNameWidget(bool respondFontSizeChange, bool showDisplayName, QWidget *parent)
     : QWidget(parent)
     , m_userPicLabel(nullptr)
     , m_fullNameLabel(nullptr)
     , m_displayNameLabel(nullptr)
     , m_showUserName(false)
     , m_showDisplayName(showDisplayName)
+    , m_respondFontSizeChange(respondFontSizeChange)
 {
     initialize();
-    DConfigHelper::instance()->bind(this, SHOW_USER_NAME);
 }
 
 void UserNameWidget::initialize()
@@ -51,7 +51,12 @@ void UserNameWidget::initialize()
     QPalette palette = m_fullNameLabel->palette();
     palette.setColor(QPalette::WindowText, Qt::white);
     m_fullNameLabel->setPalette(palette);
-    DFontSizeManager::instance()->bind(m_fullNameLabel, DFontSizeManager::T6);
+
+    // 设置字体大小
+    bool ok;
+    int fontSize = DConfigHelper::instance()->getConfig(FULL_NAME_FONT, 5).toInt(&ok);
+    if (!ok || fontSize < 0 || fontSize > 9 || !m_respondFontSizeChange) fontSize = DFontSizeManager::T6;
+    DFontSizeManager::instance()->bind(m_fullNameLabel, static_cast<DFontSizeManager::SizeType>(fontSize));
 
     if (m_showDisplayName) {
         m_displayNameLabel = new DLabel(this);
@@ -77,6 +82,9 @@ void UserNameWidget::initialize()
     m_showUserName = DConfigHelper::instance()->getConfig(SHOW_USER_NAME, false).toBool();
     m_fullNameLabel->setVisible(m_showUserName);
     m_userPicLabel->setVisible(m_showUserName);
+
+    DConfigHelper::instance()->bind(this, FULL_NAME_FONT);
+    DConfigHelper::instance()->bind(this, SHOW_USER_NAME);
 }
 
 void UserNameWidget::updateUserName(const QString &userName)
@@ -163,5 +171,12 @@ void UserNameWidget::OnDConfigPropertyChanged(const QString &key, const QVariant
         m_userPicLabel->setVisible(m_showUserName);
         updateUserNameWidget();
         updateDisplayNameWidget();
+    } else if (key == FULL_NAME_FONT && m_respondFontSizeChange) {
+        bool ok;
+        const int fontSize = value.toInt(&ok);
+        if (ok && fontSize > 0 && fontSize < 9)
+            DFontSizeManager::instance()->bind(m_fullNameLabel, static_cast<DFontSizeManager::SizeType>(fontSize));
+        else
+            qWarning() << "Top tip text font format error";
     }
 }

@@ -4,14 +4,16 @@
 
 #include "centertopwidget.h"
 #include "public_func.h"
+#include "dconfig_helper.h"
+#include "constants.h"
 
 #include <QVBoxLayout>
 #include <QResizeEvent>
+#include <QMetaEnum>
 
 DCORE_USE_NAMESPACE
+using namespace DDESESSIONCC;
 
-const QString SHOW_TOP_TIP = "showTopTip";
-const QString TOP_TIP_TEXT = "topTipText";
 const int TOP_TIP_MAX_LENGTH = 60;
 const int TOP_TIP_SPACING = 10;
 
@@ -39,33 +41,23 @@ void CenterTopWidget::initUi()
     QPalette palette = m_topTip->palette();
     palette.setColor(QPalette::WindowText, Qt::white);
     m_topTip->setPalette(palette);
-    DFontSizeManager::instance()->bind(m_topTip, DFontSizeManager::T6);
+    // 设置字体大小
+    bool ok;
+    int fontSize = DConfigHelper::instance()->getConfig(TOP_TIP_TEXT_FONT, 5).toInt(&ok);
+    qInfo() << "Font size: " << fontSize;
+    if (!ok || fontSize < 0 || fontSize > 9) fontSize = DFontSizeManager::T6;
+    DFontSizeManager::instance()->bind(m_topTip, static_cast<DFontSizeManager::SizeType>(fontSize));
+
     layout->addSpacerItem(m_topTipSpacer);
     layout->addWidget(m_topTip);
-    bool showTopTip = false;
-    QString topTipText = "";
-    if (m_config) {
-        if (m_config->keyList().contains(TOP_TIP_TEXT))
-            topTipText = m_config->value(TOP_TIP_TEXT).toString();
-
-        if (m_config->keyList().contains(SHOW_TOP_TIP))
-            showTopTip = m_config->value(SHOW_TOP_TIP).toBool();
-
-        // 即时响应数据变化
-        connect(m_config, &DConfig::valueChanged, this, [this] (const QString &key) {
-            if (key == SHOW_TOP_TIP) {
-                const bool showTopTip = m_config->value(SHOW_TOP_TIP).toBool();
-                m_topTipSpacer->changeSize(0, showTopTip ? TOP_TIP_SPACING : 0);
-                m_topTip->setVisible(showTopTip);
-            } else if (key == TOP_TIP_TEXT) {
-                setTopTipText(m_config->value(TOP_TIP_TEXT).toString());
-            }
-        });
-    }
-
+    const bool showTopTip = DConfigHelper::instance()->getConfig(SHOW_TOP_TIP, false).toBool();
     m_topTipSpacer->changeSize(0, showTopTip ? TOP_TIP_SPACING : 0);
     m_topTip->setVisible(showTopTip);
-    setTopTipText(topTipText);
+    setTopTipText(DConfigHelper::instance()->getConfig(TOP_TIP_TEXT, "").toString());
+
+    DConfigHelper::instance()->bind(this, SHOW_TOP_TIP);
+    DConfigHelper::instance()->bind(this, TOP_TIP_TEXT);
+    DConfigHelper::instance()->bind(this, TOP_TIP_TEXT_FONT);
 }
 
 void CenterTopWidget::setCurrentUser(User *user)
@@ -144,3 +136,22 @@ void CenterTopWidget::updateTopTipWidget()
 
     m_topTip->setText(firstLine);
 }
+
+void CenterTopWidget::OnDConfigPropertyChanged(const QString &key, const QVariant &value)
+{
+    if (key == SHOW_TOP_TIP) {
+        const bool showTopTip = m_config->value(SHOW_TOP_TIP).toBool();
+        m_topTipSpacer->changeSize(0, showTopTip ? TOP_TIP_SPACING : 0);
+        m_topTip->setVisible(showTopTip);
+    } else if (key == TOP_TIP_TEXT) {
+        setTopTipText(m_config->value(TOP_TIP_TEXT).toString());
+    } else if (key == TOP_TIP_TEXT_FONT) {
+        bool ok;
+        const int fontSize = value.toInt(&ok);
+        if (ok && fontSize > 0 && fontSize < 9)
+            DFontSizeManager::instance()->bind(m_topTip, static_cast<DFontSizeManager::SizeType>(fontSize));
+        else
+            qWarning() << "Top tip text font format error";
+    }
+}
+

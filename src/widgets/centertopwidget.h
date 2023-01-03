@@ -29,6 +29,9 @@ signals:
 public slots:
     void updateTimeFormat(bool use24);
 
+private slots:
+    void OnDConfigPropertyChanged(const QString &key, const QVariant &value);
+
 private:
     void initUi();
     void setTopTipText(const QString &text);

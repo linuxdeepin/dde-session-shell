@@ -16,7 +16,7 @@ class UserNameWidget : public QWidget
     Q_OBJECT
 
 public:
-    explicit UserNameWidget(bool showDisplayName = true, QWidget *parent = nullptr);
+    explicit UserNameWidget(bool respondFontSizeChange, bool showDisplayName, QWidget *parent = nullptr);
     void initialize();
     void updateUserName(const QString &userName);
     void updateFullName(const QString &displayName);
@@ -38,4 +38,5 @@ private:
     bool m_showDisplayName;                         // 是否显示全名
     QString m_fullNameStr;                          // 全名
     QString m_userNameStr;                          // 账户名
+    bool m_respondFontSizeChange;                   // 是否响应字体变化
 };

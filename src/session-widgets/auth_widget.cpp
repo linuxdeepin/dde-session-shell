@@ -73,7 +73,7 @@ void AuthWidget::initUI()
     m_accountEdit->setClearButtonEnabled(false);
     m_accountEdit->setPlaceholderText(tr("Account"));
     // 用户名
-    m_userNameWidget = new UserNameWidget(true, this);
+    m_userNameWidget = new UserNameWidget(false, true, this);
     /* 密码过期提示 */
     m_expiredStateLabel->setAccessibleName("ExpiredStateLabel");
     m_expiredStateLabel->setWordWrap(true);

@@ -69,9 +69,11 @@ const QString ENABLE_ONE_KEY_LOGIN = "enableOneKeylogin";
 const QString ENABLE_SHORTCUT_FOR_LOCK = "enableShortcutForLock";
 const QString SHOW_TOP_TIP = "showTopTip";
 const QString TOP_TIP_TEXT = "topTipText";
+const QString TOP_TIP_TEXT_FONT = "topTipTextFont";
 const QString SHOW_USER_NAME = "showUserName";
 const QString CHANGE_PASSWORD_FOR_NORMAL_USER = "changePasswordForNormalUser";
-
+const QString USER_FRAME_MAX_WIDTH = "userFrameMaxWidth";
+const QString FULL_NAME_FONT = "fullNameFont";
 }
 
 
