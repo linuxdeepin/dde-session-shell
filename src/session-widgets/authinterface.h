@@ -61,6 +61,7 @@ protected:
     bool isLogined(uint uid);
     void checkConfig();
     void checkPowerInfo();
+    bool checkIsADDomain();
     bool isDeepin();
     QVariant getGSettings(const QString& node, const QString& key);
 

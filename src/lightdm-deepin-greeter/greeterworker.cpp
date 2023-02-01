@@ -280,7 +280,7 @@ void GreeterWorker::initData()
 
     /* com.deepin.udcp.iam */
     QDBusInterface ifc("com.deepin.udcp.iam", "/com/deepin/udcp/iam", "com.deepin.udcp.iam", QDBusConnection::systemBus(), this);
-    const bool allowShowCustomUser = valueByQSettings<bool>("", "loginPromptInput", false) || ifc.property("Enable").toBool();
+    const bool allowShowCustomUser = valueByQSettings<bool>("", "loginPromptInput", false) || ifc.property("Enable").toBool() || checkIsADDomain();
     m_model->setAllowShowCustomUser(allowShowCustomUser);
 
     /* init current user */

@@ -7,6 +7,7 @@
 #include "userinfo.h"
 
 #include <QProcessEnvironment>
+#include <QFile>
 
 #define POWER_CAN_SLEEP "POWER_CAN_SLEEP"
 #define POWER_CAN_HIBERNATE "POWER_CAN_HIBERNATE"
@@ -234,4 +235,10 @@ void AuthInterface::checkPowerInfo()
                                                            : getGSettings("Power","hibernate").toBool() && m_powerManagerInter->CanHibernate();
 
     m_model->setHasSwap(can_hibernate);
+}
+
+bool AuthInterface::checkIsADDomain()
+{
+    //只有加入AD域后，才会生成此文件
+    return QFile::exists("/etc/krb5.keytab");
 }
