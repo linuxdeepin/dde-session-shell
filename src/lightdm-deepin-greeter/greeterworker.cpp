@@ -423,6 +423,13 @@ void GreeterWorker::createAuthentication(const QString &account)
         return;
     }
 
+    // 如果验证会话已经存在，销毁后重新开启验证
+    // TODO 这个处理办法稳健但是比较粗暴，后面需要结合DA梳理一下认证session创建、销毁和复用的时机，优化流程
+    if (m_authFramework->authSessionExist(account)) {
+        endAuthentication(account, AT_All);
+        destoryAuthentication(account);
+    }
+
     m_retryAuth = false;
     std::shared_ptr<User> user_ptr = m_model->findUserByName(account);
     if (user_ptr) {
@@ -934,7 +941,6 @@ void GreeterWorker::restartResetSessionTimer()
 
 void GreeterWorker::startGreeterAuth(const QString &account)
 {
-
     qInfo() << Q_FUNC_INFO << account ;
     m_greeter->authenticate(account);
 }
