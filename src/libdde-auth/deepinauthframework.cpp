@@ -10,13 +10,9 @@
 
 #include <dlfcn.h>
 
-#include <QThread>
 #include <QTimer>
 
-#include <grp.h>
-#include <pwd.h>
 #include <security/pam_appl.h>
-#include <signal.h>
 #include <unistd.h>
 
 #ifdef PAM_SUN_CODEBASE

@@ -19,7 +19,6 @@
 #include <QWidget>
 
 class AuthModule;
-class KbLayoutWidget;
 class KeyboardMonitor;
 
 class DLineEditEx;

@@ -74,11 +74,8 @@ private:
     UserAvatar* m_userAvatar;
     QLabel* m_userNameLabel;
     QLabel *m_checkedMark;
-    QHBoxLayout* m_buttonLayout;
     QHBoxLayout *m_nameLayout;
     QVBoxLayout* m_centralLayout;
-
-    int m_borderWidth = 0;
 
     double m_opacity;
 

@@ -14,13 +14,11 @@
 #include "authcommon.h"
 #include "dlineeditex.h"
 #include "keyboardmonitor.h"
-#include "modules_loader.h"
 #include "sessionbasemodel.h"
 #include "useravatar.h"
 #include "plugin_manager.h"
 
 #include <DFontSizeManager>
-#include <DHiDPIHelper>
 
 #include <QSpacerItem>
 

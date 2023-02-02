@@ -5,8 +5,6 @@
 #ifdef USE_DEEPIN_WAYLAND
 #include "keyboardplantform_wayland.h"
 
-#include <stdio.h>
-#include <stdlib.h>
 #include <linux/input-event-codes.h>
 
 #include <KF5/KWayland/Client/registry.h>
@@ -19,7 +17,7 @@
 #include <QThread>
 #include <QDebug>
 
-KeyboardPlantformWayland::KeyboardPlantformWayland(QObject *parent)
+KeyboardPlatformWayland::KeyboardPlatformWayland(QObject *parent)
     : KeyBoardPlatform(parent)
     , m_connectionThread(new QThread(this))
     , m_connectionThreadObject(new ConnectionThread())
@@ -33,24 +31,24 @@ KeyboardPlantformWayland::KeyboardPlantformWayland(QObject *parent)
 
 }
 
-KeyboardPlantformWayland::~KeyboardPlantformWayland()
+KeyboardPlatformWayland::~KeyboardPlatformWayland()
  {
     m_connectionThread->quit();
     m_connectionThread->wait();
     m_connectionThreadObject->deleteLater();
  }
 
-bool KeyboardPlantformWayland::isCapslockOn()
+bool KeyboardPlatformWayland::isCapslockOn()
 {
     return m_capsLock;
 }
 
-bool KeyboardPlantformWayland::isNumlockOn()
+bool KeyboardPlatformWayland::isNumlockOn()
 {
     return m_numLockOn;
 }
 
-bool KeyboardPlantformWayland::setNumlockStatus(const bool &on)
+bool KeyboardPlatformWayland::setNumlockStatus(const bool &on)
 {
     qDebug() << "Set num lock state: " << on << ", numlockon: " << m_numLockOn;
     if (m_fakeInput && m_fakeInput->isValid() && on != m_numLockOn) {
@@ -64,7 +62,7 @@ bool KeyboardPlantformWayland::setNumlockStatus(const bool &on)
     return false;
 }
 
-void KeyboardPlantformWayland::run()
+void KeyboardPlatformWayland::run()
 {
     connect(m_connectionThreadObject, &ConnectionThread::connected, this, [this] {
             m_eventQueue = new EventQueue(this);
@@ -78,7 +76,7 @@ void KeyboardPlantformWayland::run()
     m_connectionThreadObject->initConnection();
 }
 
-void KeyboardPlantformWayland::setupRegistry(Registry *registry)
+void KeyboardPlatformWayland::setupRegistry(Registry *registry)
 {
     connect(registry, &Registry::ddeSeatAnnounced, this, [this, registry](quint32 name, quint32 version) {
         m_ddeSeat = registry->createDDESeat(name, version, this);

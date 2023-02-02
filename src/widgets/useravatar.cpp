@@ -3,7 +3,7 @@
 // SPDX-License-Identifier: GPL-3.0-or-later
 
 #include "useravatar.h"
-#include "dthememanager.h"
+
 #include <QUrl>
 #include <QFile>
 #include <QPainterPath>
@@ -11,8 +11,6 @@
 UserAvatar::UserAvatar(QWidget *parent, bool deleteable)
     : QPushButton(parent)
     , m_deleteable(deleteable)
-    , m_showAnimation(nullptr)
-    , m_hideAnimation(nullptr)
 {
     setGeometry(0, 0, AvatarLargeSize, AvatarLargeSize);
 

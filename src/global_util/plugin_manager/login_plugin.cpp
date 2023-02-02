@@ -5,7 +5,6 @@
 #include "login_plugin.h"
 #include "public_func.h"
 
-
 LoginPlugin::LoginPlugin(dss::module::BaseModuleInterface *module, QObject *parent)
     : PluginBase(module, parent)
     , m_authType(AuthType::AT_Password)

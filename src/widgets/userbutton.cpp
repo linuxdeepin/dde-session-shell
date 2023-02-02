@@ -3,9 +3,7 @@
 // SPDX-License-Identifier: GPL-3.0-or-later
 
 #include <QtGui/QPainter>
-#include <QDebug>
 #include <QTimer>
-#include <QSettings>
 
 #include "dhidpihelper.h"
 #include "userbutton.h"

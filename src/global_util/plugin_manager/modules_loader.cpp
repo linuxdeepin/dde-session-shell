@@ -7,11 +7,9 @@
 #include "base_module_interface.h"
 #include "public_func.h"
 
-#include <QDebug>
 #include <QDir>
 #include <QLibrary>
 #include <QPluginLoader>
-#include <QGSettings/qgsettings.h>
 #include <QApplication>
 
 const QString ModulesDir = "/usr/lib/dde-session-shell/modules";

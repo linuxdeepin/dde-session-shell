@@ -8,7 +8,6 @@
 #include <QApplication>
 #include <QDesktopWidget>
 #include <QDebug>
-#include <QDesktopWidget>
 #include <QJsonDocument>
 #include <QJsonObject>
 

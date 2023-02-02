@@ -80,7 +80,6 @@ private:
     static QPointer<QWidget> currentContent;
     QPointer<QScreen> m_screen;
     SessionBaseModel *m_model = nullptr;
-    bool m_primaryShowFinished = false;
     bool m_enableEnterEvent = true;
     bool m_useSolidBackground;
     bool m_fadeOutAniFinished;

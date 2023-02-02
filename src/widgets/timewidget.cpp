@@ -7,7 +7,6 @@
 #include <QVBoxLayout>
 #include <QDateTime>
 #include <QFontDatabase>
-#include <QSettings>
 
 const QStringList weekdayFormat = {"dddd", "ddd"};
 const QStringList shortDateFormat = { "yyyy/M/d", "yyyy-M-d", "yyyy.M.d",

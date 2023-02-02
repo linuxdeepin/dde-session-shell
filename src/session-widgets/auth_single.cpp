@@ -21,12 +21,7 @@
 #include <QValidator>
 #include <QRegExp>
 
-#include <unistd.h>
 #include <com_deepin_daemon_accounts_user.h>
-
-#define Service "com.deepin.dialogs.ResetPassword"
-#define Path "/com/deepin/dialogs/ResetPassword"
-#define Interface "com.deepin.dialogs.ResetPassword"
 
 using namespace AuthCommon;
 

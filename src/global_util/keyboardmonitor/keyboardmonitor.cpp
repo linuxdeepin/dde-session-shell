@@ -15,7 +15,7 @@ KeyboardMonitor::KeyboardMonitor()
         m_keyBoardPlatform = new KeyboardPlantformX11();
     } else {
 #ifdef USE_DEEPIN_WAYLAND
-        m_keyBoardPlatform = new KeyboardPlantformWayland();
+        m_keyBoardPlatform = new KeyboardPlatformWayland();
 #endif
     }
 

@@ -10,13 +10,9 @@
 #include "warningcontent.h"
 #include "public_func.h"
 
-#include <DDBusSender>
-
 #include <QApplication>
 #include <QDBusInterface>
 #include <QGSettings>
-#include <QScreen>
-#include <QWindow>
 #include <QX11Info>
 
 xcb_atom_t internAtom(xcb_connection_t *connection, const char *name, bool only_if_exists)

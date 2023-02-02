@@ -81,7 +81,6 @@ protected:
     DBusLogin1Manager* m_login1Inter;
     Login1SessionSelf* m_login1SessionSelf = nullptr;
     PowerManagerInter* m_powerManagerInter;
-    Authenticate*      m_authenticateInter;
     DBusObjectInter*   m_dbusInter;
     QGSettings*        m_gsettings = nullptr;
     uint               m_lastLogoutUid;

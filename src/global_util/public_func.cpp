@@ -9,23 +9,12 @@
 #include <DConfig>
 
 #include <QDBusConnection>
-#include <QDBusMessage>
-#include <QDBusReply>
 #include <QDateTime>
 #include <QDebug>
-#include <QDir>
 #include <QFile>
 #include <QGSettings>
-#include <QProcess>
-#include <QStandardPaths>
 #include <QTranslator>
 #include <QJsonDocument>
-
-#include <execinfo.h>
-#include <signal.h>
-#include <stdio.h>
-#include <sys/stat.h>
-#include <time.h>
 
 using namespace std;
 

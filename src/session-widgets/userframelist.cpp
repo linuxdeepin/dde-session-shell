@@ -17,7 +17,7 @@
 #include <QScroller>
 #include <QVBoxLayout>
 
-const int UserFrameSpaceing = 40;
+const int UserFrameSpacing = 40;
 
 using namespace DDESESSIONCC;
 
@@ -177,7 +177,7 @@ void UserFrameList::switchNextUser()
                 //处理m_scrollArea翻页显示
                 int selectedRight = m_loginWidgets[i]->geometry().right();
                 int scrollRight = m_scrollArea->widget()->geometry().right();
-                if (selectedRight + UserFrameSpaceing == scrollRight) {
+                if (selectedRight + UserFrameSpacing == scrollRight) {
                     QPoint topLeft;
                     if (m_rowCount == 1) {
                         topLeft = m_loginWidgets[i + 1]->geometry().topLeft();
@@ -240,15 +240,15 @@ void UserFrameList::updateLayout(int width)
 
     // 根据界面总宽度计算每行可以显示多少用户信息，每行最多5个用户信息
     int count = 5;
-    while ((UserFrameWidth + UserFrameSpaceing) * count > width - 10) {
+    while ((UserFrameWidth + UserFrameSpacing) * count > width - 10) {
         count--;
     }
     count = count <= 0 ? 1 : count;
 
     if (m_flowLayout->count() <= count) {
-        m_scrollArea->setFixedSize((UserFrameWidth + UserFrameSpaceing) * m_flowLayout->count(), userWidgetHeight + 20);
+        m_scrollArea->setFixedSize((UserFrameWidth + UserFrameSpacing) * m_flowLayout->count(), userWidgetHeight + 20);
     } else {
-        m_scrollArea->setFixedSize((UserFrameWidth + UserFrameSpaceing) * count, (userWidgetHeight + UserFrameSpaceing) * 2);
+        m_scrollArea->setFixedSize((UserFrameWidth + UserFrameSpacing) * count, (userWidgetHeight + UserFrameSpacing) * 2);
     }
 
     m_centerWidget->setFixedWidth(m_scrollArea->width() - 10);

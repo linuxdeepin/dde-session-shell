@@ -45,7 +45,7 @@ TEST_F(UT_LockWorker, auth)
     m_worker->startAuthentication("uos", 0);
     m_worker->sendTokenToAuth("uos", 0, "123");
     m_worker->endAuthentication("uos", 0);
-    m_worker->destoryAuthentication("uos");
+    m_worker->destroyAuthentication("uos");
     m_worker->switchToUser(m_model->currentUser());
     m_worker->setLocked(false);
     m_worker->restartResetSessionTimer();

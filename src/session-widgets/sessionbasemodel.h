@@ -216,10 +216,8 @@ private:
     bool m_allowShowUserSwitchButton;
     bool m_alwaysShowUserSwitchButton;
     bool m_abortConfirm;
-    bool m_isLockNoPassword;
     bool m_isBlackMode;
     bool m_isHibernateMode;
-    bool m_isLock = false;
     bool m_allowShowCustomUser;
     bool m_SEOpen; // 保存等保开启、关闭的状态
     bool m_isUseWayland;

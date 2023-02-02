@@ -61,7 +61,6 @@ private:
     QPointer<UserWidget> currentSelectedUser;
     SessionBaseModel *m_model;
     QWidget *m_centerWidget;
-    int m_colCount;
     int m_rowCount;
 };
 

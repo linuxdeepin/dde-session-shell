@@ -26,7 +26,6 @@ class AuthFingerprint;
 class AuthPassword;
 class AuthCustom;
 class DLineEditEx;
-class KbLayoutWidget;
 class KeyboardMonitor;
 class SessionBaseModel;
 class UserAvatar;
@@ -103,7 +102,6 @@ protected:
     void setLockButtonType(const int type);
 
     void updatePasswordExpiredState();
-    void updateExpiredState();
 
     void registerSyncFunctions(const QString &flag, std::function<void(QVariant)> function);
     void syncSingle(const QVariant &value);
@@ -112,7 +110,6 @@ protected:
     void syncPassword(const QVariant &value);
     void syncUKey(const QVariant &value);
     int calcCurrentHeight(const int height) const;
-    int getAuthWidgetHeight();
 
 protected Q_SLOTS:
     void updateBlurEffectGeometry();
@@ -131,7 +128,6 @@ protected:
     UserNameWidget *m_userNameWidget;    // 用户名
 
     KeyboardMonitor *m_capslockMonitor;    // 大小写
-    DClipEffectWidget *m_keyboardTypeClip; // 键盘布局类型菜单边界裁剪类
 
     AuthSingle *m_singleAuth;           // PAM
     AuthPassword *m_passwordAuth;       // 密码

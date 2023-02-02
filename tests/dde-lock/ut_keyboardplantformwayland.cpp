@@ -13,12 +13,12 @@ protected:
     void SetUp() override;
     void TearDown() override;
 
-    KeyboardPlantformWayland *m_keyboard;
+    KeyboardPlatformWayland *m_keyboard;
 };
 
 void UT_KeyboardPlantformWayland::SetUp()
 {
-    m_keyboard = new KeyboardPlantformWayland;
+    m_keyboard = new KeyboardPlatformWayland;
 }
 
 void UT_KeyboardPlantformWayland::TearDown()

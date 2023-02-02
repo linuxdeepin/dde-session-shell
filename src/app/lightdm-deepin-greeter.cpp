@@ -23,9 +23,7 @@
 #include <QSettings>
 
 #include <X11/Xcursor/Xcursor.h>
-#include <X11/Xlib-xcb.h>
 #include <X11/Xlib.h>
-#include <X11/cursorfont.h>
 #include <X11/extensions/Xfixes.h>
 #include <X11/extensions/Xrandr.h>
 #include <cstdlib>

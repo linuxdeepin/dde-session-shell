@@ -28,7 +28,6 @@ class MFAWidget;
 class SFAWidget;
 class UserFrameList;
 class ControlWidget;
-class UserInputWidget;
 class User;
 class ShutdownWidget;
 class LogoWidget;
@@ -105,7 +104,6 @@ protected:
     std::shared_ptr<User> m_user;
     QList<QMetaObject::Connection> m_currentUserConnects;
     LogoWidget *m_logoWidget;
-    TimeWidget *m_timeWidget;
     MediaWidget *m_mediaWidget = nullptr;
     com::deepin::wm *m_wmInter;
     QWidget *m_loginWidget;

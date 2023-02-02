@@ -6,7 +6,6 @@
 #include <libintl.h>
 
 #include <QDomDocument>
-#include <QDomElement>
 #include <QDebug>
 
 #include "xkbparser.h"

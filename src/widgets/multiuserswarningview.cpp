@@ -6,8 +6,6 @@
 
 #include <QLabel>
 #include <QListWidget>
-#include <QListWidgetItem>
-#include <QDebug>
 #include <QPainter>
 #include <QPainterPath>
 #include <QVBoxLayout>
@@ -28,12 +26,12 @@ MultiUsersWarningView::MultiUsersWarningView(SessionBaseModel::PowerAction inhib
     , m_inhibitType(inhibitType)
 {
     m_userList->setAttribute(Qt::WA_TranslucentBackground);
-//    m_userList->setSelectionRectVisible(false);
+    // m_userList->setSelectionRectVisible(false);
     m_userList->setSelectionMode(QListView::NoSelection);
     m_userList->setEditTriggers(QListView::NoEditTriggers);
     m_userList->setHorizontalScrollBarPolicy(Qt::ScrollBarAlwaysOff);
     m_userList->setVerticalScrollBarPolicy(Qt::ScrollBarAlwaysOff);
-//    m_userList->viewport()->setAttribute(Qt::WA_TranslucentBackground);
+    // m_userList->viewport()->setAttribute(Qt::WA_TranslucentBackground);
     m_userList->setFrameStyle(QFrame::NoFrame);
     m_userList->setGridSize(UserListItemSize);
     m_userList->setFocusPolicy(Qt::NoFocus);

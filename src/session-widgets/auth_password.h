@@ -16,7 +16,6 @@
 #include <DAlertControl>
 
 #define Password_Auth QStringLiteral(":/misc/images/auth/password.svg")
-//const QString Password_Auth = ":/misc/images/auth/password.svg";
 
 class DLineEditEx;
 DWIDGET_USE_NAMESPACE

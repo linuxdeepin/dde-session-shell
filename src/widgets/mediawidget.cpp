@@ -5,7 +5,6 @@
 #include "mediawidget.h"
 #include "util_updateui.h"
 #include <QHBoxLayout>
-#include <QVBoxLayout>
 #include <QWheelEvent>
 
 MediaWidget::MediaWidget(QWidget *parent) : QWidget(parent)

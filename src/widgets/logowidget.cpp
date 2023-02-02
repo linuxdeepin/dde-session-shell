@@ -2,13 +2,10 @@
 //
 // SPDX-License-Identifier: GPL-3.0-or-later
 
-#include <QtCore/QObject>
-#include <QtCore/QFile>
 #include <QTextCodec>
 #include <QPalette>
-#include <QDebug>
-#include <QSettings>
 #include <DSysInfo>
+
 #include "public_func.h"
 #include "util_updateui.h"
 

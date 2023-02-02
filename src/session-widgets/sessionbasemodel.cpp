@@ -9,9 +9,6 @@
 #include <QDebug>
 #include <QGSettings>
 
-#define SessionManagerService "com.deepin.SessionManager"
-#define SessionManagerPath "/com/deepin/SessionManager"
-
 DCORE_USE_NAMESPACE
 
 SessionBaseModel::SessionBaseModel(QObject *parent)
@@ -23,7 +20,6 @@ SessionBaseModel::SessionBaseModel(QObject *parent)
     , m_allowShowUserSwitchButton(false)
     , m_alwaysShowUserSwitchButton(false)
     , m_abortConfirm(false)
-    , m_isLockNoPassword(false)
     , m_isBlackMode(false)
     , m_isHibernateMode(false)
     , m_allowShowCustomUser(false)

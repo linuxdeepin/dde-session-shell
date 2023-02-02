@@ -31,8 +31,8 @@ private:
     void updateDisplayNameWidget();
 
 private:
-    Dtk::Widget::DLabel *m_userPicLabel;                 // 小人儿图标
-    Dtk::Widget::DLabel *m_fullNameLabel;                // 用户名
+    Dtk::Widget::DLabel *m_userPicLabel;            // 小人儿图标
+    Dtk::Widget::DLabel *m_fullNameLabel;           // 用户名
     Dtk::Widget::DLabel *m_displayNameLabel;        // 用户全名
     bool m_showUserName;                            // 是否显示账户名，记录DConfig的配置
     bool m_showDisplayName;                         // 是否显示全名

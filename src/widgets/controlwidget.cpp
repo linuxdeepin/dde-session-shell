@@ -6,7 +6,6 @@
 #include "sessionbasemodel.h"
 #include "kblayoutlistview.h"
 
-#include "mediawidget.h"
 #include "modules_loader.h"
 #include "tipswidget.h"
 #include "public_func.h"
@@ -22,7 +21,6 @@
 #include <QEvent>
 #include <QGraphicsDropShadowEffect>
 #include <QHBoxLayout>
-#include <QPainter>
 #include <QWheelEvent>
 #include <QMenu>
 #include <QWindow>

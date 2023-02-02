@@ -10,10 +10,8 @@
 #include <QVBoxLayout>
 #include <QLabel>
 #include <QPushButton>
-#include <QHBoxLayout>
 #include <QPalette>
 #include <QFile>
-#include <QTextStream>
 
 DWIDGET_USE_NAMESPACE
 LoginTipsWindow::LoginTipsWindow(QWidget *parent)

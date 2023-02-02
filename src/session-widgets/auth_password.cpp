@@ -25,13 +25,7 @@
 #include <QValidator>
 #include <QRegExp>
 
-#include <unistd.h>
-
 #include <com_deepin_daemon_accounts_user.h>
-
-#define Service "com.deepin.dialogs.ResetPassword"
-#define Path "/com/deepin/dialogs/ResetPassword"
-#define Interface "com.deepin.dialogs.ResetPassword"
 
 const QString PASSWORD_HIDE = QStringLiteral(":/misc/images/password-hide.svg");
 const QString PASSWORD_SHOWN = QStringLiteral(":/misc/images/password-shown.svg");

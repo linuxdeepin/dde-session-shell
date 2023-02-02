@@ -9,7 +9,6 @@
 #include <grp.h>
 #include <memory>
 #include <pwd.h>
-#include <unistd.h>
 
 #define DEFAULT_AVATAR ":/img/default_avatar.svg"
 #define DEFAULT_BACKGROUND "/usr/share/backgrounds/default_background.jpg"

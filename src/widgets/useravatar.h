@@ -16,13 +16,6 @@
 
 #include <dimagebutton.h>
 
-//class AvatarDeleteButton : public DImageButton
-//{
-//    Q_OBJECT
-//public:
-//    AvatarDeleteButton(QWidget *parent = 0);
-//};
-
 class UserAvatar : public QPushButton
 {
     Q_OBJECT
@@ -77,7 +70,6 @@ private:
     QImage imageToGray(const QImage &image);
     void initDeleteButton();
 
-//    AvatarDeleteButton *m_deleteButton = NULL;
     QLabel *m_iconLabel = nullptr;
     QString m_iconPath = "";
     QColor m_borderColor;
@@ -93,8 +85,6 @@ private:
     const int AVATAR_ROUND_RADIUS = 18;
 
     QPalette m_palette;
-    QPropertyAnimation *m_showAnimation;
-    QPropertyAnimation *m_hideAnimation;
 };
 
 

@@ -8,7 +8,6 @@
 #include "constants.h"
 
 #include <QHBoxLayout>
-#include <QVBoxLayout>
 #include <QPixmap>
 
 #include <DHiDPIHelper>

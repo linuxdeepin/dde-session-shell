@@ -5,7 +5,6 @@
 #include <QtCore/QObject>
 #include <QSvgRenderer>
 #include "rounditembutton.h"
-#include "../global_util/gsettingwatcher.h"
 
 #include <DFontSizeManager>
 

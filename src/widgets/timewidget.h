@@ -21,7 +21,6 @@ public:
     inline bool get24HourFormat() const { return m_use24HourFormat; }
     void set24HourFormat(bool use24HourFormat);
     void updateLocale(const QLocale &locale);
-    int heightHint();
     QSize sizeHint() const override;
 
 public Q_SLOTS:

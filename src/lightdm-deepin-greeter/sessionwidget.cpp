@@ -3,15 +3,12 @@
 // SPDX-License-Identifier: GPL-3.0-or-later
 
 #include "sessionwidget.h"
-#include "constants.h"
 #include "sessionbasemodel.h"
 
 #include <QApplication>
 #include <QDesktopWidget>
-#include <QDebug>
 #include <QLabel>
 #include <QFile>
-#include <QButtonGroup>
 #include <QSettings>
 #include <QPropertyAnimation>
 #include <QString>

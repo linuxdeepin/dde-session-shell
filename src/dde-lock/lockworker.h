@@ -41,7 +41,7 @@ public:
 public slots:
     /* New authentication framework */
     void createAuthentication(const QString &account);
-    void destoryAuthentication(const QString &account);
+    void destroyAuthentication(const QString &account);
     void startAuthentication(const QString &account, const int authType);
     void endAuthentication(const QString &account, const int authType);
     void sendTokenToAuth(const QString &account, const int authType, const QString &token);
@@ -80,7 +80,7 @@ private:
     QMap<std::shared_ptr<User>, bool> m_lockUser;
     SessionManagerInter *m_sessionManagerInter;
     HuaWeiSwitchOSInterface *m_switchosInterface = nullptr;
-    bool m_canAuthenticate = false;
+
     QString m_account;
     QDBusInterface *m_kglobalaccelInter;
     QDBusInterface *m_kwinInter;

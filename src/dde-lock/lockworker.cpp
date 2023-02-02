@@ -11,14 +11,9 @@
 
 #include <DSysInfo>
 
-#include <QApplication>
-#include <QDebug>
 #include <QProcess>
-#include <QRegularExpression>
 
-#include <grp.h>
 #include <libintl.h>
-#include <pwd.h>
 #include <unistd.h>
 
 #define DOMAIN_BASE_UID 10000
@@ -62,7 +57,7 @@ LockWorker::LockWorker(SessionBaseModel *const model, QObject *parent)
     m_resetSessionTimer->setSingleShot(true);
     connect(m_resetSessionTimer, &QTimer::timeout, this, [=] {
         endAuthentication(m_account, AT_All);
-        destoryAuthentication(m_account);
+        destroyAuthentication(m_account);
         createAuthentication(m_account);
     });
 }
@@ -122,7 +117,7 @@ void LockWorker::initConnections()
             createAuthentication(m_model->currentUser()->name());
         } else {
             endAuthentication(m_account, AT_All);
-            destoryAuthentication(m_account);
+            destroyAuthentication(m_account);
         }
     });
     /* org.freedesktop.login1.Manager */
@@ -130,7 +125,7 @@ void LockWorker::initConnections()
         qInfo() << "DBusLogin1Manager::PrepareForSleep:" << isSleep;
         if (isSleep) {
             endAuthentication(m_account, AT_All);
-            destoryAuthentication(m_account);
+            destroyAuthentication(m_account);
         } else {
             bool wakeUpLock = true;
             // 如果待机唤醒后需要密码则创建验证
@@ -162,7 +157,7 @@ void LockWorker::initConnections()
         } else {
             m_resetSessionTimer->stop();
             endAuthentication(m_account, AT_All);
-            destoryAuthentication(m_model->currentUser()->name());
+            destroyAuthentication(m_model->currentUser()->name());
             setCurrentUser(m_model->currentUser());
             setLocked(false);
         }
@@ -266,13 +261,13 @@ void LockWorker::onAuthStateChanged(const int type, const int state, const QStri
             switch (state) {
             case AS_Success:
                 m_model->updateAuthState(type, state, message);
-                destoryAuthentication(m_account);
+                destroyAuthentication(m_account);
                 onUnlockFinished(true);
                 m_resetSessionTimer->stop();
                 break;
             case AS_Cancel:
                 m_model->updateAuthState(type, state, message);
-                destoryAuthentication(m_account);
+                destroyAuthentication(m_account);
                 break;
             default:
                 break;
@@ -357,7 +352,7 @@ void LockWorker::onAuthStateChanged(const int type, const int state, const QStri
             }
             break;
         case AS_Cancel:
-            destoryAuthentication(m_account);
+            destroyAuthentication(m_account);
             break;
         default:
             break;
@@ -535,7 +530,7 @@ void LockWorker::createAuthentication(const QString &account)
     // 如果验证会话已经存在，销毁后重新开启验证
     if (m_authFramework->authSessionExist(account)) {
         endAuthentication(account, AT_All);
-        destoryAuthentication(account);
+        destroyAuthentication(account);
     }
 
     // 同步密码过期的信息
@@ -568,9 +563,9 @@ void LockWorker::createAuthentication(const QString &account)
  *
  * @param account
  */
-void LockWorker::destoryAuthentication(const QString &account)
+void LockWorker::destroyAuthentication(const QString &account)
 {
-    qInfo() << "LockWorker::destoryAuthentication:" << account;
+    qInfo() << "LockWorker::destroyAuthentication:" << account;
     switch (m_model->getAuthProperty().FrameworkState) {
     case Available:
         m_authFramework->DestroyAuthController(account);
@@ -643,7 +638,7 @@ void LockWorker::onEndAuthentication(const QString &account, const int authType)
 {
     endAuthentication(account, authType);
     if (AT_All == authType) {
-        destoryAuthentication(account);
+        destroyAuthentication(account);
     }
 }
 

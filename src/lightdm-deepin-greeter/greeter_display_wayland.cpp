@@ -4,10 +4,7 @@
 
 #include "greeter_display_wayland.h"
 
-#include <stdio.h>
-#include <stdlib.h>
 #include <algorithm>
-#include <linux/input-event-codes.h>
 
 #include <KF5/KWayland/Client/registry.h>
 #include <KF5/KWayland/Client/event_queue.h>
@@ -22,14 +19,12 @@
 #include <QJsonDocument>
 #include <QJsonObject>
 #include <QJsonArray>
-#include <QJsonParseError>
 #include <QDBusInterface>
 #include <QDBusConnection>
 #include <QDBusReply>
 #include <QDBusPendingCall>
 #include <QDir>
 #include <QRegularExpression>
-#include <QRegularExpressionMatch>
 #include <QCryptographicHash>
 #include <QtCore/qmath.h>
 #include <QTimer>

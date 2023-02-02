@@ -24,13 +24,13 @@ namespace Client
 }
 }
 using namespace KWayland::Client;
-class KeyboardPlantformWayland : public KeyBoardPlatform
+class KeyboardPlatformWayland : public KeyBoardPlatform
 {
     Q_OBJECT
 
 public:
-    KeyboardPlantformWayland(QObject *parent = nullptr);
-    virtual ~KeyboardPlantformWayland();
+    KeyboardPlatformWayland(QObject *parent = nullptr);
+    virtual ~KeyboardPlatformWayland();
 
     bool isCapslockOn() override;
     bool isNumlockOn() override;

@@ -5,7 +5,6 @@
 #include "shutdownwidget.h"
 #include "multiuserswarningview.h"
 #include "../global_util/gsettingwatcher.h"
-#include "../global_util/public_func.h"
 
 #include <DConfig>
 

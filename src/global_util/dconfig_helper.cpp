@@ -5,7 +5,6 @@
 #include "dconfig_helper.h"
 #include "public_func.h"
 
-#include <QDebug>
 #include <QMetaMethod>
 #include <qdebug.h>
 
