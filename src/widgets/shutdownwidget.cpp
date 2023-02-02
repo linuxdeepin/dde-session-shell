@@ -188,6 +188,9 @@ void ShutdownWidget::initUI()
     setSizePolicy(QSizePolicy::Expanding, QSizePolicy::Expanding);
 
     m_requireShutdownButton = new RoundItemButton(this);
+    m_requireShutdownButton->setNormalPic(":/img/list_actions/poweroff_normal.svg");
+    m_requireShutdownButton->setHoverPic(":/img/list_actions/poweroff_hover.svg");
+    m_requireShutdownButton->setPressPic(":/img/list_actions/poweroff_press.svg");
     m_requireShutdownButton->setFocusPolicy(Qt::NoFocus);
     m_requireShutdownButton->setObjectName("RequireShutDownButton");
     m_requireShutdownButton->setAccessibleName("RequireShutDownButton");
@@ -196,6 +199,9 @@ void ShutdownWidget::initUI()
     GSettingWatcher::instance()->bind("systemShutdown", m_requireShutdownButton);  // GSettings配置项
 
     m_requireRestartButton = new RoundItemButton(tr("Reboot"), this);
+    m_requireRestartButton->setNormalPic(":/img/list_actions/reboot_normal.svg");
+    m_requireRestartButton->setHoverPic(":/img/list_actions/reboot_hover.svg");
+    m_requireRestartButton->setPressPic(":/img/list_actions/reboot_press.svg");
     m_requireRestartButton->setFocusPolicy(Qt::NoFocus);
     m_requireRestartButton->setObjectName("RequireRestartButton");
     m_requireRestartButton->setAccessibleName("RequireRestartButton");
@@ -203,6 +209,9 @@ void ShutdownWidget::initUI()
     updateTr(m_requireRestartButton, "Reboot");
 
     m_requireSuspendButton = new RoundItemButton(tr("Suspend"), this);
+    m_requireSuspendButton->setNormalPic(":/img/list_actions/suspend_normal.svg");
+    m_requireSuspendButton->setHoverPic(":/img/list_actions/suspend_hover.svg");
+    m_requireSuspendButton->setPressPic(":/img/list_actions/suspend_press.svg");
     m_requireSuspendButton->setFocusPolicy(Qt::NoFocus);
     m_requireSuspendButton->setObjectName("RequireSuspendButton");
     m_requireSuspendButton->setAccessibleName("RequireSuspendButton");
@@ -211,6 +220,9 @@ void ShutdownWidget::initUI()
     GSettingWatcher::instance()->bind("systemSuspend", m_requireSuspendButton);  // GSettings配置项
 
     m_requireHibernateButton = new RoundItemButton(tr("Hibernate"), this);
+    m_requireHibernateButton->setNormalPic(":/img/list_actions/sleep_normal.svg");
+    m_requireHibernateButton->setHoverPic(":/img/list_actions/sleep_hover.svg");
+    m_requireHibernateButton->setPressPic(":/img/list_actions/sleep_press.svg");
     m_requireHibernateButton->setFocusPolicy(Qt::NoFocus);
     m_requireHibernateButton->setAccessibleName("RequireHibernateButton");
     m_requireHibernateButton->setObjectName("RequireHibernateButton");
@@ -219,6 +231,9 @@ void ShutdownWidget::initUI()
     GSettingWatcher::instance()->bind("systemHibernate", m_requireHibernateButton);  // GSettings配置项
 
     m_requireLockButton = new RoundItemButton(tr("Lock"));
+    m_requireLockButton->setNormalPic(":/img/list_actions/lock_normal.svg");
+    m_requireLockButton->setHoverPic(":/img/list_actions/lock_hover.svg");
+    m_requireLockButton->setPressPic(":/img/list_actions/lock_press.svg");
     m_requireLockButton->setFocusPolicy(Qt::NoFocus);
     m_requireLockButton->setAccessibleName("RequireLockButton");
     m_requireLockButton->setObjectName("RequireLockButton");
@@ -227,6 +242,9 @@ void ShutdownWidget::initUI()
     GSettingWatcher::instance()->bind("systemLock", m_requireLockButton);  // GSettings配置项
 
     m_requireLogoutButton = new RoundItemButton(tr("Log out"));
+    m_requireLogoutButton->setNormalPic(":/img/list_actions/logout_normal.svg");
+    m_requireLogoutButton->setHoverPic(":/img/list_actions/logout_hover.svg");
+    m_requireLogoutButton->setPressPic(":/img/list_actions/logout_press.svg");
     m_requireLogoutButton->setFocusPolicy(Qt::NoFocus);
     m_requireLogoutButton->setAccessibleName("RequireLogoutButton");
     m_requireLogoutButton->setObjectName("RequireLogoutButton");
@@ -235,6 +253,9 @@ void ShutdownWidget::initUI()
     updateTr(m_requireLogoutButton, "Log out");
 
     m_requireSwitchUserBtn = new RoundItemButton(tr("Switch user"));
+    m_requireSwitchUserBtn->setNormalPic(":/img/list_actions/userswitch_normal.svg");
+    m_requireSwitchUserBtn->setHoverPic(":/img/list_actions/userswitch_hover.svg");
+    m_requireSwitchUserBtn->setPressPic(":/img/list_actions/userswitch_press.svg");
     m_requireSwitchUserBtn->setFocusPolicy(Qt::NoFocus);
     m_requireSwitchUserBtn->setAccessibleName("RequireSwitchUserButton");
     m_requireSwitchUserBtn->setObjectName("RequireSwitchUserButton");
@@ -244,6 +265,9 @@ void ShutdownWidget::initUI()
 
     if (m_switchosInterface->isDualOsSwitchAvail()) {
         m_requireSwitchSystemBtn = new RoundItemButton(tr("Switch system"));
+        m_requireSwitchSystemBtn->setNormalPic(":/img/list_actions/osswitch_normal.svg");
+        m_requireSwitchSystemBtn->setHoverPic(":/img/list_actions/osswitch_hover.svg");
+        m_requireSwitchSystemBtn->setPressPic(":/img/list_actions/osswitch_press.svg");
         m_requireSwitchSystemBtn->setAccessibleName("SwitchSystemButton");
         m_requireSwitchSystemBtn->setFocusPolicy(Qt::NoFocus);
         m_requireSwitchSystemBtn->setObjectName("RequireSwitchSystemButton");
@@ -314,7 +338,7 @@ void ShutdownWidget::initUI()
     m_mainLayout->addWidget(m_actionFrame);
     setLayout(m_mainLayout);
 
-    updateStyle(":/skin/requireshutdown.qss", this);
+    // updateStyle(":/skin/requireshutdown.qss", this);
 
     // refresh language
     for (auto it = m_trList.constBegin(); it != m_trList.constEnd(); ++it) {
