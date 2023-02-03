@@ -394,11 +394,13 @@ void LockWorker::doPowerAction(const SessionBaseModel::PowerAction action)
         if (delayTime < 0) {
             delayTime = 500;
         }
-        QTimer::singleShot(delayTime, this, [=] {
-            // 待机休眠前设置Locked为true,避免刚唤醒时locked状态不对
-            setLocked(true);
-            m_sessionManagerInter->RequestHibernate();
-        });
+        if (m_powerManagerInter->CanHibernate()){
+            QTimer::singleShot(delayTime, this, [=] {
+                // 待机休眠前设置Locked为true,避免刚唤醒时locked状态不对
+                setLocked(true);
+                m_sessionManagerInter->RequestHibernate();
+            });
+        }
     }
         break;
     case SessionBaseModel::PowerAction::RequireRestart:

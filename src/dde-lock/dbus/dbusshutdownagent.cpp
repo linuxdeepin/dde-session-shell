@@ -115,9 +115,5 @@ void DBusShutdownAgent::Lock()
 bool DBusShutdownAgent::canShowShutDown()
 {
     //如果当前界面已显示，而且不是关机模式，则当前已锁屏，因此不允许调用,以免在锁屏时被远程调用而进入桌面
-    if (m_model->visible() && m_model->currentModeState() != SessionBaseModel::ModeStatus::ShutDownMode) {
-        return false;
-    }
-
-    return true;
+    return !(m_model->visible() && m_model->currentModeState() != SessionBaseModel::ModeStatus::ShutDownMode);
 }
