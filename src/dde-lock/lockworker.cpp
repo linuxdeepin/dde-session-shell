@@ -45,13 +45,10 @@ LockWorker::LockWorker(SessionBaseModel *const model, QObject *parent)
 
     m_resetSessionTimer->setInterval(15000);
 
-    if (QGSettings::isSchemaInstalled("com.deepin.dde.session-shell")) {
-        m_gsettings = new QGSettings("com.deepin.dde.session-shell", "/com/deepin/dde/session-shell/", this);
-        if(m_gsettings->keys().contains("authResetTime")){
-            int resetTime = m_gsettings->get("auth-reset-time").toInt();
-            if(resetTime > 0)
-               m_resetSessionTimer->setInterval(resetTime);
-        }
+    if (m_gsettings != nullptr && m_gsettings->keys().contains("authResetTime")){
+        int resetTime = m_gsettings->get("auth-reset-time").toInt();
+        if(resetTime > 0)
+           m_resetSessionTimer->setInterval(resetTime);
     }
 
     m_resetSessionTimer->setSingleShot(true);

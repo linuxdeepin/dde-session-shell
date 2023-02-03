@@ -76,13 +76,10 @@ GreeterWorker::GreeterWorker(SessionBaseModel *const model, QObject *parent)
 
     //认证超时重启
     m_resetSessionTimer->setInterval(15000);
-    if (QGSettings::isSchemaInstalled("com.deepin.dde.session-shell")) {
-        QGSettings gsetting("com.deepin.dde.session-shell", "/com/deepin/dde/session-shell/", this);
-        if (gsetting.keys().contains("authResetTime")) {
-            int resetTime = gsetting.get("auth-reset-time").toInt();
-            if (resetTime > 0)
-                m_resetSessionTimer->setInterval(resetTime);
-        }
+    if (m_gsettings != nullptr && m_gsettings->keys().contains("authResetTime")) {
+        int resetTime = m_gsettings->get("auth-reset-time").toInt();
+        if (resetTime > 0)
+            m_resetSessionTimer->setInterval(resetTime);
     }
 
     m_resetSessionTimer->setSingleShot(true);

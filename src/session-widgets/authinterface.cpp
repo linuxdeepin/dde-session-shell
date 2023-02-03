@@ -25,6 +25,11 @@ AuthInterface::AuthInterface(SessionBaseModel *const model, QObject *parent)
     , m_currentUserUid(0)
     , m_loginUserList(0)
 {
+    // 需要先初始化m_gsettings
+    if (QGSettings::isSchemaInstalled("com.deepin.dde.session-shell")) {
+        m_gsettings = new QGSettings("com.deepin.dde.session-shell", "/com/deepin/dde/session-shell/", this);
+    }
+
     if (m_login1Inter->isValid()) {
        QString session_self = m_login1Inter->GetSessionByPID(0).value().path();
        m_login1SessionSelf = new Login1SessionSelf("org.freedesktop.login1", session_self, QDBusConnection::systemBus(), this);
