@@ -104,6 +104,11 @@ void LockWorker::initConnections()
     connect(m_lockInter, &DBusLockService::UserChanged, this, [=](const QString &json) {
         qInfo() << "DBusLockService::UserChanged:" << json;
         QTimer::singleShot(100, this, [ = ] {
+            if(m_model->currentContentType() == SessionBaseModel::UpdateContent){
+                qInfo() << "Updating, do not answer user changed signal";
+                return;
+            }
+
             m_model->setCurrentModeState(SessionBaseModel::ModeStatus::PasswordMode);
         });
         m_resetSessionTimer->stop();
@@ -128,6 +133,11 @@ void LockWorker::initConnections()
     /* org.freedesktop.login1.Manager */
     connect(m_login1Inter, &DBusLogin1Manager::PrepareForSleep, this, [=](bool isSleep) {
         qInfo() << "DBusLogin1Manager::PrepareForSleep:" << isSleep;
+        if (m_model->currentContentType() == SessionBaseModel::UpdateContent) {
+            qInfo() << "Updating, do not answer `PrepareForSleep` signal";
+            return;
+        }
+
         if (isSleep) {
             endAuthentication(m_account, AT_All);
             destroyAuthentication(m_account);
@@ -187,11 +197,19 @@ void LockWorker::initConnections()
     });
 
     connect(m_model, &SessionBaseModel::activeAuthChanged, this, [this] (const bool active) {
-        if (!active || m_model->currentModeState() == SessionBaseModel::ModeStatus::PasswordMode)
+        const auto currentMode = m_model->currentModeState();
+        const auto currenContent = m_model->currentContentType();
+        qInfo() << "Active auth changed, active: " << active
+                << ", current mode: " << currentMode
+                << ", currenContent: " << currenContent;
+
+        if (!active || currentMode == SessionBaseModel::PasswordMode || currenContent == SessionBaseModel::UpdateContent) {
+            qInfo() << "Do not response active auth changed signal";
             return;
+        }
 
         createAuthentication(m_model->currentUser()->name());
-        m_model->setCurrentModeState(SessionBaseModel::ModeStatus::PasswordMode);
+        m_model->setCurrentModeState(SessionBaseModel::PasswordMode);
     });
 }
 
@@ -367,6 +385,7 @@ void LockWorker::onAuthStateChanged(const int type, const int state, const QStri
 
 void LockWorker::doPowerAction(const SessionBaseModel::PowerAction action)
 {
+    qInfo() << "Do power action : " << action;
     switch (action) {
     case SessionBaseModel::PowerAction::RequireSuspend:
     {
@@ -437,6 +456,12 @@ void LockWorker::doPowerAction(const SessionBaseModel::PowerAction action)
         break;
     case SessionBaseModel::PowerAction::RequireSwitchUser:
         m_model->setCurrentModeState(SessionBaseModel::ModeStatus::UserMode);
+        break;
+    case SessionBaseModel::PowerAction::RequireUpdateRestart:
+        Q_EMIT m_model->showUpdate(true);
+        break;
+    case SessionBaseModel::PowerAction::RequireUpdateShutdown:
+        Q_EMIT m_model->showUpdate(false);
         break;
     default:
         break;

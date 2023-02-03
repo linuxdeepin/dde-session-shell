@@ -17,6 +17,10 @@ void DBusLockAgent::setModel(SessionBaseModel *const model)
 
 void DBusLockAgent::Show()
 {
+    qInfo() << "DBusLockAgent::Show";
+    if (isUpdating())
+        return;
+
     m_model->setIsBlackMode(false);
     m_model->setIsHibernateModel(false);
     m_model->setVisible(true);
@@ -24,6 +28,10 @@ void DBusLockAgent::Show()
 
 void DBusLockAgent::ShowAuth(bool active)
 {
+    qInfo() << "DBusLockAgent::ShowAuth";
+    if (isUpdating())
+        return;
+
     Show();
     m_model->activeAuthChanged(active);
 }
@@ -31,6 +39,10 @@ void DBusLockAgent::ShowAuth(bool active)
 // 待机，enable=true：进入待机；enable=false：待机恢复
 void DBusLockAgent::Suspend(bool enable)
 {
+    qInfo() << "DBusLockAgent::Suspend";
+    if (isUpdating())
+        return;
+
     if (enable) {
         m_model->setIsBlackMode(true);
         m_model->setVisible(true);
@@ -51,11 +63,28 @@ void DBusLockAgent::Suspend(bool enable)
 
 void DBusLockAgent::Hibernate(bool enable)
 {
+    qInfo() << "DBusLockAgent::Hibernate";
+    if (isUpdating())
+        return;
+
     m_model->setIsHibernateModel(enable);
     m_model->setVisible(true);
 }
 
 void DBusLockAgent::ShowUserList()
 {
+    qInfo() << "DBusLockAgent::ShowUserList";
+    if (isUpdating())
+        return;
+
     emit m_model->showUserList();
+}
+
+/**
+ * @brief 如果处于更新状态,那么不响应shutdown接口
+ */
+bool DBusLockAgent::isUpdating() const
+{
+    qInfo() << "DBusLockAgent::isUpdating, current content type: " << m_model->currentContentType();
+    return m_model->currentContentType() == SessionBaseModel::UpdateContent;
 }

@@ -55,10 +55,15 @@ DConfig* DConfigHelper::initializeDConfig(const QString &appId, const QString &n
 
 void DConfigHelper::bind(QObject *obj, const QString &key)
 {
+    bind(getDefaultConfigFileName(), getDefaultConfigFileName(), "", obj, key);
+}
+
+void DConfigHelper::bind(const QString &appId, const QString &name, const QString &subpath, QObject *obj, const QString &key)
+{
     if (!obj)
         return;
 
-    DConfig *dConfig = defaultDConfigObject();
+    DConfig *dConfig = dConfigObject(appId, name, subpath);
     if (!dConfig)
         return;
 
@@ -128,7 +133,7 @@ void DConfigHelper::setConfig(const QString &key, const QVariant &value)
 
 QVariant DConfigHelper::getConfig(const QString &appId, const QString &name, const QString &subpath, const QString &key, const QVariant &defaultValue)
 {
-    qInfo() << Q_FUNC_INFO
+    qDebug() << Q_FUNC_INFO
             << ", appId: " << appId
             << ", name: " << name
             << ", subpath: " << subpath

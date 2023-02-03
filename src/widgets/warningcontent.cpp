@@ -6,8 +6,6 @@
 #include "fullscreenbackground.h"
 #include "lockcontent.h"
 
-Q_GLOBAL_STATIC(WarningContent, warningContent)
-
 WarningContent::WarningContent(QWidget *parent)
     : SessionBaseWindow(parent)
     , m_model(nullptr)
@@ -27,6 +25,11 @@ WarningContent::~WarningContent()
 
 WarningContent *WarningContent::instance()
 {
+    static WarningContent *warningContent = nullptr;
+    if (!warningContent) {
+        warningContent = new WarningContent;
+    }
+
     return warningContent;
 }
 
@@ -52,7 +55,9 @@ QList<InhibitWarnView::InhibitorData> WarningContent::listInhibitors(const Sessi
 
             switch (action) {
             case SessionBaseModel::PowerAction::RequireShutdown:
+            case SessionBaseModel::PowerAction::RequireUpdateShutdown:
             case SessionBaseModel::PowerAction::RequireRestart:
+            case SessionBaseModel::PowerAction::RequireUpdateRestart:
             case SessionBaseModel::PowerAction::RequireSwitchSystem:
             case SessionBaseModel::PowerAction::RequireLogout:
                 type = "shutdown";
@@ -130,8 +135,10 @@ QList<InhibitWarnView::InhibitorData> WarningContent::listInhibitors(const Sessi
 
 void WarningContent::doCancelShutdownInhibit()
 {
+    qInfo() << "Cancel shut down inhibit";
     m_model->setPowerAction(SessionBaseModel::PowerAction::None);
     FullScreenBackground::setContent(LockContent::instance());
+    m_model->setCurrentContentType(SessionBaseModel::LockContent);
     // 从lock点的power btn，不能隐藏锁屏而进入桌面
     if (m_model->currentModeState() == SessionBaseModel::ModeStatus::ShutDownMode) {
         m_model->setVisible(false);
@@ -141,15 +148,20 @@ void WarningContent::doCancelShutdownInhibit()
 
 void WarningContent::doAcceptShutdownInhibit()
 {
-    qInfo() << "m_powerAction: " << m_powerAction;
+    qInfo() << "Accept shut down inhibit, power action: " << m_powerAction
+            << ", current mode: " << m_model->currentModeState();
     m_model->setPowerAction(m_powerAction);
-    if (m_model->currentModeState() != SessionBaseModel::ModeStatus::ShutDownMode) {
+    if (m_model->currentModeState() != SessionBaseModel::ModeStatus::ShutDownMode
+        && m_powerAction != SessionBaseModel::RequireUpdateShutdown
+        && m_powerAction != SessionBaseModel::RequireUpdateRestart ) {
         FullScreenBackground::setContent(LockContent::instance());
+        m_model->setCurrentContentType(SessionBaseModel::LockContent);
     }
 }
 
 void WarningContent::beforeInvokeAction(bool needConfirm)
 {
+    qInfo() << Q_FUNC_INFO;
     const QList<InhibitWarnView::InhibitorData> inhibitors = listInhibitors(m_powerAction);
     const QList<std::shared_ptr<User>> &loginUsers = m_model->loginedUserList();
 
@@ -169,11 +181,13 @@ void WarningContent::beforeInvokeAction(bool needConfirm)
 
         switch (m_powerAction) {
         case SessionBaseModel::PowerAction::RequireShutdown:
+        case SessionBaseModel::PowerAction::RequireUpdateShutdown:
             view->setInhibitConfirmMessage(tr("The programs are preventing the computer from shutting down, and forcing shut down may cause data loss.") + "\n" +
                                            tr("To close the program, click Cancel, and then close the program."));
             break;
         case SessionBaseModel::PowerAction::RequireSwitchSystem:
         case SessionBaseModel::PowerAction::RequireRestart:
+        case SessionBaseModel::PowerAction::RequireUpdateRestart:
             view->setInhibitConfirmMessage(tr("The programs are preventing the computer from reboot, and forcing reboot may cause data loss.") + "\n" +
                                            tr("To close the program, click Cancel, and then close the program."));
             break;
@@ -200,7 +214,8 @@ void WarningContent::beforeInvokeAction(bool needConfirm)
         if (m_powerAction == SessionBaseModel::PowerAction::RequireShutdown) {
             view->setAcceptReason(tr("Shut down"));
             view->setAcceptVisible(!isBlock);
-        } else if (m_powerAction == SessionBaseModel::PowerAction::RequireRestart || m_powerAction == SessionBaseModel::PowerAction::RequireSwitchSystem) {
+        } else if (m_powerAction == SessionBaseModel::PowerAction::RequireRestart
+            || m_powerAction == SessionBaseModel::PowerAction::RequireSwitchSystem) {
             view->setAcceptReason(tr("Reboot"));
             view->setAcceptVisible(!isBlock);
         } else if (m_powerAction == SessionBaseModel::PowerAction::RequireSuspend) {
@@ -211,6 +226,12 @@ void WarningContent::beforeInvokeAction(bool needConfirm)
             view->setAcceptVisible(!isBlock);
         } else if (m_powerAction == SessionBaseModel::PowerAction::RequireLogout) {
             view->setAcceptReason(tr("Log out"));
+            view->setAcceptVisible(!isBlock);
+        } else if (m_powerAction == SessionBaseModel::PowerAction::RequireUpdateShutdown) {
+            view->setAcceptReason(tr("Update and Shut Down"));  // TODO 翻译
+            view->setAcceptVisible(!isBlock);
+        } else if (m_powerAction == SessionBaseModel::PowerAction::RequireUpdateRestart) {
+            view->setAcceptReason(tr("Update and Reboot"));     // TODO 翻译
             view->setAcceptVisible(!isBlock);
         }
 
@@ -225,7 +246,11 @@ void WarningContent::beforeInvokeAction(bool needConfirm)
         return;
     }
 
-    if (loginUsers.length() > 1 && (m_powerAction == SessionBaseModel::PowerAction::RequireShutdown || m_powerAction == SessionBaseModel::PowerAction::RequireRestart)) {
+    if (loginUsers.length() > 1
+        && (m_powerAction == SessionBaseModel::PowerAction::RequireShutdown
+        || m_powerAction == SessionBaseModel::PowerAction::RequireRestart
+        || m_powerAction == SessionBaseModel::PowerAction::RequireUpdateShutdown
+        || m_powerAction == SessionBaseModel::PowerAction::RequireUpdateRestart)) {
         QList<std::shared_ptr<User>> tmpList = loginUsers;
 
         for (auto it = tmpList.begin(); it != tmpList.end();) {
@@ -244,6 +269,10 @@ void WarningContent::beforeInvokeAction(bool needConfirm)
             view->setAcceptReason(tr("Shut down"));
         else if (m_powerAction == SessionBaseModel::PowerAction::RequireRestart)
             view->setAcceptReason(tr("Reboot"));
+        else if (m_powerAction == SessionBaseModel::PowerAction::RequireUpdateRestart)
+            view->setAcceptReason(tr("Update and Reboot"));     // TODO 翻译
+        else if (m_powerAction == SessionBaseModel::PowerAction::RequireUpdateShutdown)
+            view->setAcceptReason(tr("Update and Shut Down"));  // TODO 翻译
 
         m_warningView = view;
         m_warningView->setFixedSize(getCenterContentSize());
@@ -261,10 +290,12 @@ void WarningContent::beforeInvokeAction(bool needConfirm)
         InhibitWarnView *view = new InhibitWarnView(m_powerAction, this);
         view->setFocusPolicy(Qt::StrongFocus);
         setFocusPolicy(Qt::NoFocus);
-        if (m_powerAction == SessionBaseModel::PowerAction::RequireShutdown) {
+        if (m_powerAction == SessionBaseModel::PowerAction::RequireShutdown
+            || m_powerAction == SessionBaseModel::PowerAction::RequireUpdateShutdown) {
             view->setAcceptReason(tr("Shut down"));
             view->setInhibitConfirmMessage(tr("Are you sure you want to shut down?"));
-        } else if (m_powerAction == SessionBaseModel::PowerAction::RequireRestart) {
+        } else if (m_powerAction == SessionBaseModel::PowerAction::RequireRestart
+            || m_powerAction == SessionBaseModel::PowerAction::RequireUpdateRestart) {
             view->setAcceptReason(tr("Reboot"));
             view->setInhibitConfirmMessage(tr("Are you sure you want to reboot?"));
         } else if (m_powerAction == SessionBaseModel::PowerAction::RequireLogout) {
@@ -315,5 +346,6 @@ void WarningContent::shutdownInhibit(const SessionBaseModel::PowerAction action,
     setPowerAction(action);
     //检查是否允许关机
     FullScreenBackground::setContent(WarningContent::instance());
+    m_model->setCurrentContentType(SessionBaseModel::WarningContent);
     beforeInvokeAction(needConfirm);
 }

@@ -14,6 +14,7 @@ set(GREETER_TEST_SRCS
     ${haweiswitchos_DBUS_SCRS}
     ${AUTHENTICATE}
     ${PLUGIN_MANAGER}
+    ${UPDATE}
     ${PROJECT_SOURCE_DIR}/src/lightdm-deepin-greeter/loginwindow.cpp
     ${PROJECT_SOURCE_DIR}/src/lightdm-deepin-greeter/greeterworker.cpp
     ${PROJECT_SOURCE_DIR}/src/lightdm-deepin-greeter/logincontent.cpp

@@ -22,9 +22,12 @@ public:
     void Hibernate();
     void SwitchUser();
     void Lock();
+    void UpdateAndShutdown();
+    void UpdateAndReboot();
 
 private:
-    bool canShowShutDown();
+    bool canShowShutDown() const;
+    bool isUpdating() const;
 
 private:
     SessionBaseModel *m_model;

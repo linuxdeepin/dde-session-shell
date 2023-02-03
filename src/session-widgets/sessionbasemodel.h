@@ -30,6 +30,8 @@ public:
     enum PowerAction {
         None,
         RequireNormal,
+        RequireUpdateShutdown,
+        RequireUpdateRestart,
         RequireShutdown,
         RequireRestart,
         RequireSuspend,
@@ -49,9 +51,24 @@ public:
         SessionMode,
         PowerMode,
         ShutDownMode,
-        ResetPasswdMode
+        ResetPasswdMode,
+        UpdateMode,
     };
     Q_ENUM(ModeStatus)
+
+    enum UpdatePowerMode {
+        UPM_None,
+        UPM_UpdateAndShutdown,
+        UPM_UpdateAndReboot
+    };
+    Q_ENUM(UpdatePowerMode)
+
+    enum ContentType {
+        NoContent,
+        WarningContent,
+        LockContent,
+        UpdateContent
+    };
 
     /* com.deepin.daemon.Authenticate */
     struct AuthProperty {
@@ -137,6 +154,12 @@ public:
 
     std::shared_ptr<User> json2User(const QString &userJson);
 
+    void setUpdatePowerMode(UpdatePowerMode mode) { m_updatePowerMode = mode; }
+    UpdatePowerMode updatePowerMode() const { return m_updatePowerMode; }
+
+    void setCurrentContentType(ContentType type) { m_currentContentType = type; }
+    ContentType currentContentType() const { return m_currentContentType; }
+
 signals:
     /* com.deepin.daemon.Accounts */
     void currentUserChanged(const std::shared_ptr<User>);
@@ -185,6 +208,7 @@ signals:
     void showUserList();
     void showLockScreen();
     void showShutdown();
+    void showUpdate(bool doReboot);
     void onStatusChanged(ModeStatus status);
     void onUserListChanged(QList<std::shared_ptr<User>> list);
     void hasVirtualKBChanged(bool hasVirtualKB);
@@ -232,6 +256,8 @@ private:
     AuthProperty m_authProperty; // 认证相关属性的值，初始时通过dbus获取，暂存在model中，供widget初始化界面使用
     QMap<QString, std::shared_ptr<User>> *m_users;
     QMap<QString, std::shared_ptr<User>> *m_loginedUsers;
+    UpdatePowerMode m_updatePowerMode;
+    ContentType m_currentContentType;
 };
 
 #endif // SESSIONBASEMODEL_H

@@ -7,9 +7,6 @@
 #include "sessionwidget.h"
 #include "controlwidget.h"
 
-
-Q_GLOBAL_STATIC(LoginContent, loginContent)
-
 LoginContent::LoginContent(QWidget *parent)
     : LockContent(parent)
 {
@@ -18,6 +15,11 @@ LoginContent::LoginContent(QWidget *parent)
 
 LoginContent *LoginContent::instance()
 {
+    static LoginContent* loginContent = nullptr;
+    if (!loginContent) {
+        loginContent = new LoginContent;
+    }
+
     return loginContent;
 }
 
@@ -66,7 +68,7 @@ void LoginContent::onStatusChanged(SessionBaseModel::ModeStatus status)
     case SessionBaseModel::ModeStatus::SessionMode:
         if (m_currentModeStatus == status)
             break;
-        
+
         m_currentModeStatus = status;
         pushSessionFrame();
         break;

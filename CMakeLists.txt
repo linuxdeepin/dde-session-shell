@@ -145,6 +145,7 @@ include_directories(${PROJECT_SOURCE_DIR}/src/widgets)
 include_directories(${PROJECT_SOURCE_DIR}/src/session-widgets)
 include_directories(${PROJECT_SOURCE_DIR}/src/libdde-auth)
 include_directories(${PROJECT_SOURCE_DIR}/interface)
+include_directories(${PROJECT_SOURCE_DIR}/src/update)
 
 aux_source_directory(${PROJECT_SOURCE_DIR}/src/global_util GLOBAL_UTILS)
 aux_source_directory(${PROJECT_SOURCE_DIR}/src/global_util/dbus GLOBAL_UTILS_DBUS)
@@ -154,6 +155,7 @@ aux_source_directory(${PROJECT_SOURCE_DIR}/src/libdde-auth AUTHENTICATE)
 aux_source_directory(${PROJECT_SOURCE_DIR}/src/global_util/keyboardmonitor GLOBAL_UTILS_KEYBOARDMONITOR)
 aux_source_directory(${PROJECT_SOURCE_DIR}/interface INTERFACE)
 aux_source_directory(${PROJECT_SOURCE_DIR}/src/global_util/plugin_manager PLUGIN_MANAGER)
+aux_source_directory(${PROJECT_SOURCE_DIR}/src/update UPDATE)
 
 set(QRCS
     ${CMAKE_CURRENT_SOURCE_DIR}/resources.qrc
@@ -173,6 +175,7 @@ set(LOCK_SRCS
     ${AUTHENTICATE}
     ${INTERFACE}
     ${PLUGIN_MANAGER}
+    ${UPDATE}
     src/app/dde-lock.cpp
     src/dde-lock/lockframe.cpp
     src/dde-lock/lockworker.cpp
@@ -232,6 +235,7 @@ set(GREETER_SRCS
     ${AUTHENTICATE}
     ${INTERFACE}
     ${PLUGIN_MANAGER}
+    ${UPDATE}
     src/app/lightdm-deepin-greeter.cpp
     src/lightdm-deepin-greeter/loginwindow.cpp
     src/lightdm-deepin-greeter/greeterworker.cpp

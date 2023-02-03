@@ -48,7 +48,6 @@ public:
     void buttonClickHandle() Q_DECL_OVERRIDE;
 
     SessionBaseModel::PowerAction inhibitType() const;
-    bool event(QEvent *event) override;
 
 protected:
     void updateIcon();

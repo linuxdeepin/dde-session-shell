@@ -9,6 +9,7 @@
 #include "userinfo.h"
 #include "warningcontent.h"
 #include "public_func.h"
+#include "updatewidget.h"
 
 #include <QApplication>
 #include <QDBusInterface>
@@ -49,35 +50,11 @@ LockFrame::LockFrame(SessionBaseModel *const model, QWidget *parent)
 
     setAccessibleName("LockFrame");
     setContent(LockContent::instance());
+    m_model->setCurrentContentType(SessionBaseModel::LockContent);
 
     connect(LockContent::instance(), &LockContent::requestBackground, this, static_cast<void (LockFrame::*)(const QString &)>(&LockFrame::updateBackground));
-    connect(model, &SessionBaseModel::prepareForSleep, this, [ = ](bool isSleep) {
-        //不管是待机还是唤醒均不响应电源按键信号
-        m_enablePowerOffKey = false;
-        // 唤醒不需要密码时，在性能差的机器上可能会在1秒后才收到电源事件，依就会响应电源事件
-        // 或者将延时改的更长
-        //唤醒时间改为3秒后才响应电源按键信号，避免待机唤醒时响应信号，将界面切换到关机选项
-        if (!isSleep) {
-            QTimer::singleShot(3000, this, [ = ] {
-                m_enablePowerOffKey = true;
-            });
-        }
-        //待机时由锁屏提供假黑屏，唤醒时显示正常界面
-        model->setIsBlackMode(isSleep);
-        model->setVisible(true);
-
-        if (!isSleep) {
-            //待机唤醒后检查是否需要密码，若不需要密码直接隐藏锁定界面
-            if (QGSettings::isSchemaInstalled("com.deepin.dde.power")) {
-                QGSettings powerSettings("com.deepin.dde.power", QByteArray(), this);
-                if (!powerSettings.get("sleep-lock").toBool()) {
-                    m_model->setVisible(false);
-                }
-            }
-        }
-    } );
-
-    connect(model, &SessionBaseModel::authFinished, this, [this] (bool success) {
+    connect(model, &SessionBaseModel::prepareForSleep, this, &LockFrame::prepareForSleep);
+    connect(model, &SessionBaseModel::authFinished, this, [this](bool success) {
         if (success) {
             Q_EMIT requestEnableHotzone(true);
             m_model->setVisible(false);
@@ -183,6 +160,12 @@ void LockFrame::resizeEvent(QResizeEvent *event)
 
 bool LockFrame::handlePoweroffKey()
 {
+    // 升级的时候，不响应电源按钮
+    if (m_model->currentContentType() == SessionBaseModel::UpdateContent) {
+        qInfo() << "Updating, do not handle power off key";
+        return false;
+    }
+
     QDBusInterface powerInter("com.deepin.daemon.Power","/com/deepin/daemon/Power","com.deepin.daemon.Power");
     if (!powerInter.isValid()) {
         qDebug() << "powerInter is not valid";
@@ -242,4 +225,32 @@ void LockFrame::hideEvent(QHideEvent *event)
         m_autoExitTimer->start();
 
     return FullScreenBackground::hideEvent(event);
+}
+
+
+void LockFrame::prepareForSleep(bool isSleep)
+{
+    //不管是待机还是唤醒均不响应电源按键信号
+    m_enablePowerOffKey = false;
+    // 唤醒不需要密码时，在性能差的机器上可能会在1秒后才收到电源事件，依就会响应电源事件
+    // 或者将延时改的更长
+    //唤醒时间改为3秒后才响应电源按键信号，避免待机唤醒时响应信号，将界面切换到关机选项
+    if (!isSleep) {
+        QTimer::singleShot(3000, this, [ = ] {
+            m_enablePowerOffKey = true;
+        });
+    }
+    //待机时由锁屏提供假黑屏，唤醒时显示正常界面
+    m_model->setIsBlackMode(isSleep);
+    m_model->setVisible(true);
+
+    if (!isSleep) {
+        //待机唤醒后检查是否需要密码，若不需要密码直接隐藏锁定界面
+        if (QGSettings::isSchemaInstalled("com.deepin.dde.power")) {
+            QGSettings powerSettings("com.deepin.dde.power", QByteArray(), this);
+            if (!powerSettings.get("sleep-lock").toBool()) {
+                m_model->setVisible(false);
+            }
+        }
+    }
 }

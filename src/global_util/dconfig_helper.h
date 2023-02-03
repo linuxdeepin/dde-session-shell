@@ -5,9 +5,9 @@
 #pragma once
 
 #include <QObject>
+#include <QMap>
 
 #include <DConfig>
-#include <QMap>
 
 /**
  * @brief 配置变化回调函数
@@ -25,30 +25,21 @@ public:
 
     static DConfigHelper* instance();
 
+    // 注意：多个配置文件区分同名的key
     void bind(QObject *obj, const QString &key);
-
-    /**
-     * @brief 如果需要读取其它app的配置文件，使用这个函数进行绑定
-     */
-    void bind(const QString &appId, const QString &name, const QString &subpath, QObject *obj, const QString *key) {}
-
+    void bind(const QString &appId, const QString &name, const QString &subpath, QObject *obj, const QString &key);
     void unBind(QObject *obj, const QString &key = "");
 
     QVariant getConfig(const QString &appId, const QString &name, const QString &subpath, const QString &key, const QVariant &defaultValue);
-
-    void setConfig(const QString &appId, const QString &name, const QString &subpath, const QString &key, const QVariant &value);
-
     QVariant getConfig(const QString &key, const QVariant &defaultValue);
 
+    void setConfig(const QString &appId, const QString &name, const QString &subpath, const QString &key, const QVariant &value);
     void setConfig(const QString &key, const QVariant &value);
 
 private:
     Dtk::Core::DConfig* initializeDConfig(const QString &appId, const QString &name, const QString &subpath);
-
     Dtk::Core::DConfig *dConfigObject(const QString &appId, const QString &name, const QString &subpath);
-
     Dtk::Core::DConfig* defaultDConfigObject();
-
     QString packageDConfigPath(const QString &appId, const QString &name, const QString &subpath) const;
 
 private:

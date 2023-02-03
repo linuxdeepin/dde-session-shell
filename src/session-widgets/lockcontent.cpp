@@ -14,9 +14,9 @@
 #include "shutdownwidget.h"
 #include "userframelist.h"
 #include "virtualkbinstance.h"
-#include "fullscreenbackground.h"
 #include "plugin_manager.h"
 #include "fullmanagedauthwidget.h"
+#include "updatemodel.h"
 
 #include <DDBusSender>
 
@@ -26,8 +26,6 @@
 using namespace dss;
 using namespace dss::module;
 DCORE_USE_NAMESPACE
-
-Q_GLOBAL_STATIC(LockContent, lockContent)
 
 LockContent::LockContent(QWidget *parent)
     : SessionBaseWindow(parent)
@@ -52,6 +50,11 @@ LockContent::LockContent(QWidget *parent)
 
 LockContent* LockContent::instance()
 {
+    static LockContent* lockContent = nullptr;
+    if (!lockContent) {
+        lockContent = new LockContent();
+    }
+
     return lockContent;
 }
 

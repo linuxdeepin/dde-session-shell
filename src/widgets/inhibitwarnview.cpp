@@ -113,17 +113,6 @@ InhibitWarnView::~InhibitWarnView()
 
 }
 
-bool InhibitWarnView::event(QEvent *event)
-{
-    if (event->type() == QEvent::FocusIn) {
-        qInfo() << "focus in";
-    }
-    if (event->type() == QEvent::FocusOut) {
-        qInfo() << "focus out";
-    }
-    return false;
-}
-
 void InhibitWarnView::setInhibitorList(const QList<InhibitorData> &list)
 {
     for (QWidget *widget : m_inhibitorPtrList) {
@@ -171,6 +160,7 @@ void InhibitWarnView::updateIcon()
     QString icon_string;
     switch (m_inhibitType) {
     case SessionBaseModel::PowerAction::RequireShutdown:
+    case SessionBaseModel::PowerAction::RequireUpdateShutdown:
         icon_string = ":/img/poweroff_warning_normal.svg";
         break;
     case SessionBaseModel::PowerAction::RequireLogout:
@@ -253,12 +243,10 @@ void InhibitWarnView::onOtherPageDataChanged(const QVariant &value)
 
 void InhibitWarnView::keyPressEvent(QKeyEvent *event)
 {
-    qInfo() << Q_FUNC_INFO << "event: " << event->key();
     switch (event->key()) {
     case Qt::Key_Up:
     case Qt::Key_Down:
     case Qt::Key_Tab:
-        qInfo() << "=============== keyPressEvent";
         toggleButtonState();
         break;
     case Qt::Key_Return:

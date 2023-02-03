@@ -43,6 +43,8 @@ public Q_SLOTS:
     void Hibernate();
     void SwitchUser();
     void Lock();
+    void UpdateAndShutdown();
+    void UpdateAndReboot();
 
 Q_SIGNALS:
     void ChangKey(QString key);

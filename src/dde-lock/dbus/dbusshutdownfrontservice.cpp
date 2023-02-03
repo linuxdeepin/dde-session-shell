@@ -25,9 +25,19 @@ void DBusShutdownFrontService::Shutdown()
     parent()->Shutdown();
 }
 
+void DBusShutdownFrontService::UpdateAndShutdown()
+{
+    parent()->UpdateAndShutdown();
+}
+
 void DBusShutdownFrontService::Restart()
 {
     parent()->Restart();
+}
+
+void DBusShutdownFrontService::UpdateAndReboot()
+{
+    parent()->UpdateAndReboot();
 }
 
 void DBusShutdownFrontService::Logout()

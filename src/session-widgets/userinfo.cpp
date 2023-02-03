@@ -353,6 +353,7 @@ void NativeUser::updateAvatar(const QString &path)
  */
 void NativeUser::updateAutomaticLogin(const bool autoLoginState)
 {
+    qInfo() << "Update automatic login: " << autoLoginState;
     if (autoLoginState == m_isAutomaticLogin) {
         return;
     }
@@ -502,6 +503,7 @@ void NativeUser::updatePasswordHint(const QString &hint)
 void NativeUser::updatePasswordExpiredInfo()
 {
     m_expiredState = m_userInter->PasswordExpiredInfo(m_expiredDayLeft).value();
+    qInfo() << "User expired state: " << m_expiredState << ", expired day left: " << m_expiredDayLeft;
 
     emit passwordExpiredInfoChanged();
 }
@@ -509,6 +511,7 @@ void NativeUser::updatePasswordExpiredInfo()
 void NativeUser::updateAccountType()
 {
     m_accountType = m_userInter->accountType();
+    qInfo() << "User account type: " << m_accountType;
 }
 
 /**
@@ -519,6 +522,7 @@ void NativeUser::updateAccountType()
 void NativeUser::updatePasswordState(const QString &state)
 {
     const bool isPasswordValidTmp = state == "P" ? true : false;
+    qInfo() << "Password state: " << isPasswordValidTmp;
     if (isPasswordValidTmp == m_isPasswordValid) {
         return;
     }

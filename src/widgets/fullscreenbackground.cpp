@@ -178,18 +178,14 @@ void FullScreenBackground::setScreen(QPointer<QScreen> screen, bool isVisible)
 
 void FullScreenBackground::setContent(QWidget *const w)
 {
-    qInfo() << Q_FUNC_INFO << ", widget: " << w;
+    qInfo() << Q_FUNC_INFO << w;
     if (!w) {
         qWarning() << "Content is null";
         return;
     }
 
-    if (!currentFrame) {
-        qWarning() << "Current frame is null";
-        return;
-    }
-
-    if (currentContent && currentContent->isVisible() && currentContent == w && w->parent() == currentFrame) {
+    // 不重复设置content
+    if (currentContent && currentContent->isVisible() && currentContent == w && currentFrame && w->parent() == currentFrame) {
         qInfo() << "Parent is current frame";
         return;
     }
@@ -200,6 +196,11 @@ void FullScreenBackground::setContent(QWidget *const w)
     }
 
     currentContent = w;
+
+    if (!currentFrame) {
+        qWarning() << "Current frame is null";
+        return;
+    }
 
     currentContent->setParent(currentFrame);
     currentContent->move(0, 0);
@@ -213,9 +214,6 @@ void FullScreenBackground::setContent(QWidget *const w)
         currentContent->raise();
         currentContent->show();
     };
-
-    qInfo() << "currentFrame focus: " << currentFrame->hasFocus();
-    qInfo() << "currentContent focus: " << currentContent->hasFocus();
 }
 
 void FullScreenBackground::setIsHibernateMode()
@@ -333,8 +331,8 @@ void FullScreenBackground::resizeEvent(QResizeEvent *event)
 
     updatePixmap();
 
-    if (currentFrame == this) {
-        m_blackWidget->resize(trueSize());
+    m_blackWidget->resize(trueSize());
+    if (currentFrame == this && currentContent) {
         currentContent->resize(trueSize());
     }
 

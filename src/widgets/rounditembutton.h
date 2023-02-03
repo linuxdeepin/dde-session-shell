@@ -45,6 +45,7 @@ public:
     void setNormalPic(const QString &path);
     void setHoverPic(const QString &path);
     void setPressPic(const QString &path);
+    void setRedPointVisible(bool visible);
 
 signals:
     void stateChanged(const State state);
@@ -76,5 +77,6 @@ private:
     QString m_hoverIcon;
     QString m_pressedIcon;
     QString m_currentIcon;
+    bool m_redPointVisible = false;
 };
 #endif // ROUNDITEMBUTTON

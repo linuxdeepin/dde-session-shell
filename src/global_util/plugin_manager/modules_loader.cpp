@@ -67,7 +67,7 @@ void ModulesLoader::findModule(const QString &path)
 
         int loadPluginType = moduleInstance->loadPluginType();
         if (loadPluginType != dss::module::BaseModuleInterface::Load) {
-            qWarning() << "The plugin dose not want to be loaded, type: " << loadPluginType;
+            qInfo() << "The plugin dose not want to be loaded, type: " << loadPluginType;
             continue;
         }
 

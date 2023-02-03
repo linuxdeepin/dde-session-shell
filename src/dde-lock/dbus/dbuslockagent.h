@@ -22,6 +22,9 @@ public:
     void Hibernate(bool enable);
 
 private:
+    bool isUpdating() const;
+
+private:
     SessionBaseModel *m_model;
 };
 

@@ -42,6 +42,9 @@ signals:
     void sendTokenToAuth(const QString &account, const int authType, const QString &token);
     void requestEndAuthentication(const QString &account, const int authType);
 
+private slots:
+    void prepareForSleep(bool isSleep);
+
 protected:
     void keyPressEvent(QKeyEvent *e) Q_DECL_OVERRIDE;
     void showEvent(QShowEvent *event) Q_DECL_OVERRIDE;
@@ -54,7 +57,6 @@ private:
 
 private:
     SessionBaseModel *m_model;
-    static QPointer<WarningContent> m_warningContent;
     bool m_enablePowerOffKey;
     QTimer *m_autoExitTimer;
 };

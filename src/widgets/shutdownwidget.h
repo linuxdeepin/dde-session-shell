@@ -13,10 +13,8 @@
 #include "util_updateui.h"
 #include "rounditembutton.h"
 #include "sessionbasemodel.h"
-#include "dbuslogin1manager.h"
 #include "switchos_interface.h"
 #include "systemmonitor.h"
-#include "public_func.h"
 
 DCORE_BEGIN_NAMESPACE
 class DConfig;
@@ -55,6 +53,7 @@ private:
     void enterKeyPushed();
     void enableHibernateBtn(bool enable);
     void enableSleepBtn(bool enable);
+    void setButtonsVisible();
 
 private:
     int m_index;
@@ -68,7 +67,7 @@ private:
     QStackedLayout* m_mainLayout;
     QHBoxLayout* m_shutdownLayout;
     QVBoxLayout* m_actionLayout;
-    RoundItemButton* m_currentSelectedBtn = nullptr;
+    RoundItemButton* m_currentSelectedBtn;
     RoundItemButton* m_requireShutdownButton;
     RoundItemButton* m_requireRestartButton;
     RoundItemButton* m_requireSuspendButton;
@@ -76,8 +75,10 @@ private:
     RoundItemButton* m_requireLockButton;
     RoundItemButton* m_requireLogoutButton;
     RoundItemButton* m_requireSwitchUserBtn;
-    RoundItemButton* m_requireSwitchSystemBtn = nullptr;
-    HuaWeiSwitchOSInterface *m_switchosInterface = nullptr;
+    RoundItemButton* m_requireSwitchSystemBtn;
+    RoundItemButton* m_updateAndShutdownButton;
+    RoundItemButton* m_updateAndRebootButton;
+    HuaWeiSwitchOSInterface *m_switchosInterface;
     DTK_CORE_NAMESPACE::DConfig *m_dconfig;
     SessionBaseModel::ModeStatus m_modeStatus;
 };

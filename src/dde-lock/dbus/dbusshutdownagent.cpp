@@ -19,9 +19,9 @@ void DBusShutdownAgent::setModel(SessionBaseModel * const model)
 
 void DBusShutdownAgent::show()
 {
-    if (!canShowShutDown()) {
+    qInfo() << "DBusShutdownAgent::show";
+    if (isUpdating() || !canShowShutDown())
         return;
-    }
 
     m_model->setCurrentModeState(SessionBaseModel::ModeStatus::ShutDownMode);
     m_model->setVisible(true);
@@ -29,7 +29,10 @@ void DBusShutdownAgent::show()
 
 void DBusShutdownAgent::Shutdown()
 {
-    qInfo() << "Shutdown";
+    qInfo() << "DBusShutdownAgent::Shutdown";
+    if (isUpdating())
+        return;
+
     if (!canShowShutDown()) {
          //锁屏时允许关机
         emit m_model->onRequirePowerAction(SessionBaseModel::PowerAction::RequireShutdown, false);
@@ -40,9 +43,23 @@ void DBusShutdownAgent::Shutdown()
     }
 }
 
+void DBusShutdownAgent::UpdateAndShutdown()
+{
+    qInfo() << "DBusShutdownAgent::UpdateAndShutdown";
+    if (isUpdating())
+        return;
+
+    m_model->setUpdatePowerMode(SessionBaseModel::UPM_UpdateAndShutdown);
+    m_model->setCurrentModeState(SessionBaseModel::ModeStatus::ShutDownMode);
+    m_model->setVisible(true);
+}
+
 void DBusShutdownAgent::Restart()
 {
-    qInfo() << "Restart";
+    qInfo() << "DBusShutdownAgent::Restart";
+    if (isUpdating())
+        return;
+
     if (!canShowShutDown()) {
         //锁屏时允许重启
         emit m_model->onRequirePowerAction(SessionBaseModel::PowerAction::RequireRestart, false);
@@ -53,12 +70,22 @@ void DBusShutdownAgent::Restart()
     }
 }
 
+void DBusShutdownAgent::UpdateAndReboot()
+{
+    qInfo() << "DBusShutdownAgent::UpdateAndReboot";
+    if (isUpdating())
+        return;
+
+    m_model->setUpdatePowerMode(SessionBaseModel::UPM_UpdateAndReboot);
+    m_model->setCurrentModeState(SessionBaseModel::ModeStatus::ShutDownMode);
+    m_model->setVisible(true);
+}
+
 void DBusShutdownAgent::Logout()
 {
-    qInfo() << "Logout";
-    if (!canShowShutDown()) {
+    qInfo() << "DBusShutdownAgent::Logout";
+    if (isUpdating() || !canShowShutDown())
         return;
-    }
 
     m_model->setCurrentModeState(SessionBaseModel::ModeStatus::ShutDownMode);
     m_model->setVisible(true);
@@ -67,9 +94,12 @@ void DBusShutdownAgent::Logout()
 
 void DBusShutdownAgent::Suspend()
 {
-    qInfo() << "Suspend";
+    qInfo() << "DBusShutdownAgent::Suspend";
+    if (isUpdating())
+        return;
+
     if (!canShowShutDown()) {
-        //锁屏时允许待机
+        // 锁屏时允许待机
         m_model->setPowerAction(SessionBaseModel::RequireSuspend);
     } else {
         m_model->setCurrentModeState(SessionBaseModel::ModeStatus::ShutDownMode);
@@ -80,9 +110,12 @@ void DBusShutdownAgent::Suspend()
 
 void DBusShutdownAgent::Hibernate()
 {
-    qInfo() << "Hibernate";
+    qInfo() << "DBusShutdownAgent::Hibernate";
+    if (isUpdating())
+        return;
+
     if (!canShowShutDown()) {
-        //锁屏时允许休眠
+        // 锁屏时允许休眠
         m_model->setPowerAction(SessionBaseModel::RequireHibernate);
     } else {
         m_model->setCurrentModeState(SessionBaseModel::ModeStatus::ShutDownMode);
@@ -93,27 +126,37 @@ void DBusShutdownAgent::Hibernate()
 
 void DBusShutdownAgent::SwitchUser()
 {
-    qInfo() << "SwitchUser";
-    if (!canShowShutDown()) {
+    qInfo() << "DBusShutdownAgent::SwitchUser";
+    if (isUpdating() || !canShowShutDown())
         return;
-    }
 
     emit m_model->showUserList();
 }
 
 void DBusShutdownAgent::Lock()
 {
-    qInfo() << "Lock";
-    if (!canShowShutDown()) {
+    qInfo() << "DBusShutdownAgent::Lock";
+    if (isUpdating() || !canShowShutDown())
         return;
-    }
+
     m_model->setCurrentModeState(SessionBaseModel::ModeStatus::ShutDownMode);
     m_model->setVisible(true);
     m_model->setPowerAction(SessionBaseModel::RequireLock);
 }
 
-bool DBusShutdownAgent::canShowShutDown()
+bool DBusShutdownAgent::canShowShutDown() const
 {
-    //如果当前界面已显示，而且不是关机模式，则当前已锁屏，因此不允许调用,以免在锁屏时被远程调用而进入桌面
+    // 如果当前界面已显示，而且不是关机模式，则当前已锁屏，因此不允许调用,以免在锁屏时被远程调用而进入桌面
+    qInfo() << Q_FUNC_INFO << " visible: " << m_model->visible() << ", mode: " << m_model->currentModeState();
+
     return !(m_model->visible() && m_model->currentModeState() != SessionBaseModel::ModeStatus::ShutDownMode);
+}
+
+/**
+ * @brief 如果处于更新状态,那么不响应shutdown接口
+ */
+bool DBusShutdownAgent::isUpdating() const
+{
+    qInfo() << "DBusShutdownAgent::isUpdating, current content type: " << m_model->currentContentType();
+    return m_model->currentContentType() == SessionBaseModel::UpdateContent;
 }
