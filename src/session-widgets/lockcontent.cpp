@@ -540,13 +540,28 @@ void LockContent::onUserListChanged(QList<std::shared_ptr<User> > list)
 void LockContent::tryGrabKeyboard(bool exitIfFailed)
 {
 #ifndef QT_DEBUG
-    if (m_model->isUseWayland() || !isVisible()) {
+    if (!isVisible()) {
         return;
     }
 
-    if (window()->windowHandle() && window()->windowHandle()->setKeyboardGrabEnabled(true)) {
-        m_failures = 0;
-        return;
+    if (m_model->isUseWayland()) {
+        static QDBusInterface *kwinInter = new QDBusInterface("org.kde.KWin","/KWin","org.kde.KWin", QDBusConnection::sessionBus());
+        if (!kwinInter || !kwinInter->isValid()) {
+            qWarning() << "kwinInter is invalid";
+            m_failures = 0;
+            return;
+        }
+        // wayland下判断是否有应用发起grab，如果有就不锁屏
+        QDBusReply<bool> reply = kwinInter->call("xwaylandGrabed");
+        if (!reply.isValid() || !reply.value()) {
+            m_failures = 0;
+            return;
+        }
+    } else {
+        if (window()->windowHandle() && window()->windowHandle()->setKeyboardGrabEnabled(true)) {
+            m_failures = 0;
+            return;
+        }
     }
 
     m_failures++;
