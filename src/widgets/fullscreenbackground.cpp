@@ -198,8 +198,7 @@ void FullScreenBackground::setContent(QWidget *const w)
 
     currentContent->setParent(currentFrame);
     currentContent->move(0, 0);
-    qInfo() << "Resize content: " << currentFrame->trueSize();
-    currentContent->resize(currentFrame->trueSize());
+    currentContent->resize(currentFrame->size());
     currentFrame->setFocusProxy(currentContent);
     currentFrame->setFocus();
     currentFrame->raise();
