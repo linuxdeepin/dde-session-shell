@@ -53,6 +53,11 @@ void MultiScreenManager::register_for_multi_screen(std::function<QWidget *(QScre
         }
     } else {
         for (QScreen *screen : qApp->screens()) {
+            // 当greeter刚起来处理第一个屏幕时，第二个屏幕被拔掉，这时第二个屏幕指针被释放，不应该在继续处理，否则会导致崩溃
+            if (!qApp->screens().contains(screen)) {
+                qWarning() << "Screen'pointer has been released";
+                continue;
+            }
             onScreenAdded(screen);
         }
     }
