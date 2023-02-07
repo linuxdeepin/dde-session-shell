@@ -11,7 +11,7 @@
     </message>
     <message numerus="yes">
         <source>Verification failed, %n chances left</source>
-        <translation type="unfinished"><numerusform></numerusform><numerusform></numerusform></translation>
+        <translation><numerusform>Ha fallat la verificació. Resta %n intent.</numerusform><numerusform>Ha fallat la verificació. Resten %n intents.</numerusform></translation>
     </message>
     <message>
         <source>Verification failed, only one chance left</source>
@@ -65,7 +65,7 @@
     </message>
     <message numerus="yes">
         <source>Verification failed, %n chances left</source>
-        <translation type="unfinished"><numerusform></numerusform><numerusform></numerusform></translation>
+        <translation><numerusform>Ha fallat la verificació. Resta %n intent.</numerusform><numerusform>Ha fallat la verificació. Resten %n intents.</numerusform></translation>
     </message>
     <message>
         <source>Verification failed, only one chance left</source>
@@ -108,7 +108,7 @@
     </message>
     <message numerus="yes">
         <source>Please try again %n minutes later</source>
-        <translation type="unfinished"><numerusform></numerusform><numerusform></numerusform></translation>
+        <translation><numerusform>Si us plau, torneu-ho a intentar d&apos;aquí a %n minut.</numerusform><numerusform>Si us plau, torneu-ho a intentar d&apos;aquí a %n minuts.</numerusform></translation>
     </message>
     <message>
         <source>Reset Password</source>
@@ -174,7 +174,7 @@
     </message>
     <message numerus="yes">
         <source>Please try again %n minutes later</source>
-        <translation type="unfinished"><numerusform></numerusform><numerusform></numerusform></translation>
+        <translation><numerusform>Si us plau, torneu-ho a intentar d&apos;aquí a %n minut.</numerusform><numerusform>Si us plau, torneu-ho a intentar d&apos;aquí a %n minuts.</numerusform></translation>
     </message>
 </context>
 <context>
@@ -185,11 +185,15 @@
     </message>
     <message numerus="yes">
         <source>Your password will expire in %n days, please change it timely</source>
-        <translation type="unfinished"><numerusform></numerusform><numerusform></numerusform></translation>
+        <translation><numerusform>La contrasenya caducarà d&apos;aquí a %d dia; canvieu-la oportunament.</numerusform><numerusform>La contrasenya caducarà d&apos;aquí a %d dies; canvieu-la oportunament.</numerusform></translation>
     </message>
     <message>
         <source>Password expired, please change</source>
         <translation>La contrasenya ha caducat. Si us plau, canvieu-la.</translation>
+    </message>
+    <message>
+        <source>Your password has expired. Please contact the administrator to change it</source>
+        <translation type="unfinished"/>
     </message>
 </context>
 <context>

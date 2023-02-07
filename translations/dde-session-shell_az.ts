@@ -11,7 +11,7 @@
     </message>
     <message numerus="yes">
         <source>Verification failed, %n chances left</source>
-        <translation type="unfinished"><numerusform></numerusform><numerusform></numerusform></translation>
+        <translation><numerusform>Doğrulama alınmadı, %n cəhdiniz qaldı</numerusform><numerusform>Doğrulama alınmadı, %n cəhdiniz qaldı</numerusform></translation>
     </message>
     <message>
         <source>Verification failed, only one chance left</source>
@@ -65,7 +65,7 @@
     </message>
     <message numerus="yes">
         <source>Verification failed, %n chances left</source>
-        <translation type="unfinished"><numerusform></numerusform><numerusform></numerusform></translation>
+        <translation><numerusform>Doğrulama alınmadı, %n cəhdiniz qaldı</numerusform><numerusform>Doğrulama alınmadı, %n cəhdiniz qaldı</numerusform></translation>
     </message>
     <message>
         <source>Verification failed, only one chance left</source>
@@ -108,7 +108,7 @@
     </message>
     <message numerus="yes">
         <source>Please try again %n minutes later</source>
-        <translation type="unfinished"><numerusform></numerusform><numerusform></numerusform></translation>
+        <translation><numerusform>Lütfən, %n dəqiqə sonra yenidən cəhd edin</numerusform><numerusform>Lütfən %n dəqiqə sonra yenidən cəhd edin</numerusform></translation>
     </message>
     <message>
         <source>Reset Password</source>
@@ -174,7 +174,7 @@
     </message>
     <message numerus="yes">
         <source>Please try again %n minutes later</source>
-        <translation type="unfinished"><numerusform></numerusform><numerusform></numerusform></translation>
+        <translation><numerusform>Lütfən %n dəqiqə sonra yenidən cəhd edin</numerusform><numerusform>Lütfən %n dəqiqə sonra yenidən cəhd edin</numerusform></translation>
     </message>
 </context>
 <context>
@@ -185,11 +185,15 @@
     </message>
     <message numerus="yes">
         <source>Your password will expire in %n days, please change it timely</source>
-        <translation type="unfinished"><numerusform></numerusform><numerusform></numerusform></translation>
+        <translation><numerusform>Şifrənizin vaxtı %n gün sonra bitəcəkdir, lütfən onu vaxtında dəyişin</numerusform><numerusform>Şifrənizin vaxtı %n gün sonra bitəcəkdir, lütfən onu vaxtında dəyişin</numerusform></translation>
     </message>
     <message>
         <source>Password expired, please change</source>
         <translation>Şifrənin vaxtı bitib, lütfən onu dəyişin</translation>
+    </message>
+    <message>
+        <source>Your password has expired. Please contact the administrator to change it</source>
+        <translation type="unfinished"/>
     </message>
 </context>
 <context>

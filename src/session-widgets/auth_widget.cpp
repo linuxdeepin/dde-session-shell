@@ -385,7 +385,7 @@ void AuthWidget::updatePasswordExpiredState()
         m_expiredSpacerItem->changeSize(0, EXPIRED_SPACER_ITEM_HEIGHT);
         break;
     case User::ExpiredAlready:
-        m_expiredStateLabel->setText(m_user->allowToChangePassword() ? tr("Password expired, please change") : tr("Your password has expired, Please contact the administrator to change it"));
+        m_expiredStateLabel->setText(m_user->allowToChangePassword() ? tr("Password expired, please change") : tr("Your password has expired. Please contact the administrator to change it"));
         m_expiredStateLabel->show();
         m_expiredSpacerItem->changeSize(0, EXPIRED_SPACER_ITEM_HEIGHT);
         break;

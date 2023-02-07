@@ -191,6 +191,10 @@
         <source>Password expired, please change</source>
         <translation>密碼已過期，請修改</translation>
     </message>
+    <message>
+        <source>Your password has expired. Please contact the administrator to change it</source>
+        <translation>您的密碼已過期，請聯繫管理員修改密碼</translation>
+    </message>
 </context>
 <context>
     <name>GreeterWorker</name>

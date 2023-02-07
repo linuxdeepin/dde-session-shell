@@ -191,6 +191,10 @@
         <source>Password expired, please change</source>
         <translation>Password expired, please change</translation>
     </message>
+    <message>
+        <source>Your password has expired. Please contact the administrator to change it</source>
+        <translation>Your password has expired. Please contact the administrator to change it</translation>
+    </message>
 </context>
 <context>
     <name>GreeterWorker</name>

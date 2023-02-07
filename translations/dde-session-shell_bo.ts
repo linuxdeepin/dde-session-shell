@@ -11,7 +11,7 @@
     </message>
     <message numerus="yes">
         <source>Verification failed, %n chances left</source>
-        <translation type="unfinished"><numerusform></numerusform></translation>
+        <translation><numerusform>ར་སྤྲོད་ཐུབ་མ་སོང་། ཁྱེད་ཀྱིས་ད་དུང་ལྟ་ཚོད་%nབྱེད་ཆོག</numerusform></translation>
     </message>
     <message>
         <source>Verification failed, only one chance left</source>
@@ -27,7 +27,7 @@
     </message>
     <message>
         <source>Device unavailable!</source>
-        <translation type="unfinished"/>
+        <translation>སྒྲིག་ཆས་སྤྱོད་མི་རུང་།</translation>
     </message>
 </context>
 <context>
@@ -65,7 +65,7 @@
     </message>
     <message numerus="yes">
         <source>Verification failed, %n chances left</source>
-        <translation type="unfinished"><numerusform></numerusform></translation>
+        <translation><numerusform>ར་སྤྲོད་ཐུབ་མ་སོང་། ཁྱེད་ཀྱིས་ད་དུང་ལྟ་ཚོད་%nབྱེད་ཆོག</numerusform></translation>
     </message>
     <message>
         <source>Verification failed, only one chance left</source>
@@ -108,7 +108,7 @@
     </message>
     <message numerus="yes">
         <source>Please try again %n minutes later</source>
-        <translation type="unfinished"><numerusform></numerusform></translation>
+        <translation><numerusform>སྐར་མ་%nརྗེས་ཡང་བསྐྱར་ཚོད་ལྟ་བྱེད།</numerusform></translation>
     </message>
     <message>
         <source>Reset Password</source>
@@ -174,7 +174,7 @@
     </message>
     <message numerus="yes">
         <source>Please try again %n minutes later</source>
-        <translation type="unfinished"><numerusform></numerusform></translation>
+        <translation><numerusform>སྐར་མ་%nརྗེས་ཡང་བསྐྱར་ཚོད་ལྟ་བྱེད།</numerusform></translation>
     </message>
 </context>
 <context>
@@ -185,11 +185,15 @@
     </message>
     <message numerus="yes">
         <source>Your password will expire in %n days, please change it timely</source>
-        <translation type="unfinished"><numerusform></numerusform></translation>
+        <translation><numerusform>གསང་ཨང་ཉིན་%nརྗེས་དུས་ཚད་འཐིམ་པས་དུས་ཐོག་ཏུ་བཟོ་བཅོས་བྱོས།</numerusform></translation>
     </message>
     <message>
         <source>Password expired, please change</source>
         <translation>གསང་ཨང་དུས་ཚོད་ཡོལ་ཟིན་པས། བཟོ་བཅོས་བྱེད་རོགས།</translation>
+    </message>
+    <message>
+        <source>Your password has expired. Please contact the administrator to change it</source>
+        <translation type="unfinished"/>
     </message>
 </context>
 <context>

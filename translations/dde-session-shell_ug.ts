@@ -11,7 +11,7 @@
     </message>
     <message numerus="yes">
         <source>Verification failed, %n chances left</source>
-        <translation type="unfinished"><numerusform></numerusform><numerusform></numerusform></translation>
+        <translation><numerusform>دەلىللەش مەغلۇپ بولدى، يەنە %n قېتىم سىنىيالايسىز</numerusform><numerusform>دەلىللەش مەغلۇپ بولدى، يەنە %n قېتىم سىنىيالايسىز</numerusform></translation>
     </message>
     <message>
         <source>Verification failed, only one chance left</source>
@@ -27,7 +27,7 @@
     </message>
     <message>
         <source>Device unavailable!</source>
-        <translation type="unfinished"/>
+        <translation>ئۈسكۈنىنى ئىشلەتكىلى بولمايدۇ!</translation>
     </message>
 </context>
 <context>
@@ -65,7 +65,7 @@
     </message>
     <message numerus="yes">
         <source>Verification failed, %n chances left</source>
-        <translation type="unfinished"><numerusform></numerusform><numerusform></numerusform></translation>
+        <translation><numerusform>دەلىللەش مەغلۇپ بولدى، يەنە %n قېتىم سىنىيالايسىز</numerusform><numerusform>دەلىللەش مەغلۇپ بولدى، يەنە %n قېتىم سىنىيالايسىز</numerusform></translation>
     </message>
     <message>
         <source>Verification failed, only one chance left</source>
@@ -108,7 +108,7 @@
     </message>
     <message numerus="yes">
         <source>Please try again %n minutes later</source>
-        <translation type="unfinished"><numerusform></numerusform><numerusform></numerusform></translation>
+        <translation><numerusform>%n مىنۇتتىن كېيىن قايتا سىناڭ</numerusform><numerusform>%n مىنۇتتىن كېيىن قايتا سىناڭ</numerusform></translation>
     </message>
     <message>
         <source>Reset Password</source>
@@ -174,7 +174,7 @@
     </message>
     <message numerus="yes">
         <source>Please try again %n minutes later</source>
-        <translation type="unfinished"><numerusform></numerusform><numerusform></numerusform></translation>
+        <translation><numerusform>%n مىنۇتتىن كېيىن قايتا سىناڭ</numerusform><numerusform>%n مىنۇتتىن كېيىن قايتا سىناڭ</numerusform></translation>
     </message>
 </context>
 <context>
@@ -185,11 +185,15 @@
     </message>
     <message numerus="yes">
         <source>Your password will expire in %n days, please change it timely</source>
-        <translation type="unfinished"><numerusform></numerusform><numerusform></numerusform></translation>
+        <translation><numerusform>پارولنىڭ ۋاقتى %n كۈندىن كېيىن توشىدۇ، پارولنى ۋاقتىدا ئۆزگەرتىڭ</numerusform><numerusform>پارولنىڭ ۋاقتى %n كۈندىن كېيىن توشىدۇ، پارولنى ۋاقتىدا ئۆزگەرتىڭ</numerusform></translation>
     </message>
     <message>
         <source>Password expired, please change</source>
         <translation>پارولنىڭ ۋاقتى ئۆتتى، ئۆزگەرتىڭ</translation>
+    </message>
+    <message>
+        <source>Your password has expired. Please contact the administrator to change it</source>
+        <translation>پارولىڭىزنىڭ ۋاقتى ئۆتۈپ كەتتى، باشقۇرغۇچى بىلەن ئالاقىلىشىپ پارول ئۆزگەرتىڭ</translation>
     </message>
 </context>
 <context>

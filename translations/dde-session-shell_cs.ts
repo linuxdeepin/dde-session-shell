@@ -191,6 +191,10 @@
         <source>Password expired, please change</source>
         <translation>Platnost hesla skončila – prosím změňte si ho</translation>
     </message>
+    <message>
+        <source>Your password has expired. Please contact the administrator to change it</source>
+        <translation type="unfinished"/>
+    </message>
 </context>
 <context>
     <name>GreeterWorker</name>

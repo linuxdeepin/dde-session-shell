@@ -11,7 +11,7 @@
     </message>
     <message numerus="yes">
         <source>Verification failed, %n chances left</source>
-        <translation type="unfinished"><numerusform></numerusform><numerusform></numerusform><numerusform></numerusform><numerusform></numerusform></translation>
+        <translation><numerusform>Weryfikacja nie powiodła się, pozostała %n próba</numerusform><numerusform>Weryfikacja nie powiodła się, pozostały %n próby</numerusform><numerusform>Weryfikacja nie powiodła się, pozostało %n prób</numerusform><numerusform>Weryfikacja nie powiodła się, pozostało %n prób</numerusform></translation>
     </message>
     <message>
         <source>Verification failed, only one chance left</source>
@@ -23,7 +23,7 @@
     </message>
     <message>
         <source>Face ID locked, use password please</source>
-        <translation>ID Twarzy zablokowane, proszę użyć hasła</translation>
+        <translation>ID Twarzy zablokowane, użyj hasła</translation>
     </message>
     <message>
         <source>Device unavailable!</source>
@@ -65,7 +65,7 @@
     </message>
     <message numerus="yes">
         <source>Verification failed, %n chances left</source>
-        <translation type="unfinished"><numerusform></numerusform><numerusform></numerusform><numerusform></numerusform><numerusform></numerusform></translation>
+        <translation><numerusform>Weryfikacja nie powiodła się, pozostała %n próba</numerusform><numerusform>Weryfikacja nie powiodła się, pozostały %n próby</numerusform><numerusform>Weryfikacja nie powiodła się, pozostało %n prób</numerusform><numerusform>Weryfikacja nie powiodła się, pozostało %n prób</numerusform></translation>
     </message>
     <message>
         <source>Verification failed, only one chance left</source>
@@ -77,7 +77,7 @@
     </message>
     <message>
         <source>Iris ID locked, use password please</source>
-        <translation>ID Tęczówki zablokowane, proszę użyć hasła</translation>
+        <translation>ID Tęczówki zablokowane, użyj hasła</translation>
     </message>
 </context>
 <context>
@@ -108,7 +108,7 @@
     </message>
     <message numerus="yes">
         <source>Please try again %n minutes later</source>
-        <translation type="unfinished"><numerusform></numerusform><numerusform></numerusform><numerusform></numerusform><numerusform></numerusform></translation>
+        <translation><numerusform>Spróbuj ponownie za %n minutę</numerusform><numerusform>Spróbuj ponownie za %n minuty</numerusform><numerusform>Spróbuj ponownie za %n minut</numerusform><numerusform>Spróbuj ponownie za %n minut</numerusform></translation>
     </message>
     <message>
         <source>Reset Password</source>
@@ -174,7 +174,7 @@
     </message>
     <message numerus="yes">
         <source>Please try again %n minutes later</source>
-        <translation type="unfinished"><numerusform></numerusform><numerusform></numerusform><numerusform></numerusform><numerusform></numerusform></translation>
+        <translation><numerusform>Spróbuj ponownie za %n minutę</numerusform><numerusform>Spróbuj ponownie za %n minuty</numerusform><numerusform>Spróbuj ponownie za %n minut</numerusform><numerusform>Spróbuj ponownie za %n minut</numerusform></translation>
     </message>
 </context>
 <context>
@@ -185,11 +185,15 @@
     </message>
     <message numerus="yes">
         <source>Your password will expire in %n days, please change it timely</source>
-        <translation type="unfinished"><numerusform></numerusform><numerusform></numerusform><numerusform></numerusform><numerusform></numerusform></translation>
+        <translation><numerusform>Twoje hasło wygaśnie za %n dzień, proszę zmień je jak najszybciej</numerusform><numerusform>Twoje hasło wygaśnie za %n dni, proszę zmień je jak najszybciej</numerusform><numerusform>Twoje hasło wygaśnie za %n dni, proszę zmień je jak najszybciej</numerusform><numerusform>Twoje hasło wygaśnie za %n dni, proszę zmień je jak najszybciej</numerusform></translation>
     </message>
     <message>
         <source>Password expired, please change</source>
         <translation>Hasło wygasło, proszę zmień je</translation>
+    </message>
+    <message>
+        <source>Your password has expired. Please contact the administrator to change it</source>
+        <translation type="unfinished"/>
     </message>
 </context>
 <context>

@@ -3,7 +3,7 @@
     <name>AuthFace</name>
     <message>
         <source>Face ID</source>
-        <translation>ID de cara</translation>
+        <translation>ID de facial</translation>
     </message>
     <message>
         <source>Verification successful</source>
@@ -11,7 +11,7 @@
     </message>
     <message numerus="yes">
         <source>Verification failed, %n chances left</source>
-        <translation type="unfinished"><numerusform></numerusform><numerusform></numerusform><numerusform></numerusform></translation>
+        <translation><numerusform>Verificación fallida, queda %n oportunidad</numerusform><numerusform>Verificación fallida, quedan %n oportunidades</numerusform><numerusform>Verificación fallida, quedan %n oportunidades</numerusform></translation>
     </message>
     <message>
         <source>Verification failed, only one chance left</source>
@@ -19,11 +19,11 @@
     </message>
     <message>
         <source>Verify your Face ID</source>
-        <translation>Verifique su ID de cara</translation>
+        <translation>Verifique su ID facial</translation>
     </message>
     <message>
         <source>Face ID locked, use password please</source>
-        <translation>ID de cara bloqueado, utilice la contraseña por favor</translation>
+        <translation>ID facial bloqueada, utilice la contraseña por favor</translation>
     </message>
     <message>
         <source>Device unavailable!</source>
@@ -65,7 +65,7 @@
     </message>
     <message numerus="yes">
         <source>Verification failed, %n chances left</source>
-        <translation type="unfinished"><numerusform></numerusform><numerusform></numerusform><numerusform></numerusform></translation>
+        <translation><numerusform>Verificación fallida, queda %n oportunidad</numerusform><numerusform>Verificación fallida, quedan %n oportunidades</numerusform><numerusform>Verificación fallida, quedan %n oportunidades</numerusform></translation>
     </message>
     <message>
         <source>Verification failed, only one chance left</source>
@@ -108,7 +108,7 @@
     </message>
     <message numerus="yes">
         <source>Please try again %n minutes later</source>
-        <translation type="unfinished"><numerusform></numerusform><numerusform></numerusform><numerusform></numerusform></translation>
+        <translation><numerusform>Por favor, inténtelo de nuevo en %n minuto más tarde</numerusform><numerusform>Por favor, inténtelo de nuevo en %n minutos más tarde</numerusform><numerusform>Por favor, inténtelo de nuevo en %n minutos más tarde</numerusform></translation>
     </message>
     <message>
         <source>Reset Password</source>
@@ -174,7 +174,7 @@
     </message>
     <message numerus="yes">
         <source>Please try again %n minutes later</source>
-        <translation type="unfinished"><numerusform></numerusform><numerusform></numerusform><numerusform></numerusform></translation>
+        <translation><numerusform>Por favor, inténtelo de nuevo en %n minuto más tarde</numerusform><numerusform>Por favor, inténtelo de nuevo en %n minutos más tarde</numerusform><numerusform>Por favor, inténtelo de nuevo en %n minutos más tarde</numerusform></translation>
     </message>
 </context>
 <context>
@@ -185,11 +185,15 @@
     </message>
     <message numerus="yes">
         <source>Your password will expire in %n days, please change it timely</source>
-        <translation type="unfinished"><numerusform></numerusform><numerusform></numerusform><numerusform></numerusform></translation>
+        <translation><numerusform>Su contraseña expirará en %n día, por favor, cámbiela a tiempo</numerusform><numerusform>Su contraseña expirará en %n días, por favor, cámbiela a tiempo</numerusform><numerusform>Su contraseña expirará en %n días, por favor, cámbiela a tiempo</numerusform></translation>
     </message>
     <message>
         <source>Password expired, please change</source>
         <translation>La contraseña ha caducado, por favor, cámbiela</translation>
+    </message>
+    <message>
+        <source>Your password has expired. Please contact the administrator to change it</source>
+        <translation type="unfinished"/>
     </message>
 </context>
 <context>

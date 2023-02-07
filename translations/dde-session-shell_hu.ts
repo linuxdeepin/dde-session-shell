@@ -11,7 +11,7 @@
     </message>
     <message numerus="yes">
         <source>Verification failed, %n chances left</source>
-        <translation type="unfinished"><numerusform></numerusform><numerusform></numerusform></translation>
+        <translation><numerusform>Az ellenőrzés sikertelen, %n próbálkozása maradt</numerusform><numerusform>Az ellenőrzés sikertelen, %n próbálkozása maradt</numerusform></translation>
     </message>
     <message>
         <source>Verification failed, only one chance left</source>
@@ -19,11 +19,11 @@
     </message>
     <message>
         <source>Verify your Face ID</source>
-        <translation>Hitelesítés Arc azonosítóval</translation>
+        <translation>Hitelesítés Arcalapú azonosítással</translation>
     </message>
     <message>
         <source>Face ID locked, use password please</source>
-        <translation>Az Arc Azonosító zárolva, kérjük használja a jelszavát</translation>
+        <translation>Az Arcalapú azonosítás zárolva, kérjük használja a jelszavát</translation>
     </message>
     <message>
         <source>Device unavailable!</source>
@@ -65,7 +65,7 @@
     </message>
     <message numerus="yes">
         <source>Verification failed, %n chances left</source>
-        <translation type="unfinished"><numerusform></numerusform><numerusform></numerusform></translation>
+        <translation><numerusform>Az ellenőrzés sikertelen, %n próbálkozása maradt</numerusform><numerusform>Az ellenőrzés sikertelen, %n próbálkozása maradt</numerusform></translation>
     </message>
     <message>
         <source>Verification failed, only one chance left</source>
@@ -73,11 +73,11 @@
     </message>
     <message>
         <source>Verify your Iris ID</source>
-        <translation>Hitelesítés Írisz Azonosítóval</translation>
+        <translation>Hitelesítés Írisz Azonosítással</translation>
     </message>
     <message>
         <source>Iris ID locked, use password please</source>
-        <translation>Az Írisz Azonosító zárolva, kérjük használja a jelszavát</translation>
+        <translation>Az Írisz azonosítás zárolva, kérjük használja a jelszavát</translation>
     </message>
 </context>
 <context>
@@ -108,7 +108,7 @@
     </message>
     <message numerus="yes">
         <source>Please try again %n minutes later</source>
-        <translation type="unfinished"><numerusform></numerusform><numerusform></numerusform></translation>
+        <translation><numerusform>Kérjük próbálja újra %n perc múlva</numerusform><numerusform>Kérjük próbálja újra %n perc múlva</numerusform></translation>
     </message>
     <message>
         <source>Reset Password</source>
@@ -174,7 +174,7 @@
     </message>
     <message numerus="yes">
         <source>Please try again %n minutes later</source>
-        <translation type="unfinished"><numerusform></numerusform><numerusform></numerusform></translation>
+        <translation><numerusform>Kérjük próbálja újra %n perc múlva</numerusform><numerusform>Kérjük próbálja újra %n perc múlva</numerusform></translation>
     </message>
 </context>
 <context>
@@ -185,11 +185,15 @@
     </message>
     <message numerus="yes">
         <source>Your password will expire in %n days, please change it timely</source>
-        <translation type="unfinished"><numerusform></numerusform><numerusform></numerusform></translation>
+        <translation><numerusform>A jelszava %n nap múlva lejár, kérjük változtassa meg időben</numerusform><numerusform>A jelszava %n nap múlva lejár, kérjük változtassa meg időben</numerusform></translation>
     </message>
     <message>
         <source>Password expired, please change</source>
         <translation>Jelszava lejárt, kérjük változtassa meg</translation>
+    </message>
+    <message>
+        <source>Your password has expired. Please contact the administrator to change it</source>
+        <translation type="unfinished"/>
     </message>
 </context>
 <context>

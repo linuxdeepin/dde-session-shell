@@ -11,7 +11,7 @@
     </message>
     <message numerus="yes">
         <source>Verification failed, %n chances left</source>
-        <translation type="unfinished"><numerusform></numerusform><numerusform></numerusform><numerusform></numerusform><numerusform></numerusform></translation>
+        <translation><numerusform>Перевірку не пройдено, лишилася %n спроба</numerusform><numerusform>Перевірку не пройдено, лишилося %n спроби</numerusform><numerusform>Перевірку не пройдено, лишилося %n спроб</numerusform><numerusform>Перевірку не пройдено, лишилася %n спроба</numerusform></translation>
     </message>
     <message>
         <source>Verification failed, only one chance left</source>
@@ -65,7 +65,7 @@
     </message>
     <message numerus="yes">
         <source>Verification failed, %n chances left</source>
-        <translation type="unfinished"><numerusform></numerusform><numerusform></numerusform><numerusform></numerusform><numerusform></numerusform></translation>
+        <translation><numerusform>Перевірку не пройдено, лишилася %n спроба</numerusform><numerusform>Перевірку не пройдено, лишилося %n спроби</numerusform><numerusform>Перевірку не пройдено, лишилося %n спроб</numerusform><numerusform>Перевірку не пройдено, лишилася %n спроба</numerusform></translation>
     </message>
     <message>
         <source>Verification failed, only one chance left</source>
@@ -108,7 +108,7 @@
     </message>
     <message numerus="yes">
         <source>Please try again %n minutes later</source>
-        <translation type="unfinished"><numerusform></numerusform><numerusform></numerusform><numerusform></numerusform><numerusform></numerusform></translation>
+        <translation><numerusform>Будь ласка, повторіть спробу за %n хвилину</numerusform><numerusform>Будь ласка, повторіть спробу за %n хвилини</numerusform><numerusform>Будь ласка, повторіть спробу за %n хвилин</numerusform><numerusform>Будь ласка, повторіть спробу за %n хвилину</numerusform></translation>
     </message>
     <message>
         <source>Reset Password</source>
@@ -174,7 +174,7 @@
     </message>
     <message numerus="yes">
         <source>Please try again %n minutes later</source>
-        <translation type="unfinished"><numerusform></numerusform><numerusform></numerusform><numerusform></numerusform><numerusform></numerusform></translation>
+        <translation><numerusform>Будь ласка, повторіть спробу за %n хвилину</numerusform><numerusform>Будь ласка, повторіть спробу за %n хвилини</numerusform><numerusform>Будь ласка, повторіть спробу за %n хвилин</numerusform><numerusform>Будь ласка, повторіть спробу за %n хвилину</numerusform></translation>
     </message>
 </context>
 <context>
@@ -185,11 +185,15 @@
     </message>
     <message numerus="yes">
         <source>Your password will expire in %n days, please change it timely</source>
-        <translation type="unfinished"><numerusform></numerusform><numerusform></numerusform><numerusform></numerusform><numerusform></numerusform></translation>
+        <translation><numerusform>Строк дії вашого пароля буде вичерпано за %n день. Будь ласка, вчасно змініть його</numerusform><numerusform>Строк дії вашого пароля буде вичерпано за %n дні. Будь ласка, вчасно змініть його</numerusform><numerusform>Строк дії вашого пароля буде вичерпано за %n днів. Будь ласка, вчасно змініть його</numerusform><numerusform>Строк дії вашого пароля буде вичерпано за %n день. Будь ласка, вчасно змініть його</numerusform></translation>
     </message>
     <message>
         <source>Password expired, please change</source>
         <translation>Строк дії пароля вичерпано. Будь ласка, змініть</translation>
+    </message>
+    <message>
+        <source>Your password has expired. Please contact the administrator to change it</source>
+        <translation type="unfinished"/>
     </message>
 </context>
 <context>
