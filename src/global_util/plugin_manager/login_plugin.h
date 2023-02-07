@@ -34,7 +34,7 @@ public:
 
     explicit LoginPlugin(dss::module::BaseModuleInterface *module, QObject *parent = nullptr);
 
-    PluginBase::ModuleType type() const { return PluginBase::ModuleType::LoginType; }
+    virtual PluginBase::ModuleType type() const = 0;
 
     virtual void setAuthCallback(AuthCallbackFun) = 0;
 

@@ -17,7 +17,9 @@ class LoginPluginV2 : public LoginPlugin
 {
     Q_OBJECT
 public:
-    explicit LoginPluginV2(dss::module_v2::LoginModuleInterfaceV2 * module, QObject *parent = nullptr);
+    explicit LoginPluginV2(dss::module_v2::LoginModuleInterfaceV2 *module, QObject *parent = nullptr);
+
+    virtual PluginBase::ModuleType type() const override;
 
     virtual QString icon() const override;
 
@@ -32,6 +34,6 @@ public:
     virtual void reset() override;
 };
 
-}
+} // namespace LoginPlugin_V2
 
 #endif // LOGIN_PLUGIN_V2_H

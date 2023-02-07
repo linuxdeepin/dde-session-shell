@@ -32,7 +32,7 @@ void PluginManager::addPlugin(dss::module::BaseModuleInterface *module, const QS
 
     const QString &key = plugin->key();
     m_plugins.insert(key, plugin);
-    connect(plugin, &QObject::destroyed, this, [this, key]  {
+    connect(plugin, &QObject::destroyed, this, [this, key] {
         m_plugins.remove(key);
     });
 }
@@ -42,6 +42,18 @@ LoginPlugin* PluginManager::getLoginPlugin() const
     for (const auto &plugin : m_plugins.values()) {
         if (plugin && PluginBase::ModuleType::LoginType == plugin->type()) {
             return dynamic_cast<LoginPlugin*>(plugin);
+        }
+    }
+
+    return nullptr;
+}
+
+
+LoginPlugin *PluginManager::getFullManagedLoginPlugin() const
+{
+    for (const auto &plugin : m_plugins.values()) {
+        if (plugin && PluginBase::ModuleType::FullManagedLoginType == plugin->type()) {
+            return dynamic_cast<LoginPlugin *>(plugin);
         }
     }
 
@@ -62,7 +74,8 @@ QList<TrayPlugin*> PluginManager::trayPlugins() const
 
 PluginBase* PluginManager::createPlugin(dss::module::BaseModuleInterface *module, const QString &version)
 {
-    if (dss::module::BaseModuleInterface::LoginType == module->type()) {
+    if (dss::module::BaseModuleInterface::LoginType == module->type()
+        || dss::module::BaseModuleInterface::FullManagedLoginType == module->type()) {
         return createLoginPlugin(module, version);
     } else if (dss::module::BaseModuleInterface::TrayType == module->type()) {
         TrayPlugin *plugin = createTrayPlugin(module, version);

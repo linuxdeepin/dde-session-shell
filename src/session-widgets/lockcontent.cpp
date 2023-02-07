@@ -15,6 +15,7 @@
 #include "virtualkbinstance.h"
 #include "fullscreenbackground.h"
 #include "plugin_manager.h"
+#include "fullmanagedauthwidget.h"
 
 #include <DDBusSender>
 
@@ -37,10 +38,12 @@ LockContent::LockContent(QWidget *parent)
     , m_sfaWidget(nullptr)
     , m_mfaWidget(nullptr)
     , m_authWidget(nullptr)
+    , m_fmaWidget(nullptr)
     , m_userListWidget(nullptr)
     , m_localServer(new QLocalServer(this))
     , m_currentModeStatus(SessionBaseModel::ModeStatus::NoStatus)
     , m_initialized(false)
+    , m_isUserSwitchVisible(false)
 {
 
 }
@@ -114,6 +117,8 @@ void LockContent::initUI()
     m_authWidget->hide();
 
     initUserListWidget();
+
+    initFMAWidget();
 }
 
 void LockContent::initConnections()
@@ -231,6 +236,28 @@ void LockContent::initSFAWidget()
     });
 }
 
+// init full managed plugin widget
+void LockContent::initFMAWidget()
+{
+    qDebug() << "LockContent::initFMAWidget" << m_fmaWidget;
+    if (m_fmaWidget) {
+        m_fmaWidget->hide();
+        delete m_fmaWidget;
+        m_fmaWidget = nullptr;
+    }
+
+    m_fmaWidget = new FullManagedAuthWidget();
+    m_fmaWidget->setModel(m_model);
+    if (m_fmaWidget->isPluginLoaded()) {
+        setFullManagedLoginWidget(m_fmaWidget);
+    }
+    connect(m_fmaWidget, &FullManagedAuthWidget::requestStartAuthentication, this, &LockContent::requestStartAuthentication);
+    connect(m_fmaWidget, &FullManagedAuthWidget::sendTokenToAuth, this, &LockContent::sendTokenToAuth);
+    connect(m_fmaWidget, &FullManagedAuthWidget::requestEndAuthentication, this, &LockContent::requestEndAuthentication);
+    connect(m_fmaWidget, &FullManagedAuthWidget::requestCheckAccount, this, &LockContent::requestCheckAccount);
+    connect(m_fmaWidget, &FullManagedAuthWidget::authFinished, this, &LockContent::authFinished);
+}
+
 /**
  * @brief 初始化用户列表界面
  */
@@ -275,6 +302,13 @@ void LockContent::pushPasswordFrame()
     setCenterContent(m_authWidget, 0, Qt::AlignTop, calcTopSpacing(m_authWidget->getTopSpacing()));
 
     m_authWidget->syncResetPasswordUI();
+
+    if (!m_fmaWidget->isPluginLoaded()) {
+        showDefaultFrame();
+        return;
+    }
+
+    showPasswdFrame();
 }
 
 void LockContent::pushUserFrame()
@@ -285,19 +319,40 @@ void LockContent::pushUserFrame()
 
     m_userListWidget->updateLayout(width());
     setCenterContent(m_userListWidget);
+
+    auto config = PluginConfigMap::instance().getConfig();
+    if (config) {
+        m_controlWidget->setUserSwitchEnable(config->isUserSwitchButtonVisiable());
+    } else {
+        m_controlWidget->setUserSwitchEnable(m_isUserSwitchVisible);
+    }
+
+    showDefaultFrame();
 }
 
 void LockContent::pushConfirmFrame()
 {
     setCenterContent(m_authWidget, 0, Qt::AlignTop, calcTopSpacing(m_authWidget->getTopSpacing()));
+    showDefaultFrame();
 }
 
 void LockContent::pushShutdownFrame()
 {
     qInfo() << "Push shutdown frame";
     // 设置关机选项界面大小为中间区域的大小,并移动到左上角，避免显示后出现移动现象
+    auto config = PluginConfigMap::instance().getConfig();
+    if (config) {
+        m_shutdownFrame->setUserSwitchEnable(config->isUserSwitchButtonVisiable());
+        m_controlWidget->setUserSwitchEnable(config->isUserSwitchButtonVisiable());
+    } else {
+        m_shutdownFrame->setUserSwitchEnable(m_isUserSwitchVisible);
+        m_controlWidget->setUserSwitchEnable(m_isUserSwitchVisible);
+    }
+
+    //设置关机选项界面大小为中间区域的大小,并移动到左上角，避免显示后出现移动现象
     m_shutdownFrame->onStatusChanged(m_model->currentModeState());
     setCenterContent(m_shutdownFrame);
+    showDefaultFrame();
 }
 
 void LockContent::setMPRISEnable(const bool state)
@@ -347,6 +402,13 @@ void LockContent::onStatusChanged(SessionBaseModel::ModeStatus status)
 {
     qInfo() << Q_FUNC_INFO << status << ", current status: " << m_currentModeStatus;
     refreshLayout(status);
+
+    // select plugin config
+    if (m_fmaWidget && m_fmaWidget->isPluginLoaded()) {
+        PluginConfigMap::instance().requestAddConfig(PluginConfigMap::ConfigIndex::FullManagePlugin, m_fmaWidget);
+    } else {
+        PluginConfigMap::instance().requestRemoveConfig(PluginConfigMap::ConfigIndex::FullManagePlugin);
+    }
 
     if(m_model->isServerModel())
         onUserListChanged(m_model->loginedUserList());
@@ -501,6 +563,9 @@ void LockContent::showModule(const QString &name)
         m_loginWidget = plugin->content();
         setCenterContent(m_loginWidget);
         break;
+    default:
+        // 扩展插件类型 FullManagedLoginType，不在此处处理
+        break;
     }
 }
 
@@ -527,6 +592,8 @@ void LockContent::onUserListChanged(QList<std::shared_ptr<User> > list)
 
     m_controlWidget->setUserSwitchEnable(enable);
     m_shutdownFrame->setUserSwitchEnable(enable);
+
+    m_isUserSwitchVisible = enable;
 }
 
 /**

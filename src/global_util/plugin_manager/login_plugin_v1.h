@@ -19,6 +19,8 @@ class LoginPluginV1 : public LoginPlugin
 public:
     explicit LoginPluginV1(dss::module::LoginModuleInterface* module, QObject *parent = nullptr);
 
+    virtual PluginBase::ModuleType type() const override;
+
     virtual QString icon() const override;
 
     virtual void setMessageCallback(MessageCallbackFunc) override;
@@ -41,6 +43,6 @@ private:
     static MessageCallbackFunc messageCallbackFunc;
 };
 
-}
+} // namespace LoginPlugin_V1
 
 #endif // LOGIN_PLUGIN_V1_H

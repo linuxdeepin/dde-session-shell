@@ -19,6 +19,16 @@ LoginPluginV1::LoginPluginV1(dss::module::LoginModuleInterface* module,  QObject
 
 }
 
+PluginBase::ModuleType LoginPluginV1::type() const
+{
+    TO_LOGIN_PLUGIN
+
+    if (!loginPlugin)
+        return ModuleType::LoginType;
+
+    return m_plugin->type();
+}
+
 QString LoginPluginV1::icon() const
 {
     TO_LOGIN_PLUGIN
@@ -111,4 +121,4 @@ std::string LoginPluginV1::messageCallBack(const std::string & message, void *ap
     return ret.toStdString();
 }
 
-}
+} // namespace LoginPlugin_V1

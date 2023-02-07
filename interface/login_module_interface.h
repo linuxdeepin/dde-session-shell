@@ -162,11 +162,10 @@ public:
     // Warning: 不要增加虚函数，即使在最后面（如果派生类也有虚函数，那么虚表寻址也会错误）
 };
 
-typedef Q_DECL_DEPRECATED LoginModuleInterface LoginModuleInterfaceV2 ;
+typedef Q_DECL_DEPRECATED LoginModuleInterface LoginModuleInterfaceV2;
 
 } // namespace module
 } // namespace dss
-
 
 Q_DECLARE_INTERFACE(dss::module::LoginModuleInterface, "com.deepin.dde.shell.Modules.Login")
 

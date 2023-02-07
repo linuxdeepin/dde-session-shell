@@ -14,6 +14,16 @@ LoginPluginV2::LoginPluginV2(dss::module_v2::LoginModuleInterfaceV2 * module, QO
 
 }
 
+PluginBase::ModuleType LoginPluginV2::type() const
+{
+    TO_LOGIN_PLUGIN_V2
+
+    if (!pluginV2)
+        return ModuleType::LoginType;
+
+    return m_plugin->type();
+}
+
 QString LoginPluginV2::icon() const
 {
     TO_LOGIN_PLUGIN_V2
@@ -74,4 +84,4 @@ void LoginPluginV2::reset()
     return pluginV2->reset();
 }
 
-}
+} // namespace LoginPlugin_V2

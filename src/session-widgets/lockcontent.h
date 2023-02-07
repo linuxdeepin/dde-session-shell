@@ -31,6 +31,7 @@ class ControlWidget;
 class User;
 class ShutdownWidget;
 class LogoWidget;
+class FullManagedAuthWidget;
 
 class LockContent : public SessionBaseWindow
 {
@@ -92,6 +93,7 @@ protected:
     void initConnections();
     void initMFAWidget();
     void initSFAWidget();
+    void initFMAWidget();
     void initUserListWidget();
 
 protected:
@@ -110,12 +112,14 @@ protected:
     SFAWidget *m_sfaWidget;
     MFAWidget *m_mfaWidget;
     AuthWidget *m_authWidget;
+    FullManagedAuthWidget *m_fmaWidget;
     UserFrameList *m_userListWidget;
 
     int m_failures = 0;
     QLocalServer *m_localServer;
     SessionBaseModel::ModeStatus m_currentModeStatus;
     bool m_initialized;
+    bool m_isUserSwitchVisible;
 };
 
 #endif // LOCKCONTENT_H
