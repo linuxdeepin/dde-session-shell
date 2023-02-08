@@ -144,6 +144,9 @@ int main(int argc, char *argv[])
         worker->enableZoneDetected(true);
     });
     QObject::connect(LockContent::instance(), &LockContent::requestCheckAccount, worker, &LockWorker::checkAccount);
+    QObject::connect(LockContent::instance(), &LockContent::requestLockFrameHide, [model] {
+        model->setVisible(false);
+    });
 
     auto createFrame = [&] (QPointer<QScreen> screen, int count) -> QWidget* {
         LockFrame *lockFrame = new LockFrame(model);

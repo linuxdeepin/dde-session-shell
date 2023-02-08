@@ -52,13 +52,12 @@ signals:
     void requestSwitchToUser(std::shared_ptr<User> user);
     void requestSetLayout(std::shared_ptr<User> user, const QString &value);
     void unlockActionFinish();
-
     void requestStartAuthentication(const QString &account, const int authType);
     void sendTokenToAuth(const QString &account, const int authType, const QString &token);
     void requestEndAuthentication(const QString &account, const int authType);
     void authFinished();
-
     void requestCheckAccount(const QString &account);
+    void requestLockFrameHide();
 
 public slots:
     void pushPasswordFrame();
