@@ -542,7 +542,7 @@ void AuthPassword::showResetPasswordMessage()
     });
     connect(m_resetPasswordFloatingMessage, &DFloatingMessage::closeButtonClicked, this, [this](){
         if (m_resetPasswordFloatingMessage) {
-            delete  m_resetPasswordFloatingMessage;
+            m_resetPasswordFloatingMessage->deleteLater();
             m_resetPasswordFloatingMessage = nullptr;
         }
         emit resetPasswordMessageVisibleChanged(false);
@@ -557,7 +557,7 @@ void AuthPassword::closeResetPasswordMessage()
 {
     if (m_resetPasswordFloatingMessage) {
         m_resetPasswordFloatingMessage->close();
-        delete  m_resetPasswordFloatingMessage;
+        m_resetPasswordFloatingMessage->deleteLater();
         m_resetPasswordFloatingMessage = nullptr;
     }
 }
