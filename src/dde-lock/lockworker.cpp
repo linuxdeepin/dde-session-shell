@@ -83,6 +83,14 @@ void LockWorker::initConnections()
             m_model->updateLimitedInfo(m_authFramework->GetLimitedInfo(account));
         }
     });
+    connect(m_authFramework, &DeepinAuthFramework::DeviceChanged, this, [this](const int type, const int state) {
+        // 如果是单因或者多因且包含该类型认证，需要重新创建认证
+        if (m_model->visible() && (!m_model->getAuthProperty().MFAFlag || (m_model->getAuthProperty().MFAFlag && (m_model->getAuthProperty().AuthType & type)))) {
+            endAuthentication(m_account, AT_All);
+            destroyAuthentication(m_account);
+            createAuthentication(m_account);
+        }
+    });
     connect(m_authFramework, &DeepinAuthFramework::SupportedEncryptsChanged, m_model, &SessionBaseModel::updateSupportedEncryptionType);
     connect(m_authFramework, &DeepinAuthFramework::SupportedMixAuthFlagsChanged, m_model, &SessionBaseModel::updateSupportedMixAuthFlags);
     /* com.deepin.daemon.Authenticate.Session */

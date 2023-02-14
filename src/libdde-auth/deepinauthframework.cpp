@@ -38,6 +38,13 @@ DeepinAuthFramework::DeepinAuthFramework(QObject *parent)
     connect(m_authenticateInter, &AuthInter::LimitUpdated, this, &DeepinAuthFramework::LimitsInfoChanged);
     connect(m_authenticateInter, &AuthInter::SupportedFlagsChanged, this, &DeepinAuthFramework::SupportedMixAuthFlagsChanged);
     connect(m_authenticateInter, &AuthInter::SupportEncryptsChanged, this, &DeepinAuthFramework::SupportedEncryptsChanged);
+    QDBusConnection::systemBus().connect(AUTHENTICATE_SERVICE, "/com/deepin/daemon/Authenticate", "com.deepin.daemon.Authenticate", "DeviceChange", this, SLOT(onDeviceChanged(const int, const int)));
+}
+
+void DeepinAuthFramework::onDeviceChanged(const int authType, const int state)
+{
+    qInfo() << "Receive DeviceChanged, authType:" << authType << " state:" << state;
+    Q_EMIT DeviceChanged(authType, state);
 }
 
 DeepinAuthFramework::~DeepinAuthFramework()
