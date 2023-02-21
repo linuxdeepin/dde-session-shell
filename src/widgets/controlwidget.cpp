@@ -267,9 +267,38 @@ void ControlWidget::initConnect()
     });
 }
 
+QString ControlWidget::messageCallback(const QString &message, void *app_data)
+{
+    qInfo() << Q_FUNC_INFO << "Received message: " << message;
+    if (!app_data && static_cast<ControlWidget *>(app_data)) {
+        qWarning() << "appdata is null";
+        return QString();
+    }
+    QJsonObject retObj;
+    QJsonParseError jsonParseError;
+    const QJsonDocument messageDoc = QJsonDocument::fromJson(message.toLatin1(), &jsonParseError);
+    if (jsonParseError.error != QJsonParseError::NoError || messageDoc.isEmpty()) {
+        retObj["Code"] = "-1";
+        retObj["Message"] = "Failed to analysis message info from plugin!";
+        qWarning() << "Failed to analysis message info from plugin!: " << message;
+        return toJson(retObj);
+    }
+    QJsonObject messageObj = messageDoc.object();
+    emit static_cast<ControlWidget *>(app_data)->requestShowModule(messageObj.value("PluginKey").toString());
+    return message;
+}
+
+QWidget *ControlWidget::getTray(const QString &name)
+{
+    qInfo() << "TrayButton name:" << name << m_modules[name];
+    return m_modules[name];
+}
+
 void ControlWidget::addModule(TrayPlugin *trayModule)
 {
     trayModule->init();
+    trayModule->setMessageCallback(&ControlWidget::messageCallback);
+    trayModule->setAppData(this);
 
     FloatingButton *button = new FloatingButton(this);
     button->setIconSize(QSize(26, 26));
@@ -278,13 +307,11 @@ void ControlWidget::addModule(TrayPlugin *trayModule)
     button->setBackgroundRole(DPalette::Button);
 
     if (QWidget *trayWidget = trayModule->itemWidget()) {
-        trayWidget->setParent(this);
-        QHBoxLayout *layout = new QHBoxLayout(this);
+        trayWidget->setParent(button);
+        QHBoxLayout *layout = new QHBoxLayout(button);
         layout->setSpacing(0);
         layout->setMargin(0);
         layout->addWidget(trayWidget);
-
-        button->setLayout(layout);
     } else {
         button->setIcon(QIcon(trayModule->icon()));
     }
@@ -342,7 +369,7 @@ void ControlWidget::addModule(TrayPlugin *trayModule)
         m_tipsWidget->hide();
     });
 
-    connect(button, &DFloatingButton::clicked, this, [this, trayModule] {
+    connect(button, &FloatingButton::clicked, this, [this, trayModule] {
         emit requestShowModule(trayModule->key());
     }, Qt::UniqueConnection);
 

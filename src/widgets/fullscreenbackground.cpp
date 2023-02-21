@@ -184,17 +184,22 @@ void FullScreenBackground::setContent(QWidget *const w)
         return;
     }
 
+    if (!currentFrame) {
+        qWarning() << "Current frame is null";
+        return;
+    }
+
+    if (currentContent && currentContent->isVisible() && currentContent == w && w->parent() == currentFrame) {
+        qInfo() << "Parent is current frame";
+        return;
+    }
+
     if (!currentContent.isNull()) {
         currentContent->setParent(nullptr);
         currentContent->hide();
     }
 
     currentContent = w;
-
-    if (!currentFrame) {
-        qWarning() << "Current frame is null";
-        return;
-    }
 
     currentContent->setParent(currentFrame);
     currentContent->move(0, 0);

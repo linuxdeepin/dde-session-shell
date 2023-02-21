@@ -8,6 +8,7 @@
 #include "logowidget.h"
 #include "mfa_widget.h"
 #include "modules_loader.h"
+#include "popupwindow.h"
 #include "sessionbasemodel.h"
 #include "sfa_widget.h"
 #include "shutdownwidget.h"
@@ -44,6 +45,7 @@ LockContent::LockContent(QWidget *parent)
     , m_currentModeStatus(SessionBaseModel::ModeStatus::NoStatus)
     , m_initialized(false)
     , m_isUserSwitchVisible(false)
+    , m_popWin(nullptr)
 {
 
 }
@@ -560,13 +562,48 @@ void LockContent::showModule(const QString &name)
         m_model->setCurrentModeState(SessionBaseModel::ModeStatus::PasswordMode);
         break;
     case PluginBase::ModuleType::TrayType:
-        m_loginWidget = plugin->content();
-        setCenterContent(m_loginWidget);
+        m_currentTray = m_controlWidget->getTray(name);
+        if (!m_currentTray) {
+            qWarning() << "TrayButton is null";
+            return;
+        }
+        if (!m_popWin) {
+            m_popWin = new PopupWindow(this);
+            // 隐藏后需要removeEventFilter，后期优化
+            for (auto child : this->findChildren<QWidget*>()) {
+                child->installEventFilter(this);
+            }
+        }
+
+        if (!m_popWin->getContent() || m_popWin->getContent() != plugin->content())
+            m_popWin->setContent(plugin->content());
+        m_popWin->toggle(mapFromGlobal(m_currentTray->mapToGlobal(QPoint(m_currentTray->size().width() / 2, 0))));
         break;
     default:
         // 扩展插件类型 FullManagedLoginType，不在此处处理
         break;
     }
+}
+
+bool LockContent::eventFilter(QObject *watched, QEvent *e)
+{
+    // 点击插件弹窗以外区域，隐藏插件弹窗
+    if (m_popWin && m_currentTray && m_popWin->isVisible()) {
+        QWidget * w = qobject_cast<QWidget*>(watched);
+        if (!w)
+            return false;
+        const bool isChild = m_currentTray->findChildren<QWidget*>().contains(w);
+        if ((watched == m_currentTray || isChild) && e->type() == QEvent::Enter) {
+            Q_EMIT qobject_cast<FloatingButton*>(m_currentTray)->requestHideTips();
+        } else if (watched != m_currentTray && !isChild && e->type() == QEvent::MouseButtonRelease) {
+            QMouseEvent *ev = static_cast<QMouseEvent *>(e);
+            if (!m_popWin->geometry().contains(ev->pos())) {
+                m_popWin->hide();
+            }
+        }
+    }
+
+    return false;
 }
 
 void LockContent::updateVirtualKBPosition()

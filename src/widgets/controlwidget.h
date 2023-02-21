@@ -98,6 +98,7 @@ public:
     void setUser(std::shared_ptr<User> user);
 
     void initKeyboardLayoutList();
+    QWidget *getTray(const QString &name);
 
 signals:
     void requestSwitchUser();
@@ -134,6 +135,7 @@ private:
     void hideTips();
     void updateLayout();
     void updateTapOrder();
+    static QString messageCallback(const QString &message, void *app_data);
 
 private:
     int m_index = 0;

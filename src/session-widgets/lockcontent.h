@@ -10,6 +10,7 @@
 #include "sessionbasewindow.h"
 #include "systemmonitor.h"
 #include "centertopwidget.h"
+#include "popupwindow.h"
 
 #include <DConfig>
 
@@ -77,6 +78,7 @@ protected:
     void showEvent(QShowEvent *event) Q_DECL_OVERRIDE;
     void resizeEvent(QResizeEvent *event) Q_DECL_OVERRIDE;
     void keyPressEvent(QKeyEvent *event) Q_DECL_OVERRIDE;
+    bool eventFilter(QObject *watched, QEvent *e) Q_DECL_OVERRIDE;
 
 protected:
     void toggleVirtualKB();
@@ -120,6 +122,8 @@ protected:
     SessionBaseModel::ModeStatus m_currentModeStatus;
     bool m_initialized;
     bool m_isUserSwitchVisible;
+    PopupWindow *m_popWin;
+    QPointer<QWidget> m_currentTray;
 };
 
 #endif // LOCKCONTENT_H
