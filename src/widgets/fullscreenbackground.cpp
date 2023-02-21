@@ -275,7 +275,6 @@ void FullScreenBackground::paintEvent(QPaintEvent *e)
 
 void FullScreenBackground::tryActiveWindow(int count/* = 9*/)
 {
-    return;
     if (count < 0 || m_model->isUseWayland())
         return;
 
@@ -459,7 +458,7 @@ bool FullScreenBackground::event(QEvent *e)
 {
 #ifndef QT_DEBUG
     if (e->type() == QEvent::WindowDeactivate) {
-        if (currentContent->isVisible()) {
+        if (contentVisible()) {
             tryActiveWindow();
         }
     }
