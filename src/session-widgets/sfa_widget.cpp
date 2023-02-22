@@ -1005,7 +1005,12 @@ void SFAWidget::onRequestChangeAuth(const int authType)
 
     if (!m_authButtons.contains(authType)) {
         qWarning() << "Authentication buttons do not contain the type";
-        m_chooseAuthButtonBox->button(m_authButtons.firstKey())->toggled(true);
+        auto button = m_chooseAuthButtonBox->button(m_authButtons.firstKey());
+        if (button)
+            button->setChecked(true);
+        else
+            qWarning() << "First authentication button is nullptr: " << m_authButtons.firstKey();
+
         return ;
     }
 
@@ -1015,7 +1020,7 @@ void SFAWidget::onRequestChangeAuth(const int authType)
         return;
     }
 
-    emit btn->toggled(true);
+    btn->setChecked(true);
 }
 
 bool SFAWidget::useCustomAuth() const
