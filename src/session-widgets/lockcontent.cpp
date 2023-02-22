@@ -566,8 +566,8 @@ void LockContent::showModule(const QString &name)
         break;
     case PluginBase::ModuleType::TrayType:
         m_currentTray = m_controlWidget->getTray(name);
-        if (!m_currentTray) {
-            qWarning() << "TrayButton is null";
+        if (!m_currentTray || !plugin->content()) {
+            qWarning() << "TrayButton or plugin`s content is null";
             return;
         }
         if (!m_popWin) {
