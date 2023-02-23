@@ -330,9 +330,9 @@ void FullScreenBackground::resizeEvent(QResizeEvent *event)
 
     updatePixmap();
 
-    m_blackWidget->resize(trueSize());
+    m_blackWidget->resize(size());
     if (currentFrame == this && currentContent) {
-        currentContent->resize(trueSize());
+        currentContent->resize(size());
     }
 
     QWidget::resizeEvent(event);
