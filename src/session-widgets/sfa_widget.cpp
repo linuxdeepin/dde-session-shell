@@ -115,9 +115,10 @@ void SFAWidget::setAuthType(const int type)
     qDebug() << Q_FUNC_INFO << "SFAWidget::setAuthType:" << type;
     int authType = type;
     if (!m_model->currentUser()->allowToChangePassword() && m_model->appType() == Login) {
-        qInfo() << "Password is expired";
+        qInfo() << "Password is expired, current user is not allowed to change the password, set authentication type to `AT_Password`";
         authType = AT_Password;
     }
+
     if (useCustomAuth()) {
         authType |= AT_Custom;
         initCustomAuth();
@@ -1026,12 +1027,9 @@ void SFAWidget::onRequestChangeAuth(const int authType)
 bool SFAWidget::useCustomAuth() const
 {
     // 无密码登录或者自动登录不使用自定义认证
-    //去掉自动登录的判定，详见bug176463
-    const bool isNoPasswordLoginEnabled = m_model->appType() == AuthCommon::Lock         ||
-                             ( m_model ->appType() == AuthCommon::Login       &&
-                               !m_model->currentUser()->isNoPasswordLogin());
-    if (!isNoPasswordLoginEnabled) {
-        qInfo() << "NoPassword login is enabled";
+    // 去掉自动登录的判定，详见bug176463
+    if (m_model->currentUser()->isNoPasswordLogin()) {
+        qInfo() << "No password login is enabled";
         return false;
     }
 
