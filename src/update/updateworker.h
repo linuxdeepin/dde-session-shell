@@ -48,6 +48,7 @@ public:
     void doAction(UpdateModel::UpdateAction action);
     void startUpdateProgress();
     bool checkPower();
+    void enableShortcuts(bool enable);
 
 Q_SIGNALS:
     void requestDoPowerAction(bool isReboot);

@@ -117,6 +117,10 @@ public:
 signals:
     void updateExited();
 
+protected:
+    bool event(QEvent *e) override;
+    void keyPressEvent(QKeyEvent *e) override;
+
 private slots:
     void onExitUpdating();
     void onUpdateStatusChanged(UpdateModel::UpdateStatus status);
@@ -130,7 +134,6 @@ private:
     void showChecking();
     void showProgress();
     void setMouseCursorVisible(bool visible);
-    void keyPressEvent(QKeyEvent *e);
 
 private:
     UpdatePrepareWidget *m_prepareWidget;

@@ -558,3 +558,14 @@ void UpdateWidget::keyPressEvent(QKeyEvent *e)
 
     // 屏蔽esc键，设置event的accept无效，暂时不处理
 }
+
+bool UpdateWidget::event(QEvent *e)
+{
+    if (e->type() == QEvent::Show) {
+        UpdateWorker::instance()->enableShortcuts(false);
+    } else if (e->type() == QEvent::Hide) {
+        UpdateWorker::instance()->enableShortcuts(true);
+    }
+
+    return false;
+}

@@ -348,3 +348,17 @@ void UpdateWorker::fixError()
     });
 }
 
+void UpdateWorker::enableShortcuts(bool enable)
+{
+    qInfo() << "Enable shortcuts: " << enable;
+    QDBusInterface osdInterface("com.deepin.dde.osd", "/", "org.freedesktop.DBus.Properties");
+    QDBusPendingCall reply = osdInterface.asyncCall("Set", "com.deepin.dde.osd", "OSDEnabled", enable);
+    QDBusPendingCallWatcher *watcher = new QDBusPendingCallWatcher(reply, this);
+    connect(watcher, &QDBusPendingCallWatcher::finished, this, [reply, watcher] {
+        watcher->deleteLater();
+        if (!reply.isValid()) {
+            qWarning() << "Set `OSDEnabled` property failed, error: " << reply.error().message();
+        }
+    });
+}
+

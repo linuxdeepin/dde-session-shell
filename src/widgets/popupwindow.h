@@ -19,14 +19,14 @@ public:
 
     void setContent(QWidget *content);
 
-public slots:
+    using Dtk::Widget::DArrowRectangle::show;
     void show(const QPoint &pos);
     void toggle(const QPoint &pos);
 
 protected:
-    void showEvent(QShowEvent *e);
-    void enterEvent(QEvent *e);
-    bool eventFilter(QObject *o, QEvent *e);
+    void showEvent(QShowEvent *e) override;
+    void enterEvent(QEvent *e) override;
+    bool eventFilter(QObject *o, QEvent *e) override;
 
 private slots:
     void ensureRaised();
