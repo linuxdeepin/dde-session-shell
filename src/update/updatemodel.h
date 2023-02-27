@@ -41,8 +41,7 @@ enum UpdateStatus {
     Installing,
     InstallSuccess,
     InstallFailed,
-    InstallComplete,
-    Unknown
+    InstallComplete
 };
 Q_ENUM(UpdateStatus)
 

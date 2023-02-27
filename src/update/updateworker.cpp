@@ -3,6 +3,7 @@
 // SPDX-License-Identifier: GPL-3.0-or-later
 
 #include "updateworker.h"
+#include "dconfig_helper.h"
 
 #include <QTimer>
 #include <QDebug>
@@ -25,6 +26,9 @@ UpdateWorker::UpdateWorker(QObject *parent)
     , m_powerInter(new PowerInter("com.deepin.system.Power", "/com/deepin/system/Power", QDBusConnection::systemBus(), this))
     , m_managerInter(new ManagerInter("com.deepin.lastore", "/com/deepin/lastore", QDBusConnection::systemBus(), this))
     , m_abRecoveryInter(new RecoveryInter("com.deepin.ABRecovery", "/com/deepin/ABRecovery", QDBusConnection::systemBus(), this))
+    , m_sessionManagerInter(new SessionManagerInter("com.deepin.SessionManager", "/com/deepin/SessionManager", QDBusConnection::sessionBus(), this))
+    , m_login1Manager(new DBusLogin1Manager("org.freedesktop.login1", "/org/freedesktop/login1", QDBusConnection::systemBus(), this))
+    , m_login1SessionSelf(nullptr)
     , m_distUpgradeJob(nullptr)
     , m_fixErrorJob(nullptr)
 {
@@ -36,10 +40,15 @@ void UpdateWorker::init()
     m_managerInter->setSync(false);
     m_abRecoveryInter->setSync(false);
     connect(m_managerInter, &ManagerInter::JobListChanged, this, &UpdateWorker::onJobListChanged);
-    connect(m_managerInter, &ManagerInter::serviceValidChanged, this, [] (bool valid) {
+    connect(m_managerInter, &ManagerInter::serviceValidChanged, this, [this] (bool valid) {
         if (!valid) {
             const auto status = UpdateModel::instance()->updateStatus();
             qWarning() << "Lastore daemon manager service is invalid, curren status: " << status;
+            if (m_distUpgradeJob) {
+                delete m_distUpgradeJob;
+                m_distUpgradeJob = nullptr;
+            }
+
             if (status != UpdateModel::Installing)
                 return;
 
@@ -86,6 +95,35 @@ void UpdateWorker::init()
             UpdateModel::instance()->setUpdateStatus(UpdateModel::UpdateStatus::BackupFailed);
         }
     });
+
+    if (m_login1Manager->isValid()) {
+        QString session_self = m_login1Manager->GetSessionByPID(0).value().path();
+        m_login1SessionSelf = new Login1SessionSelf("org.freedesktop.login1", session_self, QDBusConnection::systemBus(), this);
+        m_login1SessionSelf->setSync(false);
+        if (m_login1SessionSelf->isValid()) {
+            // 处理场景：开始更新切tty，当前session被冻结，过一段时间后切换回来，此时以及安装完成，dist_upgrade job已经退出
+            connect(m_login1SessionSelf, &Login1SessionSelf::ActiveChanged, this, [=](bool active) {
+                qInfo() << "UpdateWorker: login1 self session active changed:" << active;
+                if (UpdateModel::instance()->updateStatus() == UpdateModel::Installing) {
+                    const int lastoreDaemonStatus = DConfigHelper::instance()->getConfig("org.deepin.lastore", "org.deepin.lastore", "", "lastore-daemon-status", 0).toInt();
+                    qInfo() << "Lastore daemon status: " << lastoreDaemonStatus;
+                    static const int IS_UPDATE_READY = 1; // 第一位表示更新是否可用
+                    const bool isUpdateReady = lastoreDaemonStatus & IS_UPDATE_READY;
+                    if (!isUpdateReady) {
+                        // 更新成功
+                        qInfo() << "Update successfully";
+                        UpdateModel::instance()->setUpdateStatus(UpdateModel::InstallSuccess);
+                    } else {
+                        checkStatusAfterSessionActive();
+                    }
+                }
+            });
+        } else {
+            qWarning() << "Login1 self session is invalid";
+        }
+    } else {
+        qWarning() << "Login1 manager is invalid, error: " << m_login1Manager->lastError().type();
+    }
 }
 
 /**
@@ -136,6 +174,11 @@ void UpdateWorker::doDistUpgrade()
         return;
     }
 
+    if (UpdateModel::instance()->updateStatus() >= UpdateModel::Installing) {
+        qWarning() << "Installing, won't do it again";
+        return;
+    }
+
     QDBusPendingReply<QDBusObjectPath> reply = m_managerInter->DistUpgrade();
     QDBusPendingCallWatcher *watcher = new QDBusPendingCallWatcher(reply, this);
     connect(watcher, &QDBusPendingCallWatcher::finished, this, [reply, watcher] {
@@ -166,19 +209,22 @@ void UpdateWorker::onJobListChanged(const QList<QDBusObjectPath> &jobs)
 
         // id maybe scrapped
         const QString &id = jobInter.id();
-        qDebug() << "Job id : " << id;
+        qInfo() << "Job id : " << id;
         if (id == "dist_upgrade" && m_distUpgradeJob == nullptr) {
+            qInfo() << "Create dist upgrade job";
             m_distUpgradeJob = new JobInter("com.deepin.lastore", jobPath, QDBusConnection::systemBus(), this);
             connect(m_distUpgradeJob, &__Job::ProgressChanged, UpdateModel::instance(), &UpdateModel::setDistUpgradeProgress);
             connect(m_distUpgradeJob, &__Job::StatusChanged, this, &UpdateWorker::onDistUpgradeStatusChanged);
+            UpdateModel::instance()->setDistUpgradeProgress(m_distUpgradeJob->progress());
+            onDistUpgradeStatusChanged(m_distUpgradeJob->status());
         }
     }
 }
 
 void UpdateWorker::onDistUpgradeStatusChanged(const QString &status)
 {
+    // 无需处理ready状态
     static const QMap<QString, UpdateModel::UpdateStatus> DIST_UPGRADE_STATUS_MAP = {
-        {"ready", UpdateModel::UpdateStatus::Ready},
         {"running", UpdateModel::UpdateStatus::Installing},
         {"failed", UpdateModel::UpdateStatus::InstallFailed},
         {"succeed", UpdateModel::UpdateStatus::InstallSuccess},
@@ -202,7 +248,6 @@ void UpdateWorker::onDistUpgradeStatusChanged(const QString &status)
         }
     } else {
         qWarning() << "Unknown dist upgrade status";
-        UpdateModel::instance()->setUpdateStatus(UpdateModel::UpdateStatus::Unknown);
     }
 }
 
@@ -275,10 +320,10 @@ void UpdateWorker::doAction(UpdateModel::UpdateAction action)
             Q_EMIT requestExitUpdating();
             break;
         case UpdateModel::Reboot:
-            Q_EMIT requestDoPowerAction(true);
+            doPowerAction(true);
             break;
         case UpdateModel::ShutDown:
-            Q_EMIT requestDoPowerAction(false);
+            doPowerAction(false);
             break;
         case UpdateModel::FixError:
             // TODO 交互逻辑和UI需要重新设计
@@ -348,6 +393,38 @@ void UpdateWorker::fixError()
     });
 }
 
+void UpdateWorker::doPowerAction(bool reboot)
+{
+    qInfo() << "UpdateWorker do power action, is reboot: " << reboot;
+
+    if (m_login1Manager->isValid()) {
+        QDBusPendingReply<InhibitorsList> reply = m_login1Manager->ListInhibitors();
+        reply.waitForFinished();
+        if (reply.isValid()) {
+            const auto &value = reply.value();
+            qInfo() << "Inhibitors size: " << value.size();
+            for (const Inhibit &inhibit : value) {
+                qInfo() << "who:" << inhibit.who;
+                qInfo() << "why:" << inhibit.why;
+                qInfo() << "pid:" << inhibit.pid;
+                qInfo() << "mode:" << inhibit.mode;
+            }
+        } else {
+            qWarning() << "Get inhibitors failed, error: " << reply.error().message();
+        }
+    } else {
+        qWarning() << "Login1 manager is invalid";
+    }
+
+    auto powerActionReply = reboot ? m_sessionManagerInter->RequestReboot() : m_sessionManagerInter->RequestShutdown();
+    powerActionReply.waitForFinished();
+    if (powerActionReply.isError()) {
+        qWarning() << "Do power action failed: " << powerActionReply.error().message();
+    } else {
+        qInfo() << "Do power action successfully ";
+    }
+}
+
 void UpdateWorker::enableShortcuts(bool enable)
 {
     qInfo() << "Enable shortcuts: " << enable;
@@ -362,3 +439,71 @@ void UpdateWorker::enableShortcuts(bool enable)
     });
 }
 
+/**
+ * @brief 同步调用的方式拉起服务
+ *
+ * @param interface 需要拉起的服务
+ * @return true service is valid
+ * @return false service is invalid
+ */
+bool UpdateWorker::syncStartService(DBusExtendedAbstractInterface *interface)
+{
+    const QString &service = interface->service();
+    DBusManager dbusManager("org.freedesktop.DBus", "/", QDBusConnection::systemBus());
+    QDBusReply<uint32_t> reply = dbusManager.call("StartServiceByName", service, quint32(0));
+    if (reply.isValid()) {
+        qInfo() << QString("Start %1 service result: ").arg(service) << reply.value();
+        return reply.value() == 1;
+    } else {
+        qWarning() << QString("Start %1 service failed, error: ").arg(service) << reply.error().message();
+        return false;
+    }
+}
+
+/**
+ * @brief 此函数用来在切换session后检查备份和更新的状态
+ * 避免用户切换到其他的tty再切换回来无法正确获取状态导致进度卡住
+ *
+ */
+void UpdateWorker::checkStatusAfterSessionActive()
+{
+    qInfo() << "Check installation status";
+    if (!m_managerInter->isValid() && m_distUpgradeJob) {
+        delete m_distUpgradeJob;
+        m_distUpgradeJob = nullptr;
+        syncStartService(m_managerInter);
+    }
+
+    if (m_managerInter->isValid()) {
+        onJobListChanged(m_managerInter->jobList());
+        if (m_distUpgradeJob) {
+            return;
+        }
+    }
+
+    qInfo() << "Check backup status";
+    if (m_abRecoveryInter->isValid() || syncStartService(m_abRecoveryInter) ) {
+        QDBusReply<bool> reply = m_abRecoveryInter->call("CanBackup");
+        if (!reply.isValid()) {
+            qWarning() << "Call `CanBackup` function failed, error: " << reply.error().message();
+            return;
+        }
+
+        if (m_abRecoveryInter->backingUp()) {
+            qInfo() << "Backing up";
+            return;
+        }
+
+        if (!m_abRecoveryInter->hasBackedUp()) {
+            qWarning() << "System can backup but do not has backed up";
+            UpdateModel::instance()->setUpdateError(UpdateModel::BackupFailedUnknownReason);
+            UpdateModel::instance()->setUpdateStatus(UpdateModel::BackupFailed);
+            return;
+        }
+
+        // 已经备份完成但是并没有安装则开始安装
+        if (UpdateModel::instance()->updateStatus() < UpdateModel::Installing) {
+            doDistUpgrade();
+        }
+    }
+}

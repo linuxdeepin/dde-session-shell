@@ -251,7 +251,7 @@ void UpdateCompleteWidget::showSuccessFrame()
         m_countDownTimer->setSingleShot(false);
         connect(m_countDownTimer, &QTimer::timeout, this, [this, setTipsText] {
             if (m_countDown <= 0) {
-                Q_EMIT UpdateWorker::instance()->requestDoPowerAction(UpdateModel::instance()->isReboot());
+                UpdateWorker::instance()->doPowerAction(UpdateModel::instance()->isReboot());
                 m_countDownTimer->stop();
                 return;
             }
@@ -296,7 +296,7 @@ void UpdateCompleteWidget::showErrorFrame(UpdateModel::UpdateError error)
     if (error >= UpdateModel::UpdateInterfaceError) {
         QTimer::singleShot(1000*60*10, this, [] {
             qInfo() << "User has not operated for a long time， do shut down action now";
-            Q_EMIT UpdateWorker::instance()->requestDoPowerAction(false);
+            UpdateWorker::instance()->doPowerAction(false);
         });
     }
 }
@@ -494,15 +494,6 @@ void UpdateWidget::initUi()
 void UpdateWidget::initConnections()
 {
     connect(UpdateWorker::instance(), &UpdateWorker::requestExitUpdating,this, &UpdateWidget::onExitUpdating);
-    connect(UpdateWorker::instance(), &UpdateWorker::requestDoPowerAction, this, [this] (bool isReboot) {
-        qInfo() << "UpdateWidget do power action, is reboot :" << isReboot;
-        setMouseCursorVisible(true);
-        if (m_sessionModel) {
-            const auto action = isReboot ?
-                SessionBaseModel::PowerAction::RequireRestart : SessionBaseModel::PowerAction::RequireShutdown;
-            Q_EMIT emit m_sessionModel->setPowerAction(action);
-        }
-    });
     connect(UpdateModel::instance(), &UpdateModel::distUpgradeProgressChanged, m_progressWidget, &UpdateProgressWidget::setValue);
     connect(UpdateModel::instance(), &UpdateModel::updateStatusChanged, this, &UpdateWidget::onUpdateStatusChanged);
     connect(m_updateCompleteWidget, &UpdateCompleteWidget::requestShowLogWidget, this, &UpdateWidget::showLogWidget);

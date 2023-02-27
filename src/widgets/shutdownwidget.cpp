@@ -50,7 +50,6 @@ ShutdownWidget::ShutdownWidget(QWidget *parent)
     initUI();
     initConnect();
 
-    DConfigHelper::instance()->bind(LASTORE_DCONFIG_NAME, LASTORE_DCONFIG_NAME, "", this, LASTORE_DAEMON_STATUS);
     onEnable("systemShutdown", enableState(GSettingWatcher::instance()->getStatus("systemShutdown")));
     onEnable("systemSuspend", enableState(GSettingWatcher::instance()->getStatus("systemSuspend")));
     onEnable("systemHibernate", enableState(GSettingWatcher::instance()->getStatus("systemHibernate")));

@@ -6,6 +6,7 @@
 #define UPDATECTRL_H
 
 #include "updatemodel.h"
+#include "dbuslogin1manager.h"
 
 #include <QtCore/QByteArray>
 #include <QtCore/QList>
@@ -23,12 +24,18 @@
 #include <com_deepin_lastore_jobmanager.h>
 #include <com_deepin_lastore_updater.h>
 #include <com_deepin_system_systempower.h>
+#include <com_deepin_sessionmanager.h>
+#include <org_freedesktop_login1_session_self.h>
+#include <org_freedesktop_dbus.h>
 
 using UpdateInter = com::deepin::lastore::Updater;
 using JobInter = com::deepin::lastore::Job;
 using ManagerInter = com::deepin::lastore::Manager;
 using RecoveryInter = com::deepin::ABRecovery;
 using PowerInter = com::deepin::system::Power;
+using SessionManagerInter = com::deepin::SessionManager;
+using Login1SessionSelf = org::freedesktop::login1::Session;
+using DBusManager = org::freedesktop::DBus;
 
 class UpdateWorker : public QObject
 {
@@ -49,9 +56,9 @@ public:
     void startUpdateProgress();
     bool checkPower();
     void enableShortcuts(bool enable);
+    void doPowerAction(bool reboot);
 
 Q_SIGNALS:
-    void requestDoPowerAction(bool isReboot);
     void requestExitUpdating();
 
 private:
@@ -59,18 +66,23 @@ private:
     void init();
     UpdateModel::UpdateError analyzeJobErrorMessage(QString jobDescription);
     void fixError();
+    void checkStatusAfterSessionActive();
+    bool syncStartService(DBusExtendedAbstractInterface *interface);
 
 private slots:
     void onJobListChanged(const QList<QDBusObjectPath> &jobs);
     void onDistUpgradeStatusChanged(const QString &status);
 
 private:
-    PowerInter *m_powerInter;           // 电源
-    ManagerInter *m_managerInter;       // 更新
-    RecoveryInter *m_abRecoveryInter;   // 备份
-    JobInter *m_distUpgradeJob;         // 更新job
-    JobInter *m_fixErrorJob;           // 修复错误job
-    bool m_fixErrorResult;              // 修复错误结果
+    PowerInter *m_powerInter;
+    ManagerInter *m_managerInter;
+    RecoveryInter *m_abRecoveryInter;
+    SessionManagerInter *m_sessionManagerInter;
+    DBusLogin1Manager *m_login1Manager;
+    Login1SessionSelf* m_login1SessionSelf;
+    JobInter *m_distUpgradeJob;     // 更新job
+    JobInter *m_fixErrorJob;        // 修复错误job
+    bool m_fixErrorResult;          // 修复错误结果
 };
 
 #endif // UPDATECTRL_H
