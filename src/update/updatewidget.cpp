@@ -149,9 +149,14 @@ void UpdateProgressWidget::setValue(double value)
     qInfo() << "UpdateProgressWidget::setValue: " << value
             << " begin progress: " << m_installBeginValue;
 
-    int iProgress = m_installBeginValue + static_cast<int>(value * (100 - m_installBeginValue));
-    // 不用在意精度
-    if (iProgress > 100 || iProgress < 0)
+    double tmpValue = value * (100 - m_installBeginValue);
+    // 在备份完成后,如果m_installBeginValue=50,那么value需要大于等于2进度条才会增加,等待时间过长,体验不好.
+    if (m_installBeginValue > 0 && tmpValue < 1 && tmpValue > 0)
+        tmpValue = 1.0;
+
+    int iProgress = m_installBeginValue + static_cast<int>(tmpValue);
+    // 进度条不能大于100，不能小于0，不能回退
+    if (iProgress > 100 || iProgress < 0 || iProgress <= m_progressBar->value())
         return;
 
     qInfo() << Q_FUNC_INFO << iProgress;
