@@ -266,6 +266,7 @@ void UpdateCompleteWidget::showSuccessFrame()
 void UpdateCompleteWidget::showErrorFrame(UpdateModel::UpdateError error)
 {
     qInfo() << "UpdateCompleteWidget::showErrorFrame: " << error;
+
     m_buttonSpacer->changeSize(0, 0);
     static const QMap<UpdateModel::UpdateError, QList<UpdateModel::UpdateAction>> ErrorActions = {
         {UpdateModel::CanNotBackup, {UpdateModel::ContinueUpdating, UpdateModel::CancelUpdating}},
@@ -275,7 +276,7 @@ void UpdateCompleteWidget::showErrorFrame(UpdateModel::UpdateError error)
         {UpdateModel::UpdateInterfaceError, {UpdateModel::Reboot, UpdateModel::ShutDown}},
         {UpdateModel::InstallNoSpace, {UpdateModel::Reboot, UpdateModel::ShutDown}},
         {UpdateModel::DependenciesBrokenError, {UpdateModel::Reboot, UpdateModel::ShutDown}},
-        {UpdateModel::DpkgInterrupted, {UpdateModel::Reboot, UpdateModel::ShutDown, UpdateModel::FixError}},
+        {UpdateModel::DpkgInterrupted, {UpdateModel::Reboot, UpdateModel::ShutDown}},
         {UpdateModel::UnKnown, {UpdateModel::Reboot, UpdateModel::ShutDown}}
     };
 
