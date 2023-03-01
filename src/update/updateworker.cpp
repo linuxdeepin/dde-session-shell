@@ -428,8 +428,13 @@ void UpdateWorker::doPowerAction(bool reboot)
 void UpdateWorker::enableShortcuts(bool enable)
 {
     qInfo() << "Enable shortcuts: " << enable;
-    QDBusInterface osdInterface("com.deepin.dde.osd", "/", "org.freedesktop.DBus.Properties");
-    QDBusPendingCall reply = osdInterface.asyncCall("Set", "com.deepin.dde.osd", "OSDEnabled", enable);
+    QDBusPendingCall reply = DDBusSender()
+        .service("com.deepin.dde.osd")
+        .path("/")
+        .interface("com.deepin.dde.osd")
+        .property("OSDEnabled")
+        .set(enable);
+
     QDBusPendingCallWatcher *watcher = new QDBusPendingCallWatcher(reply, this);
     connect(watcher, &QDBusPendingCallWatcher::finished, this, [reply, watcher] {
         watcher->deleteLater();
