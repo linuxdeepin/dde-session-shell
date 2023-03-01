@@ -750,6 +750,7 @@ void GreeterWorker::onAuthFinished()
     qInfo() << "GreeterWorker::onAuthFinished";
     if (m_greeter->inAuthentication()) {
         m_greeter->respond(m_authFramework->AuthSessionPath(m_account) + QString(";") + m_password);
+        m_model->currentUser()->updatePasswordExpiredInfo();
         if (m_model->currentUser()->expiredState() == User::ExpiredAlready) {
             changePasswd();
         }
