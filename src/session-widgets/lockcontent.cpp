@@ -332,7 +332,12 @@ void LockContent::pushUserFrame()
         m_controlWidget->setUserSwitchEnable(m_isUserSwitchVisible);
     }
 
-    showDefaultFrame();
+   showDefaultFrame();
+   
+   // fix: 解决用户界面多账户区域无焦点问题
+   // showDefaultFrame() -> hideStackedWidgets() -> 会将焦点置为空
+   // 导致默认用户无选中状态，多账户区域无键盘事件
+   setFocus();
 }
 
 void LockContent::pushConfirmFrame()
