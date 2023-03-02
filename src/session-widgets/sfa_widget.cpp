@@ -904,8 +904,9 @@ void SFAWidget::updateSpaceItem()
     // Note that if changeSize() is called after the spacer item has been added to a layout,
     // it is necessary to invalidate the layout in order for the spacer item's new size to take effect.
     m_mainLayout->invalidate();
-
-    emit updateParentLayout();
+    // 不是锁屏界面不重绘，会导致界面下移
+    if (isVisible())
+        emit updateParentLayout();
 }
 
 void SFAWidget::updateFocus()
