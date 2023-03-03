@@ -385,6 +385,7 @@ bool SessionBaseModel::updateCurrentUser(const std::shared_ptr<User> user)
     qDebug() << "SessionBaseModel::updateCurrentUser:" << user->name();
 
     if (m_currentUser && *m_currentUser == *user) {
+        m_currentUser->updateUserInfo();
         return false;
     }
 

@@ -245,7 +245,6 @@ void NativeUser::initConnections()
     connect(m_userInter, &UserInter::NoPasswdLoginChanged, this, &NativeUser::updateNoPasswordLogin);
     connect(m_userInter, &UserInter::PasswordHintChanged, this, &NativeUser::updatePasswordHint);
     connect(m_userInter, &UserInter::PasswordStatusChanged, this, &NativeUser::updatePasswordState);
-    connect(m_userInter, &UserInter::PasswordHintChanged, this, &NativeUser::updatePasswordHint);
     connect(m_userInter, &UserInter::ShortDateFormatChanged, this, &NativeUser::updateShortDateFormat);
     connect(m_userInter, &UserInter::ShortTimeFormatChanged, this, &NativeUser::updateShortTimeFormat);
     connect(m_userInter, &UserInter::WeekdayFormatChanged, this, &NativeUser::updateWeekdayFormat);
@@ -404,6 +403,10 @@ void NativeUser::updateFullName(const QString &fullName)
 void NativeUser::updateGreeterBackground(const QString &path)
 {
     const QString pathTmp = toLocalFile(path);
+    if (pathTmp.isEmpty() || !QFile(pathTmp).exists() || !QFile(pathTmp).size() || !checkPictureCanRead(pathTmp)) {
+        qWarning() << "Path is invalid: " << pathTmp;
+        return;
+    }
     if (pathTmp == m_greeterBackground) {
         return;
     }
@@ -506,6 +509,34 @@ void NativeUser::updatePasswordExpiredInfo()
     qInfo() << "User expired state: " << m_expiredState << ", expired day left: " << m_expiredDayLeft;
 
     emit passwordExpiredInfoChanged();
+}
+
+/**
+ * @brief 更新账户的所有信息
+ */
+void NativeUser::updateUserInfo()
+{
+    qDebug() << "update user info";
+    if (!m_userInter) {
+        qWarning() << "userInter is null";
+        return;
+    }
+    updateAutomaticLogin(m_userInter->automaticLogin());
+    updateNoPasswordLogin(m_userInter->noPasswdLogin());
+    updatePasswordState(m_userInter->passwordStatus());
+    updateUse24HourFormat(m_userInter->use24HourFormat());
+    updatePasswordExpiredInfo();
+    updateShortDateFormat(m_userInter->shortDateFormat());
+    updateShortTimeFormat(m_userInter->shortTimeFormat());
+    updateWeekdayFormat(m_userInter->weekdayFormat());
+    updateAvatar(m_userInter->iconFile());
+    updateFullName(m_userInter->fullName());
+    updateGreeterBackground(m_userInter->greeterBackground());
+    updateKeyboardLayout(m_userInter->layout());
+    updateLocale(m_userInter->locale());
+    updatePasswordHint(m_userInter->passwordHint());
+    updateKeyboardLayoutList(m_userInter->historyLayout());
+    updateAccountType();
 }
 
 void NativeUser::updateAccountType()
