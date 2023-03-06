@@ -105,6 +105,7 @@ UpdateProgressWidget::UpdateProgressWidget(QWidget *parent)
     : QFrame(parent)
     , m_logo(new QLabel(this))
     , m_tip(new QLabel(this))
+    , m_waitingView(new DPictureSequenceView(this))
     , m_progressBar(new DProgressBar(this))
     , m_progressText(new QLabel(this))
     , m_installBeginValue(0)
@@ -115,7 +116,24 @@ UpdateProgressWidget::UpdateProgressWidget(QWidget *parent)
     auto palette = m_tip->palette();
     palette.setColor(QPalette::WindowText, Qt::white);
     m_tip->setPalette(palette);
+    m_tip->setText(tr("Do not force power off or power off when updating, otherwise the system will be damaged")); // TODO 翻译
     DFontSizeManager::instance()->bind(m_tip, DFontSizeManager::T6);
+
+    m_waitingView->setAccessibleName("WaitingUpdateSequenceView");
+    m_waitingView->setFixedSize(20 * qApp->devicePixelRatio(), 20 * qApp->devicePixelRatio());
+    m_waitingView->setSingleShot(false);
+    QStringList pics;
+    for (int i = 0; i < 40; ++i)
+        pics << QString(":img/update/waiting_update/waiting_update_%1.png").arg(QString::number(i));
+    m_waitingView->setPictureSequence(pics, true);
+
+    QHBoxLayout *tipsLayout = new QHBoxLayout;
+    tipsLayout->setSpacing(0);
+    tipsLayout->addStretch();
+    tipsLayout->addWidget(m_tip);
+    tipsLayout->addSpacing(5);
+    tipsLayout->addWidget(m_waitingView);
+    tipsLayout->addStretch();
 
     m_progressBar->setFixedWidth(500);
     m_progressBar->setFixedHeight(8);
@@ -140,8 +158,18 @@ UpdateProgressWidget::UpdateProgressWidget(QWidget *parent)
     pLayout->addSpacing(100);
     pLayout->addLayout(pProgressLayout, 0);
     pLayout->addSpacing(10);
-    pLayout->addWidget(m_tip, 0, Qt::AlignCenter);
+    pLayout->addLayout(tipsLayout, 0);
     pLayout->addStretch();
+}
+
+bool UpdateProgressWidget::event(QEvent *e)
+{
+    if (e->type() == QEvent::Show)
+        m_waitingView->play();
+    else if (e->type() == QEvent::Hide)
+        m_waitingView->stop();
+
+    return false;
 }
 
 void UpdateProgressWidget::setValue(double value)
@@ -162,11 +190,6 @@ void UpdateProgressWidget::setValue(double value)
     qInfo() << Q_FUNC_INFO << iProgress;
     m_progressBar->setValue(iProgress);
     m_progressText->setText(QString::number(iProgress) + "%");
-}
-
-void UpdateProgressWidget::setTip(const QString &tip)
-{
-    m_tip->setText(tip);
 }
 
 void UpdateProgressWidget::setInstallBeginValue(int value)
@@ -428,7 +451,6 @@ void UpdateWidget::onUpdateStatusChanged(UpdateModel::UpdateStatus status)
         case UpdateModel::UpdateStatus::BackingUp:
             m_stackedWidget->setCurrentWidget(m_progressWidget);
             m_progressWidget->setInstallBeginValue(BACKUP_BEGIN_PROGRESS);
-            m_progressWidget->setTip(tr("Updating, please do not unplug the power supply!"));   // TODO 翻译
             break;
         case UpdateModel::UpdateStatus::BackupSuccess:
             m_progressWidget->setInstallBeginValue(BACKUP_END_PROGRESS);
@@ -436,7 +458,6 @@ void UpdateWidget::onUpdateStatusChanged(UpdateModel::UpdateStatus status)
         case UpdateModel::UpdateStatus::Installing:
             setMouseCursorVisible(false);
             m_stackedWidget->setCurrentWidget(m_progressWidget);
-            m_progressWidget->setTip(tr("Updating, please do not unplug the power supply!"));   // TODO 翻译
             break;
         case UpdateModel::UpdateStatus::InstallSuccess:
             // 升级成功

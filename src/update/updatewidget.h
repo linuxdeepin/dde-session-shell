@@ -26,6 +26,7 @@
 #include <DProgressBar>
 #include <DPushButton>
 #include <DCommandLinkButton>
+#include <dpicturesequenceview.h>
 
 class UpdateLogWidget: public QFrame
 {
@@ -62,12 +63,15 @@ class UpdateProgressWidget : public QFrame
 public:
     explicit UpdateProgressWidget(QWidget *parent = nullptr);
     void setValue(double value);
-    void setTip(const QString &tip);
     void setInstallBeginValue(int value);
+
+protected:
+    bool event(QEvent *e) override;
 
 private:
     QLabel *m_logo;
     QLabel *m_tip;
+    Dtk::Widget::DPictureSequenceView  *m_waitingView;
     Dtk::Widget::DProgressBar *m_progressBar;
     QLabel *m_progressText;
     int m_installBeginValue;
