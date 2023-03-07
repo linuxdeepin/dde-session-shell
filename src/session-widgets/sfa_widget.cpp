@@ -213,54 +213,31 @@ void SFAWidget::setAuthType(const int type)
         }
     }
 
-    const int count = m_authButtons.values().size();
-    if (count > 0) {
+    m_chooseAuthButtonBox->setVisible(m_authButtons.count() > 1);
+    if (!m_authButtons.isEmpty()) {
         m_chooseAuthButtonBox->setButtonList(m_authButtons.values(), true);
         QMap<int, DButtonBoxButton *>::const_iterator iter = m_authButtons.constBegin();
         while (iter != m_authButtons.constEnd()) {
             m_chooseAuthButtonBox->setId(iter.value(), iter.key());
             ++iter;
         }
-        if (count > 1) {
-            m_chooseAuthButtonBox->show();
-            if (m_customAuth && (authType & m_currentAuthType) && m_currentAuthType != AT_All) {
-                if (m_chooseAuthButtonBox->checkedId() == m_currentAuthType) {
-                    if (m_chooseAuthButtonBox->button(m_currentAuthType)) {
-                        emit m_chooseAuthButtonBox->button(m_currentAuthType)->toggled(true);
-                    } else {
-                        m_authButtons.value(m_currentAuthType)->setChecked(true);
-                    }
-                } else {
-                    m_authButtons.value(m_currentAuthType)->setChecked(true);
-                }
-            } else if (authType & m_user->lastAuthType()) {
-                if (m_chooseAuthButtonBox->checkedId() == m_user->lastAuthType()) {
-                    emit m_chooseAuthButtonBox->button(m_user->lastAuthType())->toggled(true);
-                } else {
-                    m_chooseAuthButtonBox->button(m_user->lastAuthType())->setChecked(true);
-                }
-            } else {
-                if (m_chooseAuthButtonBox->checkedId() == m_authButtons.firstKey()) {
-                    emit m_chooseAuthButtonBox->button(m_authButtons.firstKey())->toggled(true);
-                } else {
-                    m_chooseAuthButtonBox->button(m_authButtons.firstKey())->setChecked(true);
-                }
-            }
+
+        if (m_authButtons.count() == 1) {
+            chooseAuthType(m_authButtons.firstKey());
         } else {
-            if (m_chooseAuthButtonBox->checkedId() == m_authButtons.firstKey()) {
-                emit m_chooseAuthButtonBox->button(m_authButtons.firstKey())->toggled(true);
+            if (m_customAuth && (authType & m_currentAuthType) && m_currentAuthType != AT_All) {
+                chooseAuthType(m_currentAuthType);
+            } else if (authType & m_user->lastAuthType()) {
+                chooseAuthType(m_user->lastAuthType());
             } else {
-                m_chooseAuthButtonBox->button(m_authButtons.firstKey())->setChecked(true);
+                chooseAuthType(m_authButtons.firstKey());
             }
-            m_chooseAuthButtonBox->hide();
         }
-    } else {
-        m_chooseAuthButtonBox->hide();
     }
 
     if (m_customAuth && !m_customAuth->pluginConfig().showSwitchButton) {
         m_chooseAuthButtonBox->button(AT_Custom)->hide();
-        if (count <= 2)
+        if (m_authButtons.count() <= 2)
             m_chooseAuthButtonBox->hide();
     }
 
@@ -1067,4 +1044,13 @@ void SFAWidget::onActiveAuth(int authType)
     }
 
     emit requestStartAuthentication(m_model->currentUser()->name(), authType);
+}
+
+void SFAWidget::chooseAuthType(int authType)
+{
+    if (m_chooseAuthButtonBox->checkedId() == authType) {
+        emit m_chooseAuthButtonBox->button(authType)->toggled(true);
+    } else {
+        m_chooseAuthButtonBox->button(authType)->setChecked(true);
+    }
 }

@@ -71,6 +71,7 @@ private:
     void updateFocus();
     void initAccount();
     bool useCustomAuth() const;
+    void chooseAuthType(int authType);
 
 private:
     QVBoxLayout *m_mainLayout;
