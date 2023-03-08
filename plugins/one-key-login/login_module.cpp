@@ -325,9 +325,9 @@ QString LoginModule::message(const QString &message)
         QJsonObject retDataObj;
 
         // 满足以下条件启用插件：
-        // 1. 在登录界面且未曾调用过验证接口，一键登录只在登录界面启动的时候认证一下。
-        // 2. 在锁屏界面且收到了唤醒信号
-        // 3. 验证通过(登录时根据验证结果去跳转用户)
+        // 1. 在登录界面时，一键登录仅在启动或待机休眠唤醒的时候认证一下。
+        // 2. 在锁屏界面，休眠或待机唤醒后。
+        // 3. 上次A账户验证通过(登录时根据验证结果去跳转对应的用户)
         const bool enable = (m_appType == AppType::Login && !m_loginAuthenticated) || (m_appType == AppType::Lock && m_acceptSleepSignal) || (m_appType == AppType::Login && m_lastAuthResult.result == AuthResult::Success);
         qInfo() << "Enable plugin: " << enable
                 << ", authenticated: " << m_loginAuthenticated
@@ -428,6 +428,7 @@ void LoginModule::slotPrepareForSleep(bool active)
 
     if (isSessionAvtive) {
         m_isAcceptFingerprintSignal = false;
+        m_loginAuthenticated = false;
         sendAuthTypeToSession(AuthType::AT_Custom);
         // 等待切换到插件认证完成后再发起多用户认证
         QTimer::singleShot(300, this, [this] {
