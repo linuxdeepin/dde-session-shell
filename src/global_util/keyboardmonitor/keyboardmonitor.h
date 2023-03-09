@@ -17,13 +17,13 @@ class KeyboardMonitor : public QThread
 public:
     static KeyboardMonitor *instance();
 
-    bool isCapslockOn();
-    bool isNumlockOn();
-    bool setNumlockStatus(const bool &on);
+    bool isCapsLockOn();
+    bool isNumLockOn();
+    bool setNumLockStatus(const bool &on);
 
 signals:
-    void capslockStatusChanged(bool on);
-    void numlockStatusChanged(bool on);
+    void capsLockStatusChanged(bool on);
+    void numLockStatusChanged(bool on);
     void initialized();
 
 protected:

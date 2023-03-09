@@ -79,7 +79,7 @@ void AuthUKey::initConnections()
         m_lineEdit->hideAlertMessage();
         emit lineEditTextChanged(text);
     });
-    connect(m_lineEdit, &DLineEditEx::returnPressed, this, [ this ] {
+    connect(m_lineEdit, &DLineEditEx::returnPressed, this, [this] {
         if (!m_lineEdit->lineEdit()->isReadOnly())
             emit requestAuthenticate();
     });

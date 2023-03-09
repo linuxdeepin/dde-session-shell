@@ -38,17 +38,17 @@ KeyboardPlatformWayland::~KeyboardPlatformWayland()
     m_connectionThreadObject->deleteLater();
  }
 
-bool KeyboardPlatformWayland::isCapslockOn()
+bool KeyboardPlatformWayland::isCapsLockOn()
 {
     return m_capsLock;
 }
 
-bool KeyboardPlatformWayland::isNumlockOn()
+bool KeyboardPlatformWayland::isNumLockOn()
 {
     return m_numLockOn;
 }
 
-bool KeyboardPlatformWayland::setNumlockStatus(const bool &on)
+bool KeyboardPlatformWayland::setNumLockStatus(const bool &on)
 {
     qDebug() << "Set num lock state: " << on << ", numlockon: " << m_numLockOn;
     if (m_fakeInput && m_fakeInput->isValid() && on != m_numLockOn) {
@@ -84,16 +84,16 @@ void KeyboardPlatformWayland::setupRegistry(Registry *registry)
             // 先断开连接在重新连接，防止多次创建之后，导致重复连接
             disconnect(m_ddeKeyboard, &DDEKeyboard::keyChanged, this, nullptr);
             m_ddeKeyboard = m_ddeSeat->createDDEKeyboard(this);
-            connect(m_ddeKeyboard, &DDEKeyboard::keyChanged, this, [this] (quint32 key, KWayland::Client::DDEKeyboard::KeyState state, quint32 time) {
+            connect(m_ddeKeyboard, &DDEKeyboard::keyChanged, this, [this](quint32 key, KWayland::Client::DDEKeyboard::KeyState state, quint32 time) {
                 if (state == KWayland::Client::DDEKeyboard::KeyState::Pressed) {
                     if (key == KEY_CAPSLOCK) {
                         m_capsLock = !m_capsLock;
                         qDebug() << "CapsLock state: " << m_capsLock;
-                        Q_EMIT capslockStatusChanged(m_capsLock);
+                        Q_EMIT capsLockStatusChanged(m_capsLock);
                     } else if (key == KEY_NUMLOCK) {
                         m_numLockOn = !m_numLockOn;
                         qDebug() << "NumLock state: " << m_numLockOn;
-                        Q_EMIT numlockStatusChanged(m_numLockOn);
+                        Q_EMIT numLockStatusChanged(m_numLockOn);
                     }
                 }
             });

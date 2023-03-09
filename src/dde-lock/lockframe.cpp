@@ -62,7 +62,7 @@ LockFrame::LockFrame(SessionBaseModel *const model, QWidget *parent)
     });
 
     //程序启动1秒后才响应电源按键信号，避免第一次待机唤醒启动锁屏程序后响应信号，将界面切换到关机选项
-    QTimer::singleShot(1000, this, [ = ] {
+    QTimer::singleShot(1000, this, [this] {
         m_enablePowerOffKey = true;
     });
 
@@ -236,7 +236,7 @@ void LockFrame::prepareForSleep(bool isSleep)
     // 或者将延时改的更长
     //唤醒时间改为3秒后才响应电源按键信号，避免待机唤醒时响应信号，将界面切换到关机选项
     if (!isSleep) {
-        QTimer::singleShot(3000, this, [ = ] {
+        QTimer::singleShot(3000, this, [this] {
             m_enablePowerOffKey = true;
         });
     }

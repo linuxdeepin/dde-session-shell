@@ -60,11 +60,6 @@ void RoundItemButton::initConnect()
     connect(this, &RoundItemButton::stateChanged, this, static_cast<void (RoundItemButton::*)()>(&RoundItemButton::update));
     connect(this, &RoundItemButton::iconChanged, this, &RoundItemButton::updateIcon);
     connect(this, &RoundItemButton::toggled, this, &RoundItemButton::setChecked);
-    //    connect(signalManager, &SignalManager::setButtonHover, [this] (const QString &text) {
-    //        if (m_itemText->text() != text && !isChecked() && !isDisabled()) {
-    //            updateState(Normal);
-    //        }
-    //    });
 }
 
 void RoundItemButton::initUI()

@@ -61,6 +61,7 @@ LockContent* LockContent::instance()
 void LockContent::init(SessionBaseModel *model)
 {
     if (m_initialized) {
+        qWarning() << "Has been initialized, don't do it again";
         return;
     }
     m_initialized = true;
@@ -77,9 +78,9 @@ void LockContent::init(SessionBaseModel *model)
         setMPRISEnable(model->currentModeState() != SessionBaseModel::ModeStatus::ShutDownMode);
     }
 
-    QTimer::singleShot(0, this, [=] {
-        onCurrentUserChanged(model->currentUser());
-        onUserListChanged(model->isServerModel() ? model->loginedUserList() : model->userList());
+    QTimer::singleShot(0, this, [this] {
+        onCurrentUserChanged(m_model->currentUser());
+        onUserListChanged(m_model->isServerModel() ? m_model->loginedUserList() : m_model->userList());
     });
 
     // 创建套接字连接，用于与重置密码弹窗通讯
@@ -91,9 +92,7 @@ void LockContent::init(SessionBaseModel *model)
     // 将之前的server删除，如果是旧文件，即使监听成功，客户端也无法连接。
     QLocalServer::removeServer(serverName);
     if (!m_localServer->listen(serverName)) { // 监听特定的连接
-        qWarning() << "listen failed!" << m_localServer->errorString();
-    } else {
-        qDebug() << "listen success!";
+        qWarning() << "Listen local server failed!" << m_localServer->errorString();
     }
 }
 
@@ -129,11 +128,11 @@ void LockContent::initUI()
 void LockContent::initConnections()
 {
     connect(m_model, &SessionBaseModel::currentUserChanged, this, &LockContent::onCurrentUserChanged);
-    connect(m_controlWidget, &ControlWidget::requestSwitchUser, this, [ = ] {
+    connect(m_controlWidget, &ControlWidget::requestSwitchUser, this, [this] {
         m_model->setCurrentModeState(SessionBaseModel::ModeStatus::UserMode);
         emit requestEndAuthentication(m_model->currentUser()->name(), AuthCommon::AT_All);
     });
-    connect(m_controlWidget, &ControlWidget::requestShutdown, this, [ = ] {
+    connect(m_controlWidget, &ControlWidget::requestShutdown, this, [this] {
         m_model->setCurrentModeState(SessionBaseModel::ModeStatus::PowerMode);
     });
     connect(m_controlWidget, &ControlWidget::requestSwitchVirtualKB, this, &LockContent::toggleVirtualKB);
@@ -160,7 +159,7 @@ void LockContent::initConnections()
     connect(m_model, &SessionBaseModel::hasVirtualKBChanged, this, initVirtualKB, Qt::QueuedConnection);
     connect(m_model, &SessionBaseModel::userListChanged, this, &LockContent::onUserListChanged);
     connect(m_model, &SessionBaseModel::userListLoginedChanged, this, &LockContent::onUserListChanged);
-    connect(m_model, &SessionBaseModel::authFinished, this, [ this ] (bool successful) {
+    connect(m_model, &SessionBaseModel::authFinished, this, [this](bool successful) {
         if (successful)
             setVisible(false);
         restoreMode();
@@ -216,7 +215,6 @@ void LockContent::initMFAWidget()
  */
 void LockContent::initSFAWidget()
 {
-    qDebug() << "LockContent::initSFAWidget:" << m_sfaWidget << m_mfaWidget;
     if (m_mfaWidget) {
         m_mfaWidget->hide();
         delete m_mfaWidget;
@@ -244,7 +242,6 @@ void LockContent::initSFAWidget()
 // init full managed plugin widget
 void LockContent::initFMAWidget()
 {
-    qDebug() << "LockContent::initFMAWidget" << m_fmaWidget;
     if (m_fmaWidget) {
         m_fmaWidget->hide();
         delete m_fmaWidget;
@@ -333,7 +330,7 @@ void LockContent::pushUserFrame()
     }
 
    showDefaultFrame();
-   
+
    // fix: 解决用户界面多账户区域无焦点问题
    // showDefaultFrame() -> hideStackedWidgets() -> 会将焦点置为空
    // 导致默认用户无选中状态，多账户区域无键盘事件
@@ -410,7 +407,7 @@ void LockContent::onDisConnect()
 
 void LockContent::onStatusChanged(SessionBaseModel::ModeStatus status)
 {
-    qInfo() << Q_FUNC_INFO << status << ", current status: " << m_currentModeStatus;
+    qInfo() << "Incoming status:" << status << ", current status:" << m_currentModeStatus;
     refreshLayout(status);
 
     // select plugin config
@@ -495,7 +492,7 @@ void LockContent::hideEvent(QHideEvent *event)
 
 void LockContent::resizeEvent(QResizeEvent *event)
 {
-    QTimer::singleShot(0, this, [ = ] {
+    QTimer::singleShot(0, this, [this] {
         if (m_virtualKB && m_virtualKB->isVisible()) {
             updateVirtualKBPosition();
         }
@@ -540,7 +537,7 @@ void LockContent::toggleVirtualKB()
 {
     if (!m_virtualKB) {
         VirtualKBInstance::Instance();
-        QTimer::singleShot(500, this, [ = ] {
+        QTimer::singleShot(500, this, [this] {
             m_virtualKB = VirtualKBInstance::Instance().virtualKBWidget();
             qDebug() << "init virtualKB over." << m_virtualKB;
             toggleVirtualKB();
@@ -721,17 +718,14 @@ void LockContent::currentWorkspaceChanged()
 {
     QDBusPendingCall call = m_wmInter->GetCurrentWorkspaceBackgroundForMonitor(QGuiApplication::primaryScreen()->name());
     QDBusPendingCallWatcher *watcher = new QDBusPendingCallWatcher(call, this);
-    connect(watcher, &QDBusPendingCallWatcher::finished, [ = ] {
-        if (!call.isError())
-        {
+    connect(watcher, &QDBusPendingCallWatcher::finished, [=] {
+        if (!call.isError()) {
             QDBusReply<QString> reply = call.reply();
             updateWallpaper(reply.value());
-        } else
-        {
+        } else {
             qWarning() << "get current workspace background error: " << call.error().message();
             updateWallpaper("/usr/share/backgrounds/deepin/desktop.jpg");
         }
-
         watcher->deleteLater();
     });
 }
@@ -790,7 +784,7 @@ void LockContent::keyPressEvent(QKeyEvent *event)
 void LockContent::showUserList()
 {
     m_model->setCurrentModeState(SessionBaseModel::ModeStatus::UserMode);
-    QTimer::singleShot(10, this, [ = ] {
+    QTimer::singleShot(10, this, [this] {
         m_model->setVisible(true);
     });
 }

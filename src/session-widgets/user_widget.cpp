@@ -161,7 +161,6 @@ void UserWidget::setAvatar(const QString &avatar)
  */
 void UserWidget::updateUserNameLabel()
 {
-    qInfo() << Q_FUNC_INFO;
     const bool showUserName = DConfigHelper::instance()->getConfig(SHOW_USER_NAME, false).toBool();
     const QString &name = showUserName ? m_user->name() : m_user->displayName();
     int nameWidth = m_displayNameLabel->fontMetrics().boundingRect(name).width();

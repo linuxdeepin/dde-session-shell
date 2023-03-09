@@ -63,7 +63,7 @@ private:
     static void updatePixmap();
     bool contains(int type);
     void tryActiveWindow(int count = 9);
-    static void updateCurrentFrame(FullScreenBackground *frame, bool showContent = true);
+    static void updateCurrentFrame(FullScreenBackground *frame);
 
 private:
     static QString backgroundPath;                             // 高清背景图片路径

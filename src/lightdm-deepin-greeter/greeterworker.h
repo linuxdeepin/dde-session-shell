@@ -46,7 +46,7 @@ signals:
 public slots:
     /* New authentication framework */
     void createAuthentication(const QString &account);
-    void destoryAuthentication(const QString &account);
+    void destroyAuthentication(const QString &account);
     void startAuthentication(const QString &account, const int authType);
     void endAuthentication(const QString &account, const int authType);
     void sendTokenToAuth(const QString &account, const int authType, const QString &token);
@@ -73,7 +73,7 @@ private:
     void showPrompt(const QString &text, const QLightDM::Greeter::PromptType type);
     void showMessage(const QString &text, const QLightDM::Greeter::MessageType type);
     void authenticationComplete();
-    void saveNumlockState(std::shared_ptr<User> user, bool on);
+    void saveNumLockState(std::shared_ptr<User> user, bool on);
     int getNumLockState(const QString &userName);
     void recoveryUserKBState(std::shared_ptr<User> user);
     void startGreeterAuth(const QString &account = QString());

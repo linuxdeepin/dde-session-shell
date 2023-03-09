@@ -44,7 +44,7 @@ void LoginContent::init(SessionBaseModel *model)
 
     connect(m_sessionFrame, &SessionWidget::notifyHideSessionFrame, this, &LockContent::restoreMode);
     connect(m_sessionFrame, &SessionWidget::sessionChanged, this, &LockContent::restoreMode);
-    connect(m_controlWidget, &ControlWidget::requestSwitchSession, this, [ = ] {
+    connect(m_controlWidget, &ControlWidget::requestSwitchSession, this, [this] {
         m_model->setCurrentModeState(SessionBaseModel::ModeStatus::SessionMode);
     });
     connect(m_model, &SessionBaseModel::onSessionKeyChanged, m_controlWidget, &ControlWidget::chooseToSession);

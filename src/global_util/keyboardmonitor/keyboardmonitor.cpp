@@ -12,7 +12,7 @@ KeyboardMonitor::KeyboardMonitor()
     , m_keyBoardPlatform(nullptr)
 {
     if (DGuiApplicationHelper::isXWindowPlatform()) {
-        m_keyBoardPlatform = new KeyboardPlantformX11();
+        m_keyBoardPlatform = new KeyboardPlatformX11();
     } else {
 #ifdef USE_DEEPIN_WAYLAND
         m_keyBoardPlatform = new KeyboardPlatformWayland();
@@ -20,8 +20,8 @@ KeyboardMonitor::KeyboardMonitor()
     }
 
     if (m_keyBoardPlatform) {
-        connect(m_keyBoardPlatform, &KeyBoardPlatform::capslockStatusChanged, this, &KeyboardMonitor::capslockStatusChanged);
-        connect(m_keyBoardPlatform, &KeyBoardPlatform::numlockStatusChanged, this, &KeyboardMonitor::numlockStatusChanged);
+        connect(m_keyBoardPlatform, &KeyBoardPlatform::capsLockStatusChanged, this, &KeyboardMonitor::capsLockStatusChanged);
+        connect(m_keyBoardPlatform, &KeyBoardPlatform::numLockStatusChanged, this, &KeyboardMonitor::numLockStatusChanged);
         connect(m_keyBoardPlatform, &KeyBoardPlatform::initialized, this, &KeyboardMonitor::initialized);
     }
 }
@@ -37,28 +37,28 @@ KeyboardMonitor *KeyboardMonitor::instance()
     return KeyboardMonitorInstance;
 }
 
-bool KeyboardMonitor::isCapslockOn()
+bool KeyboardMonitor::isCapsLockOn()
 {
     if (!m_keyBoardPlatform)
         return false;
 
-    return m_keyBoardPlatform->isCapslockOn();
+    return m_keyBoardPlatform->isCapsLockOn();
 }
 
-bool KeyboardMonitor::isNumlockOn()
+bool KeyboardMonitor::isNumLockOn()
 {
     if (!m_keyBoardPlatform)
         return false;
 
-    return m_keyBoardPlatform->isNumlockOn();
+    return m_keyBoardPlatform->isNumLockOn();
 }
 
-bool KeyboardMonitor::setNumlockStatus(const bool &on)
+bool KeyboardMonitor::setNumLockStatus(const bool &on)
 {
     if (!m_keyBoardPlatform)
         return false;
 
-    return m_keyBoardPlatform->setNumlockStatus(on);
+    return m_keyBoardPlatform->setNumLockStatus(on);
 }
 
 void KeyboardMonitor::run()

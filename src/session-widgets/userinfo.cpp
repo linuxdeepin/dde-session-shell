@@ -258,15 +258,10 @@ void NativeUser::initConnections()
 
 void NativeUser::initData()
 {
-    qInfo() << "User name: " << m_userInter->userName();
     m_isAutomaticLogin = m_userInter->automaticLogin();
     m_isNoPasswordLogin = m_userInter->noPasswdLogin();
-    qInfo() << "Is no password login: " << m_isNoPasswordLogin
-            << ", is auto login: " << m_isAutomaticLogin;
-
     m_isPasswordValid = (m_userInter->passwordStatus() == "P");
     m_isUse24HourFormat = m_userInter->use24HourFormat();
-
     m_expiredState = m_userInter->PasswordExpiredInfo(m_expiredDayLeft).value();
     m_shortDateFormat = m_userInter->shortDateFormat();
     m_shortTimeFormat = m_userInter->shortTimeFormat();
@@ -288,8 +283,15 @@ void NativeUser::initData()
     m_desktopBackgrounds = m_userInter->desktopBackgrounds();
     m_keyboardLayoutList = m_userInter->historyLayout();
     m_uid = m_userInter->uid().toUInt();
-    qInfo() << "accountType: " << m_userInter->accountType();
     m_accountType = m_userInter->accountType();
+
+    qInfo() << "User name:" << m_userInter->userName()
+            << " Is no password login:" << m_isNoPasswordLogin
+            << " Is auto login:" << m_isAutomaticLogin
+            << " Is password valid:" << m_isPasswordValid
+            << " Password expired state:" << m_expiredState
+            << " Locale:" << m_locale
+            << " AccountType:" << m_userInter->accountType();
 }
 
 /**

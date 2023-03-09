@@ -34,7 +34,7 @@ void UserButton::initConnect()
 #endif
     connect(m_userAvatar, &UserAvatar::clicked, this, &UserButton::click);
     connect(m_user.get(), &User::displayNameChanged, m_userNameLabel, &QLabel::setText);
-    connect(m_user.get(), &User::avatarChanged, this, [=] (const QString avatar) {
+    connect(m_user.get(), &User::avatarChanged, this, [this](const QString &avatar) {
         m_userAvatar->setIcon(avatar);
     });
     connect(m_user.get(), &User::loginStateChanged, m_checkedMark, &QLabel::setVisible);

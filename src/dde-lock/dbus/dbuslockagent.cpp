@@ -85,6 +85,8 @@ void DBusLockAgent::ShowUserList()
  */
 bool DBusLockAgent::isUpdating() const
 {
-    qInfo() << "DBusLockAgent::isUpdating, current content type: " << m_model->currentContentType();
-    return m_model->currentContentType() == SessionBaseModel::UpdateContent;
+    const bool updating = m_model->currentContentType() == SessionBaseModel::UpdateContent;
+    qInfo() << "Is updating: " << updating;
+
+    return updating;
 }

@@ -44,7 +44,6 @@ void CenterTopWidget::initUi()
     // 设置字体大小
     bool ok;
     int fontSize = DConfigHelper::instance()->getConfig(TOP_TIP_TEXT_FONT, 5).toInt(&ok);
-    qInfo() << "Font size: " << fontSize;
     if (!ok || fontSize < 0 || fontSize > 9) fontSize = DFontSizeManager::T6;
     DFontSizeManager::instance()->bind(m_topTip, static_cast<DFontSizeManager::SizeType>(fontSize));
 

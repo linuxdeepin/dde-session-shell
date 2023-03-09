@@ -67,37 +67,37 @@ ShutdownWidget::~ShutdownWidget()
 
 void ShutdownWidget::initConnect()
 {
-    connect(m_requireRestartButton, &RoundItemButton::clicked, this, [ = ] {
+    connect(m_requireRestartButton, &RoundItemButton::clicked, this, [this] {
         m_currentSelectedBtn = m_requireRestartButton;
         onRequirePowerAction(SessionBaseModel::PowerAction::RequireRestart, false);
     });
-    connect(m_requireShutdownButton, &RoundItemButton::clicked, this, [ = ] {
+    connect(m_requireShutdownButton, &RoundItemButton::clicked, this, [this] {
         m_currentSelectedBtn = m_requireShutdownButton;
         onRequirePowerAction(SessionBaseModel::PowerAction::RequireShutdown, false);
     });
-    connect(m_requireSuspendButton, &RoundItemButton::clicked, this, [ = ] {
+    connect(m_requireSuspendButton, &RoundItemButton::clicked, this, [this] {
         m_currentSelectedBtn = m_requireSuspendButton;
         onRequirePowerAction(SessionBaseModel::PowerAction::RequireSuspend, false);
     });
-    connect(m_requireHibernateButton, &RoundItemButton::clicked, this, [ = ] {
+    connect(m_requireHibernateButton, &RoundItemButton::clicked, this, [this] {
         m_currentSelectedBtn = m_requireHibernateButton;
         onRequirePowerAction(SessionBaseModel::PowerAction::RequireHibernate, false);
     });
-    connect(m_requireLockButton, &RoundItemButton::clicked, this, [ = ] {
+    connect(m_requireLockButton, &RoundItemButton::clicked, this, [this] {
         m_currentSelectedBtn = m_requireLockButton;
         onRequirePowerAction(SessionBaseModel::PowerAction::RequireLock, false);
     });
-    connect(m_requireSwitchUserBtn, &RoundItemButton::clicked, this, [ = ] {
+    connect(m_requireSwitchUserBtn, &RoundItemButton::clicked, this, [this] {
         m_currentSelectedBtn = m_requireSwitchUserBtn;
         onRequirePowerAction(SessionBaseModel::PowerAction::RequireSwitchUser, false);
     });
     if (m_requireSwitchSystemBtn) {
-        connect(m_requireSwitchSystemBtn, &RoundItemButton::clicked, this, [ = ] {
+        connect(m_requireSwitchSystemBtn, &RoundItemButton::clicked, this, [this] {
             m_currentSelectedBtn = m_requireSwitchSystemBtn;
             onRequirePowerAction(SessionBaseModel::PowerAction::RequireSwitchSystem, false);
         });
     }
-    connect(m_requireLogoutButton, &RoundItemButton::clicked, this, [ = ] {
+    connect(m_requireLogoutButton, &RoundItemButton::clicked, this, [this] {
         m_currentSelectedBtn = m_requireLogoutButton;
         onRequirePowerAction(SessionBaseModel::PowerAction::RequireLogout, false);
     });
@@ -116,7 +116,7 @@ void ShutdownWidget::initConnect()
         connect(m_systemMonitor, &SystemMonitor::requestShowSystemMonitor, this, &ShutdownWidget::runSystemMonitor);
     }
 
-    connect(m_dconfig, &DConfig::valueChanged, this, [this] (const QString &key) {
+    connect(m_dconfig, &DConfig::valueChanged, this, [this](const QString &key) {
         if (key == "hideLogoutButton") {
             if (m_requireLogoutButton && m_model->currentModeState() == SessionBaseModel::ModeStatus::ShutDownMode) {
                 m_requireLogoutButton->setVisible(!m_dconfig->value("hideLogoutButton", false).toBool());
@@ -201,7 +201,7 @@ void ShutdownWidget::initUI()
     setFocusPolicy(Qt::StrongFocus);
     setSizePolicy(QSizePolicy::Expanding, QSizePolicy::Expanding);
 
-    auto setPic = [] (RoundItemButton* button, const QString &pic) {
+    auto setPic = [](RoundItemButton* button, const QString &pic) {
         button->setNormalPic(":/img/list_actions/" + pic + "_normal.svg");
         button->setHoverPic(":/img/list_actions/" + pic + "_hover.svg");
         button->setPressPic(":/img/list_actions/" + pic + "_press.svg");
@@ -640,7 +640,7 @@ void ShutdownWidget::setModel(SessionBaseModel *const model)
 
     connect(model, &SessionBaseModel::canSleepChanged, this, &ShutdownWidget::enableSleepBtn);
     connect(model, &SessionBaseModel::currentUserChanged, this, &ShutdownWidget::updateLocale);
-    connect(m_model, &SessionBaseModel::visibleChanged, this, [this] (bool visible) {
+    connect(m_model, &SessionBaseModel::visibleChanged, this, [this](bool visible) {
         m_modeStatus = visible? m_modeStatus : SessionBaseModel::ModeStatus::NoStatus;
     });
 

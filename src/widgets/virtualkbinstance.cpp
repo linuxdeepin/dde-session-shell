@@ -37,7 +37,7 @@ void VirtualKBInstance::init()
     if (!m_virtualKBProcess) {
         m_virtualKBProcess = new QProcess(this);
 
-        connect(m_virtualKBProcess, &QProcess::readyReadStandardOutput, [ = ]{
+        connect(m_virtualKBProcess, &QProcess::readyReadStandardOutput, [this]{
             //启动完成onborad进程后，获取onborad主界面，将主界面显示在锁屏界面上
             QByteArray output = m_virtualKBProcess->readAllStandardOutput();
 
@@ -50,7 +50,7 @@ void VirtualKBInstance::init()
             m_virtualKBWidget->setFixedSize(600, 200);
             m_virtualKBWidget->hide();
 
-            QTimer::singleShot(300, [=] {
+            QTimer::singleShot(300, [this] {
                 emit initFinished();
             });
         });

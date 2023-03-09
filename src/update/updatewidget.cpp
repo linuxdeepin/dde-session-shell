@@ -413,7 +413,7 @@ void UpdateWidget::setModel(SessionBaseModel * const model)
 {
     m_sessionModel = model;
 
-    connect(m_sessionModel, &SessionBaseModel::showUpdate, this, [this] (bool doReboot) {
+    connect(m_sessionModel, &SessionBaseModel::showUpdate, this, [this](bool doReboot) {
         qInfo() << "Show update" << doReboot;
         if (UpdateModel::instance()->isUpdating()) {
             qWarning() << "Is updating, can not do it again";

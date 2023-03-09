@@ -28,8 +28,8 @@ void UT_KeyboardPlantformWayland::TearDown()
 
 TEST_F(UT_KeyboardPlantformWayland, basic)
 {
-    m_keyboard->isCapslockOn();
-    m_keyboard->isNumlockOn();
-    m_keyboard->setNumlockStatus(false);
+    m_keyboard->isCapsLockOn();
+    m_keyboard->isNumLockOn();
+    m_keyboard->setNumLockStatus(false);
 }
 #endif

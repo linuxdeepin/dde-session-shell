@@ -70,7 +70,7 @@ int main(int argc, char *argv[])
     DGuiApplicationHelper::instance()->setApplicationPalette(pa);
 
     // follow system active color
-    QObject::connect(DGuiApplicationHelper::instance()->systemTheme(), &DPlatformTheme::activeColorChanged, [] (const QColor &color) {
+    QObject::connect(DGuiApplicationHelper::instance()->systemTheme(), &DPlatformTheme::activeColorChanged, [](const QColor &color) {
         auto palette = DGuiApplicationHelper::instance()->applicationPalette();
         palette.setColor(QPalette::Highlight, color);
         DGuiApplicationHelper::instance()->setApplicationPalette(palette);
@@ -96,8 +96,8 @@ int main(int argc, char *argv[])
     QCommandLineOption shutdown(QStringList() << "t" << "shutdown", "show shut down");
     cmdParser.addOption(shutdown);
 
-    QCommandLineOption lockscreen(QStringList() << "l" << "lockscreen", "show lock screen");
-    cmdParser.addOption(lockscreen);
+    QCommandLineOption lockScreen(QStringList() << "l" << "lockscreen", "show lock screen");
+    cmdParser.addOption(lockScreen);
 
     QStringList xddd = app->arguments();
     cmdParser.process(*app);
@@ -105,7 +105,7 @@ int main(int argc, char *argv[])
     bool runDaemon = cmdParser.isSet(backend);
     bool showUserList = cmdParser.isSet(switchUser);
     bool showShutdown = cmdParser.isSet(shutdown);
-    bool showLockScreen = cmdParser.isSet(lockscreen);
+    bool showLockScreen = cmdParser.isSet(lockScreen);
 
 #ifdef  QT_DEBUG
     showLockScreen = true;
@@ -149,7 +149,7 @@ int main(int argc, char *argv[])
         model->setVisible(false);
     });
 
-    auto createFrame = [&] (QPointer<QScreen> screen, int count) -> QWidget* {
+    auto createFrame = [&](QPointer<QScreen> screen, int count) -> QWidget* {
         LockFrame *lockFrame = new LockFrame(model);
         // 创建Frame可能会花费数百毫秒，这个和机器性能有关，在此过程完成后，screen可能已经析构了
         // 在wayland的环境插拔屏幕或者显卡驱动有问题时可能会出现此类问题
@@ -160,10 +160,10 @@ int main(int argc, char *argv[])
             return nullptr;
         }
         lockFrame->setScreen(screen, count <= 0);
-        QObject::connect(model, &SessionBaseModel::visibleChanged, lockFrame, [=](const bool visible) {
+        QObject::connect(model, &SessionBaseModel::visibleChanged, lockFrame, [lockFrame](const bool visible) {
             lockFrame->setVisible(visible);
-            QTimer::singleShot(300, [=]() {
-                qInfo() << "lockFrame setVisible true, update.";
+            QTimer::singleShot(300, [lockFrame] {
+                qDebug() << "Update frame after lock frame visible changed";
                 lockFrame->update();
             });
         });

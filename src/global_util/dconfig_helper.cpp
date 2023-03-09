@@ -35,7 +35,7 @@ DConfig* DConfigHelper::initializeDConfig(const QString &appId, const QString &n
     m_bindInfos[dConfig] = {};
 
     // 即时响应数据变化
-    connect(dConfig, &DConfig::valueChanged, this, [this, dConfig] (const QString &key) {
+    connect(dConfig, &DConfig::valueChanged, this, [this, dConfig](const QString &key) {
         const QVariant &value = dConfig->value(key);
         auto it = m_bindInfos.find(dConfig);
         if (it == m_bindInfos.end())
@@ -133,13 +133,6 @@ void DConfigHelper::setConfig(const QString &key, const QVariant &value)
 
 QVariant DConfigHelper::getConfig(const QString &appId, const QString &name, const QString &subpath, const QString &key, const QVariant &defaultValue)
 {
-    qDebug() << Q_FUNC_INFO
-            << ", appId: " << appId
-            << ", name: " << name
-            << ", subpath: " << subpath
-            << ", key: " << key
-            << ", default value: " << defaultValue;
-
     DConfig *dConfig = dConfigObject(appId, name, subpath);
     if (!dConfig) {
         qWarning() << "DConfig object is null";
@@ -150,19 +143,11 @@ QVariant DConfigHelper::getConfig(const QString &appId, const QString &name, con
         return defaultValue;
 
     const QVariant &value = dConfig->value(key);
-    qDebug() << "config value: " << value;
     return value;
 }
 
 void DConfigHelper::setConfig(const QString &appId, const QString &name, const QString &subpath, const QString &key, const QVariant &value)
 {
-    qInfo() << Q_FUNC_INFO
-            << ", appId: " << appId
-            << ", name: " << name
-            << ", subpath: " << subpath
-            << ", key: " << key
-            << ", value: " << value;
-
     DConfig *dConfig = dConfigObject(appId, name, subpath);
     if (!dConfig) {
         qWarning() << "DConfig object is null";

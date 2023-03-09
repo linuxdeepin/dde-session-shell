@@ -55,7 +55,7 @@ void AuthCustom::setModel(const SessionBaseModel *model)
 
     m_model = model;
     // 通知插件当前用户发生变化
-    connect(m_model, &SessionBaseModel::currentUserChanged, this, [this] (const std::shared_ptr<User> currentUser) {
+    connect(m_model, &SessionBaseModel::currentUserChanged, this, [this](const std::shared_ptr<User> currentUser) {
         if (!currentUser || !m_plugin)
             return;
 

@@ -34,7 +34,7 @@ AuthWidget::AuthWidget(QWidget *parent)
     , m_expiredSpacerItem(new QSpacerItem(0, 0))
     , m_accountEdit(nullptr)
     , m_userNameWidget(nullptr)
-    , m_capslockMonitor(nullptr)
+    , m_capsLockMonitor(nullptr)
     , m_singleAuth(nullptr)
     , m_passwordAuth(nullptr)
     , m_fingerprintAuth(nullptr)
@@ -50,8 +50,8 @@ AuthWidget::AuthWidget(QWidget *parent)
     setSizePolicy(QSizePolicy::Fixed, QSizePolicy::Fixed);
     setFocusPolicy(Qt::NoFocus);
 
-    m_capslockMonitor = KeyboardMonitor::instance();
-    m_capslockMonitor->start(QThread::LowestPriority);
+    m_capsLockMonitor = KeyboardMonitor::instance();
+    m_capsLockMonitor->start(QThread::LowestPriority);
 }
 
 AuthWidget::~AuthWidget()

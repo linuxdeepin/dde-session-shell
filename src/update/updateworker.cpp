@@ -40,7 +40,7 @@ void UpdateWorker::init()
     m_managerInter->setSync(false);
     m_abRecoveryInter->setSync(false);
     connect(m_managerInter, &ManagerInter::JobListChanged, this, &UpdateWorker::onJobListChanged);
-    connect(m_managerInter, &ManagerInter::serviceValidChanged, this, [this] (bool valid) {
+    connect(m_managerInter, &ManagerInter::serviceValidChanged, this, [this](bool valid) {
         if (!valid) {
             const auto status = UpdateModel::instance()->updateStatus();
             qWarning() << "Lastore daemon manager service is invalid, curren status: " << status;
@@ -57,7 +57,7 @@ void UpdateWorker::init()
             UpdateModel::instance()->setUpdateStatus(UpdateModel::UpdateStatus::InstallFailed);
         }
     });
-    connect(m_abRecoveryInter, &RecoveryInter::JobEnd, this, [this] (const QString &kind, bool success, const QString &errMsg) {
+    connect(m_abRecoveryInter, &RecoveryInter::JobEnd, this, [this](const QString &kind, bool success, const QString &errMsg) {
         qInfo() << "Backup job end, kind: " << kind << ", success: " << success << ", error message: " << errMsg;
         if ("backup" != kind) {
             qWarning() << "Kind error: " << kind;
@@ -73,17 +73,17 @@ void UpdateWorker::init()
             UpdateModel::instance()->setUpdateStatus(UpdateModel::UpdateStatus::BackupFailed);
         }
     });
-    connect(m_abRecoveryInter, &RecoveryInter::BackingUpChanged, this, [] (bool value) {
+    connect(m_abRecoveryInter, &RecoveryInter::BackingUpChanged, this, [](bool value) {
         qInfo() << "Backing up changed: " << value;
         if (value) {
             UpdateModel::instance()->setUpdateStatus(UpdateModel::UpdateStatus::BackingUp);
         }
     });
-    connect(m_abRecoveryInter, &RecoveryInter::ConfigValidChanged, this, [] (bool value) {
+    connect(m_abRecoveryInter, &RecoveryInter::ConfigValidChanged, this, [](bool value) {
         qInfo() << "Backup config valid changed: " << value;
         UpdateModel::instance()->setBackupConfigValidation(value);
     });
-    connect(m_abRecoveryInter, &RecoveryInter::serviceValidChanged, this, [] (bool valid) {
+    connect(m_abRecoveryInter, &RecoveryInter::serviceValidChanged, this, [](bool valid) {
         if (!valid) {
             const auto status = UpdateModel::instance()->updateStatus();
             qWarning() << "AB recovery service was invalid, current status: " << status;
@@ -102,7 +102,7 @@ void UpdateWorker::init()
         m_login1SessionSelf->setSync(false);
         if (m_login1SessionSelf->isValid()) {
             // 处理场景：开始更新切tty，当前session被冻结，过一段时间后切换回来，此时以及安装完成，dist_upgrade job已经退出
-            connect(m_login1SessionSelf, &Login1SessionSelf::ActiveChanged, this, [=](bool active) {
+            connect(m_login1SessionSelf, &Login1SessionSelf::ActiveChanged, this, [this](bool active) {
                 qInfo() << "UpdateWorker: login1 self session active changed:" << active;
                 if (UpdateModel::instance()->updateStatus() == UpdateModel::Installing) {
                     const int lastoreDaemonStatus = DConfigHelper::instance()->getConfig("org.deepin.lastore", "org.deepin.lastore", "", "lastore-daemon-status", 0).toInt();
@@ -374,7 +374,7 @@ void UpdateWorker::fixError()
 
     QString path = reply.value().path();
     m_fixErrorJob = new JobInter("com.deepin.lastore", path, QDBusConnection::systemBus());
-    connect(m_fixErrorJob, &JobInter::StatusChanged, this, [ = ] (const QString status) {
+    connect(m_fixErrorJob, &JobInter::StatusChanged, this, [this](const QString status) {
         qInfo() << "Fix error job status changed :" << status;
         if (status == "succeed" || status == "failed" || status == "end") {
             if (m_fixErrorJob) {

@@ -135,7 +135,7 @@ void GreeterDisplayWayland::setupRegistry(Registry *registry)
             return;
         }
 
-        connect(dev, &OutputDevice::changed, this, [=] {
+        connect(dev, &OutputDevice::changed, this, [dev, this] {
             this->onDeviceChanged(dev);
         });
 

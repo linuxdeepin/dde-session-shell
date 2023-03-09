@@ -255,7 +255,7 @@ void ControlWidget::initConnect()
     connect(m_virtualKBBtn, &DFloatingButton::clicked, this, &ControlWidget::requestSwitchVirtualKB);
     connect(m_keyboardBtn, &DFloatingButton::clicked, this, &ControlWidget::setKBLayoutVisible);
     connect(m_model, &SessionBaseModel::currentUserChanged, this, &ControlWidget::setUser);
-    connect(m_dconfig, &DConfig::valueChanged, this, [this] (const QString &key) {
+    connect(m_dconfig, &DConfig::valueChanged, this, [this](const QString &key) {
         if (m_virtualKBBtn && key == "hideOnboard") {
             m_virtualKBBtn->setVisible(m_onboardBtnVisible && !m_dconfig->value("hideOnboard", false).toBool());
         }
@@ -320,7 +320,7 @@ void ControlWidget::addModule(TrayPlugin *trayModule)
     // button的顺序与layout插入顺序保持一直
     m_btnList.insert(1, button);
 
-    connect(button, &FloatingButton::requestShowMenu, this, [ = ] {
+    connect(button, &FloatingButton::requestShowMenu, this, [this, trayModule] {
         const QString menuJson = trayModule->itemContextMenu();
         if (menuJson.isEmpty())
             return;
@@ -356,14 +356,14 @@ void ControlWidget::addModule(TrayPlugin *trayModule)
         }
     });
 
-    connect(button, &FloatingButton::requestShowTips, this, [ = ] {
+    connect(button, &FloatingButton::requestShowTips, this, [=] {
         if (trayModule->itemTipsWidget()) {
             m_tipsWidget->setContent(trayModule->itemTipsWidget());
             m_tipsWidget->show(mapToGlobal(button->pos()).x() + button->width() / 2,mapToGlobal(button->pos()).y());
         }
     });
 
-    connect(button, &FloatingButton::requestHideTips, this, [ = ] {
+    connect(button, &FloatingButton::requestHideTips, this, [=] {
         if (m_tipsWidget->getContent())
             m_tipsWidget->getContent()->setVisible(false);
         m_tipsWidget->hide();

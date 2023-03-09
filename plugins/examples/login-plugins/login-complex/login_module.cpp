@@ -52,7 +52,7 @@ void LoginModule::initUI()
 
     m_loginWidget = new LoginWidget();
     m_loginWidget->setFixedSize(362, 420);
-    QObject::connect(m_loginWidget, &LoginWidget::sendAuthToken, this, [this] (const QString &account, const QString &token) {
+    QObject::connect(m_loginWidget, &LoginWidget::sendAuthToken, this, [this](const QString &account, const QString &token) {
 #if 0
         // 通常需要判断一下登录器当前的用户和插件正在验证的用户是否相同，具体根据需求而定。
         if (m_userName != account && m_userName != "...") {

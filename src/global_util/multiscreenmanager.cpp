@@ -35,7 +35,7 @@ MultiScreenManager::MultiScreenManager(QObject *parent)
 void MultiScreenManager::register_for_multi_screen(std::function<QWidget *(QScreen *, int)> function)
 {
     m_registerFunction = function;
-    qInfo() << Q_FUNC_INFO << ", is copy mode: " << m_isCopyMode;
+    qInfo() << "Is copy mode:" << m_isCopyMode;
     // update all screen
     if (m_isCopyMode) {
         if (!qApp->screens().isEmpty()) {
@@ -86,7 +86,7 @@ bool MultiScreenManager::eventFilter(QObject *watched, QEvent *event)
 
 void MultiScreenManager::onScreenAdded(QPointer<QScreen> screen)
 {
-    qInfo() << Q_FUNC_INFO << ", is copy mode: " << m_isCopyMode << ", screen: " << screen;
+    qInfo() << "Is copy mode:" << m_isCopyMode << ", screen: " << screen;
 
     // 虚拟屏幕不处理
     if (screen.isNull() || (screen->name().isEmpty() && (screen->geometry().width() == 0 || screen->geometry().height() == 0))) {

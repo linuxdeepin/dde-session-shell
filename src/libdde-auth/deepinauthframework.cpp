@@ -285,7 +285,10 @@ void DeepinAuthFramework::CreateAuthController(const QString &account, const int
         return;
     }
     const QString authControllerInterPath = m_authenticateInter->Authenticate(account, authType, appType);
-    qInfo() << "Create Authenticate Session:" << account << authType << appType << authControllerInterPath;
+    qInfo() << "Account:" << account
+            << ", Auth type:"<< authType
+            << ", App type:" << appType
+            << ", Authentication session path: " << authControllerInterPath;
     AuthControllerInter *authControllerInter = new AuthControllerInter("com.deepin.daemon.Authenticate", authControllerInterPath, QDBusConnection::systemBus(), this);
     m_authenticateControllers->insert(account, authControllerInter);
 
@@ -366,7 +369,7 @@ void DeepinAuthFramework::StartAuthentication(const QString &account, const int 
         return;
     }
     int ret = m_authenticateControllers->value(account)->Start(authType, timeout);
-    qInfo() << "Start Authenticate Session:" << account << authType << ret;
+    qInfo() << "Account:" << account << ", auth type" << authType << ", ret:" << ret;
 }
 
 /**
@@ -396,7 +399,7 @@ void DeepinAuthFramework::SendTokenToAuth(const QString &account, const int auth
     if (!m_authenticateControllers->contains(account)) {
         return;
     }
-    qInfo() << "Send token to authentication:" << account << ", authType" << authType;
+    qInfo() << "Send token:" << account << ", authType:" << authType;
 
     QByteArray ba = EncryptHelper::ref().getEncryptedToken(token);
     m_authenticateControllers->value(account)->SetToken(authType, ba);
@@ -598,9 +601,8 @@ bool DeepinAuthFramework::authSessionExist(const QString &account) const
  */
 bool DeepinAuthFramework::isDeepinAuthValid() const
 {
-    qDebug() << Q_FUNC_INFO
-             << ", frameworkState" << m_authenticateInter->frameworkState()
-             << ", isServiceRegistered: " << QDBusConnection::systemBus().interface()->isServiceRegistered(AUTHENTICATE_SERVICE);
+    qInfo() << "Framework state" << m_authenticateInter->frameworkState()
+             << ", is service registered: " << QDBusConnection::systemBus().interface()->isServiceRegistered(AUTHENTICATE_SERVICE);
     return QDBusConnection::systemBus().interface()->isServiceRegistered(AUTHENTICATE_SERVICE)
             && Available == GetFrameworkState();
 }

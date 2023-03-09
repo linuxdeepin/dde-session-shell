@@ -56,7 +56,7 @@ AuthModule::~AuthModule()
 void AuthModule::initConnections()
 {
     /* 认证解锁时间 */
-    connect(m_unlockTimer, &QTimer::timeout, this, [ this ] {
+    connect(m_unlockTimer, &QTimer::timeout, this, [this] {
         updateIntegerMinutes();
         if (m_integerMinutes == 0)
             m_unlockTimer->stop();

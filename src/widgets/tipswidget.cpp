@@ -39,7 +39,7 @@ bool TipsWidget::eventFilter(QObject *o, QEvent *e)
         return false;
 
     if (isVisible()) {
-        QTimer::singleShot(10, this, [=] {
+        QTimer::singleShot(10, this, [this] {
             if (isVisible())
                 show(m_lastPos.x(), m_lastPos.y());
         });

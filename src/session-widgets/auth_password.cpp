@@ -139,12 +139,12 @@ void AuthPassword::initConnections()
         m_lineEdit->setAlert(false);
         emit lineEditTextChanged(text);
     });
-    connect(m_lineEdit, &DLineEditEx::returnPressed, this, [ this ] {
+    connect(m_lineEdit, &DLineEditEx::returnPressed, this, [this] {
         if (!m_lineEdit->lineEdit()->isReadOnly()) // 避免用户在验证的时候反复点击
             emit requestAuthenticate();
     });
 
-    connect(m_passwordShowBtn, &DSuggestButton::clicked, this, [ this ] {
+    connect(m_passwordShowBtn, &DSuggestButton::clicked, this, [this] {
         if (m_lineEdit->echoMode() == QLineEdit::EchoMode::Password) {
             m_passwordShowBtn->setIcon(QIcon(PASSWORD_HIDE));
             m_lineEdit->lineEdit()->setEchoMode(QLineEdit::Normal);
@@ -307,7 +307,6 @@ void AuthPassword::setCapsLockVisible(const bool on)
  */
 void AuthPassword::setLimitsInfo(const LimitsInfo &info)
 {
-    qDebug() << "AuthPassword::setLimitsInfo" << info.numFailures;
     const bool lockStateChanged = (info.locked != m_limitsInfo->locked);
     AuthModule::setLimitsInfo(info);
     // 如果lock状态发生变化且当前状态为非lock更新编辑框文案
@@ -474,7 +473,7 @@ void AuthPassword::setPasswordHintBtnVisible(const bool isVisible)
  */
 void AuthPassword::setResetPasswordMessageVisible(const bool isVisible)
 {
-    qDebug() << "set reset password message visible: " << isVisible;
+    qDebug() << "Incoming visible:" << isVisible << ", current visible:" << m_resetPasswordMessageVisible;
     if (m_resetPasswordMessageVisible == isVisible)
         return;
 
@@ -529,7 +528,7 @@ void AuthPassword::showResetPasswordMessage()
     suggestButton->setAutoDefault(true);
     m_resetPasswordFloatingMessage->setWidget(suggestButton);
     m_resetPasswordFloatingMessage->setMessage(tr("Forgot password?"));
-    connect(suggestButton, &QPushButton::clicked, this, [ this ] {
+    connect(suggestButton, &QPushButton::clicked, this, [this] {
         const QString AccountsService("com.deepin.daemon.Accounts");
         const QString path = QString("/com/deepin/daemon/Accounts/User%1").arg(m_currentUid);
         com::deepin::daemon::accounts::User user(AccountsService, path, QDBusConnection::systemBus());

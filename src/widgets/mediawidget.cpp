@@ -43,11 +43,9 @@ void MediaWidget::initMediaPlayer()
 
     QDBusPendingCall call = dbusInter.asyncCall("ListNames");
     QDBusPendingCallWatcher *watcher = new QDBusPendingCallWatcher(call, this);
-    connect(watcher, &QDBusPendingCallWatcher::finished, [ = ] {
+    connect(watcher, &QDBusPendingCallWatcher::finished, [=] {
         if (!call.isError()) {
             QDBusReply<QStringList> reply = call.reply();
-            //qDebug() << "one key Login User Name is : " << reply.value();
-
             const QStringList &serviceList = reply.value();
             QString service = QString();
             for (const QString &serv : serviceList) {
@@ -57,8 +55,8 @@ void MediaWidget::initMediaPlayer()
                 service = serv;
                 break;
             }
+
             if (service.isEmpty()) {
-                qDebug() << "media player dbus has not started, waiting for signal...";
                 QDBusConnectionInterface *dbusDaemonInterface = QDBusConnection::sessionBus().interface();
                 connect(dbusDaemonInterface, &QDBusConnectionInterface::serviceOwnerChanged, this,
                         [=](const QString &name, const QString &oldOwner, const QString &newOwner) {
@@ -71,10 +69,8 @@ void MediaWidget::initMediaPlayer()
                 return;
             }
 
-            qDebug() << "got media player dbus service: " << service;
-
+            qDebug() << "Got media player dbus service:" << service;
             m_dbusInter = new DBusMediaPlayer2(service, "/org/mpris/MediaPlayer2", QDBusConnection::sessionBus(), this);
-
             m_dbusInter->MetadataChanged();
             m_dbusInter->PlaybackStatusChanged();
             m_dbusInter->VolumeChanged();

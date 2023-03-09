@@ -149,10 +149,10 @@ void AuthInterface::onLoginUserListChanged(const QString &list)
 
         auto find_it = std::find_if(
             availableUidList.begin(), availableUidList.end(),
-            [=] (const uint find_addomain_uid) { return find_addomain_uid == uid; });
+            [=](const uint find_adDomain_uid) { return find_adDomain_uid == uid; });
 
         if (haveDisplay && find_it == availableUidList.end()) {
-            // init addoman user
+            // init adDomain user
             std::shared_ptr<User> u(new ADDomainUser(uid));
             u->updateLoginState(true);
 
@@ -224,7 +224,7 @@ void AuthInterface::checkConfig()
 
 void AuthInterface::checkPowerInfo()
 {
-    //替换接口org.freedesktop.login1 为com.deepin.sessionManager,原接口的是否支持待机和休眠的信息不准确
+    // 替换接口org.freedesktop.login1 为com.deepin.sessionManager,原接口的是否支持待机和休眠的信息不准确
     QProcessEnvironment env = QProcessEnvironment::systemEnvironment();
     bool can_sleep = env.contains(POWER_CAN_SLEEP) ? QVariant(env.value(POWER_CAN_SLEEP)).toBool()
                                                    : getGSettings("Power","sleep").toBool() && m_powerManagerInter->CanSuspend();

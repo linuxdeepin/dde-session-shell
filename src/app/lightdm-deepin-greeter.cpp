@@ -80,7 +80,7 @@ static unsigned long loadCursorHandle(Display *dpy, const char *name, int size)
     return handle;
 }
 
-static int set_rootwindow_cursor() {
+static int setRootWindowCursor() {
     Display* display = XOpenDisplay(nullptr);
     if (!display) {
         qDebug() << "Open display failed";
@@ -260,7 +260,7 @@ static void set_auto_QT_SCALE_FACTOR() {
 // 初次启动时，设置一下鼠标的默认位置
 void set_pointer()
 {
-    auto set_position = [ = ] (QPoint p) {
+    auto set_position = [=](QPoint p) {
         Display *dpy;
         dpy = XOpenDisplay(nullptr);
 
@@ -274,7 +274,7 @@ void set_pointer()
     };
 
     if (!qApp->primaryScreen()) {
-        QObject::connect(qApp, &QGuiApplication::primaryScreenChanged, [ = ] {
+        QObject::connect(qApp, &QGuiApplication::primaryScreenChanged, [=] {
             static bool first = true;
             if (first) {
                 set_position(qApp->primaryScreen()->geometry().center());
@@ -339,9 +339,8 @@ int main(int argc, char* argv[])
     QDBusConnectionInterface *interface = QDBusConnection::systemBus().interface();
     if (!interface->isServiceRegistered(serviceName)) {
         qWarning() << "accounts service is not registered wait...";
-
         QDBusServiceWatcher *serviceWatcher = new QDBusServiceWatcher(serviceName, QDBusConnection::systemBus());
-        QObject::connect(serviceWatcher, &QDBusServiceWatcher::serviceUnregistered, [ = ] (const QString &service) {
+        QObject::connect(serviceWatcher, &QDBusServiceWatcher::serviceUnregistered, [serviceName](const QString &service) {
             if (service == serviceName) {
                 qCritical() << "ERROR, accounts service unregistered, what should I do?";
             }
@@ -368,9 +367,9 @@ int main(int argc, char* argv[])
     loadTranslation(model->currentUser()->locale());
 
     // 设置系统登录成功的加载光标
-    QObject::connect(model, &SessionBaseModel::authFinished, model, [ = ](bool is_success) {
-        if (is_success)
-            set_rootwindow_cursor();
+    QObject::connect(model, &SessionBaseModel::authFinished, model, [=](bool isSuccess) {
+        if (isSuccess)
+            setRootWindowCursor();
     });
 
     // 初始化LoginContent

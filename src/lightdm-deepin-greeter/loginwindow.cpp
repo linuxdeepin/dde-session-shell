@@ -18,7 +18,7 @@ LoginWindow::LoginWindow(SessionBaseModel *const model, QWidget *parent)
     updateBackground(m_model->currentUser()->greeterBackground());
     setContent(LoginContent::instance());
 
-    connect(LoginContent::instance(), &LockContent::requestBackground, this, [ this ](const QString & wallpaper) {
+    connect(LoginContent::instance(), &LockContent::requestBackground, this, [this](const QString & wallpaper) {
         updateBackground(wallpaper);
         // 在认证成功以后会通过更改背景来实现登录动画，但是禁用登录动画的情况下，会立即调用startSession，
         // 导致当前进程被lightdm退掉，X上会残留上一帧的画面，可以看到输入框等画面。使用repaint()强制刷新背景来避免这个问题。
@@ -26,7 +26,7 @@ LoginWindow::LoginWindow(SessionBaseModel *const model, QWidget *parent)
     });
 
     connect(model, &SessionBaseModel::visibleChanged, this, &LoginWindow::setVisible);
-    connect(model, &SessionBaseModel::authFinished, this, [ this ] (bool successful) {
+    connect(model, &SessionBaseModel::authFinished, this, [this](bool successful) {
         setEnterEnable(!successful);
 
         // 在认证成功以后会通过更改背景来实现登录动画，但是禁用登录动画的情况下，会立即调用startSession，

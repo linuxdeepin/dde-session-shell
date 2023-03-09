@@ -140,7 +140,7 @@ QByteArray EncryptHelper::getEncryptedToken(const QString &token)
     do {
         if (ET_SM2 == m_encryptType) {
 #ifdef PREFER_USING_GM
-            qDebug()<<"PREFER_USING_GM";
+            qInfo() << "PREFER_USING_GM";
             ctx = EVP_CIPHER_CTX_new();
             if (ctx == nullptr) {
                 break;

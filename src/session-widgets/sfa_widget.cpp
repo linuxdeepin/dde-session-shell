@@ -112,7 +112,7 @@ void SFAWidget::setModel(const SessionBaseModel *model)
  */
 void SFAWidget::setAuthType(const int type)
 {
-    qDebug() << Q_FUNC_INFO << "SFAWidget::setAuthType:" << type;
+    qInfo() << "Auth type:" << type;
     int authType = type;
     if (!m_model->currentUser()->allowToChangePassword() && m_model->appType() == Login) {
         qInfo() << "Password is expired, current user is not allowed to change the password, set authentication type to `AT_Password`";
@@ -258,7 +258,7 @@ void SFAWidget::setAuthType(const int type)
  */
 void SFAWidget::setAuthState(const int type, const int state, const QString &message)
 {
-    qDebug() << "SFAWidget::setAuthState:" << type << state << message;
+    qInfo() << "SFAWidget::setAuthState:" << type << state << message;
     switch (type) {
     case AT_Password:
         if (m_passwordAuth) {
@@ -340,22 +340,22 @@ void SFAWidget::initSingleAuth()
             emit authFinished();
         }
     });
-    connect(m_singleAuth, &AuthSingle::requestAuthenticate, this, [ this ] {
+    connect(m_singleAuth, &AuthSingle::requestAuthenticate, this, [this] {
         if (m_singleAuth->lineEditText().isEmpty()) {
             return;
         }
         emit sendTokenToAuth(m_model->currentUser()->name(), AT_PAM, m_singleAuth->lineEditText());
     });
-    connect(m_capslockMonitor, &KeyboardMonitor::capslockStatusChanged, m_singleAuth, &AuthSingle::setCapsLockVisible);
+    connect(m_capsLockMonitor, &KeyboardMonitor::capsLockStatusChanged, m_singleAuth, &AuthSingle::setCapsLockVisible);
     connect(m_lockButton, &QPushButton::clicked, m_singleAuth, &AuthSingle::requestAuthenticate);
 
-    connect(m_singleAuth, &AuthSingle::lineEditTextChanged, this, [ this ] (const QString &value) {
+    connect(m_singleAuth, &AuthSingle::lineEditTextChanged, this, [this](const QString &value) {
         m_lockButton->setEnabled(!value.isEmpty());
     });
 
     m_singleAuth->setKeyboardButtonVisible(m_keyboardList.size() > 1 ? true : false);
     m_singleAuth->setKeyboardButtonInfo(m_keyboardType);
-    m_singleAuth->setCapsLockVisible(m_capslockMonitor->isCapslockOn());
+    m_singleAuth->setCapsLockVisible(m_capsLockMonitor->isCapsLockOn());
     m_singleAuth->setPasswordHint(m_model->currentUser()->passwordHint());
 
     /* 认证选择按钮 */
@@ -409,7 +409,7 @@ void SFAWidget::initPasswdAuth()
     });
 
     if (AppType::Login == m_model->appType()) {
-        connect(m_passwordAuth, &AuthPassword::notifyLockedStateChanged, this, [this] (bool isLocked) {
+        connect(m_passwordAuth, &AuthPassword::notifyLockedStateChanged, this, [this](bool isLocked) {
             m_chooseAuthButtonBox->setEnabled(!isLocked);
             if (isLocked) {
                 onRequestChangeAuth(AT_Password);
@@ -418,11 +418,11 @@ void SFAWidget::initPasswdAuth()
     }
 
     connect(m_lockButton, &QPushButton::clicked, m_passwordAuth, &AuthPassword::requestAuthenticate);
-    connect(m_capslockMonitor, &KeyboardMonitor::capslockStatusChanged, m_passwordAuth, &AuthPassword::setCapsLockVisible);
+    connect(m_capsLockMonitor, &KeyboardMonitor::capsLockStatusChanged, m_passwordAuth, &AuthPassword::setCapsLockVisible);
     connect(m_passwordAuth, &AuthPassword::lineEditTextChanged, this, [this](const QString &value) {
         m_lockButton->setEnabled(!value.isEmpty());
     });
-    m_passwordAuth->setCapsLockVisible(m_capslockMonitor->isCapslockOn());
+    m_passwordAuth->setCapsLockVisible(m_capsLockMonitor->isCapsLockOn());
     m_passwordAuth->setPasswordHint(m_user->passwordHint());
     /* 认证选择按钮 */
     DButtonBoxButton *btn = new DButtonBoxButton(QIcon(Password_Auth), QString(), this);
@@ -500,7 +500,7 @@ void SFAWidget::initUKeyAuth()
     connect(m_ukeyAuth, &AuthUKey::authFinished, this, [this](const int authState) {
         checkAuthResult(AT_Ukey, authState);
     });
-    connect(m_ukeyAuth, &AuthUKey::requestAuthenticate, this, [=] {
+    connect(m_ukeyAuth, &AuthUKey::requestAuthenticate, this, [this] {
         const QString &text = m_ukeyAuth->lineEditText();
         if (text.isEmpty()) {
             return;
@@ -512,14 +512,14 @@ void SFAWidget::initUKeyAuth()
         emit sendTokenToAuth(m_model->currentUser()->name(), AT_Ukey, text);
     });
     connect(m_lockButton, &QPushButton::clicked, m_ukeyAuth, &AuthUKey::requestAuthenticate);
-    connect(m_capslockMonitor, &KeyboardMonitor::capslockStatusChanged, m_ukeyAuth, &AuthUKey::setCapsLockVisible);
+    connect(m_capsLockMonitor, &KeyboardMonitor::capsLockStatusChanged, m_ukeyAuth, &AuthUKey::setCapsLockVisible);
     connect(m_ukeyAuth, &AuthUKey::lineEditTextChanged, this, [this](const QString &value) {
         if (m_model->getAuthProperty().PINLen > 0 && value.size() >= m_model->getAuthProperty().PINLen) {
             emit m_ukeyAuth->requestAuthenticate();
         }
     });
 
-    m_ukeyAuth->setCapsLockVisible(m_capslockMonitor->isCapslockOn());
+    m_ukeyAuth->setCapsLockVisible(m_capsLockMonitor->isCapsLockOn());
 
     /* 认证选择按钮 */
     DButtonBoxButton *btn = new DButtonBoxButton(QIcon(UKey_Auth), QString(), this);
@@ -612,7 +612,7 @@ void SFAWidget::initIrisAuth()
     m_irisAuth->setAuthFactorType(DDESESSIONCC::SingleAuthFactor);
 
     connect(m_irisAuth, &AuthIris::retryButtonVisibleChanged, this, &SFAWidget::onRetryButtonVisibleChanged);
-    connect(m_retryButton, &DFloatingButton::clicked, this, [ this ] {
+    connect(m_retryButton, &DFloatingButton::clicked, this, [this] {
         onRetryButtonVisibleChanged(false);
         emit requestStartAuthentication(m_model->currentUser()->name(), AT_Iris);
     });
@@ -672,17 +672,17 @@ void SFAWidget::initCustomAuth()
     m_customAuth->initUi();
     m_customAuth->hide();
 
-    connect(m_customAuth, &AuthCustom::requestSendToken, this, [this] (const QString &token) {
+    connect(m_customAuth, &AuthCustom::requestSendToken, this, [this](const QString &token) {
         m_lockButton->setEnabled(false);
         qInfo() << "sfa custom sendToken name :" <<  m_user->name() << "token:" << token;
         Q_EMIT sendTokenToAuth(m_user->name(), AT_Custom, token);
     });
-    connect(m_customAuth, &AuthCustom::authFinished, this, [ this ] (const int authStatus) {
+    connect(m_customAuth, &AuthCustom::authFinished, this, [this](const int authStatus) {
         if (authStatus == AS_Success) {
             m_lockButton->setEnabled(true);
         }
     });
-    connect(m_customAuth, &AuthCustom::requestCheckAccount, this, [this] (const QString &account) {
+    connect(m_customAuth, &AuthCustom::requestCheckAccount, this, [this](const QString &account) {
         qInfo() << "Request check account: " << account;
         if (m_user && m_user->name() == account) {
             LoginPlugin::AuthCallbackData data = m_customAuth->getCurrentAuthData();
@@ -710,7 +710,7 @@ void SFAWidget::initCustomAuth()
     btn->setFixedSize(AuthButtonSize);
     btn->setFocusPolicy(Qt::NoFocus);
     m_authButtons.insert(AT_Custom, btn);
-    connect(btn, &DButtonBoxButton::toggled, this, [this] (const bool checked) {
+    connect(btn, &DButtonBoxButton::toggled, this, [this](const bool checked) {
         if (checked) {
             qDebug() << Q_FUNC_INFO << "Custom auth is checked";
             m_biometricAuthState->hide();
@@ -1033,6 +1033,7 @@ bool SFAWidget::useCustomAuth() const
         }
     }
 
+    qInfo() << "Use authenticate plugin:" << plugin->key();
     return true;
 }
 

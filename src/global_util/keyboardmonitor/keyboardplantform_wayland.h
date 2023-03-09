@@ -32,9 +32,9 @@ public:
     KeyboardPlatformWayland(QObject *parent = nullptr);
     virtual ~KeyboardPlatformWayland();
 
-    bool isCapslockOn() override;
-    bool isNumlockOn() override;
-    bool setNumlockStatus(const bool &on) override;
+    bool isCapsLockOn() override;
+    bool isNumLockOn() override;
+    bool setNumLockStatus(const bool &on) override;
 
 protected:
     void run() Q_DECL_OVERRIDE;

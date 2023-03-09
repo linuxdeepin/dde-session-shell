@@ -127,7 +127,7 @@ protected:
     DLineEditEx *m_accountEdit;   // 用户名输入框
     UserNameWidget *m_userNameWidget;    // 用户名
 
-    KeyboardMonitor *m_capslockMonitor;    // 大小写
+    KeyboardMonitor *m_capsLockMonitor;    // 大小写
 
     AuthSingle *m_singleAuth;           // PAM
     AuthPassword *m_passwordAuth;       // 密码
