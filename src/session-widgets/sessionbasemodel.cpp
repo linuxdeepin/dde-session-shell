@@ -503,7 +503,6 @@ void SessionBaseModel::updateLoginedUserList(const QString &list)
  */
 void SessionBaseModel::updateLimitedInfo(const QString &info)
 {
-    qInfo() << "Limit info:" << info;
     m_currentUser->updateLimitsInfo(info);
 }
 

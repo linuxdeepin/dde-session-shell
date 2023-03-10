@@ -326,7 +326,7 @@ void AuthCustom::lightdmAuthStarted()
 
 void AuthCustom::notifyAuthState(AuthCommon::AuthType authType, AuthCommon::AuthState state)
 {
-    qInfo() << Q_FUNC_INFO << authType << ", auth state: " << state;
+    qInfo() << Q_FUNC_INFO << AUTH_TYPES_CAST(authType) << ", auth state: " << AUTH_STATE_CAST(state);
     if (!m_plugin)
         return;
 

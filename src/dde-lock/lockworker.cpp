@@ -154,7 +154,7 @@ void LockWorker::initConnections()
     });
     /* model */
     connect(m_model, &SessionBaseModel::authTypeChanged, this, [this](const int type) {
-        qInfo() << "Auth type changed: " << type;
+        qInfo() << "Auth type changed: " << AUTH_TYPES_CAST(type);
         if (type > 0 && m_model->getAuthProperty().MFAFlag) {
             startAuthentication(m_account, type);
         }
@@ -274,7 +274,7 @@ void LockWorker::initConfiguration()
  */
 void LockWorker::onAuthStateChanged(const int type, const int state, const QString &message)
 {
-    qInfo() << "Auth type:" << type
+    qInfo() << "Auth type:" << AUTH_TYPES_CAST(type)
             << ", authentication state:" << state
             << ", message:" << message;
 
@@ -616,7 +616,7 @@ void LockWorker::destroyAuthentication(const QString &account)
  */
 void LockWorker::startAuthentication(const QString &account, const int authType)
 {
-    qInfo() << "LockWorker::startAuthentication:" << account << authType;
+    qInfo() << "Account:" << account << AUTH_TYPES_CAST(authType);
     switch (m_model->getAuthProperty().FrameworkState) {
     case Available:
         m_authFramework->StartAuthentication(account, authType, -1);
@@ -636,7 +636,7 @@ void LockWorker::startAuthentication(const QString &account, const int authType)
  */
 void LockWorker::sendTokenToAuth(const QString &account, const int authType, const QString &token)
 {
-    qInfo() << "LockWorker::sendTokenToAuth:" << account << authType;
+    qInfo() << "Account:" << account << AUTH_TYPES_CAST(authType);
     switch (m_model->getAuthProperty().FrameworkState) {
     case Available:
         m_authFramework->SendTokenToAuth(account, authType, token);
@@ -655,7 +655,7 @@ void LockWorker::sendTokenToAuth(const QString &account, const int authType, con
  */
 void LockWorker::endAuthentication(const QString &account, const int authType)
 {
-    qInfo() << "Account:" << account << " ,auth type:" << authType;
+    qInfo() << "Account:" << account << " ,auth type:" << AUTH_TYPES_CAST(authType);
     switch (m_model->getAuthProperty().FrameworkState) {
     case Available:
         m_authFramework->EndAuthentication(account, authType);

@@ -5,7 +5,14 @@
 #ifndef AUTHCOMMON_H
 #define AUTHCOMMON_H
 
+#include <QObject>
+
+#define AUTH_TYPES_CAST(type) static_cast<AuthCommon::AuthTypes>(type)
+#define AUTH_STATE_CAST(type) static_cast<AuthCommon::AuthState>(type)
+
 namespace AuthCommon {
+
+Q_NAMESPACE;
 
 /**
  * @brief The AuthFrameFlag enum
@@ -56,6 +63,9 @@ enum AuthType {
     AT_Custom          = 1 << 30,   // 自定义
     AT_All             = -1         // all
 };
+Q_DECLARE_FLAGS(AuthTypes, AuthType)
+Q_FLAG_NS(AuthTypes)
+Q_DECLARE_OPERATORS_FOR_FLAGS(AuthTypes)
 
 /**
  * @brief The AuthStatus enum
@@ -77,6 +87,7 @@ enum AuthState {
     AS_Recover,     // 设备恢复，需要调用 Start 重新开启认证，对应 AS_Exception
     AS_Unlocked     // 认证解锁，对应 AS_Locked
 };
+Q_ENUM_NS(AuthState)
 
 } // namespace AuthCommon
 #endif // AUTHCOMMON_H

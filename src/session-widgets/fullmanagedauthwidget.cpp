@@ -80,7 +80,7 @@ void FullManagedAuthWidget::setAuthType(const int type)
         return;
     }
 
-    qDebug() << "Auth type:" << type;
+    qDebug() << "Auth type:" << AUTH_TYPES_CAST(type);
     int authType = type;
     LoginPlugin *plugin = PluginManager::instance()->getFullManagedLoginPlugin();
     if (plugin
@@ -110,7 +110,7 @@ void FullManagedAuthWidget::setAuthType(const int type)
 
 void FullManagedAuthWidget::setAuthState(const int type, const int state, const QString &message)
 {
-    qDebug() << type << state << message;
+    qDebug() << AUTH_TYPES_CAST(type) << AUTH_STATE_CAST(state) << message;
     if (!isPluginLoaded()) {
         qDebug() << Q_FUNC_INFO << "plugin not load or actived";
         return;

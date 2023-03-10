@@ -43,7 +43,7 @@ DeepinAuthFramework::DeepinAuthFramework(QObject *parent)
 
 void DeepinAuthFramework::onDeviceChanged(const int authType, const int state)
 {
-    qInfo() << "Receive DeviceChanged, authType:" << authType << " state:" << state;
+    qInfo() << "Receive DeviceChanged, authType:" << AUTH_TYPES_CAST(authType) << " state:" << state;
     Q_EMIT DeviceChanged(authType, state);
 }
 
@@ -286,7 +286,7 @@ void DeepinAuthFramework::CreateAuthController(const QString &account, const int
     }
     const QString authControllerInterPath = m_authenticateInter->Authenticate(account, authType, appType);
     qInfo() << "Account:" << account
-            << ", Auth type:"<< authType
+            << ", Auth type:"<< AUTH_TYPES_CAST(authType)
             << ", App type:" << appType
             << ", Authentication session path: " << authControllerInterPath;
     AuthControllerInter *authControllerInter = new AuthControllerInter("com.deepin.daemon.Authenticate", authControllerInterPath, QDBusConnection::systemBus(), this);
@@ -369,7 +369,7 @@ void DeepinAuthFramework::StartAuthentication(const QString &account, const int 
         return;
     }
     int ret = m_authenticateControllers->value(account)->Start(authType, timeout);
-    qInfo() << "Account:" << account << ", auth type" << authType << ", ret:" << ret;
+    qInfo() << "Account:" << account << ", auth type" << AUTH_TYPES_CAST(authType) << ", ret:" << ret;
 }
 
 /**
@@ -383,7 +383,7 @@ void DeepinAuthFramework::EndAuthentication(const QString &account, const int au
     if (!m_authenticateControllers->contains(account)) {
         return;
     }
-    qInfo() << "End Authentication:" << account << authType;
+    qInfo() << "End Authentication:" << account << AUTH_TYPES_CAST(authType);
     m_authenticateControllers->value(account)->End(authType).waitForFinished();
 }
 
@@ -399,7 +399,7 @@ void DeepinAuthFramework::SendTokenToAuth(const QString &account, const int auth
     if (!m_authenticateControllers->contains(account)) {
         return;
     }
-    qInfo() << "Send token:" << account << ", authType:" << authType;
+    qInfo() << "Send token:" << account << ", authType:" << AUTH_TYPES_CAST(authType);
 
     QByteArray ba = EncryptHelper::ref().getEncryptedToken(token);
     m_authenticateControllers->value(account)->SetToken(authType, ba);

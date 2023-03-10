@@ -176,7 +176,6 @@ void AuthPassword::reset()
  */
 void AuthPassword::setAuthState(const int state, const QString &result)
 {
-    qDebug() << "AuthPassword::setAuthResult:" << state << result << m_currentUid;
     m_state = state;
     switch (state) {
     case AS_Success:

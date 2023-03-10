@@ -225,7 +225,7 @@ void GreeterWorker::initConnections()
     });
     /* model */
     connect(m_model, &SessionBaseModel::authTypeChanged, this, [this](const int type) {
-        qInfo() << "Auth type changed, incoming type:" << type
+        qInfo() << "Auth type changed, incoming type:" << AUTH_TYPES_CAST(type)
                 << ", mfa flag:" << m_model->getAuthProperty().MFAFlag;
         if (type > 0 && m_model->getAuthProperty().MFAFlag) {
             startAuthentication(m_account, m_model->getAuthProperty().AuthType);
@@ -536,7 +536,7 @@ void GreeterWorker::startAuthentication(const QString &account, const int authTy
         qInfo() << "Authentication exit because of user's authority";
         return;
     }
-    qInfo() << "Account:" << account << ", auth type:" << authType;
+    qInfo() << "Account:" << account << ", auth type:" << AUTH_TYPES_CAST(authType);
     switch (m_model->getAuthProperty().FrameworkState) {
     case Available:
         m_authFramework->StartAuthentication(account, authType, -1);
@@ -560,7 +560,7 @@ void GreeterWorker::startAuthentication(const QString &account, const int authTy
  */
 void GreeterWorker::sendTokenToAuth(const QString &account, const int authType, const QString &token)
 {
-    qInfo() << "Send token:" << account << ", auth type:" << authType;
+    qInfo() << "Send token:" << account << ", auth type:" << AUTH_TYPES_CAST(authType);
     switch (m_model->getAuthProperty().FrameworkState) {
     case Available:
         if (AT_PAM == authType) {
@@ -586,7 +586,7 @@ void GreeterWorker::sendTokenToAuth(const QString &account, const int authType, 
  */
 void GreeterWorker::endAuthentication(const QString &account, const int authType)
 {
-    qInfo() << "Account:" << account << ", auth type:" << authType;
+    qInfo() << "Account:" << account << ", auth type:" << AUTH_TYPES_CAST(authType);
 
     switch (m_model->getAuthProperty().FrameworkState) {
     case Available:
@@ -769,7 +769,7 @@ void GreeterWorker::onAuthFinished()
 
 void GreeterWorker::onAuthStateChanged(const int type, const int state, const QString &message)
 {
-    qInfo() << "Auth type:" << type << ", state:" << state << ", message:" << message;
+    qInfo() << "Auth type:" << AUTH_TYPES_CAST(type) << ", state:" << AUTH_STATE_CAST(state) << ", message:" << message;
     if (m_model->getAuthProperty().MFAFlag) {
         if (type == AT_All) {
             switch (state) {

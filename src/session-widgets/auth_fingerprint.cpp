@@ -61,7 +61,6 @@ void AuthFingerprint::reset()
  */
 void AuthFingerprint::setAuthState(const int state, const QString &result)
 {
-    qDebug() << "AuthFingerprint::setAuthResult:" << state << result;
     m_state = state;
     switch (state) {
     case AuthCommon::AS_Success:

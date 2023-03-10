@@ -76,6 +76,7 @@ int main(int argc, char *argv[])
         DGuiApplicationHelper::instance()->setApplicationPalette(palette);
     });
 
+    DLogManager::setLogFormat("%{time}{yyyy-MM-dd, HH:mm:ss.zzz} [%{type:-7}] [ %{function:-35} %{line}] %{message}\n");
     DLogManager::registerConsoleAppender();
     DLogManager::registerFileAppender();
 

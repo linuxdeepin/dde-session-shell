@@ -331,6 +331,7 @@ int main(int argc, char* argv[])
     DGuiApplicationHelper::generatePaletteColor(pa, DPalette::ButtonText, DGuiApplicationHelper::LightType);
     DGuiApplicationHelper::instance()->setApplicationPalette(pa);
 
+    DLogManager::setLogFormat("%{time}{yyyy-MM-dd, HH:mm:ss.zzz} [%{type:-7}] [ %{function:-35} %{line}] %{message}\n");
     DLogManager::registerConsoleAppender();
 
     ModulesLoader::instance().start(QThread::LowestPriority);

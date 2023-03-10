@@ -105,7 +105,6 @@ void AuthUKey::reset()
  */
 void AuthUKey::setAuthState(const int state, const QString &result)
 {
-    qDebug() << "AuthUKey::setAuthResult:" << state << result;
     m_state = state;
     switch (state) {
     case AuthCommon::AS_Success:

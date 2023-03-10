@@ -112,7 +112,7 @@ void SFAWidget::setModel(const SessionBaseModel *model)
  */
 void SFAWidget::setAuthType(const int type)
 {
-    qInfo() << "Auth type:" << type;
+    qInfo() << "Auth type:" << AUTH_TYPES_CAST(type);
     int authType = type;
     if (!m_model->currentUser()->allowToChangePassword() && m_model->appType() == Login) {
         qInfo() << "Password is expired, current user is not allowed to change the password, set authentication type to `AT_Password`";
@@ -258,7 +258,9 @@ void SFAWidget::setAuthType(const int type)
  */
 void SFAWidget::setAuthState(const int type, const int state, const QString &message)
 {
-    qInfo() << "SFAWidget::setAuthState:" << type << state << message;
+    qInfo() << "Auth type:" << AUTH_TYPES_CAST(type)
+            << ", state:" << AUTH_STATE_CAST(state)
+            << ", message:" << message;
     switch (type) {
     case AT_Password:
         if (m_passwordAuth) {
@@ -291,7 +293,7 @@ void SFAWidget::setAuthState(const int type, const int state, const QString &mes
         }
 
         // 这里是为了让自定义登陆知道lightdm已经开启验证了
-        qInfo() << "Current auth type is: " << m_currentAuthType;
+        qInfo() << "Current auth type is: " << AUTH_TYPES_CAST(m_currentAuthType);
         if (m_customAuth && state == AS_Prompt && m_currentAuthType == AT_Custom) {
             // 有可能DA发送了验证开始，但是lightdm的验证还未开始，此时发送token的话lightdm无法验证通过。
             // lightdm的pam发送prompt后则认为lightdm验证已经开始
