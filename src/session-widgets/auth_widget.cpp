@@ -42,6 +42,7 @@ AuthWidget::AuthWidget(QWidget *parent)
     , m_faceAuth(nullptr)
     , m_irisAuth(nullptr)
     , m_customAuth(nullptr)
+    , m_refreshTimer(new QTimer(this))
     , m_authState(AuthCommon::AS_None)
 {
     setObjectName(QStringLiteral("AuthWidget"));
@@ -52,6 +53,15 @@ AuthWidget::AuthWidget(QWidget *parent)
 
     m_capsLockMonitor = KeyboardMonitor::instance();
     m_capsLockMonitor->start(QThread::LowestPriority);
+
+    m_refreshTimer->setInterval(1000);
+    m_refreshTimer->start();
+    connect(m_refreshTimer, &QTimer::timeout, this, [ this ] {
+        if(QTime::currentTime().minute() == 0 && QTime::currentTime().second() == 0){
+            m_user->updatePasswordExpiredInfo();
+            updatePasswordExpiredState();
+        }
+    });
 }
 
 AuthWidget::~AuthWidget()

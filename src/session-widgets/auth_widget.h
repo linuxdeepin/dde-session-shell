@@ -145,6 +145,8 @@ protected:
 
     QList<QMetaObject::Connection> m_connectionList;
     QMap<QString, int> m_registerFunctions;
+
+    QTimer *m_refreshTimer;
     AuthCommon::AuthState m_authState;  // 当前验证状态
 };
 
