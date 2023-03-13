@@ -82,7 +82,7 @@ protected:
 
 protected:
     void toggleVirtualKB();
-    void showModule(const QString &name);
+    void showModule(const QString &name, const bool callShowForce = false);
     void updateVirtualKBPosition();
     void onUserListChanged(QList<std::shared_ptr<User>> list);
     void tryGrabKeyboard(bool exitIfFalied = true);

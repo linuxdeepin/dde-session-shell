@@ -553,7 +553,7 @@ void LockContent::toggleVirtualKB()
     m_virtualKB->setVisible(!m_virtualKB->isVisible());
 }
 
-void LockContent::showModule(const QString &name)
+void LockContent::showModule(const QString &name, const bool callShowForce)
 {
     PluginBase * plugin = PluginManager::instance()->findPlugin(name);
     if (!plugin) {
@@ -566,7 +566,7 @@ void LockContent::showModule(const QString &name)
         setCenterContent(m_loginWidget);
         m_model->setCurrentModeState(SessionBaseModel::ModeStatus::PasswordMode);
         break;
-    case PluginBase::ModuleType::TrayType:
+    case PluginBase::ModuleType::TrayType: {
         m_currentTray = m_controlWidget->getTray(name);
         if (!m_currentTray || !plugin->content()) {
             qWarning() << "TrayButton or plugin`s content is null";
@@ -582,8 +582,10 @@ void LockContent::showModule(const QString &name)
 
         if (!m_popWin->getContent() || m_popWin->getContent() != plugin->content())
             m_popWin->setContent(plugin->content());
-        m_popWin->toggle(mapFromGlobal(m_currentTray->mapToGlobal(QPoint(m_currentTray->size().width() / 2, 0))));
+        const QPoint &point = mapFromGlobal(m_currentTray->mapToGlobal(QPoint(m_currentTray->size().width() / 2, 0)));
+        callShowForce ? m_popWin->show(point) : m_popWin->toggle(point);
         break;
+    }
     default:
         // 扩展插件类型 FullManagedLoginType，不在此处处理
         break;

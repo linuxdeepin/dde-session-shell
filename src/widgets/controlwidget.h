@@ -106,7 +106,7 @@ signals:
     void requestSwitchSession();
     void requestSwitchVirtualKB();
     void requestKeyboardLayout(const QPoint &pos);
-    void requestShowModule(const QString &name);
+    void requestShowModule(const QString &name, const bool callShowForce = false);
     void notifyKeyboardLayoutHidden();
 
 public slots:

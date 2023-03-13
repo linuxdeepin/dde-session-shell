@@ -284,7 +284,7 @@ QString ControlWidget::messageCallback(const QString &message, void *app_data)
         return toJson(retObj);
     }
     QJsonObject messageObj = messageDoc.object();
-    emit static_cast<ControlWidget *>(app_data)->requestShowModule(messageObj.value("PluginKey").toString());
+    emit static_cast<ControlWidget *>(app_data)->requestShowModule(messageObj.value("PluginKey").toString(), true);
     return message;
 }
 
