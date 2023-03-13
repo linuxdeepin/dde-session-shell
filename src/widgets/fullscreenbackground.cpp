@@ -205,7 +205,6 @@ void FullScreenBackground::setContent(QWidget *const w)
     currentContent->resize(currentFrame->size());
     currentFrame->setFocusProxy(currentContent);
     currentFrame->setFocus();
-    currentFrame->raise();
     currentFrame->activateWindow();
     // 如果是黑屏状态则不置顶
     if (!currentFrame->m_blackWidget->isVisible()) {
@@ -297,7 +296,6 @@ void FullScreenBackground::enterEvent(QEvent *event)
     if (m_enableEnterEvent && m_model->visible()) {
         updateCurrentFrame(this);
         // 多屏情况下，此Frame晚于其它Frame显示出来时，可能处于未激活状态（特别是在wayland环境下比较明显）
-        raise();
         activateWindow();
     }
 
