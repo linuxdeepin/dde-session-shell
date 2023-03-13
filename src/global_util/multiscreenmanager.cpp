@@ -127,6 +127,7 @@ void MultiScreenManager::onScreenRemoved(QPointer<QScreen> screen)
     qDebug() << Q_FUNC_INFO << " is copy mode: " << m_isCopyMode << ", screen: " << screen;
     // 虚拟屏幕不处理
     if (screen.isNull() || (screen->name().isEmpty() && (screen->geometry().width() == 0 || screen->geometry().height() == 0))) {
+        qDebug() << "remove skipped";
         return;
     }
 
@@ -178,6 +179,11 @@ void MultiScreenManager::raiseContentFrame()
             if (QGuiApplication::platformName().startsWith("wayland", Qt::CaseInsensitive)) {
                 it.value()->setFocus();
             }
+
+            // bug189309, 重启或注锁后，后端屏幕变化通知太晚
+            // 触发move事件处理content是否显示
+            it.value()->updateGeometry();
+
             return;
         }
     }

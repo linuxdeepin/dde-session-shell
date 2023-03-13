@@ -552,7 +552,15 @@ bool FullScreenBackground::contains(int type)
 
 void FullScreenBackground::moveEvent(QMoveEvent *event)
 {
-    qInfo() << "Old pos:" << event->oldPos() << ", pos:" << event->pos();
+    // 规避 bug189309，登录时后端屏幕变化通知太晚
+    if (currentContent && !currentContent->isVisible()) {
+        if (m_model->isUseWayland()) {
+            if (m_model->visible() && geometry().contains(QCursor::pos())) {
+                currentContent->show();
+            }
+        }
+    }
+    qInfo() << "FullscreenBackground::moveEvent: " << ", old pos: " << event->oldPos() << ", pos: " << event->pos();
     QWidget::moveEvent(event);
 }
 
