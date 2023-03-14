@@ -59,7 +59,7 @@ void AuthFingerprint::reset()
  * @param state
  * @param result
  */
-void AuthFingerprint::setAuthState(const int state, const QString &result)
+void AuthFingerprint::setAuthState(const AuthCommon::AuthState state, const QString &result)
 {
     m_state = state;
     switch (state) {

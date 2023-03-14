@@ -65,11 +65,11 @@ public:
     explicit AuthModule(const AuthCommon::AuthType type, QWidget *parent = nullptr);
     ~AuthModule() override;
 
-    inline int authType() const { return m_type; }
-    inline int authState() const { return m_state; }
+    inline AuthCommon::AuthType authType() const { return m_type; }
+    inline AuthCommon::AuthState authState() const { return m_state; }
 
     virtual void setAnimationState(const bool start);
-    virtual void setAuthState(const int state, const QString &result);
+    virtual void setAuthState(const AuthCommon::AuthState state, const QString &result);
     void setAuthStateStyle(const QString &path);
     virtual void setLimitsInfo(const LimitsInfo &info);
     void setAuthStatueVisible(bool visible);
@@ -79,8 +79,8 @@ public:
     bool isLocked() const;
 
 signals:
-    void activeAuth(const int);
-    void authFinished(const int);
+    void activeAuth(const AuthCommon::AuthType);
+    void authFinished(const AuthCommon::AuthState);
     void requestAuthenticate();
     void unlockTimeChanged();
 
@@ -93,8 +93,8 @@ protected:
 
 protected:
     int m_inputType;          // 认证信息输入设备类型
-    int m_state;              // 认证状态
-    int m_type;               // 认证类型
+    AuthCommon::AuthState m_state;  // 认证状态
+    AuthCommon::AuthType m_type;   // 认证类型
     bool m_showPrompt;        // 是否显示默认提示文案
     uint m_integerMinutes;    // 认证剩余解锁的整数分钟
     LimitsInfo *m_limitsInfo; // 认证限制相关信息

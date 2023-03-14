@@ -59,7 +59,7 @@ void MFAWidget::setModel(const SessionBaseModel *model)
     setUser(model->currentUser());
 }
 
-void MFAWidget::setAuthType(const int type)
+void MFAWidget::setAuthType(const AuthFlags type)
 {
     qDebug() << "MFAWidget::setAuthType:" << type;
     m_index = 2;
@@ -159,7 +159,7 @@ void MFAWidget::setAuthType(const int type)
  * @param state  认证结果
  * @param message 消息
  */
-void MFAWidget::setAuthState(const int type, const int state, const QString &message)
+void MFAWidget::setAuthState(const AuthCommon::AuthType type, const AuthCommon::AuthState state, const QString &message)
 {
     qDebug() << "MFAWidget::setAuthState:" << type << state << message;
     switch (type) {
@@ -235,7 +235,7 @@ void MFAWidget::initPasswdAuth()
         m_passwordAuth->setLineEditEnabled(false);
         emit sendTokenToAuth(m_model->currentUser()->name(), AT_Password, text);
     });
-    connect(m_passwordAuth, &AuthPassword::authFinished, this, [this](const int value) {
+    connect(m_passwordAuth, &AuthPassword::authFinished, this, [this](const AuthState value) {
         checkAuthResult(AT_Password, value);
     });
     connect(m_lockButton, &QPushButton::clicked, m_passwordAuth, &AuthPassword::requestAuthenticate);
@@ -260,7 +260,7 @@ void MFAWidget::initFingerprintAuth()
     connect(m_fingerprintAuth, &AuthFingerprint::activeAuth, this, [this] {
         emit requestStartAuthentication(m_model->currentUser()->name(), AT_Fingerprint);
     });
-    connect(m_fingerprintAuth, &AuthFingerprint::authFinished, this, [this](const int value) {
+    connect(m_fingerprintAuth, &AuthFingerprint::authFinished, this, [this](const AuthState value) {
         checkAuthResult(AT_Fingerprint, value);
     });
 }
@@ -294,7 +294,7 @@ void MFAWidget::initUKeyAuth()
         emit sendTokenToAuth(m_model->currentUser()->name(), AT_Ukey, text);
     });
     connect(m_lockButton, &QPushButton::clicked, m_ukeyAuth, &AuthUKey::requestAuthenticate);
-    connect(m_ukeyAuth, &AuthUKey::authFinished, this, [this](const bool state) {
+    connect(m_ukeyAuth, &AuthUKey::authFinished, this, [this](const AuthState state) {
         checkAuthResult(AT_Ukey, state);
     });
     connect(m_capsLockMonitor, &KeyboardMonitor::capsLockStatusChanged, m_ukeyAuth, &AuthUKey::setCapsLockVisible);
@@ -323,7 +323,7 @@ void MFAWidget::initFaceAuth()
     connect(m_faceAuth, &AuthFace::activeAuth, this, [this] {
         emit requestStartAuthentication(m_model->currentUser()->name(), AT_Face);
     });
-    connect(m_faceAuth, &AuthFace::authFinished, this, [this](const bool state) {
+    connect(m_faceAuth, &AuthFace::authFinished, this, [this](const AuthState state) {
         checkAuthResult(AT_Face, state);
     });
 }
@@ -345,7 +345,7 @@ void MFAWidget::initIrisAuth()
     connect(m_irisAuth, &AuthIris::activeAuth, this, [this] {
         emit requestStartAuthentication(m_model->currentUser()->name(), AT_Iris);
     });
-    connect(m_irisAuth, &AuthIris::authFinished, this, [this](const bool state) {
+    connect(m_irisAuth, &AuthIris::authFinished, this, [this](const AuthState state) {
         checkAuthResult(AT_Iris, state);
     });
 }
@@ -356,7 +356,7 @@ void MFAWidget::initIrisAuth()
  * @param type
  * @param succeed
  */
-void MFAWidget::checkAuthResult(const int type, const int state)
+void MFAWidget::checkAuthResult(const AuthType type, const AuthState state)
 {
     if (type == AT_Password && state == AS_Success) {
         if (m_fingerprintAuth && m_fingerprintAuth->authState() == AS_Locked) {

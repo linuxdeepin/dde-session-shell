@@ -69,13 +69,14 @@ public:
         LockContent,
         UpdateContent
     };
+    Q_ENUM(ContentType)
 
     /* com.deepin.daemon.Authenticate */
     struct AuthProperty {
         bool FuzzyMFA;          // Reserved
         bool MFAFlag;           // 多因子标志位
         int FrameworkState;     // 认证框架是否可用标志位
-        int AuthType;           // 账户开启的认证类型
+        AuthFlags AuthType;           // 账户开启的认证类型
         int MixAuthFlags;       // 受支持的认证类型
         int PINLen;             // PIN 码的最大长度
         QString EncryptionType; // 加密类型
@@ -150,7 +151,7 @@ public:
     inline const QList<std::shared_ptr<User>> getUserList() const { return m_users->values(); }
 
     inline const AuthProperty &getAuthProperty() const { return m_authProperty; }
-    void setAuthType(const int type);
+    void setAuthType(const AuthFlags type);
 
     std::shared_ptr<User> json2User(const QString &userJson);
 
@@ -190,7 +191,7 @@ public slots:
     void updateSupportedMixAuthFlags(const int flags);
     void updateSupportedEncryptionType(const QString &type);
     /* com.deepin.daemon.Authenticate.Session */
-    void updateAuthState(const int type, const int state, const QString &message);
+    void updateAuthState(const AuthType type, const AuthState state, const QString &message);
     void updateFactorsInfo(const MFAInfoList &infoList);
     void updateFuzzyMFA(const bool fuzzMFA);
     void updateMFAFlag(const bool MFAFlag);
@@ -226,8 +227,8 @@ signals:
     void tipsShowed();
     void clearServerLoginWidgetContent();
 
-    void authStateChanged(const int, const int, const QString &);
-    void authTypeChanged(const int type);
+    void authStateChanged(const AuthType, const AuthState, const QString &);
+    void authTypeChanged(const AuthFlags type);
 
     // 关闭插件右键菜单信号
     void hidePluginMenu();

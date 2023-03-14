@@ -145,7 +145,7 @@ void AuthSingle::reset()
  * @param state
  * @param result
  */
-void AuthSingle::setAuthState(const int state, const QString &result)
+void AuthSingle::setAuthState(const AuthCommon::AuthState state, const QString &result)
 {
     qDebug() << "AuthSingle::setAuthResult:" << state << result;
     m_state = state;

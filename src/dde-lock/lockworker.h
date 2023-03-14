@@ -42,15 +42,15 @@ public slots:
     /* New authentication framework */
     void createAuthentication(const QString &account);
     void destroyAuthentication(const QString &account);
-    void startAuthentication(const QString &account, const int authType);
-    void endAuthentication(const QString &account, const int authType);
-    void sendTokenToAuth(const QString &account, const int authType, const QString &token);
-    void onEndAuthentication(const QString &account, const int authType);
+    void startAuthentication(const QString &account, const AuthFlags authType);
+    void endAuthentication(const QString &account, const AuthFlags authType);
+    void sendTokenToAuth(const QString &account, const AuthType authType, const QString &token);
+    void onEndAuthentication(const QString &account, const AuthFlags authType);
 
     void switchToUser(std::shared_ptr<User> user) override;
     void restartResetSessionTimer();
     void onAuthFinished();
-    void onAuthStateChanged(const int type, const int state, const QString &message);
+    void onAuthStateChanged(const AuthType type, const AuthState state, const QString &message);
 
     void disableGlobalShortcutsForWayland(const bool enable);
     void checkAccount(const QString &account);

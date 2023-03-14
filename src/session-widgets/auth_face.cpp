@@ -66,7 +66,7 @@ void AuthFace::reset()
  * @param state
  * @param result
  */
-void AuthFace::setAuthState(const int state, const QString &result)
+void AuthFace::setAuthState(const AuthCommon::AuthState state, const QString &result)
 {
     m_state = state;
     switch (state) {

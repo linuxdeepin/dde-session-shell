@@ -34,7 +34,7 @@ TEST_F(UT_AuthSingle, basic)
 
 TEST_F(UT_AuthSingle, AuthResultTest)
 {
-    m_authSingle->setAuthState(INT_MAX, "default");
+    m_authSingle->setAuthState(AuthCommon::AS_None, "default");
     m_authSingle->setAuthState(AuthCommon::AS_Success, "Success");
     m_authSingle->setAuthState(AuthCommon::AS_Failure, "Failure");
     m_authSingle->setAuthState(AuthCommon::AS_Cancel, "Cancel");

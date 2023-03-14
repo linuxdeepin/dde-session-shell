@@ -35,13 +35,13 @@ public:
     ~SFAWidget();
 
     void setModel(const SessionBaseModel *model) override;
-    void setAuthType(const int type) override;
-    void setAuthState(const int type, const int state, const QString &message) override;
+    void setAuthType(const AuthCommon::AuthFlags type) override;
+    void setAuthState(const AuthCommon::AuthType type, const AuthCommon::AuthState state, const QString &message) override;
     int getTopSpacing() const override;
 
 public slots:
     void onRetryButtonVisibleChanged(bool visible);
-    void onRequestChangeAuth(const int authType);
+    void onRequestChangeAuth(const AuthCommon::AuthType authType);
 
 protected:
     void resizeEvent(QResizeEvent *event) Q_DECL_OVERRIDE;
@@ -49,11 +49,15 @@ protected:
 
 protected Q_SLOTS:
     void updateBlurEffectGeometry();
-    void onActiveAuth(int authType);
+    void onActiveAuth(AuthCommon::AuthType authType);
 
 private:
     void initUI();
     void initConnections();
+    AuthCommon::AuthFlags initAuthFactors(const AuthCommon::AuthFlags type);
+    AuthCommon::AuthFlags initCustomFactor(const AuthCommon::AuthFlags type);
+    void chooseAuthType(const AuthCommon::AuthFlags authFlags);
+    void initChooseAuthButtonBox(const AuthCommon::AuthFlags authFlags);
 
     void initSingleAuth();
     void initPasswdAuth();
@@ -63,7 +67,7 @@ private:
     void initIrisAuth();
     void initCustomAuth();
 
-    void checkAuthResult(const int type, const int state) override;
+    void checkAuthResult(const AuthCommon::AuthType type, const AuthCommon::AuthState state) override;
 
     void replaceWidget(AuthModule *authModule);
     void setBioAuthStateVisible(AuthModule *authModule, bool visible);
@@ -71,7 +75,6 @@ private:
     void updateFocus();
     void initAccount();
     bool useCustomAuth() const;
-    void chooseAuthType(int authType);
     bool showAuthButtonBox() const;
 
 private:
@@ -80,7 +83,7 @@ private:
     DButtonBox *m_chooseAuthButtonBox; // 认证选择按钮
     DLabel *m_biometricAuthState;      // 生物认证状态
 
-    QMap<int, DButtonBoxButton *> m_authButtons;
+    QMap<AuthCommon::AuthType, DButtonBoxButton *> m_authButtons;
     DFloatingButton *m_retryButton;
     QSpacerItem *m_bioAuthStatePlaceHolder;
     QSpacerItem *m_bioBottomSpacingHolder;

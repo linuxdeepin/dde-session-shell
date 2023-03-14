@@ -39,7 +39,7 @@ signals:
     void sendKeyValue(QString keyValue);
 
     void requestStartAuthentication(const QString &account, const int authType);
-    void sendTokenToAuth(const QString &account, const int authType, const QString &token);
+    void sendTokenToAuth(const QString &account, const AuthType authType, const QString &token);
     void requestEndAuthentication(const QString &account, const int authType);
 
 private slots:

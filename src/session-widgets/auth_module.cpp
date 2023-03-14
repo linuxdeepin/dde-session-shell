@@ -82,7 +82,7 @@ void AuthModule::setAnimationState(const bool start)
  * @param state
  * @param result
  */
-void AuthModule::setAuthState(const int state, const QString &result)
+void AuthModule::setAuthState(const AuthCommon::AuthState state, const QString &result)
 {
     Q_UNUSED(result)
 

@@ -7,8 +7,9 @@
 
 #include <QObject>
 
-#define AUTH_TYPES_CAST(type) static_cast<AuthCommon::AuthTypes>(type)
-#define AUTH_STATE_CAST(type) static_cast<AuthCommon::AuthState>(type)
+#define AUTH_TYPE_CAST(type) static_cast<AuthCommon::AuthType>(type)
+#define AUTH_FLAGS_CAST(flags) static_cast<AuthCommon::AuthFlags>(flags)
+#define AUTH_STATE_CAST(state) static_cast<AuthCommon::AuthState>(state)
 
 namespace AuthCommon {
 
@@ -63,9 +64,9 @@ enum AuthType {
     AT_Custom          = 1 << 30,   // 自定义
     AT_All             = -1         // all
 };
-Q_DECLARE_FLAGS(AuthTypes, AuthType)
-Q_FLAG_NS(AuthTypes)
-Q_DECLARE_OPERATORS_FOR_FLAGS(AuthTypes)
+Q_DECLARE_FLAGS(AuthFlags, AuthType)
+Q_FLAG_NS(AuthFlags)
+Q_DECLARE_OPERATORS_FOR_FLAGS(AuthFlags)
 
 /**
  * @brief The AuthStatus enum

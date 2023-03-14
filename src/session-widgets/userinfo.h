@@ -7,6 +7,7 @@
 
 #include "constants.h"
 #include "public_func.h"
+#include "authcommon.h"
 
 #include <QObject>
 #include <QJsonObject>
@@ -74,7 +75,7 @@ public:
 
     inline int expiredDayLeft() const { return m_expiredDayLeft; }
     inline int expiredState() const { return m_expiredState; }
-    inline int lastAuthType() const { return m_lastAuthType; }
+    inline AuthCommon::AuthType lastAuthType() const { return m_lastAuthType; }
     inline int shortDateFormat() const { return m_shortDateFormat; }
     inline int shortTimeFormat() const { return m_shortTimeFormat; }
     inline int weekdayFormat() const { return m_weekdayFormat; }
@@ -97,7 +98,7 @@ public:
 
     void updateLimitsInfo(const QString &info);
     void updateLoginState(const bool isLogin);
-    void setLastAuthType(const int type);
+    void setLastAuthType(const AuthCommon::AuthType type);
     bool allowToChangePassword() const;
 
     virtual void setKeyboardLayout(const QString &keyboard) { Q_UNUSED(keyboard) }
@@ -139,7 +140,7 @@ protected:
     bool m_isUse24HourFormat;            // 24小时制
     int m_expiredDayLeft;                // 密码过期剩余天数
     int m_expiredState;                  // 密码过期状态
-    int m_lastAuthType;                  // 上次成功的认证
+    AuthCommon::AuthType m_lastAuthType; // 上次成功的认证
     int m_shortDateFormat;               // 短日期格式
     int m_shortTimeFormat;               // 短时间格式
     int m_weekdayFormat;                 // 星期显示格式

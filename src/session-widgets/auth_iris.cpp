@@ -66,7 +66,7 @@ void AuthIris::reset()
  * @param state
  * @param result
  */
-void AuthIris::setAuthState(const int state, const QString &result)
+void AuthIris::setAuthState(const AuthCommon::AuthState state, const QString &result)
 {
     m_state = state;
     switch (state) {

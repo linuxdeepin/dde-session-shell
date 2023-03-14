@@ -103,7 +103,7 @@ void AuthCustom::reset()
         m_plugin->reset();
 }
 
-void AuthCustom::setAuthState(const int state, const QString &result)
+void AuthCustom::setAuthState(const AuthCommon::AuthState state, const QString &result)
 {
     qInfo() << Q_FUNC_INFO << "AuthCustom::setAuthState:" << state << result;
     m_state = state;
@@ -202,8 +202,7 @@ QString AuthCustom::messageCallback(const QString &message, void *app_data)
         }
     } else if (cmdType == "setAuthTypeInfo") {
         QJsonObject dataObj = messageObj.value("Data").toObject();
-        AuthCommon::AuthType type = (AuthCommon::AuthType)dataObj["AuthType"].toInt();
-        authCustom->changeAuthType(type);
+        authCustom->changeAuthType(AUTH_TYPE_CAST(dataObj["AuthType"].toInt()));
     }
 
     retObj["Data"] = dataObj;
@@ -324,16 +323,16 @@ void AuthCustom::lightdmAuthStarted()
     qInfo() << "Plugin result: " << result;
 }
 
-void AuthCustom::notifyAuthState(AuthCommon::AuthType authType, AuthCommon::AuthState state)
+void AuthCustom::notifyAuthState(AuthCommon::AuthFlags authType, AuthCommon::AuthState state)
 {
-    qInfo() << Q_FUNC_INFO << AUTH_TYPES_CAST(authType) << ", auth state: " << AUTH_STATE_CAST(state);
+    qInfo() << Q_FUNC_INFO << authType << ", auth state: " << state;
     if (!m_plugin)
         return;
 
     QJsonObject message;
     message["CmdType"] = "AuthState";
     QJsonObject retDataObj;
-    retDataObj["AuthType"] = authType;
+    retDataObj["AuthType"] = static_cast<int>(authType);
     retDataObj["AuthState"] = state;
     message["Data"] = retDataObj;
     m_plugin->message(toJson(message));

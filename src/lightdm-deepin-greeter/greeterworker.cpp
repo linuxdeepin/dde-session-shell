@@ -224,8 +224,8 @@ void GreeterWorker::initConnections()
         });
     });
     /* model */
-    connect(m_model, &SessionBaseModel::authTypeChanged, this, [this](const int type) {
-        qInfo() << "Auth type changed, incoming type:" << AUTH_TYPES_CAST(type)
+    connect(m_model, &SessionBaseModel::authTypeChanged, this, [this](const AuthFlags type) {
+        qInfo() << "Auth type changed, incoming type:" << type
                 << ", mfa flag:" << m_model->getAuthProperty().MFAFlag;
         if (type > 0 && m_model->getAuthProperty().MFAFlag) {
             startAuthentication(m_account, m_model->getAuthProperty().AuthType);
@@ -371,7 +371,7 @@ void GreeterWorker::setCurrentUser(const std::shared_ptr<User> user)
 {
     qDebug() << "User:" << user->name();
     QJsonObject json;
-    json["AuthType"] = user->lastAuthType();
+    json["AuthType"] = static_cast<int>(user->lastAuthType());
     json["Name"] = user->name();
     json["Type"] = user->type();
     json["Uid"] = static_cast<int>(user->uid());
@@ -530,13 +530,13 @@ void GreeterWorker::destroyAuthentication(const QString &account)
  * @param authType  认证类型（可传入一种或多种）
  * @param timeout   设定超时时间（默认 -1）
  */
-void GreeterWorker::startAuthentication(const QString &account, const int authType)
+void GreeterWorker::startAuthentication(const QString &account, const AuthFlags authType)
 {
     if (!m_model->currentUser()->allowToChangePassword()) {
         qInfo() << "Authentication exit because of user's authority";
         return;
     }
-    qInfo() << "Account:" << account << ", auth type:" << AUTH_TYPES_CAST(authType);
+    qInfo() << "Account:" << account << ", auth type:" << authType;
     switch (m_model->getAuthProperty().FrameworkState) {
     case Available:
         m_authFramework->StartAuthentication(account, authType, -1);
@@ -555,9 +555,9 @@ void GreeterWorker::startAuthentication(const QString &account, const int authTy
  * @param authType  认证类型
  * @param token     密文
  */
-void GreeterWorker::sendTokenToAuth(const QString &account, const int authType, const QString &token)
+void GreeterWorker::sendTokenToAuth(const QString &account, const AuthType authType, const QString &token)
 {
-    qInfo() << "Send token:" << account << ", auth type:" << AUTH_TYPES_CAST(authType);
+    qInfo() << "Send token:" << account << ", auth type:" << authType;
     switch (m_model->getAuthProperty().FrameworkState) {
     case Available:
         if (AT_PAM == authType) {
@@ -581,9 +581,9 @@ void GreeterWorker::sendTokenToAuth(const QString &account, const int authType, 
  * @param account   账户
  * @param authType  认证类型
  */
-void GreeterWorker::endAuthentication(const QString &account, const int authType)
+void GreeterWorker::endAuthentication(const QString &account, const AuthFlags authType)
 {
-    qInfo() << "Account:" << account << ", auth type:" << AUTH_TYPES_CAST(authType);
+    qInfo() << "Account:" << account << ", auth type:" << authType;
 
     switch (m_model->getAuthProperty().FrameworkState) {
     case Available:
@@ -764,9 +764,9 @@ void GreeterWorker::onAuthFinished()
     }
 }
 
-void GreeterWorker::onAuthStateChanged(const int type, const int state, const QString &message)
+void GreeterWorker::onAuthStateChanged(const AuthType type, const AuthState state, const QString &message)
 {
-    qInfo() << "Auth type:" << AUTH_TYPES_CAST(type) << ", state:" << AUTH_STATE_CAST(state) << ", message:" << message;
+    qInfo() << "Auth type:" << type << ", state:" << state << ", message:" << message;
     if (m_model->getAuthProperty().MFAFlag) {
         if (type == AT_All) {
             switch (state) {

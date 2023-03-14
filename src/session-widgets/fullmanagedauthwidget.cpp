@@ -16,7 +16,7 @@ QList<FullManagedAuthWidget *> FullManagedAuthWidget::FullManagedAuthWidgetObjs 
 FullManagedAuthWidget::FullManagedAuthWidget(QWidget *parent)
     : AuthWidget(parent)
     , m_mainLayout(new QVBoxLayout(this))
-    , m_currentAuthType(AuthCommon::AuthType::AT_All)
+    , m_currentAuthType(AT_All)
     , m_inited(false)
     , m_isPluginLoaded(false)
 {
@@ -73,9 +73,9 @@ void FullManagedAuthWidget::setModel(const SessionBaseModel *model)
     m_inited = true;
 }
 
-void FullManagedAuthWidget::setAuthType(const int type)
+void FullManagedAuthWidget::setAuthType(const AuthFlags type)
 {
-    qDebug() << "Auth type:" << AUTH_TYPES_CAST(type);
+    qDebug() << "Auth type:" << type;
     int authType = type;
     LoginPlugin *plugin = PluginManager::instance()->getFullManagedLoginPlugin();
     if (plugin
@@ -106,9 +106,9 @@ void FullManagedAuthWidget::setAuthType(const int type)
         Q_EMIT requestStartAuthentication(m_model->currentUser()->name(), AT_Custom);
 }
 
-void FullManagedAuthWidget::setAuthState(const int type, const int state, const QString &message)
+void FullManagedAuthWidget::setAuthState(const AuthCommon::AuthType type, const AuthCommon::AuthState state, const QString &message)
 {
-    qDebug() << AUTH_TYPES_CAST(type) << AUTH_STATE_CAST(state) << message;
+    qDebug() << type << state << message;
     if (!isPluginLoaded()) {
         qDebug() << Q_FUNC_INFO << "plugin not load or actived";
         return;
@@ -140,7 +140,7 @@ void FullManagedAuthWidget::setAuthState(const int type, const int state, const 
 
     // 同步验证状态给插件
     if (m_customAuth) {
-        m_customAuth->notifyAuthState(static_cast<AuthCommon::AuthType>(type), static_cast<AuthCommon::AuthState>(state));
+        m_customAuth->notifyAuthState(type, state);
     }
 }
 
@@ -199,7 +199,7 @@ void FullManagedAuthWidget::initCustomAuth()
     m_isPluginLoaded = true;
 }
 
-void FullManagedAuthWidget::checkAuthResult(const int type, const int state)
+void FullManagedAuthWidget::checkAuthResult(const AuthType type, const AuthState state)
 {
     // 等所有类型验证通过的时候在发送验证完成信息，否则DA的验证结果可能还没有刷新，导致lightdm调用pam验证失败
     // 人脸和虹膜是手动点击解锁按钮后发送，无需处理
@@ -230,7 +230,7 @@ void FullManagedAuthWidget::showEvent(QShowEvent *event)
 }
 
 // plugin do not neet to response auth changing
-void FullManagedAuthWidget::onRequestChangeAuth(const int authType)
+void FullManagedAuthWidget::onRequestChangeAuth(const AuthType authType)
 {
     Q_UNUSED(authType);
 }

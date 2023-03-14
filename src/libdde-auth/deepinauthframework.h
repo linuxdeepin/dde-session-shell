@@ -5,6 +5,8 @@
 #ifndef DEEPINAUTHFRAMEWORK_H
 #define DEEPINAUTHFRAMEWORK_H
 
+#include "authcommon.h"
+
 #include <QObject>
 #include <QPointer>
 
@@ -39,7 +41,7 @@ public:
 
     /* com.deepin.daemon.Authenticate */
     int GetFrameworkState() const;
-    int GetSupportedMixAuthFlags() const;
+    AuthCommon::AuthFlags GetSupportedMixAuthFlags() const;
     QString GetPreOneKeyLogin(const int flag) const;
     QString GetLimitedInfo(const QString &account) const;
     QString GetSupportedEncrypts() const;
@@ -69,26 +71,26 @@ signals:
     void PromptChanged(const QString &);
     void FactorsInfoChanged(const MFAInfoList &);
     void PINLenChanged(const int);
-    void AuthStateChanged(const int, const int, const QString &);
+    void AuthStateChanged(const AuthCommon::AuthType, const AuthCommon::AuthState, const QString &);
     void SessionCreated();
-    void DeviceChanged(const int, const int);
+    void DeviceChanged(const AuthCommon::AuthFlags, const int);
 
 public slots:
     /* New authentication framework */
-    void CreateAuthController(const QString &account, const int authType, const int appType);
+    void CreateAuthController(const QString &account, const AuthCommon::AuthFlags authType, const int appType);
     void DestroyAuthController(const QString &account);
-    void StartAuthentication(const QString &account, const int authType, const int timeout);
-    void EndAuthentication(const QString &account, const int authType);
-    void SendTokenToAuth(const QString &account, const int authType, const QString &token);
+    void StartAuthentication(const QString &account, const AuthCommon::AuthFlags authType, const int timeout);
+    void EndAuthentication(const QString &account, const AuthCommon::AuthFlags authType);
+    void SendTokenToAuth(const QString &account, const AuthCommon::AuthType authType, const QString &token);
     void SetAuthQuitFlag(const QString &account, const int flag = AutoQuit);
-    void onDeviceChanged(const int authType, const int state);
+    void onDeviceChanged(const AuthCommon::AuthFlags authType, const int state);
 
 private:
     /* Compatible with old authentication methods */
     static void *PAMAuthWorker(void *arg);
     void PAMAuthentication(const QString &account);
     static int PAMConversation(int num_msg, const struct pam_message **msg, struct pam_response **resp, void *app_data);
-    void UpdateAuthState(const int state, const QString &message);
+    void UpdateAuthState(const AuthCommon::AuthState state, const QString &message);
 
 private:
     AuthInter *m_authenticateInter;

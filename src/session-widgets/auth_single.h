@@ -27,7 +27,7 @@ public:
     void setPasswordLineEditEnabled(const bool enable);
 
     void setAnimationState(const bool start) override;
-    void setAuthState(const int state, const QString &result) override;
+    void setAuthState(const AuthCommon::AuthState state, const QString &result) override;
     void setCapsLockVisible(const bool on);
     void setKeyboardButtonInfo(const QString &text);
     void setKeyboardButtonVisible(const bool visible);

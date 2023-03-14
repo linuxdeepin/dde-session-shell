@@ -103,7 +103,7 @@ void AuthUKey::reset()
  * @param state
  * @param result
  */
-void AuthUKey::setAuthState(const int state, const QString &result)
+void AuthUKey::setAuthState(const AuthCommon::AuthState state, const QString &result)
 {
     m_state = state;
     switch (state) {

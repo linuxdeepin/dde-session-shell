@@ -31,7 +31,7 @@ TEST_F(UT_AuthModule, BasicTest)
     m_authModule->authState();
     m_authModule->authType();
     m_authModule->setAnimationState(false);
-    m_authModule->setAuthState(0, "test");
+    m_authModule->setAuthState(AuthCommon::AS_Success, "test");
     // m_authModule->setAuthState("");
     m_authModule->setLimitsInfo(LimitsInfo());
 }

@@ -47,16 +47,16 @@ public slots:
     /* New authentication framework */
     void createAuthentication(const QString &account);
     void destroyAuthentication(const QString &account);
-    void startAuthentication(const QString &account, const int authType);
-    void endAuthentication(const QString &account, const int authType);
-    void sendTokenToAuth(const QString &account, const int authType, const QString &token);
+    void startAuthentication(const QString &account, const AuthFlags authType);
+    void endAuthentication(const QString &account, const AuthFlags authType);
+    void sendTokenToAuth(const QString &account, const AuthType authType, const QString &token);
 
     void checkAccount(const QString &account);
     void restartResetSessionTimer();
     void onAuthFinished();
 
 private slots:
-    void onAuthStateChanged(const int type, const int state, const QString &message);
+    void onAuthStateChanged(const AuthType type, const AuthState state, const QString &message);
     void onReceiptChanged(bool state);
     void onCurrentUserChanged(const std::shared_ptr<User> &user);
     void onSessionCreated();

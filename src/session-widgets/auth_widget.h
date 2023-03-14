@@ -68,8 +68,8 @@ public:
     ~AuthWidget() override;
 
     virtual void setModel(const SessionBaseModel *model);
-    virtual void setAuthType(const int type);
-    virtual void setAuthState(const int type, const int state, const QString &message);
+    virtual void setAuthType(const AuthCommon::AuthFlags type);
+    virtual void setAuthState(const AuthCommon::AuthType type, const AuthCommon::AuthState state, const QString &message);
     virtual int getTopSpacing() const;
 
     void setAccountErrorMsg(const QString &message);
@@ -79,9 +79,9 @@ public:
 Q_SIGNALS:
     void requestCheckAccount(const QString &account);
     void requestSetKeyboardType(const QString &key);
-    void requestStartAuthentication(const QString &account, const int authType);
-    void sendTokenToAuth(const QString &account, const int authType, const QString &token);
-    void requestEndAuthentication(const QString &account, const int authType);
+    void requestStartAuthentication(const QString &account, const AuthCommon::AuthFlags authType);
+    void sendTokenToAuth(const QString &account, const AuthCommon::AuthType authType, const QString &token);
+    void requestEndAuthentication(const QString &account, const AuthCommon::AuthFlags authType);
     void authFinished();
     void updateParentLayout();
 
@@ -91,18 +91,14 @@ protected:
 protected:
     void initUI();
     void initConnections();
-
-    virtual void checkAuthResult(const int type, const int state);
-
+    virtual void checkAuthResult(const AuthCommon::AuthType type, const AuthCommon::AuthState state);
     void setUser(std::shared_ptr<User> user);
     void setLimitsInfo(const QMap<int, User::LimitsInfo> *limitsInfo);
     void setAvatar(const QString &avatar);
     void updateUserDisplayNameLabel();
     void setPasswordHint(const QString &hint);
     void setLockButtonType(const int type);
-
     void updatePasswordExpiredState();
-
     void registerSyncFunctions(const QString &flag, std::function<void(QVariant)> function);
     void syncSingle(const QVariant &value);
     void syncSingleResetPasswordVisibleChanged(const QVariant &value);

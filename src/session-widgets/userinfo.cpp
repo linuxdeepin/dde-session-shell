@@ -25,7 +25,7 @@ User::User(QObject *parent)
     , m_isUse24HourFormat(true)
     , m_expiredDayLeft(0)
     , m_expiredState(ExpiredNormal)
-    , m_lastAuthType(0)
+    , m_lastAuthType(AuthCommon::AT_Password)
     , m_shortDateFormat(0)
     , m_shortTimeFormat(0)
     , m_weekdayFormat(0)
@@ -49,7 +49,7 @@ User::User(const User &user)
     , m_isUse24HourFormat(user.m_isUse24HourFormat)
     , m_expiredDayLeft(user.m_expiredDayLeft)
     , m_expiredState(user.m_expiredState)
-    , m_lastAuthType(0)
+    , m_lastAuthType(AuthCommon::AT_Password)
     , m_shortDateFormat(user.m_shortDateFormat)
     , m_shortTimeFormat(user.m_shortTimeFormat)
     , m_weekdayFormat(user.m_weekdayFormat)
@@ -119,7 +119,7 @@ void User::updateLimitsInfo(const QString &info)
  *
  * @param type
  */
-void User::setLastAuthType(const int type)
+void User::setLastAuthType(const AuthCommon::AuthType type)
 {
     if (m_lastAuthType == type) {
         return;

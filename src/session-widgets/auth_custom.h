@@ -31,7 +31,7 @@ public:
 
     void setModule(LoginPlugin *module);
     LoginPlugin* getModule() const;
-    void setAuthState(const int state, const QString &result) override;
+    void setAuthState(const AuthCommon::AuthState state, const QString &result) override;
     LoginPlugin::AuthCallbackData getCurrentAuthData() const { return m_currentAuthData; }
     void setModel(const SessionBaseModel *model);
     const SessionBaseModel *getModel() const { return m_model; }
@@ -45,7 +45,7 @@ public:
     void sendAuthToken();
     void lightdmAuthStarted();
 
-    void notifyAuthState(AuthCommon::AuthType authType, AuthCommon::AuthState state);
+    void notifyAuthState(AuthCommon::AuthFlags authType, AuthCommon::AuthState state);
     using AuthModule::setLimitsInfo; // 避免警告：XXX hides overloaded virtual function
     void setLimitsInfo(const QMap<int, User::LimitsInfo> &limitsInfo);
 
@@ -67,7 +67,7 @@ Q_SIGNALS:
     void requestCheckAccount(const QString &account);
     void requestSendToken(const QString &token);
     void notifyResizeEvent();
-    void notifyAuthTypeChange(const int authType);
+    void notifyAuthTypeChange(const AuthCommon::AuthType authType);
 
 private:
     QVBoxLayout *m_mainLayout;

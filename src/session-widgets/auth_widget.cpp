@@ -190,7 +190,7 @@ void AuthWidget::setUser(std::shared_ptr<User> user)
  * @brief 设置认证类型
  * @param type
  */
-void AuthWidget::setAuthType(const int type)
+void AuthWidget::setAuthType(const AuthCommon::AuthFlags type)
 {
     Q_UNUSED(type)
 }
@@ -201,7 +201,7 @@ void AuthWidget::setAuthType(const int type)
  * @param state
  * @param message
  */
-void AuthWidget::setAuthState(const int type, const int state, const QString &message)
+void AuthWidget::setAuthState(const AuthCommon::AuthType type, const AuthCommon::AuthState state, const QString &message)
 {
     Q_UNUSED(type)
     Q_UNUSED(state)
@@ -215,7 +215,7 @@ void AuthWidget::setAuthState(const int type, const int state, const QString &me
  * @param type
  * @param state
  */
-void AuthWidget::checkAuthResult(const int type, const int state)
+void AuthWidget::checkAuthResult(const AuthCommon::AuthType type, const AuthCommon::AuthState state)
 {
     Q_UNUSED(type)
     Q_UNUSED(state)

@@ -43,7 +43,7 @@ TEST_F(UT_LockWorker, auth)
 {
     m_worker->createAuthentication("uos");
     m_worker->startAuthentication("uos", 0);
-    m_worker->sendTokenToAuth("uos", 0, "123");
+    m_worker->sendTokenToAuth("uos", AuthCommon::AT_None, "123");
     m_worker->endAuthentication("uos", 0);
     m_worker->destroyAuthentication("uos");
     m_worker->switchToUser(m_model->currentUser());

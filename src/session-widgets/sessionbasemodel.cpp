@@ -30,7 +30,7 @@ SessionBaseModel::SessionBaseModel(QObject *parent)
     , m_lastLogoutUser(nullptr)
     , m_powerAction(PowerAction::RequireNormal)
     , m_currentModeState(ModeStatus::NoStatus)
-    , m_authProperty {false, false, Unavailable, AuthCommon::None, AuthCommon::None, 0, "", "", ""}
+    , m_authProperty {false, false, Unavailable, AuthCommon::AT_None, AuthCommon::None, 0, "", "", ""}
     , m_users(new QMap<QString, std::shared_ptr<User>>())
     , m_loginedUsers(new QMap<QString, std::shared_ptr<User>>())
     , m_updatePowerMode(UPM_None)
@@ -237,7 +237,7 @@ void SessionBaseModel::setAllowShowCustomUser(const bool allowShowCustomUser)
  *
  * @param type
  */
-void SessionBaseModel::setAuthType(const int type)
+void SessionBaseModel::setAuthType(const AuthFlags type)
 {
     if (type == m_authProperty.AuthType && type != AT_None) {
         return;
@@ -347,7 +347,7 @@ std::shared_ptr<User> SessionBaseModel::json2User(const QString &userJson)
         user_ptr = findUserByUid(uid);
     }
     if (user_ptr)
-        user_ptr->setLastAuthType(userObj["AuthType"].toInt());
+        user_ptr->setLastAuthType(AUTH_TYPE_CAST(userObj["AuthType"].toInt()));
 
     return user_ptr;
 }
@@ -613,7 +613,7 @@ void SessionBaseModel::updateFactorsInfo(const MFAInfoList &infoList)
     switch (m_authProperty.FrameworkState) {
     case Available:
         for (const MFAInfo &info : infoList) {
-            m_authProperty.AuthType |= info.AuthType;
+            m_authProperty.AuthType |= AUTH_FLAGS_CAST(info.AuthType);
         }
         emit authTypeChanged(m_authProperty.AuthType);
         break;
@@ -631,7 +631,7 @@ void SessionBaseModel::updateFactorsInfo(const MFAInfoList &infoList)
  * @param state
  * @param result
  */
-void SessionBaseModel::updateAuthState(const int type, const int state, const QString &message)
+void SessionBaseModel::updateAuthState(const AuthType type, const AuthState state, const QString &message)
 {
     switch (m_authProperty.FrameworkState) {
     case Available:

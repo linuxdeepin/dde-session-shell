@@ -174,7 +174,7 @@ void AuthPassword::reset()
  * @param state
  * @param result
  */
-void AuthPassword::setAuthState(const int state, const QString &result)
+void AuthPassword::setAuthState(const AuthState state, const QString &result)
 {
     m_state = state;
     switch (state) {

@@ -41,9 +41,9 @@ DeepinAuthFramework::DeepinAuthFramework(QObject *parent)
     QDBusConnection::systemBus().connect(AUTHENTICATE_SERVICE, "/com/deepin/daemon/Authenticate", "com.deepin.daemon.Authenticate", "DeviceChange", this, SLOT(onDeviceChanged(const int, const int)));
 }
 
-void DeepinAuthFramework::onDeviceChanged(const int authType, const int state)
+void DeepinAuthFramework::onDeviceChanged(const AuthFlags authType, const int state)
 {
-    qInfo() << "Receive DeviceChanged, authType:" << AUTH_TYPES_CAST(authType) << " state:" << state;
+    qInfo() << "Receive DeviceChanged, authType:" << authType << " state:" << state;
     Q_EMIT DeviceChanged(authType, state);
 }
 
@@ -252,7 +252,7 @@ void DeepinAuthFramework::SendToken(const QString &token)
  * @param state
  * @param message
  */
-void DeepinAuthFramework::UpdateAuthState(const int state, const QString &message)
+void DeepinAuthFramework::UpdateAuthState(const AuthState state, const QString &message)
 {
     emit AuthStateChanged(AT_PAM, state, message);
 }
@@ -279,14 +279,14 @@ void DeepinAuthFramework::DestroyAuthenticate()
  * @param authType    认证方式（多因、单因，一种或多种）
  * @param encryptType 加密方式
  */
-void DeepinAuthFramework::CreateAuthController(const QString &account, const int authType, const int appType)
+void DeepinAuthFramework::CreateAuthController(const QString &account, const AuthFlags authType, const int appType)
 {
     if (m_authenticateControllers->contains(account) && m_authenticateControllers->value(account)->isValid()) {
         return;
     }
     const QString authControllerInterPath = m_authenticateInter->Authenticate(account, authType, appType);
     qInfo() << "Account:" << account
-            << ", Auth type:"<< AUTH_TYPES_CAST(authType)
+            << ", Auth type:"<< authType
             << ", App type:" << appType
             << ", Authentication session path: " << authControllerInterPath;
     AuthControllerInter *authControllerInter = new AuthControllerInter("com.deepin.daemon.Authenticate", authControllerInterPath, QDBusConnection::systemBus(), this);
@@ -298,11 +298,13 @@ void DeepinAuthFramework::CreateAuthController(const QString &account, const int
     connect(authControllerInter, &AuthControllerInter::PINLenChanged, this, &DeepinAuthFramework::PINLenChanged);
     connect(authControllerInter, &AuthControllerInter::PromptChanged, this, &DeepinAuthFramework::PromptChanged);
     connect(authControllerInter, &AuthControllerInter::Status, this, [this](int flag, int state, const QString &msg) {
-        emit AuthStateChanged(flag, state, msg);
+        const AuthType type = AUTH_TYPE_CAST(flag);
+        const AuthState authState = AUTH_STATE_CAST(state);
+        emit AuthStateChanged(type, authState, msg);
 
         // 当人脸或者虹膜认证成功 或者 指纹识别失败/成功 时唤醒屏幕
-        if (((AT_Face == flag || AT_Iris == flag) && AS_Success == state)
-            || (AT_Fingerprint == flag && (AS_Failure == state || AS_Success == state))) {
+        if (((AT_Face == type || AT_Iris == type) && AS_Success == authState)
+            || (AT_Fingerprint == type && (AS_Failure == authState || AS_Success == authState))) {
             system("xset dpms force on");
         }
     });
@@ -363,13 +365,13 @@ void DeepinAuthFramework::DestroyAuthController(const QString &account)
  * @param authType  认证类型（可传入一种或多种）
  * @param timeout   设定超时时间（默认 -1）
  */
-void DeepinAuthFramework::StartAuthentication(const QString &account, const int authType, const int timeout)
+void DeepinAuthFramework::StartAuthentication(const QString &account, const AuthFlags authType, const int timeout)
 {
     if (!m_authenticateControllers->contains(account)) {
         return;
     }
     int ret = m_authenticateControllers->value(account)->Start(authType, timeout);
-    qInfo() << "Account:" << account << ", auth type" << AUTH_TYPES_CAST(authType) << ", ret:" << ret;
+    qInfo() << "Account:" << account << ", auth type" << authType << ", ret:" << ret;
 }
 
 /**
@@ -378,12 +380,12 @@ void DeepinAuthFramework::StartAuthentication(const QString &account, const int 
  * @param account   账户
  * @param authType  认证类型
  */
-void DeepinAuthFramework::EndAuthentication(const QString &account, const int authType)
+void DeepinAuthFramework::EndAuthentication(const QString &account, const AuthFlags authType)
 {
     if (!m_authenticateControllers->contains(account)) {
         return;
     }
-    qInfo() << "End Authentication:" << account << AUTH_TYPES_CAST(authType);
+    qInfo() << "End Authentication:" << account << authType;
     m_authenticateControllers->value(account)->End(authType).waitForFinished();
 }
 
@@ -394,12 +396,12 @@ void DeepinAuthFramework::EndAuthentication(const QString &account, const int au
  * @param authType  认证类型
  * @param token     密文
  */
-void DeepinAuthFramework::SendTokenToAuth(const QString &account, const int authType, const QString &token)
+void DeepinAuthFramework::SendTokenToAuth(const QString &account, const AuthType authType, const QString &token)
 {
     if (!m_authenticateControllers->contains(account)) {
         return;
     }
-    qInfo() << "Send token:" << account << ", authType:" << AUTH_TYPES_CAST(authType);
+    qInfo() << "Send token:" << account << ", authType:" << authType;
 
     QByteArray ba = EncryptHelper::ref().getEncryptedToken(token);
     m_authenticateControllers->value(account)->SetToken(authType, ba);
@@ -424,9 +426,9 @@ void DeepinAuthFramework::SetAuthQuitFlag(const QString &account, const int flag
  *
  * @return int
  */
-int DeepinAuthFramework::GetSupportedMixAuthFlags() const
+AuthFlags DeepinAuthFramework::GetSupportedMixAuthFlags() const
 {
-    return m_authenticateInter->supportedFlags();
+    return AUTH_FLAGS_CAST(m_authenticateInter->supportedFlags());
 }
 
 /**

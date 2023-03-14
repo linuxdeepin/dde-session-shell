@@ -233,7 +233,7 @@ void UserFrameList::onOtherPageChanged(const QVariant &value)
 
 void UserFrameList::updateLayout(int width)
 {
-    //处理窗体数量小于5个时的居中显示，取 窗体数量*窗体宽度 和 最大宽度 的较小值，设置为m_centerWidget的宽度
+    // 处理窗体数量小于5个时的居中显示，取 窗体数量*窗体宽度 和 最大宽度 的较小值，设置为m_centerWidget的宽度
     auto userWidget = m_loginWidgets.constFirst();
     int userWidgetHeight = UserFrameHeight;
     if (userWidget)
@@ -257,16 +257,21 @@ void UserFrameList::updateLayout(int width)
         }
     }
 
-    if (m_flowLayout->count() <= count) {
-        m_scrollArea->setFixedSize(countWidth, userWidgetHeight + 20);
-    } else {
-        m_scrollArea->setFixedSize(countWidth, (userWidgetHeight + UserFrameSpacing) * 2);
+    if (countWidth > 0) {
+        if (m_flowLayout->count() <= count) {
+            m_scrollArea->setFixedSize(countWidth, userWidgetHeight + 20);
+        } else {
+            m_scrollArea->setFixedSize(countWidth, (userWidgetHeight + UserFrameSpacing) * 2);
+        }
+
+        m_centerWidget->setFixedWidth(m_scrollArea->width() - 10);
     }
 
-    m_centerWidget->setFixedWidth(m_scrollArea->width() - 10);
-
+    // 设置当前选中用户
     std::shared_ptr<User> user = m_model->currentUser();
-    if (user.get() == nullptr) return;
+    if (user.get() == nullptr)
+        return;
+
     for (auto it = m_loginWidgets.constBegin(); it != m_loginWidgets.constEnd(); ++it) {
         auto login_widget = *it;
 

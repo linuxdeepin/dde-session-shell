@@ -6,6 +6,7 @@
 #define LOGINWINDOW_H
 
 #include "fullscreenbackground.h"
+#include "authcommon.h"
 
 #include <memory>
 
@@ -27,8 +28,8 @@ signals:
 
     void requestCreateAuthController(const QString &account);
     void requestDestroyAuthController(const QString &account);
-    void requestStartAuthentication(const QString &account, const int authType);
-    void sendTokenToAuth(const QString &account, const int authType, const QString &token);
+    void requestStartAuthentication(const QString &account, const AuthCommon::AuthFlags authType);
+    void sendTokenToAuth(const QString &account, const AuthCommon::AuthType, const QString &token);
     void requestEndAuthentication(const QString &account, const int authType);
     void authFinished();
     void requestCheckAccount(const QString &account);

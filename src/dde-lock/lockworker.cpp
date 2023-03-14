@@ -153,8 +153,8 @@ void LockWorker::initConnections()
         emit m_model->prepareForSleep(isSleep);
     });
     /* model */
-    connect(m_model, &SessionBaseModel::authTypeChanged, this, [this](const int type) {
-        qInfo() << "Auth type changed: " << AUTH_TYPES_CAST(type);
+    connect(m_model, &SessionBaseModel::authTypeChanged, this, [this](const AuthFlags type) {
+        qInfo() << "Auth type changed: " << type;
         if (type > 0 && m_model->getAuthProperty().MFAFlag) {
             startAuthentication(m_account, type);
         }
@@ -240,7 +240,7 @@ void LockWorker::initData()
             qWarning() << "Failed to obtain current user information from LockService!";
         } else {
             const QJsonObject userObj = userDoc.object();
-            m_model->currentUser()->setLastAuthType(userObj["AuthType"].toInt());
+            m_model->currentUser()->setLastAuthType(AUTH_TYPE_CAST(userObj["AuthType"].toInt()));
         }
     } else {
         m_model->updateCurrentUser(m_lockInter->CurrentUser());
@@ -272,9 +272,9 @@ void LockWorker::initConfiguration()
  * @param state     认证状态
  * @param message   认证消息
  */
-void LockWorker::onAuthStateChanged(const int type, const int state, const QString &message)
+void LockWorker::onAuthStateChanged(const AuthType type, const AuthState state, const QString &message)
 {
-    qInfo() << "Auth type:" << AUTH_TYPES_CAST(type)
+    qInfo() << "Auth type:" << type
             << ", authentication state:" << state
             << ", message:" << message;
 
@@ -478,7 +478,7 @@ void LockWorker::setCurrentUser(const std::shared_ptr<User> user)
 {
     qInfo() << "Set current user: " << user->name();
     QJsonObject json;
-    json["AuthType"] = user->lastAuthType();
+    json["AuthType"] = static_cast<int>(user->lastAuthType());
     json["Name"] = user->name();
     json["Type"] = user->type();
     json["Uid"] = static_cast<int>(user->uid());
@@ -614,9 +614,9 @@ void LockWorker::destroyAuthentication(const QString &account)
  * @param authType  认证类型（可传入一种或多种）
  * @param timeout   设定超时时间（默认 -1）
  */
-void LockWorker::startAuthentication(const QString &account, const int authType)
+void LockWorker::startAuthentication(const QString &account, const AuthFlags authType)
 {
-    qInfo() << "Account:" << account << AUTH_TYPES_CAST(authType);
+    qInfo() << "Account:" << account << ", auth types:" << authType;
     switch (m_model->getAuthProperty().FrameworkState) {
     case Available:
         m_authFramework->StartAuthentication(account, authType, -1);
@@ -634,9 +634,9 @@ void LockWorker::startAuthentication(const QString &account, const int authType)
  * @param authType  认证类型
  * @param token     密文
  */
-void LockWorker::sendTokenToAuth(const QString &account, const int authType, const QString &token)
+void LockWorker::sendTokenToAuth(const QString &account, const AuthType authType, const QString &token)
 {
-    qInfo() << "Account:" << account << AUTH_TYPES_CAST(authType);
+    qInfo() << "Account:" << account << ", auth type:" << authType;
     switch (m_model->getAuthProperty().FrameworkState) {
     case Available:
         m_authFramework->SendTokenToAuth(account, authType, token);
@@ -653,9 +653,9 @@ void LockWorker::sendTokenToAuth(const QString &account, const int authType, con
  * @param account   账户
  * @param authType  认证类型
  */
-void LockWorker::endAuthentication(const QString &account, const int authType)
+void LockWorker::endAuthentication(const QString &account, const AuthFlags authType)
 {
-    qInfo() << "Account:" << account << " ,auth type:" << AUTH_TYPES_CAST(authType);
+    qInfo() << "Account:" << account << ", auth type:" << authType;
     switch (m_model->getAuthProperty().FrameworkState) {
     case Available:
         m_authFramework->EndAuthentication(account, authType);
@@ -665,7 +665,7 @@ void LockWorker::endAuthentication(const QString &account, const int authType)
     }
 }
 
-void LockWorker::onEndAuthentication(const QString &account, const int authType)
+void LockWorker::onEndAuthentication(const QString &account, const AuthFlags authType)
 {
     endAuthentication(account, authType);
     if (AT_All == authType) {
