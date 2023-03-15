@@ -51,6 +51,7 @@ ShutdownWidget::ShutdownWidget(QWidget *parent)
     onEnable("systemSuspend", enableState(GSettingWatcher::instance()->getStatus("systemSuspend")));
     onEnable("systemHibernate", enableState(GSettingWatcher::instance()->getStatus("systemHibernate")));
     onEnable("systemLock", enableState(GSettingWatcher::instance()->getStatus("systemLock")));
+    onEnable("systemReboot", enableState(GSettingWatcher::instance()->getStatus("systemReboot")));
 
     installEventFilter(this);
 }
@@ -60,6 +61,8 @@ ShutdownWidget::~ShutdownWidget()
     GSettingWatcher::instance()->erase("systemSuspend");
     GSettingWatcher::instance()->erase("systemHibernate");
     GSettingWatcher::instance()->erase("systemShutdown");
+    GSettingWatcher::instance()->erase("systemLock");
+    GSettingWatcher::instance()->erase("systemReboot");
 }
 
 void ShutdownWidget::initConnect()
@@ -141,6 +144,8 @@ void ShutdownWidget::onEnable(const QString &gsettingsName, bool enable)
         m_requireHibernateButton->setCheckable(enable);
     } else if ("systemLock" == gsettingsName) {
         m_requireLockButton->setDisabled(!enable);
+    } else if ("systemReboot" == gsettingsName) {
+        m_requireRestartButton->setDisabled(!enable);
     }
 }
 
@@ -214,6 +219,7 @@ void ShutdownWidget::initUI()
     m_requireRestartButton->setAccessibleName("RequireRestartButton");
     m_requireRestartButton->setAutoExclusive(true);
     updateTr(m_requireRestartButton, "Reboot");
+    GSettingWatcher::instance()->bind("systemReboot", m_requireRestartButton);  // GSettings配置项
 
     m_requireSuspendButton = new RoundItemButton(tr("Suspend"), this);
     setPic(m_requireSuspendButton, "suspend");
@@ -500,7 +506,7 @@ void ShutdownWidget::recoveryLayout()
     // 关机或重启确认前会隐藏所有按钮,取消重启或关机后隐藏界面时重置按钮可见状态
     // 同时需要判断切换用户按钮是否允许可见
     m_requireShutdownButton->setVisible(true && (GSettingWatcher::instance()->getStatus("systemShutdown") != "Hiden"));
-    m_requireRestartButton->setVisible(true);
+    m_requireRestartButton->setVisible(GSettingWatcher::instance()->getStatus("systemReboot") != "Hiden");
     enableHibernateBtn(m_model->hasSwap());
     enableSleepBtn(m_model->canSleep());
     if (m_modeStatus == SessionBaseModel::ModeStatus::PowerMode)
