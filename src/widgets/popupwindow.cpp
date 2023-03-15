@@ -52,8 +52,16 @@ void PopupWindow::toggle(const QPoint &pos)
 void PopupWindow::show(const QPoint &pos)
 {
     m_lastPoint = pos;
-
+    if (getContent())
+        getContent()->setVisible(true);
     DArrowRectangle::show(pos.x(), pos.y());
+}
+
+void PopupWindow::hide()
+{
+    if (getContent())
+        getContent()->setVisible(false);
+    DArrowRectangle::hide();
 }
 
 void PopupWindow::showEvent(QShowEvent *e)

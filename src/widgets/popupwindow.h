@@ -22,6 +22,7 @@ public:
     using Dtk::Widget::DArrowRectangle::show;
     void show(const QPoint &pos);
     void toggle(const QPoint &pos);
+    void hide();
 
 protected:
     void showEvent(QShowEvent *e) override;

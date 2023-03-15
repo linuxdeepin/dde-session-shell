@@ -574,6 +574,11 @@ void LockContent::showModule(const QString &name, const bool callShowForce)
         }
         if (!m_popWin) {
             m_popWin = new PopupWindow(this);
+            connect(m_model, &SessionBaseModel::visibleChanged, this, [this] (const bool visible) {
+                if (!visible) {
+                    m_popWin->hide();
+                }
+            });
             // 隐藏后需要removeEventFilter，后期优化
             for (auto child : this->findChildren<QWidget*>()) {
                 child->installEventFilter(this);
