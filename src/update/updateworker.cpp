@@ -512,3 +512,12 @@ void UpdateWorker::checkStatusAfterSessionActive()
         }
     }
 }
+
+void UpdateWorker::setLocked(const bool locked)
+{
+#ifdef QT_DEBUG
+    Q_UNUSED(locked)
+#else
+    m_sessionManagerInter->SetLocked(locked);
+#endif
+}
