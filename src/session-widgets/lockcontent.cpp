@@ -183,6 +183,11 @@ void LockContent::initConnections()
     connect(m_model, &SessionBaseModel::showUserList, this, &LockContent::showUserList);
     connect(m_model, &SessionBaseModel::showLockScreen, this, &LockContent::showLockScreen);
     connect(m_model, &SessionBaseModel::showShutdown, this, &LockContent::showShutdown);
+
+    // 连续按两次电源键导致锁屏界面失焦，无法接收到event，需重新抓取焦点
+    connect(m_model, &SessionBaseModel::onPowerActionChanged, this, [this] {
+        tryGrabKeyboard();
+    });
 }
 
 /**
