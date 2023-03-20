@@ -72,6 +72,7 @@ private:
     void initAccount();
     bool useCustomAuth() const;
     void chooseAuthType(int authType);
+    bool showAuthButtonBox() const;
 
 private:
     QVBoxLayout *m_mainLayout;

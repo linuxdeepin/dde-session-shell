@@ -852,7 +852,7 @@ int SFAWidget::getTopSpacing() const
             - m_bioBottomSpacingHolder->geometry().height()
             - m_authTypeBottomSpacingHolder->sizeHint().height()
             - ((m_faceAuth || m_fingerprintAuth || m_irisAuth) ? BIO_AUTH_STATE_PLACE_HOLDER_HEIGHT : 0)
-            - (m_authButtons.size() > 1 ? calcCurrentHeight(CHOOSE_AUTH_TYPE_BUTTON_BOTTOM_SPACING) : 0);
+            - (showAuthButtonBox() ? calcCurrentHeight(CHOOSE_AUTH_TYPE_BUTTON_BOTTOM_SPACING) : 0);
 
     return qMax(15, deltaY);
 }
@@ -870,7 +870,7 @@ void SFAWidget::resizeEvent(QResizeEvent *event)
  */
 void SFAWidget::updateSpaceItem()
 {
-    m_authTypeBottomSpacingHolder->changeSize(0, m_authButtons.size() > 1 ? calcCurrentHeight(CHOOSE_AUTH_TYPE_BUTTON_BOTTOM_SPACING) : 0);
+    m_authTypeBottomSpacingHolder->changeSize(0, showAuthButtonBox() ? calcCurrentHeight(CHOOSE_AUTH_TYPE_BUTTON_BOTTOM_SPACING) : 0);
 
     if (m_faceAuth || m_fingerprintAuth || m_irisAuth) {
         m_bioBottomSpacingHolder->changeSize(0, calcCurrentHeight(CHOOSE_AUTH_TYPE_BUTTON_BOTTOM_SPACING));
@@ -1056,4 +1056,10 @@ void SFAWidget::chooseAuthType(int authType)
     } else {
         m_chooseAuthButtonBox->button(authType)->setChecked(true);
     }
+}
+
+bool SFAWidget::showAuthButtonBox() const
+{
+    return (m_customAuth && !m_customAuth->pluginConfig().showSwitchButton) ?
+        m_authButtons.count() > 2 : m_authButtons.count() > 1;
 }
