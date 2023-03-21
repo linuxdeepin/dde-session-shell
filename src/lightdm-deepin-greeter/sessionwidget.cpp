@@ -4,6 +4,7 @@
 
 #include "sessionwidget.h"
 #include "sessionbasemodel.h"
+#include "dconfig_helper.h"
 
 #include <QApplication>
 #include <QDesktopWidget>
@@ -47,10 +48,10 @@ SessionWidget::SessionWidget(QWidget *parent)
     , m_currentSessionIndex(0)
     , m_sessionModel(new QLightDM::SessionsModel(this))
     , m_userModel(new QLightDM::UsersModel(this))
-    , m_allowSwitchingToWayland(getDConfigValue(getDefaultConfigFileName(), "allowSwitchingToWayland", false).toBool())
+    , m_allowSwitchingToWayland(DConfigHelper::instance()->getConfig("allowSwitchingToWayland", false).toBool())
     , m_isWaylandExisted(false)
     , m_warningLabel(new QLabel(this))
-    , m_defaultSession(getDConfigValue(getDefaultConfigFileName(),"defaultSession", DEFAULT_SESSION_NAME).toString())
+    , m_defaultSession(DConfigHelper::instance()->getConfig("defaultSession", DEFAULT_SESSION_NAME).toString())
     , m_resetSessionIndex(true)
 {
     setSizePolicy(QSizePolicy::Expanding, QSizePolicy::Expanding);

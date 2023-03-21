@@ -16,10 +16,6 @@
 #include "switchos_interface.h"
 #include "systemmonitor.h"
 
-DCORE_BEGIN_NAMESPACE
-class DConfig;
-DCORE_END_NAMESPACE
-
 class ShutdownWidget: public QFrame
 {
     Q_OBJECT
@@ -29,6 +25,7 @@ public:
     void setModel(SessionBaseModel * const model);
     void onStatusChanged(SessionBaseModel::ModeStatus status);
     bool enableState(const QString &gsettingsValue);
+    static void onDConfigPropertyChanged(const QString &key, const QVariant &value, QObject *objPtr);
 
 public slots:
     void leftKeySwitch();
@@ -79,7 +76,6 @@ private:
     RoundItemButton* m_updateAndShutdownButton;
     RoundItemButton* m_updateAndRebootButton;
     HuaWeiSwitchOSInterface *m_switchosInterface;
-    DTK_CORE_NAMESPACE::DConfig *m_dconfig;
     SessionBaseModel::ModeStatus m_modeStatus;
 };
 

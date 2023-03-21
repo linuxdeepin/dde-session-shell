@@ -35,12 +35,11 @@ public:
     inline uint uid() const { return m_uid; }
     void setUid(const uint uid);
     int heightHint() const;
+    static void onDConfigPropertyChanged(const QString &key, const QVariant &value, QObject *objPtr);
 
 signals:
     void clicked();
 
-public slots:
-    void OnDConfigPropertyChanged(const QString &key, const QVariant &value);
 
 protected:
     void mousePressEvent(QMouseEvent *event) override;

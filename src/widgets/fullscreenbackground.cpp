@@ -7,6 +7,7 @@
 #include "black_widget.h"
 #include "public_func.h"
 #include "sessionbasemodel.h"
+#include "dconfig_helper.h"
 
 #include <DGuiApplicationHelper>
 
@@ -56,7 +57,7 @@ FullScreenBackground::FullScreenBackground(SessionBaseModel *model, QWidget *par
     }
 #endif
     frameList.append(this);
-    m_useSolidBackground = getDConfigValue(getDefaultConfigFileName(), "useSolidBackground", false).toBool();
+    m_useSolidBackground = DConfigHelper::instance()->getConfig("useSolidBackground", false).toBool();
     m_enableAnimation = DGuiApplicationHelper::isSpecialEffectsEnvironment();
     if (m_enableAnimation && !m_useSolidBackground) {
         m_fadeOutAni = new QVariantAnimation(this);

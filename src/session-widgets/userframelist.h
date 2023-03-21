@@ -28,13 +28,11 @@ public:
     void setModel(SessionBaseModel *model);
     void setFixedSize(const QSize &size);
     void updateLayout(int width);
+    static void onDConfigPropertyChanged(const QString &key, const QVariant &value, QObject* objPtr);
 
 signals:
     void requestSwitchUser(std::shared_ptr<User> user);
     void clicked();
-
-public slots:
-    void OnDConfigPropertyChanged(const QString &key, const QVariant &value);
 
 protected:
     void hideEvent(QHideEvent *event) override;

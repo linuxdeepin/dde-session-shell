@@ -3,10 +3,12 @@
 // SPDX-License-Identifier: GPL-3.0-or-later
 
 #include "dconfig_helper.h"
+
 #include "public_func.h"
 
-#include <QMetaMethod>
 #include <qdebug.h>
+
+#include <QMetaMethod>
 
 DCORE_USE_NAMESPACE
 
@@ -18,16 +20,19 @@ DConfigHelper::DConfigHelper(QObject *parent)
     initializeDConfig(getDefaultConfigFileName(), getDefaultConfigFileName(), "");
 }
 
-DConfigHelper* DConfigHelper::instance()
+DConfigHelper *DConfigHelper::instance()
 {
     return dConfigWatcher;
 }
 
-DConfig* DConfigHelper::initializeDConfig(const QString &appId, const QString &name, const QString &subpath)
+DConfig *DConfigHelper::initializeDConfig(const QString &appId,
+                                          const QString &name,
+                                          const QString &subpath)
 {
-    DConfig* dConfig = DConfig::create(appId, name, subpath, this);
+    DConfig *dConfig = DConfig::create(appId, name, subpath, this);
     if (!dConfig) {
-        qWarning() << "Create DConfig failed, appId: " << appId << ", name: " << name << ", subpath: " << subpath;
+        qWarning() << "Create DConfig failed, appId: " << appId << ", name: " << name
+                   << ", subpath: " << subpath;
         return nullptr;
     }
 
@@ -41,11 +46,12 @@ DConfig* DConfigHelper::initializeDConfig(const QString &appId, const QString &n
         if (it == m_bindInfos.end())
             return;
 
-        QMap<QString, QList<QObject *>> &bindInfo = it.value();
-        auto bindInfoIt = bindInfo.find(key);
-        if (bindInfoIt != bindInfo.end()) {
-            for (QObject *obj : bindInfoIt.value()) {
-                QMetaObject::invokeMethod(obj, "OnDConfigPropertyChanged", Qt::QueuedConnection, Q_ARG(QString, key), Q_ARG(QVariant,value));
+        auto itBindInfo = it.value().begin();
+        for (; itBindInfo != it.value().end(); ++itBindInfo) {
+            if (itBindInfo.value().contains(key)) {
+                auto callbackIt = m_objCallbackMap.find(itBindInfo.key());
+                if (callbackIt != m_objCallbackMap.end())
+                    callbackIt.value()(key, value, itBindInfo.key());
             }
         }
     });
@@ -53,44 +59,49 @@ DConfig* DConfigHelper::initializeDConfig(const QString &appId, const QString &n
     return dConfig;
 }
 
-void DConfigHelper::bind(QObject *obj, const QString &key)
+void DConfigHelper::bind(QObject *obj, const QString &key, OnPropertyChangedCallback callback)
 {
-    bind(getDefaultConfigFileName(), getDefaultConfigFileName(), "", obj, key);
+    bind(getDefaultConfigFileName(), getDefaultConfigFileName(), "", obj, key, callback);
 }
 
-void DConfigHelper::bind(const QString &appId, const QString &name, const QString &subpath, QObject *obj, const QString &key)
+void DConfigHelper::bind(const QString &appId,
+                         const QString &name,
+                         const QString &subpath,
+                         QObject *obj,
+                         const QString &key,
+                         OnPropertyChangedCallback callback)
 {
     if (!obj)
         return;
 
     DConfig *dConfig = dConfigObject(appId, name, subpath);
-    if (!dConfig)
-        return;
-
-    const QMetaObject *metaObject = obj->metaObject();
-    if (-1 == metaObject->indexOfMethod("OnDConfigPropertyChanged(QString,QVariant)")) {
-        qWarning() << "Bind dconfig failed, " + QString(metaObject->className()) + " does not have `OnDConfigPropertyChanged` function";
+    if (!dConfig) {
+        qWarning() << "DConfig is nullptr";
         return;
     }
 
     auto it = m_bindInfos.find(dConfig);
-    if (it == m_bindInfos.end())
+    if (it == m_bindInfos.end()) {
+        qWarning() << "Can not find bind info";
         return;
-
-    QMap<QString, QList<QObject *>> &bindInfo = it.value();
-    auto bindInfoIt = bindInfo.find(key);
-    if (bindInfoIt != bindInfo.end()) {
-        bindInfoIt.value().append(obj);
-    } else {
-        bindInfo[key] = {obj};
     }
 
+    QMap<QObject *, QStringList> &bindInfo = it.value();
+    auto bindInfoIt = bindInfo.find(obj);
+    if (bindInfoIt != bindInfo.end()) {
+        if (!bindInfoIt.value().contains(key))
+            bindInfoIt.value().append(key);
+    } else {
+        bindInfo[obj] = QStringList(key);
+    }
+
+    m_objCallbackMap.insert(obj, callback);
     connect(obj, &QObject::destroyed, this, [this, obj] {
         unBind(obj);
     });
 }
 
-DConfig* DConfigHelper::defaultDConfigObject()
+DConfig *DConfigHelper::defaultDConfigObject()
 {
     return dConfigObject(getDefaultConfigFileName(), getDefaultConfigFileName(), "");
 }
@@ -103,16 +114,27 @@ void DConfigHelper::unBind(QObject *obj, const QString &key)
         return;
     }
 
+    bool objStillUseful = false;
     auto it = m_bindInfos.begin();
-    for(; it != m_bindInfos.end(); ++it) {
-        auto it1 = it.value().begin();
-        for (; it1 != it.value().end(); ++it1) {
-            if (!key.isEmpty() && it1.key() != key)
-                continue;
-
-            it1.value().removeAll(obj);
+    for (; it != m_bindInfos.end(); ++it) {
+        if (key.isEmpty()) {
+            it->remove(obj);
+        } else {
+            // 移除key，移除完如果obj没有绑定了key了，那么把obj也移除掉
+            auto it1 = it.value().find(obj);
+            if (it1 != it.value().end()) {
+                it1.value().removeAll(key);
+                if (it1.value().isEmpty()) {
+                    it->remove(obj);
+                } else {
+                    objStillUseful = true;
+                }
+            }
         }
     }
+
+    if (key.isEmpty() || !objStillUseful)
+        m_objCallbackMap.remove(obj);
 }
 
 /**
@@ -131,7 +153,11 @@ void DConfigHelper::setConfig(const QString &key, const QVariant &value)
     return setConfig(getDefaultConfigFileName(), getDefaultConfigFileName(), "", key, value);
 }
 
-QVariant DConfigHelper::getConfig(const QString &appId, const QString &name, const QString &subpath, const QString &key, const QVariant &defaultValue)
+QVariant DConfigHelper::getConfig(const QString &appId,
+                                  const QString &name,
+                                  const QString &subpath,
+                                  const QString &key,
+                                  const QVariant &defaultValue)
 {
     DConfig *dConfig = dConfigObject(appId, name, subpath);
     if (!dConfig) {
@@ -146,7 +172,11 @@ QVariant DConfigHelper::getConfig(const QString &appId, const QString &name, con
     return value;
 }
 
-void DConfigHelper::setConfig(const QString &appId, const QString &name, const QString &subpath, const QString &key, const QVariant &value)
+void DConfigHelper::setConfig(const QString &appId,
+                              const QString &name,
+                              const QString &subpath,
+                              const QString &key,
+                              const QVariant &value)
 {
     DConfig *dConfig = dConfigObject(appId, name, subpath);
     if (!dConfig) {
@@ -162,7 +192,9 @@ void DConfigHelper::setConfig(const QString &appId, const QString &name, const Q
     dConfig->setValue(key, value);
 }
 
-DConfig* DConfigHelper::dConfigObject(const QString &appId, const QString &name, const QString &subpath)
+DConfig *DConfigHelper::dConfigObject(const QString &appId,
+                                      const QString &name,
+                                      const QString &subpath)
 {
     const QString &configPath = packageDConfigPath(appId, name, subpath);
     DConfig *dConfig = nullptr;
@@ -174,7 +206,9 @@ DConfig* DConfigHelper::dConfigObject(const QString &appId, const QString &name,
     return dConfig;
 }
 
-QString DConfigHelper::packageDConfigPath(const QString &appId, const QString &name, const QString &subpath) const
+QString DConfigHelper::packageDConfigPath(const QString &appId,
+                                          const QString &name,
+                                          const QString &subpath) const
 {
     return appId + name + subpath;
 }

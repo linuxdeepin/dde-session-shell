@@ -83,8 +83,8 @@ void UserNameWidget::initialize()
     m_fullNameLabel->setVisible(m_showUserName);
     m_userPicLabel->setVisible(m_showUserName);
 
-    DConfigHelper::instance()->bind(this, FULL_NAME_FONT);
-    DConfigHelper::instance()->bind(this, SHOW_USER_NAME);
+    DConfigHelper::instance()->bind(this, FULL_NAME_FONT, &UserNameWidget::onDConfigPropertyChanged);
+    DConfigHelper::instance()->bind(this, SHOW_USER_NAME, &UserNameWidget::onDConfigPropertyChanged);
 }
 
 void UserNameWidget::updateUserName(const QString &userName)
@@ -163,19 +163,23 @@ int UserNameWidget::heightHint() const
     return height;
 }
 
-void UserNameWidget::OnDConfigPropertyChanged(const QString &key, const QVariant &value)
+void UserNameWidget::onDConfigPropertyChanged(const QString &key, const QVariant &value, QObject *objPtr)
 {
+    auto obj = qobject_cast<UserNameWidget*>(objPtr);
+    if (!obj)
+        return;
+
     if (key == SHOW_USER_NAME) {
-        m_showUserName = value.toBool();
-        m_fullNameLabel->setVisible(m_showUserName);
-        m_userPicLabel->setVisible(m_showUserName);
-        updateUserNameWidget();
-        updateDisplayNameWidget();
-    } else if (key == FULL_NAME_FONT && m_respondFontSizeChange) {
+        obj->m_showUserName = value.toBool();
+        obj->m_fullNameLabel->setVisible(obj->m_showUserName);
+        obj->m_userPicLabel->setVisible(obj->m_showUserName);
+        obj->updateUserNameWidget();
+        obj->updateDisplayNameWidget();
+    } else if (key == FULL_NAME_FONT && obj->m_respondFontSizeChange) {
         bool ok;
         const int fontSize = value.toInt(&ok);
         if (ok && fontSize > 0 && fontSize < 9)
-            DFontSizeManager::instance()->bind(m_fullNameLabel, static_cast<DFontSizeManager::SizeType>(fontSize));
+            DFontSizeManager::instance()->bind(obj->m_fullNameLabel, static_cast<DFontSizeManager::SizeType>(fontSize));
         else
             qWarning() << "Top tip text font format error";
     }

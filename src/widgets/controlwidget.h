@@ -30,10 +30,6 @@ DWIDGET_BEGIN_NAMESPACE
 class DArrowRectangle;
 DWIDGET_END_NAMESPACE
 
-DCORE_BEGIN_NAMESPACE
-class DConfig;
-DCORE_END_NAMESPACE
-
 class MediaWidget;
 class QHBoxLayout;
 class QPropertyAnimation;
@@ -99,6 +95,7 @@ public:
 
     void initKeyboardLayoutList();
     QWidget *getTray(const QString &name);
+    static void onDConfigPropertyChanged(const QString &key, const QVariant &value, QObject *objPtr);
 
 signals:
     void requestSwitchUser();
@@ -162,7 +159,6 @@ private:
     std::shared_ptr<User> m_curUser;
     QList<QMetaObject::Connection> m_connectionList;
     bool m_onboardBtnVisible;
-    DTK_CORE_NAMESPACE::DConfig *m_dconfig;
     bool m_doGrabKeyboard;
 };
 

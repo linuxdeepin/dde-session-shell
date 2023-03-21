@@ -23,7 +23,6 @@ CenterTopWidget::CenterTopWidget(QWidget *parent)
     , m_timeWidget(new TimeWidget(this))
     , m_topTip(new QLabel(this))
     , m_topTipSpacer(new QSpacerItem(0, TOP_TIP_SPACING))
-    , m_config(DConfig::create(getDefaultConfigFileName(), getDefaultConfigFileName(), QString(), this))
 {
     initUi();
 }
@@ -54,9 +53,9 @@ void CenterTopWidget::initUi()
     m_topTip->setVisible(showTopTip);
     setTopTipText(DConfigHelper::instance()->getConfig(TOP_TIP_TEXT, "").toString());
 
-    DConfigHelper::instance()->bind(this, SHOW_TOP_TIP);
-    DConfigHelper::instance()->bind(this, TOP_TIP_TEXT);
-    DConfigHelper::instance()->bind(this, TOP_TIP_TEXT_FONT);
+    DConfigHelper::instance()->bind(this, SHOW_TOP_TIP, &CenterTopWidget::onDConfigPropertyChanged);
+    DConfigHelper::instance()->bind(this, TOP_TIP_TEXT, &CenterTopWidget::onDConfigPropertyChanged);
+    DConfigHelper::instance()->bind(this, TOP_TIP_TEXT_FONT, &CenterTopWidget::onDConfigPropertyChanged);
 }
 
 void CenterTopWidget::setCurrentUser(User *user)
@@ -136,19 +135,23 @@ void CenterTopWidget::updateTopTipWidget()
     m_topTip->setText(firstLine);
 }
 
-void CenterTopWidget::OnDConfigPropertyChanged(const QString &key, const QVariant &value)
+void CenterTopWidget::onDConfigPropertyChanged(const QString &key, const QVariant &value, QObject *objPtr)
 {
+    auto obj = qobject_cast<CenterTopWidget*>(objPtr);
+    if (!obj)
+        return;
+
     if (key == SHOW_TOP_TIP) {
-        const bool showTopTip = m_config->value(SHOW_TOP_TIP).toBool();
-        m_topTipSpacer->changeSize(0, showTopTip ? TOP_TIP_SPACING : 0);
-        m_topTip->setVisible(showTopTip);
+        const bool showTopTip = value.toBool();
+        obj->m_topTipSpacer->changeSize(0, showTopTip ? TOP_TIP_SPACING : 0);
+        obj->m_topTip->setVisible(showTopTip);
     } else if (key == TOP_TIP_TEXT) {
-        setTopTipText(m_config->value(TOP_TIP_TEXT).toString());
+        obj->setTopTipText(value.toString());
     } else if (key == TOP_TIP_TEXT_FONT) {
         bool ok;
         const int fontSize = value.toInt(&ok);
         if (ok && fontSize > 0 && fontSize < 9)
-            DFontSizeManager::instance()->bind(m_topTip, static_cast<DFontSizeManager::SizeType>(fontSize));
+            DFontSizeManager::instance()->bind(obj->m_topTip, static_cast<DFontSizeManager::SizeType>(fontSize));
         else
             qWarning() << "Top tip text font format error";
     }

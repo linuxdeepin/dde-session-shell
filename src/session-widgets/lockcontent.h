@@ -12,11 +12,8 @@
 #include "centertopwidget.h"
 #include "popupwindow.h"
 
-#include <DConfig>
-
 #include <QWidget>
 #include <QLocalServer>
-
 #include <QWidget>
 #include <QLocalServer>
 

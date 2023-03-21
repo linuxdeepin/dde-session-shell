@@ -89,8 +89,8 @@ void UserWidget::initUI()
         m_mainLayout->addWidget(m_userNameWidget);
     m_mainLayout->addSpacing(20);
 
-    DConfigHelper::instance()->bind(this, SHOW_USER_NAME);
-    DConfigHelper::instance()->bind(this, USER_FRAME_MAX_WIDTH);
+    DConfigHelper::instance()->bind(this, SHOW_USER_NAME, &UserWidget::onDConfigPropertyChanged);
+    DConfigHelper::instance()->bind(this, USER_FRAME_MAX_WIDTH, &UserWidget::onDConfigPropertyChanged);
 }
 
 void UserWidget::initConnections()
@@ -242,32 +242,36 @@ int UserWidget::heightHint() const
     return UserFrameHeight;
 }
 
-void UserWidget::OnDConfigPropertyChanged(const QString &key, const QVariant &value)
+void UserWidget::onDConfigPropertyChanged(const QString &key, const QVariant &value, QObject *objPtr)
 {
+    auto obj = qobject_cast<UserWidget*>(objPtr);
+    if (!obj)
+        return;
+
     qInfo() << Q_FUNC_INFO << key << ", value: " << value;
     if (key == SHOW_USER_NAME) {
         const bool showUserName = value.toBool();
         if (showUserName) {
-            if (!m_userNameWidget) {
-                m_userNameWidget = new UserNameWidget(true, false, this);
+            if (!obj->m_userNameWidget) {
+                obj->m_userNameWidget = new UserNameWidget(true, false, obj);
             }
-            m_mainLayout->insertWidget(m_mainLayout->indexOf(m_displayNameWidget) + 1, m_userNameWidget);
-            m_userNameWidget->show();
-            if (m_user)
-                m_userNameWidget->updateFullName(m_user->fullName());
+            obj->m_mainLayout->insertWidget(obj->m_mainLayout->indexOf(obj->m_displayNameWidget) + 1, obj->m_userNameWidget);
+            obj->m_userNameWidget->show();
+            if (obj->m_user)
+                obj->m_userNameWidget->updateFullName(obj->m_user->fullName());
 
         } else {
-            if (m_userNameWidget) {
-                delete m_userNameWidget;
-                m_userNameWidget = nullptr;
+            if (obj->m_userNameWidget) {
+                delete obj->m_userNameWidget;
+                obj->m_userNameWidget = nullptr;
             }
         }
     } else if (key == USER_FRAME_MAX_WIDTH) {
-        updateUserNameLabel();
+        obj->updateUserNameLabel();
     }
 
     // 刷新界面
-    setFixedHeight(heightHint());
-    updateBlurEffectGeometry();
-    update();
+    obj->setFixedHeight(obj->heightHint());
+    obj->updateBlurEffectGeometry();
+    obj->update();
 }

@@ -7,6 +7,7 @@
 #include "authcommon.h"
 #include "keyboardmonitor.h"
 #include "userinfo.h"
+#include "dconfig_helper.h"
 
 #include <DSysInfo>
 #include <DGuiApplicationHelper>
@@ -894,7 +895,7 @@ void GreeterWorker::onSessionCreated()
 
 void GreeterWorker::saveNumLockState(std::shared_ptr<User> user, bool on)
 {
-    QStringList list = getDConfigValue(getDefaultConfigFileName(), "numLockState", QStringList()).toStringList();
+    QStringList list = DConfigHelper::instance()->getConfig("numLockState", QStringList()).toStringList();
     const QString &userName = user->name();
 
     // 移除当前用户的记录
@@ -908,12 +909,12 @@ void GreeterWorker::saveNumLockState(std::shared_ptr<User> user, bool on)
 
     // 插入当前用户的记录
     list.append(user->name() + ":" + (on ? "True" : "False"));
-    setDConfigValue(getDefaultConfigFileName(), "numLockState", list);
+    DConfigHelper::instance()->setConfig("numLockState", list);
 }
 
 int GreeterWorker::getNumLockState(const QString &userName)
 {
-    QStringList list = getDConfigValue(getDefaultConfigFileName(), "numLockState", QStringList()).toStringList();
+    QStringList list = DConfigHelper::instance()->getConfig("numLockState", QStringList()).toStringList();
 
     for (const QString &numLockState : list) {
         QStringList tmpList = numLockState.split(":");

@@ -6,8 +6,6 @@
 
 #include "constants.h"
 
-#include <DConfig>
-
 #include <QDBusConnection>
 #include <QDateTime>
 #include <QDebug>
@@ -91,51 +89,6 @@ uint timeFromString(QString time)
         return QDateTime::currentDateTime().toTime_t();
     }
     return QDateTime::fromString(time, Qt::ISODateWithMs).toLocalTime().toTime_t();
-}
-
-/**
- * @brief getDConfigValue 根据传入的\a key获取配置项的值，获取失败返回默认值
- * @param key 配置项键值
- * @param defaultValue 默认返回值，为避免出现返回值错误导致程序异常的问题，此参数必填
- * @param configFileName 配置文件名称
- * @return 配置项的值
- */
-QVariant getDConfigValue(const QString &configFileName, const QString &key, const QVariant &defaultValue)
-{
-    if (configFileName.isEmpty())
-        return defaultValue;
-
-    DConfig config(configFileName);
-    if (!config.isValid() || !config.keyList().contains(key)) {
-        qWarning() << "dconfig parse failed, name: " << config.name()
-                   << "subpath: " << config.subpath()
-                   << "\n use fallback value:" << defaultValue;
-        return defaultValue;
-    }
-
-    return config.value(key);
-}
-
-/**
- * @brief setDConfigValue 根据传入的\a key设置对应的值
- * @param configFileName 配置文件名称
- * @param key 配置项键值
- * @param value 值
- * @return 配置项的值
- */
-void setDConfigValue(const QString &configFileName, const QString &key, const QVariant &value)
-{
-    if (configFileName.isEmpty())
-        return;
-
-    DConfig config(configFileName);
-    if (!config.isValid() || !config.keyList().contains(key)) {
-        qWarning() << "dconfig parse failed, name: " << config.name()
-                   << "subpath: " << config.subpath();
-        return;
-    }
-
-    config.setValue(key, value);
 }
 
 void setAppType(int type)

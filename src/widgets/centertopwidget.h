@@ -8,8 +8,6 @@
 #include "userinfo.h"
 #include "timewidget.h"
 
-#include <DConfig>
-
 #include <QWidget>
 #include <QPointer>
 #include <QLabel>
@@ -23,14 +21,13 @@ public:
     void setCurrentUser(User *user);
     QSize sizeHint() const override;
     void resizeEvent(QResizeEvent *event) override;
+    static void onDConfigPropertyChanged(const QString &key, const QVariant &value, QObject* objPtr);
 
 signals:
 
 public slots:
     void updateTimeFormat(bool use24);
 
-private slots:
-    void OnDConfigPropertyChanged(const QString &key, const QVariant &value);
 
 private:
     void initUi();
@@ -44,7 +41,6 @@ private:
     QString m_tipText;
     QSpacerItem *m_topTipSpacer;
     QList<QMetaObject::Connection> m_currentUserConnects;
-    DTK_CORE_NAMESPACE::DConfig *m_config;
 };
 
 #endif // CENTERTOPWIDGET_H

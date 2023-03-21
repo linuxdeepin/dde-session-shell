@@ -6,8 +6,6 @@
 #include "../global_util/gsettingwatcher.h"
 #include "dconfig_helper.h"
 
-#include <DConfig>
-
 #if 0 // storage i10n
 QT_TRANSLATE_NOOP("ShutdownWidget", "Shut down"),
 QT_TRANSLATE_NOOP("ShutdownWidget", "Reboot"),
@@ -44,7 +42,6 @@ ShutdownWidget::ShutdownWidget(QWidget *parent)
     , m_updateAndShutdownButton(nullptr)
     , m_updateAndRebootButton(nullptr)
     , m_switchosInterface(new HuaWeiSwitchOSInterface("com.huawei", "/com/huawei/switchos", QDBusConnection::sessionBus(), this))
-    , m_dconfig(DConfig::create(getDefaultConfigFileName(), getDefaultConfigFileName(), QString(), this))
     , m_modeStatus(SessionBaseModel::ModeStatus::NoStatus)
 {
     initUI();
@@ -116,13 +113,7 @@ void ShutdownWidget::initConnect()
         connect(m_systemMonitor, &SystemMonitor::requestShowSystemMonitor, this, &ShutdownWidget::runSystemMonitor);
     }
 
-    connect(m_dconfig, &DConfig::valueChanged, this, [this](const QString &key) {
-        if (key == "hideLogoutButton") {
-            if (m_requireLogoutButton && m_model->currentModeState() == SessionBaseModel::ModeStatus::ShutDownMode) {
-                m_requireLogoutButton->setVisible(!m_dconfig->value("hideLogoutButton", false).toBool());
-            }
-        }
-    });
+    DConfigHelper::instance()->bind(this, "hideLogoutButton", &ShutdownWidget::onDConfigPropertyChanged);
 }
 
 void ShutdownWidget::updateTr(RoundItemButton *widget, const QString &tr)
@@ -464,7 +455,8 @@ void ShutdownWidget::setButtonsVisible()
         if (m_requireSwitchSystemBtn) {
             m_requireSwitchSystemBtn->setVisible(true);
         }
-        m_requireLogoutButton->setVisible(!m_dconfig->value("hideLogoutButton", false).toBool());
+        const bool hideLogoutButton = DConfigHelper::instance()->getConfig("hideLogoutButton", false).toBool();
+        m_requireLogoutButton->setVisible(!hideLogoutButton);
         // 根据lastore的lastore-daemon-status配置决定是否显示更新按钮
         const int lastoreDaemonStatus = DConfigHelper::instance()->getConfig(LASTORE_DCONFIG_NAME, LASTORE_DCONFIG_NAME, "", LASTORE_DAEMON_STATUS, 0).toInt();
         qInfo() << "Lastore daemon status: " << lastoreDaemonStatus;
@@ -645,4 +637,16 @@ void ShutdownWidget::setModel(SessionBaseModel *const model)
     });
 
     enableSleepBtn(model->canSleep());
+}
+
+void ShutdownWidget::onDConfigPropertyChanged(const QString &key, const QVariant &value, QObject *objPtr)
+{
+    auto obj = qobject_cast<ShutdownWidget*>(objPtr);
+    if (!obj)
+        return;
+
+    if (key == "hideLogoutButton" && obj->m_requireLogoutButton
+        && obj->m_model->currentModeState() == SessionBaseModel::ModeStatus::ShutDownMode) {
+        obj->m_requireLogoutButton->setVisible(!value.toBool());
+    }
 }

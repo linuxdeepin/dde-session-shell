@@ -22,9 +22,7 @@ public:
     void updateFullName(const QString &displayName);
     int heightHint() const;
     void resizeEvent(QResizeEvent *event) override;
-
-public slots:
-    void OnDConfigPropertyChanged(const QString &key, const QVariant &value);
+    static void onDConfigPropertyChanged(const QString &key, const QVariant &value, QObject *objPtr);
 
 private:
     void updateUserNameWidget();

@@ -39,8 +39,8 @@ UserFrameList::UserFrameList(QWidget *parent)
     QScrollerProperties sp;
     sp.setScrollMetric(QScrollerProperties::VerticalOvershootPolicy, QScrollerProperties::OvershootWhenScrollable);
     scroller->setScrollerProperties(sp);
-    DConfigHelper::instance()->bind(this, SHOW_USER_NAME);
-    DConfigHelper::instance()->bind(this, USER_FRAME_MAX_WIDTH);
+    DConfigHelper::instance()->bind(this, SHOW_USER_NAME, &UserFrameList::onDConfigPropertyChanged);
+    DConfigHelper::instance()->bind(this, USER_FRAME_MAX_WIDTH, &UserFrameList::onDConfigPropertyChanged);
 }
 
 void UserFrameList::initUI()
@@ -338,12 +338,16 @@ void UserFrameList::resizeEvent(QResizeEvent *event)
     updateLayout(width());
 }
 
-void UserFrameList::OnDConfigPropertyChanged(const QString &key, const QVariant &value)
+void UserFrameList::onDConfigPropertyChanged(const QString &key, const QVariant &value, QObject* objPtr)
 {
+    auto obj = qobject_cast<UserFrameList*>(objPtr);
+    if (!obj)
+        return;
+
     if (key == SHOW_USER_NAME || key == USER_FRAME_MAX_WIDTH) {
         // 需要等待UserWidget处理完，延时100ms后更新布局
-        QTimer::singleShot(100, this, [this]{
-            updateLayout(width());
+        QTimer::singleShot(100, obj, [obj]{
+            obj->updateLayout(obj->width());
         });
     }
 }

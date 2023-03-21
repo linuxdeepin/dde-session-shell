@@ -5,17 +5,16 @@
 #include "controlwidget.h"
 #include "sessionbasemodel.h"
 #include "kblayoutlistview.h"
-
 #include "modules_loader.h"
 #include "tipswidget.h"
 #include "public_func.h"
 #include "plugin_manager.h"
+#include "dconfig_helper.h"
 
 #include <DFloatingButton>
 #include <DArrowRectangle>
 #include <DPushButton>
 #include <dimagebutton.h>
-#include <DConfig>
 #include <DRegionMonitor>
 
 #include <QEvent>
@@ -87,7 +86,6 @@ ControlWidget::ControlWidget(const SessionBaseModel *model, QWidget *parent)
     , m_kbLayoutListView(nullptr)
     , m_keyboardBtn(nullptr)
     , m_onboardBtnVisible(true)
-    , m_dconfig(DConfig::create(getDefaultConfigFileName(), getDefaultConfigFileName(), QString(), this))
     , m_doGrabKeyboard(true)
 {
     setModel(model);
@@ -157,7 +155,8 @@ void ControlWidget::initKeyboardLayoutList()
 void ControlWidget::setVirtualKBVisible(bool visible)
 {
     m_onboardBtnVisible = visible;
-    m_virtualKBBtn->setVisible(visible && !m_dconfig->value("hideOnboard", false).toBool());
+    const bool hideOnboard = DConfigHelper::instance()->getConfig("hideOnboard", false).toBool();
+    m_virtualKBBtn->setVisible(visible && !hideOnboard);
 }
 
 void ControlWidget::initUI()
@@ -244,6 +243,8 @@ void ControlWidget::initUI()
 
     // 初始化键盘布局列表
     initKeyboardLayoutList();
+
+    DConfigHelper::instance()->bind(this, "hideOnboard", &ControlWidget::onDConfigPropertyChanged);
 }
 
 void ControlWidget::initConnect()
@@ -255,11 +256,6 @@ void ControlWidget::initConnect()
     connect(m_virtualKBBtn, &DFloatingButton::clicked, this, &ControlWidget::requestSwitchVirtualKB);
     connect(m_keyboardBtn, &DFloatingButton::clicked, this, &ControlWidget::setKBLayoutVisible);
     connect(m_model, &SessionBaseModel::currentUserChanged, this, &ControlWidget::setUser);
-    connect(m_dconfig, &DConfig::valueChanged, this, [this](const QString &key) {
-        if (m_virtualKBBtn && key == "hideOnboard") {
-            m_virtualKBBtn->setVisible(m_onboardBtnVisible && !m_dconfig->value("hideOnboard", false).toBool());
-        }
-    });
     connect(m_model, &SessionBaseModel::hidePluginMenu, m_contextMenu, [this] {
         m_contextMenu->close();
         // 重置密码弹窗弹出的时候不重新抓取键盘，否则会导致重置密码弹窗无法抓取键盘
@@ -707,5 +703,16 @@ void ControlWidget::updateTapOrder()
     for (int i = 0; i < buttons.size(); ++i) {
         if ((i + 1) < buttons.size())
             setTabOrder(buttons[i], buttons[i + 1]);
+    }
+}
+
+void ControlWidget::onDConfigPropertyChanged(const QString &key, const QVariant &value, QObject *objPtr)
+{
+    auto obj = qobject_cast<ControlWidget*>(objPtr);
+    if (!obj)
+        return;
+
+    if (obj->m_virtualKBBtn && key == "hideOnboard") {
+        obj->m_virtualKBBtn->setVisible(obj->m_onboardBtnVisible && !value.toBool());
     }
 }
