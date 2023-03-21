@@ -75,11 +75,6 @@ void FullManagedAuthWidget::setModel(const SessionBaseModel *model)
 
 void FullManagedAuthWidget::setAuthType(const int type)
 {
-    if (m_inited) {
-        Q_EMIT requestStartAuthentication(m_model->currentUser()->name(), AT_Custom);
-        return;
-    }
-
     qDebug() << "Auth type:" << AUTH_TYPES_CAST(type);
     int authType = type;
     LoginPlugin *plugin = PluginManager::instance()->getFullManagedLoginPlugin();
@@ -106,6 +101,9 @@ void FullManagedAuthWidget::setAuthType(const int type)
         delete m_customAuth;
         m_customAuth = nullptr;
     }
+
+    if (m_inited && m_customAuth)
+        Q_EMIT requestStartAuthentication(m_model->currentUser()->name(), AT_Custom);
 }
 
 void FullManagedAuthWidget::setAuthState(const int type, const int state, const QString &message)
