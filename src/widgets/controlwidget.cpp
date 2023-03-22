@@ -359,6 +359,10 @@ void ControlWidget::addModule(TrayPlugin *trayModule)
     connect(button, &FloatingButton::requestShowTips, this, [=] {
         if (trayModule->itemTipsWidget()) {
             m_tipsWidget->setContent(trayModule->itemTipsWidget());
+            // 因为密码框需要一直获取焦点，会导致TipsWidget在间隙时间内的Visible变为false
+            // DArrowRectangle::show中当Visible为false时会activateWindow，抢占密码框焦点
+            // 所以这里手动设置visible为true
+            m_tipsWidget->setVisible(true);
             m_tipsWidget->show(mapToGlobal(button->pos()).x() + button->width() / 2,mapToGlobal(button->pos()).y());
         }
     });
