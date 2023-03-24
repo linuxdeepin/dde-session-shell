@@ -122,6 +122,11 @@ void LockWorker::initConnections()
     /* org.freedesktop.login1.Session */
     connect(m_login1SessionSelf, &Login1SessionSelf::ActiveChanged, this, [this](bool active) {
         qInfo() << "DBusLockService::ActiveChanged:" << active << ", model visible: " << m_model->visible();
+        if (m_model->currentContentType() == SessionBaseModel::UpdateContent) {
+            qInfo() << "Updating, do not answer login1 session self `ActiveChanged` signal";
+            return;
+        }
+
         if (active && m_model->visible()) {
             createAuthentication(m_model->currentUser()->name());
         } else {
