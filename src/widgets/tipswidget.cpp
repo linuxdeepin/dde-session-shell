@@ -2,19 +2,26 @@
 //
 // SPDX-License-Identifier: GPL-3.0-or-later
 
+#include <DWindowManagerHelper>
 #include "tipswidget.h"
 
 DWIDGET_USE_NAMESPACE
+DGUI_USE_NAMESPACE
 
 TipsWidget::TipsWidget(QWidget *parent)
     : DArrowRectangle(DArrowRectangle::ArrowBottom, parent)
 {
-    setProperty("_d_radius_force", true); // 无特效模式时，让窗口圆角
-    setShadowBlurRadius(20);
-    setRadius(6);
+    if (DWindowManagerHelper::instance()->hasComposite()) {
+        setRadiusArrowStyleEnable(true);
+        setProperty("_d_radius_force", true);
+        setShadowBlurRadius(20);
+        setRadius(6);
+    } else {
+        setProperty("_d_radius_force", false);
+    }
     setShadowYOffset(2);
     setShadowXOffset(0);
-    setArrowWidth(18);
+    setArrowWidth(20);
     setArrowHeight(10);
 }
 
