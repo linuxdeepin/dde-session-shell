@@ -367,12 +367,12 @@ void ControlWidget::addModule(TrayPlugin *trayModule)
         if (m_tipsWidget->getContent())
             m_tipsWidget->getContent()->setVisible(false);
         m_tipsWidget->hide();
+        update();
     });
 
     connect(button, &FloatingButton::clicked, this, [this, trayModule] {
         emit requestShowModule(trayModule->key());
     }, Qt::UniqueConnection);
-
 
     updateLayout();
 }
