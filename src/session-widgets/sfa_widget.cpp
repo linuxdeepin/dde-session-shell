@@ -959,11 +959,19 @@ void SFAWidget::onRequestChangeAuth(const AuthType authType)
 
     if (!m_authButtons.contains(authType)) {
         qWarning() << "Authentication buttons do not contain the type";
-        auto button = m_chooseAuthButtonBox->button(m_authButtons.firstKey());
-        if (button)
+
+        // 登录选项默认显示上一次认证方式，当不存在上一次认证，默认显示第一种认证方式
+        QAbstractButton *button = nullptr;
+        if (m_authButtons.contains(m_user->lastAuthType())) {
+            button = m_chooseAuthButtonBox->button(m_user->lastAuthType());
+        } else {
+            button = m_chooseAuthButtonBox->button(m_authButtons.firstKey());
+        }
+        if (button) {
             button->setChecked(true);
-        else
-            qWarning() << "First authentication button is nullptr: " << m_authButtons.firstKey();
+        } else {
+            qWarning() << "Authentication button is nullptr";
+        }
 
         return ;
     }
