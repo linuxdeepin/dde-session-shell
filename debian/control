@@ -42,15 +42,20 @@ Depends: ${shlibs:Depends}, ${misc:Depends}, ${dist:Depends},
  deepin-authenticate(>=1.2.27),
  xsettingsd,
  libssl-dev,
- libxcb-util0 | libxcb-util1
-Provides: lightdm-greeter
+ libxcb-util0 | libxcb-util1,
+ dde-dconfig-daemon,
+ dde-wayland-config(>>1.0.10-1)
+Provides: lightdm-greeter,
+ deepin-greeter-wayland
 Recommends: onboard,
  dss-network-plugin
 Conflicts: dde-workspace,
  deepin-notifications,
  dde-session-ui (<< 5.0.0),
- dde-preload
-Replaces: deepin-notifications
+ dde-preload,
+ deepin-greeter-wayland
+Replaces: deepin-notifications,
+ deepin-greeter-wayland
 Breaks: dde-workspace
 Description: deepin desktop-environment - dde-session-shell module
  Deepin desktop environment 2015 - dde-session-shell module.
@@ -63,9 +68,3 @@ Architecture: any
 Depends: dde-session-shell (= ${binary:Version}), ${shlibs:Depends}, ${misc:Depends}
 Description: deepin desktop-environment - dde-session-shell module development files
  DDE Session Shell module development files of deepin desktop-environment
-
-Package: deepin-greeter-wayland
-Architecture: any
-Depends: dde-session-shell (= ${binary:Version}), ${shlibs:Depends}, ${misc:Depends}, dde-wayland-config
-Description: deepin desktop-environment - dde-session-shell module config files
- DDE Session Shell module configuration package adapted to the wayland environment for lightdm-deepin-greeter

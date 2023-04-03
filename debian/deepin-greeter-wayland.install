@@ -1,4 +1,0 @@
-files/wayland/deepin-greeter-wayland usr/bin
-files/wayland/lightdm-deepin-greeter-wayland var
-files/wayland/lightdm-deepin-greeter-wayland.desktop usr/share/xgreeters
-files/wayland/kwin_wayland_helper-wayland usr/bin

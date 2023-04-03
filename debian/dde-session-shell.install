@@ -1,4 +1,8 @@
 etc
 usr/bin
 usr/share
+usr/share/xgreeters
+usr/share/dde-session-shell/greeters.d/x
+usr/share/dde-session-shell/greeters.d/wayland
+usr/share/lightdm/lightdm.conf.d
 usr/lib/dde-session-shell/modules

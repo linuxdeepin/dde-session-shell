@@ -1,0 +1,16 @@
+#!/bin/sh
+
+set -e
+
+# delete old files installed by dde-session-shell(<<5.5.100-1)
+if [ -d "/etc/deepin/greeters.d" ]; then
+    rm -rf "/etc/deepin/greeters.d"
+fi
+
+# restore lightdm.conf to default （历史构建镜像会修改此文件，这里将之恢复，从而不影响升级场景）
+sed -i -r -e "s|^.*greeter-session=lightdm-deepin-greeter.*\$|#greeter-session=restore default greeter by dde-session-shell|" \
+	-e "s|^.*user-session=deepin.*\$|#user-session=restore default user session by dde-session-shell|" \
+	/etc/lightdm/lightdm.conf
+
+#DEBHELPER#
+exit 0

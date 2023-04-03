@@ -306,16 +306,33 @@ add_subdirectory(plugins)
 install(TARGETS dde-lock lightdm-deepin-greeter DESTINATION ${CMAKE_INSTALL_BINDIR})
 install(FILES files/deepin-greeter DESTINATION ${CMAKE_INSTALL_BINDIR})
 
-file(GLOB SCRIPTS  scripts/*)
-install(PROGRAMS ${SCRIPTS} DESTINATION ${CMAKE_INSTALL_SYSCONFDIR}/deepin/greeters.d)
+# install x files
+file(GLOB SCRIPTS
+    files/x/00-xrandr
+    files/x/10-cursor-theme
+    files/x/lightdm-deepin-greeter
+)
+
+install(PROGRAMS ${SCRIPTS} DESTINATION ${CMAKE_INSTALL_DATADIR}/dde-session-shell/greeters.d/x)
+
+install(FILES files/x/lightdm-deepin-greeter.desktop DESTINATION ${CMAKE_INSTALL_DATADIR}/xgreeters/)
+
+# 指定greeter，优先级最低，允许被其他应用以更高的配置文件覆盖
+install(FILES files/50-deepin.conf DESTINATION ${CMAKE_INSTALL_DATADIR}/lightdm/lightdm.conf.d)
+
+# install wayland files
+install(PROGRAMS files/wayland/launch-kwin-wayland DESTINATION ${CMAKE_INSTALL_DATADIR}/dde-session-shell/greeters.d/wayland)
+install(PROGRAMS files/wayland/lightdm-deepin-greeter-wayland DESTINATION ${CMAKE_INSTALL_DATADIR}/dde-session-shell/greeters.d/wayland)
+install(FILES files/wayland/lightdm-deepin-greeter-wayland.desktop DESTINATION ${CMAKE_INSTALL_DATADIR}/xgreeters/)
 
 file(GLOB QM_FILES "translations/*.qm")
 install(FILES ${QM_FILES} DESTINATION ${CMAKE_INSTALL_DATADIR}/dde-session-shell/translations)
 install(FILES qt-theme.ini DESTINATION ${CMAKE_INSTALL_SYSCONFDIR}/lightdm/deepin)
 
-install(FILES files/lightdm-deepin-greeter.desktop DESTINATION ${CMAKE_INSTALL_DATADIR}/xgreeters/)
 install(FILES files/dde-lock.desktop DESTINATION ${CMAKE_INSTALL_DATADIR}/applications/)
 install(FILES files/dde-lock.desktop DESTINATION ${CMAKE_INSTALL_SYSCONFDIR}/xdg/autostart/)
+
+# install conf files
 install(FILES files/dde-session-shell.conf DESTINATION ${CMAKE_INSTALL_DATADIR}/dde-session-shell/)
 install(FILES files/lightdm-deepin-greeter.conf DESTINATION ${CMAKE_INSTALL_DATADIR}/deepin-authentication/privileges/)
 

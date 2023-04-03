@@ -8,4 +8,4 @@ export QT_QPA_PLATFORM=wayland
 export KWIN_COMPOSE=O2ES
 export QT_WAYLAND_SHELL_INTEGRATION=kwayland-shell
 
-/usr/bin/kwin_wayland --drm --no-lockscreen /etc/deepin/greeters.d/lightdm-deepin-greeter
+/usr/bin/kwin_wayland --drm --no-lockscreen /usr/share/dde-session-shell/greeters.d/wayland/lightdm-deepin-greeter-wayland

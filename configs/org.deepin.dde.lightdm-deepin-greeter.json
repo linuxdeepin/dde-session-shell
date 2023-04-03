@@ -141,6 +141,16 @@
             "description": "设置全名的字体大小，默认为5，有效值为0~9，数字越大字体越小。",
             "permissions": "readwrite",
             "visibility": "private"
+        },
+        "defaultGreeterSession":{
+            "value": "x",
+            "serial": 0,
+            "flags": ["global"],
+            "name": "DefaultGreeterSession",
+            "name[zh_CN]": "Greeter以x还是wayland的模式启动",
+            "description": "Greeter以x还是wayland的模式启动，目前仅x和wayland两种模式.部分机型不适用，修改后可能导致登录黑屏，谨慎修改",
+            "permissions": "readwrite",
+            "visibility": "private"
         }
     }
 }
