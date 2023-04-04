@@ -78,6 +78,8 @@ LoginModule::LoginModule(QObject *parent)
             }
             watcher->deleteLater();
         });
+    } else {
+        qDebug() << Q_FUNC_INFO << " login1Inter is not Valid";
     }
 
     initConnect();
@@ -107,6 +109,7 @@ LoginModule::LoginModule(QObject *parent)
 
 LoginModule::~LoginModule()
 {
+    qDebug() << Q_FUNC_INFO << "release start ";
     if (m_loginWidget) {
         delete m_loginWidget;
     }
@@ -410,6 +413,27 @@ void LoginModule::slotPrepareForSleep(bool active)
 
     m_acceptSleepSignal = true;
     if (m_login1SessionSelf == nullptr) {
+        qWarning()  << "m_login1SessionSelf is null";
+        QDBusInterface login1Inter("org.freedesktop.login1", "/org/freedesktop/login1",
+                                   "org.freedesktop.login1.Manager",
+                                   QDBusConnection::systemBus());
+        if(login1Inter.isValid()){
+            QDBusPendingReply<QDBusObjectPath> reply = login1Inter.call("GetSessionByPID" , uint(0));
+            if(!reply.isError()){
+                QString session_self = reply.value().path();
+                qDebug() << "session_self path" << session_self;
+                m_login1SessionSelf = new QDBusInterface("org.freedesktop.login1", session_self, "org.freedesktop.login1.Session", QDBusConnection::systemBus());
+                qDebug() << " m_login1SessionSelf ----" << m_login1SessionSelf;
+            } else {
+                qDebug() << reply.error().message();
+            }
+
+        } else {
+            qDebug() << Q_FUNC_INFO << " login1Inter is not Valid";
+        }
+    }
+
+    if (m_login1SessionSelf == nullptr ) {
         qWarning()  << "m_login1SessionSelf is null";
         return;
     }
