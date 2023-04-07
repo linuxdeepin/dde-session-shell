@@ -29,14 +29,16 @@ SystemMonitor::SystemMonitor(QWidget *parent)
 void SystemMonitor::initUI()
 {
     QHBoxLayout *mainLayout = new QHBoxLayout(this);
-    mainLayout->setSpacing(5);
-    mainLayout->setContentsMargins(10, 0, 10, 0);
+    mainLayout->setSpacing(10);
+    mainLayout->setContentsMargins(35, 0, 35, 0);
 
     m_icon->setPixmap(DHiDPIHelper::loadNxPixmap(":/img/deepin-system-monitor.svg"));
     m_text->setText(tr("Start system monitor"));
 
     mainLayout->addWidget(m_icon, 0, Qt::AlignVCenter | Qt::AlignRight);
     mainLayout->addWidget(m_text, 1, Qt::AlignVCenter | Qt::AlignLeft);
+
+    setLayout(mainLayout);
 }
 
 void SystemMonitor::setState(const State state)
@@ -108,19 +110,19 @@ void SystemMonitor::paintEvent(QPaintEvent *event)
 
     switch (m_state) {
     case Enter:
-        painter.setBrush(QColor(0, 0, 0, 75));
+        painter.setBrush(QColor(255, 255, 255, 0.3 * 255));
         break;
     case Leave:
-        painter.setBrush(QColor(0, 0, 0, 0));
+        painter.setBrush(QColor(255, 255, 255, 0.1 * 255));
         break;
     case Release:
-        painter.setBrush(QColor(0, 0, 0, 75));
+        painter.setBrush(QColor(255, 255, 255, 0.3 * 255));
         break;
     case Press:
-        painter.setBrush(QColor(0, 0, 0, 105));
+        painter.setBrush(QColor(255, 255, 255, 0.1 * 255));
         break;
     }
-    painter.drawRoundedRect(QRect(1, 1, width() - 2, height() - 2), 10, 10);
+    painter.drawRoundedRect(rect(), 8, 8);
 
     QWidget::paintEvent(event);
 }
