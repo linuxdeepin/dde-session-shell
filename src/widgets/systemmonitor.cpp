@@ -9,6 +9,7 @@
 #include <QPainter>
 
 #include <DHiDPIHelper>
+#include <DFontSizeManager>
 
 DWIDGET_USE_NAMESPACE
 
@@ -38,7 +39,7 @@ void SystemMonitor::initUI()
     mainLayout->addWidget(m_icon, 0, Qt::AlignVCenter | Qt::AlignRight);
     mainLayout->addWidget(m_text, 1, Qt::AlignVCenter | Qt::AlignLeft);
 
-    setLayout(mainLayout);
+    DFontSizeManager::instance()->bind(m_text, DFontSizeManager::T6);
 }
 
 void SystemMonitor::setState(const State state)
