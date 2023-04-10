@@ -428,7 +428,7 @@ void LockWorker::doPowerAction(const SessionBaseModel::PowerAction action)
     }
         break;
     case SessionBaseModel::PowerAction::RequireRestart:
-        if (!isLocked()) {
+        if (!isLocked() || m_model->currentModeState() == SessionBaseModel::ModeStatus::ShutDownMode) {
             m_sessionManagerInter->RequestReboot();
         } else {
             createAuthentication(m_account);
@@ -436,7 +436,7 @@ void LockWorker::doPowerAction(const SessionBaseModel::PowerAction action)
         }
         return;
     case SessionBaseModel::PowerAction::RequireShutdown:
-        if (!isLocked()) {
+        if (!isLocked() || m_model->currentModeState() == SessionBaseModel::ModeStatus::ShutDownMode) {
             m_sessionManagerInter->RequestShutdown();
         } else {
             createAuthentication(m_account);
