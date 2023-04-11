@@ -954,7 +954,7 @@ void GreeterWorker::restartResetSessionTimer()
 
 void GreeterWorker::startGreeterAuth(const QString &account)
 {
-    if (!m_greeter->inAuthentication()) {
+    if (!m_greeter->inAuthentication() || m_greeter->authenticationUser() != account) {
         qInfo() << "Account:" << account ;
         m_greeter->authenticate(account);
     } else {
