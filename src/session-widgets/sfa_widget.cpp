@@ -199,7 +199,7 @@ AuthFlags SFAWidget::initAuthFactors(const AuthFlags authFactors)
     authTypes = initCustomFactor(authTypes);
 
     auto updateAuthType = [this, authTypes](AuthType type,
-                                           AuthModule *&authenticator,
+                                           AuthModule *authenticator,
                                            void (SFAWidget::*initAuthFunc)()) {
         if (authTypes.testFlag(type)) {
             if (!authenticator) {
@@ -213,23 +213,12 @@ AuthFlags SFAWidget::initAuthFactors(const AuthFlags authFactors)
         }
     };
 
-    auto authObject = qobject_cast<AuthModule*>(m_passwordAuth);
-    updateAuthType(AT_Password, authObject, &SFAWidget::initPasswdAuth);
-
-    authObject = qobject_cast<AuthModule*>(m_faceAuth);
-    updateAuthType(AT_Face, authObject, &SFAWidget::initFaceAuth);
-
-    authObject = qobject_cast<AuthModule*>(m_irisAuth);
-    updateAuthType(AT_Iris, authObject, &SFAWidget::initIrisAuth);
-
-    authObject = qobject_cast<AuthModule*>(m_fingerprintAuth);
-    updateAuthType(AT_Fingerprint, authObject, &SFAWidget::initFingerprintAuth);
-
-    authObject = qobject_cast<AuthModule*>(m_ukeyAuth);
-    updateAuthType(AT_Ukey, authObject, &SFAWidget::initUKeyAuth);
-
-    authObject = qobject_cast<AuthModule*>(m_singleAuth);
-    updateAuthType(AT_PAM, authObject, &SFAWidget::initSingleAuth);
+    updateAuthType(AT_Password, m_passwordAuth, &SFAWidget::initPasswdAuth);
+    updateAuthType(AT_Face, m_faceAuth, &SFAWidget::initFaceAuth);
+    updateAuthType(AT_Iris, m_irisAuth, &SFAWidget::initIrisAuth);
+    updateAuthType(AT_Fingerprint, m_fingerprintAuth, &SFAWidget::initFingerprintAuth);
+    updateAuthType(AT_Ukey, m_ukeyAuth, &SFAWidget::initUKeyAuth);
+    updateAuthType(AT_PAM, m_singleAuth, &SFAWidget::initSingleAuth);
 
     return authTypes;
 }

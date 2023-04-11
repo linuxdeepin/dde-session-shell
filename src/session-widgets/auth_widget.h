@@ -125,13 +125,13 @@ protected:
 
     KeyboardMonitor *m_capsLockMonitor;    // 大小写
 
-    AuthSingle *m_singleAuth;           // PAM
-    AuthPassword *m_passwordAuth;       // 密码
-    AuthFingerprint *m_fingerprintAuth; // 指纹
-    AuthUKey *m_ukeyAuth;               // UKey
-    AuthFace *m_faceAuth;               // 面容
-    AuthIris *m_irisAuth;               // 虹膜
-    AuthCustom *m_customAuth;           // 自定义认证
+    QPointer<AuthSingle> m_singleAuth;           // PAM
+    QPointer<AuthPassword> m_passwordAuth;       // 密码
+    QPointer<AuthFingerprint> m_fingerprintAuth; // 指纹
+    QPointer<AuthUKey> m_ukeyAuth;               // UKey
+    QPointer<AuthFace> m_faceAuth;               // 面容
+    QPointer<AuthIris> m_irisAuth;               // 虹膜
+    QPointer<AuthCustom> m_customAuth;           // 自定义认证
 
     QString m_passwordHint;     // 密码提示
     QString m_keyboardType;     // 键盘布局类型
