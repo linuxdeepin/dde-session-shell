@@ -440,7 +440,7 @@ void FullScreenBackground::updateGeometry()
         return;
     }
 
-    qInfo() << "set background screen:" << m_screen;
+    qInfo() << "set background m_screen:" << m_screen << " geometry:" << m_screen->geometry();
 
     // for bug:184943.系统修改分辨率后，登录界面获取的屏幕分辨率不正确,通过xrandr获取屏幕分辨率
     if (m_model->appType() == AuthCommon::Login && !m_model->isUseWayland()) {
@@ -593,6 +593,10 @@ void FullScreenBackground::moveEvent(QMoveEvent *event)
 
 QMap<QString, QRect> FullScreenBackground::getScreenGeometryByXrandr()
 {
+    // 获取缩放比例
+    double scale = getScaleFactorFromDisplay();
+    qInfo() << "getScaleFactorFromDisplay scale:" << scale;
+
     QMap<QString, QRect> screensGeometry;
 
     // 启动 xrandr | grep connected 进程
@@ -615,7 +619,7 @@ QMap<QString, QRect> FullScreenBackground::getScreenGeometryByXrandr()
             int height = match.captured(3).toInt();
             int x = match.captured(4).toInt();
             int y = match.captured(5).toInt();
-            QRect rect(x, y, width, height);
+            QRect rect(x, y, width / scale, height / scale);
             screensGeometry.insert(name, rect);
             qInfo() << "Screen Name:" << name << "Screen Rect:" << rect;
         }
@@ -623,6 +627,32 @@ QMap<QString, QRect> FullScreenBackground::getScreenGeometryByXrandr()
 
     return screensGeometry;
 }
+
+double FullScreenBackground::getScaleFactorFromDisplay()
+{
+    QDBusInterface display("com.deepin.system.Display",
+                                 "/com/deepin/system/Display",
+                                 "com.deepin.system.Display",
+                                 QDBusConnection::systemBus(), this);
+
+    QDBusReply<QString> reply = display.call("GetConfig");
+    QString jsonObjStr = reply.value();
+    if (jsonObjStr.isNull()) {
+        return 1.0;
+    }
+
+    // 获取 ScaleFactors 对象
+    QJsonObject json = QJsonDocument::fromJson(jsonObjStr.toUtf8()).object();
+    QJsonObject scaleFactors = json.value("Config").toObject().value("ScaleFactors").toObject();
+
+    // 遍历 ScaleFactors 对象
+    for (const auto& key : scaleFactors.keys()) {
+        return scaleFactors.value(key).toDouble();
+    }
+
+    return 1.0;
+}
+
 
 void FullScreenBackground::updateCurrentFrame(FullScreenBackground *frame)
 {

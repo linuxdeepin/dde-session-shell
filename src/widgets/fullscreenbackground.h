@@ -64,6 +64,7 @@ private:
     bool contains(int type);
     void tryActiveWindow(int count = 9);
     QMap<QString, QRect> getScreenGeometryByXrandr();
+    double getScaleFactorFromDisplay();
     static void updateCurrentFrame(FullScreenBackground *frame);
 
 protected:
