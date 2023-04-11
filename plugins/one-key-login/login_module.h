@@ -12,7 +12,7 @@
 
 #include "login_module_interface_v2.h"
 
-#include "dtkcore_global.h"
+#include <dtkcore_global.h>
 #include <DSpinner>
 
 DCORE_BEGIN_NAMESPACE
