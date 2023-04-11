@@ -436,6 +436,30 @@ void FullScreenBackground::updateScreen(QPointer<QScreen> screen)
 
 void FullScreenBackground::updateGeometry()
 {
+    if (m_screen.isNull()) {
+        return;
+    }
+
+    qInfo() << "set background screen:" << m_screen;
+
+    // for bug:184943.系统修改分辨率后，登录界面获取的屏幕分辨率不正确,通过xrandr获取屏幕分辨率
+    if (m_model->appType() == AuthCommon::Login && !m_model->isUseWayland()) {
+        static QMap<QString, QRect> screensGeometry;
+        if (screensGeometry.isEmpty() || !screensGeometry.contains(m_screen->name())) {
+            screensGeometry = getScreenGeometryByXrandr();
+            qInfo() << "getScreenGeometryByXrandr:" << screensGeometry;
+        }
+
+        if (screensGeometry.contains(m_screen->name())) {
+            setGeometry(screensGeometry[m_screen->name()]);
+            qInfo() << "set geometry by xrandr rect:" << screensGeometry[m_screen->name()];
+        } else {
+            setGeometry(m_screen->geometry());
+        }
+
+        return;
+    }
+
     if (!m_screen.isNull()) {
         setGeometry(m_screen->geometry());
 
@@ -565,6 +589,39 @@ void FullScreenBackground::moveEvent(QMoveEvent *event)
     }
     qInfo() << "FullscreenBackground::moveEvent: " << ", old pos: " << event->oldPos() << ", pos: " << event->pos();
     QWidget::moveEvent(event);
+}
+
+QMap<QString, QRect> FullScreenBackground::getScreenGeometryByXrandr()
+{
+    QMap<QString, QRect> screensGeometry;
+
+    // 启动 xrandr | grep connected 进程
+    QProcess process;
+    QStringList arguments;
+    arguments << "-c" << "xrandr | grep connected";
+    process.start("/bin/sh", arguments);
+    process.waitForStarted();
+    process.waitForFinished();
+
+    // 读取进程输出并解析屏幕信息
+    QString output = QString::fromLocal8Bit(process.readAll());
+    QRegularExpression regex("(\\S+) connected (?:primary )?(\\d+)x(\\d+)\\+(\\d+)\\+(\\d+)");
+    QRegularExpressionMatchIterator iter = regex.globalMatch(output);
+    while (iter.hasNext()) {
+        QRegularExpressionMatch match = iter.next();
+        if (match.hasMatch()) {
+            QString name = match.captured(1);
+            int width = match.captured(2).toInt();
+            int height = match.captured(3).toInt();
+            int x = match.captured(4).toInt();
+            int y = match.captured(5).toInt();
+            QRect rect(x, y, width, height);
+            screensGeometry.insert(name, rect);
+            qInfo() << "Screen Name:" << name << "Screen Rect:" << rect;
+        }
+    }
+
+    return screensGeometry;
 }
 
 void FullScreenBackground::updateCurrentFrame(FullScreenBackground *frame)

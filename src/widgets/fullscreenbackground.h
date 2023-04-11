@@ -63,6 +63,7 @@ private:
     static void updatePixmap();
     bool contains(int type);
     void tryActiveWindow(int count = 9);
+    QMap<QString, QRect> getScreenGeometryByXrandr();
     static void updateCurrentFrame(FullScreenBackground *frame);
 
 protected:
