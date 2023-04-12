@@ -98,7 +98,9 @@ LoginModule::LoginModule(QObject *parent)
         }
     }, Qt::DirectConnection);
 
-    startCallHuaweiFingerprint();
+    if (!isLock) {
+        startCallHuaweiFingerprint();
+    }
 }
 
 LoginModule::~LoginModule()
