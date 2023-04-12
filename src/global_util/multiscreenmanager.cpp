@@ -155,6 +155,10 @@ void MultiScreenManager::onScreenRemoved(QPointer<QScreen> screen)
                 }
                 // 更新frame绑定的屏幕
                 m_frames[validScreen] = frame;
+                AbstractFullBackgroundInterface *fullScreenFrameInterface = dynamic_cast<AbstractFullBackgroundInterface*>(frame);
+                if (fullScreenFrameInterface) {
+                    fullScreenFrameInterface->setScreen(validScreen, true);
+                }
             } else {
                 frame->deleteLater();
             }

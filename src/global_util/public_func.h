@@ -47,6 +47,9 @@ T findValueByQSettings(const QStringList &configFiles,
     return fallback.value<T>();
 }
 
+int setRootWindowCursor();
+void setPointer();
+
 /**
  * @brief 是否使用深度认证，不使用域管认证。
  *

@@ -8,6 +8,10 @@
 #include <QWidget>
 #include <QSharedPointer>
 #include <QLoggingCategory>
+#include <QSize>
+
+#include "abstractfullbackgroundinterface.h"
+
 Q_DECLARE_LOGGING_CATEGORY(DDE_SS)
 
 #include <com_deepin_daemon_imageeffect.h>
@@ -16,7 +20,7 @@ using ImageEffectInter = com::deepin::daemon::ImageEffect;
 
 class BlackWidget;
 class SessionBaseModel;
-class FullScreenBackground : public QWidget
+class FullScreenBackground : public QWidget, public AbstractFullBackgroundInterface
 {
     Q_OBJECT
     Q_PROPERTY(bool contentVisible READ contentVisible)

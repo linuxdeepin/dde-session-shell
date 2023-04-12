@@ -12,6 +12,7 @@
 #include "multiscreenmanager.h"
 #include "propertygroup.h"
 #include "sessionbasemodel.h"
+#include "public_func.h"
 
 #include <DApplication>
 #include <DGuiApplicationHelper>
@@ -35,78 +36,6 @@ DWIDGET_USE_NAMESPACE
 
 const bool IsWayland = qgetenv("XDG_SESSION_TYPE").contains("wayland");
 
-//Load the System cursor --begin
-static XcursorImages*
-xcLoadImages(const char *image, int size)
-{
-    QSettings settings(DDESESSIONCC::DEFAULT_CURSOR_THEME, QSettings::IniFormat);
-    //The default cursor theme path
-    qDebug() << "Theme Path:" << DDESESSIONCC::DEFAULT_CURSOR_THEME;
-    QString item = "Icon Theme";
-    const char* defaultTheme = "";
-    QVariant tmpCursorTheme = settings.value(item + "/Inherits");
-    if (tmpCursorTheme.isNull()) {
-        qDebug() << "Set a default one instead, if get the cursor theme failed!";
-        defaultTheme = "Deepin";
-    } else {
-        defaultTheme = tmpCursorTheme.toString().toLocal8Bit().data();
-    }
-
-    qDebug() << "Get defaultTheme:" << tmpCursorTheme.isNull()
-             << defaultTheme;
-    return XcursorLibraryLoadImages(image, defaultTheme, size);
-}
-
-static unsigned long loadCursorHandle(Display *dpy, const char *name, int size)
-{
-    if (size == -1) {
-        size = XcursorGetDefaultSize(dpy);
-    }
-
-    // Load the cursor images
-    XcursorImages *images = nullptr;
-    images = xcLoadImages(name, size);
-
-    if (!images) {
-        images = xcLoadImages(name, size);
-        if (!images) {
-            return 0;
-        }
-    }
-
-    unsigned long handle = static_cast<unsigned long>(XcursorImagesLoadCursor(dpy,images));
-    XcursorImagesDestroy(images);
-
-    return handle;
-}
-
-static int setRootWindowCursor() {
-    Display* display = XOpenDisplay(nullptr);
-    if (!display) {
-        qDebug() << "Open display failed";
-        return -1;
-    }
-
-    const char *cursorPath = qApp->devicePixelRatio() > 1.7
-            ? "/usr/share/icons/bloom/cursors/loginspinner@2x"
-            : "/usr/share/icons/bloom/cursors/loginspinner";
-
-    Cursor cursor = static_cast<Cursor>(XcursorFilenameLoadCursor(display, cursorPath));
-    if (cursor == 0) {
-        cursor = static_cast<Cursor>(loadCursorHandle(display, "watch", 24));
-    }
-    XDefineCursor(display, XDefaultRootWindow(display),cursor);
-
-    // XFixesChangeCursorByName is the key to change the cursor
-    // and the XFreeCursor and XCloseDisplay is also essential.
-
-    XFixesChangeCursorByName(display, cursor, "watch");
-
-    XFreeCursor(display, cursor);
-    XCloseDisplay(display);
-
-    return 0;
-}
 // Load system cursor --end
 
 bool isScaleConfigExists() {
@@ -257,34 +186,7 @@ static void set_auto_QT_SCALE_FACTOR() {
     }
 }
 
-// 初次启动时，设置一下鼠标的默认位置
-void set_pointer()
-{
-    auto set_position = [=](QPoint p) {
-        Display *dpy;
-        dpy = XOpenDisplay(nullptr);
 
-        if (!dpy) return;
-
-        Window root_window;
-        root_window = XRootWindow(dpy, 0);
-        XSelectInput(dpy, root_window, KeyReleaseMask);
-        XWarpPointer(dpy, None, root_window, 0, 0, 0, 0, p.x(), p.y());
-        XFlush(dpy);
-    };
-
-    if (!qApp->primaryScreen()) {
-        QObject::connect(qApp, &QGuiApplication::primaryScreenChanged, [=] {
-            static bool first = true;
-            if (first) {
-                set_position(qApp->primaryScreen()->geometry().center());
-                first = false;
-            }
-        });
-    } else {
-        set_position(qApp->primaryScreen()->geometry().center());
-    }
-}
 
 int main(int argc, char* argv[])
 {
@@ -307,7 +209,7 @@ int main(int argc, char* argv[])
     qApp->setOrganizationName("deepin");
     qApp->setApplicationName("org.deepin.dde.lightdm-deepin-greeter");
 
-    set_pointer();
+    setPointer();
 
     //注册全局事件过滤器
     AppEventFilter appEventFilter;
