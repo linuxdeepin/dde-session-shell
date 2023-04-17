@@ -84,6 +84,7 @@ private:
     QLightDM::Greeter *m_greeter;
     DeepinAuthFramework *m_authFramework;
     DBusLockService *m_lockInter;
+    QDBusInterface *m_systemDaemon;
     SoundThemePlayerInter *m_soundPlayerInter;
 #ifdef USE_DEEPIN_WAYLAND
     GreeterDisplayWayland *m_greeterDisplayWayland;

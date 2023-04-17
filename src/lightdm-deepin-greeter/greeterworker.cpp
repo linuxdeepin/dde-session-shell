@@ -38,6 +38,7 @@ GreeterWorker::GreeterWorker(SessionBaseModel *const model, QObject *parent)
     , m_greeter(new QLightDM::Greeter(this))
     , m_authFramework(new DeepinAuthFramework(this))
     , m_lockInter(new DBusLockService(LOCK_SERVICE_NAME, LOCK_SERVICE_PATH, QDBusConnection::systemBus(), this))
+    , m_systemDaemon(new QDBusInterface("com.deepin.daemon.Daemon", QString("/com/deepin/daemon/Daemon"), "com.deepin.daemon.Daemon", QDBusConnection::systemBus(), this))
     , m_soundPlayerInter(new SoundThemePlayerInter("com.deepin.api.SoundThemePlayer", "/com/deepin/api/SoundThemePlayer", QDBusConnection::systemBus(), this))
 #ifdef USE_DEEPIN_WAYLAND
     , m_greeterDisplayWayland(nullptr)
@@ -749,6 +750,12 @@ void GreeterWorker::authenticationComplete()
     m_greeter->startSessionSync(m_model->sessionKey());
     endAuthentication(m_account, AT_All);
     destroyAuthentication(m_account);
+
+    //清理所有TTY输出
+    QDBusReply<void> reply = m_systemDaemon->call("ClearTtys");
+    if (!reply.isValid()) {
+        qWarning() << __FUNCTION__ << __LINE__ << "clear ttys feild. error messages:" << reply.error().message();
+    };
 }
 
 void GreeterWorker::onAuthFinished()
