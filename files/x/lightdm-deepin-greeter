@@ -7,4 +7,15 @@ xsettingsd_conf="/etc/lightdm/deepin/xsettingsd.conf"
 if [ -e $xsettingsd_conf ]; then
     xsettingsd -c $xsettingsd_conf &
 fi
-/usr/bin/lightdm-deepin-greeter
+
+dde-dconfig --get -a org.deepin.dde.lightdm-deepin-greeter -r org.deepin.dde.lightdm-deepin-greeter -k enableLighterGreeter | grep "true"
+if [ $? -eq 0 ];then
+    /usr/bin/lightdm-deepin-greeter-lighter
+    
+    # 没正常退出的情况下，仍然拉起原版Greeter
+    if [ $? -ne 0 ];then
+        /usr/bin/lightdm-deepin-greeter
+    fi
+else
+    /usr/bin/lightdm-deepin-greeter
+fi

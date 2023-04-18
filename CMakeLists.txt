@@ -297,6 +297,7 @@ target_link_libraries(lightdm-deepin-greeter PRIVATE
     PkgConfig::SSL
 )
 
+add_subdirectory(lighter-greeter)
 add_subdirectory(tests)
 add_subdirectory(plugins)
 

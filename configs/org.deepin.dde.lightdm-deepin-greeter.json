@@ -151,6 +151,26 @@
             "description": "Greeter以x还是wayland的模式启动，目前仅x和wayland两种模式.部分机型不适用，修改后可能导致登录黑屏，谨慎修改",
             "permissions": "readwrite",
             "visibility": "private"
+        },
+        "enableLighterGreeter":{
+            "value": false,
+            "serial": 0,
+            "flags": ["global"],
+            "name": "enableLighterGreeter",
+            "name[zh_CN]": "是否启用轻量Greeter",
+            "description": "是否启用轻量Greeter",
+            "permissions": "readwrite",
+            "visibility": "private"
+        },
+        "lastUser":{
+            "value": "",
+            "serial": 0,
+            "flags": ["global"],
+            "name": "lastUser",
+            "name[zh_CN]": "上一次登录的用户",
+            "description": "上一次登录的用户，LighterGreeter登录后会保存登录的用户到此配置项目中(避免对外部服务依赖，自行存储)，用于下次登录时选择为默认用户",
+            "permissions": "readwrite",
+            "visibility": "private"
         }
     }
 }
