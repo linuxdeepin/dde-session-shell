@@ -141,6 +141,9 @@ void LockWorker::initConnections()
             endAuthentication(m_account, AT_All);
             destroyAuthentication(m_account);
         } else {
+            // 非黑屏mode
+            m_model->setIsBlackMode(isSleep);
+
             bool wakeUpLock = true;
             // 如果待机唤醒后需要密码则创建验证
             if (QGSettings::isSchemaInstalled("com.deepin.dde.power")) {

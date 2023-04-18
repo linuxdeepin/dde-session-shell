@@ -384,6 +384,8 @@ void FullScreenBackground::showEvent(QShowEvent *event)
     if (contentVisible())
         raise();
 
+    m_blackWidget->setBlackMode(m_model->isBlackMode());
+
     return QWidget::showEvent(event);
 }
 
