@@ -427,10 +427,11 @@ void ShutdownWidget::onStatusChanged(SessionBaseModel::ModeStatus status)
     setButtonsVisible();
 
     if (m_model->currentModeState() == SessionBaseModel::ModeStatus::ShutDownMode) {
-        // 如果用户点击了更新选项，那么默认选中用户选择的更新按钮
+        // 如果用户点击了更新选项，那么直接开始进入更新
         if (m_model->updatePowerMode() != SessionBaseModel::UPM_None) {
             roundItemButton = m_model->updatePowerMode() == SessionBaseModel::UPM_UpdateAndShutdown ?
                 m_updateAndShutdownButton : m_updateAndRebootButton;
+            Q_EMIT roundItemButton->clicked();
         } else {
             roundItemButton = m_requireLockButton;
         }
