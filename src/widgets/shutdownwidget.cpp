@@ -431,7 +431,10 @@ void ShutdownWidget::onStatusChanged(SessionBaseModel::ModeStatus status)
         if (m_model->updatePowerMode() != SessionBaseModel::UPM_None) {
             roundItemButton = m_model->updatePowerMode() == SessionBaseModel::UPM_UpdateAndShutdown ?
                 m_updateAndShutdownButton : m_updateAndRebootButton;
-            Q_EMIT roundItemButton->clicked();
+            // 当前流程执行完毕后模拟点击按钮
+            QTimer::singleShot(0, this, [roundItemButton] {
+                Q_EMIT roundItemButton->clicked();
+            });
         } else {
             roundItemButton = m_requireLockButton;
         }
