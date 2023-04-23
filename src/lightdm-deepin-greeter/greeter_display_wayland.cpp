@@ -276,7 +276,7 @@ void GreeterDisplayWayland::setOutputs()
                             obj["Enabled"] = false;
                             obj["X"] = 0;
                             obj["Y"] = 0;
-                            obj["Rotation"] = 1;
+                            obj["Rotation"] = Normal;
                             valueTmp = obj;
                         }
                         monitorsArr.append(valueTmp);
@@ -416,7 +416,17 @@ void GreeterDisplayWayland::applyConfig(QString uuid)
     auto dev = monitor.dev;
     bool modeSet = false;
     for (auto m : dev->modes()) {
-        if (m.size.width() == monitor.width && m.size.height() == monitor.height && m.refreshRate == monitor.refresh_rate * 1000) {
+        if (m.refreshRate == monitor.refresh_rate * 1000) {
+            if (monitor.transform == Rotated90 || monitor.transform == Rotated270 ||
+                monitor.transform == Flipped90 || monitor.transform == Flipped270) {
+                if (m.size.width() != monitor.height || m.size.height() != monitor.width) {
+                    continue;
+                }
+            } else {
+                if (m.size.width() != monitor.width || m.size.height() != monitor.height) {
+                    continue;
+                }
+            }
             qDebug() << "set output mode :" << monitor.width << "x" << monitor.height << "and refreshRate :" << monitor.refresh_rate;
             m_pConf->setMode(dev, m.id);
             modeSet = true;

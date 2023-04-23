@@ -55,6 +55,18 @@ public:
         Extend_Mode,
         Single_Mode
     };
+
+    enum Transform {
+        Normal,
+        Rotated90,
+        Rotated180,
+        Rotated270,
+        Flipped,
+        Flipped90,
+        Flipped180,
+        Flipped270
+    };
+
     GreeterDisplayWayland(QObject *parent = nullptr);
     virtual ~GreeterDisplayWayland();
 
