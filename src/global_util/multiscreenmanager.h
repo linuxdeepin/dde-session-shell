@@ -35,6 +35,7 @@ private:
     void onScreenRemoved(QPointer<QScreen> screen);
     void raiseContentFrame();
     int getDisplayModeByConfig(const QString &config) const;
+    void updateFrame();
 
 private slots:
     void onDisplayModeChanged(const QString &);

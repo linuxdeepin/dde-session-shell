@@ -155,10 +155,6 @@ void MultiScreenManager::onScreenRemoved(QPointer<QScreen> screen)
                 }
                 // 更新frame绑定的屏幕
                 m_frames[validScreen] = frame;
-                FullScreenBackground *fullScreenFrame = qobject_cast<FullScreenBackground*>(frame);
-                if (fullScreenFrame) {
-                    fullScreenFrame->setScreen(validScreen, true);
-                }
             } else {
                 frame->deleteLater();
             }
@@ -166,9 +162,20 @@ void MultiScreenManager::onScreenRemoved(QPointer<QScreen> screen)
             m_frames[screen]->deleteLater();
             m_frames.remove(screen);
         }
+        updateFrame();
     }
 
     startRaiseContentFrame();
+}
+
+void MultiScreenManager::updateFrame()
+{
+    for (const auto screen : m_frames.keys()) {
+        FullScreenBackground *fullScreenFrame = qobject_cast<FullScreenBackground*>(screen);
+        if (fullScreenFrame) {
+            fullScreenFrame->setScreen(screen, true);
+        }
+    }
 }
 
 void MultiScreenManager::raiseContentFrame()
