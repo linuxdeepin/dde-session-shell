@@ -33,7 +33,7 @@ LoginModule::LoginModule(QObject *parent)
     , m_authCallback(nullptr)
     , m_messageCallback(nullptr)
     , m_loginWidget(nullptr)
-    , m_appType(AppType::Login)
+    , m_appType(AppType::TypeNone)
     , m_loadPluginType(Notload)
     , m_isAcceptFingerprintSignal(false)
     , m_waitAcceptSignalTimer(nullptr)
@@ -50,6 +50,7 @@ LoginModule::LoginModule(QObject *parent)
     setObjectName(QStringLiteral("LoginModule"));
 
     const bool isLock = qApp->applicationName().toLower().contains("lock");
+    m_appType = isLock ? AppType::Lock : AppType::Login;
     qDebug() << "Is lock application: " << isLock << ", application name: "<< qApp->applicationName();
     const QString &dconfigFile = isLock ? "org.deepin.dde.lock" : "org.deepin.dde.lightdm-deepin-greeter";
     m_dconfig = DConfig::create(dconfigFile, dconfigFile, QString(), this);

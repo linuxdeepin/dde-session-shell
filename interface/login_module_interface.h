@@ -38,6 +38,7 @@ struct AuthCallbackData {
  * 发起认证的应用类型
  */
 enum AppType {
+    TypeNone = 0, // 其他
     Login = 1, // 登录
     Lock = 2   // 锁屏
 };
