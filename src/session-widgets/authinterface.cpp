@@ -93,7 +93,6 @@ void AuthInterface::onUserRemove(const QString &user)
 void AuthInterface::initData()
 {
     onUserListChanged(m_accountsInter->userList());
-    onLastLogoutUserChanged(m_loginedInter->lastLogoutUser());
     onLoginUserListChanged(m_loginedInter->userList());
     // m_accountsInter->userList();
     // m_loginedInter->lastLogoutUser();
@@ -111,23 +110,7 @@ void AuthInterface::initDBus()
     connect(m_accountsInter, &AccountsInter::UserAdded, this, &AuthInterface::onUserAdded, Qt::QueuedConnection);
     connect(m_accountsInter, &AccountsInter::UserDeleted, this, &AuthInterface::onUserRemove, Qt::QueuedConnection);
 
-    connect(m_loginedInter, &LoginedInter::LastLogoutUserChanged, this, &AuthInterface::onLastLogoutUserChanged);
     connect(m_loginedInter, &LoginedInter::UserListChanged, this, &AuthInterface::onLoginUserListChanged);
-}
-
-void AuthInterface::onLastLogoutUserChanged(uint uid)
-{
-    m_lastLogoutUid = uid;
-
-    QList<std::shared_ptr<User>> userList = m_model->userList();
-    for (auto it = userList.constBegin(); it != userList.constEnd(); ++it) {
-        if ((*it)->uid() == uid) {
-            m_model->updateLastLogoutUser((*it));
-            return;
-        }
-    }
-
-    m_model->updateLastLogoutUser(std::shared_ptr<User>(nullptr));
 }
 
 void AuthInterface::onLoginUserListChanged(const QString &list)

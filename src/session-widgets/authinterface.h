@@ -54,7 +54,6 @@ public:
 protected:
     void initDBus();
     void initData();
-    void onLastLogoutUserChanged(uint uid);
     void onLoginUserListChanged(const QString &list);
 
     bool checkHaveDisplay(const QJsonArray &array);

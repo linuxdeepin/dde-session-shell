@@ -27,7 +27,6 @@ SessionBaseModel::SessionBaseModel(QObject *parent)
     , m_isUseWayland(QGuiApplication::platformName().startsWith("wayland", Qt::CaseInsensitive))
     , m_appType(AuthCommon::None)
     , m_currentUser(nullptr)
-    , m_lastLogoutUser(nullptr)
     , m_powerAction(PowerAction::RequireNormal)
     , m_currentModeState(ModeStatus::NoStatus)
     , m_authProperty {false, false, Unavailable, AuthCommon::AT_None, AuthCommon::None, 0, "", "", ""}
@@ -362,8 +361,12 @@ bool SessionBaseModel::updateCurrentUser(const QString &userJson)
 {
     qInfo() << "Update current user:" << userJson;
     std::shared_ptr<User> user_ptr = json2User(userJson);
-    if (!user_ptr)
-        user_ptr = m_lastLogoutUser ? m_lastLogoutUser : m_users->first();
+    if (!user_ptr) {
+        if (m_currentUser)
+            return false;
+
+        user_ptr = m_users->first();
+    }
 
     return updateCurrentUser(user_ptr);
 }
@@ -415,37 +418,6 @@ void SessionBaseModel::updateUserList(const QStringList &list)
         m_users->remove(path);
     }
     emit userListChanged(m_users->values());
-}
-
-/**
- * @brief 更新上一个登录用户
- *
- * @param uid
- */
-void SessionBaseModel::updateLastLogoutUser(const uid_t uid)
-{
-    QList<std::shared_ptr<User>> userList = m_users->values();
-    auto it = std::find_if(userList.begin(), userList.end(), [uid](std::shared_ptr<User> &user) {
-        return user->uid() == uid;
-    });
-    if (it != userList.end()) {
-        updateLastLogoutUser(it.i->t());
-    }
-}
-
-/**
- * @brief 设置上一个登录的用户
- *
- * @param lastLogoutUser
- */
-void SessionBaseModel::updateLastLogoutUser(const std::shared_ptr<User> lastLogoutUser)
-{
-    if (!lastLogoutUser.get() || m_lastLogoutUser == lastLogoutUser) {
-        return;
-    }
-    qInfo() << "Last logout user:" << lastLogoutUser->name() << ", uid:" << lastLogoutUser->uid();
-
-    m_lastLogoutUser = lastLogoutUser;
 }
 
 /**

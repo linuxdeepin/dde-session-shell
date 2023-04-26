@@ -88,7 +88,6 @@ public:
     ~SessionBaseModel() override;
 
     inline std::shared_ptr<User> currentUser() const { return m_currentUser; }
-    inline std::shared_ptr<User> lastLogoutUser() const { return m_lastLogoutUser; }
 
     inline QList<std::shared_ptr<User>> loginedUserList() const { return m_loginedUsers->values(); }
     inline QList<std::shared_ptr<User>> userList() const { return m_users->values(); }
@@ -182,8 +181,6 @@ public slots:
     bool updateCurrentUser(const QString &userJson);
     bool updateCurrentUser(const std::shared_ptr<User> user);
     void updateUserList(const QStringList &list);
-    void updateLastLogoutUser(const uid_t uid);
-    void updateLastLogoutUser(const std::shared_ptr<User> lastLogoutUser);
     void updateLoginedUserList(const QString &list);
     /* com.deepin.daemon.Authenticate */
     void updateLimitedInfo(const QString &info);
@@ -250,7 +247,6 @@ private:
     AppType m_appType;
     QList<std::shared_ptr<User>> m_userList;
     std::shared_ptr<User> m_currentUser;
-    std::shared_ptr<User> m_lastLogoutUser;
     QString m_sessionKey;
     PowerAction m_powerAction;
     ModeStatus m_currentModeState;
