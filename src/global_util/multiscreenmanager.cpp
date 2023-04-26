@@ -171,7 +171,7 @@ void MultiScreenManager::onScreenRemoved(QPointer<QScreen> screen)
 void MultiScreenManager::updateFrame()
 {
     for (const auto screen : m_frames.keys()) {
-        FullScreenBackground *fullScreenFrame = qobject_cast<FullScreenBackground*>(screen);
+        FullScreenBackground *fullScreenFrame = qobject_cast<FullScreenBackground*>(m_frames[screen]);
         if (fullScreenFrame) {
             fullScreenFrame->setScreen(screen, true);
         }
