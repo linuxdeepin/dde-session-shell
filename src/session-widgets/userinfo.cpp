@@ -78,6 +78,25 @@ bool User::operator==(const User &user) const
 }
 
 /**
+ * @brief 检查用户是否是LDAP用户
+ * @return true 是 false 否
+ */
+bool User::isLdapUser()
+{
+    struct group *grp = getgrnam("udcp");
+    if (!grp) {
+        return false;
+    }
+
+    for (char **member = grp->gr_mem; member && *member; ++member) {
+        if (*member == m_name) {
+            return true;
+        }
+    }
+    return false;
+}
+
+/**
  * @brief 更新登录状态
  *
  * @param isLogin

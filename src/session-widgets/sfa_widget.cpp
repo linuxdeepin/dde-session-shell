@@ -17,6 +17,7 @@
 #include "sessionbasemodel.h"
 #include "useravatar.h"
 #include "plugin_manager.h"
+#include "login_plugin_util.h"
 
 #include <DFontSizeManager>
 
@@ -65,6 +66,7 @@ void SFAWidget::initUI()
     /* 重试按钮 */
     m_retryButton->setIcon(QIcon(":/img/bottom_actions/reboot.svg"));
     m_retryButton->hide();
+
 
     m_mainLayout->setContentsMargins(10, 0, 10, 0);
     m_mainLayout->setSpacing(0);
@@ -374,7 +376,7 @@ void SFAWidget::initPasswdAuth()
         checkAuthResult(AT_Password, authState);
     });
     connect(m_passwordAuth, &AuthPassword::requestAuthenticate, this, [this] {
-        const QString &text = m_passwordAuth->lineEditText();
+        QString text = m_passwordAuth->lineEditText();
         if (text.isEmpty()) {
             return;
         }
@@ -382,6 +384,16 @@ void SFAWidget::initPasswdAuth()
         m_passwordAuth->setAnimationState(true);
         m_passwordAuth->setLineEditEnabled(false);
         m_lockButton->setEnabled(false);
+
+        if (m_model->currentUser()->isLdapUser()
+            && LPUtil::updateLoginType() == LPUtil::Type::CLT_MFA)
+        {
+            QJsonObject obj;
+            obj["password"] = text;
+            obj["mfa"] = true;
+            text = QJsonDocument(obj).toJson(QJsonDocument::Compact);
+        }
+
         emit sendTokenToAuth(m_user->name(), AT_Password, text);
     });
 
@@ -543,7 +555,14 @@ void SFAWidget::initFaceAuth()
         if (m_faceAuth == nullptr) return;
         if (m_faceAuth->authState() == AS_Success) {
             m_faceAuth->setAuthState(AS_Ended, "Ended");
-            emit authFinished();
+
+            if (m_model->currentUser()->isLdapUser()
+                && LPUtil::loginType() == LPUtil::Type::CLT_MFA)
+            {
+                initCustomMFAAuth();
+            } else {
+                emit authFinished();
+            }
         }
     });
 
@@ -599,7 +618,14 @@ void SFAWidget::initIrisAuth()
         if (m_irisAuth == nullptr) return;
         if (m_irisAuth->authState() == AS_Success) {
             m_irisAuth->setAuthState(AS_Ended, "Ended");
-            emit authFinished();
+
+            if (m_model->currentUser()->isLdapUser()
+                && LPUtil::loginType() == LPUtil::Type::CLT_MFA) {
+                initCustomMFAAuth();
+            } else {
+                emit authFinished();
+            }
+
         }
     });
 
@@ -626,6 +652,81 @@ void SFAWidget::initIrisAuth()
             }
         }
     });
+}
+
+void SFAWidget::initCustomMFAAuth()
+{
+    qDebug() << Q_FUNC_INFO << "init custom auth";
+
+    m_chooseAuthButtonBox->hide();
+    if (m_passwordAuth) {
+        m_passwordAuth->hide();
+        emit requestEndAuthentication(m_user->name(), AT_Password);
+    }
+    if (m_fingerprintAuth) {
+        m_fingerprintAuth->hide();
+        emit requestEndAuthentication(m_user->name(), AT_Fingerprint);
+    }
+    if (m_faceAuth) {
+        m_faceAuth->hide();
+        emit requestEndAuthentication(m_user->name(), AT_Face);
+    }
+    if (m_irisAuth) {
+        m_irisAuth->hide();
+        emit requestEndAuthentication(m_user->name(), AT_Iris);
+    }
+    if (m_ukeyAuth) {
+        m_ukeyAuth->hide();
+        emit requestEndAuthentication(m_user->name(), AT_Ukey);
+    }
+
+    if (m_customAuth) {
+        m_customAuth->reset();
+        return;
+    }
+
+    m_customAuth = new AuthCustom(this);
+
+    LoginPlugin *plugin = PluginManager::instance()->getLoginPlugin();
+    m_customAuth->setModule(plugin);
+    m_customAuth->setModel(m_model);
+    m_customAuth->initUi();
+    m_customAuth->hide();
+
+    connect(m_customAuth, &AuthCustom::requestSendToken, this, [this] (const QString &token) {
+        m_lockButton->setEnabled(false);
+        qInfo() << "sfa custom sendToken name :" <<  m_user->name() << "token:" << token;
+        Q_EMIT sendTokenToAuth(m_user->name(), AT_Custom, token);
+    });
+    connect(m_customAuth, &AuthCustom::authFinished, this, [ this ] (const int authStatus) {
+        if (authStatus == AS_Success) {
+            m_lockButton->setEnabled(true);
+        }
+    });
+    connect(m_customAuth, &AuthCustom::requestCheckAccount, this, [this] (const QString &account) {
+        qInfo() << "Request check account: " << account;
+        if (m_user && m_user->name() == account) {
+            LoginPlugin::AuthCallbackData data = m_customAuth->getCurrentAuthData();
+            if (data.result == LoginPlugin::AuthResult::Success)
+                Q_EMIT sendTokenToAuth(m_user->name(), AT_Custom, data.token);
+            else
+                qWarning() << Q_FUNC_INFO << "auth failed";
+            return;
+        }
+
+        Q_EMIT requestCheckAccount(account);
+    });
+
+    connect(m_customAuth, &AuthCustom::notifyAuthTypeChange, this, &SFAWidget::onRequestChangeAuth);
+
+    m_biometricAuthState->hide();
+    setBioAuthStateVisible(nullptr, false);
+    m_accountEdit->hide();
+    m_userAvatar->setVisible(m_customAuth->pluginConfig().showAvatar);
+    m_userNameWidget->setVisible(m_customAuth->pluginConfig().showUserName);
+    m_lockButton->setVisible(m_customAuth->pluginConfig().showLockButton);
+    replaceWidget(m_customAuth);
+    Q_EMIT requestStartAuthentication(m_user->name(), AT_Custom);
 }
 
 /**
@@ -1002,6 +1103,11 @@ bool SFAWidget::useCustomAuth() const
         return false;
     }
 
+    if (plugin->level() != 1) {
+        qInfo() << "Plugin level does not match";
+        return false;
+    }
+
     // 判断认证插件是否支持"..."用户
     if (m_user && m_user->type() == User::Default) {
         const bool supportDefaultUser = plugin->supportDefaultUser();
@@ -1102,7 +1208,17 @@ void SFAWidget::sendAuthFinished()
         || (m_customAuth && m_customAuth->authState() == AS_Success)) {
         if (m_faceAuth) m_faceAuth->setAuthState(AS_Ended, "Ended");
         if (m_irisAuth) m_irisAuth->setAuthState(AS_Ended, "Ended");
-
-        emit authFinished();
+        // 认证拦截，接入域管二级以上因子
+        if (m_model->currentUser()->isLdapUser() && LPUtil::loginType() == LPUtil::Type::CLT_MFA) {
+            if (m_customAuth && m_customAuth->authState() == AS_Success) {
+                emit authFinished();
+            } else if (LPUtil::hasSecondLevel(m_model->currentUser()->name())){
+                initCustomMFAAuth();
+            } else {
+                emit authFinished();
+            }
+        } else {
+            emit authFinished();
+        }
     }
 }

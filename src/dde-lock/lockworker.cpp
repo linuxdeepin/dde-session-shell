@@ -7,6 +7,7 @@
 #include "authcommon.h"
 #include "sessionbasemodel.h"
 #include "userinfo.h"
+#include "login_plugin_util.h"
 #include "public_func.h"
 #include "dconfig_helper.h"
 
@@ -364,9 +365,19 @@ void LockWorker::onAuthStateChanged(const AuthType type, const AuthState state, 
         m_model->updateAuthState(type, state, message);
         switch (state) {
         case AS_Success:
-            if ((type == AT_Face || type == AT_Iris) && m_model->visible())
-                m_resetSessionTimer->start();
+            if (m_model->currentUser()->isLdapUser() && type != AT_Custom && type != AT_All) {
+                auto loginType = LPUtil::loginType();
+                if (loginType == LPUtil::Type::CLT_MFA) {
+                    m_resetSessionTimer->setInterval(LPUtil::sessionTimeout());
+                    m_resetSessionTimer->start();
+                    break;
+                }
+            }
 
+            if (type == AT_Face || type == AT_Iris) {
+                m_resetSessionTimer->setInterval(DEFAULT_SESSION_TIMEOUT);
+                m_resetSessionTimer->start();
+            }
             break;
         case AS_Failure:
             // 单因失败会返回明确的失败类型，不关注type为-1的情况

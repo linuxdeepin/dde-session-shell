@@ -67,6 +67,7 @@ private:
     void initFaceAuth();
     void initIrisAuth();
     void initCustomAuth();
+    void initCustomMFAAuth();
 
     void checkAuthResult(const AuthCommon::AuthType type, const AuthCommon::AuthState state) override;
 

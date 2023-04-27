@@ -22,6 +22,12 @@ enum AuthResult {
     Failure
 };
 
+enum CustomLoginType {
+    CLT_Default = 0, // 默认登录
+    CLT_MFA, // 多因子
+    CLT_ThirdParty, // 第三方
+};
+
 /**
  * @brief 认证插件需要传回的数据
  */

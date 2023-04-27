@@ -11,6 +11,8 @@
 #include <QObject>
 #include <QJsonObject>
 
+#define DEFAULT_SESSION_TIMEOUT 15000
+
 class LoginPlugin : public PluginBase
 {
     Q_OBJECT
@@ -20,6 +22,7 @@ public:
     using AuthResult = dss::module_v2::AuthResult;
     using DefaultAuthLevel = dss::module::DefaultAuthLevel;
     using AuthType = dss::module::AuthType;
+    using CustomLoginType = dss::module::CustomLoginType;
 
     // 认证插件配置
     struct PluginConfig
@@ -41,6 +44,16 @@ public:
     virtual void reset() = 0;
 
     bool isPluginEnabled();
+
+    int level(); // 插件所处层级
+
+    int loginType(); // 从插件获取登录类型: 默认、多因、第三方
+
+    bool hasSecondLevel(const QString &user); // 检查是否有第二层
+
+    int updateLoginType(); // 通知插件更新登录类型，登录类型信息依赖远程配置
+
+    int sessionTimeout(); // 插件自定义的会话超时时长，单位ms
 
     bool supportDefaultUser();
 

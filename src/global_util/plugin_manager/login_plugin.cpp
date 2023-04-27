@@ -26,6 +26,92 @@ bool LoginPlugin::isPluginEnabled()
     return dataObj["IsPluginEnabled"].toBool(true);
 }
 
+int LoginPlugin::level()
+{
+    qDebug() << Q_FUNC_INFO;
+    QJsonObject message {
+        {"CmdType", "GetLevel"}
+    };
+
+    const QString &result = this->message(toJson(message));
+    qDebug() << "Result: " << result;
+    const QJsonObject &dataObj = getDataObj(result);
+    if (!dataObj.contains("Level")) {
+        return 1;
+    }
+
+    return dataObj["Level"].toInt(1);
+}
+
+int LoginPlugin::loginType()
+{
+    qDebug() << Q_FUNC_INFO;
+    QJsonObject message {
+        {"CmdType", "GetLoginType"}
+    };
+
+    const QString &result = this->message(toJson(message));
+    qDebug() << "Result: " << result;
+    const QJsonObject &dataObj = getDataObj(result);
+    if (!dataObj.contains("LoginType")) {
+        return CustomLoginType::CLT_Default;
+    }
+
+    return dataObj["LoginType"].toInt(CustomLoginType::CLT_Default);
+}
+
+bool LoginPlugin::hasSecondLevel(const QString &user)
+{
+    qDebug() << Q_FUNC_INFO;
+    QJsonObject message {
+        {"CmdType", "HasSecondLevel"},
+        {"Data", user}
+    };
+
+    const QString &result = this->message(toJson(message));
+    qDebug() << "Result: " << result;
+    const QJsonObject &dataObj = getDataObj(result);
+    if (!dataObj.contains("HasSecondLevel")) {
+        return false;
+    }
+
+    return dataObj["HasSecondLevel"].toBool(false);
+}
+
+int LoginPlugin::updateLoginType()
+{
+    qDebug() << Q_FUNC_INFO;
+    QJsonObject message {
+        {"CmdType", "UpdateLoginType"}
+    };
+
+    const QString &result = this->message(toJson(message));
+    qDebug() << "Result: " << result;
+    const QJsonObject &dataObj = getDataObj(result);
+    if (!dataObj.contains("LoginType")) {
+        return CustomLoginType::CLT_Default;
+    }
+
+    return dataObj["LoginType"].toInt(CustomLoginType::CLT_Default);
+}
+
+int LoginPlugin::sessionTimeout()
+{
+    qDebug() << Q_FUNC_INFO;
+    QJsonObject message {
+        {"CmdType", "GetSessionTimeout"}
+    };
+
+    const QString &result = this->message(toJson(message));
+    qDebug() << "Result: " << result;
+    const QJsonObject &dataObj = getDataObj(result);
+    if (!dataObj.contains("SessionTimeout")) {
+        return DEFAULT_SESSION_TIMEOUT;
+    }
+
+    return dataObj["SessionTimeout"].toInt(DEFAULT_SESSION_TIMEOUT);
+}
+
 bool LoginPlugin::supportDefaultUser()
 {
     qInfo() << Q_FUNC_INFO;

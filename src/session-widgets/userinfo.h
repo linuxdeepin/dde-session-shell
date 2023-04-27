@@ -66,6 +66,8 @@ public:
     bool operator==(const User &user) const;
 
     inline int accountType() const { return m_accountType; }
+    bool isLdapUser();
+
     inline bool isAutomaticLogin() const { return m_isAutomaticLogin; }
     inline bool isPasswordValid() const { return m_isPasswordValid; }
     inline bool isLogin() const { return m_isLogin; }

@@ -8,6 +8,7 @@
 #include "keyboardmonitor.h"
 #include "userinfo.h"
 #include "dconfig_helper.h"
+#include "login_plugin_util.h"
 
 #include <DSysInfo>
 #include <DGuiApplicationHelper>
@@ -854,9 +855,19 @@ void GreeterWorker::onAuthStateChanged(const AuthType type, const AuthState stat
         m_model->updateAuthState(type, state, message);
         switch (state) {
         case AS_Success:
-            if (type == AT_Face || type == AT_Iris)
-                m_resetSessionTimer->start();
+            if (m_model->currentUser()->isLdapUser() && type != AT_Custom && type != AT_All) {
+                auto loginType = LPUtil::loginType();
+                if (loginType == LPUtil::Type::CLT_MFA) {
+                    m_resetSessionTimer->setInterval(LPUtil::sessionTimeout());
+                    m_resetSessionTimer->start();
+                    break;
+                }
+            }
 
+            if (type == AT_Face || type == AT_Iris) {
+                m_resetSessionTimer->setInterval(DEFAULT_SESSION_TIMEOUT);
+                m_resetSessionTimer->start();
+            }
             break;
         case AS_Failure:
             if (AT_All != type) {
