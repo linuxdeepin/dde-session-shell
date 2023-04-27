@@ -50,9 +50,10 @@ LockFrame::LockFrame(SessionBaseModel *const model, QWidget *parent)
     updateBackground(m_model->currentUser()->greeterBackground());
 
     setAccessibleName("LockFrame");
-    setContent(LockContent::instance());
-    m_model->setCurrentContentType(SessionBaseModel::LockContent);
-
+    if (!currentContent) {
+        setContent(LockContent::instance());
+        m_model->setCurrentContentType(SessionBaseModel::LockContent);
+    }
     connect(LockContent::instance(), &LockContent::requestBackground, this, static_cast<void (LockFrame::*)(const QString &)>(&LockFrame::updateBackground));
     connect(model, &SessionBaseModel::prepareForSleep, this, &LockFrame::prepareForSleep);
     connect(model, &SessionBaseModel::authFinished, this, [this](bool success) {
