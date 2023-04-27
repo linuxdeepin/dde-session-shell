@@ -1,4 +1,6 @@
-<?xml version="1.0" ?><!DOCTYPE TS><TS version="2.1" language="en">
+<?xml version="1.0" encoding="utf-8"?>
+<!DOCTYPE TS>
+<TS version="2.1" language="en">
 <context>
     <name>AuthFace</name>
     <message>
@@ -11,7 +13,10 @@
     </message>
     <message numerus="yes">
         <source>Verification failed, %n chances left</source>
-        <translation><numerusform>Verification failed, %n chances left</numerusform><numerusform>Verification failed, %n chances left</numerusform></translation>
+        <translation>
+            <numerusform>Verification failed, %n chances left</numerusform>
+            <numerusform>Verification failed, %n chances left</numerusform>
+        </translation>
     </message>
     <message>
         <source>Verification failed, only one chance left</source>
@@ -42,7 +47,10 @@
     </message>
     <message numerus="yes">
         <source>Verification failed, %n chances left</source>
-        <translation><numerusform>Verification failed, %n chances left</numerusform><numerusform>Verification failed, %n chances left</numerusform></translation>
+        <translation>
+            <numerusform>Verification failed, %n chances left</numerusform>
+            <numerusform>Verification failed, %n chances left</numerusform>
+        </translation>
     </message>
     <message>
         <source>Verification failed, only one chance left</source>
@@ -65,7 +73,10 @@
     </message>
     <message numerus="yes">
         <source>Verification failed, %n chances left</source>
-        <translation><numerusform>Verification failed, %n chances left</numerusform><numerusform>Verification failed, %n chances left</numerusform></translation>
+        <translation>
+            <numerusform>Verification failed, %n chances left</numerusform>
+            <numerusform>Verification failed, %n chances left</numerusform>
+        </translation>
     </message>
     <message>
         <source>Verification failed, only one chance left</source>
@@ -88,7 +99,10 @@
     </message>
     <message numerus="yes">
         <source>Verification failed, %n chances left</source>
-        <translation><numerusform>Verification failed, %n chances left</numerusform><numerusform>Verification failed, %n chances left</numerusform></translation>
+        <translation>
+            <numerusform>Verification failed, %n chances left</numerusform>
+            <numerusform>Verification failed, %n chances left</numerusform>
+        </translation>
     </message>
     <message>
         <source>Verification failed, only one chance left</source>
@@ -108,7 +122,10 @@
     </message>
     <message numerus="yes">
         <source>Please try again %n minutes later</source>
-        <translation><numerusform>Please try again %n minutes later</numerusform><numerusform>Please try again %n minutes later</numerusform></translation>
+        <translation>
+            <numerusform>Please try again %n minutes later</numerusform>
+            <numerusform>Please try again %n minutes later</numerusform>
+        </translation>
     </message>
     <message>
         <source>Reset Password</source>
@@ -127,7 +144,10 @@
     </message>
     <message numerus="yes">
         <source>Please try again %n minutes later</source>
-        <translation><numerusform>Please try again %n minutes later</numerusform><numerusform>Please try again %n minutes later</numerusform></translation>
+        <translation>
+            <numerusform>Please try again %n minutes later</numerusform>
+            <numerusform>Please try again %n minutes later</numerusform>
+        </translation>
     </message>
     <message>
         <source>Reset Password</source>
@@ -146,7 +166,10 @@
     </message>
     <message numerus="yes">
         <source>Verification failed, %n chances left</source>
-        <translation><numerusform>Verification failed, %n chances left</numerusform><numerusform>Verification failed, %n chances left</numerusform></translation>
+        <translation>
+            <numerusform>Verification failed, %n chances left</numerusform>
+            <numerusform>Verification failed, %n chances left</numerusform>
+        </translation>
     </message>
     <message>
         <source>Verification failed, only one chance left</source>
@@ -166,7 +189,10 @@
     </message>
     <message numerus="yes">
         <source>Please try again %n minute(s) later</source>
-        <translation><numerusform>Please try again %n minute(s) later</numerusform><numerusform>Please try again %n minute(s) later</numerusform></translation>
+        <translation>
+            <numerusform>Please try again %n minute(s) later</numerusform>
+            <numerusform>Please try again %n minute(s) later</numerusform>
+        </translation>
     </message>
     <message>
         <source>Please try again 1 minute later</source>
@@ -174,7 +200,10 @@
     </message>
     <message numerus="yes">
         <source>Please try again %n minutes later</source>
-        <translation><numerusform>Please try again %n minutes later</numerusform><numerusform>Please try again %n minutes later</numerusform></translation>
+        <translation>
+            <numerusform>Please try again %n minutes later</numerusform>
+            <numerusform>Please try again %n minutes later</numerusform>
+        </translation>
     </message>
 </context>
 <context>
@@ -185,7 +214,10 @@
     </message>
     <message numerus="yes">
         <source>Your password will expire in %n days, please change it timely</source>
-        <translation><numerusform>Your password will expire in %n days, please change it timely</numerusform><numerusform>Your password will expire in %n days, please change it timely</numerusform></translation>
+        <translation>
+            <numerusform>Your password will expire in %n days, please change it timely</numerusform>
+            <numerusform>Your password will expire in %n days, please change it timely</numerusform>
+        </translation>
     </message>
     <message>
         <source>Password expired, please change</source>
@@ -292,12 +324,130 @@
         <source>Switch system</source>
         <translation>Switch system</translation>
     </message>
+    <message>
+        <source>Update and Shut Down</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Update and Reboot</source>
+        <translation type="unfinished"></translation>
+    </message>
 </context>
 <context>
     <name>SystemMonitor</name>
     <message>
         <source>Start system monitor</source>
         <translation>Start system monitor</translation>
+    </message>
+</context>
+<context>
+    <name>UpdateCompleteWidget</name>
+    <message>
+        <source>View Logs</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Updates successful</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Your computer will reboot soon %1</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Your computer will be turned off soon %1</source>
+        <translation type="unfinished"></translation>
+    </message>
+</context>
+<context>
+    <name>UpdateLogWidget</name>
+    <message>
+        <source>Hide Logs</source>
+        <translation type="unfinished"></translation>
+    </message>
+</context>
+<context>
+    <name>UpdateModel</name>
+    <message>
+        <source>Update failed</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Unknown error</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Backup failed</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Dependency error</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Reboot</source>
+        <translation type="unfinished">Reboot</translation>
+    </message>
+    <message>
+        <source>Shut Down</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Unable to perform system backup. If you continue the updates, you cannot roll back to the old system later.</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Insufficient disk space. Please clean up your disk and try again.</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>DPKG error</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Back Up Again</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Abort</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Proceed to Update</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Failed to connect to backup services. Please check and retry again.</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Failed to connect to update services. Please check and retry again.</source>
+        <translation type="unfinished"></translation>
+    </message>
+</context>
+<context>
+    <name>UpdatePrepareWidget</name>
+    <message>
+        <source>Preparing for updates…</source>
+        <translation type="unfinished"></translation>
+    </message>
+</context>
+<context>
+    <name>UpdateProgressWidget</name>
+    <message>
+        <source>Do not force a shutdown or power off when installing updates. Otherwise, your system may be damaged.</source>
+        <translation type="unfinished"></translation>
+    </message>
+</context>
+<context>
+    <name>UpdateWorker</name>
+    <message>
+        <source>Update</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Please plug in and then install updates.</source>
+        <translation type="unfinished"></translation>
     </message>
 </context>
 <context>
@@ -357,6 +507,14 @@
     <message>
         <source>Are you sure you want to log out?</source>
         <translation>Are you sure you want to log out?</translation>
+    </message>
+    <message>
+        <source>Update and Shut Down</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Update and Reboot</source>
+        <translation type="unfinished"></translation>
     </message>
 </context>
 <context>

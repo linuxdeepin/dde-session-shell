@@ -3,7 +3,7 @@ host = https://www.transifex.com
 minimum_perc = 80
 mode = developer
 
-[deepin-desktop-environment.dde-session-shell]
+[o:linuxdeepin:p:deepin-desktop-environment:r:dde-session-shell]
 file_filter = translations/dde-session-shell_<lang>.ts
 source_file = translations/dde-session-shell_en.ts
 source_lang = en

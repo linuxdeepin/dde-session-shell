@@ -269,7 +269,7 @@ void ShutdownWidget::initUI()
         updateTr(m_requireSwitchSystemBtn, "Switch system");
     }
 
-    m_updateAndShutdownButton = new RoundItemButton(tr("Update and Shut Down"));     // TODO 翻译
+    m_updateAndShutdownButton = new RoundItemButton(tr("Update and Shut Down"));
     setPic(m_updateAndShutdownButton, "poweroff");
     m_updateAndShutdownButton->setFocusPolicy(Qt::NoFocus);
     m_updateAndShutdownButton->setAccessibleName("UpdateAndShutdownButton");
@@ -278,7 +278,7 @@ void ShutdownWidget::initUI()
     m_updateAndShutdownButton->setVisible(false);
     GSettingWatcher::instance()->bind("systemShutdown", m_updateAndShutdownButton);  // GSettings配置项
 
-    m_updateAndRebootButton = new RoundItemButton(tr("Update and reboot"));         // TODO 翻译
+    m_updateAndRebootButton = new RoundItemButton(tr("Update and Reboot"));
     setPic(m_updateAndRebootButton, "reboot");
     m_updateAndRebootButton->setFocusPolicy(Qt::NoFocus);
     m_updateAndRebootButton->setAccessibleName("UpdateAndRebootButton");

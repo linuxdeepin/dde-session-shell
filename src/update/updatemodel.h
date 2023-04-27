@@ -66,7 +66,6 @@ enum UpdateAction {
     DoBackupAgain,
     ExitUpdating,
     ContinueUpdating,
-    CancelUpdating,
     FixError,
     Reboot,
     ShutDown

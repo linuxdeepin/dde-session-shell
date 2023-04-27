@@ -67,17 +67,16 @@ void UpdateModel::setUpdateError(UpdateError error)
 
 QPair<QString, QString> UpdateModel::updateErrorMessage(UpdateError error)
 {
-    // TODO 翻译
     static const QMap<UpdateError, QPair<QString, QString>> ErrorMessage = {
         {UpdateError::UnKnown, qMakePair(tr("Update failed"), tr("Unknown error"))},
-        {UpdateError::CanNotBackup, qMakePair(tr("Can not do backup"), QString())},
-        {UpdateError::BackupNoSpace, qMakePair(tr("Can not do backup"), QString(tr("Insufficient disk space. It is recommended to clean the disk before updating")))},
-        {UpdateError::BackupInterfaceError, qMakePair(tr("Can not do backup"), tr("Failed to connect to backup services, please check and retry"))},
-        {UpdateError::BackupFailedUnknownReason, qMakePair(tr("Backup failed"), QString())},
-        {UpdateError::UpdateInterfaceError, qMakePair(tr("Update failed"), tr("Failed to connect to update services, please check and retry"))},
-        {UpdateError::InstallNoSpace, qMakePair(tr("Update failed"), tr("Please insufficient disk space and try again"))},
+        {UpdateError::CanNotBackup, qMakePair(tr("Backup failed"), tr("Unable to perform system backup. If you continue the updates, you cannot roll back to the old system later."))},
+        {UpdateError::BackupNoSpace, qMakePair(tr("Backup failed"), QString(tr("Insufficient disk space. Please clean up your disk and try again.")))},
+        {UpdateError::BackupInterfaceError, qMakePair(tr("Backup failed"), tr("Failed to connect to backup services. Please check and retry again."))},
+        {UpdateError::BackupFailedUnknownReason, qMakePair(tr("Backup failed"), tr("Unknown error"))},
+        {UpdateError::UpdateInterfaceError, qMakePair(tr("Update failed"), tr("Failed to connect to update services. Please check and retry again."))},
+        {UpdateError::InstallNoSpace, qMakePair(tr("Update failed"), tr("Insufficient disk space. Please clean up your disk and try again."))},
         {UpdateError::DependenciesBrokenError, qMakePair(tr("Update failed"), tr("Dependency error"))},
-        {UpdateError::DpkgInterrupted, qMakePair(tr("Update failed"), tr("Dpkg interrupt"))}
+        {UpdateError::DpkgInterrupted, qMakePair(tr("Update failed"), tr("DPKG error"))}
     };
 
     if (ErrorMessage.contains(error))
@@ -98,13 +97,11 @@ void UpdateModel::setBackupConfigValidation(bool valid)
 
 QString UpdateModel::updateActionText(UpdateAction action)
 {
-    // TODO 翻译
     static const QMap<UpdateAction, QString> ActionsText = {
         {None, tr("")},
-        {DoBackupAgain, tr("Backup again")},
-        {ExitUpdating, tr("Exit updating")},
-        {ContinueUpdating, tr("Continue updating")},
-        {CancelUpdating, tr("Cancel updating")},
+        {DoBackupAgain, tr("Back Up Again")},
+        {ExitUpdating, tr("Abort")},
+        {ContinueUpdating, tr("Proceed to Update")},
         {Reboot, tr("Reboot")},
         {ShutDown, tr("Shut Down")}
     };

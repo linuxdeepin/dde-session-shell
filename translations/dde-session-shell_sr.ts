@@ -1,4 +1,35 @@
-<?xml version="1.0" ?><!DOCTYPE TS><TS language="sr" version="2.1">
+<?xml version="1.0" ?><!DOCTYPE TS><TS version="2.1" language="sr">
+<context>
+    <name>AuthFace</name>
+    <message>
+        <source>Face ID</source>
+        <translation type="unfinished"/>
+    </message>
+    <message>
+        <source>Verification successful</source>
+        <translation>Успешна верификација</translation>
+    </message>
+    <message numerus="yes">
+        <source>Verification failed, %n chances left</source>
+        <translation type="unfinished"><numerusform></numerusform><numerusform></numerusform><numerusform></numerusform></translation>
+    </message>
+    <message>
+        <source>Verification failed, only one chance left</source>
+        <translation>Неуспешна верификација, имате још један покушај</translation>
+    </message>
+    <message>
+        <source>Verify your Face ID</source>
+        <translation type="unfinished"/>
+    </message>
+    <message>
+        <source>Face ID locked, use password please</source>
+        <translation type="unfinished"/>
+    </message>
+    <message>
+        <source>Device unavailable!</source>
+        <translation type="unfinished"/>
+    </message>
+</context>
 <context>
     <name>AuthFingerprint</name>
     <message>
@@ -11,7 +42,7 @@
     </message>
     <message numerus="yes">
         <source>Verification failed, %n chances left</source>
-        <translation><numerusform>Неуспешна верификација, имате још %n покушај</numerusform><numerusform>Неуспешна верификација, имате још %n покушаја</numerusform><numerusform>Неуспешна верификација, имате још %n покушаја</numerusform></translation>
+        <translation type="unfinished"><numerusform></numerusform><numerusform></numerusform><numerusform></numerusform></translation>
     </message>
     <message>
         <source>Verification failed, only one chance left</source>
@@ -21,9 +52,32 @@
         <source>Fingerprint locked, use password please</source>
         <translation>Отисак прста је закључан, употребите лозинку</translation>
     </message>
+</context>
+<context>
+    <name>AuthIris</name>
+    <message>
+        <source>Iris ID</source>
+        <translation type="unfinished"/>
+    </message>
+    <message>
+        <source>Verification successful</source>
+        <translation>Успешна верификација</translation>
+    </message>
     <message numerus="yes">
-        <source>Please try again %n minute(s) later</source>
-        <translation><numerusform>Покушајте поново за %n минут</numerusform><numerusform>Покушајте поново за %n минута</numerusform><numerusform>Покушајте поново за %n минута</numerusform></translation>
+        <source>Verification failed, %n chances left</source>
+        <translation type="unfinished"><numerusform></numerusform><numerusform></numerusform><numerusform></numerusform></translation>
+    </message>
+    <message>
+        <source>Verification failed, only one chance left</source>
+        <translation>Неуспешна верификација, имате још један покушај</translation>
+    </message>
+    <message>
+        <source>Verify your Iris ID</source>
+        <translation type="unfinished"/>
+    </message>
+    <message>
+        <source>Iris ID locked, use password please</source>
+        <translation type="unfinished"/>
     </message>
 </context>
 <context>
@@ -34,7 +88,7 @@
     </message>
     <message numerus="yes">
         <source>Verification failed, %n chances left</source>
-        <translation><numerusform>Неуспешна верификација, имате још %n покушај</numerusform><numerusform>Неуспешна верификација, имате још %n покушаја</numerusform><numerusform>Неуспешна верификација, имате још %n покушаја</numerusform></translation>
+        <translation type="unfinished"><numerusform></numerusform><numerusform></numerusform><numerusform></numerusform></translation>
     </message>
     <message>
         <source>Verification failed, only one chance left</source>
@@ -48,9 +102,21 @@
         <source>Password</source>
         <translation>Лозинка</translation>
     </message>
+    <message>
+        <source>Please try again 1 minute later</source>
+        <translation>Покушајте поново за 1 минут</translation>
+    </message>
     <message numerus="yes">
-        <source>Please try again %n minute(s) later</source>
-        <translation><numerusform>Покушајте поново за %n минут</numerusform><numerusform>Покушајте поново за %n минута</numerusform><numerusform>Покушајте поново за %n минута</numerusform></translation>
+        <source>Please try again %n minutes later</source>
+        <translation type="unfinished"><numerusform></numerusform><numerusform></numerusform><numerusform></numerusform></translation>
+    </message>
+    <message>
+        <source>Reset Password</source>
+        <translation type="unfinished"/>
+    </message>
+    <message>
+        <source>Forgot password?</source>
+        <translation type="unfinished"/>
     </message>
 </context>
 <context>
@@ -61,7 +127,15 @@
     </message>
     <message numerus="yes">
         <source>Please try again %n minutes later</source>
-        <translation><numerusform>Покушајте поново за %n минут</numerusform><numerusform>Покушајте поново за %n минута</numerusform><numerusform>Покушајте поново за %n минута</numerusform></translation>
+        <translation type="unfinished"><numerusform></numerusform><numerusform></numerusform><numerusform></numerusform></translation>
+    </message>
+    <message>
+        <source>Reset Password</source>
+        <translation type="unfinished"/>
+    </message>
+    <message>
+        <source>Forgot password?</source>
+        <translation type="unfinished"/>
     </message>
 </context>
 <context>
@@ -72,7 +146,7 @@
     </message>
     <message numerus="yes">
         <source>Verification failed, %n chances left</source>
-        <translation><numerusform>Неуспешна верификација, имате још %n покушај</numerusform><numerusform>Неуспешна верификација, имате још %n покушаја</numerusform><numerusform>Неуспешна верификација, имате још %n покушаја</numerusform></translation>
+        <translation type="unfinished"><numerusform></numerusform><numerusform></numerusform><numerusform></numerusform></translation>
     </message>
     <message>
         <source>Verification failed, only one chance left</source>
@@ -92,50 +166,7 @@
     </message>
     <message numerus="yes">
         <source>Please try again %n minute(s) later</source>
-        <translation><numerusform>Покушајте поново за %n минут</numerusform><numerusform>Покушајте поново за %n минута</numerusform><numerusform>Покушајте поново за %n минута</numerusform></translation>
-    </message>
-</context>
-<context>
-    <name>AuthenticationModule</name>
-    <message>
-        <source>Verification successful</source>
-        <translation>Успешна верификација</translation>
-    </message>
-    <message numerus="yes">
-        <source>Verification failed, %n chances left</source>
-        <translation><numerusform>Неуспешна верификација, имате још %n покушај</numerusform><numerusform>Неуспешна верификација, имате још %n покушаја</numerusform><numerusform>Неуспешна верификација, имате још %n покушаја</numerusform></translation>
-    </message>
-    <message>
-        <source>Verification failed, only one chance left</source>
-        <translation>Неуспешна верификација, имате још један покушај</translation>
-    </message>
-    <message>
-        <source>Wrong Password</source>
-        <translation>Погрешна лозинка</translation>
-    </message>
-    <message>
-        <source>Wrong PIN</source>
-        <translation>Погрешан ПИН</translation>
-    </message>
-    <message>
-        <source>UKey is required</source>
-        <translation>Потребан је У-Кључ</translation>
-    </message>
-    <message>
-        <source>Verify your fingerprint</source>
-        <translation>Верификујте отисак прста</translation>
-    </message>
-    <message>
-        <source>Password</source>
-        <translation>Лозинка</translation>
-    </message>
-    <message>
-        <source>Enter your PIN</source>
-        <translation>Унесите ПИН</translation>
-    </message>
-    <message>
-        <source>Fingerprint locked, use password please</source>
-        <translation>Отисак прста је закључан, употребите лозинку</translation>
+        <translation type="unfinished"><numerusform></numerusform><numerusform></numerusform><numerusform></numerusform></translation>
     </message>
     <message>
         <source>Please try again 1 minute later</source>
@@ -143,82 +174,30 @@
     </message>
     <message numerus="yes">
         <source>Please try again %n minutes later</source>
-        <translation><numerusform>Покушајте поново за %n минут</numerusform><numerusform>Покушајте поново за %n минута</numerusform><numerusform>Покушајте поново за %n минута</numerusform></translation>
+        <translation type="unfinished"><numerusform></numerusform><numerusform></numerusform><numerusform></numerusform></translation>
     </message>
 </context>
 <context>
-    <name>ContentWidget</name>
+    <name>AuthWidget</name>
     <message>
-        <source>The programs are preventing the computer from shutting down, and forcing shut down may cause data loss.</source>
-        <translation>Програми спречавају искључивање. Принудно искључивање може изазвати губитак података.</translation>
+        <source>Account</source>
+        <translation>Налог</translation>
+    </message>
+    <message numerus="yes">
+        <source>Your password will expire in %n days, please change it timely</source>
+        <translation type="unfinished"><numerusform></numerusform><numerusform></numerusform><numerusform></numerusform></translation>
     </message>
     <message>
-        <source>To close the program, click Cancel, and then close the program.</source>
-        <translation>Да затворите програм, кликните на Откажи, затим затворите.</translation>
+        <source>Password expired, please change</source>
+        <translation>Лозинка је истекла, промените је</translation>
     </message>
     <message>
-        <source>The programs are preventing the computer from reboot, and forcing reboot may cause data loss.</source>
-        <translation>Програми спречавају поновно покретање. Принудно поновно покретање може изазвати губитак података.</translation>
-    </message>
-    <message>
-        <source>The programs are preventing the computer from suspend, and forcing suspend may cause data loss.</source>
-        <translation>Програми спречавају обуставу. Принудно обустављање може изазвати губитак података.</translation>
-    </message>
-    <message>
-        <source>The programs are preventing the computer from hibernate, and forcing hibernate may cause data loss.</source>
-        <translation>Програми спречавају хибернацију. Принудна хибернација може изазвати губитак података.</translation>
-    </message>
-    <message>
-        <source>The programs are preventing the computer from log out, and forcing log out may cause data loss.</source>
-        <translation>Програми спречавају одјављивање. Принудно одјављивање може изазвати губитак података.</translation>
-    </message>
-    <message>
-        <source>Shut down</source>
-        <translation>Искључи</translation>
-    </message>
-    <message>
-        <source>Reboot</source>
-        <translation>Поново покрени</translation>
-    </message>
-    <message>
-        <source>Suspend</source>
-        <translation>Обустави</translation>
-    </message>
-    <message>
-        <source>Hibernate</source>
-        <translation>Хибернација</translation>
-    </message>
-    <message>
-        <source>Log out</source>
-        <translation>Одјави се</translation>
-    </message>
-    <message>
-        <source>Are you sure you want to shut down?</source>
-        <translation>Заиста желите да искључите?</translation>
-    </message>
-    <message>
-        <source>Are you sure you want to reboot?</source>
-        <translation>Заиста желите да поново покренете?</translation>
-    </message>
-    <message>
-        <source>Are you sure you want to log out?</source>
-        <translation>Заиста желите да се одјавите?</translation>
-    </message>
-    <message>
-        <source>Lock</source>
-        <translation>Закључај</translation>
-    </message>
-    <message>
-        <source>Switch user</source>
-        <translation>Промени корисника</translation>
-    </message>
-    <message>
-        <source>Switch system</source>
-        <translation>Промени систем</translation>
+        <source>Your password has expired. Please contact the administrator to change it</source>
+        <translation type="unfinished"/>
     </message>
 </context>
 <context>
-    <name>GreeterWorkek</name>
+    <name>GreeterWorker</name>
     <message>
         <source>Wrong account</source>
         <translation>Погрешан налог</translation>
@@ -273,6 +252,13 @@
     </message>
 </context>
 <context>
+    <name>SessionWidget</name>
+    <message>
+        <source>You have enabled the high system security level, thus cannot switch to the Wayland mode, please disable the high security level in Security Center and try again.</source>
+        <translation type="unfinished"/>
+    </message>
+</context>
+<context>
     <name>ShutdownWidget</name>
     <message>
         <source>Shut down</source>
@@ -306,6 +292,14 @@
         <source>Switch system</source>
         <translation>Промени систем</translation>
     </message>
+    <message>
+        <source>Update and Shut Down</source>
+        <translation type="unfinished"/>
+    </message>
+    <message>
+        <source>Update and Reboot</source>
+        <translation type="unfinished"/>
+    </message>
 </context>
 <context>
     <name>SystemMonitor</name>
@@ -315,22 +309,113 @@
     </message>
 </context>
 <context>
-    <name>UserLoginWidget</name>
+    <name>UpdateCompleteWidget</name>
     <message>
-        <source>Account</source>
-        <translation>Налог</translation>
+        <source>View Logs</source>
+        <translation type="unfinished"/>
     </message>
     <message>
-        <source>Verify your fingerprint</source>
-        <translation>Верификујте отисак прста</translation>
-    </message>
-    <message numerus="yes">
-        <source>Your password will expire in %n days, please change it timely</source>
-        <translation><numerusform>Лозинка истиче за %n дан, промените је на време</numerusform><numerusform>Лозинка истиче за %n дана, промените је на време</numerusform><numerusform>Лозинка истиче за %n дан(а), промените је на време</numerusform></translation>
+        <source>Updates successful</source>
+        <translation type="unfinished"/>
     </message>
     <message>
-        <source>Password expired, please change</source>
-        <translation>Лозинка је истекла, промените је</translation>
+        <source>Your computer will reboot soon %1</source>
+        <translation type="unfinished"/>
+    </message>
+    <message>
+        <source>Your computer will be turned off soon %1</source>
+        <translation type="unfinished"/>
+    </message>
+</context>
+<context>
+    <name>UpdateLogWidget</name>
+    <message>
+        <source>Hide Logs</source>
+        <translation type="unfinished"/>
+    </message>
+</context>
+<context>
+    <name>UpdateModel</name>
+    <message>
+        <source>Update failed</source>
+        <translation type="unfinished"/>
+    </message>
+    <message>
+        <source>Unknown error</source>
+        <translation type="unfinished"/>
+    </message>
+    <message>
+        <source>Backup failed</source>
+        <translation type="unfinished"/>
+    </message>
+    <message>
+        <source>Dependency error</source>
+        <translation type="unfinished"/>
+    </message>
+    <message>
+        <source>Reboot</source>
+        <translation type="unfinished"/>
+    </message>
+    <message>
+        <source>Shut Down</source>
+        <translation type="unfinished"/>
+    </message>
+    <message>
+        <source>Unable to perform system backup. If you continue the updates, you cannot roll back to the old system later.</source>
+        <translation type="unfinished"/>
+    </message>
+    <message>
+        <source>Insufficient disk space. Please clean up your disk and try again.</source>
+        <translation type="unfinished"/>
+    </message>
+    <message>
+        <source>DPKG error</source>
+        <translation type="unfinished"/>
+    </message>
+    <message>
+        <source>Back Up Again</source>
+        <translation type="unfinished"/>
+    </message>
+    <message>
+        <source>Abort</source>
+        <translation type="unfinished"/>
+    </message>
+    <message>
+        <source>Proceed to Update</source>
+        <translation type="unfinished"/>
+    </message>
+    <message>
+        <source>Failed to connect to backup services. Please check and retry again.</source>
+        <translation type="unfinished"/>
+    </message>
+    <message>
+        <source>Failed to connect to update services. Please check and retry again.</source>
+        <translation type="unfinished"/>
+    </message>
+</context>
+<context>
+    <name>UpdatePrepareWidget</name>
+    <message>
+        <source>Preparing for updates…</source>
+        <translation type="unfinished"/>
+    </message>
+</context>
+<context>
+    <name>UpdateProgressWidget</name>
+    <message>
+        <source>Do not force a shutdown or power off when installing updates. Otherwise, your system may be damaged.</source>
+        <translation type="unfinished"/>
+    </message>
+</context>
+<context>
+    <name>UpdateWorker</name>
+    <message>
+        <source>Update</source>
+        <translation type="unfinished"/>
+    </message>
+    <message>
+        <source>Please plug in and then install updates.</source>
+        <translation type="unfinished"/>
     </message>
 </context>
 <context>
@@ -390,6 +475,25 @@
     <message>
         <source>Are you sure you want to log out?</source>
         <translation>Заиста желите да се одјавите?</translation>
+    </message>
+    <message>
+        <source>Update and Shut Down</source>
+        <translation type="unfinished"/>
+    </message>
+    <message>
+        <source>Update and Reboot</source>
+        <translation type="unfinished"/>
+    </message>
+</context>
+<context>
+    <name>dss::module::NetworkModule</name>
+    <message>
+        <source>Turn on</source>
+        <translation>Укључи</translation>
+    </message>
+    <message>
+        <source>Turn off</source>
+        <translation>Искључи</translation>
     </message>
 </context>
 </TS>

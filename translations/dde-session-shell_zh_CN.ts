@@ -292,12 +292,130 @@
         <source>Switch system</source>
         <translation>切换系统</translation>
     </message>
+    <message>
+        <source>Update and Shut Down</source>
+        <translation>更新并关机</translation>
+    </message>
+    <message>
+        <source>Update and Reboot</source>
+        <translation>更新并重启</translation>
+    </message>
 </context>
 <context>
     <name>SystemMonitor</name>
     <message>
         <source>Start system monitor</source>
         <translation>启动系统监视器</translation>
+    </message>
+</context>
+<context>
+    <name>UpdateCompleteWidget</name>
+    <message>
+        <source>View Logs</source>
+        <translation>查看日志</translation>
+    </message>
+    <message>
+        <source>Updates successful</source>
+        <translation>更新成功</translation>
+    </message>
+    <message>
+        <source>Your computer will reboot soon %1</source>
+        <translation>您的电脑即将重启 %1</translation>
+    </message>
+    <message>
+        <source>Your computer will be turned off soon %1</source>
+        <translation>您的电脑即将关机 %1</translation>
+    </message>
+</context>
+<context>
+    <name>UpdateLogWidget</name>
+    <message>
+        <source>Hide Logs</source>
+        <translation>收起日志</translation>
+    </message>
+</context>
+<context>
+    <name>UpdateModel</name>
+    <message>
+        <source>Update failed</source>
+        <translation>更新失败</translation>
+    </message>
+    <message>
+        <source>Unknown error</source>
+        <translation>未知错误</translation>
+    </message>
+    <message>
+        <source>Backup failed</source>
+        <translation>备份失败</translation>
+    </message>
+    <message>
+        <source>Dependency error</source>
+        <translation>依赖错误</translation>
+    </message>
+    <message>
+        <source>Reboot</source>
+        <translation>重启</translation>
+    </message>
+    <message>
+        <source>Shut Down</source>
+        <translation>关机</translation>
+    </message>
+    <message>
+        <source>Unable to perform system backup. If you continue the updates, you cannot roll back to the old system later.</source>
+        <translation>系统无法备份，继续升级，系统将无法回退</translation>
+    </message>
+    <message>
+        <source>Insufficient disk space. Please clean up your disk and try again.</source>
+        <translation>磁盘空间不足，请清理磁盘后再更新</translation>
+    </message>
+    <message>
+        <source>DPKG error</source>
+        <translation>dpkg错误</translation>
+    </message>
+    <message>
+        <source>Back Up Again</source>
+        <translation>重新备份</translation>
+    </message>
+    <message>
+        <source>Abort</source>
+        <translation>退出更新</translation>
+    </message>
+    <message>
+        <source>Proceed to Update</source>
+        <translation>继续更新</translation>
+    </message>
+    <message>
+        <source>Failed to connect to backup services. Please check and retry again.</source>
+        <translation>无法启动备份服务，请检查后重试</translation>
+    </message>
+    <message>
+        <source>Failed to connect to update services. Please check and retry again.</source>
+        <translation>无法启动更新服务，请检查后重试</translation>
+    </message>
+</context>
+<context>
+    <name>UpdatePrepareWidget</name>
+    <message>
+        <source>Preparing for updates…</source>
+        <translation>正在准备更新...</translation>
+    </message>
+</context>
+<context>
+    <name>UpdateProgressWidget</name>
+    <message>
+        <source>Do not force a shutdown or power off when installing updates. Otherwise, your system may be damaged.</source>
+        <translation>更新时请勿强制关机或断电，否则会导致系统损坏</translation>
+    </message>
+</context>
+<context>
+    <name>UpdateWorker</name>
+    <message>
+        <source>Update</source>
+        <translation>更新</translation>
+    </message>
+    <message>
+        <source>Please plug in and then install updates.</source>
+        <translation>请插入电源后再开始更新</translation>
     </message>
 </context>
 <context>
@@ -357,6 +475,14 @@
     <message>
         <source>Are you sure you want to log out?</source>
         <translation>您确定要注销吗？</translation>
+    </message>
+    <message>
+        <source>Update and Shut Down</source>
+        <translation>更新并关机</translation>
+    </message>
+    <message>
+        <source>Update and Reboot</source>
+        <translation>更新并重启</translation>
     </message>
 </context>
 <context>

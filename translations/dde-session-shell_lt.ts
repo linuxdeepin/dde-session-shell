@@ -1,123 +1,215 @@
-<?xml version="1.0" ?><!DOCTYPE TS><TS language="lt" version="2.1">
+<?xml version="1.0" ?><!DOCTYPE TS><TS version="2.1" language="lt">
 <context>
-    <name>ContentWidget</name>
+    <name>AuthFace</name>
     <message>
-        <location filename="../src/dde-shutdown/view/contentwidget.cpp" line="348"/>
-        <source>The programs are preventing the computer from shutting down, and forcing shut down may cause data loss.</source>
-        <translation>Kai kurios programos neleidžia kompiuteriui išsijungti, o priverstinai išjungiant, gali būti prarasti duomenys.</translation>
+        <source>Face ID</source>
+        <translation type="unfinished"/>
     </message>
     <message>
-        <location filename="../src/dde-shutdown/view/contentwidget.cpp" line="349"/>
-        <location filename="../src/dde-shutdown/view/contentwidget.cpp" line="354"/>
-        <location filename="../src/dde-shutdown/view/contentwidget.cpp" line="358"/>
-        <location filename="../src/dde-shutdown/view/contentwidget.cpp" line="362"/>
-        <location filename="../src/dde-shutdown/view/contentwidget.cpp" line="366"/>
-        <source>To close the program, click Cancel, and then close the program.</source>
-        <translation>Norėdami užverti programą, spustelėkite Atsisakyti, o tuomet užverkite programą.</translation>
+        <source>Verification successful</source>
+        <translation type="unfinished"/>
+    </message>
+    <message numerus="yes">
+        <source>Verification failed, %n chances left</source>
+        <translation type="unfinished"><numerusform></numerusform><numerusform></numerusform><numerusform></numerusform><numerusform></numerusform></translation>
     </message>
     <message>
-        <location filename="../src/dde-shutdown/view/contentwidget.cpp" line="353"/>
-        <source>The programs are preventing the computer from reboot, and forcing reboot may cause data loss.</source>
-        <translation>Kai kurios programos neleidžia kompiuteriui pasileisti iš naujo, o priverstinai paleidžiant iš naujo, gali būti prarasti duomenys.</translation>
+        <source>Verification failed, only one chance left</source>
+        <translation type="unfinished"/>
     </message>
     <message>
-        <location filename="../src/dde-shutdown/view/contentwidget.cpp" line="357"/>
-        <source>The programs are preventing the computer from suspend, and forcing suspend may cause data loss.</source>
-        <translation>Kai kurios programos neleidžia kompiuteriui būti pristabdytam, o priverstinai pristabdant, gali būti prarasti duomenys.</translation>
+        <source>Verify your Face ID</source>
+        <translation type="unfinished"/>
     </message>
     <message>
-        <location filename="../src/dde-shutdown/view/contentwidget.cpp" line="361"/>
-        <source>The programs are preventing the computer from hibernate, and forcing hibernate may cause data loss.</source>
-        <translation>Kai kurios programos neleidžia kompiuteriui būti užmigdytam, o priverstinai užmigdant, gali būti prarasti duomenys.</translation>
+        <source>Face ID locked, use password please</source>
+        <translation type="unfinished"/>
     </message>
     <message>
-        <location filename="../src/dde-shutdown/view/contentwidget.cpp" line="365"/>
-        <source>The programs are preventing the computer from log out, and forcing log out may cause data loss.</source>
-        <translation>Kai kurios programos neleidžia kompiuteriui atsijungti, o priverstinai atsijungiant, gali būti prarasti duomenys.</translation>
-    </message>
-    <message>
-        <location filename="../src/dde-shutdown/view/contentwidget.cpp" line="382"/>
-        <location filename="../src/dde-shutdown/view/contentwidget.cpp" line="423"/>
-        <location filename="../src/dde-shutdown/view/contentwidget.cpp" line="445"/>
-        <location filename="../src/dde-shutdown/view/contentwidget.cpp" line="593"/>
-        <source>Shut down</source>
-        <translation>Išjungti</translation>
-    </message>
-    <message>
-        <location filename="../src/dde-shutdown/view/contentwidget.cpp" line="385"/>
-        <location filename="../src/dde-shutdown/view/contentwidget.cpp" line="425"/>
-        <location filename="../src/dde-shutdown/view/contentwidget.cpp" line="448"/>
-        <location filename="../src/dde-shutdown/view/contentwidget.cpp" line="596"/>
-        <source>Reboot</source>
-        <translation>Paleisti iš naujo</translation>
-    </message>
-    <message>
-        <location filename="../src/dde-shutdown/view/contentwidget.cpp" line="388"/>
-        <location filename="../src/dde-shutdown/view/contentwidget.cpp" line="599"/>
-        <source>Suspend</source>
-        <translation>Pristabdyti</translation>
-    </message>
-    <message>
-        <location filename="../src/dde-shutdown/view/contentwidget.cpp" line="390"/>
-        <location filename="../src/dde-shutdown/view/contentwidget.cpp" line="602"/>
-        <source>Hibernate</source>
-        <translation>Užmigdyti</translation>
-    </message>
-    <message>
-        <location filename="../src/dde-shutdown/view/contentwidget.cpp" line="392"/>
-        <location filename="../src/dde-shutdown/view/contentwidget.cpp" line="451"/>
-        <location filename="../src/dde-shutdown/view/contentwidget.cpp" line="608"/>
-        <source>Log out</source>
-        <translation>Atsijungti</translation>
-    </message>
-    <message>
-        <location filename="../src/dde-shutdown/view/contentwidget.cpp" line="446"/>
-        <source>Are you sure you want to shut down?</source>
-        <translation>Ar tikrai norite išjungti?</translation>
-    </message>
-    <message>
-        <location filename="../src/dde-shutdown/view/contentwidget.cpp" line="449"/>
-        <source>Are you sure you want to reboot?</source>
-        <translation>Ar tikrai norite paleisti iš naujo?</translation>
-    </message>
-    <message>
-        <location filename="../src/dde-shutdown/view/contentwidget.cpp" line="452"/>
-        <source>Are you sure you want to log out?</source>
-        <translation>Ar tikrai norite atsijungti?</translation>
-    </message>
-    <message>
-        <location filename="../src/dde-shutdown/view/contentwidget.cpp" line="605"/>
-        <source>Lock</source>
-        <translation>Užrakinti</translation>
-    </message>
-    <message>
-        <location filename="../src/dde-shutdown/view/contentwidget.cpp" line="612"/>
-        <source>Switch user</source>
-        <translation>Perjungti naudotoją</translation>
-    </message>
-    <message>
-        <location filename="../src/dde-shutdown/view/contentwidget.cpp" line="617"/>
-        <source>Switch system</source>
+        <source>Device unavailable!</source>
         <translation type="unfinished"/>
     </message>
 </context>
 <context>
-    <name>GreeterWorkek</name>
+    <name>AuthFingerprint</name>
     <message>
-        <location filename="../src/lightdm-deepin-greeter/greeterworkek.cpp" line="327"/>
+        <source>Verify your fingerprint</source>
+        <translation type="unfinished"/>
+    </message>
+    <message>
+        <source>Verification successful</source>
+        <translation type="unfinished"/>
+    </message>
+    <message numerus="yes">
+        <source>Verification failed, %n chances left</source>
+        <translation type="unfinished"><numerusform></numerusform><numerusform></numerusform><numerusform></numerusform><numerusform></numerusform></translation>
+    </message>
+    <message>
+        <source>Verification failed, only one chance left</source>
+        <translation type="unfinished"/>
+    </message>
+    <message>
+        <source>Fingerprint locked, use password please</source>
+        <translation type="unfinished"/>
+    </message>
+</context>
+<context>
+    <name>AuthIris</name>
+    <message>
+        <source>Iris ID</source>
+        <translation type="unfinished"/>
+    </message>
+    <message>
+        <source>Verification successful</source>
+        <translation type="unfinished"/>
+    </message>
+    <message numerus="yes">
+        <source>Verification failed, %n chances left</source>
+        <translation type="unfinished"><numerusform></numerusform><numerusform></numerusform><numerusform></numerusform><numerusform></numerusform></translation>
+    </message>
+    <message>
+        <source>Verification failed, only one chance left</source>
+        <translation type="unfinished"/>
+    </message>
+    <message>
+        <source>Verify your Iris ID</source>
+        <translation type="unfinished"/>
+    </message>
+    <message>
+        <source>Iris ID locked, use password please</source>
+        <translation type="unfinished"/>
+    </message>
+</context>
+<context>
+    <name>AuthPassword</name>
+    <message>
+        <source>Verification successful</source>
+        <translation type="unfinished"/>
+    </message>
+    <message numerus="yes">
+        <source>Verification failed, %n chances left</source>
+        <translation type="unfinished"><numerusform></numerusform><numerusform></numerusform><numerusform></numerusform><numerusform></numerusform></translation>
+    </message>
+    <message>
+        <source>Verification failed, only one chance left</source>
+        <translation type="unfinished"/>
+    </message>
+    <message>
         <source>Wrong Password</source>
         <translation>Neteisingas slaptažodis</translation>
     </message>
     <message>
-        <location filename="../src/lightdm-deepin-greeter/greeterworkek.cpp" line="331"/>
-        <source>The account or password is not correct. Please enter again.</source>
+        <source>Password</source>
+        <translation>Slaptažodis</translation>
+    </message>
+    <message>
+        <source>Please try again 1 minute later</source>
         <translation type="unfinished"/>
+    </message>
+    <message numerus="yes">
+        <source>Please try again %n minutes later</source>
+        <translation type="unfinished"><numerusform></numerusform><numerusform></numerusform><numerusform></numerusform><numerusform></numerusform></translation>
+    </message>
+    <message>
+        <source>Reset Password</source>
+        <translation type="unfinished"/>
+    </message>
+    <message>
+        <source>Forgot password?</source>
+        <translation type="unfinished"/>
+    </message>
+</context>
+<context>
+    <name>AuthSingle</name>
+    <message>
+        <source>Please try again 1 minute later</source>
+        <translation type="unfinished"/>
+    </message>
+    <message numerus="yes">
+        <source>Please try again %n minutes later</source>
+        <translation type="unfinished"><numerusform></numerusform><numerusform></numerusform><numerusform></numerusform><numerusform></numerusform></translation>
+    </message>
+    <message>
+        <source>Reset Password</source>
+        <translation type="unfinished"/>
+    </message>
+    <message>
+        <source>Forgot password?</source>
+        <translation type="unfinished"/>
+    </message>
+</context>
+<context>
+    <name>AuthUKey</name>
+    <message>
+        <source>Verification successful</source>
+        <translation type="unfinished"/>
+    </message>
+    <message numerus="yes">
+        <source>Verification failed, %n chances left</source>
+        <translation type="unfinished"><numerusform></numerusform><numerusform></numerusform><numerusform></numerusform><numerusform></numerusform></translation>
+    </message>
+    <message>
+        <source>Verification failed, only one chance left</source>
+        <translation type="unfinished"/>
+    </message>
+    <message>
+        <source>Wrong PIN</source>
+        <translation type="unfinished"/>
+    </message>
+    <message>
+        <source>UKey is required</source>
+        <translation type="unfinished"/>
+    </message>
+    <message>
+        <source>Enter your PIN</source>
+        <translation type="unfinished"/>
+    </message>
+    <message numerus="yes">
+        <source>Please try again %n minute(s) later</source>
+        <translation type="unfinished"><numerusform></numerusform><numerusform></numerusform><numerusform></numerusform><numerusform></numerusform></translation>
+    </message>
+    <message>
+        <source>Please try again 1 minute later</source>
+        <translation type="unfinished"/>
+    </message>
+    <message numerus="yes">
+        <source>Please try again %n minutes later</source>
+        <translation type="unfinished"><numerusform></numerusform><numerusform></numerusform><numerusform></numerusform><numerusform></numerusform></translation>
+    </message>
+</context>
+<context>
+    <name>AuthWidget</name>
+    <message>
+        <source>Account</source>
+        <translation>Paskyra</translation>
+    </message>
+    <message numerus="yes">
+        <source>Your password will expire in %n days, please change it timely</source>
+        <translation type="unfinished"><numerusform></numerusform><numerusform></numerusform><numerusform></numerusform><numerusform></numerusform></translation>
+    </message>
+    <message>
+        <source>Password expired, please change</source>
+        <translation>Slaptažodis nebegalioja, prašome jį pasikeisti</translation>
+    </message>
+    <message>
+        <source>Your password has expired. Please contact the administrator to change it</source>
+        <translation type="unfinished"/>
+    </message>
+</context>
+<context>
+    <name>GreeterWorker</name>
+    <message>
+        <source>Wrong account</source>
+        <translation type="unfinished"/>
+    </message>
+    <message>
+        <source>Wrong Password</source>
+        <translation>Neteisingas slaptažodis</translation>
     </message>
 </context>
 <context>
     <name>InhibitWarnView</name>
     <message>
-        <location filename="../src/dde-shutdown/view/inhibitwarnview.cpp" line="90"/>
         <source>Cancel</source>
         <translation>Atsisakyti</translation>
     </message>
@@ -125,12 +217,10 @@
 <context>
     <name>LockContent</name>
     <message>
-        <location filename="../src/session-widgets/lockcontent.cpp" line="353"/>
         <source>Lock Screen</source>
         <translation type="unfinished"/>
     </message>
     <message>
-        <location filename="../src/session-widgets/lockcontent.cpp" line="357"/>
         <source>Failed to lock screen</source>
         <translation>Nepavyko užrakinti ekrano</translation>
     </message>
@@ -138,142 +228,272 @@
 <context>
     <name>LockWorker</name>
     <message>
-        <location filename="../src/dde-lock/lockworker.cpp" line="229"/>
         <source>Fingerprint verification timed out, please enter your password manually</source>
         <translation>Pasibaigė piršto atspaudo patvirtinimui skirtas laikas, įveskite slaptažodį rankiniu būdu</translation>
     </message>
     <message>
-        <location filename="../src/dde-lock/lockworker.cpp" line="247"/>
         <source>Failed to match fingerprint</source>
         <translation>Nepavyko sutapatinti piršto atspaudo</translation>
-    </message>
-    <message>
-        <location filename="../src/dde-lock/lockworker.cpp" line="278"/>
-        <source>Wrong Password</source>
-        <translation>Neteisingas slaptažodis</translation>
     </message>
 </context>
 <context>
     <name>MultiUsersWarningView</name>
     <message>
-        <location filename="../src/dde-shutdown/view/multiuserswarningview.cpp" line="45"/>
         <source>Cancel</source>
         <translation>Atsisakyti</translation>
     </message>
     <message>
-        <location filename="../src/dde-shutdown/view/multiuserswarningview.cpp" line="129"/>
         <source>The above users are still logged in and data will be lost due to shutdown, are you sure you want to shut down?</source>
         <translation>Aukščiau išvardyti naudotojai yra vis dar prisijungę ir dėl išjungimo praras duomenis, ar tikrai norite išjungti?</translation>
     </message>
     <message>
-        <location filename="../src/dde-shutdown/view/multiuserswarningview.cpp" line="133"/>
         <source>The above users are still logged in and data will be lost due to reboot, are you sure you want to reboot?</source>
         <translation>Aukščiau išvardyti naudotojai yra vis dar prisijungę ir dėl paleidimo iš naujo praras duomenis, ar tikrai norite paleisti iš naujo?</translation>
     </message>
 </context>
 <context>
+    <name>SessionWidget</name>
+    <message>
+        <source>You have enabled the high system security level, thus cannot switch to the Wayland mode, please disable the high security level in Security Center and try again.</source>
+        <translation type="unfinished"/>
+    </message>
+</context>
+<context>
     <name>ShutdownWidget</name>
     <message>
-        <location filename="../src/widgets/shutdownwidget.cpp" line="29"/>
         <source>Shut down</source>
         <translation>Išjungti</translation>
     </message>
     <message>
-        <location filename="../src/widgets/shutdownwidget.cpp" line="30"/>
-        <location filename="../src/widgets/shutdownwidget.cpp" line="101"/>
         <source>Reboot</source>
         <translation>Paleisti iš naujo</translation>
     </message>
     <message>
-        <location filename="../src/widgets/shutdownwidget.cpp" line="31"/>
-        <location filename="../src/widgets/shutdownwidget.cpp" line="108"/>
         <source>Suspend</source>
         <translation>Pristabdyti</translation>
     </message>
     <message>
-        <location filename="../src/widgets/shutdownwidget.cpp" line="32"/>
-        <location filename="../src/widgets/shutdownwidget.cpp" line="115"/>
         <source>Hibernate</source>
         <translation>Užmigdyti</translation>
+    </message>
+    <message>
+        <source>Lock</source>
+        <translation>Užrakinti</translation>
+    </message>
+    <message>
+        <source>Log out</source>
+        <translation>Atsijungti</translation>
+    </message>
+    <message>
+        <source>Switch user</source>
+        <translation>Perjungti naudotoją</translation>
+    </message>
+    <message>
+        <source>Switch system</source>
+        <translation type="unfinished"/>
+    </message>
+    <message>
+        <source>Update and Shut Down</source>
+        <translation type="unfinished"/>
+    </message>
+    <message>
+        <source>Update and Reboot</source>
+        <translation type="unfinished"/>
     </message>
 </context>
 <context>
     <name>SystemMonitor</name>
     <message>
-        <location filename="../src/dde-shutdown/view/systemmonitor.cpp" line="45"/>
         <source>Start system monitor</source>
         <translation>Paleisti sistemos monitorių</translation>
     </message>
 </context>
 <context>
-    <name>UserExpiredWidget</name>
+    <name>UpdateCompleteWidget</name>
     <message>
-        <location filename="../src/session-widgets/userexpiredwidget.cpp" line="149"/>
-        <source>Password expired, please change</source>
-        <translation>Slaptažodis nebegalioja, prašome jį pasikeisti</translation>
-    </message>
-    <message>
-        <location filename="../src/session-widgets/userexpiredwidget.cpp" line="153"/>
-        <source>New password</source>
-        <translation>Naujas slaptažodis</translation>
-    </message>
-    <message>
-        <location filename="../src/session-widgets/userexpiredwidget.cpp" line="163"/>
-        <source>Repeat password</source>
-        <translation>Pakartokite slaptažodį</translation>
-    </message>
-    <message>
-        <location filename="../src/session-widgets/userexpiredwidget.cpp" line="322"/>
-        <source>Failed to change your password</source>
-        <translation>Nepavyko pakeisti jūsų slaptažodžio</translation>
-    </message>
-    <message>
-        <location filename="../src/session-widgets/userexpiredwidget.cpp" line="336"/>
-        <source>Password too weak</source>
+        <source>View Logs</source>
         <translation type="unfinished"/>
     </message>
     <message>
-        <location filename="../src/session-widgets/userexpiredwidget.cpp" line="344"/>
-        <source>Please enter the new password</source>
-        <translation>Prašome įrašyti naują slaptažodį</translation>
+        <source>Updates successful</source>
+        <translation type="unfinished"/>
     </message>
     <message>
-        <location filename="../src/session-widgets/userexpiredwidget.cpp" line="350"/>
-        <source>Please repeat the new password</source>
-        <translation>Pakartokite naują slaptažodį</translation>
+        <source>Your computer will reboot soon %1</source>
+        <translation type="unfinished"/>
     </message>
     <message>
-        <location filename="../src/session-widgets/userexpiredwidget.cpp" line="356"/>
-        <source>Passwords do not match</source>
-        <translation>Slaptažodžiai nesutampa</translation>
+        <source>Your computer will be turned off soon %1</source>
+        <translation type="unfinished"/>
     </message>
 </context>
 <context>
-    <name>UserLoginWidget</name>
+    <name>UpdateLogWidget</name>
     <message>
-        <location filename="../src/session-widgets/userloginwidget.cpp" line="195"/>
-        <source>Password</source>
-        <translation>Slaptažodis</translation>
+        <source>Hide Logs</source>
+        <translation type="unfinished"/>
     </message>
+</context>
+<context>
+    <name>UpdateModel</name>
     <message>
-        <location filename="../src/session-widgets/userloginwidget.cpp" line="199"/>
-        <source>Account</source>
-        <translation>Paskyra</translation>
-    </message>
-    <message>
-        <location filename="../src/session-widgets/userloginwidget.cpp" line="241"/>
-        <source>Please enter the account</source>
+        <source>Update failed</source>
         <translation type="unfinished"/>
     </message>
     <message>
-        <location filename="../src/session-widgets/userloginwidget.cpp" line="248"/>
-        <source>Please enter the password</source>
+        <source>Unknown error</source>
         <translation type="unfinished"/>
     </message>
-    <message numerus="yes">
-        <location filename="../src/session-widgets/userloginwidget.cpp" line="328"/>
-        <source>Please try again %n minute(s) later</source>
-        <translation type="unfinished"><numerusform></numerusform><numerusform></numerusform><numerusform></numerusform><numerusform></numerusform></translation>
+    <message>
+        <source>Backup failed</source>
+        <translation type="unfinished"/>
+    </message>
+    <message>
+        <source>Dependency error</source>
+        <translation type="unfinished"/>
+    </message>
+    <message>
+        <source>Reboot</source>
+        <translation type="unfinished"/>
+    </message>
+    <message>
+        <source>Shut Down</source>
+        <translation type="unfinished"/>
+    </message>
+    <message>
+        <source>Unable to perform system backup. If you continue the updates, you cannot roll back to the old system later.</source>
+        <translation type="unfinished"/>
+    </message>
+    <message>
+        <source>Insufficient disk space. Please clean up your disk and try again.</source>
+        <translation type="unfinished"/>
+    </message>
+    <message>
+        <source>DPKG error</source>
+        <translation type="unfinished"/>
+    </message>
+    <message>
+        <source>Back Up Again</source>
+        <translation type="unfinished"/>
+    </message>
+    <message>
+        <source>Abort</source>
+        <translation type="unfinished"/>
+    </message>
+    <message>
+        <source>Proceed to Update</source>
+        <translation type="unfinished"/>
+    </message>
+    <message>
+        <source>Failed to connect to backup services. Please check and retry again.</source>
+        <translation type="unfinished"/>
+    </message>
+    <message>
+        <source>Failed to connect to update services. Please check and retry again.</source>
+        <translation type="unfinished"/>
+    </message>
+</context>
+<context>
+    <name>UpdatePrepareWidget</name>
+    <message>
+        <source>Preparing for updates…</source>
+        <translation type="unfinished"/>
+    </message>
+</context>
+<context>
+    <name>UpdateProgressWidget</name>
+    <message>
+        <source>Do not force a shutdown or power off when installing updates. Otherwise, your system may be damaged.</source>
+        <translation type="unfinished"/>
+    </message>
+</context>
+<context>
+    <name>UpdateWorker</name>
+    <message>
+        <source>Update</source>
+        <translation type="unfinished"/>
+    </message>
+    <message>
+        <source>Please plug in and then install updates.</source>
+        <translation type="unfinished"/>
+    </message>
+</context>
+<context>
+    <name>WarningContent</name>
+    <message>
+        <source>The programs are preventing the computer from shutting down, and forcing shut down may cause data loss.</source>
+        <translation>Kai kurios programos neleidžia kompiuteriui išsijungti, o priverstinai išjungiant, gali būti prarasti duomenys.</translation>
+    </message>
+    <message>
+        <source>To close the program, click Cancel, and then close the program.</source>
+        <translation>Norėdami užverti programą, spustelėkite Atsisakyti, o tuomet užverkite programą.</translation>
+    </message>
+    <message>
+        <source>The programs are preventing the computer from reboot, and forcing reboot may cause data loss.</source>
+        <translation>Kai kurios programos neleidžia kompiuteriui pasileisti iš naujo, o priverstinai paleidžiant iš naujo, gali būti prarasti duomenys.</translation>
+    </message>
+    <message>
+        <source>The programs are preventing the computer from suspend, and forcing suspend may cause data loss.</source>
+        <translation>Kai kurios programos neleidžia kompiuteriui būti pristabdytam, o priverstinai pristabdant, gali būti prarasti duomenys.</translation>
+    </message>
+    <message>
+        <source>The programs are preventing the computer from hibernate, and forcing hibernate may cause data loss.</source>
+        <translation>Kai kurios programos neleidžia kompiuteriui būti užmigdytam, o priverstinai užmigdant, gali būti prarasti duomenys.</translation>
+    </message>
+    <message>
+        <source>The programs are preventing the computer from log out, and forcing log out may cause data loss.</source>
+        <translation>Kai kurios programos neleidžia kompiuteriui atsijungti, o priverstinai atsijungiant, gali būti prarasti duomenys.</translation>
+    </message>
+    <message>
+        <source>Shut down</source>
+        <translation>Išjungti</translation>
+    </message>
+    <message>
+        <source>Reboot</source>
+        <translation>Paleisti iš naujo</translation>
+    </message>
+    <message>
+        <source>Suspend</source>
+        <translation>Pristabdyti</translation>
+    </message>
+    <message>
+        <source>Hibernate</source>
+        <translation>Užmigdyti</translation>
+    </message>
+    <message>
+        <source>Log out</source>
+        <translation>Atsijungti</translation>
+    </message>
+    <message>
+        <source>Are you sure you want to shut down?</source>
+        <translation>Ar tikrai norite išjungti?</translation>
+    </message>
+    <message>
+        <source>Are you sure you want to reboot?</source>
+        <translation>Ar tikrai norite paleisti iš naujo?</translation>
+    </message>
+    <message>
+        <source>Are you sure you want to log out?</source>
+        <translation>Ar tikrai norite atsijungti?</translation>
+    </message>
+    <message>
+        <source>Update and Shut Down</source>
+        <translation type="unfinished"/>
+    </message>
+    <message>
+        <source>Update and Reboot</source>
+        <translation type="unfinished"/>
+    </message>
+</context>
+<context>
+    <name>dss::module::NetworkModule</name>
+    <message>
+        <source>Turn on</source>
+        <translation>Įjungti</translation>
+    </message>
+    <message>
+        <source>Turn off</source>
+        <translation>Išjungti</translation>
     </message>
 </context>
 </TS>

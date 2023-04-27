@@ -193,7 +193,7 @@
     </message>
     <message>
         <source>Your password has expired. Please contact the administrator to change it</source>
-        <translation type="unfinished"/>
+        <translation>A jelszava lejárt. A módosításhoz kérjük forduljon a Rendszergazdához.</translation>
     </message>
 </context>
 <context>
@@ -292,12 +292,130 @@
         <source>Switch system</source>
         <translation>Rendszer váltása</translation>
     </message>
+    <message>
+        <source>Update and Shut Down</source>
+        <translation>Frissítés és Leállítás</translation>
+    </message>
+    <message>
+        <source>Update and Reboot</source>
+        <translation>Frissítés és Újraindítás</translation>
+    </message>
 </context>
 <context>
     <name>SystemMonitor</name>
     <message>
         <source>Start system monitor</source>
         <translation>Rendszermonitor indítása</translation>
+    </message>
+</context>
+<context>
+    <name>UpdateCompleteWidget</name>
+    <message>
+        <source>View Logs</source>
+        <translation>Naplók megtekintése</translation>
+    </message>
+    <message>
+        <source>Updates successful</source>
+        <translation>A frissítés sikeres</translation>
+    </message>
+    <message>
+        <source>Your computer will reboot soon %1</source>
+        <translation>A számítógépe hamarosan újraindul %1</translation>
+    </message>
+    <message>
+        <source>Your computer will be turned off soon %1</source>
+        <translation>A számítógépe hamarosan leáll %1</translation>
+    </message>
+</context>
+<context>
+    <name>UpdateLogWidget</name>
+    <message>
+        <source>Hide Logs</source>
+        <translation>Naplók elrejtése</translation>
+    </message>
+</context>
+<context>
+    <name>UpdateModel</name>
+    <message>
+        <source>Update failed</source>
+        <translation>A frissítés sikertelen</translation>
+    </message>
+    <message>
+        <source>Unknown error</source>
+        <translation>Ismeretlen hiba</translation>
+    </message>
+    <message>
+        <source>Backup failed</source>
+        <translation>A biztonsági mentés készítése sikertelen</translation>
+    </message>
+    <message>
+        <source>Dependency error</source>
+        <translation>Függőségi hiba</translation>
+    </message>
+    <message>
+        <source>Reboot</source>
+        <translation>Újraindítás</translation>
+    </message>
+    <message>
+        <source>Shut Down</source>
+        <translation>Leállítás</translation>
+    </message>
+    <message>
+        <source>Unable to perform system backup. If you continue the updates, you cannot roll back to the old system later.</source>
+        <translation>A rendszer biztonsági mentése nem hajtható végre. Ha folytatja a frissítéseket, később nem térhet vissza a régi rendszerre.</translation>
+    </message>
+    <message>
+        <source>Insufficient disk space. Please clean up your disk and try again.</source>
+        <translation>Nincs elegendő lemezterület. Kérjük tisztítsa meg a lemezt, és próbálja újra. </translation>
+    </message>
+    <message>
+        <source>DPKG error</source>
+        <translation>DPKG hiba</translation>
+    </message>
+    <message>
+        <source>Back Up Again</source>
+        <translation>Biztonsági mentés készítése újra</translation>
+    </message>
+    <message>
+        <source>Abort</source>
+        <translation>Megszakítás</translation>
+    </message>
+    <message>
+        <source>Proceed to Update</source>
+        <translation>Folytassa a frissítést</translation>
+    </message>
+    <message>
+        <source>Failed to connect to backup services. Please check and retry again.</source>
+        <translation type="unfinished"/>
+    </message>
+    <message>
+        <source>Failed to connect to update services. Please check and retry again.</source>
+        <translation type="unfinished"/>
+    </message>
+</context>
+<context>
+    <name>UpdatePrepareWidget</name>
+    <message>
+        <source>Preparing for updates…</source>
+        <translation>Frissítések előkészítése...</translation>
+    </message>
+</context>
+<context>
+    <name>UpdateProgressWidget</name>
+    <message>
+        <source>Do not force a shutdown or power off when installing updates. Otherwise, your system may be damaged.</source>
+        <translation>A frissítések telepítésekor ne erőltesse a leállítást vagy a kikapcsolást. Ellenkező esetben a rendszer megsérülhet.</translation>
+    </message>
+</context>
+<context>
+    <name>UpdateWorker</name>
+    <message>
+        <source>Update</source>
+        <translation>Frissítés</translation>
+    </message>
+    <message>
+        <source>Please plug in and then install updates.</source>
+        <translation>Kérjük csatlakoztassa a számítógépet az áramforráshoz, majd telepítse a frissítéseket.</translation>
     </message>
 </context>
 <context>
@@ -357,6 +475,14 @@
     <message>
         <source>Are you sure you want to log out?</source>
         <translation>Biztosan ki akar jelentkezni?</translation>
+    </message>
+    <message>
+        <source>Update and Shut Down</source>
+        <translation>Frissítés és Leállítás</translation>
+    </message>
+    <message>
+        <source>Update and Reboot</source>
+        <translation>Frissítés és Újraindítás</translation>
     </message>
 </context>
 <context>

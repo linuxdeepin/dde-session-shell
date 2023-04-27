@@ -228,10 +228,10 @@ void WarningContent::beforeInvokeAction(bool needConfirm)
             view->setAcceptReason(tr("Log out"));
             view->setAcceptVisible(!isBlock);
         } else if (m_powerAction == SessionBaseModel::PowerAction::RequireUpdateShutdown) {
-            view->setAcceptReason(tr("Update and Shut Down"));  // TODO 翻译
+            view->setAcceptReason(tr("Update and Shut Down"));
             view->setAcceptVisible(!isBlock);
         } else if (m_powerAction == SessionBaseModel::PowerAction::RequireUpdateRestart) {
-            view->setAcceptReason(tr("Update and Reboot"));     // TODO 翻译
+            view->setAcceptReason(tr("Update and Reboot"));
             view->setAcceptVisible(!isBlock);
         }
 
@@ -270,9 +270,9 @@ void WarningContent::beforeInvokeAction(bool needConfirm)
         else if (m_powerAction == SessionBaseModel::PowerAction::RequireRestart)
             view->setAcceptReason(tr("Reboot"));
         else if (m_powerAction == SessionBaseModel::PowerAction::RequireUpdateRestart)
-            view->setAcceptReason(tr("Update and Reboot"));     // TODO 翻译
+            view->setAcceptReason(tr("Update and Reboot"));
         else if (m_powerAction == SessionBaseModel::PowerAction::RequireUpdateShutdown)
-            view->setAcceptReason(tr("Update and Shut Down"));  // TODO 翻译
+            view->setAcceptReason(tr("Update and Shut Down"));
 
         m_warningView = view;
         m_warningView->setFixedSize(getCenterContentSize());

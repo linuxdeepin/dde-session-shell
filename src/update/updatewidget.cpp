@@ -26,7 +26,7 @@ const int BACKUP_END_PROGRESS = 50;
 
 UpdateLogWidget::UpdateLogWidget(QWidget *parent)
     : QFrame(parent)
-    , m_hideLogWidgetButton(new DCommandLinkButton(tr("Collapse log"), this))   // TODO 翻译
+    , m_hideLogWidgetButton(new DCommandLinkButton(tr("Hide Logs"), this))
     , m_logLabel(new DLabel(this))
     , m_logWidget(new QWidget(this))
 {
@@ -79,7 +79,7 @@ void UpdateLogWidget::setErrorLog(const QString &error)
 UpdatePrepareWidget::UpdatePrepareWidget(QWidget *parent) : QFrame(parent)
 {
     m_tip = new QLabel(this);
-    m_tip->setText(tr("Preparing update...")); // TODO 翻译
+    m_tip->setText(tr("Preparing for updates…"));
     DFontSizeManager::instance()->bind(m_tip, DFontSizeManager::T6);
 
     m_spinner = new Dtk::Widget::DSpinner(this);
@@ -116,7 +116,7 @@ UpdateProgressWidget::UpdateProgressWidget(QWidget *parent)
     auto palette = m_tip->palette();
     palette.setColor(QPalette::WindowText, Qt::white);
     m_tip->setPalette(palette);
-    m_tip->setText(tr("Do not force power off or power off when updating, otherwise the system will be damaged")); // TODO 翻译
+    m_tip->setText(tr("Do not force a shutdown or power off when installing updates. Otherwise, your system may be damaged."));
     DFontSizeManager::instance()->bind(m_tip, DFontSizeManager::T6);
 
     m_waitingView->setAccessibleName("WaitingUpdateSequenceView");
@@ -209,7 +209,7 @@ UpdateCompleteWidget::UpdateCompleteWidget(QWidget *parent)
     , m_countDownTimer(nullptr)
     , m_countDown(3)
     , m_buttonSpacer(new QSpacerItem(0, 80))
-    , m_showLogButton(new Dtk::Widget::DCommandLinkButton(tr("Show log of updates"), this)) // TODO 翻译
+    , m_showLogButton(new Dtk::Widget::DCommandLinkButton(tr("View Logs"), this))
     , m_checkedButton(nullptr)
 {
     QPalette palette = this->palette();
@@ -257,12 +257,12 @@ void UpdateCompleteWidget::showSuccessFrame()
     m_showLogButton->setVisible(false);
 
     m_iconLabel->setPixmap(DHiDPIHelper::loadNxPixmap(":img/update/success.svg"));
-    m_title->setText(tr("System update succeeded")); // TODO 翻译
+    m_title->setText(tr("Updates successful"));
     m_countDown = 3;
 
     auto setTipsText = [this] {
         const QString &tips = UpdateModel::instance()->isReboot() ?
-                tr("Your PC will restart %1") : tr("Your PC will shutdown %1"); // TODO 翻译
+                tr("Your computer will reboot soon %1") : tr("Your computer will be turned off soon %1");
         m_tips->setText(tips.arg(QString::number(m_countDown)));
         m_tips->setVisible(true);
         m_countDown--;
@@ -292,7 +292,7 @@ void UpdateCompleteWidget::showErrorFrame(UpdateModel::UpdateError error)
 
     m_buttonSpacer->changeSize(0, 0);
     static const QMap<UpdateModel::UpdateError, QList<UpdateModel::UpdateAction>> ErrorActions = {
-        {UpdateModel::CanNotBackup, {UpdateModel::ContinueUpdating, UpdateModel::CancelUpdating}},
+        {UpdateModel::CanNotBackup, {UpdateModel::ContinueUpdating, UpdateModel::ExitUpdating}},
         {UpdateModel::BackupInterfaceError, {UpdateModel::ExitUpdating, UpdateModel::ContinueUpdating}},
         {UpdateModel::BackupFailedUnknownReason, {UpdateModel::DoBackupAgain, UpdateModel::ExitUpdating, UpdateModel::ContinueUpdating}},
         {UpdateModel::BackupNoSpace, {UpdateModel::ContinueUpdating, UpdateModel::ExitUpdating}},

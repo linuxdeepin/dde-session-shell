@@ -148,7 +148,7 @@ void UpdateWorker::startUpdateProgress()
             .arg(static_cast<uint>(0))
             .arg(QString(""))
             .arg(QString(""))
-            .arg(tr("Please plug in the power before starting the update"))
+            .arg(tr("Please plug in and then install updates."))
             .arg(QStringList())
             .arg(QVariantMap())
             .arg(5000)
@@ -316,7 +316,6 @@ void UpdateWorker::doAction(UpdateModel::UpdateAction action)
             doDistUpgrade();
             break;
         case UpdateModel::ExitUpdating:
-        case UpdateModel::CancelUpdating:
             Q_EMIT requestExitUpdating();
             break;
         case UpdateModel::Reboot:

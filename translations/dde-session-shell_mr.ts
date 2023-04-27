@@ -1,222 +1,499 @@
-<?xml version="1.0" ?><!DOCTYPE TS><TS language="mr" version="2.1">
+<?xml version="1.0" ?><!DOCTYPE TS><TS version="2.1" language="mr">
 <context>
-    <name>ContentWidget</name>
+    <name>AuthFace</name>
     <message>
-        <location filename="../src/dde-shutdown/view/contentwidget.cpp" line="315"/>
-        <source>The programs are preventing the computer from shutting down / hibernation, and forcing shut down / hibernate may cause data loss.</source>
+        <source>Face ID</source>
         <translation type="unfinished"/>
     </message>
     <message>
-        <location filename="../src/dde-shutdown/view/contentwidget.cpp" line="316"/>
-        <source>To close the program, click Cancel, and then close the program.</source>
+        <source>Verification successful</source>
+        <translation type="unfinished"/>
+    </message>
+    <message numerus="yes">
+        <source>Verification failed, %n chances left</source>
+        <translation type="unfinished"><numerusform></numerusform><numerusform></numerusform></translation>
+    </message>
+    <message>
+        <source>Verification failed, only one chance left</source>
         <translation type="unfinished"/>
     </message>
     <message>
-        <location filename="../src/dde-shutdown/view/contentwidget.cpp" line="328"/>
-        <location filename="../src/dde-shutdown/view/contentwidget.cpp" line="365"/>
-        <location filename="../src/dde-shutdown/view/contentwidget.cpp" line="387"/>
-        <location filename="../src/dde-shutdown/view/contentwidget.cpp" line="521"/>
-        <source>Shut down</source>
+        <source>Verify your Face ID</source>
         <translation type="unfinished"/>
     </message>
     <message>
-        <location filename="../src/dde-shutdown/view/contentwidget.cpp" line="330"/>
-        <location filename="../src/dde-shutdown/view/contentwidget.cpp" line="367"/>
-        <location filename="../src/dde-shutdown/view/contentwidget.cpp" line="390"/>
-        <location filename="../src/dde-shutdown/view/contentwidget.cpp" line="524"/>
-        <source>Reboot</source>
+        <source>Face ID locked, use password please</source>
         <translation type="unfinished"/>
     </message>
     <message>
-        <location filename="../src/dde-shutdown/view/contentwidget.cpp" line="332"/>
-        <location filename="../src/dde-shutdown/view/contentwidget.cpp" line="527"/>
-        <source>Suspend</source>
-        <translation type="unfinished"/>
-    </message>
-    <message>
-        <location filename="../src/dde-shutdown/view/contentwidget.cpp" line="334"/>
-        <location filename="../src/dde-shutdown/view/contentwidget.cpp" line="530"/>
-        <source>Hibernate</source>
-        <translation type="unfinished"/>
-    </message>
-    <message>
-        <location filename="../src/dde-shutdown/view/contentwidget.cpp" line="336"/>
-        <location filename="../src/dde-shutdown/view/contentwidget.cpp" line="393"/>
-        <location filename="../src/dde-shutdown/view/contentwidget.cpp" line="536"/>
-        <source>Log out</source>
-        <translation type="unfinished"/>
-    </message>
-    <message>
-        <location filename="../src/dde-shutdown/view/contentwidget.cpp" line="388"/>
-        <source>Are you sure you want to shut down?</source>
-        <translation type="unfinished"/>
-    </message>
-    <message>
-        <location filename="../src/dde-shutdown/view/contentwidget.cpp" line="391"/>
-        <source>Are you sure you want to reboot?</source>
-        <translation type="unfinished"/>
-    </message>
-    <message>
-        <location filename="../src/dde-shutdown/view/contentwidget.cpp" line="394"/>
-        <source>Are you sure you want to log out?</source>
-        <translation type="unfinished"/>
-    </message>
-    <message>
-        <location filename="../src/dde-shutdown/view/contentwidget.cpp" line="533"/>
-        <source>Lock</source>
-        <translation type="unfinished"/>
-    </message>
-    <message>
-        <location filename="../src/dde-shutdown/view/contentwidget.cpp" line="540"/>
-        <source>Switch user</source>
+        <source>Device unavailable!</source>
         <translation type="unfinished"/>
     </message>
 </context>
 <context>
-    <name>GreeterWorkek</name>
+    <name>AuthFingerprint</name>
     <message>
-        <location filename="../src/lightdm-deepin-greeter/greeterworkek.cpp" line="94"/>
-        <source>Domain account</source>
+        <source>Verify your fingerprint</source>
         <translation type="unfinished"/>
     </message>
     <message>
-        <location filename="../src/lightdm-deepin-greeter/greeterworkek.cpp" line="288"/>
+        <source>Verification successful</source>
+        <translation type="unfinished"/>
+    </message>
+    <message numerus="yes">
+        <source>Verification failed, %n chances left</source>
+        <translation type="unfinished"><numerusform></numerusform><numerusform></numerusform></translation>
+    </message>
+    <message>
+        <source>Verification failed, only one chance left</source>
+        <translation type="unfinished"/>
+    </message>
+    <message>
+        <source>Fingerprint locked, use password please</source>
+        <translation type="unfinished"/>
+    </message>
+</context>
+<context>
+    <name>AuthIris</name>
+    <message>
+        <source>Iris ID</source>
+        <translation type="unfinished"/>
+    </message>
+    <message>
+        <source>Verification successful</source>
+        <translation type="unfinished"/>
+    </message>
+    <message numerus="yes">
+        <source>Verification failed, %n chances left</source>
+        <translation type="unfinished"><numerusform></numerusform><numerusform></numerusform></translation>
+    </message>
+    <message>
+        <source>Verification failed, only one chance left</source>
+        <translation type="unfinished"/>
+    </message>
+    <message>
+        <source>Verify your Iris ID</source>
+        <translation type="unfinished"/>
+    </message>
+    <message>
+        <source>Iris ID locked, use password please</source>
+        <translation type="unfinished"/>
+    </message>
+</context>
+<context>
+    <name>AuthPassword</name>
+    <message>
+        <source>Verification successful</source>
+        <translation type="unfinished"/>
+    </message>
+    <message numerus="yes">
+        <source>Verification failed, %n chances left</source>
+        <translation type="unfinished"><numerusform></numerusform><numerusform></numerusform></translation>
+    </message>
+    <message>
+        <source>Verification failed, only one chance left</source>
+        <translation type="unfinished"/>
+    </message>
+    <message>
         <source>Wrong Password</source>
         <translation type="unfinished"/>
     </message>
     <message>
-        <location filename="../src/lightdm-deepin-greeter/greeterworkek.cpp" line="293"/>
-        <source>The domain account or password is not correct. Please enter again.</source>
+        <source>Password</source>
+        <translation type="unfinished"/>
+    </message>
+    <message>
+        <source>Please try again 1 minute later</source>
+        <translation type="unfinished"/>
+    </message>
+    <message numerus="yes">
+        <source>Please try again %n minutes later</source>
+        <translation type="unfinished"><numerusform></numerusform><numerusform></numerusform></translation>
+    </message>
+    <message>
+        <source>Reset Password</source>
+        <translation type="unfinished"/>
+    </message>
+    <message>
+        <source>Forgot password?</source>
+        <translation type="unfinished"/>
+    </message>
+</context>
+<context>
+    <name>AuthSingle</name>
+    <message>
+        <source>Please try again 1 minute later</source>
+        <translation type="unfinished"/>
+    </message>
+    <message numerus="yes">
+        <source>Please try again %n minutes later</source>
+        <translation type="unfinished"><numerusform></numerusform><numerusform></numerusform></translation>
+    </message>
+    <message>
+        <source>Reset Password</source>
+        <translation type="unfinished"/>
+    </message>
+    <message>
+        <source>Forgot password?</source>
+        <translation type="unfinished"/>
+    </message>
+</context>
+<context>
+    <name>AuthUKey</name>
+    <message>
+        <source>Verification successful</source>
+        <translation type="unfinished"/>
+    </message>
+    <message numerus="yes">
+        <source>Verification failed, %n chances left</source>
+        <translation type="unfinished"><numerusform></numerusform><numerusform></numerusform></translation>
+    </message>
+    <message>
+        <source>Verification failed, only one chance left</source>
+        <translation type="unfinished"/>
+    </message>
+    <message>
+        <source>Wrong PIN</source>
+        <translation type="unfinished"/>
+    </message>
+    <message>
+        <source>UKey is required</source>
+        <translation type="unfinished"/>
+    </message>
+    <message>
+        <source>Enter your PIN</source>
+        <translation type="unfinished"/>
+    </message>
+    <message numerus="yes">
+        <source>Please try again %n minute(s) later</source>
+        <translation type="unfinished"><numerusform></numerusform><numerusform></numerusform></translation>
+    </message>
+    <message>
+        <source>Please try again 1 minute later</source>
+        <translation type="unfinished"/>
+    </message>
+    <message numerus="yes">
+        <source>Please try again %n minutes later</source>
+        <translation type="unfinished"><numerusform></numerusform><numerusform></numerusform></translation>
+    </message>
+</context>
+<context>
+    <name>AuthWidget</name>
+    <message>
+        <source>Account</source>
+        <translation type="unfinished"/>
+    </message>
+    <message numerus="yes">
+        <source>Your password will expire in %n days, please change it timely</source>
+        <translation type="unfinished"><numerusform></numerusform><numerusform></numerusform></translation>
+    </message>
+    <message>
+        <source>Password expired, please change</source>
+        <translation type="unfinished"/>
+    </message>
+    <message>
+        <source>Your password has expired. Please contact the administrator to change it</source>
+        <translation type="unfinished"/>
+    </message>
+</context>
+<context>
+    <name>GreeterWorker</name>
+    <message>
+        <source>Wrong account</source>
+        <translation type="unfinished"/>
+    </message>
+    <message>
+        <source>Wrong Password</source>
         <translation type="unfinished"/>
     </message>
 </context>
 <context>
     <name>InhibitWarnView</name>
     <message>
-        <location filename="../src/dde-shutdown/view/inhibitwarnview.cpp" line="88"/>
         <source>Cancel</source>
+        <translation type="unfinished"/>
+    </message>
+</context>
+<context>
+    <name>LockContent</name>
+    <message>
+        <source>Lock Screen</source>
+        <translation type="unfinished"/>
+    </message>
+    <message>
+        <source>Failed to lock screen</source>
         <translation type="unfinished"/>
     </message>
 </context>
 <context>
     <name>LockWorker</name>
     <message>
-        <location filename="../src/dde-lock/lockworker.cpp" line="92"/>
-        <source>Domain account</source>
-        <translation type="unfinished"/>
-    </message>
-    <message>
-        <location filename="../src/dde-lock/lockworker.cpp" line="211"/>
         <source>Fingerprint verification timed out, please enter your password manually</source>
         <translation type="unfinished"/>
     </message>
     <message>
-        <location filename="../src/dde-lock/lockworker.cpp" line="229"/>
         <source>Failed to match fingerprint</source>
-        <translation type="unfinished"/>
-    </message>
-    <message>
-        <location filename="../src/dde-lock/lockworker.cpp" line="264"/>
-        <source>Wrong Password</source>
         <translation type="unfinished"/>
     </message>
 </context>
 <context>
     <name>MultiUsersWarningView</name>
     <message>
-        <location filename="../src/dde-shutdown/view/multiuserswarningview.cpp" line="45"/>
         <source>Cancel</source>
         <translation type="unfinished"/>
     </message>
     <message>
-        <location filename="../src/dde-shutdown/view/multiuserswarningview.cpp" line="126"/>
         <source>The above users are still logged in and data will be lost due to shutdown, are you sure you want to shut down?</source>
         <translation type="unfinished"/>
     </message>
     <message>
-        <location filename="../src/dde-shutdown/view/multiuserswarningview.cpp" line="130"/>
         <source>The above users are still logged in and data will be lost due to reboot, are you sure you want to reboot?</source>
+        <translation type="unfinished"/>
+    </message>
+</context>
+<context>
+    <name>SessionWidget</name>
+    <message>
+        <source>You have enabled the high system security level, thus cannot switch to the Wayland mode, please disable the high security level in Security Center and try again.</source>
         <translation type="unfinished"/>
     </message>
 </context>
 <context>
     <name>ShutdownWidget</name>
     <message>
-        <location filename="../src/session-widgets/userinputwidget.cpp" line="285"/>
-        <location filename="../src/widgets/shutdownwidget.cpp" line="29"/>
         <source>Shut down</source>
         <translation type="unfinished"/>
     </message>
     <message>
-        <location filename="../src/session-widgets/userinputwidget.cpp" line="301"/>
-        <source>Log in</source>
-        <translation type="unfinished"/>
-    </message>
-    <message>
-        <location filename="../src/session-widgets/userinputwidget.cpp" line="310"/>
-        <location filename="../src/widgets/shutdownwidget.cpp" line="30"/>
-        <location filename="../src/widgets/shutdownwidget.cpp" line="101"/>
         <source>Reboot</source>
         <translation type="unfinished"/>
     </message>
     <message>
-        <location filename="../src/widgets/shutdownwidget.cpp" line="31"/>
-        <location filename="../src/widgets/shutdownwidget.cpp" line="108"/>
         <source>Suspend</source>
         <translation type="unfinished"/>
     </message>
     <message>
-        <location filename="../src/widgets/shutdownwidget.cpp" line="32"/>
-        <location filename="../src/widgets/shutdownwidget.cpp" line="115"/>
         <source>Hibernate</source>
+        <translation type="unfinished"/>
+    </message>
+    <message>
+        <source>Lock</source>
+        <translation type="unfinished"/>
+    </message>
+    <message>
+        <source>Log out</source>
+        <translation type="unfinished"/>
+    </message>
+    <message>
+        <source>Switch user</source>
+        <translation type="unfinished"/>
+    </message>
+    <message>
+        <source>Switch system</source>
+        <translation type="unfinished"/>
+    </message>
+    <message>
+        <source>Update and Shut Down</source>
+        <translation type="unfinished"/>
+    </message>
+    <message>
+        <source>Update and Reboot</source>
         <translation type="unfinished"/>
     </message>
 </context>
 <context>
     <name>SystemMonitor</name>
     <message>
-        <location filename="../src/dde-shutdown/view/systemmonitor.cpp" line="45"/>
         <source>Start system monitor</source>
         <translation type="unfinished"/>
     </message>
 </context>
 <context>
-    <name>TimeWidget</name>
+    <name>UpdateCompleteWidget</name>
     <message>
-        <location filename="../src/widgets/timewidget.cpp" line="82"/>
-        <source>hh:mm</source>
-        <translation>hh:mm</translation>
-    </message>
-    <message>
-        <location filename="../src/widgets/timewidget.cpp" line="84"/>
-        <source>hh:mm ap</source>
+        <source>View Logs</source>
         <translation type="unfinished"/>
     </message>
     <message>
-        <location filename="../src/widgets/timewidget.cpp" line="87"/>
-        <source>yyyy-MM-dd dddd</source>
-        <translation>yyyy-MM-dd dddd</translation>
-    </message>
-</context>
-<context>
-    <name>UserInputWidget</name>
-    <message>
-        <location filename="../src/session-widgets/userinputwidget.cpp" line="13"/>
-        <source>Log in</source>
+        <source>Updates successful</source>
         <translation type="unfinished"/>
     </message>
-    <message numerus="yes">
-        <location filename="../src/session-widgets/userinputwidget.cpp" line="257"/>
-        <source>Please try again %n minute(s) later</source>
-        <translation type="unfinished"><numerusform></numerusform><numerusform></numerusform></translation>
+    <message>
+        <source>Your computer will reboot soon %1</source>
+        <translation type="unfinished"/>
+    </message>
+    <message>
+        <source>Your computer will be turned off soon %1</source>
+        <translation type="unfinished"/>
     </message>
 </context>
 <context>
-    <name>UserLoginWidget</name>
-    <message numerus="yes">
-        <location filename="../src/session-widgets/userloginwidget.cpp" line="235"/>
-        <source>Please try again %n minute(s) later</source>
-        <translation type="unfinished"><numerusform></numerusform><numerusform></numerusform></translation>
+    <name>UpdateLogWidget</name>
+    <message>
+        <source>Hide Logs</source>
+        <translation type="unfinished"/>
+    </message>
+</context>
+<context>
+    <name>UpdateModel</name>
+    <message>
+        <source>Update failed</source>
+        <translation type="unfinished"/>
+    </message>
+    <message>
+        <source>Unknown error</source>
+        <translation type="unfinished"/>
+    </message>
+    <message>
+        <source>Backup failed</source>
+        <translation type="unfinished"/>
+    </message>
+    <message>
+        <source>Dependency error</source>
+        <translation type="unfinished"/>
+    </message>
+    <message>
+        <source>Reboot</source>
+        <translation type="unfinished"/>
+    </message>
+    <message>
+        <source>Shut Down</source>
+        <translation type="unfinished"/>
+    </message>
+    <message>
+        <source>Unable to perform system backup. If you continue the updates, you cannot roll back to the old system later.</source>
+        <translation type="unfinished"/>
+    </message>
+    <message>
+        <source>Insufficient disk space. Please clean up your disk and try again.</source>
+        <translation type="unfinished"/>
+    </message>
+    <message>
+        <source>DPKG error</source>
+        <translation type="unfinished"/>
+    </message>
+    <message>
+        <source>Back Up Again</source>
+        <translation type="unfinished"/>
+    </message>
+    <message>
+        <source>Abort</source>
+        <translation type="unfinished"/>
+    </message>
+    <message>
+        <source>Proceed to Update</source>
+        <translation type="unfinished"/>
+    </message>
+    <message>
+        <source>Failed to connect to backup services. Please check and retry again.</source>
+        <translation type="unfinished"/>
+    </message>
+    <message>
+        <source>Failed to connect to update services. Please check and retry again.</source>
+        <translation type="unfinished"/>
+    </message>
+</context>
+<context>
+    <name>UpdatePrepareWidget</name>
+    <message>
+        <source>Preparing for updates…</source>
+        <translation type="unfinished"/>
+    </message>
+</context>
+<context>
+    <name>UpdateProgressWidget</name>
+    <message>
+        <source>Do not force a shutdown or power off when installing updates. Otherwise, your system may be damaged.</source>
+        <translation type="unfinished"/>
+    </message>
+</context>
+<context>
+    <name>UpdateWorker</name>
+    <message>
+        <source>Update</source>
+        <translation type="unfinished"/>
+    </message>
+    <message>
+        <source>Please plug in and then install updates.</source>
+        <translation type="unfinished"/>
+    </message>
+</context>
+<context>
+    <name>WarningContent</name>
+    <message>
+        <source>The programs are preventing the computer from shutting down, and forcing shut down may cause data loss.</source>
+        <translation type="unfinished"/>
+    </message>
+    <message>
+        <source>To close the program, click Cancel, and then close the program.</source>
+        <translation type="unfinished"/>
+    </message>
+    <message>
+        <source>The programs are preventing the computer from reboot, and forcing reboot may cause data loss.</source>
+        <translation type="unfinished"/>
+    </message>
+    <message>
+        <source>The programs are preventing the computer from suspend, and forcing suspend may cause data loss.</source>
+        <translation type="unfinished"/>
+    </message>
+    <message>
+        <source>The programs are preventing the computer from hibernate, and forcing hibernate may cause data loss.</source>
+        <translation type="unfinished"/>
+    </message>
+    <message>
+        <source>The programs are preventing the computer from log out, and forcing log out may cause data loss.</source>
+        <translation type="unfinished"/>
+    </message>
+    <message>
+        <source>Shut down</source>
+        <translation type="unfinished"/>
+    </message>
+    <message>
+        <source>Reboot</source>
+        <translation type="unfinished"/>
+    </message>
+    <message>
+        <source>Suspend</source>
+        <translation type="unfinished"/>
+    </message>
+    <message>
+        <source>Hibernate</source>
+        <translation type="unfinished"/>
+    </message>
+    <message>
+        <source>Log out</source>
+        <translation type="unfinished"/>
+    </message>
+    <message>
+        <source>Are you sure you want to shut down?</source>
+        <translation type="unfinished"/>
+    </message>
+    <message>
+        <source>Are you sure you want to reboot?</source>
+        <translation type="unfinished"/>
+    </message>
+    <message>
+        <source>Are you sure you want to log out?</source>
+        <translation type="unfinished"/>
+    </message>
+    <message>
+        <source>Update and Shut Down</source>
+        <translation type="unfinished"/>
+    </message>
+    <message>
+        <source>Update and Reboot</source>
+        <translation type="unfinished"/>
+    </message>
+</context>
+<context>
+    <name>dss::module::NetworkModule</name>
+    <message>
+        <source>Turn on</source>
+        <translation type="unfinished"/>
+    </message>
+    <message>
+        <source>Turn off</source>
+        <translation type="unfinished"/>
     </message>
 </context>
 </TS>

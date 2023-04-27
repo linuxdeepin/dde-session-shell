@@ -193,7 +193,7 @@
     </message>
     <message>
         <source>Your password has expired. Please contact the administrator to change it</source>
-        <translation type="unfinished"/>
+        <translation>La contrasenya ha vençut. Poseu-vos en contacte amb l&apos;administrador per canviar-la.</translation>
     </message>
 </context>
 <context>
@@ -266,11 +266,11 @@
     </message>
     <message>
         <source>Reboot</source>
-        <translation>Reinicia</translation>
+        <translation>Reinicia&apos;t</translation>
     </message>
     <message>
         <source>Suspend</source>
-        <translation>Suspèn</translation>
+        <translation>Suspèn-te</translation>
     </message>
     <message>
         <source>Hibernate</source>
@@ -292,12 +292,130 @@
         <source>Switch system</source>
         <translation>Canvia de sistema</translation>
     </message>
+    <message>
+        <source>Update and Shut Down</source>
+        <translation type="unfinished"/>
+    </message>
+    <message>
+        <source>Update and Reboot</source>
+        <translation type="unfinished"/>
+    </message>
 </context>
 <context>
     <name>SystemMonitor</name>
     <message>
         <source>Start system monitor</source>
         <translation>Inicia el monitor del sistema</translation>
+    </message>
+</context>
+<context>
+    <name>UpdateCompleteWidget</name>
+    <message>
+        <source>View Logs</source>
+        <translation type="unfinished"/>
+    </message>
+    <message>
+        <source>Updates successful</source>
+        <translation type="unfinished"/>
+    </message>
+    <message>
+        <source>Your computer will reboot soon %1</source>
+        <translation type="unfinished"/>
+    </message>
+    <message>
+        <source>Your computer will be turned off soon %1</source>
+        <translation type="unfinished"/>
+    </message>
+</context>
+<context>
+    <name>UpdateLogWidget</name>
+    <message>
+        <source>Hide Logs</source>
+        <translation type="unfinished"/>
+    </message>
+</context>
+<context>
+    <name>UpdateModel</name>
+    <message>
+        <source>Update failed</source>
+        <translation type="unfinished"/>
+    </message>
+    <message>
+        <source>Unknown error</source>
+        <translation type="unfinished"/>
+    </message>
+    <message>
+        <source>Backup failed</source>
+        <translation type="unfinished"/>
+    </message>
+    <message>
+        <source>Dependency error</source>
+        <translation type="unfinished"/>
+    </message>
+    <message>
+        <source>Reboot</source>
+        <translation type="unfinished"/>
+    </message>
+    <message>
+        <source>Shut Down</source>
+        <translation type="unfinished"/>
+    </message>
+    <message>
+        <source>Unable to perform system backup. If you continue the updates, you cannot roll back to the old system later.</source>
+        <translation type="unfinished"/>
+    </message>
+    <message>
+        <source>Insufficient disk space. Please clean up your disk and try again.</source>
+        <translation type="unfinished"/>
+    </message>
+    <message>
+        <source>DPKG error</source>
+        <translation type="unfinished"/>
+    </message>
+    <message>
+        <source>Back Up Again</source>
+        <translation type="unfinished"/>
+    </message>
+    <message>
+        <source>Abort</source>
+        <translation type="unfinished"/>
+    </message>
+    <message>
+        <source>Proceed to Update</source>
+        <translation type="unfinished"/>
+    </message>
+    <message>
+        <source>Failed to connect to backup services. Please check and retry again.</source>
+        <translation type="unfinished"/>
+    </message>
+    <message>
+        <source>Failed to connect to update services. Please check and retry again.</source>
+        <translation type="unfinished"/>
+    </message>
+</context>
+<context>
+    <name>UpdatePrepareWidget</name>
+    <message>
+        <source>Preparing for updates…</source>
+        <translation type="unfinished"/>
+    </message>
+</context>
+<context>
+    <name>UpdateProgressWidget</name>
+    <message>
+        <source>Do not force a shutdown or power off when installing updates. Otherwise, your system may be damaged.</source>
+        <translation type="unfinished"/>
+    </message>
+</context>
+<context>
+    <name>UpdateWorker</name>
+    <message>
+        <source>Update</source>
+        <translation type="unfinished"/>
+    </message>
+    <message>
+        <source>Please plug in and then install updates.</source>
+        <translation type="unfinished"/>
     </message>
 </context>
 <context>
@@ -332,11 +450,11 @@
     </message>
     <message>
         <source>Reboot</source>
-        <translation>Reinicia</translation>
+        <translation>Reinicia&apos;t</translation>
     </message>
     <message>
         <source>Suspend</source>
-        <translation>Suspèn</translation>
+        <translation>Suspèn-te</translation>
     </message>
     <message>
         <source>Hibernate</source>
@@ -357,6 +475,14 @@
     <message>
         <source>Are you sure you want to log out?</source>
         <translation>Segur que voleu sortir de la sessió?</translation>
+    </message>
+    <message>
+        <source>Update and Shut Down</source>
+        <translation type="unfinished"/>
+    </message>
+    <message>
+        <source>Update and Reboot</source>
+        <translation type="unfinished"/>
     </message>
 </context>
 <context>
