@@ -15,7 +15,6 @@
 UpdateModel::UpdateModel(QObject *parent)
     : QObject{parent}
     , m_updateAvailable(false)
-    , m_updateMode(UpdateModel::UpdateType::Invalid)
     , m_updateStatus(UpdateStatus::Default)
     , m_distUpgradeProgress(0)
     , m_isBackupConfigValid(true)
@@ -87,6 +86,7 @@ QPair<QString, QString> UpdateModel::updateErrorMessage(UpdateError error)
 
 void UpdateModel::setLastErrorLog(const QString &log)
 {
+    qWarning() << log;
     m_lastErrorLog = log;
 }
 

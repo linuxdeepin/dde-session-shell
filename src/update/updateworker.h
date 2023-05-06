@@ -50,8 +50,8 @@ public:
         return pIns;
     };
 
-    void doDistUpgrade();
-    void doBackup();
+    void doDistUpgrade(bool doBackup);
+    void doDistUpgradeIfCanBackup();
     void doAction(UpdateModel::UpdateAction action);
     void startUpdateProgress();
     bool checkPower();
@@ -69,6 +69,8 @@ private:
     void fixError();
     void checkStatusAfterSessionActive();
     bool syncStartService(DBusExtendedAbstractInterface *interface);
+    void createDistUpgradeJob(const QString& jobPath);
+    void cleanLaStoreJob(QPointer<JobInter> dbusJob);
 
 private slots:
     void onJobListChanged(const QList<QDBusObjectPath> &jobs);

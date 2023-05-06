@@ -57,7 +57,7 @@ void UpdateWorker::init()
             UpdateModel::instance()->setUpdateStatus(UpdateModel::UpdateStatus::InstallFailed);
         }
     });
-    connect(m_abRecoveryInter, &RecoveryInter::JobEnd, this, [this](const QString &kind, bool success, const QString &errMsg) {
+    connect(m_abRecoveryInter, &RecoveryInter::JobEnd, this, [](const QString &kind, bool success, const QString &errMsg) {
         qInfo() << "Backup job end, kind: " << kind << ", success: " << success << ", error message: " << errMsg;
         if ("backup" != kind) {
             qWarning() << "Kind error: " << kind;
@@ -66,7 +66,6 @@ void UpdateWorker::init()
 
         if (success) {
             UpdateModel::instance()->setUpdateStatus(UpdateModel::UpdateStatus::BackupSuccess);
-            doDistUpgrade();
         } else {
             UpdateModel::instance()->setLastErrorLog(errMsg);
             UpdateModel::instance()->setUpdateError(UpdateModel::UpdateError::BackupFailedUnknownReason);
@@ -160,11 +159,10 @@ void UpdateWorker::startUpdateProgress()
 
     qInfo() << "Power check passed";
 
-    // 备份; PS:收到备份完成的信号后自动进入安装过程
-    doBackup();
+    doDistUpgradeIfCanBackup();
 }
 
-void UpdateWorker::doDistUpgrade()
+void UpdateWorker::doDistUpgrade(bool doBackup)
 {
     qInfo() << "Do dist upgrade";
     if (!m_managerInter->isValid()) {
@@ -179,12 +177,18 @@ void UpdateWorker::doDistUpgrade()
         return;
     }
 
-    QDBusPendingReply<QDBusObjectPath> reply = m_managerInter->DistUpgrade();
+    cleanLaStoreJob(m_distUpgradeJob);
+    m_managerInter->setSync(true);
+    const qulonglong updateMode = m_managerInter->updateMode();
+    m_managerInter->setSync(false);
+    qInfo() << "Update mode:" << updateMode;
+    QDBusPendingReply<QDBusObjectPath> reply = m_managerInter->asyncCall("DistUpgradePartly", updateMode, doBackup);
     QDBusPendingCallWatcher *watcher = new QDBusPendingCallWatcher(reply, this);
-    connect(watcher, &QDBusPendingCallWatcher::finished, this, [reply, watcher] {
+    connect(watcher, &QDBusPendingCallWatcher::finished, this, [this, reply, watcher] {
         watcher->deleteLater();
         if (reply.isValid()) {
             UpdateModel::instance()->setUpdateStatus(UpdateModel::UpdateStatus::Installing);
+            createDistUpgradeJob(reply.value().path());
         } else {
             const QString &errorMessage = watcher->error().message();
             qWarning() << "Do dist upgrade failed:" << watcher->error().message();
@@ -212,13 +216,29 @@ void UpdateWorker::onJobListChanged(const QList<QDBusObjectPath> &jobs)
         qInfo() << "Job id : " << id;
         if (id == "dist_upgrade" && m_distUpgradeJob == nullptr) {
             qInfo() << "Create dist upgrade job";
-            m_distUpgradeJob = new JobInter("com.deepin.lastore", jobPath, QDBusConnection::systemBus(), this);
-            connect(m_distUpgradeJob, &__Job::ProgressChanged, UpdateModel::instance(), &UpdateModel::setDistUpgradeProgress);
-            connect(m_distUpgradeJob, &__Job::StatusChanged, this, &UpdateWorker::onDistUpgradeStatusChanged);
-            UpdateModel::instance()->setDistUpgradeProgress(m_distUpgradeJob->progress());
-            onDistUpgradeStatusChanged(m_distUpgradeJob->status());
+            createDistUpgradeJob(jobPath);
         }
     }
+}
+
+void UpdateWorker::createDistUpgradeJob(const QString& jobPath)
+{
+    qInfo() << "Job path:" << jobPath;
+    if (m_distUpgradeJob) {
+        qWarning() << "Dist upgrade job is not null";
+        return;
+    }
+
+    if (jobPath.isEmpty()) {
+        qWarning() << "Dist upgrade job path is empty";
+        return;
+    }
+
+    m_distUpgradeJob = new JobInter("com.deepin.lastore", jobPath, QDBusConnection::systemBus(), this);
+    connect(m_distUpgradeJob, &__Job::ProgressChanged, UpdateModel::instance(), &UpdateModel::setDistUpgradeProgress);
+    connect(m_distUpgradeJob, &__Job::StatusChanged, this, &UpdateWorker::onDistUpgradeStatusChanged);
+    UpdateModel::instance()->setDistUpgradeProgress(m_distUpgradeJob->progress());
+    onDistUpgradeStatusChanged(m_distUpgradeJob->status());
 }
 
 void UpdateWorker::onDistUpgradeStatusChanged(const QString &status)
@@ -235,9 +255,7 @@ void UpdateWorker::onDistUpgradeStatusChanged(const QString &status)
     if (DIST_UPGRADE_STATUS_MAP.contains(status)) {
         const UpdateModel::UpdateStatus updateStatus = DIST_UPGRADE_STATUS_MAP.value(status);
         if (updateStatus == UpdateModel::UpdateStatus::InstallComplete) {
-            m_managerInter->CleanJob(m_distUpgradeJob->id());
-            delete m_distUpgradeJob;
-            m_distUpgradeJob = nullptr;
+            cleanLaStoreJob(m_distUpgradeJob);
         } else {
             if (updateStatus == UpdateModel::UpdateStatus::InstallFailed && m_distUpgradeJob) {
                 UpdateModel::instance()->setLastErrorLog(m_distUpgradeJob->description());
@@ -277,7 +295,7 @@ UpdateModel::UpdateError UpdateWorker::analyzeJobErrorMessage(QString jobDescrip
     return UpdateModel::UpdateError::UnKnown;
 }
 
-void UpdateWorker::doBackup()
+void UpdateWorker::doDistUpgradeIfCanBackup()
 {
     qInfo() << "Prepare to do backup";
     QDBusPendingCall call = m_abRecoveryInter->CanBackup();
@@ -287,9 +305,16 @@ void UpdateWorker::doBackup()
             QDBusReply<bool> reply = call.reply();
             const bool value = reply.value();
             if (value) {
-                qInfo() << "Start backup";
-                UpdateModel::instance()->setUpdateStatus(UpdateModel::BackingUp);
-                m_abRecoveryInter->StartBackup();
+                m_abRecoveryInter->setSync(true);
+                const bool hasBackedUp = m_abRecoveryInter->hasBackedUp();
+                m_abRecoveryInter->setSync(false);
+                qInfo() << "Has backed up:" << hasBackedUp;
+                if (hasBackedUp) {
+                    UpdateModel::instance()->setUpdateStatus(UpdateModel::BackupSuccess);
+                } else {
+                    UpdateModel::instance()->setUpdateStatus(UpdateModel::BackingUp);
+                }
+                doDistUpgrade(true);
             } else {
                 qWarning() << "Can not backup";
                 UpdateModel::instance()->setLastErrorLog(reply.error().message());
@@ -313,7 +338,7 @@ void UpdateWorker::doAction(UpdateModel::UpdateAction action)
             startUpdateProgress();
             break;
         case UpdateModel::ContinueUpdating:
-            doDistUpgrade();
+            doDistUpgrade(false);
             break;
         case UpdateModel::ExitUpdating:
             Q_EMIT requestExitUpdating();
@@ -377,9 +402,7 @@ void UpdateWorker::fixError()
         qInfo() << "Fix error job status changed :" << status;
         if (status == "succeed" || status == "failed" || status == "end") {
             if (m_fixErrorJob) {
-                m_managerInter->CleanJob(m_fixErrorJob->id());
-                m_fixErrorJob->deleteLater();
-                m_fixErrorJob = nullptr;
+                cleanLaStoreJob(m_fixErrorJob);
             }
 
             if (status == "succeed") {
@@ -507,7 +530,7 @@ void UpdateWorker::checkStatusAfterSessionActive()
 
         // 已经备份完成但是并没有安装则开始安装
         if (UpdateModel::instance()->updateStatus() < UpdateModel::Installing) {
-            doDistUpgrade();
+            doDistUpgrade(false);
         }
     }
 }
@@ -519,4 +542,13 @@ void UpdateWorker::setLocked(const bool locked)
 #else
     m_sessionManagerInter->SetLocked(locked);
 #endif
+}
+
+void UpdateWorker::cleanLaStoreJob(QPointer<JobInter> dbusJob)
+{
+    if (dbusJob != nullptr) {
+        m_managerInter->CleanJob(dbusJob->id());
+        dbusJob->deleteLater();
+        dbusJob = nullptr;
+    }
 }

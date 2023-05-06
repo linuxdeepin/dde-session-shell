@@ -15,21 +15,6 @@ class UpdateModel : public QObject
     Q_OBJECT
 
 public:
-enum UpdateType {
-    Invalid = 0,                // 无效
-    SystemUpdate = 1 << 0,      // 系统
-    AppStoreUpdate = 1 << 1,    // 应用商店（1050版本弃用）
-    SecurityUpdate = 1 << 2,    // 安全
-    UnknownUpdate = 1 << 3,     // 未知来源
-    OnlySecurityUpdate = 1 << 4 // 仅安全更新（1060版本弃用）
-};
-Q_ENUM(UpdateType)
-
-const QMap<UpdateType, QString> UPDATE_TYPE_NAME = {
-    {SystemUpdate, "system_upgrade"},
-    {AppStoreUpdate, "appstore_upgrade"},
-    {SecurityUpdate, "security_upgrade"},
-    {UnknownUpdate, "unknown_upgrade"}};
 
 enum UpdateStatus {
     Default = 0,
@@ -109,7 +94,6 @@ signals:
 
 private:
     bool m_updateAvailable;
-    qulonglong m_updateMode;
     UpdateStatus m_updateStatus;
     double m_distUpgradeProgress;   // 更新进度
     UpdateError m_updateError;      // 错误类型

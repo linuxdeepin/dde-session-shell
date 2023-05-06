@@ -453,6 +453,7 @@ void UpdateWidget::onUpdateStatusChanged(UpdateModel::UpdateStatus status)
             m_progressWidget->setInstallBeginValue(BACKUP_BEGIN_PROGRESS);
             break;
         case UpdateModel::UpdateStatus::BackupSuccess:
+            m_stackedWidget->setCurrentWidget(m_progressWidget);
             m_progressWidget->setInstallBeginValue(BACKUP_END_PROGRESS);
             break;
         case UpdateModel::UpdateStatus::Installing:
