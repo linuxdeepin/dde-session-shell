@@ -175,8 +175,8 @@ void LockWorker::initConnections()
             endAuthentication(m_account, AT_All);
             destroyAuthentication(m_model->currentUser()->name());
             setCurrentUser(m_model->currentUser());
+            setLocked(false);
         }
-        setLocked(visible);
     });
     connect(m_model, &SessionBaseModel::onStatusChanged, this, [this](SessionBaseModel::ModeStatus state) {
         if (state == SessionBaseModel::ModeStatus::PowerMode || state == SessionBaseModel::ModeStatus::ShutDownMode) {
