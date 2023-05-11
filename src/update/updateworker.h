@@ -83,8 +83,8 @@ private:
     SessionManagerInter *m_sessionManagerInter;
     DBusLogin1Manager *m_login1Manager;
     Login1SessionSelf* m_login1SessionSelf;
-    JobInter *m_distUpgradeJob;     // 更新job
-    JobInter *m_fixErrorJob;        // 修复错误job
+    QPointer<JobInter> m_distUpgradeJob;     // 更新job
+    QPointer<JobInter> m_fixErrorJob;        // 修复错误job
     bool m_fixErrorResult;          // 修复错误结果
 };
 

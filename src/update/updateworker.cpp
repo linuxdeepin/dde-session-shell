@@ -123,6 +123,8 @@ void UpdateWorker::init()
     } else {
         qWarning() << "Login1 manager is invalid, error: " << m_login1Manager->lastError().type();
     }
+
+    onJobListChanged(m_managerInter->jobList());
 }
 
 /**
@@ -546,9 +548,11 @@ void UpdateWorker::setLocked(const bool locked)
 
 void UpdateWorker::cleanLaStoreJob(QPointer<JobInter> dbusJob)
 {
+    qInfo() << "Clean job";
     if (dbusJob != nullptr) {
+        qInfo() << "Job path" << dbusJob->path();
         m_managerInter->CleanJob(dbusJob->id());
-        dbusJob->deleteLater();
+        delete dbusJob;
         dbusJob = nullptr;
     }
 }
