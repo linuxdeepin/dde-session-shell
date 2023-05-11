@@ -566,7 +566,7 @@ void LockWorker::createAuthentication(const QString &account)
     }
 
     // 如果验证会话已经存在，销毁后重新开启验证
-    if (m_authFramework->authSessionExist(account)) {
+    if (m_authFramework->authSessionExist(account) || m_authFramework->IsUsingPamAuth()) {
         endAuthentication(account, AT_All);
         destroyAuthentication(account);
     }

@@ -272,6 +272,11 @@ void DeepinAuthFramework::DestroyAuthenticate()
     m_PAMAuthThread = 0;
 }
 
+bool DeepinAuthFramework::IsUsingPamAuth()
+{
+    return m_PAMAuthThread != 0;
+}
+
 /**
  * @brief 创建认证服务
  *

@@ -38,6 +38,8 @@ public:
     void CreateAuthenticate(const QString &account);
     void SendToken(const QString &token);
     void DestroyAuthenticate();
+    // 是否正在使用pam认证
+    bool IsUsingPamAuth();
 
     /* com.deepin.daemon.Authenticate */
     int GetFrameworkState() const;
