@@ -1,3 +1,28 @@
+dde-session-shell (5.6.10.2) unstable; urgency=medium
+
+  [ Deepin Packages Builder ]
+  * feat: 更新时切换session被激活不创建认证(Task: 253837)(Influence: 来回切换用户、更新时切换用户)
+  * fix: 安装更新卡在50%(Bug: 198691)(Influence: 控制中心更新失败时进行模态更新)
+  * fix: 修复S3/S4通过指纹唤醒后，概率性出现指纹不响应问题(Bug: 177695, 174585)(Influence: S3指纹唤醒)
+  * fix: 锁屏/登录界面切换用户异常(Bug: 183619)(Influence: 登录/锁屏界面切换用户)
+  * chron: 增加日志，方便后续跟踪问题(Bug: 191983)(Influence: 增加日志无影响)
+  * fix: 修复登录界面显示认证类型错误的问题(Bug: 190693)(Influence: 华为klv-未接入指纹设备-最近一次使用人脸认证-注销或重启，登录选项显示最近一次的方式)
+  * fix: 关机页面“启动系统监视器”Label未有设置字体大小(Influence: 优化电源关机页面,系统显示器按钮的显示)
+  * chore: 社区编译问题(Influence: 无)
+  * fix: 修复系统修改分辨率后注销登录界面显示的问题。(Bug: 184943)(Influence: 系统修改分辨率后登录界面显示。)
+  * fix: 修复系统修改分辨率和缩放后注销登录界面显示的问题。(Bug: 184943)(Influence: 系统修改分辨率后登录界面显示。)
+  * chore: 删除deepin-greeter-wayland包(Task: 251417)(Influence: dde-session-shell、deepin-greeter-wayland、uos-hw-config、dde-wayland-config无序安装不会导致登录界面黑屏)
+  * fix: 修复系统安装完成优化配置时，及注销/关机/重启/登录过程中，出现代码行(提示+低概率+常用功能)(Bug: 190421)(Influence: greeter登录认证成功后处理流程)
+  * chore: 解耦(Task: 251417)(Influence: 无)
+  * fix: 解决preinst脚本报错问题(Task: 251417)(Influence: dde-session-shell、deepin-greeter-wayland、uos-hw-config、dde-wayland-config无序安装不会导致登录界面黑屏)
+  * fix: 修复greet启动耗时过长问题(Bug: 178279)(Influence: 指纹,登录)
+  * fix: 修改root禁用时，创建管理员帐户后，无法图形化界面进入系统问题(Bug: 194539)(Influence: 服务器版-安装后进入图形界面，等熄屏后唤醒，用户正常)
+  * fix: 修复帐户密码过期后,再登录界面使用指纹登录后,在修改密码界面再切换其它帐户会失败问题(Bug: 197255)(Influence: 账户过期,登陆,锁屏)
+  * fix: 有更新失败job时更新界面异常(Bug: 198691)(Influence: 控制中心更新失败后进入模态界面更新)
+  * fix: 解决屏幕键盘显示异常问题(Bug: 199415)(Influence: 屏幕键盘)
+
+ -- Deepin Packages Builder <packages@deepin.org>  Fri, 12 May 2023 13:40:19 +0800
+
 dde-session-shell (5.6.10) unstable; urgency=medium
 
   [ Deepin Packages Builder ]
