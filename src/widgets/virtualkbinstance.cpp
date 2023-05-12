@@ -65,7 +65,10 @@ void VirtualKBInstance::stopVirtualKBProcess()
     //结束onborad进程
     if (m_virtualKBProcess) {
         m_virtualKBProcess->close();
-        m_virtualKBWidget = nullptr;
+        if (m_virtualKBWidget) {
+            delete m_virtualKBWidget;
+            m_virtualKBWidget = nullptr;
+        }
     }
 }
 

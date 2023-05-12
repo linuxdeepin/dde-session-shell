@@ -100,7 +100,7 @@ protected:
     ControlWidget *m_controlWidget;
     CenterTopWidget *m_centerTopWidget;
     ShutdownWidget *m_shutdownFrame;
-    QWidget *m_virtualKB;
+    QPointer<QWidget> m_virtualKB;
     std::shared_ptr<User> m_user;
     QList<QMetaObject::Connection> m_currentUserConnects;
     LogoWidget *m_logoWidget;
