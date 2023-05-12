@@ -24,6 +24,7 @@
 #include <QGuiApplication>
 #include <QScreen>
 #include <QSettings>
+#include <QSurfaceFormat>
 
 #include <X11/Xcursor/Xcursor.h>
 #include <X11/Xlib.h>
@@ -47,6 +48,11 @@ int main(int argc, char* argv[])
     }
 
     DGuiApplicationHelper::setAttribute(DGuiApplicationHelper::UseInactiveColorGroup, false);
+    if (qgetenv("XDG_SESSION_TYPE").contains("wayland")) {
+        QSurfaceFormat format;
+        format.setRenderableType(QSurfaceFormat::OpenGLES);
+        QSurfaceFormat::setDefaultFormat(format);
+    }
 
     // 以下4行为解决登录和锁屏的默认字体不一致的情况，gsettings默认值为10.5，
     // 而登录读取不到gsettings配置的默认值而使用Qt默认的9，导致登录界面字体很小。

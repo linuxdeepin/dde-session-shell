@@ -22,6 +22,7 @@
 #include <DPlatformTheme>
 
 #include <QDBusInterface>
+#include <QSurfaceFormat>
 
 #include <unistd.h>
 
@@ -30,6 +31,12 @@ DWIDGET_USE_NAMESPACE
 
 int main(int argc, char *argv[])
 {
+    if (qgetenv("XDG_SESSION_TYPE").contains("wayland")) {
+        QSurfaceFormat format;
+        format.setRenderableType(QSurfaceFormat::OpenGLES);
+        QSurfaceFormat::setDefaultFormat(format);
+    }
+
     DApplication *app = nullptr;
 #if (DTK_VERSION < DTK_VERSION_CHECK(5, 4, 0, 0))
     app = new DApplication(argc, argv);
