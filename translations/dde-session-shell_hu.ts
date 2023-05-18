@@ -386,11 +386,11 @@
     </message>
     <message>
         <source>Failed to connect to backup services. Please check and retry again.</source>
-        <translation type="unfinished"/>
+        <translation>Nem sikerült csatlakozni a biztonsági mentési szolgáltatásokhoz. Kérjük ellenőrizze, és próbálja újra.</translation>
     </message>
     <message>
         <source>Failed to connect to update services. Please check and retry again.</source>
-        <translation type="unfinished"/>
+        <translation>Nem sikerült csatlakozni a frissítési szolgáltatásokhoz. Kérjük ellenőrizze, és próbálja újra.</translation>
     </message>
 </context>
 <context>

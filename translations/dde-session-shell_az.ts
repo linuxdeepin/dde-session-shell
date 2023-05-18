@@ -298,7 +298,7 @@
     </message>
     <message>
         <source>Update and Reboot</source>
-        <translation type="unfinished"/>
+        <translation>Yenilə və Yenidən başlat</translation>
     </message>
 </context>
 <context>
@@ -312,26 +312,26 @@
     <name>UpdateCompleteWidget</name>
     <message>
         <source>View Logs</source>
-        <translation type="unfinished"/>
+        <translation>Jurnal qeydlərinə baxış</translation>
     </message>
     <message>
         <source>Updates successful</source>
-        <translation type="unfinished"/>
+        <translation>Yenilənmə uğurlu oldu</translation>
     </message>
     <message>
         <source>Your computer will reboot soon %1</source>
-        <translation type="unfinished"/>
+        <translation>Kompyuteriniz tezliklə yenidən başladılacaqdır: %1</translation>
     </message>
     <message>
         <source>Your computer will be turned off soon %1</source>
-        <translation type="unfinished"/>
+        <translation>Komppyuteriniz tezliklə sönəcəkdir: %1</translation>
     </message>
 </context>
 <context>
     <name>UpdateLogWidget</name>
     <message>
         <source>Hide Logs</source>
-        <translation type="unfinished"/>
+        <translation>Jurnal qeydlərini gizlətmək</translation>
     </message>
 </context>
 <context>
@@ -362,49 +362,49 @@
     </message>
     <message>
         <source>Unable to perform system backup. If you continue the updates, you cannot roll back to the old system later.</source>
-        <translation type="unfinished"/>
+        <translation>Sistemin ehtiyyat nüsxəsinin saxlanılmasını icra etmək mümkün olmadı. Əgər yeniləməyə davam etsəniz geri, köhnə sistemə qayıda bilməyəcəksiniz?</translation>
     </message>
     <message>
         <source>Insufficient disk space. Please clean up your disk and try again.</source>
-        <translation type="unfinished"/>
+        <translation>Disk sahəsi kifayət etmir. Diskinizi təmizləyin və yenidən cəhd edin</translation>
     </message>
     <message>
         <source>DPKG error</source>
-        <translation type="unfinished"/>
+        <translation>DPKG xətası</translation>
     </message>
     <message>
         <source>Back Up Again</source>
-        <translation type="unfinished"/>
+        <translation>Yenidən ehtiyyat nüsxə yaradın</translation>
     </message>
     <message>
         <source>Abort</source>
-        <translation type="unfinished"/>
+        <translation>Ləğv edin</translation>
     </message>
     <message>
         <source>Proceed to Update</source>
-        <translation type="unfinished"/>
+        <translation>Yenilənməyə davam edin</translation>
     </message>
     <message>
         <source>Failed to connect to backup services. Please check and retry again.</source>
-        <translation type="unfinished"/>
+        <translation>Ehtiyyat nüsxələmə xidmətləri ilə bağlantı baş tutmadı. Lütfən yoxlayın və yenidən cəhd edin.</translation>
     </message>
     <message>
         <source>Failed to connect to update services. Please check and retry again.</source>
-        <translation type="unfinished"/>
+        <translation>Yenilənmə xidmətləri ilə bağlantı alınmadı. Lütfən, yoxlayın və yenidən cəhd edin.</translation>
     </message>
 </context>
 <context>
     <name>UpdatePrepareWidget</name>
     <message>
         <source>Preparing for updates…</source>
-        <translation type="unfinished"/>
+        <translation>Yenilənmələr üçün hazırlıq...</translation>
     </message>
 </context>
 <context>
     <name>UpdateProgressWidget</name>
     <message>
         <source>Do not force a shutdown or power off when installing updates. Otherwise, your system may be damaged.</source>
-        <translation type="unfinished"/>
+        <translation>Yenilənmələr quraşdırılan zaman məcburi söndürmək və ya yenidən başlatmaq olmaz. Əks halda sisteminiz sıradan çıxa bilər.</translation>
     </message>
 </context>
 <context>
@@ -415,7 +415,7 @@
     </message>
     <message>
         <source>Please plug in and then install updates.</source>
-        <translation type="unfinished"/>
+        <translation>Elektrik şəbəkəsinə qoşun və yenilənmələri yenidən quraşdırın.</translation>
     </message>
 </context>
 <context>

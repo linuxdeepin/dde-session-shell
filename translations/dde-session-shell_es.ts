@@ -294,11 +294,11 @@
     </message>
     <message>
         <source>Update and Shut Down</source>
-        <translation type="unfinished"/>
+        <translation>Actualizar y Apagar</translation>
     </message>
     <message>
         <source>Update and Reboot</source>
-        <translation type="unfinished"/>
+        <translation>Actualizar y reiniciar</translation>
     </message>
 </context>
 <context>
@@ -312,110 +312,110 @@
     <name>UpdateCompleteWidget</name>
     <message>
         <source>View Logs</source>
-        <translation type="unfinished"/>
+        <translation>Ver los registros</translation>
     </message>
     <message>
         <source>Updates successful</source>
-        <translation type="unfinished"/>
+        <translation>Actualización exitosa</translation>
     </message>
     <message>
         <source>Your computer will reboot soon %1</source>
-        <translation type="unfinished"/>
+        <translation>Su computadora se reiniciará pronto %1</translation>
     </message>
     <message>
         <source>Your computer will be turned off soon %1</source>
-        <translation type="unfinished"/>
+        <translation>Su computadora se apagará pronto %1</translation>
     </message>
 </context>
 <context>
     <name>UpdateLogWidget</name>
     <message>
         <source>Hide Logs</source>
-        <translation type="unfinished"/>
+        <translation>Ocultar registros</translation>
     </message>
 </context>
 <context>
     <name>UpdateModel</name>
     <message>
         <source>Update failed</source>
-        <translation type="unfinished"/>
+        <translation>Actualización fallida</translation>
     </message>
     <message>
         <source>Unknown error</source>
-        <translation type="unfinished"/>
+        <translation>Error desconocido</translation>
     </message>
     <message>
         <source>Backup failed</source>
-        <translation type="unfinished"/>
+        <translation>Copia de seguridad fallida</translation>
     </message>
     <message>
         <source>Dependency error</source>
-        <translation type="unfinished"/>
+        <translation>Error de dependencia</translation>
     </message>
     <message>
         <source>Reboot</source>
-        <translation type="unfinished"/>
+        <translation>Reiniciar</translation>
     </message>
     <message>
         <source>Shut Down</source>
-        <translation type="unfinished"/>
+        <translation>Apagar</translation>
     </message>
     <message>
         <source>Unable to perform system backup. If you continue the updates, you cannot roll back to the old system later.</source>
-        <translation type="unfinished"/>
+        <translation>No se puede realizar la copia de seguridad del sistema. Si continúa con las actualizaciones, no podrá volver al sistema anterior más adelante.</translation>
     </message>
     <message>
         <source>Insufficient disk space. Please clean up your disk and try again.</source>
-        <translation type="unfinished"/>
+        <translation>Espacio en disco insuficiente. Limpia tu disco e inténtalo de nuevo.</translation>
     </message>
     <message>
         <source>DPKG error</source>
-        <translation type="unfinished"/>
+        <translation>Error DPKG</translation>
     </message>
     <message>
         <source>Back Up Again</source>
-        <translation type="unfinished"/>
+        <translation>Respaldar datos nuevamente</translation>
     </message>
     <message>
         <source>Abort</source>
-        <translation type="unfinished"/>
+        <translation>Abortar</translation>
     </message>
     <message>
         <source>Proceed to Update</source>
-        <translation type="unfinished"/>
+        <translation>Proceder a actualizar</translation>
     </message>
     <message>
         <source>Failed to connect to backup services. Please check and retry again.</source>
-        <translation type="unfinished"/>
+        <translation>No se pudo conectar a los servicios de copia de seguridad. Verifique y vuelva a intentarlo.</translation>
     </message>
     <message>
         <source>Failed to connect to update services. Please check and retry again.</source>
-        <translation type="unfinished"/>
+        <translation>No se pudo conectar a los servicios de actualización. Verifique y vuelva a intentarlo.</translation>
     </message>
 </context>
 <context>
     <name>UpdatePrepareWidget</name>
     <message>
         <source>Preparing for updates…</source>
-        <translation type="unfinished"/>
+        <translation>Preparando para actualizar…</translation>
     </message>
 </context>
 <context>
     <name>UpdateProgressWidget</name>
     <message>
         <source>Do not force a shutdown or power off when installing updates. Otherwise, your system may be damaged.</source>
-        <translation type="unfinished"/>
+        <translation>No fuerce un apagado ni apague cuando instale actualizaciones. De lo contrario, su sistema puede dañarse.</translation>
     </message>
 </context>
 <context>
     <name>UpdateWorker</name>
     <message>
         <source>Update</source>
-        <translation type="unfinished"/>
+        <translation>Actualizar</translation>
     </message>
     <message>
         <source>Please plug in and then install updates.</source>
-        <translation type="unfinished"/>
+        <translation>Conéctelo y luego instale las actualizaciones.</translation>
     </message>
 </context>
 <context>
@@ -478,11 +478,11 @@
     </message>
     <message>
         <source>Update and Shut Down</source>
-        <translation type="unfinished"/>
+        <translation>Acrualizar y apagar</translation>
     </message>
     <message>
         <source>Update and Reboot</source>
-        <translation type="unfinished"/>
+        <translation>Actualizar y reiniciar</translation>
     </message>
 </context>
 <context>

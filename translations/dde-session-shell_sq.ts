@@ -294,11 +294,11 @@
     </message>
     <message>
         <source>Update and Shut Down</source>
-        <translation type="unfinished"/>
+        <translation>Përditësoje dhe Fiku</translation>
     </message>
     <message>
         <source>Update and Reboot</source>
-        <translation type="unfinished"/>
+        <translation>Përditësoje dhe Rinisu</translation>
     </message>
 </context>
 <context>
@@ -312,33 +312,33 @@
     <name>UpdateCompleteWidget</name>
     <message>
         <source>View Logs</source>
-        <translation type="unfinished"/>
+        <translation>Shihni Regjistra</translation>
     </message>
     <message>
         <source>Updates successful</source>
-        <translation type="unfinished"/>
+        <translation>Përditësime me sukses</translation>
     </message>
     <message>
         <source>Your computer will reboot soon %1</source>
-        <translation type="unfinished"/>
+        <translation>Kompjuteri juaj do të riniset së shpejti %1</translation>
     </message>
     <message>
         <source>Your computer will be turned off soon %1</source>
-        <translation type="unfinished"/>
+        <translation>Kompjuteri juaj do të fiket së shpejti %1</translation>
     </message>
 </context>
 <context>
     <name>UpdateLogWidget</name>
     <message>
         <source>Hide Logs</source>
-        <translation type="unfinished"/>
+        <translation>Fshihi Regjistrat</translation>
     </message>
 </context>
 <context>
     <name>UpdateModel</name>
     <message>
         <source>Update failed</source>
-        <translation type="unfinished"/>
+        <translation>Përditësimi dështoi</translation>
     </message>
     <message>
         <source>Unknown error</source>
@@ -346,19 +346,19 @@
     </message>
     <message>
         <source>Backup failed</source>
-        <translation type="unfinished"/>
+        <translation>Kopjeruajtja dështoi</translation>
     </message>
     <message>
         <source>Dependency error</source>
-        <translation type="unfinished"/>
+        <translation>Gabim varësish</translation>
     </message>
     <message>
         <source>Reboot</source>
-        <translation type="unfinished"/>
+        <translation>Rinisu</translation>
     </message>
     <message>
         <source>Shut Down</source>
-        <translation type="unfinished"/>
+        <translation>Fiku</translation>
     </message>
     <message>
         <source>Unable to perform system backup. If you continue the updates, you cannot roll back to the old system later.</source>
@@ -366,7 +366,7 @@
     </message>
     <message>
         <source>Insufficient disk space. Please clean up your disk and try again.</source>
-        <translation type="unfinished"/>
+        <translation>Hapësirë e pamjaftueshme disku. Ju lutemi, pastroni diskun dhe riprovoni.</translation>
     </message>
     <message>
         <source>DPKG error</source>
@@ -374,48 +374,48 @@
     </message>
     <message>
         <source>Back Up Again</source>
-        <translation type="unfinished"/>
+        <translation>Ribëj Kopjeruajtje</translation>
     </message>
     <message>
         <source>Abort</source>
-        <translation type="unfinished"/>
+        <translation>Ndërprite</translation>
     </message>
     <message>
         <source>Proceed to Update</source>
-        <translation type="unfinished"/>
+        <translation>Vazhdo me Përditësimin</translation>
     </message>
     <message>
         <source>Failed to connect to backup services. Please check and retry again.</source>
-        <translation type="unfinished"/>
+        <translation>S’u arrit të lidhej te shërbime kopjeruajtjeje. Ju lutemi, kontrollojeni dhe riprovoni.</translation>
     </message>
     <message>
         <source>Failed to connect to update services. Please check and retry again.</source>
-        <translation type="unfinished"/>
+        <translation>S’u arrit të lidhej te shërbime përditësimi. Ju lutemi, kontrollojeni dhe riprovoni.</translation>
     </message>
 </context>
 <context>
     <name>UpdatePrepareWidget</name>
     <message>
         <source>Preparing for updates…</source>
-        <translation type="unfinished"/>
+        <translation>Po përgatitet për përditësime…</translation>
     </message>
 </context>
 <context>
     <name>UpdateProgressWidget</name>
     <message>
         <source>Do not force a shutdown or power off when installing updates. Otherwise, your system may be damaged.</source>
-        <translation type="unfinished"/>
+        <translation>Mos bëni fikje ose heqje energjie të makinës, kur instalohen përditësime. Përndryshe mund të dëmtohet sistemi juaj.</translation>
     </message>
 </context>
 <context>
     <name>UpdateWorker</name>
     <message>
         <source>Update</source>
-        <translation type="unfinished"/>
+        <translation>Përditësoje</translation>
     </message>
     <message>
         <source>Please plug in and then install updates.</source>
-        <translation type="unfinished"/>
+        <translation>Ju lutemi, vëreni në prizë dhe mandej instaloni përditësimet.</translation>
     </message>
 </context>
 <context>
@@ -478,11 +478,11 @@
     </message>
     <message>
         <source>Update and Shut Down</source>
-        <translation type="unfinished"/>
+        <translation>Përditësoje dhe Fiku</translation>
     </message>
     <message>
         <source>Update and Reboot</source>
-        <translation type="unfinished"/>
+        <translation>Përditësoje dhe Rinisu</translation>
     </message>
 </context>
 <context>

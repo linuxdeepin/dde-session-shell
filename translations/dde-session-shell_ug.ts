@@ -294,11 +294,11 @@
     </message>
     <message>
         <source>Update and Shut Down</source>
-        <translation type="unfinished"/>
+        <translation>يېڭىلاش ۋە تاقاش</translation>
     </message>
     <message>
         <source>Update and Reboot</source>
-        <translation type="unfinished"/>
+        <translation>يېڭىلاش ۋە قايتا قوزغىتىش</translation>
     </message>
 </context>
 <context>
@@ -312,33 +312,33 @@
     <name>UpdateCompleteWidget</name>
     <message>
         <source>View Logs</source>
-        <translation type="unfinished"/>
+        <translation>كۈندىلىك خاتىرىنى كۆرۈش</translation>
     </message>
     <message>
         <source>Updates successful</source>
-        <translation type="unfinished"/>
+        <translation>يېڭىلاندى</translation>
     </message>
     <message>
         <source>Your computer will reboot soon %1</source>
-        <translation type="unfinished"/>
+        <translation>كومپيۇتېرىڭىز قايتا قوزغىلىدۇ %1</translation>
     </message>
     <message>
         <source>Your computer will be turned off soon %1</source>
-        <translation type="unfinished"/>
+        <translation>كومپيۇتېرىڭىز تاقىلىدۇ %1</translation>
     </message>
 </context>
 <context>
     <name>UpdateLogWidget</name>
     <message>
         <source>Hide Logs</source>
-        <translation type="unfinished"/>
+        <translation>كۈندىلىك خاتىرىنى يىغىش</translation>
     </message>
 </context>
 <context>
     <name>UpdateModel</name>
     <message>
         <source>Update failed</source>
-        <translation type="unfinished"/>
+        <translation>يېڭىلاش مەغلۇب بولدى</translation>
     </message>
     <message>
         <source>Unknown error</source>
@@ -346,19 +346,19 @@
     </message>
     <message>
         <source>Backup failed</source>
-        <translation type="unfinished"/>
+        <translation>زاپاسلانمىدى</translation>
     </message>
     <message>
         <source>Dependency error</source>
-        <translation type="unfinished"/>
+        <translation>بېقىنىش خاتالىقى</translation>
     </message>
     <message>
         <source>Reboot</source>
-        <translation type="unfinished"/>
+        <translation>قايتا قوزغىتىش</translation>
     </message>
     <message>
         <source>Shut Down</source>
-        <translation type="unfinished"/>
+        <translation>تاقاش</translation>
     </message>
     <message>
         <source>Unable to perform system backup. If you continue the updates, you cannot roll back to the old system later.</source>
@@ -366,7 +366,7 @@
     </message>
     <message>
         <source>Insufficient disk space. Please clean up your disk and try again.</source>
-        <translation type="unfinished"/>
+        <translation>دىسكا بوشلۇقى يېتەرسىز، دىسكىڭىزنى تازىلاپ ئاندىن يېڭىلاڭ</translation>
     </message>
     <message>
         <source>DPKG error</source>
@@ -374,48 +374,48 @@
     </message>
     <message>
         <source>Back Up Again</source>
-        <translation type="unfinished"/>
+        <translation>قايتا زاپاسلاش</translation>
     </message>
     <message>
         <source>Abort</source>
-        <translation type="unfinished"/>
+        <translation>يېڭىلاشتىن چېكىنىش</translation>
     </message>
     <message>
         <source>Proceed to Update</source>
-        <translation type="unfinished"/>
+        <translation>داۋاملىق يېڭىلاش</translation>
     </message>
     <message>
         <source>Failed to connect to backup services. Please check and retry again.</source>
-        <translation type="unfinished"/>
+        <translation>زاپاسلاش مۇلازىمىتىنى قوزغاتقىلى بولمىدى، تەكشۈرۈپ قايتا سىناڭ</translation>
     </message>
     <message>
         <source>Failed to connect to update services. Please check and retry again.</source>
-        <translation type="unfinished"/>
+        <translation>يېڭىلاش مۇلازىمىتىنى قوزغاتقىلى بولمىدى، تەكشۈرۈپ قايتا سىناڭ</translation>
     </message>
 </context>
 <context>
     <name>UpdatePrepareWidget</name>
     <message>
         <source>Preparing for updates…</source>
-        <translation type="unfinished"/>
+        <translation>يېڭىلاشقا تەييارلىنىۋاتىدۇ...</translation>
     </message>
 </context>
 <context>
     <name>UpdateProgressWidget</name>
     <message>
         <source>Do not force a shutdown or power off when installing updates. Otherwise, your system may be damaged.</source>
-        <translation type="unfinished"/>
+        <translation>يېڭىلىغاندا كومپيۇتېرنى مەجبۇرىي تاقىۋەتمەڭ ياكى توكتىن ئۈزۈۋەتمەڭ، بولمىسا سىستېما بۇزۇلۇپ كېتىدۇ</translation>
     </message>
 </context>
 <context>
     <name>UpdateWorker</name>
     <message>
         <source>Update</source>
-        <translation type="unfinished"/>
+        <translation>يېڭىلاش</translation>
     </message>
     <message>
         <source>Please plug in and then install updates.</source>
-        <translation type="unfinished"/>
+        <translation>توكقا چېتىپ ئاندىن يېڭىلاڭ</translation>
     </message>
 </context>
 <context>
@@ -478,11 +478,11 @@
     </message>
     <message>
         <source>Update and Shut Down</source>
-        <translation type="unfinished"/>
+        <translation>يېڭىلاش ۋە تاقاش</translation>
     </message>
     <message>
         <source>Update and Reboot</source>
-        <translation type="unfinished"/>
+        <translation>يېڭىلاش ۋە قايتا قوزغىتىش</translation>
     </message>
 </context>
 <context>

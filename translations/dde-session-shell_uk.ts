@@ -298,7 +298,7 @@
     </message>
     <message>
         <source>Update and Reboot</source>
-        <translation type="unfinished"/>
+        <translation>Оновити і перезавантажити</translation>
     </message>
 </context>
 <context>
@@ -312,26 +312,26 @@
     <name>UpdateCompleteWidget</name>
     <message>
         <source>View Logs</source>
-        <translation type="unfinished"/>
+        <translation>Переглянути журнал</translation>
     </message>
     <message>
         <source>Updates successful</source>
-        <translation type="unfinished"/>
+        <translation>Успішно оновлено</translation>
     </message>
     <message>
         <source>Your computer will reboot soon %1</source>
-        <translation type="unfinished"/>
+        <translation>Ваш комп&apos;ютер невдовзі буде перезавантажено %1</translation>
     </message>
     <message>
         <source>Your computer will be turned off soon %1</source>
-        <translation type="unfinished"/>
+        <translation>Ваш комп&apos;ютер невдовзі буде вимкнено %1</translation>
     </message>
 </context>
 <context>
     <name>UpdateLogWidget</name>
     <message>
         <source>Hide Logs</source>
-        <translation type="unfinished"/>
+        <translation>Приховати журнал</translation>
     </message>
 </context>
 <context>
@@ -366,7 +366,7 @@
     </message>
     <message>
         <source>Insufficient disk space. Please clean up your disk and try again.</source>
-        <translation type="unfinished"/>
+        <translation>Недостатньо вільного місця на диску. Будь ласка, звільніть місце і повторіть спробу.</translation>
     </message>
     <message>
         <source>DPKG error</source>
@@ -374,37 +374,37 @@
     </message>
     <message>
         <source>Back Up Again</source>
-        <translation type="unfinished"/>
+        <translation>Повторити спробу копіювання</translation>
     </message>
     <message>
         <source>Abort</source>
-        <translation type="unfinished"/>
+        <translation>Перервати</translation>
     </message>
     <message>
         <source>Proceed to Update</source>
-        <translation type="unfinished"/>
+        <translation>Перейти до оновлення</translation>
     </message>
     <message>
         <source>Failed to connect to backup services. Please check and retry again.</source>
-        <translation type="unfinished"/>
+        <translation>Не вдалося встановити зв&apos;язок із службами резервного копіювання. Будь ласка, перевірте зв&apos;язок і повторіть спробу</translation>
     </message>
     <message>
         <source>Failed to connect to update services. Please check and retry again.</source>
-        <translation type="unfinished"/>
+        <translation>Не вдалося встановити зв&apos;язок із службами оновлення. Будь ласка, перевірте зв&apos;язок і повторіть спробу</translation>
     </message>
 </context>
 <context>
     <name>UpdatePrepareWidget</name>
     <message>
         <source>Preparing for updates…</source>
-        <translation type="unfinished"/>
+        <translation>Готуємося до оновлень…</translation>
     </message>
 </context>
 <context>
     <name>UpdateProgressWidget</name>
     <message>
         <source>Do not force a shutdown or power off when installing updates. Otherwise, your system may be damaged.</source>
-        <translation type="unfinished"/>
+        <translation>Не виконуйте примусового вимикання або знеструмлення комп&apos;ютера при встановленні оновлень. Якщо ви так зробите, системі може бути завдано шкоди.</translation>
     </message>
 </context>
 <context>
@@ -415,7 +415,7 @@
     </message>
     <message>
         <source>Please plug in and then install updates.</source>
-        <translation type="unfinished"/>
+        <translation>Будь ласка, з&apos;єднайте комп&apos;ютер з джерелом живлення, потім встановлюйте оновлення.</translation>
     </message>
 </context>
 <context>
