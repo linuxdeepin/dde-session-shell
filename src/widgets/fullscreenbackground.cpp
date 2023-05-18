@@ -381,8 +381,7 @@ void FullScreenBackground::showEvent(QShowEvent *event)
 
     updateGeometry();
     // 显示的时候需要置顶，截图在上方的话无法显示锁屏 见Bug-140545
-    if (contentVisible())
-        raise();
+    raise();
 
     m_blackWidget->setBlackMode(m_model->isBlackMode());
 
