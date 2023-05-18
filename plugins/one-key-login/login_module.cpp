@@ -334,10 +334,13 @@ QString LoginModule::message(const QString &message)
         // 1. 在登录界面时，一键登录仅在启动或待机休眠唤醒的时候认证一下。
         // 2. 在锁屏界面，休眠或待机唤醒后。
         // 3. 上次A账户验证通过(登录时根据验证结果去跳转对应的用户)
-        const bool enable = (m_appType == AppType::Login && !m_loginAuthenticated) || (m_appType == AppType::Lock && m_acceptSleepSignal) || (m_appType == AppType::Login && m_lastAuthResult.result == AuthResult::Success);
+        const bool enable = (m_appType == AppType::Login && !m_loginAuthenticated) || (m_appType == AppType::Lock && m_acceptSleepSignal) ||
+                (m_appType == AppType::Login && m_lastAuthResult.result == AuthResult::Success && m_lastAuthResult.account == m_userName);
         qInfo() << "Enable plugin: " << enable
                 << ", authenticated: " << m_loginAuthenticated
-                << ", accepted sleep signal: " << m_acceptSleepSignal;
+                << ", accepted sleep signal: " << m_acceptSleepSignal
+                << ", last auth account: " << m_lastAuthResult.account
+                << ", current auth account: "<< m_userName;
 
         retDataObj["IsPluginEnabled"] = enable;
         retObj["Data"] = retDataObj;
