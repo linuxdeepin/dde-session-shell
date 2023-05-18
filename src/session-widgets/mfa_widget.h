@@ -42,6 +42,7 @@ private:
 private:
     int m_index;
     QVBoxLayout *m_mainLayout;
+    QVBoxLayout *m_authLayout;
     QList<QWidget *> m_widgetList;
 };
 

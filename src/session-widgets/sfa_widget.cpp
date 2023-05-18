@@ -24,7 +24,6 @@
 
 const QSize AuthButtonSize(60, 36);
 const QSize AuthButtonIconSize(24, 24);
-const int MAIN_LAYOUT_SPACING = 10;
 
 SFAWidget::SFAWidget(QWidget *parent)
     : AuthWidget(parent)
@@ -68,20 +67,22 @@ void SFAWidget::initUI()
     m_retryButton->hide();
 
     m_mainLayout->setContentsMargins(10, 0, 10, 0);
-    m_mainLayout->setSpacing(MAIN_LAYOUT_SPACING);
+    m_mainLayout->setSpacing(0);
     m_mainLayout->addWidget(m_biometricAuthState, 0, Qt::AlignCenter);
     m_mainLayout->addItem(m_bioAuthStatePlaceHolder);
     m_mainLayout->addItem(m_bioBottomSpacingHolder);
     m_mainLayout->addWidget(m_chooseAuthButtonBox, 0, Qt::AlignCenter);
     m_mainLayout->addItem(m_authTypeBottomSpacingHolder);
-    m_mainLayout->addWidget(m_userAvatar);
-    m_mainLayout->addWidget(m_userNameWidget, 0, Qt::AlignVCenter);
-    m_mainLayout->addWidget(m_accountEdit, 0, Qt::AlignVCenter);
-    m_mainLayout->addSpacing(10);
+    SpacerItemBinder::addWidget(m_userAvatar, m_mainLayout, Qt::AlignVCenter, 5);
+    SpacerItemBinder::addWidget(m_accountEdit, m_mainLayout, Qt::AlignVCenter, 20);
+    SpacerItemBinder::addWidget(m_userNameWidget, m_mainLayout, Qt::AlignVCenter, 20);
+    m_mainLayout->addSpacing(20);
     m_mainLayout->addWidget(m_expiredStateLabel);
-    m_mainLayout->addItem(m_expiredSpacerItem);
-    m_mainLayout->addWidget(m_lockButton, 0, Qt::AlignCenter);
-    m_mainLayout->addWidget(m_retryButton, 0, Qt::AlignCenter);
+    m_mainLayout->addSpacing(10);
+    SpacerItemBinder::addWidget(m_lockButton, m_mainLayout, Qt::AlignCenter);
+    SpacerItemBinder::addWidget(m_retryButton, m_mainLayout, Qt::AlignCenter);
+
+    m_mainLayout->invalidate();
 }
 
 void SFAWidget::initConnections()
@@ -92,6 +93,7 @@ void SFAWidget::initConnections()
     connect(m_accountEdit, &DLineEditEx::textChanged, this, [this](const QString &value) {
         m_lockButton->setEnabled(!value.isEmpty());
     });
+    connect(SpacerItemBinder::instance(), &SpacerItemBinder::requestInvalidateLayout, m_mainLayout, &QVBoxLayout::invalidate);
 }
 
 void SFAWidget::setModel(const SessionBaseModel *model)
@@ -750,7 +752,7 @@ void SFAWidget::checkAuthResult(const AuthCommon::AuthType type, const AuthCommo
 void SFAWidget::replaceWidget(AuthModule *authModule)
 {
     m_currentAuthType = authModule->authType();
-    m_mainLayout->insertWidget(layout()->indexOf(m_userAvatar) + 3, authModule);
+    m_mainLayout->insertWidget(layout()->indexOf(m_userNameWidget) + 2, authModule);
     authModule->show();
     setFocus();
     if (authModule->isLocked())
@@ -909,7 +911,7 @@ void SFAWidget::updateBlurEffectGeometry()
             if (!m_customAuth->pluginConfig().showLockButton) {
                 rect.setBottom(m_customAuth->geometry().bottom() + 10);
             } else {
-                rect.setBottom(m_lockButton->geometry().top() - 10);
+                rect.setBottom(m_lockButton->geometry().top() - 20);
             }
         } else {
             rect.setBottom(m_expiredStateLabel->geometry().top() - 10);

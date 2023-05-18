@@ -16,8 +16,12 @@
 #include <DFloatingButton>
 #include <DLabel>
 #include <DStyleOptionButton>
+#include <DSingleton>
 
 #include <QWidget>
+#include <QMap>
+#include <QPair>
+#include <QPointer>
 
 class AuthSingle;
 class AuthIris;
@@ -32,6 +36,82 @@ class SessionBaseModel;
 class UserAvatar;
 
 DWIDGET_USE_NAMESPACE
+
+// 把widget和SpacerItem进行绑定，widget隐藏的时候sapcerItem也隐藏，避免有多余的空白导致布局不符合设计
+class SpacerItemBinder : public QObject, public Dtk::Core::DSingleton<SpacerItemBinder>
+{
+    Q_OBJECT
+
+    friend class Dtk::Core::DSingleton<SpacerItemBinder>;
+public:
+
+    void bind(QWidget* w, QSpacerItem* item, QSize size)
+    {
+        if (!w || !item) {
+            return;
+        }
+
+        connect(w, &QObject::destroyed, this, [w, this] {
+            m_bindingMap.remove(w);
+        });
+
+        auto s = w->isVisible() ? size : QSize(0, 0);
+        item->changeSize(s.width(), s.height());
+        w->installEventFilter(this);
+
+        m_bindingMap.insert(w, qMakePair(item, size));
+    }
+
+    bool eventFilter(QObject* watched, QEvent* event) override
+    {
+        if ((event->type() == QEvent::Hide || event->type() == QEvent::Show)) {
+            auto w = qobject_cast<QWidget*>(watched);
+            if (m_bindingMap.contains(w)) {
+                auto pair = m_bindingMap.value(w);
+                if (pair.first) {
+                    auto size = event->type() == QEvent::Hide ? QSize(0, 0) : pair.second;
+                    pair.first->changeSize(size.width(), size.height());
+                    Q_EMIT requestInvalidateLayout();
+                }
+            }
+        }
+
+        return false;
+    }
+
+    static void addWidget(QWidget* w, QBoxLayout* layout, Qt::Alignment alignment = Qt::AlignVCenter, int h = 10)
+    {
+        QSpacerItem* item = new QSpacerItem(0, h);
+        SpacerItemBinder::instance()->bind(w, item, QSize(0, h));
+        layout->addWidget(w, 0, alignment);
+        layout->addSpacerItem(item);
+    }
+
+    void changeItemSize(QWidget* w, QSize size)
+    {
+        if (!m_bindingMap.contains(w)) {
+            return;
+        }
+
+        auto pair = m_bindingMap.value(w);
+        if (pair.first) {
+            pair.first->changeSize(size.width(), size.height());
+            pair.second = size;
+            m_bindingMap[w] = pair;
+        }
+        Q_EMIT requestInvalidateLayout();
+    }
+
+Q_SIGNALS:
+    void requestInvalidateLayout();
+
+private:
+    SpacerItemBinder() = default;
+    ~SpacerItemBinder() = default;
+
+private:
+    QMap<QWidget*, QPair<QSpacerItem*, QSize>> m_bindingMap;
+};
 
 class AuthWidget : public QWidget
 {
@@ -93,7 +173,6 @@ protected:
     UserAvatar *m_userAvatar;              // 用户头像
 
     DLabel *m_expiredStateLabel;           // 密码过期提示
-    QSpacerItem *m_expiredSpacerItem;      // 密码过期提示与按钮的间隔
     DLineEditEx *m_accountEdit;   // 用户名输入框
     UserNameWidget *m_userNameWidget;    // 用户名
 

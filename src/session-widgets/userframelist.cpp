@@ -235,9 +235,7 @@ void UserFrameList::updateLayout(int width)
 {
     // 处理窗体数量小于5个时的居中显示，取 窗体数量*窗体宽度 和 最大宽度 的较小值，设置为m_centerWidget的宽度
     auto userWidget = m_loginWidgets.constFirst();
-    int userWidgetHeight = UserFrameHeight;
-    if (userWidget)
-        userWidgetHeight = userWidget->heightHint();
+    int userWidgetHeight = userWidget ? userWidget->heightHint() : UserFrameHeight;
 
     int resolutionWidth = 0;
     QWidget* parentWidget = qobject_cast<QWidget*>(this->parent());

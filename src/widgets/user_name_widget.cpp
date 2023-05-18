@@ -36,7 +36,10 @@ void UserNameWidget::initialize()
 {
     setAccessibleName("UserNameWidget");
     QVBoxLayout *vLayout = new QVBoxLayout;
+    vLayout->setMargin(0);
+    vLayout->setSpacing(0);
     QHBoxLayout *hLayout = new QHBoxLayout;
+    hLayout->setMargin(0);
 
     m_userPicLabel = new DLabel(this);
     m_userPicLabel->setAlignment(Qt::AlignVCenter);
@@ -74,6 +77,7 @@ void UserNameWidget::initialize()
     vLayout->addLayout(hLayout);
     hLayout->addStretch();
     hLayout->addWidget(m_userPicLabel);
+    hLayout->addSpacing(8);
     hLayout->addWidget(m_fullNameLabel);
     hLayout->addStretch();
 
@@ -153,11 +157,9 @@ void UserNameWidget::resizeEvent(QResizeEvent *event)
 int UserNameWidget::heightHint() const
 {
     int height = 0;
-    if (m_userPicLabel)
-        height += USER_PIC_HEIGHT;
-    if (m_fullNameLabel)
-        height += m_fullNameLabel->fontMetrics().height();
-    if (m_displayNameLabel)
+    if (m_showUserName)
+        height += qMax(USER_PIC_HEIGHT, m_fullNameLabel->fontMetrics().height());
+    if (m_showDisplayName)
         height += m_displayNameLabel->fontMetrics().height();
 
     return height;

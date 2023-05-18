@@ -18,6 +18,7 @@ MFAWidget::MFAWidget(QWidget *parent)
     : AuthWidget(parent)
     , m_index(0)
     , m_mainLayout(new QVBoxLayout(this))
+    , m_authLayout(new QVBoxLayout)
 {
     setObjectName(QStringLiteral("MFAWidget"));
     setAccessibleName(QStringLiteral("MFAWidget"));
@@ -29,15 +30,18 @@ MFAWidget::MFAWidget(QWidget *parent)
 void MFAWidget::initUI()
 {
     AuthWidget::initUI();
+    m_authLayout->setSpacing(10);
+    m_authLayout->setMargin(0);
 
+    m_mainLayout->setSpacing(0);
     m_mainLayout->setContentsMargins(10, 0, 10, 0);
-    m_mainLayout->setSpacing(10);
-    m_mainLayout->addWidget(m_userAvatar);
-    m_mainLayout->addWidget(m_userNameWidget, 0, Qt::AlignVCenter);
-    m_mainLayout->addWidget(m_accountEdit, 0, Qt::AlignVCenter);
-    m_mainLayout->addSpacing(10);
+    SpacerItemBinder::addWidget(m_userAvatar, m_mainLayout, Qt::AlignVCenter, 0);
+    SpacerItemBinder::addWidget(m_accountEdit, m_mainLayout, Qt::AlignVCenter, 24);
+    SpacerItemBinder::addWidget(m_userNameWidget, m_mainLayout, Qt::AlignVCenter, 24);
+    m_mainLayout->addLayout(m_authLayout);
+    m_mainLayout->addSpacing(20);
     m_mainLayout->addWidget(m_expiredStateLabel);
-    m_mainLayout->addItem(m_expiredSpacerItem);
+    m_mainLayout->addSpacing(10);
     m_mainLayout->addWidget(m_lockButton, 0, Qt::AlignCenter);
 }
 
@@ -62,7 +66,7 @@ void MFAWidget::setModel(const SessionBaseModel *model)
 void MFAWidget::setAuthType(const AuthFlags type)
 {
     qDebug() << "MFAWidget::setAuthType:" << type;
-    m_index = 2;
+    m_index = 0;
     /* 面容 */
     if (type & AT_Face) {
         initFaceAuth();
@@ -210,7 +214,7 @@ void MFAWidget::initPasswdAuth()
 {
     if (m_passwordAuth) {
         m_passwordAuth->reset();
-        m_mainLayout->insertWidget(m_index, m_passwordAuth);
+        m_authLayout->insertWidget(m_index, m_passwordAuth);
         return;
     }
     m_passwordAuth = new AuthPassword(this);
@@ -220,7 +224,7 @@ void MFAWidget::initPasswdAuth()
     m_passwordAuth->setAuthStatueVisible(true);
     m_passwordAuth->setPasswordLineEditEnabled(m_model->currentUser()->allowToChangePassword() || m_model->appType() != Login);
 
-    m_mainLayout->insertWidget(m_index, m_passwordAuth);
+    m_authLayout->insertWidget(m_index, m_passwordAuth);
 
     connect(m_passwordAuth, &AuthPassword::activeAuth, this, [this] {
         emit requestStartAuthentication(m_model->currentUser()->name(), AT_Password);
@@ -250,12 +254,12 @@ void MFAWidget::initFingerprintAuth()
 {
     if (m_fingerprintAuth) {
         m_fingerprintAuth->reset();
-        m_mainLayout->insertWidget(m_index, m_fingerprintAuth);
+        m_authLayout->insertWidget(m_index, m_fingerprintAuth);
         return;
     }
     m_fingerprintAuth = new AuthFingerprint(this);
     m_fingerprintAuth->setAuthFactorType(DDESESSIONCC::MultiAuthFactor);
-    m_mainLayout->insertWidget(m_index, m_fingerprintAuth);
+    m_authLayout->insertWidget(m_index, m_fingerprintAuth);
 
     connect(m_fingerprintAuth, &AuthFingerprint::activeAuth, this, [this] {
         emit requestStartAuthentication(m_model->currentUser()->name(), AT_Fingerprint);
@@ -272,13 +276,13 @@ void MFAWidget::initUKeyAuth()
 {
     if (m_ukeyAuth) {
         m_ukeyAuth->reset();
-        m_mainLayout->insertWidget(m_index, m_ukeyAuth);
+        m_authLayout->insertWidget(m_index, m_ukeyAuth);
         return;
     }
     m_ukeyAuth = new AuthUKey(this);
     m_ukeyAuth->setCapsLockVisible(m_capsLockMonitor->isCapsLockOn());
     m_ukeyAuth->setAuthStatueVisible(true);
-    m_mainLayout->insertWidget(m_index, m_ukeyAuth);
+    m_authLayout->insertWidget(m_index, m_ukeyAuth);
 
     connect(m_ukeyAuth, &AuthUKey::activeAuth, this, [this] {
         emit requestStartAuthentication(m_model->currentUser()->name(), AT_Ukey);
@@ -313,12 +317,12 @@ void MFAWidget::initFaceAuth()
 {
     if (m_faceAuth) {
         m_faceAuth->reset();
-        m_mainLayout->insertWidget(m_index, m_faceAuth);
+        m_authLayout->insertWidget(m_index, m_faceAuth);
         return;
     }
     m_faceAuth = new AuthFace(this);
     m_faceAuth->setAuthFactorType(DDESESSIONCC::MultiAuthFactor);
-    m_mainLayout->insertWidget(m_index, m_faceAuth);
+    m_authLayout->insertWidget(m_index, m_faceAuth);
 
     connect(m_faceAuth, &AuthFace::activeAuth, this, [this] {
         emit requestStartAuthentication(m_model->currentUser()->name(), AT_Face);
@@ -335,12 +339,12 @@ void MFAWidget::initIrisAuth()
 {
     if (m_irisAuth) {
         m_irisAuth->reset();
-        m_mainLayout->insertWidget(m_index, m_irisAuth);
+        m_authLayout->insertWidget(m_index, m_irisAuth);
         return;
     }
     m_irisAuth = new AuthIris(this);
     m_irisAuth->setAuthFactorType(DDESESSIONCC::MultiAuthFactor);
-    m_mainLayout->insertWidget(m_index, m_irisAuth);
+    m_authLayout->insertWidget(m_index, m_irisAuth);
 
     connect(m_irisAuth, &AuthIris::activeAuth, this, [this] {
         emit requestStartAuthentication(m_model->currentUser()->name(), AT_Iris);
@@ -412,7 +416,7 @@ int MFAWidget::getTopSpacing() const
 {
     const int calcTopHeight = static_cast<int>(topLevelWidget()->geometry().height() * AUTH_WIDGET_TOP_SPACING_PERCENT);
     // 验证类型数量*高度
-    const int authWidgetHeight = (m_index - 2) * 47 + MIN_AUTH_WIDGET_HEIGHT;
+    const int authWidgetHeight = m_index * 47 + MIN_AUTH_WIDGET_HEIGHT;
 
     // 当分辨率过低时，如果仍然保持用户头像到屏幕顶端的距离为屏幕高度的35%，那么验证窗口整体时偏下的。
     // 计算当验证窗口居中时距离屏幕顶端的高度，与屏幕高度*0.35对比取较小值。

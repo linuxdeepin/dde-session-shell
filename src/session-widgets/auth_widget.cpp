@@ -20,7 +20,6 @@
 
 const int BlurRadius = 15;
 const int BlurTransparency = 70;
-const int EXPIRED_SPACER_ITEM_HEIGHT = 10;
 
 const QColor ShutdownColor(QColor(247, 68, 68));
 
@@ -31,7 +30,6 @@ AuthWidget::AuthWidget(QWidget *parent)
     , m_lockButton(nullptr)
     , m_userAvatar(nullptr)
     , m_expiredStateLabel(new DLabel(this))
-    , m_expiredSpacerItem(new QSpacerItem(0, 0))
     , m_accountEdit(nullptr)
     , m_userNameWidget(nullptr)
     , m_capsLockMonitor(nullptr)
@@ -371,7 +369,7 @@ void AuthWidget::updateBlurEffectGeometry()
     QRect rect = this->rect();
     rect.setTop(m_userAvatar->geometry().top() + m_userAvatar->height() / 2);
     if (m_user->expiredState() == User::ExpiredNormal) {
-        rect.setBottom(m_lockButton->geometry().top() - 10);
+        rect.setBottom(m_lockButton->geometry().top() - 20);
     } else {
         rect.setBottom(m_expiredStateLabel->geometry().top() - 10);
     }
@@ -385,19 +383,16 @@ void AuthWidget::updatePasswordExpiredState()
 {
     switch (m_user->expiredState()) {
     case User::ExpiredNormal:
-        m_expiredSpacerItem->changeSize(0, 0);
         m_expiredStateLabel->clear();
         m_expiredStateLabel->hide();
         break;
     case User::ExpiredSoon:
         m_expiredStateLabel->setText(tr("Your password will expire in %n days, please change it timely", "", m_user->expiredDayLeft()));
         m_expiredStateLabel->show();
-        m_expiredSpacerItem->changeSize(0, EXPIRED_SPACER_ITEM_HEIGHT);
         break;
     case User::ExpiredAlready:
         m_expiredStateLabel->setText(m_user->allowToChangePassword() ? tr("Password expired, please change") : tr("Your password has expired. Please contact the administrator to change it"));
         m_expiredStateLabel->show();
-        m_expiredSpacerItem->changeSize(0, EXPIRED_SPACER_ITEM_HEIGHT);
         break;
     default:
         break;

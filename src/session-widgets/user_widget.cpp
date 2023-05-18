@@ -48,15 +48,17 @@ void UserWidget::initUI()
     /* 用户全名 */
     m_displayNameWidget->setAccessibleName(QStringLiteral("NameWidget"));
     QHBoxLayout *nameLayout = new QHBoxLayout(m_displayNameWidget);
-    nameLayout->setContentsMargins(0, 0, 0, 0);
-    nameLayout->setSpacing(5);
+    nameLayout->setMargin(0);
+    nameLayout->setSpacing(8);
 
     QPixmap pixmap = DHiDPIHelper::loadNxPixmap(":/misc/images/select.svg");
     pixmap.setDevicePixelRatio(devicePixelRatioF());
     m_loginState->setAccessibleName("LoginState");
     m_loginState->setPixmap(pixmap);
     m_loginState->setVisible(m_user->isLogin());
-    QVBoxLayout *loginStateLayout = new QVBoxLayout(m_displayNameWidget);
+    QVBoxLayout *loginStateLayout = new QVBoxLayout;
+    loginStateLayout->setSpacing(0);
+    loginStateLayout->setMargin(0);
     loginStateLayout->addSpacing(4);
     loginStateLayout->addWidget(m_loginState);
     nameLayout->addLayout(loginStateLayout, 0);
@@ -83,11 +85,15 @@ void UserWidget::initUI()
     m_blurEffectWidget->setBlurRectXRadius(BlurRadius);
     m_blurEffectWidget->setBlurRectYRadius(BlurRadius);
 
+    m_mainLayout->setSpacing(0);
+    m_mainLayout->setMargin(0);
     m_mainLayout->addWidget(m_avatar);
+    m_mainLayout->addSpacing(4);
     m_mainLayout->addWidget(m_displayNameWidget, 0, Qt::AlignHCenter);
     if (m_userNameWidget)
         m_mainLayout->addWidget(m_userNameWidget);
     m_mainLayout->addSpacing(20);
+    m_mainLayout->addStretch(1);
 
     DConfigHelper::instance()->bind(this, SHOW_USER_NAME, &UserWidget::onDConfigPropertyChanged);
     DConfigHelper::instance()->bind(this, USER_FRAME_MAX_WIDTH, &UserWidget::onDConfigPropertyChanged);
@@ -199,8 +205,7 @@ void UserWidget::updateBlurEffectGeometry()
 {
     QRect rect = layout()->geometry();
     rect.setTop(m_avatar->geometry().top() + m_avatar->height() / 2);
-    const QWidget *w = m_userNameWidget ? m_userNameWidget : m_displayNameWidget;
-    rect.setBottom(w->geometry().bottom() + 10);
+    rect.setBottom(rect.bottom() - 18);
     m_blurEffectWidget->setGeometry(rect);
 }
 

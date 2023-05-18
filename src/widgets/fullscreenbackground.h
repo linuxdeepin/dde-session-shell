@@ -36,7 +36,7 @@ public:
 public slots:
     void updateBackground(const QString &path);
     void updateBlurBackground(const QString &path);
-    void setScreen(QPointer<QScreen> screen, bool isVisible = true);
+    void setScreen(QPointer<QScreen> screen, bool isVisible = true) override;
     void setIsHibernateMode();
 
 signals:
