@@ -120,6 +120,7 @@ public slots:
     void setKeyboardList(const QStringList& str);
     void onItemClicked(const QString& str);
     void updateModuleVisible();
+    void setCanShowMenu(bool state) { m_canShowMenu = state; }
 
 protected:
     bool eventFilter(QObject *watched, QEvent *event) Q_DECL_OVERRIDE;
@@ -160,6 +161,7 @@ private:
     QList<QMetaObject::Connection> m_connectionList;
     bool m_onboardBtnVisible;
     bool m_doGrabKeyboard;
+    bool m_canShowMenu;
 };
 
 #endif // CONTROLWIDGET_H

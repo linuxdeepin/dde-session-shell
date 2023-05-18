@@ -586,6 +586,9 @@ void LockContent::showModule(const QString &name, const bool callShowForce)
                     m_popWin->hide();
                 }
             });
+            connect(m_popWin, &PopupWindow::visibleChanged, this, [this] (bool visible) {
+                m_controlWidget->setCanShowMenu(!visible);
+            });
             // 隐藏后需要removeEventFilter，后期优化
             for (auto child : this->findChildren<QWidget*>()) {
                 child->installEventFilter(this);

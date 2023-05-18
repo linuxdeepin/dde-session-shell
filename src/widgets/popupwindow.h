@@ -29,6 +29,9 @@ protected:
     void enterEvent(QEvent *e) override;
     bool eventFilter(QObject *o, QEvent *e) override;
 
+signals:
+    void visibleChanged(bool visible);
+
 private slots:
     void ensureRaised();
 

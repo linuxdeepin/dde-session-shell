@@ -87,6 +87,7 @@ ControlWidget::ControlWidget(const SessionBaseModel *model, QWidget *parent)
     , m_keyboardBtn(nullptr)
     , m_onboardBtnVisible(true)
     , m_doGrabKeyboard(true)
+    , m_canShowMenu(true)
 {
     setModel(model);
     initUI();
@@ -317,6 +318,8 @@ void ControlWidget::addModule(TrayPlugin *trayModule)
     m_btnList.insert(1, button);
 
     connect(button, &FloatingButton::requestShowMenu, this, [this, trayModule] {
+        if (!m_canShowMenu)
+            return;
         const QString menuJson = trayModule->itemContextMenu();
         if (menuJson.isEmpty())
             return;

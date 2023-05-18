@@ -61,11 +61,13 @@ void PopupWindow::hide()
 {
     if (getContent())
         getContent()->setVisible(false);
+    Q_EMIT visibleChanged(false);
     DArrowRectangle::hide();
 }
 
 void PopupWindow::showEvent(QShowEvent *e)
 {
+    Q_EMIT visibleChanged(true);
     DArrowRectangle::showEvent(e);
 
     QTimer::singleShot(0, this, &PopupWindow::ensureRaised);
