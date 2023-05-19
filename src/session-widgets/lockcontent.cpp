@@ -598,7 +598,9 @@ void LockContent::showModule(const QString &name, const bool callShowForce)
         if (!m_popWin->getContent() || m_popWin->getContent() != plugin->content())
             m_popWin->setContent(plugin->content());
         const QPoint &point = mapFromGlobal(m_currentTray->mapToGlobal(QPoint(m_currentTray->size().width() / 2, 0)));
-        callShowForce ? m_popWin->show(point) : m_popWin->toggle(point);
+        // 插件图标不显示，窗口不显示
+        if (m_currentTray->isVisible())
+            callShowForce ? m_popWin->show(point) : m_popWin->toggle(point);
         break;
     }
     default:
