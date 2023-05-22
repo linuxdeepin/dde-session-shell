@@ -73,7 +73,7 @@ void AuthPassword::initUI()
     setLineEditInfo(tr("Password"), PlaceHolderText);
 
     QHBoxLayout *passwordLayout = new QHBoxLayout(m_lineEdit->lineEdit());
-    passwordLayout->setContentsMargins(5, 0, 10, 0);
+    passwordLayout->setContentsMargins(10, 0, 10, 0);
     passwordLayout->setSpacing(5);
     /* 大小写状态 */
     QPixmap pixmap = DHiDPIHelper::loadNxPixmap(CAPS_LOCK);
@@ -137,6 +137,7 @@ void AuthPassword::initConnections()
         m_lineEdit->hideAlertMessage();
         hidePasswordHintWidget();
         m_lineEdit->setAlert(false);
+        updatePasswordTextMargins();
         emit lineEditTextChanged(text);
     });
     connect(m_lineEdit, &DLineEditEx::returnPressed, this, [this] {
@@ -148,9 +149,11 @@ void AuthPassword::initConnections()
         if (m_lineEdit->echoMode() == QLineEdit::EchoMode::Password) {
             m_passwordShowBtn->setIcon(QIcon(PASSWORD_HIDE));
             m_lineEdit->lineEdit()->setEchoMode(QLineEdit::Normal);
+            updatePasswordTextMargins();
         } else {
             m_passwordShowBtn->setIcon(QIcon(PASSWORD_SHOWN));
             m_lineEdit->lineEdit()->setEchoMode(QLineEdit::Password);
+            updatePasswordTextMargins();
         }
     });
 }
@@ -733,12 +736,22 @@ void AuthPassword::hidePasswordHintWidget()
 
 void AuthPassword::updatePasswordTextMargins()
 {
-    // 根据大小写提示是否显示，设置密码框左边距,根据密码提示和显示密码设置密码杠右边距
     QMargins textMargins = m_lineEdit->lineEdit()->textMargins();
-    textMargins.setLeft(m_capsLock->isVisible() ? m_capsLock->width() : 0);
-    textMargins.setRight((m_passwordShowBtn->isVisible() ? m_passwordShowBtn->width() : 0) +
-                         (m_authStateLabel->isVisible() ? m_authStateLabel->width() : 0) +
-                         (m_passwordHintBtn->isVisible() ? m_passwordHintBtn->width() : 0));
+    // 右边控件宽度+控件间距
+    const int rightWidth = (m_passwordShowBtn->isVisible() ? m_passwordShowBtn->width() + 5 : 0) +
+                         (m_authStateLabel->isVisible() ? m_authStateLabel->width() + 5 : 0) +
+                         (m_passwordHintBtn->isVisible() ? m_passwordHintBtn->width() + 5: 0);
+    // 左侧控件宽度
+    const int leftWidth = (m_capsLock->isVisible() ? m_capsLock->width() + 5: 0);
+    textMargins.setRight(rightWidth);
+    const int displayTextWidth = m_lineEdit->lineEdit()->fontMetrics().width(m_lineEdit->lineEdit()->displayText());
+    // 计算当前文字长度+图标+间距所需长度 和 编辑框长度的差值，如果空间不足，则缩减左边的margin，但是不小于左侧控件的宽度
+    const int diff = m_lineEdit->lineEdit()->width() - 10 /*borer padding等宽度*/ - (displayTextWidth + 15 /*content margin*/ + textMargins.right() * 2);
+    textMargins.setLeft(qMax(leftWidth, rightWidth + (diff < 0 ? diff : 0)));
+    if (textMargins == m_lineEdit->lineEdit()->textMargins()) {
+        return;
+    }
+
     m_lineEdit->lineEdit()->setTextMargins(textMargins);
 }
 
