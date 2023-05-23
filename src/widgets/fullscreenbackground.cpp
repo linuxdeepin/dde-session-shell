@@ -5,6 +5,7 @@
 #include "fullscreenbackground.h"
 
 #include "black_widget.h"
+#include "lockcontent.h"
 #include "public_func.h"
 #include "sessionbasemodel.h"
 #include "dconfig_helper.h"
@@ -212,6 +213,9 @@ void FullScreenBackground::setContent(QWidget *const w)
         currentContent->raise();
         currentContent->show();
     };
+    auto lockContent = dynamic_cast<LockContent*>(w);
+    if (lockContent)
+        Q_EMIT lockContent->parentChanged();
 }
 
 void FullScreenBackground::setIsHibernateMode()

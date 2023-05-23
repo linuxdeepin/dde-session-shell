@@ -57,6 +57,7 @@ signals:
     void authFinished();
     void requestCheckAccount(const QString &account);
     void requestLockFrameHide();
+    void parentChanged();
 
 public slots:
     void pushPasswordFrame();
