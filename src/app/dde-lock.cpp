@@ -163,7 +163,7 @@ int main(int argc, char *argv[])
         lockFrame->setScreen(screen, count <= 0);
         QObject::connect(model, &SessionBaseModel::visibleChanged, lockFrame, [lockFrame](const bool visible) {
             lockFrame->setVisible(visible);
-            QTimer::singleShot(300, [lockFrame] {
+            QTimer::singleShot(300, lockFrame, [lockFrame] {
                 qDebug() << "Update frame after lock frame visible changed";
                 lockFrame->update();
             });
