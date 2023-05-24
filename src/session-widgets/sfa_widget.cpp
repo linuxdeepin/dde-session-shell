@@ -385,14 +385,12 @@ void SFAWidget::initPasswdAuth()
         emit sendTokenToAuth(m_user->name(), AT_Password, text);
     });
 
-    if (AppType::Login == m_model->appType()) {
-        connect(m_passwordAuth, &AuthPassword::notifyLockedStateChanged, this, [this](bool isLocked) {
-            m_chooseAuthButtonBox->setEnabled(!isLocked);
-            if (isLocked) {
-                onRequestChangeAuth(AT_Password);
-            }
-        });
-    }
+    connect(m_passwordAuth, &AuthPassword::notifyLockedStateChanged, this, [this](bool isLocked) {
+        m_chooseAuthButtonBox->setEnabled(!isLocked);
+        if (isLocked) {
+            onRequestChangeAuth(AT_Password);
+        }
+    });
 
     connect(m_lockButton, &QPushButton::clicked, m_passwordAuth, &AuthPassword::requestAuthenticate);
     connect(m_capsLockMonitor, &KeyboardMonitor::capsLockStatusChanged, m_passwordAuth, &AuthPassword::setCapsLockVisible);
