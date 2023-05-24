@@ -104,17 +104,7 @@ void UpdateWorker::init()
             connect(m_login1SessionSelf, &Login1SessionSelf::ActiveChanged, this, [this](bool active) {
                 qInfo() << "UpdateWorker: login1 self session active changed:" << active;
                 if (UpdateModel::instance()->updateStatus() == UpdateModel::Installing) {
-                    const int lastoreDaemonStatus = DConfigHelper::instance()->getConfig("org.deepin.lastore", "org.deepin.lastore", "", "lastore-daemon-status", 0).toInt();
-                    qInfo() << "Lastore daemon status: " << lastoreDaemonStatus;
-                    static const int IS_UPDATE_READY = 1; // 第一位表示更新是否可用
-                    const bool isUpdateReady = lastoreDaemonStatus & IS_UPDATE_READY;
-                    if (!isUpdateReady) {
-                        // 更新成功
-                        qInfo() << "Update successfully";
-                        UpdateModel::instance()->setUpdateStatus(UpdateModel::InstallSuccess);
-                    } else {
-                        checkStatusAfterSessionActive();
-                    }
+                    checkStatusAfterSessionActive();
                 }
             });
         } else {
@@ -509,31 +499,14 @@ void UpdateWorker::checkStatusAfterSessionActive()
             return;
         }
     }
-
-    qInfo() << "Check backup status";
-    if (m_abRecoveryInter->isValid() || syncStartService(m_abRecoveryInter) ) {
-        QDBusReply<bool> reply = m_abRecoveryInter->call("CanBackup");
-        if (!reply.isValid()) {
-            qWarning() << "Call `CanBackup` function failed, error: " << reply.error().message();
-            return;
-        }
-
-        if (m_abRecoveryInter->backingUp()) {
-            qInfo() << "Backing up";
-            return;
-        }
-
-        if (!m_abRecoveryInter->hasBackedUp()) {
-            qWarning() << "System can backup but do not has backed up";
-            UpdateModel::instance()->setUpdateError(UpdateModel::BackupFailedUnknownReason);
-            UpdateModel::instance()->setUpdateStatus(UpdateModel::BackupFailed);
-            return;
-        }
-
-        // 已经备份完成但是并没有安装则开始安装
-        if (UpdateModel::instance()->updateStatus() < UpdateModel::Installing) {
-            doDistUpgrade(false);
-        }
+    const int lastoreDaemonStatus = DConfigHelper::instance()->getConfig("org.deepin.lastore", "org.deepin.lastore", "","lastore-daemon-status", 0).toInt();
+    qInfo() << "Lastore daemon status: " << lastoreDaemonStatus;
+    static const int IS_UPDATE_READY = 1; // 第一位表示更新是否可用
+    const bool isUpdateReady = lastoreDaemonStatus & IS_UPDATE_READY;
+    if (!isUpdateReady) {
+        // 更新成功
+        qInfo() << "Update successfully";
+        UpdateModel::instance()->setUpdateStatus(UpdateModel::InstallSuccess);
     }
 }
 
