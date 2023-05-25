@@ -233,13 +233,6 @@ void ControlWidget::initUI()
     m_mainLayout->addWidget(m_switchUserBtn);
     m_mainLayout->addWidget(m_powerBtn);
 
-    for (const auto &module : PluginManager::instance()->trayPlugins()) {
-        if (!module)
-            continue;
-
-        addModule(module);
-    }
-
     updateLayout();
 
     // 初始化键盘布局列表
@@ -690,6 +683,24 @@ void ControlWidget::keyReleaseEvent(QKeyEvent *event)
         m_index = it != m_btnList.end() ? m_btnList.indexOf(it.i->t()) : 0;
         break;
     }
+}
+
+void ControlWidget::showEvent(QShowEvent *event)
+{
+    auto initPlugins = [this] {
+        for (const auto &module : PluginManager::instance()->trayPlugins()) {
+            if (!module)
+                continue;
+
+            addModule(module);
+        }
+    };
+    static bool isInit = false;
+    if (!isInit) {
+        initPlugins();
+        isInit = true;
+    }
+    QWidget::showEvent(event);
 }
 
 void ControlWidget::updateTapOrder()
