@@ -1,3 +1,22 @@
+dde-session-shell (5.6.11.1) unstable; urgency=medium
+
+  [ Deepin Packages Builder ]
+  * fix: 修复网络面板和网络图标右键菜单面板可同时打开的问题(Bug: 200365)(Influence: 网络面板和菜单显示)
+  * chore: 更新翻译(Task: 267299)(Influence: 更新相关翻译)
+  * feat: 增加轻量版的greeter(Task: 251417)(Influence: 新功能，仅具备密码登录)
+  * fix: 截图时无法锁屏(Bug: 199017)(Influence: 正常情况时、截图时、单屏&多屏的场景)
+  * fix: 修复在关机界面络面板回连也会弹出的问题(Task: 267681)(Influence: 网络面板弹窗)
+  * fix: 系统更新图标合规(Task: 267459)(Influence: 锁屏更新界面图标合规替换)
+  * fix: 用户登录界面UI间距不符合设计(Bug: 194335)(Influence: 登录界面、切换用户页面UI间距)
+  * fix: 密码框内密码视觉左右未居中(Bug: 197071)(Influence: 密码输入框UI效果)
+  * fix: 修复扩展模式下网络面板位置异常的问题(Bug: 201107)(Influence: 扩展模式下网络面板的位置)
+  * fix: 处理模态更新tty切换场景(Bug: 201267)(Influence: tty切换)
+  * fix: 修复W525登录界面网络面板位置异常的问题(Bug: 201437)(Influence: 网络回连后面板位置)
+  * fix: 解决锁屏下密码认证被锁定后仍然可以切换其他认证方式的问题。(Bug: 201449)(Influence: 密码认证被锁定后不可切换其他认证。)
+  * fix: 解决插拔屏幕锁屏崩溃的问题。(Bug: 201311)(Influence: 插拔显示器，锁屏显示正常。)
+
+ -- Deepin Packages Builder <packages@deepin.org>  Thu, 25 May 2023 14:19:23 +0800
+
 dde-session-shell (5.6.10.2) unstable; urgency=medium
 
   [ Deepin Packages Builder ]
