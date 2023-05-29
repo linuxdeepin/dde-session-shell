@@ -1034,7 +1034,7 @@ void SFAWidget::initChooseAuthButtonBox(const AuthFlags authFlags)
 {
     m_chooseAuthButtonBox->setEnabled(true);
     // 如果密码锁定，那么切换到密码认证且不允许切换认证类型
-    if (AppType::Login == m_model->appType() && m_passwordAuth) {
+    if (m_passwordAuth) {
         m_chooseAuthButtonBox->setEnabled(!m_passwordAuth->isLocked());
         if (m_passwordAuth->isLocked()) {
             m_user->setLastAuthType(AT_Password);
