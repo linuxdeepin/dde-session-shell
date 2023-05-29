@@ -219,7 +219,7 @@ void MFAWidget::initPasswdAuth()
     }
     m_passwordAuth = new AuthPassword(this);
     m_passwordAuth->setCurrentUid(m_model->currentUser()->uid());
-    m_passwordAuth->setCapsLockVisible(m_capsLockMonitor->isCapsLockOn());
+    m_passwordAuth->setCapsLockVisible(KeyboardMonitor::instance()->isCapsLockOn());
     m_passwordAuth->setPasswordHint(m_user->passwordHint());
     m_passwordAuth->setAuthStatueVisible(true);
     m_passwordAuth->setPasswordLineEditEnabled(m_model->currentUser()->allowToChangePassword() || m_model->appType() != Login);
@@ -243,7 +243,7 @@ void MFAWidget::initPasswdAuth()
         checkAuthResult(AT_Password, value);
     });
     connect(m_lockButton, &QPushButton::clicked, m_passwordAuth, &AuthPassword::requestAuthenticate);
-    connect(m_capsLockMonitor, &KeyboardMonitor::capsLockStatusChanged, m_passwordAuth, &AuthPassword::setCapsLockVisible);
+    connect(KeyboardMonitor::instance(), &KeyboardMonitor::capsLockStatusChanged, m_passwordAuth, &AuthPassword::setCapsLockVisible);
     connect(m_passwordAuth, &AuthPassword::requestChangeFocus, this, &MFAWidget::updateFocusPosition);
 }
 
@@ -280,7 +280,7 @@ void MFAWidget::initUKeyAuth()
         return;
     }
     m_ukeyAuth = new AuthUKey(this);
-    m_ukeyAuth->setCapsLockVisible(m_capsLockMonitor->isCapsLockOn());
+    m_ukeyAuth->setCapsLockVisible(KeyboardMonitor::instance()->isCapsLockOn());
     m_ukeyAuth->setAuthStatueVisible(true);
     m_authLayout->insertWidget(m_index, m_ukeyAuth);
 
@@ -301,7 +301,7 @@ void MFAWidget::initUKeyAuth()
     connect(m_ukeyAuth, &AuthUKey::authFinished, this, [this](const AuthState state) {
         checkAuthResult(AT_Ukey, state);
     });
-    connect(m_capsLockMonitor, &KeyboardMonitor::capsLockStatusChanged, m_ukeyAuth, &AuthUKey::setCapsLockVisible);
+    connect(KeyboardMonitor::instance(), &KeyboardMonitor::capsLockStatusChanged, m_ukeyAuth, &AuthUKey::setCapsLockVisible);
     connect(m_ukeyAuth, &AuthUKey::lineEditTextChanged, this, [this](const QString &value) {
         if (m_model->getAuthProperty().PINLen > 0 && value.size() >= m_model->getAuthProperty().PINLen) {
             emit m_ukeyAuth->requestAuthenticate();

@@ -24,6 +24,8 @@ KeyboardMonitor::KeyboardMonitor()
         connect(m_keyBoardPlatform, &KeyBoardPlatform::numLockStatusChanged, this, &KeyboardMonitor::numLockStatusChanged);
         connect(m_keyBoardPlatform, &KeyBoardPlatform::initialized, this, &KeyboardMonitor::initialized);
     }
+
+    start(QThread::LowestPriority);
 }
 
 KeyboardMonitor *KeyboardMonitor::instance()

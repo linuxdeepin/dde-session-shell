@@ -323,7 +323,7 @@ void SFAWidget::initSingleAuth()
         }
         emit sendTokenToAuth(m_model->currentUser()->name(), AT_PAM, m_singleAuth->lineEditText());
     });
-    connect(m_capsLockMonitor, &KeyboardMonitor::capsLockStatusChanged, m_singleAuth, &AuthSingle::setCapsLockVisible);
+    connect(KeyboardMonitor::instance(), &KeyboardMonitor::capsLockStatusChanged, m_singleAuth, &AuthSingle::setCapsLockVisible);
     connect(m_lockButton, &QPushButton::clicked, m_singleAuth, &AuthSingle::requestAuthenticate);
 
     connect(m_singleAuth, &AuthSingle::lineEditTextChanged, this, [this](const QString &value) {
@@ -332,7 +332,7 @@ void SFAWidget::initSingleAuth()
 
     m_singleAuth->setKeyboardButtonVisible(m_keyboardList.size() > 1 ? true : false);
     m_singleAuth->setKeyboardButtonInfo(m_keyboardType);
-    m_singleAuth->setCapsLockVisible(m_capsLockMonitor->isCapsLockOn());
+    m_singleAuth->setCapsLockVisible(KeyboardMonitor::instance()->isCapsLockOn());
     m_singleAuth->setPasswordHint(m_model->currentUser()->passwordHint());
 
     /* 认证选择按钮 */
@@ -393,11 +393,11 @@ void SFAWidget::initPasswdAuth()
     });
 
     connect(m_lockButton, &QPushButton::clicked, m_passwordAuth, &AuthPassword::requestAuthenticate);
-    connect(m_capsLockMonitor, &KeyboardMonitor::capsLockStatusChanged, m_passwordAuth, &AuthPassword::setCapsLockVisible);
+    connect(KeyboardMonitor::instance(), &KeyboardMonitor::capsLockStatusChanged, m_passwordAuth, &AuthPassword::setCapsLockVisible);
     connect(m_passwordAuth, &AuthPassword::lineEditTextChanged, this, [this](const QString &value) {
         m_lockButton->setEnabled(!value.isEmpty());
     });
-    m_passwordAuth->setCapsLockVisible(m_capsLockMonitor->isCapsLockOn());
+    m_passwordAuth->setCapsLockVisible(KeyboardMonitor::instance()->isCapsLockOn());
     m_passwordAuth->setPasswordHint(m_user->passwordHint());
     /* 认证选择按钮 */
     DButtonBoxButton *btn = new DButtonBoxButton(QIcon(Password_Auth), QString(), this);
@@ -487,14 +487,14 @@ void SFAWidget::initUKeyAuth()
         emit sendTokenToAuth(m_model->currentUser()->name(), AT_Ukey, text);
     });
     connect(m_lockButton, &QPushButton::clicked, m_ukeyAuth, &AuthUKey::requestAuthenticate);
-    connect(m_capsLockMonitor, &KeyboardMonitor::capsLockStatusChanged, m_ukeyAuth, &AuthUKey::setCapsLockVisible);
+    connect(KeyboardMonitor::instance(), &KeyboardMonitor::capsLockStatusChanged, m_ukeyAuth, &AuthUKey::setCapsLockVisible);
     connect(m_ukeyAuth, &AuthUKey::lineEditTextChanged, this, [this](const QString &value) {
         if (m_model->getAuthProperty().PINLen > 0 && value.size() >= m_model->getAuthProperty().PINLen) {
             emit m_ukeyAuth->requestAuthenticate();
         }
     });
 
-    m_ukeyAuth->setCapsLockVisible(m_capsLockMonitor->isCapsLockOn());
+    m_ukeyAuth->setCapsLockVisible(KeyboardMonitor::instance()->isCapsLockOn());
 
     /* 认证选择按钮 */
     DButtonBoxButton *btn = new DButtonBoxButton(QIcon(UKey_Auth), QString(), this);

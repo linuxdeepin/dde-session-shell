@@ -32,7 +32,6 @@ AuthWidget::AuthWidget(QWidget *parent)
     , m_expiredStateLabel(new DLabel(this))
     , m_accountEdit(nullptr)
     , m_userNameWidget(nullptr)
-    , m_capsLockMonitor(nullptr)
     , m_singleAuth(nullptr)
     , m_passwordAuth(nullptr)
     , m_fingerprintAuth(nullptr)
@@ -48,9 +47,6 @@ AuthWidget::AuthWidget(QWidget *parent)
 
     setSizePolicy(QSizePolicy::Fixed, QSizePolicy::Fixed);
     setFocusPolicy(Qt::NoFocus);
-
-    m_capsLockMonitor = KeyboardMonitor::instance();
-    m_capsLockMonitor->start(QThread::LowestPriority);
 
     m_refreshTimer->setInterval(1000);
     m_refreshTimer->start();
