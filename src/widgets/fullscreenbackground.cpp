@@ -596,11 +596,14 @@ void FullScreenBackground::moveEvent(QMoveEvent *event)
 
 QMap<QString, QRect> FullScreenBackground::getScreenGeometryByXrandr()
 {
+    QMap<QString, QRect> screensGeometry;
+
     // 获取缩放比例
     double scale = getScaleFactorFromDisplay();
     qInfo() << "getScaleFactorFromDisplay scale:" << scale;
-
-    QMap<QString, QRect> screensGeometry;
+    if (scale <= 0) {
+        return screensGeometry;
+    }
 
     // 启动 xrandr | grep connected 进程
     QProcess process;
@@ -641,7 +644,8 @@ double FullScreenBackground::getScaleFactorFromDisplay()
     QDBusReply<QString> reply = display.call("GetConfig");
     QString jsonObjStr = reply.value();
     if (jsonObjStr.isNull()) {
-        return 1.0;
+        qWarning() << "greeter get system display config failed(GetConfig's content is null)!";
+        return -1.0;
     }
 
     // 获取 ScaleFactors 对象
@@ -653,7 +657,8 @@ double FullScreenBackground::getScaleFactorFromDisplay()
         return scaleFactors.value(key).toDouble();
     }
 
-    return 1.0;
+    qWarning() << "greeter get system display config failed(scaleFactors is null)!";
+    return -1.0;
 }
 
 
