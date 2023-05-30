@@ -36,9 +36,9 @@ DGUI_USE_NAMESPACE
 bool FloatingButton::eventFilter(QObject *watch, QEvent *event)
 {
     if (watch == this) {
+        QMouseEvent *e = static_cast<QMouseEvent *>(event);
         if (event->type() == QEvent::MouseButtonRelease) {
-            m_State = Normal;
-            QMouseEvent *e = static_cast<QMouseEvent *>(event);
+            m_State = underMouse() ? Hover : Normal;
             if (e->button() == Qt::RightButton) {
                 Q_EMIT requestShowMenu();
             }
@@ -49,7 +49,8 @@ bool FloatingButton::eventFilter(QObject *watch, QEvent *event)
             m_State = Normal;
             Q_EMIT requestHideTips();
         } else if (event->type() == QEvent::MouseButtonPress) {
-            m_State = Press;
+            if (e->button() == Qt::LeftButton)
+                m_State = Press;
             Q_EMIT requestHideTips();
         }
     }
