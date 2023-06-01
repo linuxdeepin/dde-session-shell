@@ -199,13 +199,14 @@ int main(int argc, char *argv[])
 
     QObject::connect(model, &SessionBaseModel::visibleChanged, &multi_screen_manager, &MultiScreenManager::startRaiseContentFrame);
 
+    auto isSingle = app->setSingleInstance(QString("dde-lock%1").arg(getuid()), DApplication::UserScope);
     QDBusConnection conn = QDBusConnection::sessionBus();
     int ret = 0;
     if (!conn.registerService(DBUS_LOCK_NAME) ||
         !conn.registerObject(DBUS_LOCK_PATH, &lockAgent) ||
         !conn.registerService(DBUS_SHUTDOWN_NAME) ||
         !conn.registerObject(DBUS_SHUTDOWN_PATH, &shutdownAgent) ||
-        !app->setSingleInstance(QString("dde-lock%1").arg(getuid()), DApplication::UserScope)) {
+        !isSingle) {
         qDebug() << "register dbus failed"<< "maybe lockFront is running..." << conn.lastError();
 
         if (!runDaemon) {
@@ -217,7 +218,7 @@ int main(int argc, char *argv[])
             } else if (showShutdown) {
                 QDBusInterface ifc(DBUS_SHUTDOWN_NAME, DBUS_SHUTDOWN_PATH, shutdownFrontInter, QDBusConnection::sessionBus(), nullptr);
                 ifc.asyncCall("Show");
-            } else if (showLockScreen) {
+            } else if (showLockScreen && isSingle) {
                 QDBusInterface ifc(DBUS_LOCK_NAME, DBUS_LOCK_PATH, lockFrontInter, QDBusConnection::sessionBus(), nullptr);
                 ifc.asyncCall("Show");
             }
