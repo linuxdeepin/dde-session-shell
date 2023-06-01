@@ -216,6 +216,7 @@ int main(int argc, char* argv[])
     a.installEventFilter(&appEventFilter);
     setAppType(APP_TYPE_LOGIN);
 
+    DGuiApplicationHelper::instance()->setSizeMode(DGuiApplicationHelper::SizeMode::NormalMode);
     DPalette pa = DGuiApplicationHelper::instance()->standardPalette(DGuiApplicationHelper::LightType);
     pa.setColor(QPalette::Normal, DPalette::WindowText, QColor("#FFFFFF"));
     pa.setColor(QPalette::Normal, DPalette::Text, QColor("#FFFFFF"));

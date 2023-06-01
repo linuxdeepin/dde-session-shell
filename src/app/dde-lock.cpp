@@ -51,6 +51,7 @@ int main(int argc, char *argv[])
     app->installEventFilter(&appEventFilter);
     setAppType(APP_TYPE_LOCK);
 
+    DGuiApplicationHelper::instance()->setSizeMode(DGuiApplicationHelper::SizeMode::NormalMode);
     DGuiApplicationHelper::instance()->setPaletteType(DGuiApplicationHelper::LightType);
     DPalette pa = DGuiApplicationHelper::instance()->applicationPalette();
     pa.setColor(QPalette::Normal, DPalette::WindowText, QColor("#FFFFFF"));
