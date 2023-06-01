@@ -215,6 +215,13 @@
     </message>
 </context>
 <context>
+    <name>LighterGreeter</name>
+    <message>
+        <source>Standard Mode</source>
+        <translation type="unfinished"/>
+    </message>
+</context>
+<context>
     <name>LockContent</name>
     <message>
         <source>Lock Screen</source>

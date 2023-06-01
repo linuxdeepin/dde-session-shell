@@ -215,6 +215,13 @@
     </message>
 </context>
 <context>
+    <name>LighterGreeter</name>
+    <message>
+        <source>Standard Mode</source>
+        <translation>Mënyra Standarde</translation>
+    </message>
+</context>
+<context>
     <name>LockContent</name>
     <message>
         <source>Lock Screen</source>
