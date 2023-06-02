@@ -1,3 +1,17 @@
+dde-session-shell (5.6.11.2) unstable; urgency=medium
+
+  [ Deepin Packages Builder ]
+  * fix: 修复锁屏界面鼠标hover到网络图标上，tips位置异常的问题(Bug: 199429)(Influence: 网络tips位置)
+  * fix: 禁用网络驱动后隐藏锁屏和greeter上网络插(Bug: 200601)(Influence: 锁屏和greeter显示)
+  * fix: 修复锁屏或登录页面先左键点击网络图标再右键单击鼠标，网络图标显示异常的问题(Bug: 201997)(Influence: 网络图标显示)
+  * fix: 解决镜像安装后第一次启动登录界面显示异常的问题。(Bug: 202143)(Influence: 镜像安装（带有缩放的）后，登录界面显示正常。)
+  * fix: 解决锁屏界面上密码认证锁定后切换其他用户再切换回来后其他认证方式又可以切换的问题。(Bug: 202119)(Influence: 密码认证锁定后切换其他用户再切换回来，其他认证方式不可切换。)
+  * chore: 优化capsLock监听线程逻辑(Task: 193971)(Influence: 登录锁屏界面的capsLock状态正常即可)
+  * chore: 删除重复的libdtkcore5-bin依赖(Task: 270025)(Influence: 不涉及)
+  * feat: 登录/锁屏暂不响应紧凑模式(Task: 270299)(Influence: 紧凑模式下登录锁屏界面不变)
+
+ -- Deepin Packages Builder <packages@deepin.org>  Fri, 02 Jun 2023 15:58:21 +0800
+
 dde-session-shell (5.6.11.1) unstable; urgency=medium
 
   [ Deepin Packages Builder ]
