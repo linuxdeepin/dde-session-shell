@@ -3,7 +3,7 @@
 // SPDX-License-Identifier: GPL-3.0-or-later
 #include <QApplication>
 #include <QLineEdit>
-#include <QGridLayout>
+#include <QVBoxLayout>
 #include <QPushButton>
 #include <QListView>
 #include <QComboBox>
@@ -32,7 +32,7 @@
 
 LighterGreeter::LighterGreeter(QWidget *parent)
     : QWidget(parent)
-    , m_gridLayout(new QGridLayout(this))
+    , m_mainLayout(new QVBoxLayout(this))
     , m_loginFrame(new DBlurEffectWidget(this))
     , m_avatar(new UserAvatar(this))
     , m_userCbx(new QComboBox(this))
@@ -57,7 +57,7 @@ LighterGreeter::LighterGreeter(QWidget *parent)
 void LighterGreeter::initUI()
 {
     // 顶部区域
-    m_gridLayout->addWidget(new TimeWidget(this), 0, 1, Qt::AlignCenter);
+    m_mainLayout->addWidget(new TimeWidget(this), 1, Qt::AlignCenter);
 
     // 中间区域
     QVBoxLayout *layout = new QVBoxLayout;
@@ -71,6 +71,7 @@ void LighterGreeter::initUI()
     m_loginFrame->setMaskAlpha(70);
     m_loginFrame->setBlurRectXRadius(15);
     m_loginFrame->setBlurRectYRadius(15);
+    m_loginFrame->setSizePolicy(QSizePolicy::Fixed, QSizePolicy::Fixed);
 
     m_loginFrame->setMaximumSize(1152, 300);
     m_userCbx->setMinimumWidth(300);
@@ -94,10 +95,13 @@ void LighterGreeter::initUI()
     m_avatar->setIcon("/var/lib/AccountsService/icons/guest.png");
     m_avatar->setAvatarSize(AVATAR_ICON_SIZE);
 
+    layout->addStretch();
     layout->addWidget(m_loginFrame, 0, Qt::AlignCenter);
     layout->addWidget(m_loginBtn, 0, Qt::AlignCenter);
+    layout->addSpacing(10);
+    layout->addStretch();
 
-    m_gridLayout->addLayout(layout, 1, 1, Qt::AlignCenter);
+    m_mainLayout->addLayout(layout, 5);
 
     /* 整体布局，横向1:5:1,纵向1:1:1
     |---------------------------|
@@ -111,14 +115,6 @@ void LighterGreeter::initUI()
     |    |                  | s |
     |---------------------------|
     */
-
-    m_gridLayout->setColumnStretch(0, 1);
-    m_gridLayout->setColumnStretch(1, 5);
-    m_gridLayout->setColumnStretch(2, 1);
-
-    m_gridLayout->setRowStretch(0, 1);
-    m_gridLayout->setRowStretch(1, 1);
-    m_gridLayout->setRowStretch(2, 1);
 
     // 右下角区域
     DBlurEffectWidget *controlFrame = new DBlurEffectWidget(this);
@@ -134,7 +130,7 @@ void LighterGreeter::initUI()
 
     controlFrame->setSizePolicy(QSizePolicy::Fixed, QSizePolicy::Fixed);
 
-    m_gridLayout->addWidget(controlFrame, 2, 2, Qt::AlignBottom);
+    m_mainLayout->addWidget(controlFrame, 1, Qt::AlignRight);
 
     m_userCbx->setModel(new QLightDM::UsersModel(this));
 

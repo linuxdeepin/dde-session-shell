@@ -9,7 +9,7 @@
 #include <DLabel>
 
 class QLineEdit;
-class QGridLayout;
+class QVBoxLayout;
 class QListView;
 class QComboBox;
 class QPushButton;
@@ -58,7 +58,7 @@ protected:
 
 private:
     // 布局控件
-    QGridLayout *m_gridLayout;
+    QVBoxLayout *m_mainLayout;
     DBlurEffectWidget *m_loginFrame;
     UserAvatar *m_avatar;
     QComboBox *m_userCbx;
