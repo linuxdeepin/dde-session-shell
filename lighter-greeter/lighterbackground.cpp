@@ -58,7 +58,7 @@ void LighterBackground::setScreen(QPointer<QScreen> screen, bool isVisible)
 void LighterBackground::onAuthFinished()
 {
     m_showBlack = true;
-    update();
+    repaint();
 }
 
 void LighterBackground::paintEvent(QPaintEvent *event)
