@@ -43,15 +43,17 @@ Q_SIGNALS:
     void authFinished();
 
 public Q_SLOTS:
-    void onCurrentUserChanged();
-    void onRespond();
+    void onStartAuthentication();
     void onAuthenticationComplete();
     void onShowPrompt(QString promptText, int promptType);
     void onShowMessage(QString messageText, int messageType);
     void resetToNormalGreeter();
 
+private Q_SLOTS:
+    void respond();
+    void updateFocus();
+
 protected:
-    void showEvent(QShowEvent *event) override;
     bool eventFilter(QObject *watched, QEvent *event) override;
 
 private:
@@ -72,7 +74,6 @@ private:
     // variant
     bool m_allowSwitchToWayland;
     QString m_defaultSessionName;
-    bool m_respond;
 };
 
 #endif // LIGHTERGREETER_H

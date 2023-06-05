@@ -9,6 +9,7 @@
 #include <QComboBox>
 #include <QDebug>
 #include <QProcess>
+#include <QFile>
 
 #include <QLightDM/Greeter>
 #include <QLightDM/SessionsModel>
@@ -38,12 +39,11 @@ LighterGreeter::LighterGreeter(QWidget *parent)
     , m_passwordEdit(new DLineEditEx(this))
     , m_sessionCbx(new QComboBox(this))
     , m_loginBtn(new TransparentButton(this))
-    , m_switchGreeter(new QPushButton(tr("Switch To Normal"), this))
+    , m_switchGreeter(new QPushButton(tr("Standard Mode"), this))
     , m_greeter(new QLightDM::Greeter(this))
     , m_sessionModel(new QLightDM::SessionsModel(this))
     , m_allowSwitchToWayland(DConfigHelper::instance()->getConfig("allowSwitchingToWayland", false).toBool())
     , m_defaultSessionName(DConfigHelper::instance()->getConfig("defaultSession", "deepin").toString())
-    , m_respond(false)
 {
     if (!m_greeter->connectSync()) {
         qWarning() << "connect sync failed";
@@ -78,7 +78,6 @@ void LighterGreeter::initUI()
     m_passwordEdit->setContextMenuPolicy(Qt::NoContextMenu);
     m_passwordEdit->lineEdit()->setAlignment(Qt::AlignCenter);
     m_passwordEdit->setClearButtonEnabled(false);
-    m_passwordEdit->setPlaceholderText(tr("Password"));
     m_passwordEdit->setEchoMode(QLineEdit::Password);
     m_passwordEdit->setFocusPolicy(Qt::StrongFocus);
     m_passwordEdit->lineEdit()->setValidator(new QRegExpValidator(QRegExp("^[ -~]+$")));
@@ -164,33 +163,29 @@ void LighterGreeter::initUI()
     if (index != -1)
         m_userCbx->setCurrentIndex(index);
 
-    setFocusProxy(m_passwordEdit);
+    QMetaObject::invokeMethod(this, &LighterGreeter::updateFocus, Qt::QueuedConnection);
 }
 
 void LighterGreeter::initConnections()
 {
-    connect(m_passwordEdit, &DLineEditEx::returnPressed, this, &LighterGreeter::onRespond);
+    connect(m_passwordEdit, &DLineEditEx::returnPressed, this, &LighterGreeter::onStartAuthentication);
     connect(m_passwordEdit, &DLineEditEx::textChanged, this, [ = ] {
         m_passwordEdit->setAlert(false);
         m_passwordEdit->hideAlertMessage();
     });
-    connect(m_userCbx, QOverload<int>::of(&QComboBox::currentIndexChanged), this, &LighterGreeter::onCurrentUserChanged);
-    connect(m_loginBtn, &TransparentButton::clicked, this, &LighterGreeter::onRespond);
-
+    connect(m_userCbx, QOverload<int>::of(&QComboBox::currentIndexChanged), this, &LighterGreeter::updateFocus);
+    connect(m_loginBtn, &TransparentButton::clicked, this, &LighterGreeter::onStartAuthentication);
     connect(m_switchGreeter, &QPushButton::clicked, this, &LighterGreeter::resetToNormalGreeter);
 
     connect(m_greeter, &QLightDM::Greeter::authenticationComplete, this, &LighterGreeter::onAuthenticationComplete);
     connect(m_greeter, &QLightDM::Greeter::showPrompt, this, &LighterGreeter::onShowPrompt);
     connect(m_greeter, &QLightDM::Greeter::showMessage, this, &LighterGreeter::onShowMessage);
-
-    onCurrentUserChanged();
 }
 
-void LighterGreeter::onRespond()
+void LighterGreeter::respond()
 {
     // Respond to prompt with password text and disable window
     m_greeter->respond(m_passwordEdit->text());
-    m_respond = true;
 
     m_userCbx->setEnabled(false);
     m_passwordEdit->setEnabled(false);
@@ -202,13 +197,8 @@ void LighterGreeter::onRespond()
     m_passwordEdit->startAnimation();
 }
 
-void LighterGreeter::onCurrentUserChanged()
+void LighterGreeter::onStartAuthentication()
 {
-    m_respond = false;
-    m_passwordEdit->setVisible(true);
-    disconnect(m_loginBtn);
-    connect(m_loginBtn, &TransparentButton::clicked, this, &LighterGreeter::onRespond);
-
     // Clear password field
     m_passwordEdit->clear();
 
@@ -247,24 +237,9 @@ void LighterGreeter::onAuthenticationComplete()
                                       , Q_ARG(QString, session));
         };
 
-        qInfo() << "Passwordless login：" << m_respond;
-        // Determine whether it is a passwordless login based on whether a password is required
-        if (m_respond) {
-            startLogin(m_sessionCbx->currentData().toString());
-        } else {
-            // Passwordless login
-            m_passwordEdit->setVisible(false);
-            disconnect(m_loginBtn);
-            connect(m_loginBtn, &TransparentButton::clicked, this, [ = ] {
-                startLogin(m_sessionCbx->currentData().toString());
-            });
-            m_loginBtn->setFocus();
-        }
+        startLogin(m_sessionCbx->currentData().toString());
     } else {
-        // Display error message for incorrect password and restart authentication process
-        m_passwordEdit->showAlertMessage(tr("Incorrect password, please try again"));
-        qInfo() << "Restarting authentication";
-        onCurrentUserChanged();
+        qInfo() << "Authentication failed";
     }
 }
 
@@ -285,13 +260,12 @@ void LighterGreeter::onShowPrompt(QString promptText, int promptType)
     auto type = static_cast<QLightDM::Greeter::PromptType>(promptType);
     switch (type) {
     case QLightDM::Greeter::PromptType::PromptTypeSecret:
-        // Focus on password field for secret prompts
-        m_passwordEdit->setFocus();
-        break;
     case QLightDM::Greeter::PromptType::PromptTypeQuestion:
         // Clear password field and set placeholder text for question prompts
         m_passwordEdit->clear();
+        m_passwordEdit->setFocus();
         m_passwordEdit->setPlaceholderText(promptText);
+        respond();
         break;
     }
 }
@@ -317,9 +291,13 @@ void LighterGreeter::onShowMessage(QString messageText, int messageType)
         break;
     case QLightDM::Greeter::MessageType::MessageTypeError:
         // Clear password field, set alert flag, and show error message for error messages
-        m_passwordEdit->clear();
-        m_passwordEdit->setAlert(true);
-        m_passwordEdit->showAlertMessage(messageText);
+        if (m_passwordEdit->isVisible()) {
+            m_passwordEdit->clear();
+            m_passwordEdit->setAlert(true);
+            m_passwordEdit->showAlertMessage(messageText);
+            m_passwordEdit->setFocus();
+            m_passwordEdit->lineEdit()->setFocus();
+        }
         break;
     }
 }
@@ -330,12 +308,40 @@ void LighterGreeter::resetToNormalGreeter()
     qApp->exit(-1);
 }
 
-void LighterGreeter::showEvent(QShowEvent *event)
+void LighterGreeter::updateFocus()
 {
+    m_passwordEdit->setVisible(true);
+
+    const QString &userName = m_userCbx->itemData(m_userCbx->currentIndex(), QLightDM::UsersModel::NameRole).toString();
+
+    QFile group("/etc/group");
+    if (group.open(QIODevice::ReadOnly)) {
+        QByteArray content = group.readAll();
+        QList<QByteArray> list = content.split('\n');
+        for (auto item : list) {
+            // Wether current user is in group nopasswordlogin
+            if (item.startsWith("nopasswdlogin") && item.endsWith(userName.toStdString().data())) {
+                m_passwordEdit->setVisible(false);
+                m_loginBtn->setFocus();
+
+                this->setTabOrder(m_loginBtn, m_sessionCbx);
+                this->setTabOrder(m_sessionCbx, m_switchGreeter);
+                this->setTabOrder(m_switchGreeter, m_userCbx);
+                this->setTabOrder(m_userCbx, m_loginBtn);
+
+                return;
+            }
+        }
+    }
+
     m_passwordEdit->setFocus();
     m_passwordEdit->lineEdit()->setFocus();
 
-    return QWidget::showEvent(event);
+    this->setTabOrder(m_loginBtn, m_sessionCbx);
+    this->setTabOrder(m_sessionCbx, m_switchGreeter);
+    this->setTabOrder(m_switchGreeter, m_userCbx);
+    this->setTabOrder(m_userCbx, m_passwordEdit);
+    this->setTabOrder(m_passwordEdit, m_loginBtn);
 }
 
 bool LighterGreeter::eventFilter(QObject *watched, QEvent *event)
@@ -345,8 +351,7 @@ bool LighterGreeter::eventFilter(QObject *watched, QEvent *event)
         if (!qgetenv("XDG_SESSION_TYPE").startsWith("wayland"))
             activateWindow();
 
-        m_passwordEdit->setFocus();
-        m_passwordEdit->lineEdit()->setFocus();
+        updateFocus();
     } else if ((watched == this || watched == m_loginFrame) && event->type() == QEvent::Resize) {
         int x = m_loginFrame->mapToGlobal(QPoint(0, 0)).x() + ((m_loginFrame->width() - AVATAR_SIZE) / 2);
         int y = m_loginFrame->mapToGlobal(QPoint(0, 0)).y() - (AVATAR_SIZE / 2);
