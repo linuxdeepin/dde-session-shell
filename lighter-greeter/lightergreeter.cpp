@@ -199,9 +199,6 @@ void LighterGreeter::respond()
 
 void LighterGreeter::onStartAuthentication()
 {
-    // Clear password field
-    m_passwordEdit->clear();
-
     // Cancel ongoing authentication
     if (m_greeter->inAuthentication()) {
         m_greeter->cancelAuthentication();
@@ -261,11 +258,12 @@ void LighterGreeter::onShowPrompt(QString promptText, int promptType)
     switch (type) {
     case QLightDM::Greeter::PromptType::PromptTypeSecret:
     case QLightDM::Greeter::PromptType::PromptTypeQuestion:
-        // Clear password field and set placeholder text for question prompts
-        m_passwordEdit->clear();
-        m_passwordEdit->setFocus();
-        m_passwordEdit->setPlaceholderText(promptText);
         respond();
+
+        // Not need show just respond password
+        //        m_passwordEdit->clear();
+        //        m_passwordEdit->setFocus();
+        //        m_passwordEdit->setPlaceholderText(promptText);
         break;
     }
 }
@@ -310,6 +308,9 @@ void LighterGreeter::resetToNormalGreeter()
 
 void LighterGreeter::updateFocus()
 {
+    // Clear password field
+    m_passwordEdit->clear();
+
     m_passwordEdit->setVisible(true);
 
     const QString &userName = m_userCbx->itemData(m_userCbx->currentIndex(), QLightDM::UsersModel::NameRole).toString();
