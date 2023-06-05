@@ -162,6 +162,8 @@ public:
 
     void setUpdatePowerMode(UpdatePowerMode mode) { m_updatePowerMode = mode; }
     UpdatePowerMode updatePowerMode() const { return m_updatePowerMode; }
+    void setTerminalLocked(bool locked);
+    inline bool terminalLocked() const { return m_isTerminalLocked; }
 
     void setCurrentContentType(ContentType type) { m_currentContentType = type; }
     ContentType currentContentType() const { return m_currentContentType; }
@@ -241,6 +243,7 @@ signals:
 
     // 关闭插件右键菜单信号
     void hidePluginMenu();
+    void terminalLockedChanged(bool isLocked);
 
 private:
     bool m_hasSwap;
@@ -256,6 +259,7 @@ private:
     bool m_SEOpen; // 保存等保开启、关闭的状态
     bool m_isUseWayland;
     int m_userListSize = 0;
+    bool m_isTerminalLocked = false;
     AppType m_appType;
     QList<std::shared_ptr<User>> m_userList;
     std::shared_ptr<User> m_currentUser;

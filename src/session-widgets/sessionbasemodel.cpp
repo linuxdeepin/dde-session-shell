@@ -634,3 +634,13 @@ void SessionBaseModel::setLightdmPamStarted(bool lightdmPamStarted)
         }
     }
 }
+
+void SessionBaseModel::setTerminalLocked(bool locked)
+{
+    qInfo() << "SessionBaseModel set terminal locked: " << locked;
+    if (locked == m_isTerminalLocked)
+        return;
+
+    m_isTerminalLocked = locked;
+    emit terminalLockedChanged(locked);
+}

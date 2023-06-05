@@ -284,6 +284,10 @@ void GreeterWorker::initConnections()
             qWarning() << "DeepinAuthFramework is not valid!:" << m_authFramework->GetFrameworkState();
         }
     });
+
+    // 监听terminal锁定状态
+    QDBusConnection::systemBus().connect("com.deepin.daemon.Accounts", "/com/deepin/daemon/Accounts", "org.freedesktop.DBus.Properties",
+                                         "PropertiesChanged", this, SLOT(terminalLockedChanged(QDBusMessage)));
 }
 
 void GreeterWorker::initData()
@@ -319,6 +323,10 @@ void GreeterWorker::initData()
         m_model->updateCurrentUser(m_lockInter->CurrentUser());
     }
     m_soundPlayerInter->PrepareShutdownSound(static_cast<int>(m_model->currentUser()->uid()));
+
+    // 获取terminal锁定状态
+    QDBusInterface accoutsInter("com.deepin.daemon.Accounts", "/com/deepin/daemon/Accounts", "com.deepin.daemon.Accounts", QDBusConnection::systemBus(), this);
+    m_model->setTerminalLocked(accoutsInter.property("IsTerminalLocked").toBool());
 }
 
 void GreeterWorker::initConfiguration()
@@ -445,6 +453,10 @@ bool GreeterWorker::isSecurityEnhanceOpen()
 void GreeterWorker::createAuthentication(const QString &account)
 {
     qInfo() << "Account:" << account;
+    if (m_model->terminalLocked()) {
+        return;
+    }
+
     m_account = account;
     if (account.isEmpty() || account == "...") {
         m_model->setAuthType(AT_None);
@@ -1013,6 +1025,31 @@ void GreeterWorker::updatePasswordExpiredStateBySPName(const QString &account)
         }
         if (m_model->currentUser()) {
             m_model->currentUser()->updatePasswordExpiredState(state, days);
+        }
+    }
+}
+
+void GreeterWorker::terminalLockedChanged(const QDBusMessage &msg)
+{
+    QList<QVariant> arguments = msg.arguments();
+    if (arguments.size() != 3) {
+        qWarning() << "terminalLockedChanged Invalid arguments size";
+        return;
+    }
+
+    QString interfaceName = arguments.at(0).toString();
+    if (interfaceName != QString("com.deepin.daemon.Accounts")){
+        return;
+    }
+
+    QVariantMap changedProps = qdbus_cast<QVariantMap>(arguments.at(1).value<QDBusArgument>());
+    if (changedProps.contains("IsTerminalLocked")) {
+        bool locked = changedProps.value("IsTerminalLocked").toBool();
+        qInfo() << Q_FUNC_INFO << locked;
+        m_model->setTerminalLocked(locked);
+
+        if (!locked) {
+            createAuthentication(m_model->currentUser()->name());
         }
     }
 }

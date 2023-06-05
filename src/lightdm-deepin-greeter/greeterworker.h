@@ -60,6 +60,7 @@ private slots:
     void onReceiptChanged(bool state);
     void onCurrentUserChanged(const std::shared_ptr<User> &user);
     void onSessionCreated();
+    void terminalLockedChanged(const QDBusMessage &msg);
 
 private:
     void initConnections();

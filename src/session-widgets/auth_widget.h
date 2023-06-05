@@ -160,6 +160,7 @@ protected:
     void syncPassword(const QVariant &value);
     void syncUKey(const QVariant &value);
     int calcCurrentHeight(const int height) const;
+    void terminalLockedChanged(bool locked);
 
 protected Q_SLOTS:
     void updateBlurEffectGeometry();

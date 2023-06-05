@@ -157,7 +157,7 @@ void SFAWidget::setAuthType(const AuthFlags type)
 AuthFlags SFAWidget::initCustomFactor(const AuthFlags type)
 {
     AuthFlags authType = type;
-    if (useCustomAuth()) {
+    if (!m_model->terminalLocked() && useCustomAuth()) {
         authType |= AT_Custom;
         initCustomAuth();
         // 是否进行自定义认证，具体判断逻辑可见`LoginPlugin::DefaultAuthLevel`各字段的说明

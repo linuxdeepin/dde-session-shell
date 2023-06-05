@@ -27,7 +27,7 @@ AuthWidget::AuthWidget(QWidget *parent)
     : QWidget(parent)
     , m_model(nullptr)
     , m_blurEffectWidget(new DBlurEffectWidget(this))
-    , m_lockButton(nullptr)
+    , m_lockButton(new TransparentButton(this))
     , m_userAvatar(nullptr)
     , m_expiredStateLabel(new DLabel(this))
     , m_accountEdit(nullptr)
@@ -83,9 +83,10 @@ void AuthWidget::initUI()
     m_expiredStateLabel->setAccessibleName("ExpiredStateLabel");
     m_expiredStateLabel->setWordWrap(true);
     m_expiredStateLabel->setAlignment(Qt::AlignHCenter);
-    m_expiredStateLabel->hide();
+    if (!m_model->terminalLocked()) {
+        m_expiredStateLabel->hide();
+    }
     /* 解锁按钮 */
-    m_lockButton = new TransparentButton(this);
     if (m_model->appType() == Lock) {
         m_lockButton->setIcon(DStyle::SP_LockElement);
     } else {
@@ -131,6 +132,9 @@ void AuthWidget::setModel(const SessionBaseModel *model)
 {
     m_model = model;
     m_user = model->currentUser();
+
+    terminalLockedChanged(m_model->terminalLocked());
+    connect(m_model, &SessionBaseModel::terminalLockedChanged, this, &AuthWidget::terminalLockedChanged);
 }
 
 /**
@@ -154,7 +158,9 @@ void AuthWidget::setUser(std::shared_ptr<User> user)
     setAvatar(user->avatar());
     setPasswordHint(user->passwordHint());
     setLimitsInfo(user->limitsInfo());
-    updatePasswordExpiredState();
+    if (!m_model->terminalLocked()) {
+        updatePasswordExpiredState();
+    }
     updateUserDisplayNameLabel();
 
     /* 根据用户类型设置用户名和用户名输入框的可见性 */
@@ -511,4 +517,17 @@ int AuthWidget::calcCurrentHeight(const int height) const
 {
     const int h = static_cast<int>(((double) height / (double) BASE_SCREEN_HEIGHT) * topLevelWidget()->geometry().height());
     return qMin(h, height);
+}
+
+void AuthWidget::terminalLockedChanged(bool locked)
+{
+    qInfo() << "AuthWidget terminal locked changed:" << locked;
+    if (locked) {
+        m_expiredStateLabel->setText(tr("Terminal locked, please contact administrator"));
+        m_expiredStateLabel->show();
+        m_lockButton->setEnabled(false);
+    } else {
+        m_expiredStateLabel->clear();
+        m_expiredStateLabel->hide();
+    }
 }
