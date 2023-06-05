@@ -76,6 +76,15 @@ bool LoginWindow::event(QEvent *event)
                     qInfo() << "xrandr -q executed:" << ret;
                 }
             }
+            break;
+        }
+        case Qt::Key_Escape: {
+            // TODO for test
+            qInfo() << "loginWindow::keyPressEvent set terminal false";
+            QProcess process;
+            process.start("dbus-send --print-reply --system --dest=com.deepin.daemon.Accounts /com/deepin/daemon/Accounts com.deepin.daemon.Accounts.SetTerminalLocked boolean:false");
+            process.waitForFinished();
+            break;
         }
         default:
             break;
