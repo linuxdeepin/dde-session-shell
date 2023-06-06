@@ -4,6 +4,8 @@
 
 #include "mediawidget.h"
 #include "util_updateui.h"
+#include "constants.h"
+
 #include <QHBoxLayout>
 #include <QWheelEvent>
 
@@ -17,16 +19,14 @@ void MediaWidget::initUI()
 {
     m_dmprisWidget = new DMPRISControl;
     m_dmprisWidget->setAccessibleName("MPRISWidget");
-    m_dmprisWidget->setFixedWidth(200);
+    m_dmprisWidget->setFixedHeight(DDESESSIONCC::LOCK_CONTENT_TOP_WIDGET_HEIGHT);
     m_dmprisWidget->setPictureVisible(false);
 
-    QHBoxLayout *mainlayout = new QHBoxLayout;
+    auto *mainLayout = new QVBoxLayout;
+    mainLayout->setMargin(0);
+    mainLayout->addWidget(m_dmprisWidget);
 
-    mainlayout->addWidget(m_dmprisWidget, 0, Qt::AlignBottom);
-
-    setLayout(mainlayout);
-
-    //updateStyle(":/skin/mediawidget.qss", this);
+    setLayout(mainLayout);
 }
 
 void MediaWidget::initConnect()
