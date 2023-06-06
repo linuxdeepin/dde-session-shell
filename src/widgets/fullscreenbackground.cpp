@@ -277,6 +277,11 @@ void FullScreenBackground::paintEvent(QPaintEvent *e)
 
 void FullScreenBackground::tryActiveWindow(int count/* = 9*/)
 {
+    // 在登录时，不需要一直激活界面，避免影响第三方验证插件界面输入
+    if (m_model->appType() == AuthCommon::Login) {
+        return;
+    }
+
     if (count < 0 || m_model->isUseWayland())
         return;
 
