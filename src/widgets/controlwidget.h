@@ -121,8 +121,6 @@ public slots:
     void onItemClicked(const QString& str);
     void updateModuleVisible();
     void setCanShowMenu(bool state) { m_canShowMenu = state; }
-    void updateNetworkPluginState(bool state);
-    void handlePropertiesChanged(const QString &interfaceName, const QVariantMap &changedProperties, const QStringList &invalidatedProperties);
 
 protected:
     bool eventFilter(QObject *watched, QEvent *event) Q_DECL_OVERRIDE;
@@ -137,7 +135,6 @@ private:
     void updateLayout();
     void updateTapOrder();
     static QString messageCallback(const QString &message, void *app_data);
-    void initNetworkPluginState();
 
 private:
     int m_index = 0;
@@ -166,8 +163,6 @@ private:
     bool m_onboardBtnVisible;
     bool m_doGrabKeyboard;
     bool m_canShowMenu;
-    QWidget *m_networkPluginWidget = nullptr;
-    FloatingButton *m_networkPluginButton = nullptr;
 };
 
 #endif // CONTROLWIDGET_H

@@ -27,8 +27,6 @@
 #define BUTTON_ICON_SIZE QSize(26,26)
 #define BUTTON_SIZE QSize(52,52)
 
-const QString NetworkPlugin = "network-item-key";
-
 using namespace dss;
 DCORE_USE_NAMESPACE
 DGUI_USE_NAMESPACE
@@ -156,17 +154,6 @@ void ControlWidget::initKeyboardLayoutList()
     connect(m_kbLayoutListView, &KBLayoutListView::itemClicked, this, &ControlWidget::onItemClicked);
 }
 
-void ControlWidget::updateNetworkPluginState(bool state)
-{
-    qInfo() << Q_FUNC_INFO << state;
-    if (m_networkPluginWidget) {
-       m_networkPluginWidget->setVisible(state);
-    }
-    if (m_networkPluginButton) {
-        m_networkPluginButton->setVisible(state);
-    }
-}
-
 void ControlWidget::setVirtualKBVisible(bool visible)
 {
     m_onboardBtnVisible = visible;
@@ -269,23 +256,6 @@ void ControlWidget::initConnect()
         // 重置密码弹窗弹出的时候不重新抓取键盘，否则会导致重置密码弹窗无法抓取键盘
         m_doGrabKeyboard = false;
     });
-
-    qInfo() << " connect org.freedesktop.NetworkManager ret : "
-            << QDBusConnection::systemBus().connect("org.freedesktop.NetworkManager",
-                                                    "/org/freedesktop/NetworkManager",
-                                                    "org.freedesktop.DBus.Properties",
-                                                    "PropertiesChanged",
-                                                    "sa{sv}as",
-                                                    this,
-                                                    SLOT(handlePropertiesChanged(QString, QVariantMap, QStringList)));
-}
-
-void ControlWidget::handlePropertiesChanged(const QString &interfaceName, const QVariantMap &changedProperties, const QStringList &invalidatedProperties)
-{
-    Q_UNUSED(invalidatedProperties)
-    if (interfaceName == "org.freedesktop.NetworkManager" && changedProperties.keys().contains("ActiveConnections")) {
-        updateNetworkPluginState(qdbus_cast<QList<QString>>(changedProperties["ActiveConnections"]).count() > 0);
-    }
 }
 
 QString ControlWidget::messageCallback(const QString &message, void *app_data)
@@ -333,12 +303,6 @@ void ControlWidget::addModule(TrayPlugin *trayModule)
         layout->setSpacing(0);
         layout->setMargin(0);
         layout->addWidget(trayWidget);
-
-        if (trayModule->key() == NetworkPlugin) {
-            m_networkPluginWidget = trayWidget;
-            m_networkPluginButton = button;
-            initNetworkPluginState();
-        }
     } else {
         button->setIcon(QIcon(trayModule->icon()));
     }
@@ -768,24 +732,5 @@ void ControlWidget::onDConfigPropertyChanged(const QString &key, const QVariant 
 
     if (obj->m_virtualKBBtn && key == "hideOnboard") {
         obj->m_virtualKBBtn->setVisible(obj->m_onboardBtnVisible && !value.toBool());
-    }
-}
-
-void ControlWidget::initNetworkPluginState()
-{
-    QDBusInterface dbusInterface("org.freedesktop.NetworkManager", "/org/freedesktop/NetworkManager",
-                                 "org.freedesktop.DBus.Properties", QDBusConnection::systemBus());
-    if (!dbusInterface.isValid()) {
-        qWarning() << "Failed to get ActiveConnections property:"  << dbusInterface.lastError().message();
-        return;
-    }
-
-    QDBusReply<QVariant> reply = dbusInterface.call("Get", "org.freedesktop.NetworkManager", "ActiveConnections");
-    if (reply.isValid()) {
-        bool isNetworkActive = qdbus_cast<QList<QString>>(reply.value()).count() > 0;
-        qInfo() << " init: The Network Active : " << isNetworkActive;
-        updateNetworkPluginState(isNetworkActive);
-    } else {
-        qWarning() << "Failed to get ActiveConnections(2) property:" << reply.error().message();
     }
 }
