@@ -1,3 +1,16 @@
+dde-session-shell (5.6.11.3) unstable; urgency=medium
+
+  [ Deepin Packages Builder ]
+  * fix: 修复账户锁定情况下频繁刷新提示信息的问题(Task: 270477)(Influence: 账户密码次数超限后锁定，提示信息频繁刷新)
+  * chore: 更新翻译(Task: 270477)(Influence: 文案显示)
+  * fix: 修复无法登录的问题(Task: 270477)(Influence: 修复无法登录的问题)
+  * fix: 修复登录界面未居中的问题(Task: 270477)(Influence: 界面布局)
+  * fix: 修复认证成功后背景未变化为黑色的问题(Task: 270477)(Influence: 认证成功时的体验)
+  * fix: 修复锁屏解锁后，又被拉起锁屏情况(Bug: 200415)(Influence: 锁屏)
+  * fix: 解决登录锁屏界面音频快捷按钮部分显示不全的问题。(Bug: 200781)(Influence: 登录锁屏界面音频widget显示正常。)
+
+ -- Deepin Packages Builder <packages@deepin.org>  Wed, 07 Jun 2023 17:43:03 +0800
+
 dde-session-shell (5.6.11.2) unstable; urgency=medium
 
   [ Deepin Packages Builder ]
