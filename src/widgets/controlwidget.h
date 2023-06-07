@@ -121,6 +121,7 @@ public slots:
     void onItemClicked(const QString& str);
     void updateModuleVisible();
     void setCanShowMenu(bool state) { m_canShowMenu = state; }
+    void updatePluginVisible(const QString module, bool state);
 
 protected:
     bool eventFilter(QObject *watched, QEvent *event) Q_DECL_OVERRIDE;

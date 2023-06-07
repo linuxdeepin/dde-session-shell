@@ -27,6 +27,8 @@
 #define BUTTON_ICON_SIZE QSize(26,26)
 #define BUTTON_SIZE QSize(52,52)
 
+const QString NetworkPlugin = "network-item-key";
+
 using namespace dss;
 DCORE_USE_NAMESPACE
 DGUI_USE_NAMESPACE
@@ -154,6 +156,14 @@ void ControlWidget::initKeyboardLayoutList()
     connect(m_kbLayoutListView, &KBLayoutListView::itemClicked, this, &ControlWidget::onItemClicked);
 }
 
+void ControlWidget::updatePluginVisible(const QString module, bool state)
+{
+    qInfo() << Q_FUNC_INFO << state;
+    if (m_modules.keys().contains(module)) {
+        m_modules.value(module)->setVisible(state);
+    }
+}
+
 void ControlWidget::setVirtualKBVisible(bool visible)
 {
     m_onboardBtnVisible = visible;
@@ -275,7 +285,14 @@ QString ControlWidget::messageCallback(const QString &message, void *app_data)
         return toJson(retObj);
     }
     QJsonObject messageObj = messageDoc.object();
-    emit static_cast<ControlWidget *>(app_data)->requestShowModule(messageObj.value("PluginKey").toString(), true);
+
+    QString cmd = messageObj.value("Cmd").toString();
+    if (cmd == "ShowContent") {
+        emit static_cast<ControlWidget *>(app_data)->requestShowModule(messageObj.value("PluginKey").toString(), true);
+    } else if (cmd == "PluginVisible") {
+        static_cast<ControlWidget *>(app_data)->updatePluginVisible(NetworkPlugin, messageObj.value("Visible").toBool());
+    }
+
     return message;
 }
 
@@ -288,8 +305,6 @@ QWidget *ControlWidget::getTray(const QString &name)
 void ControlWidget::addModule(TrayPlugin *trayModule)
 {
     trayModule->init();
-    trayModule->setMessageCallback(&ControlWidget::messageCallback);
-    trayModule->setAppData(this);
 
     FloatingButton *button = new FloatingButton(this);
     button->setIconSize(QSize(26, 26));
@@ -308,6 +323,9 @@ void ControlWidget::addModule(TrayPlugin *trayModule)
     }
 
     m_modules.insert(trayModule->key(), button);
+    trayModule->setAppData(this);
+    trayModule->setMessageCallback(&ControlWidget::messageCallback);
+
     // button的顺序与layout插入顺序保持一直
     m_btnList.insert(1, button);
 
