@@ -507,9 +507,6 @@ void ShutdownWidget::recoveryLayout()
         return;
 
     m_requireSwitchUserBtn->setVisible(m_switchUserEnable);
-    if (m_systemMonitor) {
-        m_systemMonitor->setVisible(false);
-    }
     m_mainLayout->setCurrentWidget(m_actionFrame);
     setFocusPolicy(Qt::StrongFocus);
 }
