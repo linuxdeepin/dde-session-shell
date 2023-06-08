@@ -41,7 +41,7 @@ DeepinAuthFramework::DeepinAuthFramework(QObject *parent)
     QDBusConnection::systemBus().connect(AUTHENTICATE_SERVICE, "/com/deepin/daemon/Authenticate", "com.deepin.daemon.Authenticate", "DeviceChange", this, SLOT(onDeviceChanged(const int, const int)));
 }
 
-void DeepinAuthFramework::onDeviceChanged(const AuthFlags authType, const int state)
+void DeepinAuthFramework::onDeviceChanged(const int authType, const int state)
 {
     qInfo() << "Receive DeviceChanged, authType:" << authType << " state:" << state;
     Q_EMIT DeviceChanged(authType, state);

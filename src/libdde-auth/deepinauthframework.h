@@ -73,7 +73,7 @@ signals:
     void PINLenChanged(const int);
     void AuthStateChanged(const AuthCommon::AuthType, const AuthCommon::AuthState, const QString &);
     void SessionCreated();
-    void DeviceChanged(const AuthCommon::AuthFlags, const int);
+    void DeviceChanged(const int, const int);
 
 public slots:
     /* New authentication framework */
@@ -83,7 +83,7 @@ public slots:
     void EndAuthentication(const QString &account, const AuthCommon::AuthFlags authType);
     void SendTokenToAuth(const QString &account, const AuthCommon::AuthType authType, const QString &token);
     void SetAuthQuitFlag(const QString &account, const int flag = AutoQuit);
-    void onDeviceChanged(const AuthCommon::AuthFlags authType, const int state);
+    void onDeviceChanged(const int authType, const int state);
 
 private:
     /* Compatible with old authentication methods */
