@@ -494,6 +494,11 @@ bool FullScreenBackground::event(QEvent *e)
         }
     }
 #endif
+
+    if (e->type() == QEvent::MouseButtonPress) {
+        setFocus();
+    }
+
     return QWidget::event(e);
 }
 
