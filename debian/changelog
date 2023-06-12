@@ -1,3 +1,14 @@
+dde-session-shell (5.6.12) unstable; urgency=medium
+
+  [ Deepin Packages Builder ]
+  * fix: 修复拔掉显示屏再接入后，“启动系统监视器”功能按钮消失的问题(Bug: 203827)(Influence: 系统监视器按钮显示状态)
+  * fix: 修复华为指纹键盘热插拔无反应的问题(Bug: 201385)(Influence: 指纹热插拔)
+  * fix: 禁用网络驱动后隐藏锁屏和greeter上网络插2(Bug: 203795)(Influence: 禁用网络隐藏图标)
+  * fix: 在登录时不需要grab键盘并且一直激活界面，避免第三方验证插件界面上的输入(Bug: 202861)(Influence: 第三方验证插件正常输入并验证成功后直接登录系统)
+  * fix: 将common-auth中内容修改为第三方pam模块，第一次锁屏后无提示(Bug: 198605)(Influence: 将common-auth中内容修改为第三方pam模块，第一次锁屏界面展示)
+
+ -- Deepin Packages Builder <packages@deepin.org>  Mon, 12 Jun 2023 14:58:06 +0800
+
 dde-session-shell (5.6.11.3) unstable; urgency=medium
 
   [ Deepin Packages Builder ]
