@@ -445,7 +445,7 @@ void LockWorker::doPowerAction(const SessionBaseModel::PowerAction action)
     }
         break;
     case SessionBaseModel::PowerAction::RequireRestart:
-        if (!isLocked() || m_model->currentModeState() == SessionBaseModel::ModeStatus::ShutDownMode) {
+        if (!isLocked() || m_model->currentModeState() == SessionBaseModel::ModeStatus::ShutDownMode || !isCheckPwdBeforeRebootOrShut()) {
             m_sessionManagerInter->RequestReboot();
         } else {
             createAuthentication(m_account);
@@ -453,7 +453,7 @@ void LockWorker::doPowerAction(const SessionBaseModel::PowerAction action)
         }
         return;
     case SessionBaseModel::PowerAction::RequireShutdown:
-        if (!isLocked() || m_model->currentModeState() == SessionBaseModel::ModeStatus::ShutDownMode) {
+        if (!isLocked() || m_model->currentModeState() == SessionBaseModel::ModeStatus::ShutDownMode || !isCheckPwdBeforeRebootOrShut()) {
             m_sessionManagerInter->RequestShutdown();
         } else {
             createAuthentication(m_account);
@@ -485,6 +485,18 @@ void LockWorker::doPowerAction(const SessionBaseModel::PowerAction action)
     }
 
     m_model->setPowerAction(SessionBaseModel::PowerAction::None);
+}
+
+
+bool LockWorker::isCheckPwdBeforeRebootOrShut()
+{
+    if (QGSettings::isSchemaInstalled("com.deepin.dde.session-shell")) {
+        QGSettings updateSettings("com.deepin.dde.session-shell", QByteArray(), this);
+        if (updateSettings.keys().contains("checkpwd")) {
+             return updateSettings.get("checkpwd").toBool();
+        }
+    }
+    return false;
 }
 
 /**

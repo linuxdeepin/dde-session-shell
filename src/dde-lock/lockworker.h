@@ -68,6 +68,8 @@ private:
     void lockServiceEvent(quint32 eventType, quint32 pid, const QString &username, const QString &message);
     void onUnlockFinished(bool unlocked);
 
+    bool isCheckPwdBeforeRebootOrShut();
+
 private:
     bool m_authenticating;
     bool m_isThumbAuth;

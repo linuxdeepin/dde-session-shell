@@ -72,5 +72,10 @@
             <summary>delaytime</summary>
             <range min="100" max="1000"/>
         </key>
+        <key name='checkpwd' type='b'>
+            <default>true</default>
+            <summary>check password before beboot or shutdown </summary>
+            <description>default is true</description>
+        </key>
     </schema>
 </schemalist>
