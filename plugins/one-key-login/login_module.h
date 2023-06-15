@@ -41,7 +41,7 @@ public:
 
     void init() override;
     ModuleType type() const override { return LoginType;     }
-    inline QString key() const override { return objectName(); }
+    inline QString key() const override { return QStringLiteral("one-key-login"); }
     inline QWidget *content() override { return m_loginWidget; }
     inline LoadType loadPluginType() const override { return  m_loadPluginType;}
     void reset() override;

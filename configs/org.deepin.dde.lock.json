@@ -121,6 +121,16 @@
             "description": "设置全名的字体大小，默认为5，有效值为0~9，数字越大字体越小。",
             "permissions": "readwrite",
             "visibility": "private"
+        },
+        "pluginBlackList":{
+            "value": [],
+            "serial": 0,
+            "flags": ["global"],
+            "name": "Plugin black list",
+            "name[zh_CN]": "插件黑名单",
+            "description": "插件黑名单（包括托盘插件和认证插件），在加载插件的阶段进行判断。系统级配置，默认为空，需要重启电脑。数据结构为数组，内部填充字符串（插件的key值）",
+            "permissions": "readwrite",
+            "visibility": "private"
         }
     }
 }

@@ -171,6 +171,16 @@
             "description": "上一次登录的用户，LighterGreeter登录后会保存登录的用户到此配置项目中(避免对外部服务依赖，自行存储)，用于下次登录时选择为默认用户",
             "permissions": "readwrite",
             "visibility": "private"
+        },
+        "pluginBlackList":{
+            "value": [],
+            "serial": 0,
+            "flags": ["global"],
+            "name": "Plugin black list",
+            "name[zh_CN]": "插件黑名单",
+            "description": "插件黑名单（包括托盘插件和认证插件），在加载插件的阶段进行判断。系统级配置，默认为空，需要重启电脑。数据结构为数组，内部填充字符串（插件的key值）",
+            "permissions": "readwrite",
+            "visibility": "private"
         }
     }
 }

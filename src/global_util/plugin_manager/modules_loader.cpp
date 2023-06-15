@@ -6,6 +6,7 @@
 #include "plugin_manager.h"
 #include "base_module_interface.h"
 #include "public_func.h"
+#include "dconfig_helper.h"
 
 #include <QDir>
 #include <QLibrary>
@@ -42,13 +43,16 @@ void ModulesLoader::findModule(const QString &path)
         qDebug() << path << "is not exists.";
         return;
     }
+
+    auto blackList = DConfigHelper::instance()->getConfig("pluginBlackList", QStringList()).toStringList();
+    qInfo() << "Plugin black list:" << blackList;
     const QFileInfoList modules = dir.entryInfoList();
     for (QFileInfo module : modules) {
         const QString path = module.absoluteFilePath();
         if (!QLibrary::isLibrary(path)) {
             continue;
         }
-        qInfo() << module << "is found";
+        qInfo() << "About to process " << module;
         QPluginLoader loader(path);
 
         // 检查兼容性
@@ -65,14 +69,20 @@ void ModulesLoader::findModule(const QString &path)
             continue;
         }
 
+        qInfo() << "Current plugin key:" << moduleInstance->key();
+        if (blackList.contains(moduleInstance->key())) {
+            qInfo() << "The plugin is in black list, won't be loaded.";
+            continue;
+        }
+
         int loadPluginType = moduleInstance->loadPluginType();
         if (loadPluginType != dss::module::BaseModuleInterface::Load) {
-            qInfo() << "The plugin dose not want to be loaded";
+            qInfo() << "The plugin dose not want to be loaded.";
             continue;
         }
 
         if (PluginManager::instance()->contains(moduleInstance->key())) {
-            qWarning() << "The plugin has been loaded";
+            qWarning() << "The plugin has been loaded.";
             continue;
         }
 
