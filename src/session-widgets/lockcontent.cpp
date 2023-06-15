@@ -670,10 +670,6 @@ void LockContent::onUserListChanged(QList<std::shared_ptr<User> > list)
  */
 void LockContent::tryGrabKeyboard(bool exitIfFailed)
 {
-    // 在登录时，不需要Grab键盘，避免影响第三方验证插件界面输入
-    if (m_model->appType() == AuthCommon::Login) {
-        return;
-    }
 #ifndef QT_DEBUG
     if (!isVisible()) {
         return;
