@@ -164,6 +164,7 @@ private:
     bool m_onboardBtnVisible;
     bool m_doGrabKeyboard;
     bool m_canShowMenu;
+    bool m_bIsNetworkPluginVisible = false;
 };
 
 #endif // CONTROLWIDGET_H

@@ -161,6 +161,7 @@ void ControlWidget::updatePluginVisible(const QString module, bool state)
     qInfo() << Q_FUNC_INFO << state;
     if (m_modules.keys().contains(module)) {
         m_modules.value(module)->setVisible(state);
+        m_bIsNetworkPluginVisible = state;
     }
 }
 
@@ -318,6 +319,9 @@ void ControlWidget::addModule(TrayPlugin *trayModule)
         layout->setSpacing(0);
         layout->setMargin(0);
         layout->addWidget(trayWidget);
+        button->setVisible(trayWidget->isVisible());
+        if (trayModule->key() == NetworkPlugin)
+            m_bIsNetworkPluginVisible = trayWidget->isVisible();
     } else {
         button->setIcon(QIcon(trayModule->icon()));
     }
@@ -722,6 +726,10 @@ void ControlWidget::showEvent(QShowEvent *event)
         initPlugins();
         isInit = true;
     }
+
+    if (m_modules[NetworkPlugin] && m_modules[NetworkPlugin]->isVisible() != m_bIsNetworkPluginVisible)
+        m_modules[NetworkPlugin]->setVisible(m_bIsNetworkPluginVisible);
+
     QWidget::showEvent(event);
 }
 
