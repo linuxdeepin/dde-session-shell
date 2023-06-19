@@ -447,12 +447,7 @@ void FullScreenBackground::updateGeometry()
 
     // for bug:184943.系统修改分辨率后，登录界面获取的屏幕分辨率不正确,通过xrandr获取屏幕分辨率
     if (m_model->appType() == AuthCommon::Login && !m_model->isUseWayland()) {
-        static QMap<QString, QRect> screensGeometry;
-        if (screensGeometry.isEmpty() || !screensGeometry.contains(m_screen->name())) {
-            screensGeometry = getScreenGeometryByXrandr();
-            qInfo() << "getScreenGeometryByXrandr:" << screensGeometry;
-        }
-
+        const auto &screensGeometry = getScreenGeometryByXrandr();
         if (screensGeometry.contains(m_screen->name())) {
             setGeometry(screensGeometry[m_screen->name()]);
             qInfo() << "set geometry by xrandr rect:" << screensGeometry[m_screen->name()];
