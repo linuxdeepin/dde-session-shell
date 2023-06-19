@@ -11,6 +11,7 @@
 #include <QHBoxLayout>
 #include <QApplication>
 #include <QScrollArea>
+#include <QWindow>
 
 #include <DFontSizeManager>
 #include <DHiDPIHelper>
@@ -578,9 +579,15 @@ bool UpdateWidget::event(QEvent *e)
     if (e->type() == QEvent::Show) {
         UpdateWorker::instance()->enableShortcuts(false);
         UpdateWorker::instance()->setLocked(true);  // 截图录屏在Locked状态时会屏蔽一些锁屏时无法使用的功能（更新时同样无法使用）
+        if (window()->windowHandle()) {
+            window()->windowHandle()->setKeyboardGrabEnabled(true);
+        }
     } else if (e->type() == QEvent::Hide) {
         UpdateWorker::instance()->enableShortcuts(true);
         UpdateWorker::instance()->setLocked(false);
+        if (window()->windowHandle()) {
+            window()->windowHandle()->setKeyboardGrabEnabled(false);
+        }
     }
 
     return false;
