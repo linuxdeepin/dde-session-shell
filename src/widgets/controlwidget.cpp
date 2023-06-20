@@ -299,8 +299,7 @@ QString ControlWidget::messageCallback(const QString &message, void *app_data)
 
 QWidget *ControlWidget::getTray(const QString &name)
 {
-    qInfo() << "TrayButton name:" << name << m_modules[name];
-    return m_modules[name];
+    return m_modules.value(name, nullptr);
 }
 
 void ControlWidget::addModule(TrayPlugin *trayModule)
@@ -727,8 +726,8 @@ void ControlWidget::showEvent(QShowEvent *event)
         isInit = true;
     }
 
-    if (m_modules[NetworkPlugin] && m_modules[NetworkPlugin]->isVisible() != m_bIsNetworkPluginVisible)
-        m_modules[NetworkPlugin]->setVisible(m_bIsNetworkPluginVisible);
+    if (m_modules.value(NetworkPlugin) && m_modules.value(NetworkPlugin)->isVisible() != m_bIsNetworkPluginVisible)
+        m_modules.value(NetworkPlugin)->setVisible(m_bIsNetworkPluginVisible);
 
     QWidget::showEvent(event);
 }
