@@ -140,8 +140,13 @@ void GreeterDisplayWayland::setupRegistry(Registry *registry)
         });
 
         connect(dev, &OutputDevice::removed, this, [dev, this] {
-            qDebug() << "OutputDevice::removed ...";
+            qDebug() << "OutputDevice::removed ...:" << dev->uuid();
             MonitorConfigsForUuid_v1.remove(dev->uuid());
+            // 开机出现logo后开始插拔屏幕，kwin会出现org_kde_kwin_outputdevice的错误并无法解决。采用退出重新拉起greeter规避。
+            if (dev->uuid().isEmpty()) {
+                qWarning() << "uuid is empty! kwin has error! greeter exit!";
+                exit(-1);
+            }
             // 登录界面只有插拔需要处理
             if (m_removeUuid != dev->uuid()) {
                 if (!m_setOutputTimer->isActive()) {
