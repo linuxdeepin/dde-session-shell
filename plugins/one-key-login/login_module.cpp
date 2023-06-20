@@ -413,7 +413,6 @@ void LoginModule::slotPrepareForSleep(bool active)
 {
     qInfo() << Q_FUNC_INFO << active;
 
-    m_acceptSleepSignal = true;
     if (m_login1SessionSelf == nullptr) {
         qWarning()  << "m_login1SessionSelf is null";
         QDBusInterface login1Inter("org.freedesktop.login1", "/org/freedesktop/login1",
@@ -445,10 +444,15 @@ void LoginModule::slotPrepareForSleep(bool active)
         return;
     }
 
-    bool isSessionAvtive = m_login1SessionSelf->property("Active").toBool();
-
+    bool isSessionActive = m_login1SessionSelf->property("Active").toBool();
+    qInfo() << "Current session is active:" << isSessionActive;
     m_lastAuthResult = AuthCallbackData();
+
     // 休眠待机时,同时当前session被激活才开始调用一键登录指纹
+    if (isSessionActive) {
+        m_acceptSleepSignal = true;
+    }
+
     if (active) {
         m_lastAuthResult.result = AuthResult::Failure;
         sendAuthData(m_lastAuthResult);
@@ -456,7 +460,7 @@ void LoginModule::slotPrepareForSleep(bool active)
         return;
     }
 
-    if (isSessionAvtive) {
+    if (isSessionActive) {
         m_isAcceptFingerprintSignal = false;
         m_loginAuthenticated = false;
         sendAuthTypeToSession(AuthType::AT_Custom);
@@ -490,6 +494,7 @@ void LoginModule::sendAuthTypeToSession(AuthType type)
 {
     qInfo() << Q_FUNC_INFO << "sendAuthTypeToSession" << type;
     if (!m_messageCallback){
+        qInfo() << "Message callback is nullptr";
         m_needSendAuthType = true;
         return;
     }
