@@ -93,6 +93,7 @@ LoginModule::LoginModule(QObject *parent)
         m_waitAcceptSignalTimer->stop();
         m_loginAuthenticated = true;
         m_IdentifyWithMultipleUserStarted = false;
+        m_acceptSleepSignal = false;
         if (!m_isAcceptFingerprintSignal) {
             // 防止刚切换指纹认证stop还没结束。
             QTimer::singleShot(30, this, [this] {
@@ -337,6 +338,7 @@ QString LoginModule::message(const QString &message)
         const bool enable = (m_appType == AppType::Login && !m_loginAuthenticated) || (m_appType == AppType::Lock && m_acceptSleepSignal) ||
                 (m_appType == AppType::Login && m_lastAuthResult.result == AuthResult::Success && m_lastAuthResult.account == m_userName);
         qInfo() << "Enable plugin: " << enable
+                << ", app type: " << m_appType
                 << ", authenticated: " << m_loginAuthenticated
                 << ", accepted sleep signal: " << m_acceptSleepSignal
                 << ", last auth account: " << m_lastAuthResult.account
