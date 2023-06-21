@@ -84,6 +84,12 @@ public:
         QString UserName;       // 账户名
     };
 
+    struct AuthResult {
+        AuthType authType;       // 认证结果对应的认证类型，AT_ALL时代表所有认证类型
+        AuthState authState;     // 认证结果
+        QString authMessage;     // 认证消息
+    };
+
     explicit SessionBaseModel(QObject *parent = nullptr);
     ~SessionBaseModel() override;
 
@@ -160,6 +166,10 @@ public:
     void setCurrentContentType(ContentType type) { m_currentContentType = type; }
     ContentType currentContentType() const { return m_currentContentType; }
 
+    bool isLightdmPamStarted() const;
+    void setLightdmPamStarted(bool lightPamStarted);
+
+    inline const AuthResult &getAuthResult() const { return m_authResult; }
 signals:
     /* com.deepin.daemon.Accounts */
     void currentUserChanged(const std::shared_ptr<User>);
@@ -171,6 +181,8 @@ signals:
     void MFAFlagChanged(const bool);
     /* others */
     void visibleChanged(const bool);
+    //通知前端lightdm pam 已经开启
+    void lightdmPamStartedChanged();
 
 public slots:
     /* com.deepin.daemon.Accounts */
@@ -255,6 +267,9 @@ private:
     QMap<QString, std::shared_ptr<User>> *m_loginedUsers;
     UpdatePowerMode m_updatePowerMode;
     ContentType m_currentContentType;
+
+    bool m_lightdmPamStarted; // 标志lightdmpam是否已经开启，主要用于greeter,lock不涉及lightdm
+    AuthResult m_authResult; // 记录认证结果
 };
 
 #endif // SESSIONBASEMODEL_H

@@ -677,6 +677,7 @@ void GreeterWorker::checkDBusServer(bool isValid)
 void GreeterWorker::showPrompt(const QString &text, const QLightDM::Greeter::PromptType type)
 {
     qInfo() << "Greeter prompt:" << text << "type:" << type;
+    m_model->setLightdmPamStarted(true);
     switch (type) {
     case QLightDM::Greeter::PromptTypeSecret:
         m_retryAuth = true;
@@ -697,6 +698,7 @@ void GreeterWorker::showPrompt(const QString &text, const QLightDM::Greeter::Pro
 void GreeterWorker::showMessage(const QString &text, const QLightDM::Greeter::MessageType type)
 {
     qInfo() << "Greeter message:" << text << "type:" << type;
+    m_model->setLightdmPamStarted(true);
     switch (type) {
     case QLightDM::Greeter::MessageTypeInfo:
         m_model->updateAuthState(AT_PAM, AS_Prompt, text);

@@ -42,6 +42,7 @@ public:
 public slots:
     void onRetryButtonVisibleChanged(bool visible);
     void onRequestChangeAuth(const AuthCommon::AuthType authType);
+    void onLightdmPamStartChanged();
 
 protected:
     void resizeEvent(QResizeEvent *event) Q_DECL_OVERRIDE;
@@ -76,6 +77,7 @@ private:
     void initAccount();
     bool useCustomAuth() const;
     bool showAuthButtonBox() const;
+    void sendAuthFinished();
 
 private:
     QVBoxLayout *m_mainLayout;

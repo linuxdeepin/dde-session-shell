@@ -90,6 +90,7 @@ void SFAWidget::initConnections()
     AuthWidget::initConnections();
     connect(m_model, &SessionBaseModel::authTypeChanged, this, &SFAWidget::setAuthType);
     connect(m_model, &SessionBaseModel::authStateChanged, this, &SFAWidget::setAuthState);
+    connect(m_model, &SessionBaseModel::lightdmPamStartedChanged, this, &SFAWidget::onLightdmPamStartChanged);
     connect(m_accountEdit, &DLineEditEx::textChanged, this, [this](const QString &value) {
         m_lockButton->setEnabled(!value.isEmpty());
     });
@@ -723,13 +724,8 @@ void SFAWidget::checkAuthResult(const AuthCommon::AuthType type, const AuthCommo
     // 等所有类型验证通过的时候在发送验证完成信息，否则DA的验证结果可能还没有刷新，导致lightdm调用pam验证失败
     // 人脸和虹膜是手动点击解锁按钮后发送，无需处理
     if (type == AT_All && state == AS_Success) {
-        if ((m_passwordAuth && AS_Success == m_passwordAuth->authState())
-            || (m_ukeyAuth && AS_Success == m_ukeyAuth->authState())
-            || (m_fingerprintAuth && AS_Success == m_fingerprintAuth->authState())
-            || (m_customAuth && m_customAuth->authState() == AS_Success)) {
-            if (m_faceAuth) m_faceAuth->setAuthState(AS_Ended, "Ended");
-            if (m_irisAuth) m_irisAuth->setAuthState(AS_Ended, "Ended");
-            emit authFinished();
+        if( m_model->appType() != AppType::Login || m_model->isLightdmPamStarted()){
+            sendAuthFinished();
         }
 
         if (m_customAuth) {
@@ -1090,4 +1086,24 @@ bool SFAWidget::showAuthButtonBox() const
 {
     return (m_customAuth && !m_customAuth->pluginConfig().showSwitchButton) ?
         m_authButtons.count() > 2 : m_authButtons.count() > 1;
+}
+
+void SFAWidget::onLightdmPamStartChanged()
+{
+    if (m_model->getAuthResult().authType == AT_All && m_model->getAuthResult().authState == AS_Success) {
+        sendAuthFinished();
+    }
+}
+
+void SFAWidget::sendAuthFinished()
+{
+    if ((m_passwordAuth && AS_Success == m_passwordAuth->authState())
+        || (m_ukeyAuth && AS_Success == m_ukeyAuth->authState())
+        || (m_fingerprintAuth && AS_Success == m_fingerprintAuth->authState())
+        || (m_customAuth && m_customAuth->authState() == AS_Success)) {
+        if (m_faceAuth) m_faceAuth->setAuthState(AS_Ended, "Ended");
+        if (m_irisAuth) m_irisAuth->setAuthState(AS_Ended, "Ended");
+
+        emit authFinished();
+    }
 }

@@ -34,6 +34,8 @@ SessionBaseModel::SessionBaseModel(QObject *parent)
     , m_loginedUsers(new QMap<QString, std::shared_ptr<User>>())
     , m_updatePowerMode(UPM_None)
     , m_currentContentType(NoContent)
+    , m_lightdmPamStarted(false)
+    , m_authResult{AuthType::AT_None, AuthState::AS_None, ""}
 {
 }
 
@@ -605,6 +607,9 @@ void SessionBaseModel::updateFactorsInfo(const MFAInfoList &infoList)
  */
 void SessionBaseModel::updateAuthState(const AuthType type, const AuthState state, const QString &message)
 {
+    m_authResult.authState = state;
+    m_authResult.authType = type;
+    m_authResult.authMessage = message;
     switch (m_authProperty.FrameworkState) {
     case Available:
         emit authStateChanged(type, state, message);
@@ -612,5 +617,20 @@ void SessionBaseModel::updateAuthState(const AuthType type, const AuthState stat
     default:
         emit authStateChanged(AT_PAM, state, message);
         break;
+    }
+}
+
+bool SessionBaseModel::isLightdmPamStarted() const
+{
+    return m_lightdmPamStarted;
+}
+
+void SessionBaseModel::setLightdmPamStarted(bool lightdmPamStarted)
+{
+    if(m_lightdmPamStarted != lightdmPamStarted){
+        m_lightdmPamStarted = lightdmPamStarted;
+        if(lightdmPamStarted){
+            Q_EMIT lightdmPamStartedChanged();
+        }
     }
 }
