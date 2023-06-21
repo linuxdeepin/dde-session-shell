@@ -447,10 +447,20 @@ void FullScreenBackground::updateGeometry()
 
     // for bug:184943.系统修改分辨率后，登录界面获取的屏幕分辨率不正确,通过xrandr获取屏幕分辨率
     if (m_model->appType() == AuthCommon::Login && !m_model->isUseWayland()) {
-        const auto &screensGeometry = getScreenGeometryByXrandr();
+        const auto screensGeometry = getScreenGeometryByXrandr();
+
         if (screensGeometry.contains(m_screen->name())) {
-            setGeometry(screensGeometry[m_screen->name()]);
-            qInfo() << "set geometry by xrandr rect:" << screensGeometry[m_screen->name()];
+            // 如果qt获取的屏幕分辨率和xrandr获取的屏幕分辨率一致，使用qt获取的屏幕geometry
+            QSize qtScreenSize = m_screen->size();
+            QSize xrandrScreenSize = screensGeometry[m_screen->name()].size();
+            if (qtScreenSize == xrandrScreenSize) {
+                // fix205519。获取到的屏幕尺寸一致，但qt的位置可能是错的，但不影响窗口位置。
+                setGeometry(m_screen->geometry());
+            } else {
+                setGeometry(screensGeometry[m_screen->name()]);
+                qInfo() << "set geometry by xrandr - this:" << this << screensGeometry[m_screen->name()]
+                        << " screen:" << m_screen->name() << "screen geometry:" << m_screen->geometry();
+            }
         } else {
             setGeometry(m_screen->geometry());
         }
@@ -590,7 +600,7 @@ void FullScreenBackground::moveEvent(QMoveEvent *event)
             }
         }
     }
-    qInfo() << "FullscreenBackground::moveEvent: " << ", old pos: " << event->oldPos() << ", pos: " << event->pos();
+    qInfo() << "FullscreenBackground::moveEvent:this " << this << ", old pos: " << event->oldPos() << ", pos: " << event->pos();
     QWidget::moveEvent(event);
 }
 
@@ -600,8 +610,10 @@ QMap<QString, QRect> FullScreenBackground::getScreenGeometryByXrandr()
 
     // 获取缩放比例
     double scale = getScaleFactorFromDisplay();
-    qInfo() << "getScaleFactorFromDisplay scale:" << scale;
-    if (scale <= 0) {
+    double scaleFromDisplayQt = qApp->devicePixelRatio();
+    qInfo() << "getScaleFactorFromDisplay scale:" << scale << " scaleFromDisplayQt:" << scaleFromDisplayQt;
+    // 如果获取失败或者与从Qt获取的不一致，则不需要处理，使用Qt的屏幕信息
+    if (scale <= 0 || scaleFromDisplayQt != scale) {
         return screensGeometry;
     }
 
