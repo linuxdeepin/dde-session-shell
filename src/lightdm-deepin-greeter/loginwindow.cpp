@@ -9,13 +9,11 @@
 #include <QWindow>
 #include <QKeyEvent>
 
-
 LoginWindow::LoginWindow(SessionBaseModel *const model, QWidget *parent)
     : FullScreenBackground(model, parent)
     , m_model(model)
 {
     setAccessibleName("LoginWindow");
-    updateBackground(m_model->currentUser()->greeterBackground());
     setContent(LoginContent::instance());
 
     connect(LoginContent::instance(), &LockContent::requestBackground, this, [this](const QString & wallpaper) {

@@ -81,8 +81,6 @@ int main(int argc, char* argv[])
     DLogManager::setLogFormat("%{time}{yyyy-MM-dd, HH:mm:ss.zzz} [%{type:-7}] [ %{function:-35} %{line}] %{message}\n");
     DLogManager::registerConsoleAppender();
 
-    ModulesLoader::instance().start(QThread::LowestPriority);
-
     const QString serviceName = "com.deepin.daemon.Accounts";
     QDBusConnectionInterface *interface = QDBusConnection::systemBus().interface();
     if (!interface->isServiceRegistered(serviceName)) {
@@ -105,6 +103,10 @@ int main(int argc, char* argv[])
         qDebug() << "service registered!";
 #endif
     }
+
+    // 加载login模块
+    ModulesLoader::instance().setLoadLoginModule(true);
+    ModulesLoader::instance().start(QThread::LowestPriority);
 
     SessionBaseModel *model = new SessionBaseModel();
     model->setAppType(Login);
@@ -165,6 +167,10 @@ int main(int argc, char* argv[])
     if (!IsWayland) {
         model->setVisible(true);
     }
+
+    // 加载非login模块
+    ModulesLoader::instance().setLoadLoginModule(false);
+    ModulesLoader::instance().start(QThread::LowestPriority);
 
     return a.exec();
 }

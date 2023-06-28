@@ -84,6 +84,7 @@ int main(int argc, char *argv[])
     /* load translation files */
     loadTranslation(QLocale::system().name());
 
+    ModulesLoader::instance().setLoadLoginModule(true);
     ModulesLoader::instance().start(QThread::LowestPriority);
 
     QCommandLineParser cmdParser;
@@ -198,6 +199,10 @@ int main(int argc, char *argv[])
 #endif
 
     QObject::connect(model, &SessionBaseModel::visibleChanged, &multi_screen_manager, &MultiScreenManager::startRaiseContentFrame);
+
+    // 加载Tray插件
+    ModulesLoader::instance().setLoadLoginModule(false);
+    ModulesLoader::instance().start(QThread::LowestPriority);
 
     auto isSingle = app->setSingleInstance(QString("dde-lock%1").arg(getuid()), DApplication::UserScope);
     QDBusConnection conn = QDBusConnection::sessionBus();

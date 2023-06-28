@@ -47,8 +47,6 @@ LockFrame::LockFrame(SessionBaseModel *const model, QWidget *parent)
                             cook, XCB_ATOM_ATOM, 32, 1, &cook);
     }
 
-    updateBackground(m_model->currentUser()->greeterBackground());
-
     setAccessibleName("LockFrame");
     if (!currentContent) {
         setContent(LockContent::instance());

@@ -9,17 +9,16 @@
 #include <QSharedPointer>
 #include <QLoggingCategory>
 #include <QSize>
+#include <QPointer>
+#include <QVariantAnimation>
 
 #include "abstractfullbackgroundinterface.h"
 
 Q_DECLARE_LOGGING_CATEGORY(DDE_SS)
 
-#include <com_deepin_daemon_imageeffect.h>
-
-using ImageEffectInter = com::deepin::daemon::ImageEffect;
-
 class BlackWidget;
 class SessionBaseModel;
+class BackgroundHandlerThread;
 class FullScreenBackground : public QWidget, public AbstractFullBackgroundInterface
 {
     Q_OBJECT
@@ -56,7 +55,6 @@ private:
     void enterEvent(QEvent *event) Q_DECL_OVERRIDE;
     void leaveEvent(QEvent *event) Q_DECL_OVERRIDE;
     void mouseMoveEvent(QMouseEvent *event) Q_DECL_OVERRIDE;
-    const QPixmap pixmapHandle(const QPixmap &pixmap);
     void updateScreen(QPointer<QScreen> screen);
     void updateGeometry();
     bool isPicture(const QString &file);
@@ -76,14 +74,17 @@ protected:
     static QList<FullScreenBackground *> frameList;
     static QPointer<FullScreenBackground> currentFrame;
 
+    void handleBackground(const QString &path, int type);
+    static QString sizeToString(const QSize &size);
+
 private:
     static QString backgroundPath;                             // 高清背景图片路径
     static QString blurBackgroundPath;                         // 模糊背景图片路径
-    static QList<QPair<QSize, QPixmap>> backgroundCacheList;
-    static QList<QPair<QSize, QPixmap>> blurBackgroundCacheList;
+
+    static QMap<QString, QPixmap> backgroundCacheMap;
+    static QMap<QString, QPixmap> blurBackgroundCacheMap;
 
     QVariantAnimation *m_fadeOutAni;      // 背景动画
-    ImageEffectInter *m_imageEffectInter; // 获取模糊背景服务
     QPointer<QScreen> m_screen;
     SessionBaseModel *m_model = nullptr;
     bool m_enableEnterEvent = true;
@@ -92,6 +93,7 @@ private:
     bool m_enableAnimation;
 
     BlackWidget *m_blackWidget;
+    BackgroundHandlerThread *m_backgroundHandlerThread = nullptr;
 };
 
 #endif // FULLSCREENBACKGROUND_H

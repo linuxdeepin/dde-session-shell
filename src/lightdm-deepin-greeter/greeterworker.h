@@ -81,8 +81,8 @@ private:
     void screenSwitchByWldpms(bool active);
 
 private:
-    QLightDM::Greeter *m_greeter;
     DeepinAuthFramework *m_authFramework;
+    QLightDM::Greeter *m_greeter;
     DBusLockService *m_lockInter;
     QDBusInterface *m_systemDaemon;
     SoundThemePlayerInter *m_soundPlayerInter;
@@ -94,6 +94,8 @@ private:
     QString m_account;
     QString m_password;
     bool m_retryAuth;
+
+    bool m_DAStartupCompleted = false;
 };
 
 #endif  // GREETERWORKEK_H

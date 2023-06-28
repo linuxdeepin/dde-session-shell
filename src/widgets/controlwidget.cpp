@@ -257,7 +257,6 @@ void ControlWidget::initUI()
 
 void ControlWidget::initConnect()
 {
-    connect(PluginManager::instance(), &PluginManager::trayPluginAdded, this, &ControlWidget::addModule);
     connect(m_sessionBtn, &DFloatingButton::clicked, this, &ControlWidget::requestSwitchSession);
     connect(m_switchUserBtn, &DFloatingButton::clicked, this, &ControlWidget::requestSwitchUser);
     connect(m_powerBtn, &DFloatingButton::clicked, this, &ControlWidget::requestShutdown);
@@ -721,27 +720,30 @@ void ControlWidget::keyReleaseEvent(QKeyEvent *event)
 
 void ControlWidget::showEvent(QShowEvent *event)
 {
-    auto initPlugins = [this] {
-        for (const auto &module : PluginManager::instance()->trayPlugins()) {
-            if (!module)
+    // 对tray类型插件延时处理,避免阻塞主界面显示。
+    QTimer::singleShot(500, this, [this]{
+        auto initPlugins = [this] {
+            for (const auto &module : PluginManager::instance()->trayPlugins()) {
+                if (!module)
+                    continue;
+
+                addModule(module);
+            }
+        };
+        static bool isInit = false;
+        if (!isInit) {
+            initPlugins();
+            isInit = true;
+        }
+
+        for (auto key : m_modules.keys()) {
+            auto value = m_modules.value(key);
+            if (!value) {
                 continue;
-
-            addModule(module);
+            }
+            value->setVisible(key->isVisible());
         }
-    };
-    static bool isInit = false;
-    if (!isInit) {
-        initPlugins();
-        isInit = true;
-    }
-
-    for (auto key : m_modules.keys()) {
-        auto value = m_modules.value(key);
-        if (!value) {
-            continue;
-        }
-        value->setVisible(key->isVisible());
-    }
+    });
 
     QWidget::showEvent(event);
 }

@@ -15,6 +15,8 @@
 
 const QString ModulesDir = "/usr/lib/dde-session-shell/modules";
 const QString LOWEST_VERSION = "1.1.0";
+const QString LoginType = "Login";
+const QString TrayType = "Tray";
 
 ModulesLoader::ModulesLoader(QObject *parent)
     : QThread(parent)
@@ -56,10 +58,23 @@ void ModulesLoader::findModule(const QString &path)
         QPluginLoader loader(path);
 
         // 检查兼容性
-        const QString &version = loader.metaData().value("MetaData").toObject().value("api").toString();
+        const QJsonObject meta = loader.metaData().value("MetaData").toObject();
+        const QString version = meta.value("api").toString();
         // 版本过低则不加载，可能会导致登录器崩溃
         if (!checkVersion(version, LOWEST_VERSION)) {
             qWarning() << "The module version is too low.";
+            continue;
+        }
+
+        QString pluginType = meta.value("pluginType").toString();
+
+        // 分类加载
+        if ((pluginType == LoginType && !m_loadLoginModule) || (pluginType == TrayType && m_loadLoginModule)) {
+            continue;
+        }
+
+        if (pluginType.isEmpty()) {
+            qWarning() << "plugin has no pluginType in json file, will not load:" << module;
             continue;
         }
 

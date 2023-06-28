@@ -465,8 +465,10 @@ void ShutdownWidget::setButtonsVisible()
         if (m_requireSwitchSystemBtn) {
             m_requireSwitchSystemBtn->setVisible(true);
         }
-        const bool hideLogoutButton = DConfigHelper::instance()->getConfig("hideLogoutButton", false).toBool();
-        m_requireLogoutButton->setVisible(!hideLogoutButton);
+        if (m_model->appType() == AppType::Lock) {
+            const bool hideLogoutButton = DConfigHelper::instance()->getConfig("hideLogoutButton", false).toBool();
+            m_requireLogoutButton->setVisible(!hideLogoutButton);
+        }
         // 根据lastore的lastore-daemon-status配置决定是否显示更新按钮
         const int lastoreDaemonStatus = DConfigHelper::instance()->getConfig(LASTORE_DCONFIG_NAME, LASTORE_DCONFIG_NAME, "", LASTORE_DAEMON_STATUS, 0).toInt();
         qInfo() << "Lastore daemon status: " << lastoreDaemonStatus;

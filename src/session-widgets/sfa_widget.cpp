@@ -108,7 +108,9 @@ void SFAWidget::setModel(const SessionBaseModel *model)
 
     // 在登陆设置验证类型的时候需要判断当前是否是"..."账户，需要先设置当前用户，在设置验证类型，两者的顺序切勿颠倒。
     setUser(model->currentUser());
-    setAuthType(model->getAuthProperty().AuthType);
+    if (m_model->getAuthProperty().AuthType != AT_None) {
+        setAuthType(model->getAuthProperty().AuthType);
+    }
 }
 
 /**

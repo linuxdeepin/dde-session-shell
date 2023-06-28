@@ -36,8 +36,8 @@ const int NUM_LOCK_UNKNOWN = 2; // 未知状态
 
 GreeterWorker::GreeterWorker(SessionBaseModel *const model, QObject *parent)
     : AuthInterface(model, parent)
-    , m_greeter(new QLightDM::Greeter(this))
     , m_authFramework(new DeepinAuthFramework(this))
+    , m_greeter(new QLightDM::Greeter(this))
     , m_lockInter(new DBusLockService(LOCK_SERVICE_NAME, LOCK_SERVICE_PATH, QDBusConnection::systemBus(), this))
     , m_systemDaemon(new QDBusInterface("com.deepin.daemon.Daemon", QString("/com/deepin/daemon/Daemon"), "com.deepin.daemon.Daemon", QDBusConnection::systemBus(), this))
     , m_soundPlayerInter(new SoundThemePlayerInter("com.deepin.api.SoundThemePlayer", "/com/deepin/api/SoundThemePlayer", QDBusConnection::systemBus(), this))
@@ -238,7 +238,7 @@ void GreeterWorker::initConnections()
     connect(m_model, &SessionBaseModel::currentUserChanged, this, &GreeterWorker::onCurrentUserChanged);
     connect(m_model, &SessionBaseModel::visibleChanged, this, [this](bool visible) {
         if (visible) {
-            if (!m_model->isServerModel()
+            if (m_DAStartupCompleted && !m_model->isServerModel()
                 && (!m_model->currentUser()->isNoPasswordLogin() || m_model->currentUser()->expiredState() == User::ExpiredAlready)) {
                 createAuthentication(m_model->currentUser()->name());
             }
@@ -265,6 +265,25 @@ void GreeterWorker::initConnections()
     // 等保服务开启/关闭时更新
     QDBusConnection::systemBus().connect(SECURITY_ENHANCE_NAME, SECURITY_ENHANCE_PATH, SECURITY_ENHANCE_NAME,
                                          "Receipt", this, SLOT(onReceiptChanged(bool)));
+
+    connect(m_authFramework, &DeepinAuthFramework::startupCompleted, this, [this] {
+        m_DAStartupCompleted = true;
+
+        /* com.deepin.daemon.Authenticate */
+        if (m_authFramework->isDeepinAuthValid()) {
+            m_model->updateFrameworkState(m_authFramework->GetFrameworkState());
+            m_model->updateSupportedEncryptionType(m_authFramework->GetSupportedEncrypts());
+            m_model->updateSupportedMixAuthFlags(m_authFramework->GetSupportedMixAuthFlags());
+            m_model->updateLimitedInfo(m_authFramework->GetLimitedInfo(m_model->currentUser()->name()));
+
+            if (m_model->visible() && !m_model->isServerModel()
+                && (!m_model->currentUser()->isNoPasswordLogin() || m_model->currentUser()->expiredState() == User::ExpiredAlready)) {
+                createAuthentication(m_model->currentUser()->name());
+            }
+        } else {
+            qWarning() << "DeepinAuthFramework is not valid!:" << m_authFramework->GetFrameworkState();
+        }
+    });
 }
 
 void GreeterWorker::initData()
@@ -300,14 +319,6 @@ void GreeterWorker::initData()
         m_model->updateCurrentUser(m_lockInter->CurrentUser());
     }
     m_soundPlayerInter->PrepareShutdownSound(static_cast<int>(m_model->currentUser()->uid()));
-
-    /* com.deepin.daemon.Authenticate */
-    if (m_authFramework->isDeepinAuthValid()) {
-        m_model->updateFrameworkState(m_authFramework->GetFrameworkState());
-        m_model->updateSupportedEncryptionType(m_authFramework->GetSupportedEncrypts());
-        m_model->updateSupportedMixAuthFlags(m_authFramework->GetSupportedMixAuthFlags());
-        m_model->updateLimitedInfo(m_authFramework->GetLimitedInfo(m_model->currentUser()->name()));
-    }
 }
 
 void GreeterWorker::initConfiguration()

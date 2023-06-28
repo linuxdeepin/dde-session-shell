@@ -62,6 +62,7 @@ public:
     bool isDeepinAuthValid() const;
 
 signals:
+    void startupCompleted();
     /* com.deepin.daemon.Authenticate */
     void LimitsInfoChanged(const QString &);
     void SupportedMixAuthFlagsChanged(const int);

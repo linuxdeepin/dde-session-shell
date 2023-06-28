@@ -14,6 +14,7 @@ class ModulesLoader : public QThread
     Q_OBJECT
 public:
     static ModulesLoader &instance();
+    void setLoadLoginModule(bool loadLoginModule) { m_loadLoginModule = loadLoginModule; }
 
 protected:
     void run() override;
@@ -25,6 +26,9 @@ private:
     ModulesLoader &operator=(const ModulesLoader &) = delete;
 
     void findModule(const QString &path);
+
+private:
+    bool m_loadLoginModule = false;
 };
 
 #endif // MODULES_LOADER_H
