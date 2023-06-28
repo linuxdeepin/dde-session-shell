@@ -159,9 +159,11 @@ void ControlWidget::initKeyboardLayoutList()
 void ControlWidget::updatePluginVisible(const QString module, bool state)
 {
     qInfo() << Q_FUNC_INFO << state;
-    if (m_modules.keys().contains(module)) {
-        m_modules.value(module)->setVisible(state);
-        m_bIsNetworkPluginVisible = state;
+    for (auto key : m_modules.keys()) {
+        if (key->objectName() == module) {
+            m_modules.value(key)->setVisible(state);
+            return;
+        }
     }
 }
 
@@ -299,7 +301,15 @@ QString ControlWidget::messageCallback(const QString &message, void *app_data)
 
 QWidget *ControlWidget::getTray(const QString &name)
 {
-    return m_modules.value(name, nullptr);
+    QWidget *ret = nullptr;
+    for (auto key : m_modules.keys()) {
+        if (key->objectName() == name) {
+            ret = m_modules[key];
+            break;
+        }
+    }
+    qInfo() << "TrayButton name:" << name << ret;
+    return ret;
 }
 
 void ControlWidget::addModule(TrayPlugin *trayModule)
@@ -312,20 +322,21 @@ void ControlWidget::addModule(TrayPlugin *trayModule)
     button->setAutoExclusive(true);
     button->setBackgroundRole(DPalette::Button);
 
-    if (QWidget *trayWidget = trayModule->itemWidget()) {
+    QWidget *trayWidget = trayModule->itemWidget();
+    if (trayWidget) {
         trayWidget->setParent(button);
         QHBoxLayout *layout = new QHBoxLayout(button);
         layout->setSpacing(0);
         layout->setMargin(0);
         layout->addWidget(trayWidget);
         button->setVisible(trayWidget->isVisible());
-        if (trayModule->key() == NetworkPlugin)
-            m_bIsNetworkPluginVisible = trayWidget->isVisible();
+        trayWidget->setObjectName(trayModule->key());
     } else {
         button->setIcon(QIcon(trayModule->icon()));
     }
 
-    m_modules.insert(trayModule->key(), button);
+    m_modules.insert(trayWidget, button);
+
     trayModule->setAppData(this);
     trayModule->setMessageCallback(&ControlWidget::messageCallback);
 
@@ -400,9 +411,9 @@ void ControlWidget::addModule(TrayPlugin *trayModule)
 
 void ControlWidget::removeModule(TrayPlugin *trayModule)
 {
-    QMap<QString, QWidget *>::const_iterator i = m_modules.constBegin();
+    QMap<QWidget *, QWidget *>::const_iterator i = m_modules.constBegin();
     while (i != m_modules.constEnd()) {
-        if (i.key() == trayModule->key()) {
+        if (i.key()->objectName() == trayModule->key()) {
             m_modules.remove(i.key());
             m_btnList.removeAll(dynamic_cast<DFloatingButton *>(i.value()));
             updateLayout();
@@ -726,8 +737,13 @@ void ControlWidget::showEvent(QShowEvent *event)
         isInit = true;
     }
 
-    if (m_modules.value(NetworkPlugin) && m_modules.value(NetworkPlugin)->isVisible() != m_bIsNetworkPluginVisible)
-        m_modules.value(NetworkPlugin)->setVisible(m_bIsNetworkPluginVisible);
+    for (auto key : m_modules.keys()) {
+        auto value = m_modules.value(key);
+        if (!value) {
+            continue;
+        }
+        value->setVisible(key->isVisible());
+    }
 
     QWidget::showEvent(event);
 }

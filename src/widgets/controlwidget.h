@@ -151,7 +151,7 @@ private:
 #ifndef SHENWEI_PLATFORM
     QPropertyAnimation *m_tipsAni = nullptr;
 #endif
-    QMap<QString, QWidget *> m_modules;
+    QMap<QWidget *, QWidget *> m_modules;
     QMenu *m_contextMenu;
     TipsWidget *m_tipsWidget;
     const SessionBaseModel *m_model;
@@ -164,7 +164,6 @@ private:
     bool m_onboardBtnVisible;
     bool m_doGrabKeyboard;
     bool m_canShowMenu;
-    bool m_bIsNetworkPluginVisible = false;
 };
 
 #endif // CONTROLWIDGET_H
