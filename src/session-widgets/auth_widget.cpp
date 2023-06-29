@@ -76,6 +76,7 @@ void AuthWidget::initUI()
     m_accountEdit->lineEdit()->setAlignment(Qt::AlignCenter);
     m_accountEdit->setClearButtonEnabled(false);
     m_accountEdit->setPlaceholderText(tr("Account"));
+    m_accountEdit->lineEdit()->setValidator(new QRegExpValidator(QRegExp("[a-zA-Z0-9-_@]+$"), this));
     // 用户名
     m_userNameWidget = new UserNameWidget(false, true, this);
     /* 密码过期提示 */
