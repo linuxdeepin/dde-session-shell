@@ -300,6 +300,7 @@ target_link_libraries(lightdm-deepin-greeter PRIVATE
 add_subdirectory(lighter-greeter)
 add_subdirectory(tests)
 add_subdirectory(plugins)
+add_subdirectory(src/pam-inhibit-autologin)
 
 # Install settings
 
