@@ -38,7 +38,7 @@ GreeterDisplayWayland::GreeterDisplayWayland(QObject *parent)
     , m_eventQueue(nullptr)
     , m_pConf(nullptr)
     , m_pManager(nullptr)
-    , m_displayMode(Extend_Mode)
+    , m_displayMode(Mirror_Mode)
     , m_setOutputTimer(new QTimer(this))
 {
     QDBusInterface displayConfig("com.deepin.system.Display",
@@ -59,10 +59,10 @@ GreeterDisplayWayland::GreeterDisplayWayland(QObject *parent)
                     QJsonObject Config = rootObj.value("Config").toObject();
                     m_screensObj = Config.value("Screens").toObject();
                     m_displayMode = Config.value("DisplayMode").toInt();
-                    qDebug() << "m_displayMode :" << m_displayMode;
+                    qDebug() << "Getting displayMode:" << m_displayMode;
                 }
         } else {
-            qDebug() << "Failed to get license state: " << configReply.error().message();
+            qDebug() << "Failed to get display config:" << configReply.error().message();
         }
         watcher->deleteLater();
     });
@@ -97,28 +97,28 @@ void GreeterDisplayWayland::start()
 void GreeterDisplayWayland::setupRegistry(Registry *registry)
 {
     connect(registry, &Registry::outputManagementAnnounced, this, [ this, registry ](quint32 name, quint32 version) {
-        qDebug() << "onMangementAnnounced";
+        qDebug() << "Output mangement announced";
 
         if (!m_pManager) {
             m_pManager = registry->createOutputManagement(name, version, this);
             if (!m_pManager || !m_pManager->isValid()) {
-                qWarning() << "create manager is nullptr or not valid!";
+                qWarning() << "Creating output mangement failed!";
                 return;
             }
             if (!m_pConf) {
                 m_pConf = m_pManager->createConfiguration();
                 if (!m_pConf || !m_pConf->isValid()) {
-                    qWarning() << "create output configure is null or is not vaild";
+                    qWarning() << "Creating output configuration failed!";
                     return;
                 }
                 disconnect(m_pConf, &OutputConfiguration::applied, this, nullptr);
                 disconnect(m_pConf, &OutputConfiguration::failed, this, nullptr);
                 connect(m_pConf, &OutputConfiguration::applied, [this] {
-                    qInfo() << "Configuration applied!";
+                    qInfo() << "Configuration applied succeed!";
                     Q_EMIT setOutputFinished();
                 });
                 connect(m_pConf, &OutputConfiguration::failed, [this] {
-                    qWarning() << "Configuration failed!";
+                    qWarning() << "Configuration applied failed!";
                     Q_EMIT setOutputFinished();
                 });
             }
@@ -126,12 +126,12 @@ void GreeterDisplayWayland::setupRegistry(Registry *registry)
     });
 
     connect(registry, &Registry::outputDeviceAnnounced, this, [ this, registry ](quint32 name, quint32 version) {
-        qDebug() << "outputDeviceAnnounced";
+        qDebug() << "Output device announced";
 
         auto dev = registry->createOutputDevice(name, version);
         if (!dev || !dev->isValid())
         {
-            qWarning() << "get dev is null or not valid!";
+            qWarning() << "Creating output device failed!";
             return;
         }
 
@@ -140,11 +140,11 @@ void GreeterDisplayWayland::setupRegistry(Registry *registry)
         });
 
         connect(dev, &OutputDevice::removed, this, [dev, this] {
-            qDebug() << "OutputDevice::removed ...:" << dev->uuid();
+            qDebug() << "Removing Output device:" << dev->uuid();
             MonitorConfigsForUuid_v1.remove(dev->uuid());
             // 开机出现logo后开始插拔屏幕，kwin会出现org_kde_kwin_outputdevice的错误并无法解决。采用退出重新拉起greeter规避。
             if (dev->uuid().isEmpty()) {
-                qWarning() << "uuid is empty! kwin has error! greeter exit!";
+                qWarning() << "An error occurred in the kwin, uuid is empty, exit greeter!";
                 exit(-1);
             }
             // 登录界面只有插拔需要处理
@@ -153,8 +153,9 @@ void GreeterDisplayWayland::setupRegistry(Registry *registry)
                     m_setOutputTimer->start();
                 }
                 m_removeUuid = dev->uuid();
-                qDebug() << "update m_removeUuid--->" << m_removeUuid;
+                qInfo() << "Updating the removed uuid:" << m_removeUuid;
             }
+            dev->destroy();
         });
     });
 
@@ -165,12 +166,11 @@ void GreeterDisplayWayland::setupRegistry(Registry *registry)
 
 void GreeterDisplayWayland::onDeviceChanged(OutputDevice *dev)
 {
-    qDebug() << "onDeviceChanged ...";
-    qDebug()<<"[Changed]: "<<dev->model()<<dev->uuid()<<dev->globalPosition()<<dev->geometry()<<dev->refreshRate()<<dev->pixelSize();
+    qDebug() << "Output device changed:" << dev->model() << dev->uuid() << dev->globalPosition() << dev->geometry() << dev->refreshRate() << dev->pixelSize();
     QString uuid = dev->uuid();
     QPoint point = dev->globalPosition();
     if (MonitorConfigsForUuid_v1.find(uuid) == MonitorConfigsForUuid_v1.end()) {
-        qDebug() << "OutputDevice::Added uuid --->" << uuid;
+        qInfo() << "Adding output device:" << uuid;
         QString name = getOutputDeviceName(dev->model(), dev->manufacturer());
         QString stdName = getStdMonitorName(QByteArray(dev->edid(), dev->edid().size()));
         MonitorConfig cfg;
@@ -182,17 +182,17 @@ void GreeterDisplayWayland::onDeviceChanged(OutputDevice *dev)
             m_setOutputTimer->start();
         }
         if (dev->uuid() == m_removeUuid) {
-            qDebug() << "reset removeUuid ...";
+            qDebug() << "Reset the removed uuid";
             m_removeUuid = "";
         }
     } else {
         // 存在设置之后不生效的情况，需要根据changed信号判断，暂不处理，可能会一直设置
-        qDebug() << "OutputDevice::changed ..." << uuid;
+        qDebug() << "Output device changed:" << uuid;
         if (MonitorConfigsForUuid_v1[uuid].hasCof) {
             bool enabled = OutputDevice::Enablement::Enabled == dev->enabled();
             if ((MonitorConfigsForUuid_v1[uuid].x != point.x() && MonitorConfigsForUuid_v1[uuid].y != point.y()) ||
                 MonitorConfigsForUuid_v1[uuid].enabled != enabled) {
-                qWarning() << "apply do not work...";
+                qWarning() << "Applied the config, but it doesn't work!";
             }
         }
     }
@@ -204,7 +204,7 @@ void GreeterDisplayWayland::setOutputs()
         m_setOutputTimer->stop();
     }
     if (MonitorConfigsForUuid_v1.size() == 0) {
-        qWarning() << "has no monitors ...";
+        qWarning() << "There is no monitor!";
         return;
     }
     QString uuidKey;
@@ -215,7 +215,7 @@ void GreeterDisplayWayland::setOutputs()
         it++;
     }
     uuidKey.remove(uuidKey.length() - 1, 1);
-    qDebug() << "uuidKey:--->" << uuidKey;
+    qInfo() << "Found the key of system config:" << uuidKey;
     QString displayMode;
     switch (m_displayMode)
     {
@@ -248,7 +248,7 @@ void GreeterDisplayWayland::setOutputs()
                 }
                 uuidKeyTmp.remove(uuidKeyTmp.length() - 1, 1);
                 if (!m_screensObj.value(uuidKeyTmp).toObject().value(displayMode).toObject().isEmpty()) {
-                    qDebug() << "uuidKey update--->" << uuidKeyTmp;
+                    qInfo() << "Updating the key of system config:" << uuidKeyTmp;
                     uuidKey = uuidKeyTmp;
                     break;
                 }
@@ -257,14 +257,14 @@ void GreeterDisplayWayland::setOutputs()
     }
     QJsonArray monitorsArr;
     if (MonitorConfigsForUuid_v1.size() == 1) {
-        qDebug() << "Single mode ...";
+        qDebug() << "It's single mode";
         monitorsArr = m_screensObj.value(uuidKey).toObject().value("Single").toObject().value("Monitors").toArray();
     } else {
         if (m_displayMode != Single_Mode) {
             monitorsArr = m_screensObj.value(uuidKey).toObject().value(displayMode).toObject().value("Monitors").toArray();
         } else {
             QString enableUuid = m_screensObj.value(uuidKey).toObject().value("OnlyOneUuid").toString();
-            qDebug() << "enableUuid--->" << enableUuid;
+            qDebug() << "Enable output device:" << enableUuid;
             monitorsArr = m_screensObj.value(uuidKey).toObject().value(displayMode).toObject().value(enableUuid).toObject().value("Monitors").toArray();
             QStringList uuidList = uuidKey.split(",");
             if (uuidList.size() > 1) {
@@ -274,7 +274,7 @@ void GreeterDisplayWayland::setOutputs()
                     if(uuid != enableUuid) {
                         QJsonValue valueTmp = m_screensObj.value(uuidKey).toObject().value(displayMode).toObject().value(uuid).toObject().value("Monitors").toArray()[0];
                         if (valueTmp.toObject().isEmpty()) {
-                            qDebug() << uuid << ":valueTmp is null";
+                            qDebug() << "Creating default config:" << uuid;
                             // 仅单屏，若另一个屏幕没有配置，给个默认配置
                             QJsonObject obj;
                             obj["UUID"] = uuid;
@@ -285,7 +285,7 @@ void GreeterDisplayWayland::setOutputs()
                             valueTmp = obj;
                         }
                         monitorsArr.append(valueTmp);
-                        qDebug() << "disableUuid--->" << uuid;
+                        qDebug() << "Disable output device:" << uuid;
                     }
                 }
             }
@@ -299,12 +299,12 @@ void GreeterDisplayWayland::setOutputs()
             QString uuid = jsonMonitorConfig.value("UUID").toString();
             QString id;
             for(QMap<QString,MonitorConfig>::Iterator it = MonitorConfigsForUuid_v1.begin(); it != MonitorConfigsForUuid_v1.end(); ++it) {
-                if(it.value().uuid== uuid) {
+                if(it.value().uuid == uuid) {
                     id = it.key();
                 }
             }
             if (id.isEmpty()) {
-                qWarning() << "invalid monitor ...";
+                qWarning() << "Invalid monitor:" << uuid;
                 break;
             }
             MonitorConfigsForUuid_v1[id].x = jsonMonitorConfig.value("X").toInt();
@@ -332,7 +332,7 @@ void GreeterDisplayWayland::setOutputs()
     }
 }
 
-QSize GreeterDisplayWayland::commonSizeForMirrorMode()
+QSize GreeterDisplayWayland::getCommonResolution()
 {
     QVector<QVector<QSize>> modesVec;
     // 对所有分辨率组合去重
@@ -372,15 +372,16 @@ QSize GreeterDisplayWayland::commonSizeForMirrorMode()
             index = i;
         }
     }
+    qInfo() << "Found the common size:" << commonModeVec[index];
     return commonModeVec[index];
 }
 
 void GreeterDisplayWayland::applyDefault()
 {
-    qInfo() << "applyDefault ...";
+    qInfo() << "Applying the default config";
     QSize applySize;
     if (m_displayMode == Mirror_Mode) {
-       applySize = commonSizeForMirrorMode();
+       applySize = getCommonResolution();
     }
     QPoint o(0, 0);
     bool enabled = true;
@@ -389,20 +390,18 @@ void GreeterDisplayWayland::applyDefault()
         if (m_displayMode != Mirror_Mode) {
             applySize = dev->geometry().size();
         }
-        qDebug() << "applyDefault uuid--->" << dev->uuid() << "applySize--->" << applySize;
+        qDebug() << "Default uuid:" << dev->uuid() << ", default size: " << applySize;
         for (auto m : dev->modes()) {
             if (m.size.width() == applySize.width() && m.size.height() == applySize.height()) {
-                qDebug() << "set output mode :" << m.size.width() << "x" << m.size.height() << "and refreshRate :" << m.refreshRate;
+                qDebug() << "Setting output resolution:" << m.size.width() << "x" << m.size.height() << ", refreshRate:" << m.refreshRate;
                 m_pConf->setMode(dev, m.id);
                 break;
             }
         }
-        qInfo() << "set output setPosition to " << o.x() << o.y();
         m_pConf->setPosition(dev, o);
-        qInfo() << "set output setEnabled to " << enabled;
         m_pConf->setEnabled(dev, OutputDevice::Enablement(enabled));
-        qInfo() << "set output transform to 0";
         m_pConf->setTransform(dev, OutputDevice::Transform(0));
+        qInfo() << "Setting output position: (" << o.x() << ", "<< o.y() << ") enabled:" << enabled << "transform: 0";
         m_pConf->apply();
         // 找不到配置文件，如果是扩展模式，默认横向扩展，如果是仅单屏默认点亮第一个屏幕
         if (m_displayMode == Extend_Mode) {
@@ -416,7 +415,7 @@ void GreeterDisplayWayland::applyDefault()
 
 void GreeterDisplayWayland::applyConfig(QString uuid)
 {
-    qInfo() << "applyConfig ...";
+    qInfo() << "Applying the system Config";
     auto monitor = MonitorConfigsForUuid_v1[uuid];
     auto dev = monitor.dev;
     bool modeSet = false;
@@ -432,7 +431,7 @@ void GreeterDisplayWayland::applyConfig(QString uuid)
                     continue;
                 }
             }
-            qDebug() << "set output mode :" << monitor.width << "x" << monitor.height << "and refreshRate :" << monitor.refresh_rate;
+            qDebug() << "Setting output resolution:" << monitor.width << "x" << monitor.height << ", refreshRate:" << monitor.refresh_rate;
             m_pConf->setMode(dev, m.id);
             modeSet = true;
             break;
@@ -442,12 +441,10 @@ void GreeterDisplayWayland::applyConfig(QString uuid)
     if (!modeSet) {
         m_pConf->setMode(dev, dev->modes()[0].id);
     }
-    qInfo() << "set output setPosition to " << monitor.x << monitor.y;
     m_pConf->setPosition(dev, QPoint(monitor.x, monitor.y));
-    qInfo() << "set output setEnabled to " << monitor.enabled;
     m_pConf->setEnabled(dev, OutputDevice::Enablement(monitor.enabled));
-    qInfo() << "set output transform to " << monitor.transform;
     m_pConf->setTransform(dev, OutputDevice::Transform(monitor.transform));
+    qInfo() << "Setting output position: (" << monitor.x << ", "<< monitor.y << ") enabled:" << monitor.enabled << "transform:" << monitor.transform;
     m_pConf->apply();
     MonitorConfigsForUuid_v1[uuid].hasCof = true;
 }
