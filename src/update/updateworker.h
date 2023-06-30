@@ -58,6 +58,7 @@ public:
     void enableShortcuts(bool enable);
     void doPowerAction(bool reboot);
     void setLocked(const bool locked);
+    void doUpdateAfterRestartLightdm();
 
 Q_SIGNALS:
     void requestExitUpdating();

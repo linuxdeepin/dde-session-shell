@@ -1,0 +1,41 @@
+#!/bin/bash
+
+# 判断是否有脚本需要在greeter之前调用
+exec_path=$(/usr/share/dde-session-shell/greeters.d/pre-greeter | tail -1)
+
+exit_code=$?
+
+if [[ $exit_code == 0 ]]; then
+    echo "Pre-greeter path is: "$exec_path
+    $exec_path
+else
+    echo "There is nothing to do before start greeter"
+fi
+
+# 启动greeter
+# greeter没正常退出的情况下，会重新拉起greeter
+start_lightdm_deepin_greeter() {
+  echo "-lightdm-deepin-greeter starting..." 1>&2
+  while true; do
+      /usr/bin/lightdm-deepin-greeter
+      exit_status=$?
+      if [ $exit_status -eq 0 ]; then
+          break
+      else
+          current_time=$(date '+%Y-%m-%d %H:%M:%S')
+          echo "$current_time: -lightdm-deepin-greeter exited with non-zero status. Restarting..." 1>&2
+      fi
+  done
+}
+
+dde-dconfig --get -a org.deepin.dde.lightdm-deepin-greeter -r org.deepin.dde.lightdm-deepin-greeter -k enableLighterGreeter | grep "true"
+if [ $? -eq 0 ];then
+    /usr/bin/lightdm-deepin-greeter-lighter
+
+    # 没正常退出的情况下，仍然拉起原版Greeter
+    if [ $? -ne 0 ];then
+        start_lightdm_deepin_greeter
+    fi
+else
+    start_lightdm_deepin_greeter
+fi

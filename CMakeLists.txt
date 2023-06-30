@@ -321,6 +321,10 @@ install(FILES files/x/lightdm-deepin-greeter.desktop DESTINATION ${CMAKE_INSTALL
 # 指定greeter，优先级最低，允许被其他应用以更高的配置文件覆盖
 install(FILES files/50-deepin.conf DESTINATION ${CMAKE_INSTALL_DATADIR}/lightdm/lightdm.conf.d)
 
+# 选择需要执行的二进制
+install(PROGRAMS files/launch-binary DESTINATION ${CMAKE_INSTALL_DATADIR}/dde-session-shell/greeters.d)
+install(PROGRAMS files/pre-greeter DESTINATION ${CMAKE_INSTALL_DATADIR}/dde-session-shell/greeters.d)
+
 # install wayland files
 install(PROGRAMS files/wayland/launch-kwin-wayland DESTINATION ${CMAKE_INSTALL_DATADIR}/dde-session-shell/greeters.d/wayland)
 install(PROGRAMS files/wayland/lightdm-deepin-greeter-wayland DESTINATION ${CMAKE_INSTALL_DATADIR}/dde-session-shell/greeters.d/wayland)

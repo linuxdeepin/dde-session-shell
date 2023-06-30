@@ -18,6 +18,7 @@
 #include <QFont>
 #include <QWidget>
 #include <QApplication>
+#include <QFile>
 
 #include <DDBusSender>
 
@@ -151,7 +152,7 @@ void UpdateWorker::startUpdateProgress()
 
     qInfo() << "Power check passed";
 
-    doDistUpgradeIfCanBackup();
+    doUpdateAfterRestartLightdm();
 }
 
 void UpdateWorker::doDistUpgrade(bool doBackup)
@@ -528,4 +529,43 @@ void UpdateWorker::cleanLaStoreJob(QPointer<JobInter> dbusJob)
         delete dbusJob;
         dbusJob = nullptr;
     }
+}
+
+void UpdateWorker::doUpdateAfterRestartLightdm()
+{
+    qInfo() << "Do update after restart lightdm";
+    const static QString FILE_PATH = "/tmp/deepin_update_option.json";
+
+    // 写入更新配置，以便dde-update读取
+    QFile f(FILE_PATH);
+    if (!f.open(QIODevice::WriteOnly)) {
+        qWarning() << "Open " << FILE_PATH << " failed";
+        doDistUpgradeIfCanBackup();
+        return;
+    }
+
+    QJsonObject content;
+    m_managerInter->setSync(true);
+    const int updateMode = m_managerInter->updateMode();
+    m_managerInter->setSync(false);
+    content["DoUpgradeMode"] = updateMode;
+    content["IsPowerOff"] = UpdateModel::instance()->isReboot() ? 0 : 1;
+
+    QJsonDocument jsonDoc;
+    jsonDoc.setObject(content);
+    f.write(jsonDoc.toJson());
+    f.close();
+
+    // 重启lightdm
+    QDBusPendingReply<QDBusObjectPath> reply = m_managerInter->asyncCall("PrepareFullScreenUpgrade", "");
+    QDBusPendingCallWatcher *watcher = new QDBusPendingCallWatcher(reply, this);
+    connect(watcher, &QDBusPendingCallWatcher::finished, this, [this, reply, watcher] {
+        watcher->deleteLater();
+        if (reply.isValid()) {
+            qInfo() << "Call `PrepareFullScreenUpgrade` function successfully, quit myself";
+        } else {
+            qWarning() << "Call `PrepareFullScreenUpgrade` function failed, error:" << reply.error().message();
+            doDistUpgradeIfCanBackup();
+        }
+    });
 }
