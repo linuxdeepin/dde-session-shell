@@ -86,6 +86,9 @@ private:
     QString getOutputDeviceName(const QString& model, const QString& make);
     void setOutputs();
     QSize getCommonResolution();
+    QString displayModeStr();
+    QString getSystemConfKey();
+    QJsonArray getSystemConfArr(QString key);
 
 private:
     QThread *m_connectionThread;

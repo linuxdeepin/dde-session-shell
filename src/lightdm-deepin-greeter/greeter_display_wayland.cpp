@@ -198,15 +198,24 @@ void GreeterDisplayWayland::onDeviceChanged(OutputDevice *dev)
     }
 }
 
-void GreeterDisplayWayland::setOutputs()
+QString GreeterDisplayWayland::displayModeStr()
 {
-    if (m_setOutputTimer->isActive()) {
-        m_setOutputTimer->stop();
+    switch (m_displayMode)
+    {
+        case Custom_Mode:
+            return "";
+        case Mirror_Mode:
+            return "Mirror";
+        case Extend_Mode:
+            return "Extend";
+        case Single_Mode:
+            return "OnlyOneMap";
     }
-    if (MonitorConfigsForUuid_v1.size() == 0) {
-        qWarning() << "There is no monitor!";
-        return;
-    }
+    return "";
+}
+
+QString GreeterDisplayWayland::getSystemConfKey()
+{
     QString uuidKey;
     QMap<QString, MonitorConfig>::const_iterator it = MonitorConfigsForUuid_v1.begin();
     while (it != MonitorConfigsForUuid_v1.end())
@@ -216,22 +225,7 @@ void GreeterDisplayWayland::setOutputs()
     }
     uuidKey.remove(uuidKey.length() - 1, 1);
     qInfo() << "Found the key of system config:" << uuidKey;
-    QString displayMode;
-    switch (m_displayMode)
-    {
-        case Custom_Mode:
-            displayMode = "";
-            break;
-        case Mirror_Mode:
-            displayMode = "Mirror";
-            break;
-        case Extend_Mode:
-            displayMode = "Extend";
-            break;
-        case Single_Mode:
-            displayMode = "OnlyOneMap";
-            break;
-    }
+    const QString& displayMode = displayModeStr();
     // 先找到uuidkey
     if (m_screensObj.value(uuidKey).toObject().value(displayMode).toObject().isEmpty()) {
         QStringList uuidList = uuidKey.split(",");
@@ -255,24 +249,30 @@ void GreeterDisplayWayland::setOutputs()
             } while (std::next_permutation(uuidIndexArry, uuidIndexArry + uuidList.size()));
         }
     }
+    return uuidKey;
+}
+
+QJsonArray GreeterDisplayWayland::getSystemConfArr(QString key)
+{
+    const QString& displayMode = displayModeStr();
     QJsonArray monitorsArr;
     if (MonitorConfigsForUuid_v1.size() == 1) {
         qDebug() << "It's single mode";
-        monitorsArr = m_screensObj.value(uuidKey).toObject().value("Single").toObject().value("Monitors").toArray();
+        monitorsArr = m_screensObj.value(key).toObject().value("Single").toObject().value("Monitors").toArray();
     } else {
         if (m_displayMode != Single_Mode) {
-            monitorsArr = m_screensObj.value(uuidKey).toObject().value(displayMode).toObject().value("Monitors").toArray();
+            monitorsArr = m_screensObj.value(key).toObject().value(displayMode).toObject().value("Monitors").toArray();
         } else {
-            QString enableUuid = m_screensObj.value(uuidKey).toObject().value("OnlyOneUuid").toString();
+            QString enableUuid = m_screensObj.value(key).toObject().value("OnlyOneUuid").toString();
             qDebug() << "Enable output device:" << enableUuid;
-            monitorsArr = m_screensObj.value(uuidKey).toObject().value(displayMode).toObject().value(enableUuid).toObject().value("Monitors").toArray();
-            QStringList uuidList = uuidKey.split(",");
+            monitorsArr = m_screensObj.value(key).toObject().value(displayMode).toObject().value(enableUuid).toObject().value("Monitors").toArray();
+            QStringList uuidList = key.split(",");
             if (uuidList.size() > 1) {
                 // 仅单屏的时候，根据OnlyOneUuid找到需要点亮的屏幕放在list第一个，disable的屏幕依次放在后面，
                 // disable屏幕的属性在下面初始化配置时修改
                 foreach(QString uuid, uuidList) {
                     if(uuid != enableUuid) {
-                        QJsonValue valueTmp = m_screensObj.value(uuidKey).toObject().value(displayMode).toObject().value(uuid).toObject().value("Monitors").toArray()[0];
+                        QJsonValue valueTmp = m_screensObj.value(key).toObject().value(displayMode).toObject().value(uuid).toObject().value("Monitors").toArray()[0];
                         if (valueTmp.toObject().isEmpty()) {
                             qDebug() << "Creating default config:" << uuid;
                             // 仅单屏，若另一个屏幕没有配置，给个默认配置
@@ -291,6 +291,20 @@ void GreeterDisplayWayland::setOutputs()
             }
         }
     }
+    return monitorsArr;
+}
+
+void GreeterDisplayWayland::setOutputs()
+{
+    if (m_setOutputTimer->isActive()) {
+        m_setOutputTimer->stop();
+    }
+    if (MonitorConfigsForUuid_v1.size() == 0) {
+        qWarning() << "There is no monitor!";
+        return;
+    }
+    QString uuidKey = getSystemConfKey();
+    QJsonArray monitorsArr = getSystemConfArr(uuidKey);
 
     if (!monitorsArr.isEmpty()) {
         // 按系统配置设置
@@ -378,9 +392,10 @@ QSize GreeterDisplayWayland::getCommonResolution()
 
 void GreeterDisplayWayland::applyDefault()
 {
-    qInfo() << "Applying the default config";
+    qInfo() << "Applying the default config by display mode" << m_displayMode;
     QSize applySize;
-    if (m_displayMode == Mirror_Mode) {
+    // 暂时将自定义模式同复制模式处理
+    if (m_displayMode == Mirror_Mode || m_displayMode == Custom_Mode) {
        applySize = getCommonResolution();
     }
     QPoint o(0, 0);
