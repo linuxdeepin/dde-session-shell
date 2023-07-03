@@ -162,7 +162,10 @@ void RoundItemButton::paintEvent(QPaintEvent* event)
     iconRect.setHeight(minSize);
 
     if (m_state == Checked) {
-        painter.setBrush(QColor(0, 15, 39, 178));
+        QColor color(Qt::white);
+        color.setAlphaF(0.05);
+        painter.setPen(Qt::NoPen);
+        painter.setBrush(color);
         painter.setRenderHint(QPainter::Antialiasing, true);
 
         // 绘制图标背景
@@ -173,9 +176,10 @@ void RoundItemButton::paintEvent(QPaintEvent* event)
         painter.drawRoundedRect(itemTextRect, m_rectRadius, m_rectRadius);
 
         QPen pen;
-        QColor penColor(151, 151, 151, 127);
+        QColor penColor("#979797");
+        penColor.setAlphaF(0.5);
         pen.setColor(penColor);
-        pen.setWidth(m_penWidth * 2);
+        pen.setWidth(m_penWidth * 3);
         painter.setPen(pen);
         painter.setRenderHint(QPainter::Antialiasing, true);
 
@@ -184,6 +188,8 @@ void RoundItemButton::paintEvent(QPaintEvent* event)
         painter.drawEllipse(iconBackgroundRect);
 
         // 绘制文本区域边框
+        pen.setWidth(m_penWidth * 2);
+        painter.setPen(pen);
         QRect textBackgroundRect(textRect.marginsRemoved(QMargins(m_penWidth, m_penWidth, m_penWidth, m_penWidth)));
         painter.drawRoundedRect(textBackgroundRect, m_rectRadius, m_rectRadius);
     } else if (m_state == Hover) {
@@ -197,7 +203,9 @@ void RoundItemButton::paintEvent(QPaintEvent* event)
     } else if (m_state == Normal) {
         // 绘制鼠标选中的白色背景
         painter.setPen(Qt::NoPen);
-        painter.setBrush(QColor(255, 255, 255, int(0.1 * 255)));
+        QColor color(Qt::white);
+        color.setAlphaF(0.1);
+        painter.setBrush(color);
         painter.setRenderHint(QPainter::Antialiasing, true);
         painter.drawEllipse(iconRect);
     }
