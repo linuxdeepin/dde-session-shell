@@ -160,7 +160,7 @@ void ControlWidget::updatePluginVisible(const QString module, bool state)
 {
     qInfo() << Q_FUNC_INFO << state;
     for (auto key : m_modules.keys()) {
-        if (key->objectName() == module) {
+        if (key && key->objectName() == module) {
             m_modules.value(key)->setVisible(state);
             return;
         }
@@ -293,7 +293,7 @@ QString ControlWidget::messageCallback(const QString &message, void *app_data)
     if (cmd == "ShowContent") {
         emit static_cast<ControlWidget *>(app_data)->requestShowModule(messageObj.value("PluginKey").toString(), true);
     } else if (cmd == "PluginVisible") {
-        static_cast<ControlWidget *>(app_data)->updatePluginVisible(NetworkPlugin, messageObj.value("Visible").toBool());
+        static_cast<ControlWidget *>(app_data)->updatePluginVisible(messageObj.value("PluginKey").toString(), messageObj.value("Visible").toBool());
     }
 
     return message;
@@ -301,15 +301,13 @@ QString ControlWidget::messageCallback(const QString &message, void *app_data)
 
 QWidget *ControlWidget::getTray(const QString &name)
 {
-    QWidget *ret = nullptr;
     for (auto key : m_modules.keys()) {
-        if (key->objectName() == name) {
-            ret = m_modules[key];
-            break;
+        if (key && key->objectName() == name) {
+            return m_modules.value(key);
         }
     }
-    qInfo() << "TrayButton name:" << name << ret;
-    return ret;
+
+    return nullptr;
 }
 
 void ControlWidget::addModule(TrayPlugin *trayModule)
@@ -411,11 +409,11 @@ void ControlWidget::addModule(TrayPlugin *trayModule)
 
 void ControlWidget::removeModule(TrayPlugin *trayModule)
 {
-    QMap<QWidget *, QWidget *>::const_iterator i = m_modules.constBegin();
+    auto i = m_modules.constBegin();
     while (i != m_modules.constEnd()) {
-        if (i.key()->objectName() == trayModule->key()) {
+        if (i.key() && i.key()->objectName() == trayModule->key()) {
             m_modules.remove(i.key());
-            m_btnList.removeAll(dynamic_cast<DFloatingButton *>(i.value()));
+            m_btnList.removeAll(dynamic_cast<DFloatingButton *>(i.value().data()));
             updateLayout();
             break;
         }

@@ -151,7 +151,7 @@ private:
 #ifndef SHENWEI_PLATFORM
     QPropertyAnimation *m_tipsAni = nullptr;
 #endif
-    QMap<QWidget *, QWidget *> m_modules;
+    QMap<QPointer<QWidget>, QPointer<QWidget>> m_modules;
     QMenu *m_contextMenu;
     TipsWidget *m_tipsWidget;
     const SessionBaseModel *m_model;
