@@ -205,9 +205,8 @@ AuthFlags SFAWidget::initAuthFactors(const AuthFlags authFactors)
                                            AuthModule *authenticator,
                                            void (SFAWidget::*initAuthFunc)()) {
         if (authTypes.testFlag(type)) {
-            if (!authenticator) {
-                (this->*initAuthFunc)();
-            }
+            // After passing face or iris verification, if there is a timeout before entering the desktop, re-verification is required
+            (this->*initAuthFunc)();
         } else if (authenticator) {
             delete authenticator;
             authenticator = nullptr;
