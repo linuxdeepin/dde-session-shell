@@ -1,5 +1,14 @@
 #!/bin/bash
 
+# 设置QT缩放相关的环境变量
+greeter_display_setting_path="/usr/bin/greeter-display-setting"
+if [ -f $greeter_display_setting_path ]; then
+    scale_env=$(/usr/bin/greeter-display-setting | tail -1)
+    export $scale_env
+else
+    echo "$greeter_display_setting_path does not exist, can't do scale"
+fi
+
 # 判断是否有脚本需要在greeter之前调用
 exec_path=$(/usr/share/dde-session-shell/greeters.d/pre-greeter | tail -1)
 

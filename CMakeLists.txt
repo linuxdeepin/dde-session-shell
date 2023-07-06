@@ -297,6 +297,18 @@ target_link_libraries(lightdm-deepin-greeter PRIVATE
     PkgConfig::SSL
 )
 
+add_executable(greeter-display-setting
+    src/app/greeter-display-setting.cpp
+)
+
+target_link_libraries(greeter-display-setting
+    ${Qt_LIBS}
+    ${XCB_EWMH_LIBRARIES}
+    ${DtkCore_LIBRARIES}
+    ${Qt5X11Extras_LIBRARIES}
+    ${Qt5DBus_LIBRARIES}
+)
+
 add_subdirectory(lighter-greeter)
 add_subdirectory(tests)
 add_subdirectory(plugins)
