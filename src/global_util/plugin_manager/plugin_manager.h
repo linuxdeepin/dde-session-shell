@@ -23,6 +23,7 @@ public:
     void addPlugin(dss::module::BaseModuleInterface *module, const QString &version);
     LoginPlugin *getLoginPlugin() const;
     LoginPlugin *getFullManagedLoginPlugin() const;
+    LoginPlugin *getAssistloginPlugin() const;
     QList<TrayPlugin*> trayPlugins() const;
     bool contains(const QString &key) const;
     PluginBase *findPlugin(const QString &key) const;

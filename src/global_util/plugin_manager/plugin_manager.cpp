@@ -75,7 +75,8 @@ QList<TrayPlugin*> PluginManager::trayPlugins() const
 PluginBase* PluginManager::createPlugin(dss::module::BaseModuleInterface *module, const QString &version)
 {
     if (dss::module::BaseModuleInterface::LoginType == module->type()
-        || dss::module::BaseModuleInterface::FullManagedLoginType == module->type()) {
+        || dss::module::BaseModuleInterface::FullManagedLoginType == module->type()
+        || dss::module::BaseModuleInterface::IpcAssistLoginType == module->type()) {
         return createLoginPlugin(module, version);
     } else if (dss::module::BaseModuleInterface::TrayType == module->type()) {
         TrayPlugin *plugin = createTrayPlugin(module, version);
@@ -119,4 +120,15 @@ PluginBase *PluginManager::findPlugin(const QString &key) const
         return nullptr;
 
     return m_plugins.value(key);
+}
+
+LoginPlugin *PluginManager::getAssistloginPlugin() const
+{
+    for (const auto &plugin : m_plugins.values()) {
+        if (plugin && PluginBase::ModuleType::IpcAssistLoginType == plugin->type()) {
+            return dynamic_cast<LoginPlugin *>(plugin);
+        }
+    }
+
+    return nullptr;
 }

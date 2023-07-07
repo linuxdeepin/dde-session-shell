@@ -6,6 +6,7 @@
 #define AUTHPASSWORD_H
 
 #include "auth_module.h"
+#include "assist_login_widget.h"
 
 #include <DIconButton>
 #include <DLabel>
@@ -45,6 +46,19 @@ public:
     void setAuthStatueVisible(bool visible);
 
     bool isShowResetPasswordMessage();
+    void updatePluginConfig();
+    void startPluginAuth();
+
+    bool isPasswdAuthWidgetReplaced() const
+    {
+        return m_isPasswdAuthWidgetReplaced;
+    }
+
+    void setPasswdAuthWidgetReplaced(bool isPasswdAuthWidgetReplaced)
+    {
+        m_isPasswdAuthWidgetReplaced = isPasswdAuthWidgetReplaced;
+    }
+
 signals:
     void focusChanged(const bool);
     void lineEditTextChanged(const QString &); // 数据同步
@@ -52,6 +66,9 @@ signals:
     void requestShowKeyboardList();            // 显示键盘布局列表
     void resetPasswordMessageVisibleChanged(const bool isVisible);
     void notifyLockedStateChanged(bool isLocked);
+    void requestPluginConfigChanged(const LoginPlugin::PluginConfig &PluginConfig);
+    void requestHidePlugin();
+    void requestPluginAuthToken(const QString accout, const QString token);
 
 public slots:
     void setResetPasswordMessageVisible(const bool isVisible, bool fromResetDialog = false);
@@ -72,6 +89,7 @@ private:
     void showAlertMessage(const QString &text);
     void hidePasswordHintWidget();
     void updatePasswordTextMargins();
+    void hidePlugin();
 
 private:
     bool m_passwordLineEditEnabled;
@@ -87,6 +105,9 @@ private:
     DAlertControl *m_passwordHintWidget;
     DIconButton *m_iconButton;
     bool m_resetDialogShow;
+
+    bool m_isPasswdAuthWidgetReplaced;
+    AssistLoginWidget *m_assistLoginWidget;
 };
 
 #endif // AUTHPASSWORD_H

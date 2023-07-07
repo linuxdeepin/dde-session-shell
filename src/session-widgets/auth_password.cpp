@@ -3,6 +3,7 @@
 // SPDX-License-Identifier: GPL-3.0-or-later
 
 #include "auth_password.h"
+#include "plugin_manager.h"
 
 #include "authcommon.h"
 #include "dlineeditex.h"
@@ -45,7 +46,11 @@ AuthPassword::AuthPassword(QWidget *parent)
     , m_passwordHintWidget(nullptr)
     , m_iconButton(nullptr)
     , m_resetDialogShow(false)
+    , m_isPasswdAuthWidgetReplaced(false)
+    , m_assistLoginWidget(nullptr)
 {
+    qRegisterMetaType<LoginPlugin::PluginConfig>("LoginPlugin::PluginConfig");
+
     setObjectName(QStringLiteral("AuthPassword"));
     setAccessibleName(QStringLiteral("AuthPassword"));
 
@@ -112,8 +117,21 @@ void AuthPassword::initUI()
     m_passwordHintBtn->setIconSize(QSize(16, 16));
     m_passwordHintBtn->setVisible(false);
     passwordLayout->addWidget(m_passwordHintBtn, 0, Qt::AlignRight | Qt::AlignVCenter);
-
     mainLayout->addWidget(m_lineEdit);
+    auto plugin =  PluginManager::instance()->getAssistloginPlugin();
+
+    if (plugin) {
+        m_isPasswdAuthWidgetReplaced = true;
+        m_assistLoginWidget = new AssistLoginWidget(this);
+
+        m_assistLoginWidget->setModule(plugin);
+        m_assistLoginWidget->initUI();
+        mainLayout->addWidget(m_assistLoginWidget);
+        m_lineEdit->hide();
+    } else {
+        m_lineEdit->show();
+    }
+
     updatePasswordTextMargins();
 }
 
@@ -159,6 +177,16 @@ void AuthPassword::initConnections()
             updatePasswordTextMargins();
         }
     });
+
+    if (m_assistLoginWidget && m_isPasswdAuthWidgetReplaced) {
+        connect(m_assistLoginWidget, &AssistLoginWidget::requestPluginConfigChanged, this, [this] (const LoginPlugin::PluginConfig pluginConfig) {
+            Q_EMIT requestPluginConfigChanged(pluginConfig);
+        });
+        connect(m_assistLoginWidget, &AssistLoginWidget::requestHidePlugin, this, [ = ] {
+            hidePlugin();
+        });
+        connect(m_assistLoginWidget, &AssistLoginWidget::requestSendToken, this, &AuthPassword::requestPluginAuthToken);
+    }
 }
 
 /**
@@ -197,6 +225,9 @@ void AuthPassword::setAuthState(const AuthState state, const QString &result)
         m_resetDialogShow = false;
         emit authFinished(state);
         emit requestChangeFocus();
+        if (m_assistLoginWidget) {
+            m_assistLoginWidget->resetAuth();
+        }
         break;
     case AS_Failure: {
         setAnimationState(false);
@@ -216,6 +247,10 @@ void AuthPassword::setAuthState(const AuthState state, const QString &result)
 
         m_showPrompt = false;
         emit authFinished(state);
+
+        if (isPasswdAuthWidgetReplaced()) {
+            hidePlugin();
+        }
         break;
     }
     case AS_Cancel:
@@ -772,5 +807,31 @@ void AuthPassword::updatePasswordTextMargins()
     }
 
     m_lineEdit->lineEdit()->setTextMargins(textMargins);
+}
+
+void AuthPassword::updatePluginConfig()
+{
+    if (m_assistLoginWidget && m_isPasswdAuthWidgetReplaced) {
+        m_assistLoginWidget->updateConfig();
+    }
+}
+
+void AuthPassword::hidePlugin()
+{
+    if (m_assistLoginWidget == nullptr) {
+        return;
+    }
+    m_isPasswdAuthWidgetReplaced = false;
+    m_assistLoginWidget->hide();
+    m_lineEdit->show();
+
+    Q_EMIT requestHidePlugin();
+}
+
+void AuthPassword::startPluginAuth()
+{
+    if (m_assistLoginWidget) {
+        m_assistLoginWidget->startAuth();
+    }
 }
 

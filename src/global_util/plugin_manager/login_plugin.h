@@ -33,6 +33,24 @@ public:
         bool showLockButton = true;     // 是否显示解锁按钮
         // 默认使用此认证类型的强度
         DefaultAuthLevel defaultAuthLevel = DefaultAuthLevel::Default;
+
+        bool operator==(const PluginConfig b) const
+        {
+            return this->showAvatar == b.showAvatar &&
+                   this->showLockButton == b.showAvatar &&
+                   this->showSwitchButton == b.showSwitchButton &&
+                   this->showUserName == b.showUserName &&
+                   this->defaultAuthLevel == b.defaultAuthLevel;
+        }
+
+        bool operator!=(const PluginConfig b) const
+        {
+            return this->showAvatar != b.showAvatar ||
+                   this->showLockButton != b.showAvatar ||
+                   this->showSwitchButton != b.showSwitchButton ||
+                   this->showUserName != b.showUserName ||
+                   this->defaultAuthLevel != b.defaultAuthLevel;
+        }
     };
 
     explicit LoginPlugin(dss::module::BaseModuleInterface *module, QObject *parent = nullptr);

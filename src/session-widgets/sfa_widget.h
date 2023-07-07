@@ -9,6 +9,7 @@
 #include "userinfo.h"
 #include "authcommon.h"
 #include "buttonbox.h"
+#include "assist_login_widget.h"
 
 #include <DArrowRectangle>
 #include <DBlurEffectWidget>

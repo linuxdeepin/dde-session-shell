@@ -282,6 +282,11 @@ void SFAWidget::setAuthState(const AuthType type, const AuthState state, const Q
             qInfo() << "LightDM is in authentication right now";
             m_customAuth->lightdmAuthStarted();
         }
+
+        if (m_passwordAuth && m_passwordAuth->isPasswdAuthWidgetReplaced()) {
+            qDebug() << Q_FUNC_INFO << type << state << message << "startAuth";
+            m_passwordAuth->startPluginAuth();
+        }
         break;
     case AT_Custom:
         if (m_customAuth) {
@@ -376,9 +381,37 @@ void SFAWidget::initPasswdAuth()
     m_passwordAuth->hide();
     m_passwordAuth->setPasswordLineEditEnabled(m_model->currentUser()->allowToChangePassword() || m_model->appType() != Login);
 
+    connect(m_passwordAuth, &AuthPassword::requestPluginConfigChanged, this, [ this ](const LoginPlugin::PluginConfig pluginConfig) {
+        m_userAvatar->setVisible(pluginConfig.showAvatar);
+        m_userNameWidget->setVisible(pluginConfig.showUserName);
+        m_lockButton->setVisible(pluginConfig.showLockButton);
+        replaceWidget(m_passwordAuth);
+    });
+
+    connect(m_passwordAuth, &AuthPassword::requestHidePlugin, this, [ this ] {
+        m_userAvatar->setVisible(true);
+        m_userNameWidget->setVisible(true);
+        m_lockButton->setVisible(true);
+        replaceWidget(m_passwordAuth);
+        m_passwordAuth->updateResetPasswordUI();
+    });
+
     connect(m_passwordAuth, &AuthPassword::activeAuth, this, &SFAWidget::onActiveAuth);
-    connect(m_passwordAuth, &AuthPassword::authFinished, this, [this](const AuthState authState) {
+    connect(m_passwordAuth, &AuthPassword::authFinished, this, [this] (const AuthState authState) {
         checkAuthResult(AT_Password, authState);
+    });
+    connect(m_passwordAuth, &AuthPassword::requestPluginAuthToken, this, [this](const QString & account, const QString & token) {
+        m_passwordAuth->setAuthStateStyle(LOGIN_SPINNER);
+        m_passwordAuth->setAnimationState(true);
+        m_passwordAuth->setLineEditEnabled(false);
+        m_lockButton->setEnabled(false);
+        qInfo() << "Request check account: " << account << token;
+        if (m_user && m_user->name() == account) {
+            emit sendTokenToAuth(account, AT_Password, token);
+            return;
+        }
+
+        Q_EMIT requestCheckAccount(account);
     });
     connect(m_passwordAuth, &AuthPassword::requestAuthenticate, this, [this] {
         QString text = m_passwordAuth->lineEditText();
@@ -436,6 +469,10 @@ void SFAWidget::initPasswdAuth()
             m_passwordAuth->closeResetPasswordMessage();
         }
     });
+
+    if (m_passwordAuth->isPasswdAuthWidgetReplaced()) {
+        m_passwordAuth->updatePluginConfig();
+    }
 }
 
 /**
@@ -917,7 +954,6 @@ int SFAWidget::getTopSpacing() const
 
         centerTop = static_cast<int>((topLevelWidget()->geometry().height() - height - m_customAuth->contentSize().height()) / 2);
     }
-
     const int topHeight = qMin(calcTopHeight, centerTop);
 
     // 需要额外增加的顶部间隔高度 = 屏幕高度*0.35 - 时间控件高度 - 布局间隔 - 生物认证按钮底部间隔
@@ -1017,6 +1053,12 @@ void SFAWidget::updateBlurEffectGeometry()
         } else {
             rect.setBottom(m_expiredStateLabel->geometry().top() - 10);
         }
+        m_blurEffectWidget->setGeometry(rect);
+        m_blurEffectWidget->update();
+    } else if (m_passwordAuth && m_passwordAuth->isPasswdAuthWidgetReplaced()) {
+        QRect rect = this->rect();
+        rect.setTop(m_userAvatar->geometry().top());
+        rect.setBottom(m_lockButton->geometry().top() - 10);
         m_blurEffectWidget->setGeometry(rect);
         m_blurEffectWidget->update();
     } else {

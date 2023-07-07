@@ -37,7 +37,8 @@ public:
     enum ModuleType {
         LoginType,   // 登陆插件
         TrayType,     // 托盘插件
-        FullManagedLoginType    // 全托管插件 
+        FullManagedLoginType,    // 全托管插件
+        IpcAssistLoginType       // 用于接收厂商密码插件
     };
 
     /**
