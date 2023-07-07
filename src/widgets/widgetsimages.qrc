@@ -227,5 +227,8 @@
         <file>img/update/waiting_update/waiting_update_37.png</file>
         <file>img/update/waiting_update/waiting_update_38.png</file>
         <file>img/update/waiting_update/waiting_update_39.png</file>
+        <file>img/inhibitview/shutdown.svg</file>
+        <file>img/inhibitview/cancel_normal.svg</file>
+        <file>img/inhibitview/cancel_hover.svg</file>
     </qresource>
 </RCC>

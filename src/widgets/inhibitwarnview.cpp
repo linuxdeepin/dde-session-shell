@@ -7,18 +7,21 @@
 #include <QHBoxLayout>
 #include <QPushButton>
 
-const int ButtonIconSize = 28;
+#include <DStyle>
+#include <DFontSizeManager>
+
+DWIDGET_USE_NAMESPACE
+
 const int ButtonWidth = 200;
 const int ButtonHeight = 64;
+const QSize iconSize = QSize(28, 28);
 
 InhibitorRow::InhibitorRow(const QString &who, const QString &why, const QIcon &icon, QWidget *parent)
     : QWidget(parent)
 {
     QHBoxLayout *layout = new QHBoxLayout;
     QLabel *whoLabel = new QLabel(who);
-    QLabel *whyLabel = new QLabel("-" + why);
-    whoLabel->setStyleSheet("color: white; font: bold 12px;");
-    whyLabel->setStyleSheet("color: white;");
+    QLabel *whyLabel = new QLabel("- " + why);
 
     layout->addStretch();
 
@@ -57,55 +60,54 @@ void InhibitorRow::paintEvent(QPaintEvent *event)
 InhibitWarnView::InhibitWarnView(SessionBaseModel::PowerAction inhibitType, QWidget *parent)
     : WarningView(parent)
     , m_inhibitType(inhibitType)
+    , m_acceptBtn(new InhibitButton(this))
+    , m_cancelBtn(new InhibitButton(this))
 {
-    m_acceptBtn = new QPushButton(QString());
+    QIcon acceptIcon = QIcon::fromTheme(":/img/inhibitview/shutdown.svg");
+
     m_acceptBtn->setObjectName("AcceptButton");
-    m_acceptBtn->setIconSize(QSize(ButtonIconSize, ButtonIconSize));
     m_acceptBtn->setFixedSize(ButtonWidth, ButtonHeight);
-    m_acceptBtn->setCheckable(true);
-    m_acceptBtn->setAutoExclusive(true);
-    m_acceptBtn->setFocusPolicy(Qt::NoFocus);
+    m_acceptBtn->setFocusPolicy(Qt::StrongFocus);
+    m_acceptBtn->setNormalPixmap(acceptIcon.pixmap(iconSize * devicePixelRatioF()));
+    m_acceptBtn->setHoverPixmap(acceptIcon.pixmap(iconSize * devicePixelRatioF()));
 
-    m_cancelBtn = new QPushButton(tr("Cancel"), this);
+    QIcon iconCancelNormal = QIcon::fromTheme(":/img/inhibitview/cancel_normal.svg");
+    QIcon iconCancelHover = QIcon::fromTheme(":/img/inhibitview/cancel_hover.svg");
+
+    m_cancelBtn->setNormalPixmap(iconCancelNormal.pixmap(iconSize * devicePixelRatioF()));
+    m_cancelBtn->setHoverPixmap(iconCancelHover.pixmap(iconSize * devicePixelRatioF()));
+
     m_cancelBtn->setObjectName("CancelButton");
-    m_cancelBtn->setIconSize(QSize(ButtonIconSize, ButtonIconSize));
     m_cancelBtn->setFixedSize(ButtonWidth, ButtonHeight);
-    m_cancelBtn->setCheckable(true);
-    m_cancelBtn->setAutoExclusive(true);
-    m_cancelBtn->setFocus();
-
-    const auto ratio = devicePixelRatioF();
-    QIcon icon_pix = QIcon::fromTheme(":/img/cancel_normal.svg").pixmap(m_cancelBtn->iconSize() * ratio);
-    m_cancelBtn->setIcon(icon_pix);
+    m_cancelBtn->setText(tr("Cancel"));
+    m_cancelBtn->setFocusPolicy(Qt::StrongFocus);
 
     m_confirmTextLabel = new QLabel;
-
     m_inhibitorListLayout = new QVBoxLayout;
 
     m_confirmTextLabel->setText("The reason of inhibit.");
     m_confirmTextLabel->setAlignment(Qt::AlignCenter);
-    m_confirmTextLabel->setStyleSheet("color:white;");
+
+    DFontSizeManager::instance()->bind(m_confirmTextLabel, DFontSizeManager::T5);
 
     QVBoxLayout *centralLayout = new QVBoxLayout;
     centralLayout->addStretch();
     centralLayout->addLayout(m_inhibitorListLayout);
-    centralLayout->addSpacing(20);
+    centralLayout->addSpacing(50);
     centralLayout->addWidget(m_confirmTextLabel);
-    centralLayout->addSpacing(20);
+    centralLayout->addSpacing(70);
     centralLayout->addWidget(m_cancelBtn, 0, Qt::AlignHCenter);
-    centralLayout->addSpacing(20);
+    centralLayout->addSpacing(15);
     centralLayout->addWidget(m_acceptBtn, 0, Qt::AlignHCenter);
     centralLayout->addStretch();
 
     setLayout(centralLayout);
 
-    m_cancelBtn->setChecked(true);
-    m_currentBtn = m_cancelBtn;
+    connect(m_cancelBtn, &InhibitButton::clicked, this, &InhibitWarnView::cancelled);
+    connect(m_acceptBtn, &InhibitButton::clicked, this, &InhibitWarnView::actionInvoked);
 
-    updateIcon();
-
-    connect(m_cancelBtn, &QPushButton::clicked, this, &InhibitWarnView::cancelled);
-    connect(m_acceptBtn, &QPushButton::clicked, this, &InhibitWarnView::actionInvoked);
+    this->setTabOrder(m_cancelBtn, m_acceptBtn);
+    this->setTabOrder(m_acceptBtn, m_cancelBtn);
 }
 
 InhibitWarnView::~InhibitWarnView()
@@ -155,48 +157,9 @@ void InhibitWarnView::setAcceptReason(const QString &reason)
     m_acceptBtn->setText(reason);
 }
 
-void InhibitWarnView::updateIcon()
-{
-    QString icon_string;
-    switch (m_inhibitType) {
-    case SessionBaseModel::PowerAction::RequireShutdown:
-    case SessionBaseModel::PowerAction::RequireUpdateShutdown:
-        icon_string = ":/img/poweroff_warning_normal.svg";
-        break;
-    case SessionBaseModel::PowerAction::RequireLogout:
-        icon_string = ":/img/logout_warning_normal.svg";
-        break;
-    default:
-        icon_string = ":/img/reboot_warning_normal.svg";
-        break;
-    }
-
-    const auto ratio = devicePixelRatioF();
-    QIcon icon_pix = QIcon::fromTheme(icon_string).pixmap(m_acceptBtn->iconSize() * ratio);
-    m_acceptBtn->setIcon(icon_pix);
-}
-
 void InhibitWarnView::setAcceptVisible(const bool acceptable)
 {
     m_acceptBtn->setVisible(acceptable);
-}
-
-void InhibitWarnView::toggleButtonState()
-{
-    if (m_cancelBtn->isChecked() && m_acceptBtn->isVisible())
-        setCurrentButton(ButtonType::Accept);
-    else
-        setCurrentButton(ButtonType::Cancel);
-}
-
-void InhibitWarnView::buttonClickHandle()
-{
-    emit m_currentBtn->clicked();
-}
-
-SessionBaseModel::PowerAction InhibitWarnView::inhibitType() const
-{
-    return m_inhibitType;
 }
 
 bool InhibitWarnView::focusNextPrevChild(bool next)
@@ -206,55 +169,14 @@ bool InhibitWarnView::focusNextPrevChild(bool next)
         return WarningView::focusNextPrevChild(next);
     }
 
-    if (m_acceptBtn->hasFocus() && m_acceptBtn->isVisible())
-        setCurrentButton(ButtonType::Cancel);
-    else
-        setCurrentButton(ButtonType::Accept);
-
     return WarningView::focusNextPrevChild(next);
 }
 
 void InhibitWarnView::setCurrentButton(const ButtonType btnType)
 {
-    switch (btnType) {
-    case ButtonType::Cancel:
-        m_acceptBtn->setChecked(false);
-        m_cancelBtn->setChecked(true);
-        m_currentBtn = m_cancelBtn;
-        break;
-
-    case ButtonType::Accept:
-        m_cancelBtn->setChecked(false);
-        m_acceptBtn->setChecked(true);
-        m_currentBtn = m_acceptBtn;
-        break;
-    }
+    Q_UNUSED(btnType);
 }
 
-void InhibitWarnView::onOtherPageDataChanged(const QVariant &value)
-{
-    const QString objectName { value.toString() };
+void InhibitWarnView::toggleButtonState() {}
 
-    if (objectName == "AcceptButton")
-        setCurrentButton(ButtonType::Accept);
-    else
-        setCurrentButton(ButtonType::Cancel);
-}
-
-void InhibitWarnView::keyPressEvent(QKeyEvent *event)
-{
-    switch (event->key()) {
-    case Qt::Key_Up:
-    case Qt::Key_Down:
-    case Qt::Key_Tab:
-        toggleButtonState();
-        break;
-    case Qt::Key_Return:
-        m_currentBtn->clicked();
-        break;
-    case Qt::Key_Enter:
-        m_currentBtn->clicked();
-        break;
-    }
-    QWidget::keyPressEvent(event);
-}
+void InhibitWarnView::buttonClickHandle() {}

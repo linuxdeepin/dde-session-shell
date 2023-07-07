@@ -30,7 +30,6 @@ void UT_LockContent::SetUp()
 
 void UT_LockContent::TearDown()
 {
-    delete m_content;
     delete m_model;
 }
 

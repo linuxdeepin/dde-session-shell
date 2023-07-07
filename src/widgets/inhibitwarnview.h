@@ -8,6 +8,7 @@
 #include "warningview.h"
 #include "rounditembutton.h"
 #include "sessionbasemodel.h"
+#include "inhibitbutton.h"
 
 #include <QWidget>
 
@@ -47,28 +48,21 @@ public:
     void toggleButtonState() Q_DECL_OVERRIDE;
     void buttonClickHandle() Q_DECL_OVERRIDE;
 
-    SessionBaseModel::PowerAction inhibitType() const;
-
 protected:
-    void updateIcon();
     bool focusNextPrevChild(bool next) Q_DECL_OVERRIDE;
     void setCurrentButton(const ButtonType btntype) Q_DECL_OVERRIDE;
-    void keyPressEvent(QKeyEvent *event) override;
 
 signals:
     void cancelled() const;
     void actionInvoked() const;
 
 private:
-    void onOtherPageDataChanged(const QVariant &value);
-
-private:
     SessionBaseModel::PowerAction m_inhibitType;
     QList<QWidget*> m_inhibitorPtrList;
     QVBoxLayout *m_inhibitorListLayout = nullptr;
     QLabel *m_confirmTextLabel = nullptr;
-    QPushButton *m_acceptBtn;
-    QPushButton *m_cancelBtn;
+    InhibitButton *m_acceptBtn;
+    InhibitButton *m_cancelBtn;
     QPushButton *m_currentBtn;
     int m_dataBindIndex;
 };

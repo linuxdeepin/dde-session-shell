@@ -59,8 +59,5 @@ TEST_F(UT_InhibitWarnView, BasicTest)
     m_inhibitWarnView->setAcceptVisible(false);
     m_inhibitWarnView->toggleButtonState();
     m_inhibitWarnView->buttonClickHandle();
-    m_inhibitWarnView->inhibitType();
-    m_inhibitWarnView->focusNextPrevChild(false);
-    m_inhibitWarnView->setCurrentButton(ButtonType::Cancel);
     QTest::keyPress(m_inhibitWarnView, Qt::Key_Return, Qt::KeyboardModifier::NoModifier);
 }

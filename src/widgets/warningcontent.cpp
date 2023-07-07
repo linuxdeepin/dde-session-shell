@@ -174,7 +174,7 @@ void WarningContent::beforeInvokeAction(bool needConfirm)
     // change ui
     if (!inhibitors.isEmpty()) {
         InhibitWarnView *view = new InhibitWarnView(m_powerAction, this);
-        view->setFocusPolicy(Qt::StrongFocus);
+        view->setFocusPolicy(Qt::NoFocus);
         setFocusPolicy(Qt::NoFocus);
         setFocusProxy(view);
         view->setInhibitorList(inhibitors);
