@@ -163,7 +163,7 @@ void RoundItemButton::paintEvent(QPaintEvent* event)
 
     if (m_state == Checked) {
         QColor color(Qt::white);
-        color.setAlphaF(0.05);
+        color.setAlphaF(0.03);
         painter.setPen(Qt::NoPen);
         painter.setBrush(color);
         painter.setRenderHint(QPainter::Antialiasing, true);
@@ -176,7 +176,7 @@ void RoundItemButton::paintEvent(QPaintEvent* event)
         painter.drawRoundedRect(itemTextRect, m_rectRadius, m_rectRadius);
 
         QPen pen;
-        QColor penColor("#979797");
+        QColor penColor(Qt::white);
         penColor.setAlphaF(0.5);
         pen.setColor(penColor);
         pen.setWidth(m_penWidth * 3);
@@ -204,7 +204,7 @@ void RoundItemButton::paintEvent(QPaintEvent* event)
         // 绘制鼠标选中的白色背景
         painter.setPen(Qt::NoPen);
         QColor color(Qt::white);
-        color.setAlphaF(0.1);
+        color.setAlphaF(0.15);
         painter.setBrush(color);
         painter.setRenderHint(QPainter::Antialiasing, true);
         painter.drawEllipse(iconRect);
