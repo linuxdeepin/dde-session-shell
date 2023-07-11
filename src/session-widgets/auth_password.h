@@ -54,7 +54,7 @@ signals:
     void notifyLockedStateChanged(bool isLocked);
 
 public slots:
-    void setResetPasswordMessageVisible(const bool isVisible);
+    void setResetPasswordMessageVisible(const bool isVisible, bool fromResetDialog = false);
     void updateResetPasswordUI();
 
 protected:
@@ -86,6 +86,7 @@ private:
     QTimer *m_bindCheckTimer;
     DAlertControl *m_passwordHintWidget;
     DIconButton *m_iconButton;
+    bool m_resetDialogShow;
 };
 
 #endif // AUTHPASSWORD_H

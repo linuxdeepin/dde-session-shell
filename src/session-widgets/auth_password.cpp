@@ -43,6 +43,7 @@ AuthPassword::AuthPassword(QWidget *parent)
     , m_bindCheckTimer(nullptr)
     , m_passwordHintWidget(nullptr)
     , m_iconButton(nullptr)
+    , m_resetDialogShow(false)
 {
     setObjectName(QStringLiteral("AuthPassword"));
     setAccessibleName(QStringLiteral("AuthPassword"));
@@ -470,18 +471,25 @@ void AuthPassword::setPasswordHintBtnVisible(const bool isVisible)
 
 /**
  * @brief 设置重置密码消息框的显示状态数据
- *
- * @param visible
+ * @param isVisible
+ * @param fromResetDialog 是否通过重置对话框关闭
  */
-void AuthPassword::setResetPasswordMessageVisible(const bool isVisible)
+void AuthPassword::setResetPasswordMessageVisible(const bool isVisible, bool fromResetDialog)
 {
-    qDebug() << "Incoming visible:" << isVisible << ", current visible:" << m_resetPasswordMessageVisible;
+    qDebug() << "Incoming visible:" << isVisible
+             << " current visible:" << m_resetPasswordMessageVisible
+             << " fromResetDialog " << fromResetDialog;
+    if (isVisible && fromResetDialog) {
+        m_resetDialogShow = false;
+    }
+
     if (m_resetPasswordMessageVisible == isVisible)
         return;
 
     // 如果设置为显示重置按钮，失败次数>=3次就显示重置密码 1060-24505
-    if (isVisible && m_limitsInfo && m_limitsInfo->numFailures < 3)
+    if (isVisible && ((m_limitsInfo && m_limitsInfo->numFailures < 3) || m_resetDialogShow)) {
         return;
+    }
 
     m_resetPasswordMessageVisible = isVisible;
     emit resetPasswordMessageVisibleChanged(m_resetPasswordMessageVisible);
@@ -535,6 +543,7 @@ void AuthPassword::showResetPasswordMessage()
         const QString path = QString("/com/deepin/daemon/Accounts/User%1").arg(m_currentUid);
         com::deepin::daemon::accounts::User user(AccountsService, path, QDBusConnection::systemBus());
         auto reply = user.SetPassword("");
+        m_resetDialogShow = true;
         reply.waitForFinished();
         if (reply.isError())
             qWarning() << "reply setpassword:" << reply.error().message();
@@ -546,6 +555,7 @@ void AuthPassword::showResetPasswordMessage()
             m_resetPasswordFloatingMessage->deleteLater();
             m_resetPasswordFloatingMessage = nullptr;
         }
+        m_resetPasswordMessageVisible = false;
         emit resetPasswordMessageVisibleChanged(false);
     });
     DMessageManager::instance()->sendMessage(centerFrame, m_resetPasswordFloatingMessage);

@@ -394,20 +394,16 @@ void LockContent::onNewConnection()
     if (m_localServer->hasPendingConnections()) {
         QLocalSocket *socket = m_localServer->nextPendingConnection();
         connect(socket, &QLocalSocket::disconnected, this, &LockContent::onDisConnect);
-        connect(socket, &QLocalSocket::readyRead, this, [socket, this] {
-            auto content = socket->readAll();
-            if (content == "close") {
-                if (m_authWidget) {
-                    m_authWidget->syncPasswordResetPasswordVisibleChanged(QVariant::fromValue(true));
-                    m_authWidget->syncResetPasswordUI();
-                }
-            }
-        });
     }
 }
 
 void LockContent::onDisConnect()
 {
+    qDebug() << "onDisConnect";
+    if (m_authWidget) {
+        m_authWidget->syncPasswordResetPasswordVisibleChanged(QVariant::fromValue(true));
+        m_authWidget->syncResetPasswordUI();
+    }
     // 这种情况下不必强制要求可以抓取到键盘，因为可能是网络弹窗抓取了键盘
     tryGrabKeyboard(false);
 }

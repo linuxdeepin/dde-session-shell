@@ -464,7 +464,7 @@ void AuthWidget::syncPassword(const QVariant &value)
 void AuthWidget::syncPasswordResetPasswordVisibleChanged(const QVariant &value)
 {
     if (m_passwordAuth) {
-        m_passwordAuth->setResetPasswordMessageVisible(value.toBool());
+        m_passwordAuth->setResetPasswordMessageVisible(value.toBool(), true);
         if (m_passwordAuth->isVisible())
             m_passwordAuth->updateResetPasswordUI();
     }
