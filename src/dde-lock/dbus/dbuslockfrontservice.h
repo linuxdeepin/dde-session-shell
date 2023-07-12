@@ -34,7 +34,11 @@ public:
     inline DBusLockAgent *parent() const
     { return static_cast<DBusLockAgent *>(QObject::parent()); }
 
-public:// PROPERTIES
+public: // PROPERTIES
+    Q_PROPERTY(bool Visible READ visible)
+
+    bool visible() const;
+
 public Q_SLOTS:// METHODS
     void Show();
     void ShowUserList();

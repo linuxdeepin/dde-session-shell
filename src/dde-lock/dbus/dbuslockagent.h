@@ -20,6 +20,7 @@ public:
     void ShowAuth(bool active);
     void Suspend(bool enable);
     void Hibernate(bool enable);
+    bool Visible() const;
 
 private:
     bool isUpdating() const;

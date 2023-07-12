@@ -26,6 +26,11 @@ void DBusLockAgent::Show()
     m_model->setVisible(true);
 }
 
+bool DBusLockAgent::Visible() const
+{
+    return m_model->visible();
+}
+
 void DBusLockAgent::ShowAuth(bool active)
 {
     qInfo() << "DBusLockAgent::ShowAuth";
