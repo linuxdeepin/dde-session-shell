@@ -557,6 +557,8 @@ void AuthPassword::showResetPasswordMessage()
         }
         m_resetPasswordMessageVisible = false;
         emit resetPasswordMessageVisibleChanged(false);
+        // 重置密码后，输入框重新获取焦点
+        m_lineEdit->setFocus();
     });
     DMessageManager::instance()->sendMessage(centerFrame, m_resetPasswordFloatingMessage);
 }
