@@ -317,7 +317,7 @@ add_subdirectory(src/pam-inhibit-autologin)
 # Install settings
 
 # bin
-install(TARGETS dde-lock lightdm-deepin-greeter DESTINATION ${CMAKE_INSTALL_BINDIR})
+install(TARGETS dde-lock lightdm-deepin-greeter greeter-display-setting DESTINATION ${CMAKE_INSTALL_BINDIR})
 install(FILES files/deepin-greeter DESTINATION ${CMAKE_INSTALL_BINDIR})
 
 # install x files
