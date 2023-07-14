@@ -13,5 +13,4 @@ set_target_properties(${PAM_LIB_NAME} PROPERTIES PREFIX "")
 target_link_libraries(${PAM_LIB_NAME} PRIVATE
     -lpam
 )
-
-install(TARGETS ${PAM_LIB_NAME} DESTINATION lib/${CMAKE_LIBRARY_ARCHITECTURE}/security)
+install(TARGETS ${PAM_LIB_NAME} DESTINATION ${CMAKE_INSTALL_LIBDIR}/security)
