@@ -554,7 +554,7 @@ bool ShutdownWidget::eventFilter(QObject *watched, QEvent *event)
     Q_UNUSED(watched)
     if (event->type() == QEvent::KeyPress) {
         QKeyEvent *keyEvent = static_cast<QKeyEvent *>(event);
-        if (keyEvent->key() == Qt::Key_Tab) {
+        if (keyEvent->key() == Qt::Key_Tab && m_modeStatus == SessionBaseModel::ShutDownMode) {
             if (m_systemMonitor && m_systemMonitor->isVisible() && m_currentSelectedBtn && m_currentSelectedBtn->isVisible()) {
                 if (m_currentSelectedBtn->isChecked()) {
                     m_currentSelectedBtn->setChecked(false);
@@ -566,7 +566,12 @@ bool ShutdownWidget::eventFilter(QObject *watched, QEvent *event)
             }
             return true;
         }
+    } else if (event->type() == QEvent::FocusOut && m_currentSelectedBtn && m_currentSelectedBtn->isVisible()) {
+        m_currentSelectedBtn->setChecked(false);
+    } else if (event->type() == QEvent::FocusIn && m_currentSelectedBtn && m_currentSelectedBtn->isVisible()) {
+        m_currentSelectedBtn->setChecked(true);
     }
+
     return false;
 }
 
