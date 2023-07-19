@@ -172,6 +172,10 @@ void LockWorker::initConnections()
     connect(m_model, &SessionBaseModel::onPowerActionChanged, this, &LockWorker::doPowerAction);
     connect(m_model, &SessionBaseModel::visibleChanged, this, [this](bool visible) {
         if (visible) {
+            if(m_model->currentModeState() == SessionBaseModel::ShutDownMode) {
+                setLocked(true);
+            }
+
             if (m_model->currentModeState() != SessionBaseModel::ShutDownMode && m_model->currentModeState() != SessionBaseModel::UserMode) {
                 createAuthentication(m_model->currentUser()->name());
             }
