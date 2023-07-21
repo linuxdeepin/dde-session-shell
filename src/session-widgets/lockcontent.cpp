@@ -685,6 +685,8 @@ void LockContent::tryGrabKeyboard(bool exitIfFailed)
             return;
         }
     } else {
+        // 模拟XF86Ungrab按键，从而取消其他窗口的grab状态
+        QProcess::execute("bash -c \"originmap=$(setxkbmap -query | grep option | awk -F ' ' '{print $2}');/usr/bin/setxkbmap -option grab:break_actions&&/usr/bin/xdotool key XF86Ungrab&&setxkbmap -option $originmap\"");
         if (window()->windowHandle() && window()->windowHandle()->setKeyboardGrabEnabled(true)) {
             m_failures = 0;
             return;
