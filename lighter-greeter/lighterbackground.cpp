@@ -58,6 +58,8 @@ void LighterBackground::setScreen(QPointer<QScreen> screen, bool isVisible)
 void LighterBackground::onAuthFinished()
 {
     m_showBlack = true;
+
+    // 强制刷新，从而显示黑色画面，否则在lightdm开启会话时可能不会立即显示黑色
     repaint();
 }
 

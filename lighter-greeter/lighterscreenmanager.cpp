@@ -39,18 +39,18 @@ void LighterScreenManager::screenCountChanged()
         }
     }
 
-    // 取消关联
+    // 释放过期的资源
     for (auto &s : screens_to_remove) {
         disconnect(s);
         auto backgroundFrame = m_screenContents.key(s);
         if (backgroundFrame) {
+            // @note 创建的界面并不释放，后面可以继续复用,如果为了内存考虑，也可以启动一个定时器，在一分钟后释放(释放后要从map中remove)
             backgroundFrame->setVisible(false);
         }
         s = nullptr;
-        // 创建的界面并不释放，后面可以继续复用,如果为了内存考虑，也可以启动一个定时器，在一分钟后释放(释放后要从map中remove)
     }
 
-    // 创建关联
+    // 处理新增的资源
     for (const auto &s : screens_to_add) {
         s->setOrientationUpdateMask(Qt::PrimaryOrientation
                                     | Qt::LandscapeOrientation
@@ -58,7 +58,7 @@ void LighterScreenManager::screenCountChanged()
                                     | Qt::InvertedLandscapeOrientation
                                     | Qt::InvertedPortraitOrientation);
 
-        // 显示器信息发生任何变化时，都应该重新刷新一次任务栏的显示位置
+        // 显示器信息发生任何变化时，都应该重新刷新一次显示情况
         connect(s, &QScreen::geometryChanged, this, &LighterScreenManager::handleScreenChanged);
         connect(s, &QScreen::availableGeometryChanged, this, &LighterScreenManager::handleScreenChanged);
         connect(s, &QScreen::physicalSizeChanged, this, &LighterScreenManager::handleScreenChanged);
