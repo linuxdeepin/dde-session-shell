@@ -7,7 +7,7 @@
 #include "login_plugin_v2.h"
 #include "public_func.h"
 
-Q_GLOBAL_STATIC(PluginManager, pluginManager)
+static PluginManager pluginManager;
 
 PluginManager::PluginManager(QObject *parent) : QObject(parent)
 {
@@ -16,7 +16,7 @@ PluginManager::PluginManager(QObject *parent) : QObject(parent)
 
 PluginManager* PluginManager::instance()
 {
-    return pluginManager;
+    return &pluginManager;
 }
 
 void PluginManager::addPlugin(dss::module::BaseModuleInterface *module, const QString &version)

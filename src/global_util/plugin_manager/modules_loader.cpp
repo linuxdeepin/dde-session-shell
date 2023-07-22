@@ -81,23 +81,27 @@ void ModulesLoader::findModule(const QString &path)
         auto *moduleInstance = dynamic_cast<dss::module::BaseModuleInterface *>(loader.instance());
         if (!moduleInstance) {
             qWarning() << "Load plugin failed, error:" << loader.errorString();
+            loader.unload();
             continue;
         }
 
         qInfo() << "Current plugin key:" << moduleInstance->key();
         if (blackList.contains(moduleInstance->key())) {
             qInfo() << "The plugin is in black list, won't be loaded.";
+            loader.unload();
             continue;
         }
 
         int loadPluginType = moduleInstance->loadPluginType();
         if (loadPluginType != dss::module::BaseModuleInterface::Load) {
             qInfo() << "The plugin dose not want to be loaded.";
+            loader.unload();
             continue;
         }
 
         if (PluginManager::instance()->contains(moduleInstance->key())) {
             qWarning() << "The plugin has been loaded.";
+            loader.unload();
             continue;
         }
 
