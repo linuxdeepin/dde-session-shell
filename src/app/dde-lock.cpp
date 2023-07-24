@@ -223,7 +223,18 @@ int main(int argc, char *argv[])
             } else if (showShutdown) {
                 QDBusInterface ifc(DBUS_SHUTDOWN_NAME, DBUS_SHUTDOWN_PATH, shutdownFrontInter, QDBusConnection::sessionBus(), nullptr);
                 ifc.asyncCall("Show");
-            } else if (showLockScreen && isSingle) {
+            } else if (showLockScreen) {
+                do {
+                    // 当前会话被锁定时，强制等待10ms后再获取一次锁定状态，如果变了直接退出，避免快速锁屏解锁时，lock状态未及时更新导致再启动dde-lock直接进入了锁屏状态,From bug: 200415
+                    if (worker->isLocked()) {
+                        QThread::msleep(10);
+
+                        if (!worker->isLocked())
+                            return 0;
+                    }
+
+                } while (false);
+
                 QDBusInterface ifc(DBUS_LOCK_NAME, DBUS_LOCK_PATH, lockFrontInter, QDBusConnection::sessionBus(), nullptr);
                 ifc.asyncCall("Show");
             }
