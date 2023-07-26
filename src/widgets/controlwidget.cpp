@@ -734,6 +734,12 @@ void ControlWidget::showEvent(QShowEvent *event)
         if (!isInit) {
             initPlugins();
             isInit = true;
+            connect(PluginManager::instance(), &PluginManager::trayPluginAdded, this, [this](TrayPlugin *module) {
+                if (!module)
+                    return;
+
+                addModule(module);
+            });
         }
 
         for (auto key : m_modules.keys()) {
