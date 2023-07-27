@@ -272,6 +272,8 @@ void SFAWidget::setAuthState(const AuthType type, const AuthState state, const Q
     case AT_PAM:
         if (m_singleAuth) {
             m_singleAuth->setAuthState(state, message);
+        } else if (m_passwordAuth) {
+            m_passwordAuth->setAuthState(state, message);
         }
 
         // 这里是为了让自定义登陆知道lightdm已经开启验证了

@@ -79,6 +79,7 @@ private:
     void startGreeterAuth(const QString &account = QString());
     void changePasswd();
     void screenSwitchByWldpms(bool active);
+    void updatePasswordExpiredStateBySPName(const QString &account);
 
 private:
     DeepinAuthFramework *m_authFramework;

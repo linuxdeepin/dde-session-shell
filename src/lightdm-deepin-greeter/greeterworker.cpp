@@ -465,44 +465,7 @@ void GreeterWorker::createAuthentication(const QString &account)
     } else {
         // 域管账户第一次登录时，后端还未提供账户信息，获取不到用户密码过期数据
         // 需要通过glibc接口读取
-        std::string str = account.toStdString();
-        spwd *pw = getspnam(str.c_str());
-
-        if (pw) {
-            const int secondsPerDay = 60 * 60 * 24;
-
-            long int spMax = pw->sp_max;
-            long int spWarn = pw->sp_warn;
-            long int spLastChg = pw->sp_lstchg;
-
-            User::ExpiredState state = User::ExpiredNormal;
-            int days = 0;
-
-            if (spLastChg == 0) {
-                // expired
-                state = User::ExpiredAlready;
-                days = 0;
-            }
-
-            if (spMax == -1) {
-                // never expired
-                state = User::ExpiredNormal;
-                days = -1;
-            }
-
-            int curDays = QDateTime::currentDateTime().time().msec() / secondsPerDay;
-            int daysLeft = spLastChg + spMax - curDays;
-
-            if (daysLeft < 0) {
-                state = User::ExpiredAlready;
-                days = daysLeft;
-            } else if (spWarn > daysLeft) {
-                state = User::ExpiredSoon;
-                days = daysLeft;
-            }
-
-            m_model->currentUser()->updatePasswordExpiredState(state, days);
-        }
+        updatePasswordExpiredStateBySPName(account);
     }
 
     switch (m_model->getAuthProperty().FrameworkState) {
@@ -775,7 +738,7 @@ void GreeterWorker::onAuthFinished()
     qInfo() << "Auth finished";
     if (m_greeter->inAuthentication()) {
         m_greeter->respond(m_authFramework->AuthSessionPath(m_account) + QString(";") + m_password);
-        m_model->currentUser()->updatePasswordExpiredInfo();
+        updatePasswordExpiredStateBySPName(m_account);
         if (m_model->currentUser()->expiredState() == User::ExpiredAlready) {
             changePasswd();
         }
@@ -1009,4 +972,47 @@ void GreeterWorker::screenSwitchByWldpms(bool active)
         arguments << "off";
     }
     QProcess::startDetached("dde_wldpms", arguments);
+}
+
+void GreeterWorker::updatePasswordExpiredStateBySPName(const QString &account)
+{
+    std::string str = account.toStdString();
+    spwd *pw = getspnam(str.c_str());
+
+    if (pw) {
+        const int secondsPerDay = 60 * 60 * 24;
+
+        long int spMax = pw->sp_max;
+        long int spWarn = pw->sp_warn;
+        long int spLastChg = pw->sp_lstchg;
+
+        User::ExpiredState state = User::ExpiredNormal;
+        int days = 0;
+
+        if (spLastChg == 0) {
+            // expired
+            state = User::ExpiredAlready;
+            days = 0;
+        }
+
+        if (spMax == -1) {
+            // never expired
+            state = User::ExpiredNormal;
+            days = -1;
+        }
+
+        int curDays = QDateTime::currentDateTime().time().msec() / secondsPerDay;
+        int daysLeft = spLastChg + spMax - curDays;
+
+        if (daysLeft < 0) {
+            state = User::ExpiredAlready;
+            days = daysLeft;
+        } else if (spWarn > daysLeft) {
+            state = User::ExpiredSoon;
+            days = daysLeft;
+        }
+        if (m_model->currentUser()) {
+            m_model->currentUser()->updatePasswordExpiredState(state, days);
+        }
+    }
 }
