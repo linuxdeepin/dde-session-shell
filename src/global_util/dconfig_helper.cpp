@@ -17,6 +17,7 @@ Q_GLOBAL_STATIC(DConfigHelper, dConfigWatcher)
 DConfigHelper::DConfigHelper(QObject *parent)
     : QObject(parent)
 {
+    moveToThread(qApp->thread());
     initializeDConfig(getDefaultConfigFileName(), getDefaultConfigFileName(), "");
 }
 
@@ -29,7 +30,8 @@ DConfig *DConfigHelper::initializeDConfig(const QString &appId,
                                           const QString &name,
                                           const QString &subpath)
 {
-    DConfig *dConfig = DConfig::create(appId, name, subpath, this);
+    QMutexLocker locker(&m_mutex);
+    DConfig *dConfig = DConfig::create(appId, name, subpath);
     if (!dConfig) {
         qWarning() << "Create DConfig failed, appId: " << appId << ", name: " << name
                    << ", subpath: " << subpath;
@@ -38,6 +40,9 @@ DConfig *DConfigHelper::initializeDConfig(const QString &appId,
 
     m_dConfigs[packageDConfigPath(appId, name, subpath)] = dConfig;
     m_bindInfos[dConfig] = {};
+
+    dConfig->moveToThread(qApp->thread());
+    dConfig->setParent(this);
 
     // 即时响应数据变化
     connect(dConfig, &DConfig::valueChanged, this, [this, dConfig](const QString &key) {

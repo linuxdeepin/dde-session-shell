@@ -7,6 +7,7 @@
 #include <DConfig>
 
 #include <QMap>
+#include <QMutex>
 #include <QObject>
 
 using OnPropertyChangedCallback = void (*)(const QString &, const QVariant &, QObject *);
@@ -65,6 +66,7 @@ private:
                                const QString &subpath) const;
 
 private:
+    QMutex m_mutex;
     QMap<QString, Dtk::Core::DConfig *> m_dConfigs;
     QMap<Dtk::Core::DConfig *, QMap<QObject *, QStringList>> m_bindInfos;
     QMap<QObject *, OnPropertyChangedCallback> m_objCallbackMap;
