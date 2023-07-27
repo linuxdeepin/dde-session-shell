@@ -127,6 +127,9 @@ void SFAWidget::setAuthType(const AuthFlags type)
         authType = AT_Password;
     }
 
+    // 隐藏生物认证结果状态图标
+    m_biometricAuthState->hide();
+
     // 初始化认证因子
     authType = initAuthFactors(type);
 
