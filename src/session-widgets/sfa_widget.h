@@ -8,6 +8,7 @@
 #include "auth_widget.h"
 #include "userinfo.h"
 #include "authcommon.h"
+#include "buttonbox.h"
 
 #include <DArrowRectangle>
 #include <DBlurEffectWidget>
@@ -83,10 +84,10 @@ private:
 private:
     QVBoxLayout *m_mainLayout;
 
-    DButtonBox *m_chooseAuthButtonBox; // 认证选择按钮
+    ButtonBox *m_chooseAuthButtonBox; // 认证选择按钮
     DLabel *m_biometricAuthState;      // 生物认证状态
 
-    QMap<AuthCommon::AuthType, DButtonBoxButton *> m_authButtons;
+    QMap<AuthCommon::AuthType, ButtonBoxButton *> m_authButtons;
     DFloatingButton *m_retryButton;
     QSpacerItem *m_bioAuthStatePlaceHolder;
     QSpacerItem *m_bioBottomSpacingHolder;

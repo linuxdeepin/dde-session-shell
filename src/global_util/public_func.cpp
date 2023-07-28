@@ -152,6 +152,20 @@ QPixmap loadPixmap(const QString &file, const QSize& size)
     return pixmap;
 }
 
+//此处为下面函数的函数重载，用来解决Debug模式使用void loadPixmap(const QString &fileName, QPixmap &pixmap)调试崩溃问题，原因暂时不明，保险起见使用这个函数
+QPixmap loadPixmap(const QString &fileName)
+{
+    QPixmap pixmap;
+    if (!pixmap.load(fileName)) {
+        QFile file(fileName);
+        if (file.open(QIODevice::ReadOnly)) {
+            pixmap.loadFromData(file.readAll());
+        }
+    }
+
+    return pixmap;
+}
+
 void loadPixmap(const QString &fileName, QPixmap &pixmap)
 {
     if (!pixmap.load(fileName)) {

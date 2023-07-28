@@ -30,7 +30,7 @@ void BackgroundHandlerThread::run()
 QPixmap BackgroundHandlerThread::handleBackground(const QString &path, const QSize &size, const qreal &devicePixelRatioF)
 {
     QPixmap pixmap;
-    loadPixmap(path, pixmap);
+    pixmap = loadPixmap(path);
 
     pixmap = pixmap.scaled(size, Qt::KeepAspectRatioByExpanding, Qt::FastTransformation);
     pixmap = pixmap.copy(QRect((pixmap.width() - size.width()) / 2,

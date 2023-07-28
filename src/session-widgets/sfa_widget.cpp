@@ -53,8 +53,7 @@ void SFAWidget::initUI()
 {
     AuthWidget::initUI();
     /* 认证选择 */
-    m_chooseAuthButtonBox = new DButtonBox(this);
-    m_chooseAuthButtonBox->setOrientation(Qt::Horizontal);
+    m_chooseAuthButtonBox = new ButtonBox(this);
     m_chooseAuthButtonBox->setFocusPolicy(Qt::NoFocus);
     m_chooseAuthButtonBox->setContentsMargins(0, 0, 0, 0);
     m_chooseAuthButtonBox->setMaximumHeight(36);
@@ -343,12 +342,12 @@ void SFAWidget::initSingleAuth()
     m_singleAuth->setPasswordHint(m_model->currentUser()->passwordHint());
 
     /* 认证选择按钮 */
-    DButtonBoxButton *btn = new DButtonBoxButton(QIcon(Password_Auth), QString(), this);
+    ButtonBoxButton *btn = new ButtonBoxButton(QIcon(Password_Auth), QString(), this);
     btn->setIconSize(AuthButtonIconSize);
     btn->setFixedSize(AuthButtonSize);
     btn->setFocusPolicy(Qt::NoFocus);
     m_authButtons.insert(AT_PAM, btn);
-    connect(btn, &DButtonBoxButton::toggled, this, [this](const bool checked) {
+    connect(btn, &ButtonBoxButton::toggled, this, [this](const bool checked) {
         if (checked) {
             replaceWidget(m_singleAuth);
             m_biometricAuthState->hide();
@@ -417,12 +416,12 @@ void SFAWidget::initPasswdAuth()
     m_passwordAuth->setCapsLockVisible(KeyboardMonitor::instance()->isCapsLockOn());
     m_passwordAuth->setPasswordHint(m_user->passwordHint());
     /* 认证选择按钮 */
-    DButtonBoxButton *btn = new DButtonBoxButton(QIcon(Password_Auth), QString(), this);
+    ButtonBoxButton *btn = new ButtonBoxButton(QIcon(Password_Auth), QString(), this);
     btn->setIconSize(AuthButtonIconSize);
     btn->setFixedSize(AuthButtonSize);
     btn->setFocusPolicy(Qt::NoFocus);
     m_authButtons.insert(AT_Password, btn);
-    connect(btn, &DButtonBoxButton::toggled, this, [this](const bool checked) {
+    connect(btn, &ButtonBoxButton::toggled, this, [this](const bool checked) {
         if (checked) {
             replaceWidget(m_passwordAuth);
             m_biometricAuthState->hide();
@@ -458,12 +457,12 @@ void SFAWidget::initFingerprintAuth()
     });
 
     /* 认证选择按钮 */
-    DButtonBoxButton *btn = new DButtonBoxButton(QIcon(Fingerprint_Auth), QString(), this);
+    ButtonBoxButton *btn = new ButtonBoxButton(QIcon(Fingerprint_Auth), QString(), this);
     btn->setIconSize(AuthButtonIconSize);
     btn->setFixedSize(AuthButtonSize);
     btn->setFocusPolicy(Qt::NoFocus);
     m_authButtons.insert(AT_Fingerprint, btn);
-    connect(btn, &DButtonBoxButton::toggled, this, [this](const bool checked) {
+    connect(btn, &ButtonBoxButton::toggled, this, [this](const bool checked) {
         if (checked) {
             replaceWidget(m_fingerprintAuth);
             setBioAuthStateVisible(m_fingerprintAuth, true);
@@ -514,12 +513,12 @@ void SFAWidget::initUKeyAuth()
     m_ukeyAuth->setCapsLockVisible(KeyboardMonitor::instance()->isCapsLockOn());
 
     /* 认证选择按钮 */
-    DButtonBoxButton *btn = new DButtonBoxButton(QIcon(UKey_Auth), QString(), this);
+    ButtonBoxButton *btn = new ButtonBoxButton(QIcon(UKey_Auth), QString(), this);
     btn->setIconSize(AuthButtonIconSize);
     btn->setFixedSize(AuthButtonSize);
     btn->setFocusPolicy(Qt::NoFocus);
     m_authButtons.insert(AT_Ukey, btn);
-    connect(btn, &DButtonBoxButton::toggled, this, [this](const bool checked) {
+    connect(btn, &ButtonBoxButton::toggled, this, [this](const bool checked) {
         if (checked) {
             replaceWidget(m_ukeyAuth);
             m_biometricAuthState->hide();
@@ -572,12 +571,12 @@ void SFAWidget::initFaceAuth()
     });
 
     /* 认证选择按钮 */
-    DButtonBoxButton *btn = new DButtonBoxButton(QIcon(Face_Auth), QString(), this);
+    ButtonBoxButton *btn = new ButtonBoxButton(QIcon(Face_Auth), QString(), this);
     btn->setIconSize(AuthButtonIconSize);
     btn->setFixedSize(AuthButtonSize);
     btn->setFocusPolicy(Qt::NoFocus);
     m_authButtons.insert(AT_Face, btn);
-    connect(btn, &DButtonBoxButton::toggled, this, [this](const bool checked) {
+    connect(btn, &ButtonBoxButton::toggled, this, [this](const bool checked) {
         if (checked) {
             replaceWidget(m_faceAuth);
             setBioAuthStateVisible(m_faceAuth, true);
@@ -635,12 +634,12 @@ void SFAWidget::initIrisAuth()
     });
 
     /* 认证选择按钮 */
-    DButtonBoxButton *btn = new DButtonBoxButton(QIcon(Iris_Auth), QString(), this);
+    ButtonBoxButton *btn = new ButtonBoxButton(QIcon(Iris_Auth), QString(), this);
     btn->setIconSize(AuthButtonIconSize);
     btn->setFixedSize(AuthButtonSize);
     btn->setFocusPolicy(Qt::NoFocus);
     m_authButtons.insert(AT_Iris, btn);
-    connect(btn, &DButtonBoxButton::toggled, this, [this](const bool checked) {
+    connect(btn, &ButtonBoxButton::toggled, this, [this](const bool checked) {
         if (checked) {
             replaceWidget(m_irisAuth);
             setBioAuthStateVisible(m_irisAuth, true);
@@ -781,7 +780,7 @@ void SFAWidget::initCustomAuth()
     connect(m_customAuth, &AuthCustom::notifyAuthTypeChange, this, &SFAWidget::onRequestChangeAuth);
 
     /* 认证选择按钮 */
-    DButtonBoxButton *btn = new DButtonBoxButton(DStyle::SP_SelectElement, QString(), this);
+    ButtonBoxButton *btn = new ButtonBoxButton(DStyle::SP_SelectElement, QString(), this);
     const QString &iconStr = plugin->icon();
     const QIcon icon = QFile::exists(iconStr) ? QIcon(iconStr) : QIcon::fromTheme(iconStr);
     if (!icon.isNull()) {
@@ -791,7 +790,7 @@ void SFAWidget::initCustomAuth()
     btn->setFixedSize(AuthButtonSize);
     btn->setFocusPolicy(Qt::NoFocus);
     m_authButtons.insert(AT_Custom, btn);
-    connect(btn, &DButtonBoxButton::toggled, this, [this](const bool checked) {
+    connect(btn, &ButtonBoxButton::toggled, this, [this](const bool checked) {
         if (checked) {
             qDebug() << Q_FUNC_INFO << "Custom auth is checked";
             m_biometricAuthState->hide();
@@ -1029,12 +1028,12 @@ void SFAWidget::initAccount()
     if (m_authButtons.contains(AT_None)) {
         return;
     }
-    DButtonBoxButton *btn = new DButtonBoxButton(QIcon(Password_Auth), QString(), this);
+    ButtonBoxButton *btn = new ButtonBoxButton(QIcon(Password_Auth), QString(), this);
     btn->setIconSize(AuthButtonIconSize);
     btn->setFixedSize(AuthButtonSize);
     btn->setFocusPolicy(Qt::NoFocus);
     m_authButtons.insert(AT_None, btn);
-    connect(btn, &DButtonBoxButton::toggled, this, [this](const bool checked) {
+    connect(btn, &ButtonBoxButton::toggled, this, [this](const bool checked) {
         if (checked) {
             m_accountEdit->show();
             m_lockButton->show();
