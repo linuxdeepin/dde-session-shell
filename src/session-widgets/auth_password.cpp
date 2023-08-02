@@ -192,6 +192,7 @@ void AuthPassword::setAuthState(const AuthState state, const QString &result)
         m_showPrompt = true;
         m_lineEdit->hideAlertMessage();
         hidePasswordHintWidget();
+        m_resetDialogShow = false;
         emit authFinished(state);
         emit requestChangeFocus();
         break;
