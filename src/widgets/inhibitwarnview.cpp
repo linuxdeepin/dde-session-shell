@@ -106,8 +106,7 @@ InhibitWarnView::InhibitWarnView(SessionBaseModel::PowerAction inhibitType, QWid
     connect(m_cancelBtn, &InhibitButton::clicked, this, &InhibitWarnView::cancelled);
     connect(m_acceptBtn, &InhibitButton::clicked, this, &InhibitWarnView::actionInvoked);
 
-    this->setTabOrder(m_cancelBtn, m_acceptBtn);
-    this->setTabOrder(m_acceptBtn, m_cancelBtn);
+    setFocusPolicy(Qt::ClickFocus);
 }
 
 InhibitWarnView::~InhibitWarnView()
@@ -180,3 +179,25 @@ void InhibitWarnView::setCurrentButton(const ButtonType btnType)
 void InhibitWarnView::toggleButtonState() {}
 
 void InhibitWarnView::buttonClickHandle() {}
+
+void InhibitWarnView::keyPressEvent(QKeyEvent *event)
+{
+    if (event->key() == Qt::Key_Up || event->key() == Qt::Key_Down || event->key() == Qt::Key_Tab) {
+        QWidget *currentFocusWidget = focusWidget();
+        QWidget *nextFocusWidget = nullptr;
+
+        if (currentFocusWidget == m_cancelBtn) {
+            nextFocusWidget = m_acceptBtn;
+        } else if (currentFocusWidget == m_acceptBtn) {
+            nextFocusWidget = m_cancelBtn;
+        }
+
+        if (nextFocusWidget) {
+            nextFocusWidget->setFocus();
+        } else {
+            m_cancelBtn->setFocus();
+        }
+    }
+
+    QWidget::keyPressEvent(event);
+}

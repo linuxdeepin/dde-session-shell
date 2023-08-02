@@ -174,9 +174,6 @@ void WarningContent::beforeInvokeAction(bool needConfirm)
     // change ui
     if (!inhibitors.isEmpty()) {
         InhibitWarnView *view = new InhibitWarnView(m_powerAction, this);
-        view->setFocusPolicy(Qt::NoFocus);
-        setFocusPolicy(Qt::NoFocus);
-        setFocusProxy(view);
         view->setInhibitorList(inhibitors);
 
         switch (m_powerAction) {
@@ -288,8 +285,6 @@ void WarningContent::beforeInvokeAction(bool needConfirm)
                         m_powerAction == SessionBaseModel::PowerAction::RequireRestart ||
                         m_powerAction == SessionBaseModel::PowerAction::RequireLogout)) {
         InhibitWarnView *view = new InhibitWarnView(m_powerAction, this);
-        view->setFocusPolicy(Qt::StrongFocus);
-        setFocusPolicy(Qt::NoFocus);
         if (m_powerAction == SessionBaseModel::PowerAction::RequireShutdown
             || m_powerAction == SessionBaseModel::PowerAction::RequireUpdateShutdown) {
             view->setAcceptReason(tr("Shut down"));
