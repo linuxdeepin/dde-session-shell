@@ -56,10 +56,11 @@ void SFAWidget::initUI()
     m_chooseAuthButtonBox = new ButtonBox(this);
     m_chooseAuthButtonBox->setFocusPolicy(Qt::NoFocus);
     m_chooseAuthButtonBox->setContentsMargins(0, 0, 0, 0);
-    m_chooseAuthButtonBox->setMaximumHeight(36);
+    m_chooseAuthButtonBox->setFixedHeight(CHOOSE_AUTH_TYPE_PLACE_HOLDER_HEIGHT);
 
     /* 生物认证状态 */
     m_biometricAuthState = new DLabel(this);
+    m_biometricAuthState->setFixedHeight(BIO_AUTH_STATE_PLACE_HOLDER_HEIGHT);
     m_biometricAuthState->hide();
 
     /* 重试按钮 */
@@ -922,9 +923,9 @@ int SFAWidget::getTopSpacing() const
     // 需要额外增加的顶部间隔高度 = 屏幕高度*0.35 - 时间控件高度 - 布局间隔 - 生物认证按钮底部间隔
     // - 生物认证切换按钮底部间隔 - 生物认证图标高度(如果有生物认证因子) - 切换验证类型按钮高度（如果认证因子数量大于1)
     int deltaY = topHeight - calcCurrentHeight(LOCK_CONTENT_CENTER_LAYOUT_MARGIN)
-            - m_bioBottomSpacingHolder->geometry().height()
-            - m_authTypeBottomSpacingHolder->sizeHint().height()
-            - ((m_faceAuth || m_fingerprintAuth || m_irisAuth) ? BIO_AUTH_STATE_PLACE_HOLDER_HEIGHT : 0)
+            - (showAuthButtonBox() ? calcCurrentHeight(BIO_AUTH_STATE_BOTTOM_SPACING) : 0)
+            - (showAuthButtonBox() ? calcCurrentHeight(CHOOSE_AUTH_TYPE_PLACE_HOLDER_HEIGHT) : 0)
+            - (showAuthButtonBox() ? calcCurrentHeight(BIO_AUTH_STATE_PLACE_HOLDER_HEIGHT) : 0)
             - (showAuthButtonBox() ? calcCurrentHeight(CHOOSE_AUTH_TYPE_BUTTON_BOTTOM_SPACING) : 0);
 
     return qMax(15, deltaY);
@@ -946,7 +947,7 @@ void SFAWidget::updateSpaceItem()
     m_authTypeBottomSpacingHolder->changeSize(0, showAuthButtonBox() ? calcCurrentHeight(CHOOSE_AUTH_TYPE_BUTTON_BOTTOM_SPACING) : 0);
 
     if (m_faceAuth || m_fingerprintAuth || m_irisAuth) {
-        m_bioBottomSpacingHolder->changeSize(0, calcCurrentHeight(CHOOSE_AUTH_TYPE_BUTTON_BOTTOM_SPACING));
+        m_bioBottomSpacingHolder->changeSize(0, calcCurrentHeight(BIO_AUTH_STATE_BOTTOM_SPACING));
         m_bioAuthStatePlaceHolder->changeSize(0, m_bioAuthStatePlaceHolder->sizeHint().height() == 0 ? 0 : BIO_AUTH_STATE_PLACE_HOLDER_HEIGHT);
     } else {
         m_bioBottomSpacingHolder->changeSize(0, 0);
