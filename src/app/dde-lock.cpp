@@ -151,6 +151,9 @@ int main(int argc, char *argv[])
     QObject::connect(LockContent::instance(), &LockContent::requestLockFrameHide, [model] {
         model->setVisible(false);
     });
+    QObject::connect(WarningContent::instance(), &WarningContent::requestLockFrameHide, [model] {
+        model->setVisible(false);
+    });
 
     auto createFrame = [&](QPointer<QScreen> screen, int count) -> QWidget* {
         LockFrame *lockFrame = new LockFrame(model);

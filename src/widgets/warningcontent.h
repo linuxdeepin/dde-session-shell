@@ -27,12 +27,18 @@ public:
     void beforeInvokeAction(bool needConfirm);
     void setPowerAction(const SessionBaseModel::PowerAction action);
 
+signals:
+    void requestLockFrameHide();
+
 protected:
     void mouseReleaseEvent(QMouseEvent *event) Q_DECL_OVERRIDE;
     void keyPressEvent(QKeyEvent *event) Q_DECL_OVERRIDE;
+    void showEvent(QShowEvent *event) Q_DECL_OVERRIDE;
     QList<InhibitWarnView::InhibitorData> listInhibitors(const SessionBaseModel::PowerAction action);
     void doCancelShutdownInhibit();
     void doAcceptShutdownInhibit();
+    void tryGrabKeyboard(bool exitIfFailed = true);
+
 
 private slots:
     void shutdownInhibit(const SessionBaseModel::PowerAction action, bool needConfirm);
@@ -43,6 +49,7 @@ private:
     WarningView * m_warningView = nullptr;
     QStringList m_inhibitorBlacklists;
     SessionBaseModel::PowerAction m_powerAction;
+    int m_failures;
 };
 
 class InhibitHint

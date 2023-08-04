@@ -6,11 +6,14 @@
 #include "fullscreenbackground.h"
 #include "lockcontent.h"
 
+#include <DDBusSender>
+
 WarningContent::WarningContent(QWidget *parent)
     : SessionBaseWindow(parent)
     , m_model(nullptr)
     , m_login1Inter(new DBusLogin1Manager("org.freedesktop.login1", "/org/freedesktop/login1", QDBusConnection::systemBus(), this))
     , m_powerAction(SessionBaseModel::PowerAction::None)
+    , m_failures(0)
 {
     setAccessibleName("WarningContent");
     m_inhibitorBlacklists << "NetworkManager" << "ModemManager" << "com.deepin.daemon.Power";
@@ -309,6 +312,68 @@ void WarningContent::beforeInvokeAction(bool needConfirm)
     }
 
     doAcceptShutdownInhibit();
+}
+
+/**
+ * @brief 抓取键盘,失败后继续抓取,最多尝试15次.
+ *
+ * @param exitIfFailed true: 发送失败通知，并隐藏锁屏。 false：不做任何处理。
+ */
+void WarningContent::tryGrabKeyboard(bool exitIfFailed)
+{
+#ifndef QT_DEBUG
+    if (!isVisible()) {
+        return;
+    }
+
+    if (m_model->isUseWayland()) {
+        static QDBusInterface *kwinInter = new QDBusInterface("org.kde.KWin","/KWin","org.kde.KWin", QDBusConnection::sessionBus());
+        if (!kwinInter || !kwinInter->isValid()) {
+            qWarning() << "kwinInter is invalid";
+            m_failures = 0;
+            return;
+        }
+        // wayland下判断是否有应用发起grab，如果有就不锁屏
+        QDBusReply<bool> reply = kwinInter->call("xwaylandGrabed");
+        if (!reply.isValid() || !reply.value()) {
+            m_failures = 0;
+            return;
+        }
+    } else {
+        // 模拟XF86Ungrab按键，从而取消其他窗口的grab状态
+        QProcess::execute("bash -c \"originmap=$(setxkbmap -query | grep option | awk -F ' ' '{print $2}');/usr/bin/setxkbmap -option grab:break_actions&&/usr/bin/xdotool key XF86Ungrab&&setxkbmap -option $originmap\"");
+        if (window()->windowHandle() && window()->windowHandle()->setKeyboardGrabEnabled(true)) {
+            m_failures = 0;
+            return;
+        }
+    }
+
+    m_failures++;
+
+    if (m_failures == 15) {
+        qWarning() << "Trying to grab keyboard has exceeded the upper limit. dde-lock will quit.";
+
+        m_failures = 0;
+
+        if (!exitIfFailed) {
+            return;
+        }
+
+        qInfo() << "Request hide lock frame";
+        emit requestLockFrameHide();
+        return;
+    }
+
+    QTimer::singleShot(100, this, [this, exitIfFailed] {
+        tryGrabKeyboard(exitIfFailed);
+    });
+#endif
+}
+
+void WarningContent::showEvent(QShowEvent *event)
+{
+    tryGrabKeyboard();
+    QFrame::showEvent(event);
 }
 
 void WarningContent::setPowerAction(const SessionBaseModel::PowerAction action)
