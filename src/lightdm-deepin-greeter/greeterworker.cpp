@@ -1001,7 +1001,7 @@ void GreeterWorker::updatePasswordExpiredStateBySPName(const QString &account)
             days = -1;
         }
 
-        int curDays = QDateTime::currentDateTime().time().msec() / secondsPerDay;
+        int curDays = QDateTime::currentSecsSinceEpoch() / secondsPerDay;
         int daysLeft = spLastChg + spMax - curDays;
 
         if (daysLeft < 0) {
