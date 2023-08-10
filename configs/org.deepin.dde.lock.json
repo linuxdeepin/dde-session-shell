@@ -131,6 +131,36 @@
             "description": "插件黑名单（包括托盘插件和认证插件），在加载插件的阶段进行判断。系统级配置，默认为空，需要重启电脑。数据结构为数组，内部填充字符串（插件的key值）",
             "permissions": "readwrite",
             "visibility": "private"
+        },
+        "customLogoPath":{
+            "value": "",
+            "serial": 0,
+            "flags": ["global"],
+            "name": "CustomLogoPath",
+            "name[zh_CN]": "第三方系统logo水印路径",
+            "description": "第三方系统logo水印路径,图片最大不超过500k",
+            "permissions": "readwrite",
+            "visibility": "private"
+        },
+        "customLogoPos":{
+            "value": "0,0",
+            "serial": 0,
+            "flags": ["global"],
+            "name": "CustomLogoPos",
+            "name[zh_CN]": "第三方系统logo水印位置",
+            "description": "第三方系统logo水印位置，系统LOGO右上角为原点,(10,0)表示 OEM LOGO 在系统LOGO右侧水平间隔10像素",
+            "permissions": "readwrite",
+            "visibility": "private"
+        },
+        "showSystemVersion":{
+            "value": true,
+            "serial": 0,
+            "flags": ["global"],
+            "name": "ShowSystemVersion",
+            "name[zh_CN]": "是否显示系统版本",
+            "description": "系统版本显示；false：不显示，true：显示。默认值为true；",
+            "permissions": "readwrite",
+            "visibility": "private"
         }
     }
 }

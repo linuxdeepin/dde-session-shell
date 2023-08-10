@@ -75,6 +75,12 @@ const QString SHOW_USER_NAME = "showUserName";
 const QString CHANGE_PASSWORD_FOR_NORMAL_USER = "changePasswordForNormalUser";
 const QString USER_FRAME_MAX_WIDTH = "userFrameMaxWidth";
 const QString FULL_NAME_FONT = "fullNameFont";
+
+// 系统版本显示配置
+const QString SHOW_SYSTEM_VERSION = "showSystemVersion";
+// 第三方logo相关配置
+const QString CUSTOM_LOGO_PATH = "customLogoPath";
+const QString CUSTOM_LOGO_POS = "customLogoPos";
 }
 
 
