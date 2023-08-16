@@ -155,7 +155,7 @@ void FullScreenBackground::updateBlurBackground(const QString &path)
     // 异步调用
     QDBusPendingCall async = QDBusConnection::systemBus().asyncCall(message);
     auto *watcher = new QDBusPendingCallWatcher(async);
-    QObject::connect(watcher, &QDBusPendingCallWatcher::finished, [this, watcher, updateBlurBackgroundFunc](QDBusPendingCallWatcher *callWatcher) {
+    QObject::connect(watcher, &QDBusPendingCallWatcher::finished, this, [watcher, updateBlurBackgroundFunc](QDBusPendingCallWatcher *callWatcher) {
         // 获取模糊壁纸路径
         QDBusPendingReply<QString> reply = *callWatcher;
         QString blurPath;
