@@ -109,7 +109,6 @@ LoginModule::LoginModule(QObject *parent)
 
 LoginModule::~LoginModule()
 {
-    qDebug() << Q_FUNC_INFO << "release start ";
     if (m_loginWidget) {
         delete m_loginWidget;
     }
