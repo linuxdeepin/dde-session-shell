@@ -17,6 +17,9 @@ public:
 
     void setBackgroundInfo(const QString &path, const QSize &size, const qreal &devicePixelRatioF);
 
+    // 直接调用handle则不会通过线程处理图片
+    void handle();
+
 signals:
     void backgroundHandled(const QPixmap &pixmap);
 

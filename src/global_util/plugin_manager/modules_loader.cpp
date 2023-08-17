@@ -25,6 +25,8 @@ ModulesLoader::ModulesLoader(QObject *parent)
 
 ModulesLoader::~ModulesLoader()
 {
+    quit();
+    wait();
 }
 
 ModulesLoader &ModulesLoader::instance()

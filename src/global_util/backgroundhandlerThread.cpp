@@ -23,8 +23,7 @@ void BackgroundHandlerThread::setBackgroundInfo(const QString &path, const QSize
 
 void BackgroundHandlerThread::run()
 {
-    auto pixmap = handleBackground(m_path, m_targetSize, m_devicePixelRatioF);
-    emit backgroundHandled(pixmap);
+    handle();
 }
 
 QPixmap BackgroundHandlerThread::handleBackground(const QString &path, const QSize &size, const qreal &devicePixelRatioF)
@@ -42,4 +41,10 @@ QPixmap BackgroundHandlerThread::handleBackground(const QString &path, const QSi
     pixmap.setDevicePixelRatio(devicePixelRatioF);
 
     return pixmap;
+}
+
+void BackgroundHandlerThread::handle()
+{
+    auto pixmap = handleBackground(m_path, m_targetSize, m_devicePixelRatioF);
+    emit backgroundHandled(pixmap);
 }

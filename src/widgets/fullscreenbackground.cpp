@@ -89,6 +89,11 @@ FullScreenBackground::FullScreenBackground(SessionBaseModel *model, QWidget *par
 FullScreenBackground::~FullScreenBackground()
 {
     frameList.removeAll(this);
+
+    if (m_backgroundHandlerThread) {
+        m_backgroundHandlerThread->quit();
+        m_backgroundHandlerThread->wait();
+    }
 }
 
 void FullScreenBackground::updateBackground(const QString &path)
@@ -122,7 +127,14 @@ void FullScreenBackground::updateBackground(const QString &path)
             }
 
             m_backgroundHandlerThread->setBackgroundInfo(path, trueSize(), devicePixelRatioF());
-            m_backgroundHandlerThread->start(QThread::TimeCriticalPriority);
+            /* 如果是锁屏，不通过线程处理图片，处理图片时用到的QPainter相关接口，并不是线程安全的。多次执行dde-lock会有崩溃现象
+             * 如果是登录界面，走线程处理，可以加快进程的启动速度，且greeter不存在频繁重新启动的情况
+             */
+            if (m_model->appType() == APP_TYPE_LOCK) {
+                m_backgroundHandlerThread->handle();
+            } else {
+                m_backgroundHandlerThread->start(QThread::TimeCriticalPriority);
+            }
 
             return;
         }
