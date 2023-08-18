@@ -284,7 +284,7 @@ void LockWorker::initConfiguration()
  * @param state     认证状态
  * @param message   认证消息
  */
-void LockWorker::onAuthStateChanged(const AuthType type, const AuthState state, const QString &message)
+void LockWorker::onAuthStateChanged(const int type, const int state, const QString &message)
 {
     qInfo() << "Auth type:" << type
             << ", authentication state:" << state
@@ -294,13 +294,13 @@ void LockWorker::onAuthStateChanged(const AuthType type, const AuthState state, 
         if (type == AT_All) {
             switch (state) {
             case AS_Success:
-                m_model->updateAuthState(type, state, message);
+                m_model->updateAuthState(AuthType(type), AuthState(state), message);
                 destroyAuthentication(m_account);
                 onUnlockFinished(true);
                 m_resetSessionTimer->stop();
                 break;
             case AS_Cancel:
-                m_model->updateAuthState(type, state, message);
+                m_model->updateAuthState(AuthType(type), AuthState(state), message);
                 destroyAuthentication(m_account);
                 break;
             default:
@@ -314,7 +314,7 @@ void LockWorker::onAuthStateChanged(const AuthType type, const AuthState state, 
                     m_model->setCurrentModeState(SessionBaseModel::ModeStatus::PasswordMode);
                 }
                 m_resetSessionTimer->start();
-                m_model->updateAuthState(type, state, message);
+                m_model->updateAuthState(AuthType(type), AuthState(state), message);
                 break;
             case AS_Failure:
                 if (m_model->currentModeState() != SessionBaseModel::ModeStatus::PasswordMode
@@ -322,15 +322,15 @@ void LockWorker::onAuthStateChanged(const AuthType type, const AuthState state, 
                     m_model->setCurrentModeState(SessionBaseModel::ModeStatus::PasswordMode);
                 }
                 m_model->updateLimitedInfo(m_authFramework->GetLimitedInfo(m_model->currentUser()->name()));
-                endAuthentication(m_account, type);
+                endAuthentication(m_account, AuthType(type));
                 if (!m_model->currentUser()->limitsInfo(type).locked
                         && type != AT_Face && type != AT_Iris) {
                     QTimer::singleShot(50, this, [this, type] {
-                        startAuthentication(m_account, type);
+                        startAuthentication(m_account, AuthType(type));
                     });
                 }
                 QTimer::singleShot(50, this, [this, type, state, message] {
-                    m_model->updateAuthState(type, state, message);
+                    m_model->updateAuthState(AuthType(type), AuthState(state), message);
                 });
                 break;
             case AS_Locked:
@@ -338,24 +338,24 @@ void LockWorker::onAuthStateChanged(const AuthType type, const AuthState state, 
                     && m_model->currentModeState() != SessionBaseModel::ModeStatus::ConfirmPasswordMode) {
                     m_model->setCurrentModeState(SessionBaseModel::ModeStatus::PasswordMode);
                 }
-                endAuthentication(m_account, type);
+                endAuthentication(m_account, AuthType(type));
                 // TODO: 信号时序问题,考虑优化,Bug 89056
                 QTimer::singleShot(50, this, [this, type, state, message] {
-                    m_model->updateAuthState(type, state, message);
+                    m_model->updateAuthState(AuthType(type), AuthState(state), message);
                 });
                 break;
             case AS_Timeout:
             case AS_Error:
                 qWarning() << "Auth error, type: " << type << ", state: " << state << ", message: " << message;
-                endAuthentication(m_account, type);
-                m_model->updateAuthState(type, state, message);
+                endAuthentication(m_account, AuthType(type));
+                m_model->updateAuthState(AuthType(type), AuthState(state), message);
                 break;
             case AS_Unlocked:
                 m_model->updateLimitedInfo(m_authFramework->GetLimitedInfo(m_model->currentUser()->name()));
-                m_model->updateAuthState(type, state, message);
+                m_model->updateAuthState(AuthType(type), AuthState(state), message);
                 break;
             default:
-                m_model->updateAuthState(type, state, message);
+                m_model->updateAuthState(AuthType(type), AuthState(state), message);
                 break;
             }
         }
@@ -366,7 +366,7 @@ void LockWorker::onAuthStateChanged(const AuthType type, const AuthState state, 
             m_model->setCurrentModeState(SessionBaseModel::ModeStatus::PasswordMode);
         }
         m_model->updateLimitedInfo(m_authFramework->GetLimitedInfo(m_model->currentUser()->name()));
-        m_model->updateAuthState(type, state, message);
+        m_model->updateAuthState(AuthType(type), AuthState(state), message);
         switch (state) {
         case AS_Success:
             if (m_model->currentUser()->isLdapUser() && type != AT_Custom && type != AT_All) {
@@ -386,11 +386,11 @@ void LockWorker::onAuthStateChanged(const AuthType type, const AuthState state, 
         case AS_Failure:
             // 单因失败会返回明确的失败类型，不关注type为-1的情况
             if (AT_All != type) {
-                endAuthentication(m_account, type);
+                endAuthentication(m_account, AuthType(type));
                 // 人脸和虹膜需要手动重新开启验证
                 if (!m_model->currentUser()->limitsInfo(type).locked && type != AT_Face && type != AT_Iris) {
                     QTimer::singleShot(50, this, [this, type] {
-                        startAuthentication(m_account, type);
+                        startAuthentication(m_account, AuthType(type));
                     });
                 }
             }

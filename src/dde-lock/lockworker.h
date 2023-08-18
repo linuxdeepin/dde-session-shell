@@ -50,7 +50,7 @@ public slots:
     void switchToUser(std::shared_ptr<User> user) override;
     void restartResetSessionTimer();
     void onAuthFinished();
-    void onAuthStateChanged(const AuthType type, const AuthState state, const QString &message);
+    void onAuthStateChanged(const int type, const int state, const QString &message);
 
     void disableGlobalShortcutsForWayland(const bool enable);
     void checkAccount(const QString &account);

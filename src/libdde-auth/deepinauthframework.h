@@ -74,7 +74,7 @@ signals:
     void PromptChanged(const QString &);
     void FactorsInfoChanged(const MFAInfoList &);
     void PINLenChanged(const int);
-    void AuthStateChanged(const AuthCommon::AuthType, const AuthCommon::AuthState, const QString &);
+    void AuthStateChanged(const int, const int, const QString &);
     void SessionCreated();
     void DeviceChanged(const int, const int);
 
