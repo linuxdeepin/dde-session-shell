@@ -40,10 +40,7 @@ TEST_F(UT_MultiUsersWarningView, BasicTest)
 {
     std::shared_ptr<User> user_ptr(new User());
     m_multiUsersWarningView->action();
-    m_multiUsersWarningView->toggleButtonState();
-    m_multiUsersWarningView->buttonClickHandle();
     m_multiUsersWarningView->setAcceptReason("test");
-    m_multiUsersWarningView->getUserIcon(user_ptr->avatar());
     QTest::keyPress(m_multiUsersWarningView, Qt::Key_Up, Qt::KeyboardModifier::NoModifier);
 
 }

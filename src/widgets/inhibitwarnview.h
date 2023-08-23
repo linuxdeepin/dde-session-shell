@@ -12,7 +12,6 @@
 
 #include <QWidget>
 
-class QPushButton;
 class InhibitorRow : public QWidget
 {
     Q_OBJECT
@@ -45,12 +44,9 @@ public:
     void setAcceptReason(const QString &reason) override;
     void setAcceptVisible(const bool acceptable);
 
-    void toggleButtonState() Q_DECL_OVERRIDE;
-    void buttonClickHandle() Q_DECL_OVERRIDE;
 
 protected:
     bool focusNextPrevChild(bool next) Q_DECL_OVERRIDE;
-    void setCurrentButton(const ButtonType btntype) Q_DECL_OVERRIDE;
     void keyPressEvent(QKeyEvent *event) Q_DECL_OVERRIDE;
 
 signals:
@@ -64,7 +60,6 @@ private:
     QLabel *m_confirmTextLabel = nullptr;
     InhibitButton *m_acceptBtn;
     InhibitButton *m_cancelBtn;
-    QPushButton *m_currentBtn;
     int m_dataBindIndex;
 };
 

@@ -262,7 +262,7 @@ void WarningContent::beforeInvokeAction(bool needConfirm)
         }
 
         MultiUsersWarningView *view = new MultiUsersWarningView(m_powerAction, this);
-        view->setFocusPolicy(Qt::StrongFocus);
+        view->setFocusPolicy(Qt::NoFocus);
         setFocusPolicy(Qt::NoFocus);
         view->setUsers(tmpList);
         if (m_powerAction == SessionBaseModel::PowerAction::RequireShutdown)

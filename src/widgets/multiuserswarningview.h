@@ -18,7 +18,7 @@ class QVBoxLayout;
 
 DWIDGET_USE_NAMESPACE
 
-class QPushButton;
+class InhibitButton;
 class MultiUsersWarningView : public WarningView
 {
     Q_OBJECT
@@ -28,14 +28,10 @@ public:
 
     void setUsers(QList<std::shared_ptr<User>> users);
     SessionBaseModel::PowerAction action() const;
-    void toggleButtonState() Q_DECL_OVERRIDE;
-    void buttonClickHandle() Q_DECL_OVERRIDE;
     void setAcceptReason(const QString &reason) Q_DECL_OVERRIDE;
-    void keyPressEvent(QKeyEvent *event)Q_DECL_OVERRIDE;
 
 protected:
     bool focusNextPrevChild(bool next) Q_DECL_OVERRIDE;
-    void setCurrentButton(const ButtonType btntype) Q_DECL_OVERRIDE;
 
 signals:
     void actionInvoked();
@@ -43,19 +39,15 @@ signals:
 
 private:
     QString getUserIcon(const QString &path);
-    void updateIcon();
+    void updateWarningTip();
 
 private:
     QVBoxLayout * m_vLayout;
     QListWidget * m_userList;
     QLabel * m_warningTip;
-    QPushButton * m_cancelBtn;
-    QPushButton * m_actionBtn;
-    QPushButton *m_currentBtn;
+    InhibitButton * m_cancelBtn;
+    InhibitButton * m_actionBtn;
     SessionBaseModel::PowerAction m_action;
-    const int m_buttonIconSize = 28;
-    const int m_buttonWidth = 200;
-    const int m_buttonHeight = 64;
     SessionBaseModel::PowerAction m_inhibitType;
 };
 

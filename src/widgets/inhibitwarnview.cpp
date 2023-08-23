@@ -5,7 +5,6 @@
 #include "inhibitwarnview.h"
 
 #include <QHBoxLayout>
-#include <QPushButton>
 
 #include <DStyle>
 #include <DFontSizeManager>
@@ -14,7 +13,7 @@ DWIDGET_USE_NAMESPACE
 
 const int ButtonWidth = 200;
 const int ButtonHeight = 64;
-const QSize iconSize = QSize(28, 28);
+const QSize iconSize = QSize(24, 24);
 
 InhibitorRow::InhibitorRow(const QString &who, const QString &why, const QIcon &icon, QWidget *parent)
     : QWidget(parent)
@@ -170,15 +169,6 @@ bool InhibitWarnView::focusNextPrevChild(bool next)
 
     return WarningView::focusNextPrevChild(next);
 }
-
-void InhibitWarnView::setCurrentButton(const ButtonType btnType)
-{
-    Q_UNUSED(btnType);
-}
-
-void InhibitWarnView::toggleButtonState() {}
-
-void InhibitWarnView::buttonClickHandle() {}
 
 void InhibitWarnView::keyPressEvent(QKeyEvent *event)
 {

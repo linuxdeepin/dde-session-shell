@@ -57,7 +57,5 @@ TEST_F(UT_InhibitWarnView, BasicTest)
     m_inhibitWarnView->setInhibitConfirmMessage("test");
     m_inhibitWarnView->setAcceptReason("test");
     m_inhibitWarnView->setAcceptVisible(false);
-    m_inhibitWarnView->toggleButtonState();
-    m_inhibitWarnView->buttonClickHandle();
     QTest::keyPress(m_inhibitWarnView, Qt::Key_Return, Qt::KeyboardModifier::NoModifier);
 }
