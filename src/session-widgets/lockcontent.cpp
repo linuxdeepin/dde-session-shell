@@ -678,20 +678,21 @@ void LockContent::tryGrabKeyboard(bool exitIfFailed)
             m_failures = 0;
             return;
         }
-        // wayland下判断是否有应用发起grab，如果有就不锁屏
+        // wayland下判断是否有应用发起grab
         QDBusReply<bool> reply = kwinInter->call("xwaylandGrabed");
         if (!reply.isValid() || !reply.value()) {
             m_failures = 0;
             return;
         }
     } else {
-        // 模拟XF86Ungrab按键，从而取消其他窗口的grab状态
-        QProcess::execute("bash -c \"originmap=$(setxkbmap -query | grep option | awk -F ' ' '{print $2}');/usr/bin/setxkbmap -option grab:break_actions&&/usr/bin/xdotool key XF86Ungrab&&setxkbmap -option $originmap\"");
         if (window()->windowHandle() && window()->windowHandle()->setKeyboardGrabEnabled(true)) {
             m_failures = 0;
             return;
         }
     }
+
+    // 模拟XF86Ungrab按键，从而取消其他窗口的grab状态；尝试unGrab，x和wayland都需要
+    QProcess::execute("bash -c \"originmap=$(setxkbmap -query | grep option | awk -F ' ' '{print $2}');/usr/bin/setxkbmap -option grab:break_actions&&/usr/bin/xdotool key XF86Ungrab&&setxkbmap -option $originmap\"");
 
     m_failures++;
 
