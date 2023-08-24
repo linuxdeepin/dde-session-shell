@@ -207,7 +207,11 @@ void AuthPassword::setAuthState(const AuthState state, const QString &result)
         } else if (leftTimes == 1) {
             setLineEditInfo(tr("Verification failed, only one chance left"), PlaceHolderText);
         }
-        setLineEditInfo(tr("Wrong Password"), AlertText);
+        // 如果在锁定状态，没有必要发出警告信息
+        if(!m_limitsInfo->locked) {
+            setLineEditInfo(tr("Wrong Password"), AlertText);
+        }
+
         m_showPrompt = false;
         emit authFinished(state);
         break;
