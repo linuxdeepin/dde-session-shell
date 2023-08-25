@@ -84,8 +84,7 @@ MultiUsersWarningView::MultiUsersWarningView(SessionBaseModel::PowerAction inhib
     connect(m_cancelBtn, &InhibitButton::clicked, this, &MultiUsersWarningView::cancelled);
     connect(m_actionBtn, &InhibitButton::clicked, this, &MultiUsersWarningView::actionInvoked);
 
-    this->setTabOrder(m_cancelBtn, m_actionBtn);
-    this->setTabOrder(m_actionBtn, m_cancelBtn);
+    setFocusPolicy(Qt::ClickFocus);
 }
 
 MultiUsersWarningView::~MultiUsersWarningView()
@@ -146,6 +145,28 @@ QString MultiUsersWarningView::getUserIcon(const QString &path)
         return url.path();
 
     return path;
+}
+
+void MultiUsersWarningView::keyPressEvent(QKeyEvent *event)
+{
+    if (event->key() == Qt::Key_Up || event->key() == Qt::Key_Down || event->key() == Qt::Key_Tab) {
+        QWidget *currentFocusWidget = focusWidget();
+        QWidget *nextFocusWidget = nullptr;
+
+        if (currentFocusWidget == m_cancelBtn) {
+            nextFocusWidget = m_actionBtn;
+        } else if (currentFocusWidget == m_actionBtn) {
+            nextFocusWidget = m_cancelBtn;
+        }
+
+        if (nextFocusWidget) {
+            nextFocusWidget->setFocus();
+        } else {
+            m_cancelBtn->setFocus();
+        }
+    }
+
+    QWidget::keyPressEvent(event);
 }
 
 UserListItem::UserListItem(const QString &icon, const QString &name) :
