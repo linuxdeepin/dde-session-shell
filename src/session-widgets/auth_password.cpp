@@ -12,6 +12,7 @@
 #include <DLabel>
 #include <DPaletteHelper>
 #include <DDialogCloseButton>
+#include <DFontSizeManager>
 
 #include <QKeyEvent>
 #include <QTimer>
@@ -70,6 +71,7 @@ void AuthPassword::initUI()
     m_lineEdit->setFocusPolicy(Qt::StrongFocus);
     m_lineEdit->lineEdit()->setAlignment(Qt::AlignCenter);
     m_lineEdit->lineEdit()->setValidator(new QRegExpValidator(QRegExp("^[ -~]+$")));
+    DFontSizeManager::instance()->bind(m_lineEdit, DFontSizeManager::T6);
 
     setLineEditInfo(tr("Password"), PlaceHolderText);
 
