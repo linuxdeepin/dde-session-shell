@@ -580,6 +580,10 @@ bool ShutdownWidget::eventFilter(QObject *watched, QEvent *event)
         m_currentSelectedBtn->setChecked(true);
     }
 
+    if (event->type() == QEvent::Hide && m_modeStatus == SessionBaseModel::PowerMode) {
+        m_currentSelectedBtn = m_requireShutdownButton;
+    }
+
     return false;
 }
 
