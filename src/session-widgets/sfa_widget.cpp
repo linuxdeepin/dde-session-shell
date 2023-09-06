@@ -924,8 +924,8 @@ int SFAWidget::getTopSpacing() const
     // - 生物认证切换按钮底部间隔 - 生物认证图标高度(如果有生物认证因子) - 切换验证类型按钮高度（如果认证因子数量大于1)
     int deltaY = topHeight - calcCurrentHeight(LOCK_CONTENT_CENTER_LAYOUT_MARGIN)
             - (showAuthButtonBox() ? calcCurrentHeight(BIO_AUTH_STATE_BOTTOM_SPACING) : 0)
-            - (showAuthButtonBox() ? calcCurrentHeight(CHOOSE_AUTH_TYPE_PLACE_HOLDER_HEIGHT) : 0)
-            - (showAuthButtonBox() ? calcCurrentHeight(BIO_AUTH_STATE_PLACE_HOLDER_HEIGHT) : 0)
+            - (showAuthButtonBox() ? CHOOSE_AUTH_TYPE_PLACE_HOLDER_HEIGHT : 0)
+            - (showAuthButtonBox() ? BIO_AUTH_STATE_PLACE_HOLDER_HEIGHT : 0)
             - (showAuthButtonBox() ? calcCurrentHeight(CHOOSE_AUTH_TYPE_BUTTON_BOTTOM_SPACING) : 0);
 
     return qMax(15, deltaY);
