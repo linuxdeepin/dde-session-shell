@@ -51,6 +51,9 @@ void UserWidget::initUI()
     nameLayout->setMargin(0);
     nameLayout->setSpacing(8);
 
+    bool isDomainUser = m_user->uid() > 10000; // uid大于10000为域账户
+    nameLayout->addStretch(isDomainUser ? 3 : 0);
+
     QPixmap pixmap = DHiDPIHelper::loadNxPixmap(":/misc/images/select.svg");
     pixmap.setDevicePixelRatio(devicePixelRatioF());
     m_loginState->setAccessibleName("LoginState");
@@ -61,7 +64,20 @@ void UserWidget::initUI()
     loginStateLayout->setMargin(0);
     loginStateLayout->addSpacing(4);
     loginStateLayout->addWidget(m_loginState);
-    nameLayout->addLayout(loginStateLayout, 0);
+    nameLayout->addLayout(loginStateLayout);
+
+    // 域账户标识
+    QPixmap domainUserpixmap = QIcon::fromTheme(":/misc/images/domainUser.svg").pixmap(24, 24);
+    domainUserpixmap.setDevicePixelRatio(devicePixelRatioF());
+    DLabel *domainUserLabel = new DLabel(this);
+    domainUserLabel->setAccessibleName("isDomainUser");
+    domainUserLabel->setPixmap(domainUserpixmap);
+    domainUserLabel->setVisible(isDomainUser);
+    domainUserLabel->setAlignment(Qt::AlignVCenter);
+    QVBoxLayout *isDomainUserLayout = new QVBoxLayout;
+    isDomainUserLayout->setContentsMargins(8, 5, 0, 0);
+    isDomainUserLayout->addWidget(domainUserLabel);
+    nameLayout->addLayout(isDomainUserLayout);
 
     m_displayNameLabel->setAccessibleName("NameLabel");
     m_displayNameLabel->setTextFormat(Qt::TextFormat::PlainText);
@@ -72,7 +88,10 @@ void UserWidget::initUI()
     QPalette palette = m_displayNameLabel->palette();
     palette.setColor(QPalette::WindowText, Qt::white);
     m_displayNameLabel->setPalette(palette);
-    nameLayout->addWidget(m_displayNameLabel, 1, Qt::AlignVCenter | Qt::AlignLeft);
+    nameLayout->addWidget(m_displayNameLabel);
+    nameLayout->setSpacing(0);
+    nameLayout->addStretch(isDomainUser ? 5 : 0);
+
     // 用户名，根据配置决定是否构造对象
     if (DConfigHelper::instance()->getConfig(SHOW_USER_NAME, false).toBool()) {
         m_userNameWidget = new UserNameWidget(true, false, this);
@@ -89,7 +108,7 @@ void UserWidget::initUI()
     m_mainLayout->setMargin(0);
     m_mainLayout->addWidget(m_avatar);
     m_mainLayout->addSpacing(4);
-    m_mainLayout->addWidget(m_displayNameWidget, 0, Qt::AlignHCenter);
+    m_mainLayout->addWidget(m_displayNameWidget);
     if (m_userNameWidget)
         m_mainLayout->addWidget(m_userNameWidget);
     m_mainLayout->addSpacing(20);

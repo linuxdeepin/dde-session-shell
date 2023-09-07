@@ -20,13 +20,14 @@ DWIDGET_USE_NAMESPACE
 DCORE_USE_NAMESPACE
 using namespace DDESESSIONCC;
 
-UserNameWidget::UserNameWidget(bool respondFontSizeChange, bool showDisplayName, QWidget *parent)
+UserNameWidget::UserNameWidget(bool respondFontSizeChange, bool showDisplayName, bool showDomainUser, QWidget *parent)
     : QWidget(parent)
     , m_userPicLabel(nullptr)
     , m_fullNameLabel(nullptr)
     , m_displayNameLabel(nullptr)
     , m_showUserName(false)
     , m_showDisplayName(showDisplayName)
+    , m_showDomainUser(showDomainUser)
     , m_respondFontSizeChange(respondFontSizeChange)
 {
     initialize();
@@ -61,6 +62,18 @@ void UserNameWidget::initialize()
     if (!ok || fontSize < 0 || fontSize > 9 || !m_respondFontSizeChange) fontSize = DFontSizeManager::T6;
     DFontSizeManager::instance()->bind(m_fullNameLabel, static_cast<DFontSizeManager::SizeType>(fontSize));
 
+    QHBoxLayout *displayNameHLayout = new QHBoxLayout;
+    displayNameHLayout->setMargin(0);
+    displayNameHLayout->setSpacing(0);
+    QPixmap isDomainUserpixmap = QIcon::fromTheme(":/misc/images/domainUser.svg").pixmap(24, 24);
+    DLabel *domainUserLabel = new DLabel(this);
+    domainUserLabel->setPixmap(isDomainUserpixmap);
+    domainUserLabel->setAlignment(Qt::AlignVCenter);
+    domainUserLabel->setContentsMargins(10, 5, 10, 0);
+    domainUserLabel->setVisible(m_showDomainUser);
+    displayNameHLayout->addStretch(m_showDomainUser ? 3 : 0);
+    displayNameHLayout->addWidget(domainUserLabel);
+
     if (m_showDisplayName) {
         m_displayNameLabel = new DLabel(this);
         m_displayNameLabel->setAccessibleName(QStringLiteral("NameLabel"));
@@ -71,9 +84,15 @@ void UserNameWidget::initialize()
         palette = m_displayNameLabel->palette();
         palette.setColor(QPalette::WindowText, Qt::white);
         m_displayNameLabel->setPalette(palette);
-        vLayout->addWidget(m_displayNameLabel);
+        displayNameHLayout->addWidget(m_displayNameLabel);
     }
 
+    displayNameHLayout->addStretch(m_showDomainUser ? 5 : 0);
+    QWidget *displayNameWidget = new QWidget(this);
+    displayNameWidget->setLayout(displayNameHLayout);
+    vLayout->addWidget(displayNameWidget);
+
+    vLayout->addLayout(displayNameHLayout);
     vLayout->addLayout(hLayout);
     hLayout->addStretch();
     hLayout->addWidget(m_userPicLabel);
