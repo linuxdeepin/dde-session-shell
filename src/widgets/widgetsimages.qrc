@@ -227,8 +227,10 @@
         <file>img/update/waiting_update/waiting_update_37.png</file>
         <file>img/update/waiting_update/waiting_update_38.png</file>
         <file>img/update/waiting_update/waiting_update_39.png</file>
-        <file>img/inhibitview/shutdown.svg</file>
         <file>img/inhibitview/cancel_normal.svg</file>
         <file>img/inhibitview/cancel_hover.svg</file>
+        <file>img/inhibitview/reboot_warning.svg</file>
+        <file>img/inhibitview/logout_warning.svg</file>
+        <file>img/inhibitview/poweroff_warning.svg</file>
     </qresource>
 </RCC>

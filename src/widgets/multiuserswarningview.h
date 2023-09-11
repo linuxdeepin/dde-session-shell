@@ -31,6 +31,7 @@ public:
     void setAcceptReason(const QString &reason) Q_DECL_OVERRIDE;
 
 protected:
+    QString iconString();
     bool focusNextPrevChild(bool next) Q_DECL_OVERRIDE;
     void keyPressEvent(QKeyEvent *event) Q_DECL_OVERRIDE;
 

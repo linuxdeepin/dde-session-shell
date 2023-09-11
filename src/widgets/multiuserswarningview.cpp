@@ -30,7 +30,7 @@ MultiUsersWarningView::MultiUsersWarningView(SessionBaseModel::PowerAction inhib
     , m_actionBtn(new InhibitButton(this))
     , m_inhibitType(inhibitType)
 {
-    QIcon acceptIcon = QIcon::fromTheme(":/img/inhibitview/shutdown.svg");
+    QIcon acceptIcon = QIcon::fromTheme(iconString());
 
     m_userList->setAttribute(Qt::WA_TranslucentBackground);
     // m_userList->setSelectionRectVisible(false);
@@ -127,6 +127,24 @@ void MultiUsersWarningView::updateWarningTip()
 void MultiUsersWarningView::setAcceptReason(const QString &reason)
 {
     m_actionBtn->setText(reason);
+}
+
+QString MultiUsersWarningView::iconString()
+{
+    QString icon_string;
+    switch (m_inhibitType) {
+    case SessionBaseModel::PowerAction::RequireShutdown:
+    case SessionBaseModel::PowerAction::RequireUpdateShutdown:
+        icon_string = ":/img/inhibitview/poweroff_warning.svg";
+        break;
+    case SessionBaseModel::PowerAction::RequireLogout:
+        icon_string = ":/img/inhibitview/logout_warning.svg";
+        break;
+    default:
+        icon_string = ":/img/inhibitview/reboot_warning.svg";
+        break;
+    }
+    return icon_string;
 }
 
 bool MultiUsersWarningView::focusNextPrevChild(bool next)

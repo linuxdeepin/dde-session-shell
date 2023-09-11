@@ -62,7 +62,7 @@ InhibitWarnView::InhibitWarnView(SessionBaseModel::PowerAction inhibitType, QWid
     , m_acceptBtn(new InhibitButton(this))
     , m_cancelBtn(new InhibitButton(this))
 {
-    QIcon acceptIcon = QIcon::fromTheme(":/img/inhibitview/shutdown.svg");
+    QIcon acceptIcon = QIcon::fromTheme(iconString());
 
     m_acceptBtn->setObjectName("AcceptButton");
     m_acceptBtn->setFixedSize(ButtonWidth, ButtonHeight);
@@ -158,6 +158,24 @@ void InhibitWarnView::setAcceptReason(const QString &reason)
 void InhibitWarnView::setAcceptVisible(const bool acceptable)
 {
     m_acceptBtn->setVisible(acceptable);
+}
+
+QString InhibitWarnView::iconString()
+{
+    QString icon_string;
+    switch (m_inhibitType) {
+    case SessionBaseModel::PowerAction::RequireShutdown:
+    case SessionBaseModel::PowerAction::RequireUpdateShutdown:
+        icon_string = ":/img/inhibitview/poweroff_warning.svg";
+        break;
+    case SessionBaseModel::PowerAction::RequireLogout:
+        icon_string = ":/img/inhibitview/logout_warning.svg";
+        break;
+    default:
+        icon_string = ":/img/inhibitview/reboot_warning.svg";
+        break;
+    }
+    return icon_string;
 }
 
 bool InhibitWarnView::focusNextPrevChild(bool next)
