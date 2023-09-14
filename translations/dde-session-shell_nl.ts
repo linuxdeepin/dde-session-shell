@@ -195,6 +195,10 @@
         <source>Your password has expired. Please contact the administrator to change it</source>
         <translation>Je wachtwoord is verlopen. Neem contact op met de beheerder om het te wijzigen.</translation>
     </message>
+    <message>
+        <source>Terminal locked, please contact administrator</source>
+        <translation>De terminal is vergrendeld - neem contact op met de systeembeheerder</translation>
+    </message>
 </context>
 <context>
     <name>GreeterWorker</name>
@@ -212,6 +216,10 @@
     <message>
         <source>Cancel</source>
         <translation>Annuleren</translation>
+    </message>
+    <message>
+        <source>The reason of inhibit.</source>
+        <translation>De afsluitreden.</translation>
     </message>
 </context>
 <context>
@@ -313,6 +321,25 @@
     <message>
         <source>Start system monitor</source>
         <translation>Systeemmonitor openen</translation>
+    </message>
+</context>
+<context>
+    <name>UdcpMFALoginWidget</name>
+    <message>
+        <source>发送验证码</source>
+        <translation type="unfinished"/>
+    </message>
+    <message>
+        <source>请输入手机号</source>
+        <translation type="unfinished"/>
+    </message>
+    <message>
+        <source>请输入验证码</source>
+        <translation type="unfinished"/>
+    </message>
+    <message>
+        <source>获取验证码</source>
+        <translation type="unfinished"/>
     </message>
 </context>
 <context>
@@ -490,6 +517,18 @@
     <message>
         <source>Update and Reboot</source>
         <translation>Bijwerken en herstarten</translation>
+    </message>
+    <message>
+        <source>Closing the programs and shutting down, please wait...</source>
+        <translation>Bezig met afsluiten van programma&apos;s en computer…</translation>
+    </message>
+    <message>
+        <source>Closing the programs and rebooting, please wait...</source>
+        <translation>Bezig met afsluiten van programma&apos;s en opnieuw opstarten…</translation>
+    </message>
+    <message>
+        <source>Closing the programs and logging out, please wait...</source>
+        <translation>Bezig met afsluiten van programma&apos;s en uitloggen…</translation>
     </message>
 </context>
 <context>

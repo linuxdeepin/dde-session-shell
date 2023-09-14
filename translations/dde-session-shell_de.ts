@@ -195,6 +195,10 @@
         <source>Your password has expired. Please contact the administrator to change it</source>
         <translation type="unfinished"/>
     </message>
+    <message>
+        <source>Terminal locked, please contact administrator</source>
+        <translation type="unfinished"/>
+    </message>
 </context>
 <context>
     <name>GreeterWorker</name>
@@ -212,6 +216,10 @@
     <message>
         <source>Cancel</source>
         <translation>Abbrechen</translation>
+    </message>
+    <message>
+        <source>The reason of inhibit.</source>
+        <translation type="unfinished"/>
     </message>
 </context>
 <context>
@@ -316,14 +324,33 @@
     </message>
 </context>
 <context>
-    <name>UpdateCompleteWidget</name>
+    <name>UdcpMFALoginWidget</name>
     <message>
-        <source>View Logs</source>
+        <source>发送验证码</source>
         <translation type="unfinished"/>
     </message>
     <message>
-        <source>Updates successful</source>
+        <source>请输入手机号</source>
         <translation type="unfinished"/>
+    </message>
+    <message>
+        <source>请输入验证码</source>
+        <translation type="unfinished"/>
+    </message>
+    <message>
+        <source>获取验证码</source>
+        <translation type="unfinished"/>
+    </message>
+</context>
+<context>
+    <name>UpdateCompleteWidget</name>
+    <message>
+        <source>View Logs</source>
+        <translation>Protokolle ansehen</translation>
+    </message>
+    <message>
+        <source>Updates successful</source>
+        <translation>Aktualisierungen erfolgreich</translation>
     </message>
     <message>
         <source>Your computer will reboot soon %1</source>
@@ -338,26 +365,26 @@
     <name>UpdateLogWidget</name>
     <message>
         <source>Hide Logs</source>
-        <translation type="unfinished"/>
+        <translation>Protokolle ausblenden</translation>
     </message>
 </context>
 <context>
     <name>UpdateModel</name>
     <message>
         <source>Update failed</source>
-        <translation type="unfinished"/>
+        <translation>Aktualisierung fehlgeschlagen</translation>
     </message>
     <message>
         <source>Unknown error</source>
-        <translation type="unfinished"/>
+        <translation>Unbekannter Fehler</translation>
     </message>
     <message>
         <source>Backup failed</source>
-        <translation type="unfinished"/>
+        <translation>Sicherung fehlgeschlagen!</translation>
     </message>
     <message>
         <source>Dependency error</source>
-        <translation type="unfinished"/>
+        <translation>Abhängigkeitsfehler</translation>
     </message>
     <message>
         <source>Reboot</source>
@@ -365,7 +392,7 @@
     </message>
     <message>
         <source>Shut Down</source>
-        <translation type="unfinished"/>
+        <translation>Herunterfahren</translation>
     </message>
     <message>
         <source>Unable to perform system backup. If you continue the updates, you cannot roll back to the old system later.</source>
@@ -377,15 +404,15 @@
     </message>
     <message>
         <source>DPKG error</source>
-        <translation type="unfinished"/>
+        <translation>DPKG-Fehler</translation>
     </message>
     <message>
         <source>Back Up Again</source>
-        <translation type="unfinished"/>
+        <translation>Erneut sichern</translation>
     </message>
     <message>
         <source>Abort</source>
-        <translation type="unfinished"/>
+        <translation>Abbrechen</translation>
     </message>
     <message>
         <source>Proceed to Update</source>
@@ -489,6 +516,18 @@
     </message>
     <message>
         <source>Update and Reboot</source>
+        <translation type="unfinished"/>
+    </message>
+    <message>
+        <source>Closing the programs and shutting down, please wait...</source>
+        <translation type="unfinished"/>
+    </message>
+    <message>
+        <source>Closing the programs and rebooting, please wait...</source>
+        <translation type="unfinished"/>
+    </message>
+    <message>
+        <source>Closing the programs and logging out, please wait...</source>
         <translation type="unfinished"/>
     </message>
 </context>

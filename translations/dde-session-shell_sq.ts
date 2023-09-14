@@ -195,6 +195,10 @@
         <source>Your password has expired. Please contact the administrator to change it</source>
         <translation>Fjalëkalimi juaj ka skaduar. Ju lutemi, lidhuni me përgjegjësin që ta ndryshojë</translation>
     </message>
+    <message>
+        <source>Terminal locked, please contact administrator</source>
+        <translation>Terminal i kyçur, ju lutemi, lidhuni me përgjegjësin</translation>
+    </message>
 </context>
 <context>
     <name>GreeterWorker</name>
@@ -212,6 +216,10 @@
     <message>
         <source>Cancel</source>
         <translation>Anuloje</translation>
+    </message>
+    <message>
+        <source>The reason of inhibit.</source>
+        <translation type="unfinished"/>
     </message>
 </context>
 <context>
@@ -316,6 +324,25 @@
     </message>
 </context>
 <context>
+    <name>UdcpMFALoginWidget</name>
+    <message>
+        <source>发送验证码</source>
+        <translation type="unfinished"/>
+    </message>
+    <message>
+        <source>请输入手机号</source>
+        <translation type="unfinished"/>
+    </message>
+    <message>
+        <source>请输入验证码</source>
+        <translation type="unfinished"/>
+    </message>
+    <message>
+        <source>获取验证码</source>
+        <translation type="unfinished"/>
+    </message>
+</context>
+<context>
     <name>UpdateCompleteWidget</name>
     <message>
         <source>View Logs</source>
@@ -411,7 +438,7 @@
     <name>UpdateProgressWidget</name>
     <message>
         <source>Do not force a shutdown or power off when installing updates. Otherwise, your system may be damaged.</source>
-        <translation>Mos bëni fikje ose heqje energjie të makinës, kur instalohen përditësime. Përndryshe mund të dëmtohet sistemi juaj.</translation>
+        <translation>Mos bëni fikje ose heqje energjie të makinës, kur instalohen përditësime. Përndryshe, sistemi juaj mund të dëmtohet.</translation>
     </message>
 </context>
 <context>
@@ -490,6 +517,18 @@
     <message>
         <source>Update and Reboot</source>
         <translation>Përditësoje dhe Rinisu</translation>
+    </message>
+    <message>
+        <source>Closing the programs and shutting down, please wait...</source>
+        <translation type="unfinished"/>
+    </message>
+    <message>
+        <source>Closing the programs and rebooting, please wait...</source>
+        <translation type="unfinished"/>
+    </message>
+    <message>
+        <source>Closing the programs and logging out, please wait...</source>
+        <translation type="unfinished"/>
     </message>
 </context>
 <context>

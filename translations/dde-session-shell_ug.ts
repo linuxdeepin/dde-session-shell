@@ -195,6 +195,10 @@
         <source>Your password has expired. Please contact the administrator to change it</source>
         <translation>پارولىڭىزنىڭ ۋاقتى ئۆتۈپ كەتتى، باشقۇرغۇچى بىلەن ئالاقىلىشىپ پارول ئۆزگەرتىڭ</translation>
     </message>
+    <message>
+        <source>Terminal locked, please contact administrator</source>
+        <translation>بۇ ئۈسكۈنە قۇلۇپلانغان، باشقۇرغۇچى بىلەن ئالاقىلىشىڭ</translation>
+    </message>
 </context>
 <context>
     <name>GreeterWorker</name>
@@ -212,6 +216,10 @@
     <message>
         <source>Cancel</source>
         <translation>بىكار قىلىش</translation>
+    </message>
+    <message>
+        <source>The reason of inhibit.</source>
+        <translation type="unfinished"/>
     </message>
 </context>
 <context>
@@ -313,6 +321,25 @@
     <message>
         <source>Start system monitor</source>
         <translation>سىستېما نازارەتچىسىنى قوزغىتىش</translation>
+    </message>
+</context>
+<context>
+    <name>UdcpMFALoginWidget</name>
+    <message>
+        <source>发送验证码</source>
+        <translation>دەلىللەش كودى يوللاش</translation>
+    </message>
+    <message>
+        <source>请输入手机号</source>
+        <translation>يانفون نومۇرىڭىزنى كىرگۈزۈڭ</translation>
+    </message>
+    <message>
+        <source>请输入验证码</source>
+        <translation>دەلىللەش كودىنى كىرگۈزۈڭ</translation>
+    </message>
+    <message>
+        <source>获取验证码</source>
+        <translation>دەلىللەش كودىغا ئېرىشىش</translation>
     </message>
 </context>
 <context>
@@ -490,6 +517,18 @@
     <message>
         <source>Update and Reboot</source>
         <translation>يېڭىلاش ۋە قايتا قوزغىتىش</translation>
+    </message>
+    <message>
+        <source>Closing the programs and shutting down, please wait...</source>
+        <translation>يۇقىرىقى پىروگراممىلارنى تاقاپ ئۆچۈۋاتىدۇ، سەل ساقلاڭ...</translation>
+    </message>
+    <message>
+        <source>Closing the programs and rebooting, please wait...</source>
+        <translation>يۇقىرىقى پىروگراممىلارنى تاقاپ قايتا قوزغىلىۋاتىدۇ، سەل ساقلاڭ...</translation>
+    </message>
+    <message>
+        <source>Closing the programs and logging out, please wait...</source>
+        <translation>يۇقىرىقى پىروگراممىلارنى تاقاپ چېكىنىۋاتىدۇ، سەل ساقلاڭ...</translation>
     </message>
 </context>
 <context>

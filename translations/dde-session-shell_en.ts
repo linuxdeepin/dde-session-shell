@@ -227,6 +227,10 @@
         <source>Your password has expired. Please contact the administrator to change it</source>
         <translation>Your password has expired. Please contact the administrator to change it</translation>
     </message>
+    <message>
+        <source>Terminal locked, please contact administrator</source>
+        <translation type="unfinished"></translation>
+    </message>
 </context>
 <context>
     <name>GreeterWorker</name>
@@ -244,6 +248,10 @@
     <message>
         <source>Cancel</source>
         <translation>Cancel</translation>
+    </message>
+    <message>
+        <source>The reason of inhibit.</source>
+        <translation type="unfinished"></translation>
     </message>
 </context>
 <context>
@@ -521,6 +529,18 @@
     </message>
     <message>
         <source>Update and Reboot</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Closing the programs and shutting down, please wait...</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Closing the programs and rebooting, please wait...</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Closing the programs and logging out, please wait...</source>
         <translation type="unfinished"></translation>
     </message>
 </context>

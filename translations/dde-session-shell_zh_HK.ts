@@ -195,6 +195,10 @@
         <source>Your password has expired. Please contact the administrator to change it</source>
         <translation>您的密碼已過期，請聯繫管理員修改密碼</translation>
     </message>
+    <message>
+        <source>Terminal locked, please contact administrator</source>
+        <translation>該設備已被鎖定，請聯繫管理員</translation>
+    </message>
 </context>
 <context>
     <name>GreeterWorker</name>
@@ -212,6 +216,10 @@
     <message>
         <source>Cancel</source>
         <translation>取消</translation>
+    </message>
+    <message>
+        <source>The reason of inhibit.</source>
+        <translation type="unfinished"/>
     </message>
 </context>
 <context>
@@ -313,6 +321,25 @@
     <message>
         <source>Start system monitor</source>
         <translation>啟動系統監視器</translation>
+    </message>
+</context>
+<context>
+    <name>UdcpMFALoginWidget</name>
+    <message>
+        <source>发送验证码</source>
+        <translation type="unfinished"/>
+    </message>
+    <message>
+        <source>请输入手机号</source>
+        <translation type="unfinished"/>
+    </message>
+    <message>
+        <source>请输入验证码</source>
+        <translation type="unfinished"/>
+    </message>
+    <message>
+        <source>获取验证码</source>
+        <translation type="unfinished"/>
     </message>
 </context>
 <context>
@@ -490,6 +517,18 @@
     <message>
         <source>Update and Reboot</source>
         <translation>更新並重啟</translation>
+    </message>
+    <message>
+        <source>Closing the programs and shutting down, please wait...</source>
+        <translation>正在關閉以上程序並關機，請稍後...</translation>
+    </message>
+    <message>
+        <source>Closing the programs and rebooting, please wait...</source>
+        <translation>正在關閉以上程序並重啟，請稍後...</translation>
+    </message>
+    <message>
+        <source>Closing the programs and logging out, please wait...</source>
+        <translation>正在關閉以上程序並註銷，請稍後...</translation>
     </message>
 </context>
 <context>

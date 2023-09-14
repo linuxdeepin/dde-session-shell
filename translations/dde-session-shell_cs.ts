@@ -57,7 +57,7 @@
     <name>AuthIris</name>
     <message>
         <source>Iris ID</source>
-        <translation>Identifikace duhovkou</translation>
+        <translation>Identifikace oční duhovkou</translation>
     </message>
     <message>
         <source>Verification successful</source>
@@ -185,7 +185,7 @@
     </message>
     <message numerus="yes">
         <source>Your password will expire in %n days, please change it timely</source>
-        <translation type="unfinished"><numerusform></numerusform><numerusform></numerusform><numerusform></numerusform><numerusform></numerusform></translation>
+        <translation><numerusform>Platnost vašeho hesla skončí za %n den, prosíme změňte si ho zavčas</numerusform><numerusform>Platnost vašeho hesla skončí za %n dny, prosíme změňte si ho zavčas</numerusform><numerusform>Platnost vašeho hesla skončí za %n dnů, prosíme změňte si ho zavčas</numerusform><numerusform>Platnost vašeho hesla skončí za %n dny, prosíme změňte si ho zavčas</numerusform></translation>
     </message>
     <message>
         <source>Password expired, please change</source>
@@ -194,6 +194,10 @@
     <message>
         <source>Your password has expired. Please contact the administrator to change it</source>
         <translation>Platnost vašeho hesla vypršela. Kontaktujte prosím správce a změňte si ho.</translation>
+    </message>
+    <message>
+        <source>Terminal locked, please contact administrator</source>
+        <translation>Terminál uzamčen – obraťte se na správce</translation>
     </message>
 </context>
 <context>
@@ -212,6 +216,10 @@
     <message>
         <source>Cancel</source>
         <translation>Zrušit</translation>
+    </message>
+    <message>
+        <source>The reason of inhibit.</source>
+        <translation type="unfinished"/>
     </message>
 </context>
 <context>
@@ -316,10 +324,29 @@
     </message>
 </context>
 <context>
+    <name>UdcpMFALoginWidget</name>
+    <message>
+        <source>发送验证码</source>
+        <translation type="unfinished"/>
+    </message>
+    <message>
+        <source>请输入手机号</source>
+        <translation type="unfinished"/>
+    </message>
+    <message>
+        <source>请输入验证码</source>
+        <translation type="unfinished"/>
+    </message>
+    <message>
+        <source>获取验证码</source>
+        <translation type="unfinished"/>
+    </message>
+</context>
+<context>
     <name>UpdateCompleteWidget</name>
     <message>
         <source>View Logs</source>
-        <translation>Zobrazit záznamy</translation>
+        <translation>Zobrazit záznamy událostí</translation>
     </message>
     <message>
         <source>Updates successful</source>
@@ -369,7 +396,7 @@
     </message>
     <message>
         <source>Unable to perform system backup. If you continue the updates, you cannot roll back to the old system later.</source>
-        <translation>Nelze provést zálohování systému. Pokud budete pokračovat v aktualizacích, nelze se později vrátit ke starému systému.</translation>
+        <translation>Nedaří se provést zazálohování systému. Pokud budete pokračovat v aktualizacích, nepůjde se později vrátit k původnímu stavu.</translation>
     </message>
     <message>
         <source>Insufficient disk space. Please clean up your disk and try again.</source>
@@ -377,11 +404,11 @@
     </message>
     <message>
         <source>DPKG error</source>
-        <translation>Chyba DPKG</translation>
+        <translation>Chyba z nástroje DPKG</translation>
     </message>
     <message>
         <source>Back Up Again</source>
-        <translation>Znovu zálohovat</translation>
+        <translation>Znovu zazálohovat</translation>
     </message>
     <message>
         <source>Abort</source>
@@ -404,14 +431,14 @@
     <name>UpdatePrepareWidget</name>
     <message>
         <source>Preparing for updates…</source>
-        <translation>Příprava na aktualizace...</translation>
+        <translation>Příprava na aktualizace…</translation>
     </message>
 </context>
 <context>
     <name>UpdateProgressWidget</name>
     <message>
         <source>Do not force a shutdown or power off when installing updates. Otherwise, your system may be damaged.</source>
-        <translation>Při instalaci aktualizací nevynucujte vypnutí nebo vypnutí napájení. V opačném případě může dojít k poškození systému.</translation>
+        <translation>Při instalaci aktualizací nevynucujte vypnutí systému nebo nevypínejte/neodpojujte napájení. Mohlo by tím dojít k poškození systému.</translation>
     </message>
 </context>
 <context>
@@ -433,7 +460,7 @@
     </message>
     <message>
         <source>To close the program, click Cancel, and then close the program.</source>
-        <translation>Pro zavření programu klepněte na Zrušit a potom program zavřete.</translation>
+        <translation>Pro zavření programu klikněte na Zrušit a potom program zavřete.</translation>
     </message>
     <message>
         <source>The programs are preventing the computer from reboot, and forcing reboot may cause data loss.</source>
@@ -490,6 +517,18 @@
     <message>
         <source>Update and Reboot</source>
         <translation>Aktualizovat a restartovat</translation>
+    </message>
+    <message>
+        <source>Closing the programs and shutting down, please wait...</source>
+        <translation type="unfinished"/>
+    </message>
+    <message>
+        <source>Closing the programs and rebooting, please wait...</source>
+        <translation type="unfinished"/>
+    </message>
+    <message>
+        <source>Closing the programs and logging out, please wait...</source>
+        <translation type="unfinished"/>
     </message>
 </context>
 <context>

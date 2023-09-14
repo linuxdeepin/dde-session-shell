@@ -195,6 +195,10 @@
         <source>Your password has expired. Please contact the administrator to change it</source>
         <translation type="unfinished"/>
     </message>
+    <message>
+        <source>Terminal locked, please contact administrator</source>
+        <translation type="unfinished"/>
+    </message>
 </context>
 <context>
     <name>GreeterWorker</name>
@@ -212,6 +216,10 @@
     <message>
         <source>Cancel</source>
         <translation>Prekliči</translation>
+    </message>
+    <message>
+        <source>The reason of inhibit.</source>
+        <translation type="unfinished"/>
     </message>
 </context>
 <context>
@@ -313,6 +321,25 @@
     <message>
         <source>Start system monitor</source>
         <translation>Zaženi nadzornika sistema</translation>
+    </message>
+</context>
+<context>
+    <name>UdcpMFALoginWidget</name>
+    <message>
+        <source>发送验证码</source>
+        <translation type="unfinished"/>
+    </message>
+    <message>
+        <source>请输入手机号</source>
+        <translation type="unfinished"/>
+    </message>
+    <message>
+        <source>请输入验证码</source>
+        <translation type="unfinished"/>
+    </message>
+    <message>
+        <source>获取验证码</source>
+        <translation type="unfinished"/>
     </message>
 </context>
 <context>
@@ -489,6 +516,18 @@
     </message>
     <message>
         <source>Update and Reboot</source>
+        <translation type="unfinished"/>
+    </message>
+    <message>
+        <source>Closing the programs and shutting down, please wait...</source>
+        <translation type="unfinished"/>
+    </message>
+    <message>
+        <source>Closing the programs and rebooting, please wait...</source>
+        <translation type="unfinished"/>
+    </message>
+    <message>
+        <source>Closing the programs and logging out, please wait...</source>
         <translation type="unfinished"/>
     </message>
 </context>

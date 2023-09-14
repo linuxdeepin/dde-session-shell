@@ -195,6 +195,10 @@
         <source>Your password has expired. Please contact the administrator to change it</source>
         <translation>A jelszava lejárt. A módosításhoz kérjük forduljon a Rendszergazdához.</translation>
     </message>
+    <message>
+        <source>Terminal locked, please contact administrator</source>
+        <translation>A terminál zárolva van, forduljon a Rendszergazdához</translation>
+    </message>
 </context>
 <context>
     <name>GreeterWorker</name>
@@ -212,6 +216,10 @@
     <message>
         <source>Cancel</source>
         <translation>Mégsem</translation>
+    </message>
+    <message>
+        <source>The reason of inhibit.</source>
+        <translation>A meggátolás oka:</translation>
     </message>
 </context>
 <context>
@@ -313,6 +321,25 @@
     <message>
         <source>Start system monitor</source>
         <translation>Rendszermonitor indítása</translation>
+    </message>
+</context>
+<context>
+    <name>UdcpMFALoginWidget</name>
+    <message>
+        <source>发送验证码</source>
+        <translation>Küldje el az ellenőrző kódot</translation>
+    </message>
+    <message>
+        <source>请输入手机号</source>
+        <translation>Kérjük adja meg a telefonszámát</translation>
+    </message>
+    <message>
+        <source>请输入验证码</source>
+        <translation>Kérjük adja meg az ellenőrző kódot</translation>
+    </message>
+    <message>
+        <source>获取验证码</source>
+        <translation>Ellenőrző kódot kap</translation>
     </message>
 </context>
 <context>
@@ -490,6 +517,18 @@
     <message>
         <source>Update and Reboot</source>
         <translation>Frissítés és Újraindítás</translation>
+    </message>
+    <message>
+        <source>Closing the programs and shutting down, please wait...</source>
+        <translation>A programok bezárása és leállítás, kérjük várjon...</translation>
+    </message>
+    <message>
+        <source>Closing the programs and rebooting, please wait...</source>
+        <translation>A programok bezárása és újraindítás, kérjük várjon...</translation>
+    </message>
+    <message>
+        <source>Closing the programs and logging out, please wait...</source>
+        <translation>A programok bezárása és kijelentkezés, kérjük várjon...</translation>
     </message>
 </context>
 <context>

@@ -195,6 +195,10 @@
         <source>Your password has expired. Please contact the administrator to change it</source>
         <translation>Şifrənizin vaxtı bitib. Onu dəyişmək üçün inzibatçıya müraciət edin</translation>
     </message>
+    <message>
+        <source>Terminal locked, please contact administrator</source>
+        <translation>Terminal kilidləndi, lütfən inzibatçıya bildirin</translation>
+    </message>
 </context>
 <context>
     <name>GreeterWorker</name>
@@ -213,12 +217,16 @@
         <source>Cancel</source>
         <translation>İmtina</translation>
     </message>
+    <message>
+        <source>The reason of inhibit.</source>
+        <translation>Donmanın səbəbi</translation>
+    </message>
 </context>
 <context>
     <name>LighterGreeter</name>
     <message>
         <source>Standard Mode</source>
-        <translation type="unfinished"/>
+        <translation>Standart rejim</translation>
     </message>
 </context>
 <context>
@@ -313,6 +321,25 @@
     <message>
         <source>Start system monitor</source>
         <translation>Sistem İzləyicisini başlatmaq</translation>
+    </message>
+</context>
+<context>
+    <name>UdcpMFALoginWidget</name>
+    <message>
+        <source>发送验证码</source>
+        <translation>Doğrulama kodunu göndərin</translation>
+    </message>
+    <message>
+        <source>请输入手机号</source>
+        <translation>Lütfən telefon nömrəsini daxil edin</translation>
+    </message>
+    <message>
+        <source>请输入验证码</source>
+        <translation>Lütfən doğrulama kodunu daxil edin</translation>
+    </message>
+    <message>
+        <source>获取验证码</source>
+        <translation>Doğrulama kodunu əldə edin</translation>
     </message>
 </context>
 <context>
@@ -490,6 +517,18 @@
     <message>
         <source>Update and Reboot</source>
         <translation>Yenilə və Yenidən başlat</translation>
+    </message>
+    <message>
+        <source>Closing the programs and shutting down, please wait...</source>
+        <translation>Proqramlar bağlanır və söndürülür, lütfən gözləyin...</translation>
+    </message>
+    <message>
+        <source>Closing the programs and rebooting, please wait...</source>
+        <translation>Proqramlar bağlanır və yenidən başladılır, lütfən gözləyin...</translation>
+    </message>
+    <message>
+        <source>Closing the programs and logging out, please wait...</source>
+        <translation>Proqramlar bağlanır və sistemdən çıxılır, lütfən gözləyin...</translation>
     </message>
 </context>
 <context>
