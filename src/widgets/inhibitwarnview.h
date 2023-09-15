@@ -12,6 +12,12 @@
 
 #include <QWidget>
 
+namespace Dtk {
+namespace Widget {
+class DSpinner;
+}
+}
+
 class InhibitorRow : public QWidget
 {
     Q_OBJECT
@@ -40,28 +46,40 @@ public:
     };
 
     void setInhibitorList(const QList<InhibitorData> & list);
-    void setInhibitConfirmMessage(const QString &text);
+    void setInhibitConfirmMessage(const QString &text, bool showLoading = false);
     void setAcceptReason(const QString &reason) override;
     void setAcceptVisible(const bool acceptable);
+    bool hasInhibit() const;
+    bool waitForAppPerparing() const;
 
+signals:
+    void cancelled() const;
+    void actionInvoked() const;
 
 protected:
     QString iconString();
     bool focusNextPrevChild(bool next) Q_DECL_OVERRIDE;
     void keyPressEvent(QKeyEvent *event) Q_DECL_OVERRIDE;
 
-signals:
-    void cancelled() const;
-    void actionInvoked() const;
+private:
+    void initUi();
+    void initMember();
+    void initConnection();
+
+private slots:
+    void onAccept();
 
 private:
     SessionBaseModel::PowerAction m_inhibitType;
     QList<QWidget*> m_inhibitorPtrList;
     QVBoxLayout *m_inhibitorListLayout = nullptr;
+    Dtk::Widget::DSpinner *m_loading;
     QLabel *m_confirmTextLabel = nullptr;
     InhibitButton *m_acceptBtn;
     InhibitButton *m_cancelBtn;
+    QWidget *m_bottomWidget;
     int m_dataBindIndex;
+    bool m_waitForAppPreparing;
 };
 
 #endif // INHIBITWARNVIEW_H

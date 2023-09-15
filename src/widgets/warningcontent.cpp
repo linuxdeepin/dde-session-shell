@@ -14,6 +14,7 @@ WarningContent::WarningContent(QWidget *parent)
     , m_login1Inter(new DBusLogin1Manager("org.freedesktop.login1", "/org/freedesktop/login1", QDBusConnection::systemBus(), this))
     , m_powerAction(SessionBaseModel::PowerAction::None)
     , m_failures(0)
+    , m_canReturnMainPage(true)
 {
     setAccessibleName("WarningContent");
     m_inhibitorBlacklists << "NetworkManager" << "ModemManager" << "com.deepin.daemon.Power";
@@ -138,6 +139,9 @@ QList<InhibitWarnView::InhibitorData> WarningContent::listInhibitors(const Sessi
 
 void WarningContent::doCancelShutdownInhibit()
 {
+    if (!m_canReturnMainPage)
+        return;
+
     qInfo() << "Cancel shut down inhibit";
     m_model->setPowerAction(SessionBaseModel::PowerAction::None);
     FullScreenBackground::setContent(LockContent::instance());
@@ -153,7 +157,32 @@ void WarningContent::doAcceptShutdownInhibit()
 {
     qInfo() << "Accept shut down inhibit, power action: " << m_powerAction
             << ", current mode: " << m_model->currentModeState();
+    InhibitWarnView *view = qobject_cast<InhibitWarnView *>(sender());
+    if (view && view->hasInhibit() && view->waitForAppPerparing()) {
+        switch (m_powerAction) {
+        case SessionBaseModel::PowerAction::RequireShutdown:
+        case SessionBaseModel::PowerAction::RequireUpdateShutdown:
+            view->setInhibitConfirmMessage(tr("Closing the programs and shutting down, please wait..."), true);
+            m_canReturnMainPage = false;
+            break;
+        case SessionBaseModel::PowerAction::RequireRestart:
+        case SessionBaseModel::PowerAction::RequireUpdateRestart:
+            view->setInhibitConfirmMessage(tr("Closing the programs and rebooting, please wait..."), true);
+            m_canReturnMainPage = false;
+            break;
+        case SessionBaseModel::PowerAction::RequireLogout:
+            view->setInhibitConfirmMessage(tr("Closing the programs and logging out, please wait..."), true);
+            m_canReturnMainPage = false;
+            break;
+        default:
+            break;
+        }
+    }
+
     m_model->setPowerAction(m_powerAction);
+    if (!m_canReturnMainPage)
+        return;
+
     if (m_model->currentModeState() != SessionBaseModel::ModeStatus::ShutDownMode
         && m_powerAction != SessionBaseModel::RequireUpdateShutdown
         && m_powerAction != SessionBaseModel::RequireUpdateRestart ) {

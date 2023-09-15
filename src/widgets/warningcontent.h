@@ -50,6 +50,7 @@ private:
     QStringList m_inhibitorBlacklists;
     SessionBaseModel::PowerAction m_powerAction;
     int m_failures;
+    bool m_canReturnMainPage;
 };
 
 class InhibitHint

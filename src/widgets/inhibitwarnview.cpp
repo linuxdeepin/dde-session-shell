@@ -4,10 +4,11 @@
 
 #include "inhibitwarnview.h"
 
-#include <QHBoxLayout>
-
 #include <DStyle>
 #include <DFontSizeManager>
+#include <DSpinner>
+
+#include <QHBoxLayout>
 
 DWIDGET_USE_NAMESPACE
 
@@ -61,51 +62,12 @@ InhibitWarnView::InhibitWarnView(SessionBaseModel::PowerAction inhibitType, QWid
     , m_inhibitType(inhibitType)
     , m_acceptBtn(new InhibitButton(this))
     , m_cancelBtn(new InhibitButton(this))
+    , m_bottomWidget(new QWidget(this))
+    , m_waitForAppPreparing(true)
 {
-    QIcon acceptIcon = QIcon::fromTheme(iconString());
-
-    m_acceptBtn->setObjectName("AcceptButton");
-    m_acceptBtn->setFixedSize(ButtonWidth, ButtonHeight);
-    m_acceptBtn->setFocusPolicy(Qt::StrongFocus);
-    m_acceptBtn->setNormalPixmap(acceptIcon.pixmap(iconSize * devicePixelRatioF()));
-    m_acceptBtn->setHoverPixmap(acceptIcon.pixmap(iconSize * devicePixelRatioF()));
-
-    QIcon iconCancelNormal = QIcon::fromTheme(":/img/inhibitview/cancel_normal.svg");
-    QIcon iconCancelHover = QIcon::fromTheme(":/img/inhibitview/cancel_hover.svg");
-
-    m_cancelBtn->setNormalPixmap(iconCancelNormal.pixmap(iconSize * devicePixelRatioF()));
-    m_cancelBtn->setHoverPixmap(iconCancelHover.pixmap(iconSize * devicePixelRatioF()));
-
-    m_cancelBtn->setObjectName("CancelButton");
-    m_cancelBtn->setFixedSize(ButtonWidth, ButtonHeight);
-    m_cancelBtn->setText(tr("Cancel"));
-    m_cancelBtn->setFocusPolicy(Qt::StrongFocus);
-
-    m_confirmTextLabel = new QLabel;
-    m_inhibitorListLayout = new QVBoxLayout;
-
-    m_confirmTextLabel->setText("The reason of inhibit.");
-    m_confirmTextLabel->setAlignment(Qt::AlignCenter);
-
-    DFontSizeManager::instance()->bind(m_confirmTextLabel, DFontSizeManager::T5);
-
-    QVBoxLayout *centralLayout = new QVBoxLayout;
-    centralLayout->addStretch();
-    centralLayout->addLayout(m_inhibitorListLayout);
-    centralLayout->addSpacing(50);
-    centralLayout->addWidget(m_confirmTextLabel);
-    centralLayout->addSpacing(70);
-    centralLayout->addWidget(m_cancelBtn, 0, Qt::AlignHCenter);
-    centralLayout->addSpacing(15);
-    centralLayout->addWidget(m_acceptBtn, 0, Qt::AlignHCenter);
-    centralLayout->addStretch();
-
-    setLayout(centralLayout);
-
-    connect(m_cancelBtn, &InhibitButton::clicked, this, &InhibitWarnView::cancelled);
-    connect(m_acceptBtn, &InhibitButton::clicked, this, &InhibitWarnView::actionInvoked);
-
-    setFocusPolicy(Qt::ClickFocus);
+    initMember();
+    initUi();
+    initConnection();
 }
 
 InhibitWarnView::~InhibitWarnView()
@@ -145,9 +107,14 @@ void InhibitWarnView::setInhibitorList(const QList<InhibitorData> &list)
     }
 }
 
-void InhibitWarnView::setInhibitConfirmMessage(const QString &text)
+void InhibitWarnView::setInhibitConfirmMessage(const QString &text, bool showLoading)
 {
     m_confirmTextLabel->setText(text);
+
+    if (showLoading && m_loading->width() != m_loading->height())
+        m_loading->setFixedWidth(m_loading->height());
+    m_loading->setVisible(showLoading);
+    showLoading ? m_loading->start() : m_loading->stop();
 }
 
 void InhibitWarnView::setAcceptReason(const QString &reason)
@@ -158,6 +125,16 @@ void InhibitWarnView::setAcceptReason(const QString &reason)
 void InhibitWarnView::setAcceptVisible(const bool acceptable)
 {
     m_acceptBtn->setVisible(acceptable);
+}
+
+bool InhibitWarnView::hasInhibit() const
+{
+    return !m_inhibitorPtrList.isEmpty();
+}
+
+bool InhibitWarnView::waitForAppPerparing() const
+{
+    return m_waitForAppPreparing;
 }
 
 QString InhibitWarnView::iconString()
@@ -190,6 +167,10 @@ bool InhibitWarnView::focusNextPrevChild(bool next)
 
 void InhibitWarnView::keyPressEvent(QKeyEvent *event)
 {
+    // 如果DSpinner正在播放，此时用户按下的esc键，DSpinner将会停止播放，因此在这里直接返回
+    if (m_loading->isPlaying() && event->key() == Qt::Key_Escape)
+        return;
+
     if (event->key() == Qt::Key_Up || event->key() == Qt::Key_Down || event->key() == Qt::Key_Tab) {
         QWidget *currentFocusWidget = focusWidget();
         QWidget *nextFocusWidget = nullptr;
@@ -208,4 +189,89 @@ void InhibitWarnView::keyPressEvent(QKeyEvent *event)
     }
 
     QWidget::keyPressEvent(event);
+}
+
+void InhibitWarnView::initUi()
+{
+    QIcon acceptIcon = QIcon::fromTheme(iconString());
+
+    m_acceptBtn->setObjectName("AcceptButton");
+    m_acceptBtn->setFixedSize(ButtonWidth, ButtonHeight);
+    m_acceptBtn->setFocusPolicy(Qt::StrongFocus);
+    m_acceptBtn->setNormalPixmap(acceptIcon.pixmap(iconSize * devicePixelRatioF()));
+    m_acceptBtn->setHoverPixmap(acceptIcon.pixmap(iconSize * devicePixelRatioF()));
+
+    QIcon iconCancelNormal = QIcon::fromTheme(":/img/inhibitview/cancel_normal.svg");
+    QIcon iconCancelHover = QIcon::fromTheme(":/img/inhibitview/cancel_hover.svg");
+
+    m_cancelBtn->setNormalPixmap(iconCancelNormal.pixmap(iconSize * devicePixelRatioF()));
+    m_cancelBtn->setHoverPixmap(iconCancelHover.pixmap(iconSize * devicePixelRatioF()));
+
+    m_cancelBtn->setObjectName("CancelButton");
+    m_cancelBtn->setFixedSize(ButtonWidth, ButtonHeight);
+    m_cancelBtn->setText(tr("Cancel"));
+    m_cancelBtn->setFocusPolicy(Qt::StrongFocus);
+
+    m_inhibitorListLayout = new QVBoxLayout;
+    QVBoxLayout *buttonLayout = new QVBoxLayout(m_bottomWidget);
+    buttonLayout->setAlignment(Qt::AlignBottom);
+
+    QWidget *textWidget = new QWidget(m_bottomWidget);
+    QHBoxLayout *textLayout = new QHBoxLayout(textWidget);
+    textLayout->setContentsMargins(0, 0, 0, 0);
+    textLayout->setSpacing(10);
+    m_loading = new Dtk::Widget::DSpinner(textWidget);
+    m_confirmTextLabel = new QLabel(textWidget);
+    m_confirmTextLabel->setText(tr("The reason of inhibit."));
+    m_confirmTextLabel->setAlignment(Qt::AlignCenter);
+
+    DFontSizeManager::instance()->bind(m_confirmTextLabel, DFontSizeManager::T5);
+    textLayout->addStretch();
+    textLayout->addWidget(m_loading);
+    textLayout->addWidget(m_confirmTextLabel);
+    textLayout->addStretch();
+
+    QVBoxLayout *centralLayout = new QVBoxLayout;
+    centralLayout->addStretch();
+    centralLayout->addLayout(m_inhibitorListLayout);
+    centralLayout->addSpacing(50);
+    centralLayout->addWidget(m_bottomWidget);
+    centralLayout->addStretch();
+    setLayout(centralLayout);
+
+    buttonLayout->addWidget(textWidget);
+    buttonLayout->addSpacing(70);
+    buttonLayout->addWidget(m_cancelBtn, 0, Qt::AlignHCenter);
+    buttonLayout->addSpacing(15);
+    buttonLayout->addWidget(m_acceptBtn, 0, Qt::AlignHCenter);
+
+    setFocusPolicy(Qt::ClickFocus);
+    m_loading->hide();
+}
+
+void InhibitWarnView::initMember()
+{
+    QDBusInterface dbusInterface("com.deepin.SessionManager", "/com/deepin/SessionManager", "com.deepin.SessionManager");
+    QDBusPendingReply<bool> reply = dbusInterface.asyncCall("WaitForAppPrepare");
+    reply.waitForFinished();
+    m_waitForAppPreparing = reply.value();
+}
+
+void InhibitWarnView::initConnection()
+{
+    connect(m_cancelBtn, &InhibitButton::clicked, this, &InhibitWarnView::cancelled);
+    connect(m_acceptBtn, &InhibitButton::clicked, this, &InhibitWarnView::onAccept);
+}
+
+void InhibitWarnView::onAccept()
+{
+    if (!m_inhibitorPtrList.isEmpty() && m_waitForAppPreparing) {
+        int height = m_bottomWidget->height();
+        m_cancelBtn->hide();
+        m_acceptBtn->hide();
+        m_bottomWidget->setFixedHeight(height);
+        static_cast<QVBoxLayout *>(m_bottomWidget->layout())->addStretch();
+    }
+
+    emit actionInvoked();
 }
