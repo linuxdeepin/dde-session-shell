@@ -46,15 +46,13 @@ int main(int argc, char* argv[])
 
     DGuiApplicationHelper::setAttribute(DGuiApplicationHelper::UseInactiveColorGroup, false);
 
-    if (IsWayland) {
-        // 以下4行为解决登录和锁屏的默认字体不一致的情况，gsettings默认值为10.5，
-        // 而登录读取不到gsettings配置的默认值而使用Qt默认的9，导致登录界面字体很小。
-        // bug:161915
-        QFont font;
-        font.setPointSize(10.5);
-        font.setFamily("Noto Sans CJK SC-Thin");
-        qGuiApp->setFont(font);
-    }
+    // 以下4行为解决登录和锁屏的默认字体不一致的情况，gsettings默认值为10.5，
+    // 而登录读取不到gsettings配置的默认值而使用Qt默认的9，导致登录界面字体很小。
+    // bug:161915
+    QFont font;
+    font.setPointSize(10.5);
+    font.setFamily("Noto Sans CJK SC-Thin");
+    qGuiApp->setFont(font);
 
     DApplication a(argc, argv);
     // qt默认当最后一个窗口析构后，会自动退出程序，这里设置成false，防止插拔时，没有屏幕，导致进程退出
