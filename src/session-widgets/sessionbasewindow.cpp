@@ -82,6 +82,8 @@ void SessionBaseWindow::setCenterContent(QWidget * const widget, int stretch, Qt
     m_centerWidget = widget;
     widget->show();
 
+    qInfo() << "centerWidgetHeight: " << widget->height() << "centerWidgetTopSpacerHeight: " << spacerHeight;
+
     setFocusProxy(widget);
     setFocus();
 }
@@ -297,8 +299,8 @@ int SessionBaseWindow::calcCurrentHeight(int height) const
 int SessionBaseWindow::calcTopSpacing(int authWidgetTopSpacing) const
 {
     if (!m_centerTopWidget)
-        return qMax(15, authWidgetTopSpacing - calcCurrentHeight(LOCK_CONTENT_TOP_WIDGET_HEIGHT));
+        return qMax(0, authWidgetTopSpacing - calcCurrentHeight(LOCK_CONTENT_TOP_WIDGET_HEIGHT));
 
     const int topWidgetHeight = qMax(calcCurrentHeight(LOCK_CONTENT_TOP_WIDGET_HEIGHT), m_centerTopWidget->sizeHint().height());
-    return qMax(15, authWidgetTopSpacing - topWidgetHeight);
+    return qMax(0, authWidgetTopSpacing - topWidgetHeight);
 }

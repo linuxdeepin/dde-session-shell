@@ -907,7 +907,7 @@ int SFAWidget::getTopSpacing() const
     // 在低分辨率（高度<916）的时候，如果用户头像到屏幕顶端的距离为整个高度的35%，那么验证窗口整体是偏下的。
     // 计算居中时的顶部高度，用来保证验证窗口最起码是居中（在分辨率非常低的时候也无法保证，根据测试768是没问题的）。
     int centerTop = static_cast<int>((topLevelWidget()->geometry().height() - MIN_AUTH_WIDGET_HEIGHT) / 2);
-    if (m_customAuth) {
+    if (m_customAuth && m_customAuth->isVisible()) {
         // 一般自定义的类型控件尺寸都会比较大，尽量保证能够居中显示。
         // 根据头像、用户名、锁屏以及插件自身的高度来计算居中时顶部间隔
         // 这是一个相对比较严格的高度，如果插件还是无法显示完整，或者界面偏下的话，只能插件调整content界面的大小了
@@ -927,6 +927,8 @@ int SFAWidget::getTopSpacing() const
             - (showAuthButtonBox() ? CHOOSE_AUTH_TYPE_PLACE_HOLDER_HEIGHT : 0)
             - (showAuthButtonBox() ? BIO_AUTH_STATE_PLACE_HOLDER_HEIGHT : 0)
             - (showAuthButtonBox() ? calcCurrentHeight(CHOOSE_AUTH_TYPE_BUTTON_BOTTOM_SPACING) : 0);
+
+    qInfo() << "deltaY: " << deltaY << "topHeight: " << topHeight;
 
     return qMax(15, deltaY);
 }
