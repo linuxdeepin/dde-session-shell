@@ -288,11 +288,10 @@ void UserWidget::onDConfigPropertyChanged(const QString &key, const QVariant &va
                 obj->m_userNameWidget = nullptr;
             }
         }
-    } else if (key == USER_FRAME_MAX_WIDTH) {
-        obj->updateUserNameLabel();
     }
 
     // 刷新界面
+    obj->updateUserNameLabel();
     obj->setFixedHeight(obj->heightHint());
     obj->updateBlurEffectGeometry();
     obj->update();
