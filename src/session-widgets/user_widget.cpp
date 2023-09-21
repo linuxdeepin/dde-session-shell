@@ -49,10 +49,9 @@ void UserWidget::initUI()
     m_displayNameWidget->setAccessibleName(QStringLiteral("NameWidget"));
     QHBoxLayout *nameLayout = new QHBoxLayout(m_displayNameWidget);
     nameLayout->setMargin(0);
-    nameLayout->setSpacing(8);
 
     bool isDomainUser = m_user->uid() > 10000; // uid大于10000为域账户
-    nameLayout->addStretch(isDomainUser ? 3 : 0);
+    nameLayout->addStretch(0);
 
     QPixmap pixmap = DHiDPIHelper::loadNxPixmap(":/misc/images/select.svg");
     pixmap.setDevicePixelRatio(devicePixelRatioF());
@@ -75,13 +74,13 @@ void UserWidget::initUI()
     domainUserLabel->setVisible(isDomainUser);
     domainUserLabel->setAlignment(Qt::AlignVCenter);
     QVBoxLayout *isDomainUserLayout = new QVBoxLayout;
-    isDomainUserLayout->setContentsMargins(8, 5, 0, 0);
+    isDomainUserLayout->setContentsMargins(0, 5, 0, 0);
     isDomainUserLayout->addWidget(domainUserLabel);
     nameLayout->addLayout(isDomainUserLayout);
 
     m_displayNameLabel->setAccessibleName("NameLabel");
     m_displayNameLabel->setTextFormat(Qt::TextFormat::PlainText);
-    m_displayNameLabel->setSizePolicy(QSizePolicy::Expanding, QSizePolicy::Fixed);
+    m_displayNameLabel->setSizePolicy(QSizePolicy::Policy::Minimum, QSizePolicy::Fixed);
     m_displayNameLabel->setFixedHeight(UserDisplayNameHeight);
     m_displayNameLabel->setText(m_user->displayName());
     DFontSizeManager::instance()->bind(m_displayNameLabel, DFontSizeManager::T2);
@@ -89,12 +88,11 @@ void UserWidget::initUI()
     palette.setColor(QPalette::WindowText, Qt::white);
     m_displayNameLabel->setPalette(palette);
     nameLayout->addWidget(m_displayNameLabel);
-    nameLayout->setSpacing(0);
-    nameLayout->addStretch(isDomainUser ? 5 : 0);
+    nameLayout->addStretch(0);
 
     // 用户名，根据配置决定是否构造对象
     if (DConfigHelper::instance()->getConfig(SHOW_USER_NAME, false).toBool()) {
-        m_userNameWidget = new UserNameWidget(true, false, this);
+        m_userNameWidget = new UserNameWidget(true, false, isDomainUser, this);
         m_userNameWidget->updateFullName(m_user->fullName());
         setFixedHeight(heightHint());
     }
