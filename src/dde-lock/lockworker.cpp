@@ -605,6 +605,8 @@ void LockWorker::createAuthentication(const QString &account)
 
         if (user_ptr->isNoPasswordLogin()) {
             qInfo() << "User is no password login";
+            // 无密码登录锁定后也属于锁屏，需要设置lock属性
+            setLocked(true);
             return;
         }
     }
