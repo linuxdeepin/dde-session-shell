@@ -14,11 +14,10 @@ LoginPlugin::LoginPlugin(dss::module::BaseModuleInterface *module, QObject *pare
 
 bool LoginPlugin::isPluginEnabled()
 {
-    qDebug() << Q_FUNC_INFO;
     QJsonObject message;
     message["CmdType"] = "IsPluginEnabled";
     const QString &result = this->message(toJson(message));
-    qDebug() << "Result: " << result;
+    qDebug() << "Is plugin enabled: " << result;
     const QJsonObject &dataObj = getDataObj(result);
     if (dataObj.isEmpty() || !dataObj.contains("IsPluginEnabled"))
         return true;
@@ -28,13 +27,11 @@ bool LoginPlugin::isPluginEnabled()
 
 int LoginPlugin::level()
 {
-    qDebug() << Q_FUNC_INFO;
     QJsonObject message {
         {"CmdType", "GetLevel"}
     };
 
     const QString &result = this->message(toJson(message));
-    qDebug() << "Result: " << result;
     const QJsonObject &dataObj = getDataObj(result);
     if (!dataObj.contains("Level")) {
         return 1;
@@ -45,13 +42,12 @@ int LoginPlugin::level()
 
 int LoginPlugin::loginType()
 {
-    qDebug() << Q_FUNC_INFO;
     QJsonObject message {
         {"CmdType", "GetLoginType"}
     };
 
     const QString &result = this->message(toJson(message));
-    qDebug() << "Result: " << result;
+    qDebug() << "Login type, result: " << result;
     const QJsonObject &dataObj = getDataObj(result);
     if (!dataObj.contains("LoginType")) {
         return CustomLoginType::CLT_Default;
@@ -62,14 +58,12 @@ int LoginPlugin::loginType()
 
 bool LoginPlugin::hasSecondLevel(const QString &user)
 {
-    qDebug() << Q_FUNC_INFO;
     QJsonObject message {
         {"CmdType", "HasSecondLevel"},
         {"Data", user}
     };
 
     const QString &result = this->message(toJson(message));
-    qDebug() << "Result: " << result;
     const QJsonObject &dataObj = getDataObj(result);
     if (!dataObj.contains("HasSecondLevel")) {
         return false;
@@ -80,13 +74,12 @@ bool LoginPlugin::hasSecondLevel(const QString &user)
 
 int LoginPlugin::updateLoginType()
 {
-    qDebug() << Q_FUNC_INFO;
     QJsonObject message {
         {"CmdType", "UpdateLoginType"}
     };
 
     const QString &result = this->message(toJson(message));
-    qDebug() << "Result: " << result;
+    qDebug() << "Update login type, result: " << result;
     const QJsonObject &dataObj = getDataObj(result);
     if (!dataObj.contains("LoginType")) {
         return CustomLoginType::CLT_Default;
@@ -97,13 +90,12 @@ int LoginPlugin::updateLoginType()
 
 int LoginPlugin::sessionTimeout()
 {
-    qDebug() << Q_FUNC_INFO;
     QJsonObject message {
         {"CmdType", "GetSessionTimeout"}
     };
 
     const QString &result = this->message(toJson(message));
-    qDebug() << "Result: " << result;
+    qDebug() << "Get session timeout, result: " << result;
     const QJsonObject &dataObj = getDataObj(result);
     if (!dataObj.contains("SessionTimeout")) {
         return DEFAULT_SESSION_TIMEOUT;
@@ -114,7 +106,6 @@ int LoginPlugin::sessionTimeout()
 
 bool LoginPlugin::supportDefaultUser()
 {
-    qInfo() << Q_FUNC_INFO;
     QJsonObject message;
     message["CmdType"] = "GetConfigs";
     const QString &result = this->message(toJson(message));
@@ -141,18 +132,18 @@ void LoginPlugin::updateConfig()
     QJsonObject message;
     message["CmdType"] = "GetConfigs";
     QString result = this->message(toJson(message));
-    qInfo() << "Plugin result: " << result;
+    qInfo() << "Get configs result: " << result;
 
     QJsonParseError jsonParseError;
     const QJsonDocument resultDoc = QJsonDocument::fromJson(result.toLatin1(), &jsonParseError);
     if (jsonParseError.error != QJsonParseError::NoError || resultDoc.isEmpty()) {
-        qWarning() << "Result json parse error";
+        qWarning() << "Result json parse error, error: " << jsonParseError.error;
         return;
     }
 
     QJsonObject resultObj = resultDoc.object();
     if (!resultObj.contains("Data")) {
-        qWarning() << "Result does't contains the 'data' field";
+        qWarning() << "Result doesn't contains the 'data' field";
         return;
     }
 

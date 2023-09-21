@@ -275,7 +275,7 @@ void AuthWidget::setLimitsInfo(const QMap<int, User::LimitsInfo> *limitsInfo)
         case AT_Custom:
             break;
         default:
-            qWarning() << "Error! Authentication type is wrong." << i.key();
+            qWarning() << "Authentication type is wrong." << i.key();
             break;
         }
         ++i;

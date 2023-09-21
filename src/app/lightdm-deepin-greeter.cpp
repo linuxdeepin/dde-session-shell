@@ -92,23 +92,23 @@ int main(int argc, char* argv[])
     const QString serviceName = "com.deepin.daemon.Accounts";
     QDBusConnectionInterface *interface = QDBusConnection::systemBus().interface();
     if (!interface->isServiceRegistered(serviceName)) {
-        qWarning() << "accounts service is not registered wait...";
+        qWarning() << "Accounts service is not registered wait...";
         QDBusServiceWatcher *serviceWatcher = new QDBusServiceWatcher(serviceName, QDBusConnection::systemBus());
         QObject::connect(serviceWatcher, &QDBusServiceWatcher::serviceUnregistered, [serviceName](const QString &service) {
             if (service == serviceName) {
-                qCritical() << "ERROR, accounts service unregistered, what should I do?";
+                qCritical() << "ERROR: accounts service unregistered";
             }
         });
 
 #ifdef ENABLE_WAITING_ACCOUNTS_SERVICE
-        qDebug() << "waiting for deepin accounts service";
+        qDebug() << "Waiting for deepin accounts service";
         QEventLoop eventLoop;
         QObject::connect(serviceWatcher, &QDBusServiceWatcher::serviceRegistered, &eventLoop, &QEventLoop::quit);
 #ifdef  QT_DEBUG
         QTimer::singleShot(10000, &eventLoop, &QEventLoop::quit);
 #endif
         eventLoop.exec();
-        qDebug() << "service registered!";
+        qDebug() << "Service registered!";
 #endif
     }
 
@@ -148,7 +148,7 @@ int main(int argc, char* argv[])
         if (screen.isNull()) {
             loginFrame->deleteLater();
             loginFrame = nullptr;
-            qWarning() << "Screen was released when the frame was created ";
+            qWarning() << "Screen was released when the frame was created";
             return nullptr;
         }
         loginFrame->setScreen(screen, count <= 0);

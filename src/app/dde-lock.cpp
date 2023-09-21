@@ -80,6 +80,7 @@ int main(int argc, char *argv[])
     DLogManager::setLogFormat("%{time}{yyyy-MM-dd, HH:mm:ss.zzz} [%{type:-7}] [ %{function:-35} %{line}] %{message}\n");
     DLogManager::registerConsoleAppender();
     DLogManager::registerFileAppender();
+    DLogManager::registerJournalAppender();
 
     /* load translation files */
     loadTranslation(QLocale::system().name());
@@ -162,7 +163,7 @@ int main(int argc, char *argv[])
         if (screen.isNull()) {
             lockFrame->deleteLater();
             lockFrame = nullptr;
-            qWarning() << "Screen was released when the frame was created ";
+            qWarning() << "Screen was released when the frame was created";
             return nullptr;
         }
         lockFrame->setScreen(screen, count <= 0);
@@ -215,7 +216,7 @@ int main(int argc, char *argv[])
         !conn.registerService(DBUS_SHUTDOWN_NAME) ||
         !conn.registerObject(DBUS_SHUTDOWN_PATH, &shutdownAgent) ||
         !isSingle) {
-        qDebug() << "register dbus failed"<< "maybe lockFront is running..." << conn.lastError();
+        qWarning() << "Register DBus failed, maybe lock front is running, error: " << conn.lastError();
 
         if (!runDaemon) {
             const char *lockFrontInter = "com.deepin.dde.lockFront";

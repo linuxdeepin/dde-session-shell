@@ -44,7 +44,7 @@ bool isScaleConfigExists() {
             return false;
         }
     } else {
-        qWarning() << configReply.error().message();
+        qWarning() << "Call `GetConfig` failed: " << configReply.error().message();
         return false;
     }
 }
@@ -85,7 +85,7 @@ static double getScaleFactor() {
 
     if (!resources) {
         resources = XRRGetScreenResources(display, DefaultRootWindow(display));
-        qWarning() << "get XRRGetScreenResourcesCurrent failed, use XRRGetScreenResources.";
+        qWarning() << "Get current XRR screen resources failed, instead of getting XRR screen resources, resources: " << resources;
     }
 
     if (resources) {
@@ -106,7 +106,7 @@ static double getScaleFactor() {
         }
     }
     else {
-        qWarning() << "Get scale factor failed, please check X11 Extension.";
+        qWarning() << "Get scale factor failed, please check X11 Extension";
     }
 
     return scaleFactor;
@@ -120,7 +120,7 @@ double getScaleFormConfig()
     //华为机型,从override配置中获取默认缩放比
     if (dconfig) {
         defaultScaleFactor = dconfig->value("defaultScaleFactors", 1.0).toDouble() ;
-        qDebug() <<"Default scale factor:" << defaultScaleFactor;
+        qDebug() <<"Default scale factor: " << defaultScaleFactor;
         if(defaultScaleFactor < 1.0){
             defaultScaleFactor = 1.0;
         }
@@ -145,7 +145,7 @@ double getScaleFormConfig()
             QJsonObject rootObj = jsonDoc.object();
             QJsonObject Config = rootObj.value("Config").toObject();
             double scaleFactor = Config.value("ScaleFactors").toObject().value("ALL").toDouble();
-            qDebug() << "Scale factor from system display config:" << scaleFactor;
+            qDebug() << "Scale factor from system display config: " << scaleFactor;
             if(scaleFactor == 0.0) {
                 scaleFactor = defaultScaleFactor;
             }
@@ -154,14 +154,14 @@ double getScaleFormConfig()
             return defaultScaleFactor;
         }
     } else {
-        qWarning() << configReply.error().message();
+        qWarning() << "DBus call `GetConfig` failed, reply is invaild, error: " << configReply.error().message();
         return defaultScaleFactor;
     }
 }
 
 static void setQtScaleFactorEnv() {
     const double scaleFactor = IsWayland ? getScaleFormConfig() : getScaleFactor();
-    qDebug() << "Final scale factor:" << scaleFactor;
+    qDebug() << "Final scale factor: " << scaleFactor;
     if (scaleFactor > 0.0) {
         std::cout << QString("QT_SCALE_FACTOR="+QByteArray::number(scaleFactor)).toStdString().c_str() << std::endl;
     } else {

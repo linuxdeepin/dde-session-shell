@@ -48,7 +48,7 @@ QJsonObject PluginBase::getRootObj(const QString &jsonStr)
     QJsonParseError jsonParseError;
     const QJsonDocument &resultDoc = QJsonDocument::fromJson(jsonStr.toLocal8Bit(), &jsonParseError);
     if (jsonParseError.error != QJsonParseError::NoError || resultDoc.isEmpty()) {
-        qWarning() << "Result json parse error";
+        qWarning() << "Result json parse error, error: " << jsonParseError.error;
         return QJsonObject();
     }
 

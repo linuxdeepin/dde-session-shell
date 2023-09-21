@@ -195,7 +195,7 @@ void LockContent::initConnections()
  */
 void LockContent::initMFAWidget()
 {
-    qDebug() << "LockContent::initMFAWidget:" << m_sfaWidget << m_mfaWidget;
+    qDebug() << "Init MFA widget, sfa widget: " << m_sfaWidget << ", mfa widget: " << m_mfaWidget;
     if (m_sfaWidget) {
         m_sfaWidget->hide();
         delete m_sfaWidget;
@@ -388,7 +388,7 @@ void LockContent::onNewConnection()
 
     // 重置密码程序启动连接成功锁屏界面才释放键盘，避免点击重置密码过程中使用快捷键切走锁屏
     if (window()->windowHandle() && window()->windowHandle()->setKeyboardGrabEnabled(false)) {
-        qDebug() << "setKeyboardGrabEnabled(false) success!";
+        qDebug() << "Set keyboard grab enabled to false success!";
     }
 
     if (m_localServer->hasPendingConnections()) {
@@ -399,7 +399,6 @@ void LockContent::onNewConnection()
 
 void LockContent::onDisConnect()
 {
-    qDebug() << "onDisConnect";
     if (m_authWidget) {
         m_authWidget->syncPasswordResetPasswordVisibleChanged(QVariant::fromValue(true));
         m_authWidget->syncResetPasswordUI();
@@ -542,7 +541,7 @@ void LockContent::toggleVirtualKB()
         VirtualKBInstance::Instance();
         QTimer::singleShot(500, this, [this] {
             m_virtualKB = VirtualKBInstance::Instance().virtualKBWidget();
-            qDebug() << "init virtualKB over." << m_virtualKB;
+            qDebug() << "Init virtual keyboard over: " << m_virtualKB;
             toggleVirtualKB();
         });
         return;
@@ -674,7 +673,7 @@ void LockContent::tryGrabKeyboard(bool exitIfFailed)
     if (m_model->isUseWayland()) {
         static QDBusInterface *kwinInter = new QDBusInterface("org.kde.KWin","/KWin","org.kde.KWin", QDBusConnection::sessionBus());
         if (!kwinInter || !kwinInter->isValid()) {
-            qWarning() << "kwinInter is invalid";
+            qWarning() << "Kwin interface is invalid";
             m_failures = 0;
             return;
         }
@@ -697,7 +696,7 @@ void LockContent::tryGrabKeyboard(bool exitIfFailed)
     m_failures++;
 
     if (m_failures == 15) {
-        qWarning() << "Trying to grab keyboard has exceeded the upper limit. dde-lock will quit.";
+        qWarning() << "Trying to grab keyboard has exceeded the upper limit, dde-lock will quit.";
 
         m_failures = 0;
 
@@ -747,7 +746,7 @@ void LockContent::currentWorkspaceChanged()
             QDBusReply<QString> reply = call.reply();
             updateWallpaper(reply.value());
         } else {
-            qWarning() << "get current workspace background error: " << call.error().message();
+            qWarning() << "Get current workspace background error: " << call.error().message();
             updateWallpaper("/usr/share/backgrounds/deepin/desktop.jpg");
         }
         watcher->deleteLater();

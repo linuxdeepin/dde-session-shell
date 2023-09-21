@@ -157,7 +157,6 @@ void UpdateWorker::startUpdateProgress()
 
 void UpdateWorker::doDistUpgrade(bool doBackup)
 {
-    qInfo() << "Do dist upgrade";
     if (!m_managerInter->isValid()) {
         UpdateModel::instance()->setLastErrorLog("com.deepin.lastore.Manager interface is invalid.");
         UpdateModel::instance()->setUpdateError(UpdateModel::UpdateError::UpdateInterfaceError);
@@ -197,7 +196,6 @@ void UpdateWorker::onJobListChanged(const QList<QDBusObjectPath> &jobs)
     qInfo() << "Job list changed";
     for (const auto &job : jobs) {
         const QString &jobPath = job.path();
-        qInfo() << "path : " << jobPath;
         JobInter jobInter("com.deepin.lastore", jobPath, QDBusConnection::systemBus());
         if (!jobInter.isValid()) {
             qWarning() << "Job is invalid";
@@ -206,7 +204,6 @@ void UpdateWorker::onJobListChanged(const QList<QDBusObjectPath> &jobs)
 
         // id maybe scrapped
         const QString &id = jobInter.id();
-        qInfo() << "Job id : " << id;
         if (id == "dist_upgrade" && m_distUpgradeJob == nullptr) {
             qInfo() << "Create dist upgrade job";
             createDistUpgradeJob(jobPath);
@@ -309,13 +306,13 @@ void UpdateWorker::doDistUpgradeIfCanBackup()
                 }
                 doDistUpgrade(true);
             } else {
-                qWarning() << "Can not backup";
+                qWarning() << "Can not backup, DBus reply is null, reply: " << value;
                 UpdateModel::instance()->setLastErrorLog(reply.error().message());
                 UpdateModel::instance()->setUpdateError(UpdateModel::CanNotBackup);
                 UpdateModel::instance()->setUpdateStatus(UpdateModel::BackupFailed);
             }
         } else {
-            qWarning() << "Call `CanBackup` failed";
+            qWarning() << "Call `CanBackup` failed, error: " << call.error();
             UpdateModel::instance()->setLastErrorLog("Call `CanBackup` method in dbus interface - com.deepin.ABRecovery failed");
             UpdateModel::instance()->setUpdateError(UpdateModel::UpdateInterfaceError);
             UpdateModel::instance()->setUpdateStatus(UpdateModel::UpdateStatus::BackupFailed);
@@ -372,9 +369,9 @@ bool UpdateWorker::checkPower()
  */
 void UpdateWorker::fixError()
 {
-    qInfo() << "UpdateWorker::fixError: " << UpdateModel::instance()->updateError();
+    qInfo() << "Fix the error: " << UpdateModel::instance()->updateError();
     if (m_fixErrorJob) {
-        qWarning() << "Fix error job is not nullptr, won't fix error again";
+        qWarning() << "Fix error job is not nullptr, won't fix error again, fix error job: " << m_fixErrorJob;
         return;
     }
 
@@ -419,10 +416,10 @@ void UpdateWorker::doPowerAction(bool reboot)
             const auto &value = reply.value();
             qInfo() << "Inhibitors size: " << value.size();
             for (const Inhibit &inhibit : value) {
-                qInfo() << "who:" << inhibit.who;
-                qInfo() << "why:" << inhibit.why;
-                qInfo() << "pid:" << inhibit.pid;
-                qInfo() << "mode:" << inhibit.mode;
+                qDebug() << "Inhibit details: who: " << inhibit.who
+                        << ", why:" << inhibit.why
+                        << ", pid:" << inhibit.pid
+                        << ", mode:" << inhibit.mode;
             }
         } else {
             qWarning() << "Get inhibitors failed, error: " << reply.error().message();
@@ -522,7 +519,7 @@ void UpdateWorker::setLocked(const bool locked)
 
 void UpdateWorker::cleanLaStoreJob(QPointer<JobInter> dbusJob)
 {
-    qInfo() << "Clean job";
+    qInfo() << "Clean lastore job";
     if (dbusJob != nullptr) {
         qInfo() << "Job path" << dbusJob->path();
         m_managerInter->CleanJob(dbusJob->id());

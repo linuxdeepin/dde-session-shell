@@ -270,7 +270,7 @@ void UserWidget::onDConfigPropertyChanged(const QString &key, const QVariant &va
     if (!obj)
         return;
 
-    qInfo() << Q_FUNC_INFO << key << ", value: " << value;
+    qInfo() << "DConfig property changed, key: " << key << ", value: " << value;
     if (key == SHOW_USER_NAME) {
         const bool showUserName = value.toBool();
         if (showUserName) {

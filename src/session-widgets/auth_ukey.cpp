@@ -199,7 +199,7 @@ void AuthUKey::setAuthState(const AuthCommon::AuthState state, const QString &re
         setAuthStateStyle(LOGIN_WAIT);
         setLineEditInfo(result, AlertText);
         m_showPrompt = true;
-        qWarning() << "Error! The state of UKey Auth is wrong!" << state << result;
+        qWarning() << "The state of ukey auth is wrong, state:" << state << ", result: " << result;
         break;
     }
     update();
@@ -232,7 +232,7 @@ void AuthUKey::setCapsLockVisible(const bool on)
  */
 void AuthUKey::setLimitsInfo(const LimitsInfo &info)
 {
-    qDebug() << "AuthUKey::setLimitsInfo" << info.numFailures;
+    qDebug() << "Set limits info: " << info.numFailures;
     AuthModule::setLimitsInfo(info);
 }
 

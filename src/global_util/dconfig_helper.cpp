@@ -113,7 +113,7 @@ DConfig *DConfigHelper::defaultDConfigObject()
 
 void DConfigHelper::unBind(QObject *obj, const QString &key)
 {
-    qInfo() << Q_FUNC_INFO << obj << ", key: " << key;
+    qInfo() << "Unbind, obj: " << obj << ", key: " << key;
     if (!obj) {
         qWarning() << "Unbinding object is null";
         return;

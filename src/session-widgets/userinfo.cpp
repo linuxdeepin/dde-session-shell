@@ -175,7 +175,7 @@ bool User::checkUserIsNoPWGrp(const User *user) const
     /* Fetch passwd structure (contains first group ID for user) */
     pw = getpwnam(user->name().toUtf8().data());
     if (pw == nullptr) {
-        qDebug() << "fetch passwd structure failed, username: " << user->name();
+        qDebug() << "Fetch password structure failed, username: " << user->name();
         return false;
     }
 
@@ -304,13 +304,13 @@ void NativeUser::initData()
     m_uid = m_userInter->uid().toUInt();
     m_accountType = m_userInter->accountType();
 
-    qInfo() << "User name:" << m_userInter->userName()
-            << " Is no password login:" << m_isNoPasswordLogin
-            << " Is auto login:" << m_isAutomaticLogin
-            << " Is password valid:" << m_isPasswordValid
-            << " Password expired state:" << m_expiredState
-            << " Locale:" << m_locale
-            << " AccountType:" << m_userInter->accountType();
+    qDebug() << "Init data, user name:" << m_userInter->userName()
+            << ", Is no password login:" << m_isNoPasswordLogin
+            << ", Is auto login:" << m_isAutomaticLogin
+            << ", Is password valid:" << m_isPasswordValid
+            << ", Password expired state:" << m_expiredState
+            << ", Locale:" << m_locale
+            << ", AccountType:" << m_userInter->accountType();
 }
 
 /**
@@ -425,7 +425,7 @@ void NativeUser::updateGreeterBackground(const QString &path)
 {
     const QString pathTmp = toLocalFile(path);
     if (pathTmp.isEmpty() || !QFile(pathTmp).exists() || !QFile(pathTmp).size() || !checkPictureCanRead(pathTmp)) {
-        qWarning() << "Path is invalid: " << pathTmp;
+        qWarning() << "Update greeter background, path is invalid: " << pathTmp;
         return;
     }
     if (pathTmp == m_greeterBackground) {
@@ -537,9 +537,9 @@ void NativeUser::updatePasswordExpiredInfo()
  */
 void NativeUser::updateUserInfo()
 {
-    qDebug() << "update user info";
+    qDebug() << "Update user info";
     if (!m_userInter) {
-        qWarning() << "userInter is null";
+        qWarning() << "User interface is null";
         return;
     }
     updateAutomaticLogin(m_userInter->automaticLogin());

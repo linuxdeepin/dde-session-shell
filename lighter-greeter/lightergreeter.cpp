@@ -46,7 +46,7 @@ LighterGreeter::LighterGreeter(QWidget *parent)
     , m_defaultSessionName(DConfigHelper::instance()->getConfig("defaultSession", "deepin").toString())
 {
     if (!m_greeter->connectSync()) {
-        qWarning() << "connect sync failed";
+        qCritical() << "Connect sync failed";
         close();
     }
 
@@ -203,7 +203,7 @@ void LighterGreeter::onStartAuthentication()
     // Begin new authentication process with selected user
     int index = m_userCbx->currentIndex();
     const QString &userName = m_userCbx->itemData(index, QLightDM::UsersModel::NameRole).toString();
-    qInfo() << "Authenticating user: " << userName;
+    qInfo() << "Start authentication, user: " << userName;
     m_greeter->authenticate(userName);
 
     // Set focus to password field
@@ -238,7 +238,7 @@ void LighterGreeter::onAuthenticationComplete()
 
 void LighterGreeter::onShowPrompt(QString promptText, int promptType)
 {
-    qInfo() << "Showing prompt: " <<  promptText << promptType;
+    qInfo() << "Showing prompt, text: " <<  promptText << ", type: " << promptType;
 
     // Stop password field animation and enable window
     m_passwordEdit->stopAnimation();
@@ -266,7 +266,7 @@ void LighterGreeter::onShowPrompt(QString promptText, int promptType)
 
 void LighterGreeter::onShowMessage(QString messageText, int messageType)
 {
-    qInfo() << "Showing message: " <<  messageText << messageType;
+    qInfo() << "Showing message, text: " <<  messageText << ", type: " << messageType;
 
     // Stop password field animation and enable window
     m_passwordEdit->stopAnimation();

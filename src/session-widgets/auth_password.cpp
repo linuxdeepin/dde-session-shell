@@ -318,7 +318,7 @@ void AuthPassword::setAuthState(const AuthState state, const QString &result)
         setAuthStateStyle(LOGIN_WAIT);
         setLineEditEnabled(true);
         setLineEditInfo(result, AlertText);
-        qWarning() << "Error! The state of Password Auth is wrong!" << state << result;
+        qWarning() << "Error! The state of Password Auth is wrong, state: " << state << ", result: " << result;
         break;
     }
     update();
@@ -366,7 +366,7 @@ void AuthPassword::setLimitsInfo(const LimitsInfo &info)
         }
 
         if (this->isVisible() && isShowResetPasswordMessage()) {
-            qDebug() << "begin reset passoword";
+            qDebug() << "Begin reset passoword";
             setResetPasswordMessageVisible(true);
             updateResetPasswordUI();
         }
@@ -518,7 +518,7 @@ void AuthPassword::setPasswordHintBtnVisible(const bool isVisible)
  */
 void AuthPassword::setResetPasswordMessageVisible(const bool isVisible, bool fromResetDialog)
 {
-    qDebug() << "Incoming visible:" << isVisible
+    qDebug() << "Set reset password message visible, incoming visible:" << isVisible
              << " current visible:" << m_resetPasswordMessageVisible
              << " fromResetDialog " << fromResetDialog;
     if (isVisible && fromResetDialog) {
@@ -588,7 +588,7 @@ void AuthPassword::showResetPasswordMessage()
         m_resetDialogShow = true;
         reply.waitForFinished();
         if (reply.isError())
-            qWarning() << "reply setpassword:" << reply.error().message();
+            qWarning() << "Reset password message error: " << reply.error().message();
 
         emit m_resetPasswordFloatingMessage->closeButtonClicked();
     });
@@ -634,7 +634,7 @@ bool AuthPassword::isUserAccountBinded()
     if (retUOSID.isValid()) {
         uosid = retUOSID.value();
     } else {
-        qWarning() << retUOSID.error().message();
+        qWarning() << "UOS ID is invalid, error: " << retUOSID.error().message();
         return false;
     }
 
@@ -660,7 +660,7 @@ bool AuthPassword::isUserAccountBinded()
         }
     } else {
         qWarning() << "UOSID:" << uosid << "uuid:" << uuid;
-        qWarning() << retLocalBindCheck.error().message();
+        qWarning() << "Local bind check is invalid, error: " << retLocalBindCheck.error().message();
         if (retLocalBindCheck.error().message().contains("network error")) {
             if (m_bindCheckTimer == nullptr) {
                 m_bindCheckTimer = new QTimer(this);
@@ -752,7 +752,7 @@ void AuthPassword::showEvent(QShowEvent *event)
         }
 
         if (isShowResetPasswordMessage()) {
-            qDebug() << "begin reset passoword";
+            qDebug() << "Begin reset passoword";
             setResetPasswordMessageVisible(true);
             updateResetPasswordUI();
         }

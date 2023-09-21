@@ -44,12 +44,12 @@ void ModulesLoader::findModule(const QString &path)
 {
     QDir dir(path);
     if (!dir.exists()) {
-        qDebug() << path << "is not exists.";
+        qDebug() << "Find module, Path: " << path << "is not exists.";
         return;
     }
 
     auto blackList = DConfigHelper::instance()->getConfig("pluginBlackList", QStringList()).toStringList();
-    qInfo() << "Plugin black list:" << blackList;
+    qInfo() << "Find module, plugin black list:" << blackList;
     const QFileInfoList modules = dir.entryInfoList();
     for (QFileInfo module : modules) {
         const QString path = module.absoluteFilePath();

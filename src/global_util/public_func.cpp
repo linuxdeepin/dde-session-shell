@@ -75,7 +75,7 @@ static unsigned long loadCursorHandle(Display *dpy, const char *name, int size)
 int setRootWindowCursor() {
     Display* display = XOpenDisplay(nullptr);
     if (!display) {
-        qDebug() << "Open display failed";
+        qWarning() << "Open display failed, display is empty";
         return -1;
     }
 
@@ -199,7 +199,7 @@ bool isDeepinAuth()
         const QString &key = "useDeepinAuth";
         bool useDeepinAuth = controlObj.keys().contains(key) && controlObj.get(key).toBool();
     #ifdef QT_DEBUG
-        qDebug() << "use deepin auth: " << useDeepinAuth;
+        qDebug() << "Use deepin auth: " << useDeepinAuth;
     #endif
         return useDeepinAuth;
     }

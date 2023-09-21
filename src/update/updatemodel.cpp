@@ -37,7 +37,7 @@ UpdateModel* UpdateModel::instance()
 
 void UpdateModel::setUpdateStatus(UpdateModel::UpdateStatus status)
 {
-    qInfo() << "UpdateModel::setUpdateStatus: " << status << ", current: " << m_updateStatus;
+    qInfo() << "Set update status: " << status << ", current: " << m_updateStatus;
     if (m_updateStatus == status)
         return;
 
@@ -47,7 +47,7 @@ void UpdateModel::setUpdateStatus(UpdateModel::UpdateStatus status)
 
 void UpdateModel::setDistUpgradeProgress(double progress)
 {
-    qDebug() << "UpdateModel::setDistUpgradeProgress: " << progress << ", current: " << m_distUpgradeProgress;
+    qDebug() << "Set dist upgrade progress: " << progress << ", current: " << m_distUpgradeProgress;
     if (qFuzzyCompare(progress, m_distUpgradeProgress))
         return;
 
@@ -57,7 +57,7 @@ void UpdateModel::setDistUpgradeProgress(double progress)
 
 void UpdateModel::setUpdateError(UpdateError error)
 {
-    qWarning() << "UpdateModel::setUpdateError: " << error << ", current: " << m_updateError;
+    qWarning() << "Set update error: " << error << ", current: " << m_updateError;
     if (m_updateError == error)
         return;
 
@@ -86,7 +86,7 @@ QPair<QString, QString> UpdateModel::updateErrorMessage(UpdateError error)
 
 void UpdateModel::setLastErrorLog(const QString &log)
 {
-    qWarning() << log;
+    qWarning() << "Set last error log:" << log;
     m_lastErrorLog = log;
 }
 

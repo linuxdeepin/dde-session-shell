@@ -64,7 +64,7 @@ QString XkbParser::lookUpKeyboardKey(const QString &keyboard_value)
     for (int i = 0; i < KeyboardLayoutList.length(); i++) {
         if (KeyboardLayoutList[i].description == keyboard_value) {
             keyboard_key = QString("%1|").arg(KeyboardLayoutList[i].name);
-            qDebug() << "keyboard_key:" << keyboard_key;
+            qDebug() << "Look up keyboard key:" << keyboard_key;
             return keyboard_key;
         } else {
             for (int j = 0; j < KeyboardLayoutList[i].variantItemList.length(); j++) {
@@ -87,14 +87,14 @@ bool XkbParser::parse() {
     if (baseFile.open(QIODevice::ReadOnly | QIODevice::Text)) {
         document.setContent(&baseFile);
     } else {
-        qDebug() << "Failed to open base.xml";
+        qWarning() << "Failed to open base.xml";
         return false;
     }
 
     QDomElement rootElement = document.documentElement();
 
     if (rootElement.isNull()) {
-        qDebug() << "root element is null.";
+        qWarning() << "Root element is null.";
         return false;
     }
 
@@ -103,7 +103,7 @@ bool XkbParser::parse() {
     QDomNodeList layoutNodes = layoutListElement.elementsByTagName("layout");
 
     if (layoutNodes.isEmpty()) {
-        qDebug() << "layout list is empty.";
+        qWarning() << "Layout list is empty.";
         return false;
     }
 
@@ -130,13 +130,13 @@ bool XkbParser::parse() {
         for (int variantIndex = 0; variantIndex < variantNodes.size(); ++variantIndex) {
             variantNode = variantNodes.at(variantIndex);
             if (variantNode.isNull()) {
-                qDebug() << "variant node is null.";
+                qWarning() << "Variant node is null";
                 continue;
             }
 
             QDomElement variantConfigElement = variantNode.firstChildElement("configItem");
             if (variantConfigElement.isNull()) {
-                qDebug() << "variant config element is null.";
+                qWarning() << "Variant config element is null";
                 continue;
             }
             QDomElement variantNameElement = variantConfigElement.firstChildElement("name");

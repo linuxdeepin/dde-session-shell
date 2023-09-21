@@ -67,7 +67,7 @@ void LoginPluginV1::setAuthCallback(LoginPlugin::AuthCallbackFun func)
     authCallbackFunc = func;
     m_loginCallBack.authCallbackFun = &LoginPluginV1::authCallBack;
     if (!m_loginCallBack.authCallbackFun || !m_loginCallBack.app_data) {
-        qWarning() << "AuthCallbackFun or appData is null";
+        qWarning() << "Auth callback funtion or app data is null";
     }
 
     loginPlugin->setCallback(&m_loginCallBack);

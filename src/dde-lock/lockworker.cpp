@@ -101,10 +101,10 @@ void LockWorker::initConnections()
     connect(m_authFramework, &DeepinAuthFramework::FactorsInfoChanged, m_model, &SessionBaseModel::updateFactorsInfo);
     /* com.deepin.dde.LockService */
     connect(m_lockInter, &DBusLockService::UserChanged, this, [this](const QString &json) {
-        qInfo() << "DBusLockService::UserChanged:" << json;
+        qInfo() << "DBus lock service user changed, user: " << json;
         QTimer::singleShot(100, this, [this] {
             if(m_model->currentContentType() == SessionBaseModel::UpdateContent){
-                qInfo() << "Updating, do not answer user changed signal";
+                qInfo() << "Is updating, do not answer user changed signal";
                 return;
             }
 
@@ -121,7 +121,7 @@ void LockWorker::initConnections()
     });
     /* org.freedesktop.login1.Session */
     connect(m_login1SessionSelf, &Login1SessionSelf::ActiveChanged, this, [this](bool active) {
-        qInfo() << "DBusLockService::ActiveChanged:" << active << ", model visible: " << m_model->visible();
+        qInfo() << "DBus lock service active changed, active: " << active << ", model visible: " << m_model->visible();
         if (m_model->currentContentType() == SessionBaseModel::UpdateContent) {
             qInfo() << "Updating, do not answer login1 session self `ActiveChanged` signal";
             return;
@@ -136,7 +136,7 @@ void LockWorker::initConnections()
     });
     /* org.freedesktop.login1.Manager */
     connect(m_login1Inter, &DBusLogin1Manager::PrepareForSleep, this, [this](bool isSleep) {
-        qInfo() << "DBusLogin1Manager::PrepareForSleep:" << isSleep;
+        qInfo() << "DBus login1 manager prepare for sleep: " << isSleep;
         if (m_model->currentContentType() == SessionBaseModel::UpdateContent) {
             qInfo() << "Updating, do not answer `PrepareForSleep` signal";
             return;
@@ -249,7 +249,7 @@ void LockWorker::initData()
         QJsonParseError jsonParseError;
         const QJsonDocument userDoc = QJsonDocument::fromJson(userJson.toUtf8(), &jsonParseError);
         if (jsonParseError.error != QJsonParseError::NoError || userDoc.isEmpty()) {
-            qWarning() << "Failed to obtain current user information from LockService!";
+            qWarning() << "Failed to obtain current user information from lock service!";
         } else {
             const QJsonObject userObj = userDoc.object();
             m_model->currentUser()->setLastAuthType(AUTH_TYPE_CAST(userObj["AuthType"].toInt()));
@@ -415,7 +415,7 @@ void LockWorker::doPowerAction(const SessionBaseModel::PowerAction action)
         int delayTime = 500;
         if(m_gsettings && m_gsettings->keys().contains("delaytime")){
             delayTime = m_gsettings->get("delaytime").toInt();
-            qInfo() << "delayTime : " << delayTime;
+            qInfo() << "DelayTime : " << delayTime;
         }
         if (delayTime < 0) {
             delayTime = 500;
@@ -434,7 +434,7 @@ void LockWorker::doPowerAction(const SessionBaseModel::PowerAction action)
         int delayTime = 500;
         if(m_gsettings && m_gsettings->keys().contains("delaytime")){
             delayTime = m_gsettings->get("delaytime").toInt();
-            qInfo() << " delayTime : " << delayTime;
+            qInfo() << "DelayTime : " << delayTime;
         }
         if (delayTime < 0) {
             delayTime = 500;
@@ -523,11 +523,11 @@ void LockWorker::switchToUser(std::shared_ptr<User> user)
 {
     qDebug() << "LockWorker::switchToUser:" << m_account << user->name();
     if (user->name() == m_account || *user == *m_model->currentUser()) {
-        qInfo() << "switch to current user:" << user->name() << user->isLogin();
+        qInfo() << "Switch to current user:" << user->name() << user->isLogin();
         createAuthentication(user->name());
         return;
     } else {
-        qInfo() << "switch user from" << m_account << "to" << user->name() << user->isLogin();
+        qInfo() << "Switch user from" << m_account << "to" << user->name() << ", login: " << user->isLogin();
         endAuthentication(m_account, AT_All);
         setCurrentUser(user);
     }
@@ -632,7 +632,7 @@ void LockWorker::createAuthentication(const QString &account)
  */
 void LockWorker::destroyAuthentication(const QString &account)
 {
-    qInfo() << "Account:" << account;
+    qInfo() << "Destroy authentication, account:" << account;
     switch (m_model->getAuthProperty().FrameworkState) {
     case Available:
         m_authFramework->DestroyAuthController(account);
@@ -652,7 +652,7 @@ void LockWorker::destroyAuthentication(const QString &account)
  */
 void LockWorker::startAuthentication(const QString &account, const AuthFlags authType)
 {
-    qInfo() << "Account:" << account << ", auth types:" << authType;
+    qInfo() << "Start authentication, account:" << account << ", auth types:" << authType;
     switch (m_model->getAuthProperty().FrameworkState) {
     case Available:
         m_authFramework->StartAuthentication(account, authType, -1);
@@ -672,7 +672,7 @@ void LockWorker::startAuthentication(const QString &account, const AuthFlags aut
  */
 void LockWorker::sendTokenToAuth(const QString &account, const AuthType authType, const QString &token)
 {
-    qInfo() << "Account:" << account << ", auth type:" << authType;
+    qInfo() << "Send token to auth, account: " << account << ", auth type: " << authType;
     switch (m_model->getAuthProperty().FrameworkState) {
     case Available:
         m_authFramework->SendTokenToAuth(account, authType, token);
@@ -691,7 +691,7 @@ void LockWorker::sendTokenToAuth(const QString &account, const AuthType authType
  */
 void LockWorker::endAuthentication(const QString &account, const AuthFlags authType)
 {
-    qInfo() << "Account:" << account << ", auth type:" << authType;
+    qInfo() << "End authentication, account:" << account << ", auth type:" << authType;
     switch (m_model->getAuthProperty().FrameworkState) {
     case Available:
         m_authFramework->EndAuthentication(account, authType);
@@ -732,17 +732,17 @@ void LockWorker::lockServiceEvent(quint32 eventType, quint32 pid, const QString 
 
     switch (eventType) {
     case DBusLockService::PromptQuestion:
-        qWarning() << "prompt question from pam: " << message;
+        qWarning() << "Prompt question from pam: " << message;
         emit m_model->authFailedMessage(message);
         break;
     case DBusLockService::PromptSecret:
-        qWarning() << "prompt secret from pam: " << message;
+        qWarning() << "Prompt secret from pam: " << message;
         if (m_isThumbAuth && !msg.isEmpty()) {
             emit m_model->authFailedMessage(msg);
         }
         break;
     case DBusLockService::ErrorMsg:
-        qWarning() << "error message from pam: " << message;
+        qWarning() << "Error message from pam: " << message;
         if (msg == "Failed to match fingerprint") {
             emit m_model->authFailedTipsMessage(tr("Failed to match fingerprint"));
             emit m_model->authFailedMessage("");
@@ -771,7 +771,7 @@ void LockWorker::onAuthFinished()
 
 void LockWorker::onUnlockFinished(bool unlocked)
 {
-    qInfo() << "Is unlocked:" << unlocked;
+    qInfo() << "Unlock finished, is unlocked: " << unlocked;
 
     m_authenticating = false;
 
@@ -806,19 +806,20 @@ void LockWorker::restartResetSessionTimer()
 
 void LockWorker::disableGlobalShortcutsForWayland(const bool enable)
 {
+    qInfo() << "Disable global shortcuts for wayland: " << enable;
     if (m_kwinInter == nullptr || m_kglobalaccelInter == nullptr) {
         return;
     }
     if (!m_kwinInter->isValid()) {
-        qWarning() << "kwinInter is not valid";
+        qWarning() << "Kwin interface is not valid";
         return;
     }
     QDBusReply<void> reply = m_kwinInter->call("disableGlobalShortcutsForClient", enable);
     if (!reply.isValid()) {
-        qWarning() << "call disableGlobalShortcutsForClient failed" << reply.error();
+        qWarning() << "Call `disableGlobalShortcutsForClient` failed, error: " << reply.error();
     }
     if (!m_kglobalaccelInter->isValid()) {
-        qWarning() << "kglobalaccelInter is not valid";
+        qWarning() << "Global accel interface is not valid";
         return;
     }
     const QStringList &shortCutList = DConfigHelper::instance()
@@ -828,11 +829,11 @@ void LockWorker::disableGlobalShortcutsForWayland(const bool enable)
         foreach (const QString &shortcut, shortCutList) {
             reply = m_kglobalaccelInter->call("setActiveByUniqueName", shortcut, true);
             if (!reply.isValid()) {
-                qWarning() << "call setActiveByUniqueName failed" << reply.error();
+                qWarning() << "Call `setActiveByUniqueName` failed, error: " << reply.error();
             }
         }
     } else {
-        qWarning() << "there is no shortcut should be enabled!";
+        qWarning() << "There is no shortcut should be enabled!";
     }
 }
 

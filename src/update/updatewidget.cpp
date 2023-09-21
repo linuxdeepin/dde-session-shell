@@ -175,8 +175,8 @@ bool UpdateProgressWidget::event(QEvent *e)
 
 void UpdateProgressWidget::setValue(double value)
 {
-    qInfo() << "UpdateProgressWidget::setValue: " << value
-            << " begin progress: " << m_installBeginValue;
+    qInfo() << "Update progress widget set value: " << value
+            << ", begin progress: " << m_installBeginValue;
 
     double tmpValue = value * (100 - m_installBeginValue);
     // 在备份完成后,如果m_installBeginValue=50,那么value需要大于等于2进度条才会增加,等待时间过长,体验不好.
@@ -188,7 +188,6 @@ void UpdateProgressWidget::setValue(double value)
     if (iProgress > 100 || iProgress < 0 || iProgress <= m_progressBar->value())
         return;
 
-    qInfo() << Q_FUNC_INFO << iProgress;
     m_progressBar->setValue(iProgress);
     m_progressText->setText(QString::number(iProgress) + "%");
 }
@@ -240,13 +239,12 @@ UpdateCompleteWidget::UpdateCompleteWidget(QWidget *parent)
 
 void UpdateCompleteWidget::showResult(bool success, UpdateModel::UpdateError error)
 {
-    qInfo() << "UpdateCompleteWidget::showResult: " << success
-            << ", error: " << error;
-
     if (success)
         showSuccessFrame();
-    else
+    else {
+        qWarning() << "Show result error: " << error;
         showErrorFrame(error);
+    }
 }
 
 void UpdateCompleteWidget::showSuccessFrame()
@@ -289,8 +287,6 @@ void UpdateCompleteWidget::showSuccessFrame()
 
 void UpdateCompleteWidget::showErrorFrame(UpdateModel::UpdateError error)
 {
-    qInfo() << "UpdateCompleteWidget::showErrorFrame: " << error;
-
     m_buttonSpacer->changeSize(0, 0);
     static const QMap<UpdateModel::UpdateError, QList<UpdateModel::UpdateAction>> ErrorActions = {
         {UpdateModel::CanNotBackup, {UpdateModel::ContinueUpdating, UpdateModel::ExitUpdating}},
@@ -360,7 +356,6 @@ void UpdateCompleteWidget::createButtons(const QList<UpdateModel::UpdateAction> 
 
 void UpdateCompleteWidget::keyPressEvent(QKeyEvent *event)
 {
-    qInfo() << Q_FUNC_INFO;
     switch (event->key()) {
     case Qt::Key_Up:
     case Qt::Key_Down:
@@ -443,7 +438,7 @@ void UpdateWidget::showUpdate()
 
 void UpdateWidget::onUpdateStatusChanged(UpdateModel::UpdateStatus status)
 {
-    qInfo() << Q_FUNC_INFO << status;
+    qInfo() << "Update status changed, status: " << status;
     switch (status) {
         case UpdateModel::UpdateStatus::Ready:
             showChecking();
@@ -481,7 +476,6 @@ void UpdateWidget::onUpdateStatusChanged(UpdateModel::UpdateStatus status)
 
 void UpdateWidget::onExitUpdating()
 {
-    qInfo() << Q_FUNC_INFO;
     setMouseCursorVisible(true);
     UpdateModel::instance()->setIsUpdating(false);
     if (m_sessionModel) {
@@ -558,7 +552,7 @@ void UpdateWidget::showProgress()
 
 void UpdateWidget::setMouseCursorVisible( bool visible)
 {
-    qInfo() << Q_FUNC_INFO << visible;
+    qInfo() << "Set mouse cursor visible: " << visible;
     static bool mouseVisible=true;
     if(mouseVisible == visible)
         return;
@@ -569,8 +563,6 @@ void UpdateWidget::setMouseCursorVisible( bool visible)
 
 void UpdateWidget::keyPressEvent(QKeyEvent *e)
 {
-    qInfo() << Q_FUNC_INFO;
-
     // 屏蔽esc键，设置event的accept无效，暂时不处理
 }
 

@@ -70,16 +70,16 @@ LoginModule::LoginModule(QObject *parent)
         QDBusPendingCallWatcher *watcher = new QDBusPendingCallWatcher(reply, this);
         connect(watcher, &QDBusPendingCallWatcher::finished, [this, reply, watcher] {
             if (!watcher->isError()) {
-               QString session_self = reply.value().path();
-               qDebug() << "session_self path" << session_self;
-               m_login1SessionSelf = new QDBusInterface("org.freedesktop.login1", session_self, "org.freedesktop.login1.Session", QDBusConnection::systemBus());
+                QString session_self = reply.value().path();
+                qDebug() << "Login1 interface call `GetSessionByPID`, reply path: " << session_self;
+                m_login1SessionSelf = new QDBusInterface("org.freedesktop.login1", session_self, "org.freedesktop.login1.Session", QDBusConnection::systemBus());
             } else {
-                qWarning() << "m_login1Inter:" << watcher->error().message();
+                qWarning() << "Login1 interface error: " << watcher->error().message();
             }
             watcher->deleteLater();
         });
     } else {
-        qDebug() << Q_FUNC_INFO << " login1Inter is not Valid";
+        qWarning() << "Login1 interface is not valid";
     }
 
     initConnect();
@@ -88,7 +88,7 @@ LoginModule::LoginModule(QObject *parent)
     m_waitAcceptSignalTimer = new QTimer(this);
     m_waitAcceptSignalTimer->setInterval(800);
     connect(m_waitAcceptSignalTimer, &QTimer::timeout, this, [this] {
-        qInfo() << Q_FUNC_INFO << "start 2.5s, m_isAcceptFingerprintSignal" << m_isAcceptFingerprintSignal;
+        qDebug() << "Start 0.8s, whether accept finger print signal: " << m_isAcceptFingerprintSignal;
         stopIdentify();
         m_waitAcceptSignalTimer->stop();
         m_loginAuthenticated = true;
@@ -132,12 +132,12 @@ void LoginModule::initConnect()
 {
     bool isConIsSleep = QDBusConnection::systemBus().connect("org.freedesktop.login1", "/org/freedesktop/login1","org.freedesktop.login1.Manager",
                                                     "PrepareForSleep", this, SLOT(slotPrepareForSleep(bool)));
-    qInfo() << Q_FUNC_INFO << "connect SlotPrepareForSleep: " << isConIsSleep;
+    qInfo() << "Whether connect `PrepareForSleep`: " << isConIsSleep;
 
 
     bool isConnectSuccess = QDBusConnection::systemBus().connect("com.deepin.daemon.Authenticate", "/com/deepin/daemon/Authenticate/Fingerprint","com.deepin.daemon.Authenticate.Fingerprint",
                                                     "VerifyStatus", this, SLOT(slotIdentifyStatus(const QString &, const int, const QString &)));
-    qInfo() << Q_FUNC_INFO << "isconnectsuccess: " << isConnectSuccess;
+    qInfo() << "Whether connect `VerifyStatus`: " << isConnectSuccess;
 
 }
 
@@ -150,15 +150,14 @@ void LoginModule::startCallHuaweiFingerprint()
     QDBusPendingCall identifyCall = QDBusConnection::systemBus().asyncCall(m);
     QDBusPendingCallWatcher *watcher = new QDBusPendingCallWatcher(identifyCall, this);
     connect(watcher, &QDBusPendingCallWatcher::finished, [this, identifyCall, watcher] {
-        qDebug() << Q_FUNC_INFO << "Get license state:" << identifyCall.error().message();
         if (!identifyCall.isError()) {
             QDBusMessage response = identifyCall.reply();
             //判断Method是否被正确返回
             if (response.type()== QDBusMessage::ReplyMessage) {
                 m_IdentifyWithMultipleUserStarted = true;
-                qDebug() << Q_FUNC_INFO << "dbus IdentifyWithMultipleUser call success";
+                qDebug() << "Call `IdentifyWithMultipleUser` success";
             } else {
-                qWarning() << Q_FUNC_INFO << "dbus IdentifyWithMultipleUser call failed";
+                qWarning() << "Call `IdentifyWithMultipleUser` failed";
                 m_isAcceptFingerprintSignal = false;
                 //FIXME 此处不能调用回调，因为还没初始化，此处的逻辑应该在setCallBack函数完成后再进行。
                 sendAuthTypeToSession(AuthType::AT_Fingerprint);
@@ -190,9 +189,9 @@ void LoginModule::reset()
 
 void LoginModule::initUI()
 {
-    qInfo() << Q_FUNC_INFO;
+    qInfo() << "Login module ui init";
     if (m_loginWidget) {
-        qInfo() << Q_FUNC_INFO << "m_loginWidget is exist";
+        qWarning() << "Login widget has existed";
         return;
     }
     m_loginWidget = new QWidget;
@@ -208,9 +207,8 @@ void LoginModule::initUI()
 
 void LoginModule::updateInfo()
 {
-    qInfo() << Q_FUNC_INFO;
     if (!m_messageCallback) {
-        qWarning() << Q_FUNC_INFO << "message callback func is nullptr";
+        qWarning() << "Callback message is null";
         return;
     }
 
@@ -229,7 +227,7 @@ void LoginModule::updateInfo()
     QJsonParseError jsonParseError;
     const QJsonDocument retDoc = QJsonDocument::fromJson(ret.toLatin1(), &jsonParseError);
     if (jsonParseError.error != QJsonParseError::NoError || retDoc.isEmpty()) {
-        qWarning() << Q_FUNC_INFO << "Failed to analysis AppType info from shell!: " << ret;
+        qWarning() << "Failed to analysis app type info from shell: " << ret;
         return ;
     }
 
@@ -242,13 +240,13 @@ void LoginModule::updateInfo()
     QJsonObject data = obj.value("Data").toObject();
     if (data.contains("AppType")) {
         m_appType = (AppType)data.value("AppType").toInt();
-        qInfo() << Q_FUNC_INFO << "App type: " << m_appType;
+        qInfo() << "App type: " << m_appType;
     }
 
     if (data.contains("CurrentUser")) {
         QJsonObject user = data.value("CurrentUser").toObject();
         m_userName = user.value("Name").toString();
-        qInfo() << Q_FUNC_INFO << "Current user: " << user;
+        qInfo() << "Current user: " << user;
     }
 }
 
@@ -269,11 +267,10 @@ void LoginModule::setMessageCallback(MessageCallbackFunc messageCallback)
 
 QString LoginModule::message(const QString &message)
 {
-    qInfo() << Q_FUNC_INFO;
     QJsonParseError jsonParseError;
     const QJsonDocument messageDoc = QJsonDocument::fromJson(message.toLatin1(), &jsonParseError);
     if (jsonParseError.error != QJsonParseError::NoError || messageDoc.isEmpty()) {
-        qWarning() << Q_FUNC_INFO << "Failed to obtain message from shell!: " << message;
+        qWarning() << "Failed to obtain message from shell, message: " << message;
         return "";
     }
 
@@ -300,7 +297,7 @@ QString LoginModule::message(const QString &message)
 
         retObj["Data"] = retDataObj;
     } else if (cmdType == "StartAuth"){
-        qDebug() << Q_FUNC_INFO << "startAuth" << m_lastAuthResult.result << m_lastAuthResult.account;
+        qDebug() << "Start auth, last auth result: " << m_lastAuthResult.result << ", last auth account: " << m_lastAuthResult.account;
         QJsonObject data = msgObj.value("Data").toObject();
         m_authStatus = AuthStatus::Start;
         int type = data.value("AuthObjectType").toInt();
@@ -354,7 +351,6 @@ QString LoginModule::message(const QString &message)
 
 void LoginModule::slotIdentifyStatus(const QString &name, const int errorCode, const QString &msg)
 {
-    qDebug() << Q_FUNC_INFO << "LoginModule name :" << name << "\n error code:" << errorCode << " \n error msg:" << msg;
     m_waitAcceptSignalTimer->stop();
     if(m_IdentifyWithMultipleUserStarted){
         stopIdentify();
@@ -374,7 +370,6 @@ void LoginModule::slotIdentifyStatus(const QString &name, const int errorCode, c
             return ;
         }
 
-        qInfo() << Q_FUNC_INFO << "singleShot verify";
         m_lastAuthResult.account = name.isEmpty() ? m_userName : name;
         m_lastAuthResult.result = AuthResult::Success;
         if(m_authStatus == AuthStatus::Start || m_appType == AppType::Lock){
@@ -382,7 +377,7 @@ void LoginModule::slotIdentifyStatus(const QString &name, const int errorCode, c
         }
     } else {
         // 发送一键登录失败的信息
-        qWarning() << Q_FUNC_INFO << "slotIdentifyStatus recive failed";
+        qWarning() << "Identify Status recive failed, error: " << msg;
         QTimer::singleShot(30, this, [this] {
             sendAuthTypeToSession(AuthType::AT_Fingerprint);
         });
@@ -397,7 +392,7 @@ void LoginModule::slotIdentifyStatus(const QString &name, const int errorCode, c
 void LoginModule::sendAuthData(AuthCallbackData& data)
 {
     if (!m_authCallback) {
-        qWarning() << Q_FUNC_INFO << "m_callbackFun is null";
+        qWarning() << "Send auth data failed, callback is null";
         return;
     }
 
@@ -412,10 +407,8 @@ void LoginModule::sendAuthData(AuthCallbackData& data)
 
 void LoginModule::slotPrepareForSleep(bool active)
 {
-    qInfo() << Q_FUNC_INFO << active;
-
     if (m_login1SessionSelf == nullptr) {
-        qWarning()  << "m_login1SessionSelf is null";
+        qWarning()  << "Login1 session self is null";
         QDBusInterface login1Inter("org.freedesktop.login1", "/org/freedesktop/login1",
                                    "org.freedesktop.login1.Manager",
                                    QDBusConnection::systemBus());
@@ -423,30 +416,28 @@ void LoginModule::slotPrepareForSleep(bool active)
             QDBusPendingReply<QDBusObjectPath> reply = login1Inter.call("GetSessionByPID" , uint(0));
             if(!reply.isError()){
                 QString session_self = reply.value().path();
-                qDebug() << "session_self path" << session_self;
                 m_login1SessionSelf = new QDBusInterface("org.freedesktop.login1", session_self, "org.freedesktop.login1.Session", QDBusConnection::systemBus());
-                qDebug() << " m_login1SessionSelf ----" << m_login1SessionSelf;
             } else {
-                qDebug() << reply.error().message();
+                qWarning() << "Call `GetSessionByPID` failed, error: " << reply.error().message();
             }
 
         } else {
-            qDebug() << Q_FUNC_INFO << " login1Inter is not Valid";
+            qDebug() << "Login1 interface is not valid";
         }
     }
 
     if (m_login1SessionSelf == nullptr ) {
-        qWarning()  << "m_login1SessionSelf is null";
+        qWarning()  << "Login1 session self is null";
         return;
     }
 
     if (!m_login1SessionSelf->isValid()) {
-        qWarning()  << "m_login1SessionSelf is not Valid";
+        qWarning()  << "Login1 session self is not valid";
         return;
     }
 
     bool isSessionActive = m_login1SessionSelf->property("Active").toBool();
-    qInfo() << "Current session is active:" << isSessionActive;
+    qInfo() << "Whether current session is active:" << isSessionActive;
     m_lastAuthResult = AuthCallbackData();
 
     // 休眠待机时,同时当前session被激活才开始调用一键登录指纹
@@ -485,17 +476,16 @@ void LoginModule::stopIdentify()
     // 将消息发送到Dbus
     QDBusMessage mes = QDBusConnection::systemBus().call(m);
     if (mes.type() == QDBusMessage::ReplyMessage) {
-        qInfo() << Q_FUNC_INFO << "success";
+        qInfo() << "Stop identify success";
     } else {
-        qInfo() << Q_FUNC_INFO << "failed";
+        qWarning() << "Stop identify failed, message type: " << mes.type();
     }
 }
 
 void LoginModule::sendAuthTypeToSession(AuthType type)
 {
-    qInfo() << Q_FUNC_INFO << "sendAuthTypeToSession" << type;
     if (!m_messageCallback){
-        qInfo() << "Message callback is nullptr";
+        qWarning() << "Callback message is null";
         m_needSendAuthType = true;
         return;
     }
@@ -527,7 +517,7 @@ void LoginModule::sendAuthTypeToSession(AuthType type)
     QJsonParseError jsonParseError;
     const QJsonDocument retDoc = QJsonDocument::fromJson(ret.toLatin1(), &jsonParseError);
     if (jsonParseError.error != QJsonParseError::NoError || retDoc.isEmpty()) {
-        qWarning() << Q_FUNC_INFO << "Failed to analysis SlotPrepareForSleep info from shell!: " << ret;
+        qWarning() << "Failed to analysis `SlotPrepareForSleep` info from shell, message callback: " << ret;
     }
     m_needSendAuthType = false;
 }

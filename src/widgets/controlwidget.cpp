@@ -158,7 +158,7 @@ void ControlWidget::initKeyboardLayoutList()
 
 void ControlWidget::updatePluginVisible(const QString module, bool state)
 {
-    qInfo() << Q_FUNC_INFO << state;
+    qInfo() << "Update plugin visible, state: " << state;
     for (auto key : m_modules.keys()) {
         if (key && key->objectName() == module) {
             m_modules.value(key)->setVisible(state);
@@ -272,9 +272,8 @@ void ControlWidget::initConnect()
 
 QString ControlWidget::messageCallback(const QString &message, void *app_data)
 {
-    qInfo() << Q_FUNC_INFO << "Received message: " << message;
     if (!app_data && static_cast<ControlWidget *>(app_data)) {
-        qWarning() << "appdata is null";
+        qWarning() << "Appdata is null, app data: " << app_data;
         return QString();
     }
     QJsonObject retObj;
@@ -527,7 +526,7 @@ void ControlWidget::setSessionSwitchEnable(const bool visible)
 void ControlWidget::chooseToSession(const QString &session)
 {
     if (m_sessionBtn && m_sessionTip) {
-        qDebug() << "chosen session: " << session;
+        qDebug() << "Chosen session: " << session;
         if (session.isEmpty())
             return;
 

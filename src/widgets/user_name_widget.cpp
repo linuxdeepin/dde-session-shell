@@ -202,6 +202,6 @@ void UserNameWidget::onDConfigPropertyChanged(const QString &key, const QVariant
         if (ok && fontSize > 0 && fontSize < 9)
             DFontSizeManager::instance()->bind(obj->m_fullNameLabel, static_cast<DFontSizeManager::SizeType>(fontSize));
         else
-            qWarning() << "Top tip text font format error";
+            qWarning() << "Top tip text font format error, font size: " << fontSize;
     }
 }

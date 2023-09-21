@@ -53,7 +53,7 @@ QList<InhibitWarnView::InhibitorData> WarningContent::listInhibitors(const Sessi
 
         if (!reply.isError()) {
             InhibitorsList inhibitList = qdbus_cast<InhibitorsList>(reply.argumentAt(0));
-            qDebug() << "inhibitList:" << inhibitList.count();
+            qDebug() << "Inhibitors list count: " << inhibitList.count();
 
             QString type;
 
@@ -118,20 +118,17 @@ QList<InhibitWarnView::InhibitorData> WarningContent::listInhibitors(const Sessi
                 }
             }
 
-            qDebug() << "List of valid '" << type << "' inhibitors:";
-
             for (const InhibitWarnView::InhibitorData &data : inhibitorList) {
-                qDebug() << "who:" << data.who;
-                qDebug() << "why:" << data.why;
-                qDebug() << "pid:" << data.pid;
+                qDebug() << "Inhibitor list detail: who:" << data.who
+                         << ", why:" << data.why
+                         << ", pid:" << data.pid;
             }
 
-            qDebug() << "End list inhibitor";
         } else {
-            qWarning() << "D-Bus request reply error:" << reply.error().message();
+            qWarning() << "DBus request reply error:" << reply.error().message();
         }
     } else {
-        qDebug() <<  "Login1 interface is invalid";
+        qWarning() <<  "Login1 interface is invalid";
     }
 
     return inhibitorList;
@@ -142,7 +139,7 @@ void WarningContent::doCancelShutdownInhibit()
     if (!m_canReturnMainPage)
         return;
 
-    qInfo() << "Cancel shut down inhibit";
+    qInfo() << "Cancel shutdown inhibit";
     m_model->setPowerAction(SessionBaseModel::PowerAction::None);
     FullScreenBackground::setContent(LockContent::instance());
     m_model->setCurrentContentType(SessionBaseModel::LockContent);
@@ -155,7 +152,7 @@ void WarningContent::doCancelShutdownInhibit()
 
 void WarningContent::doAcceptShutdownInhibit()
 {
-    qInfo() << "Accept shut down inhibit, power action: " << m_powerAction
+    qInfo() << "Accept shutdown inhibit, power action: " << m_powerAction
             << ", current mode: " << m_model->currentModeState();
     InhibitWarnView *view = qobject_cast<InhibitWarnView *>(sender());
     if (view && view->hasInhibit() && view->waitForAppPerparing()) {
@@ -193,12 +190,11 @@ void WarningContent::doAcceptShutdownInhibit()
 
 void WarningContent::beforeInvokeAction(bool needConfirm)
 {
-    qInfo() << Q_FUNC_INFO;
     const QList<InhibitWarnView::InhibitorData> inhibitors = listInhibitors(m_powerAction);
     const QList<std::shared_ptr<User>> &loginUsers = m_model->loginedUserList();
 
     if (m_warningView != nullptr) {
-        qInfo() << "delete warning view: " << m_warningView;
+        qInfo() << "Before invoke action, delete warning view: " << m_warningView;
         m_warningView->deleteLater();
         m_warningView = nullptr;
     }
@@ -267,7 +263,7 @@ void WarningContent::beforeInvokeAction(bool needConfirm)
         m_warningView = view;
         setCenterContent(m_warningView);
 
-        qInfo() << "Warning view: " << m_warningView;
+        qInfo() << "Before invoke action, warning view: " << m_warningView;
 
         connect(view, &InhibitWarnView::cancelled, this, &WarningContent::doCancelShutdownInhibit);
         connect(view, &InhibitWarnView::actionInvoked, this, &WarningContent::doAcceptShutdownInhibit);
@@ -356,7 +352,7 @@ void WarningContent::tryGrabKeyboard(bool exitIfFailed)
     if (m_model->isUseWayland()) {
         static QDBusInterface *kwinInter = new QDBusInterface("org.kde.KWin","/KWin","org.kde.KWin", QDBusConnection::sessionBus());
         if (!kwinInter || !kwinInter->isValid()) {
-            qWarning() << "kwinInter is invalid";
+            qWarning() << "Kwin interface is invalid";
             m_failures = 0;
             return;
         }
@@ -429,7 +425,7 @@ void WarningContent::keyPressEvent(QKeyEvent *event)
 
 void WarningContent::shutdownInhibit(const SessionBaseModel::PowerAction action, bool needConfirm)
 {
-    qInfo() << Q_FUNC_INFO << ", action: " << action;
+    qInfo() << "Shutdown inhibit, action: " << action;
     setPowerAction(action);
     //检查是否允许关机
     FullScreenBackground::setContent(WarningContent::instance());

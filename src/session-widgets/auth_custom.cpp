@@ -76,12 +76,11 @@ void AuthCustom::setCallback()
 
 void AuthCustom::initUi()
 {
-    qInfo() << Q_FUNC_INFO;
     if (!m_plugin)
         return;
 
     if (!m_plugin->content() || m_plugin->content()->parent() == nullptr) {
-        qInfo() << Q_FUNC_INFO << "m_module->init()";
+        qInfo() << "Init module";
         m_plugin->init();
         m_mainLayout->addWidget(m_plugin->content());
         setFocusProxy(m_plugin->content());
@@ -92,20 +91,17 @@ void AuthCustom::initUi()
 
 void AuthCustom::resetAuth()
 {
-    qInfo() << Q_FUNC_INFO;
     m_currentAuthData = LoginPlugin::AuthCallbackData();
 }
 
 void AuthCustom::reset()
 {
-    qInfo() << Q_FUNC_INFO;
     if (m_plugin)
         m_plugin->reset();
 }
 
 void AuthCustom::setAuthState(const AuthCommon::AuthState state, const QString &result)
 {
-    qInfo() << Q_FUNC_INFO << "AuthCustom::setAuthState:" << state << result;
     m_state = state;
     switch (state) {
     case AuthCommon::AS_Started:
@@ -132,7 +128,7 @@ void AuthCustom::setAuthData(const LoginPlugin::AuthCallbackData &callbackData)
 
     const QString &account = callbackData.account;
     if (!account.isEmpty()) {
-        qInfo() << Q_FUNC_INFO << "Request check account: " << account;
+        qInfo() << "Request check account: " << account;
         emit requestCheckAccount(account);
     } else {
         emit requestSendToken("");
@@ -141,7 +137,6 @@ void AuthCustom::setAuthData(const LoginPlugin::AuthCallbackData &callbackData)
 
 void AuthCustom::authCallback(const LoginPlugin::AuthCallbackData *callbackData, void *app_data)
 {
-    qInfo() << Q_FUNC_INFO << "AuthCustom::authCallback";
     AuthCustom *authCustom = getAuthCustomObj(app_data);
     if (callbackData && authCustom) {
         authCustom->setAuthData(*callbackData);
@@ -150,7 +145,6 @@ void AuthCustom::authCallback(const LoginPlugin::AuthCallbackData *callbackData,
 
 QString AuthCustom::messageCallback(const QString &message, void *app_data)
 {
-    qDebug() << Q_FUNC_INFO << "Received message: " << message;
     QJsonParseError jsonParseError;
     const QJsonDocument messageDoc = QJsonDocument::fromJson(message.toLatin1(), &jsonParseError);
 
@@ -161,7 +155,7 @@ QString AuthCustom::messageCallback(const QString &message, void *app_data)
     if (jsonParseError.error != QJsonParseError::NoError || messageDoc.isEmpty()) {
         retObj["Code"] = -1;
         retObj["Message"] = "Failed to analysis message info";
-        qWarning() << "Failed to analysis message info from plugin!: " << message;
+        qWarning() << "Failed to analysis message from plugin: " << message;
         return toJson(retObj);
     }
 
@@ -305,7 +299,6 @@ void AuthCustom::sendAuthToken()
 
 void AuthCustom::lightdmAuthStarted()
 {
-    qInfo() << Q_FUNC_INFO;
     if (!m_plugin)
         return;
 
@@ -320,12 +313,12 @@ void AuthCustom::lightdmAuthStarted()
     retDataObj["AuthObjectType"] = AuthObjectType::LightDM;
     message["Data"] = retDataObj;
     QString result = m_plugin->message(toJson(message));
-    qInfo() << "Plugin result: " << result;
+    qInfo() << "Plugin message: " << result;
 }
 
 void AuthCustom::notifyAuthState(AuthCommon::AuthFlags authType, AuthCommon::AuthState state)
 {
-    qInfo() << Q_FUNC_INFO << authType << ", auth state: " << state;
+    qInfo() << "Notify auth state, auth type: " << authType << ", auth state: " << state;
     if (!m_plugin)
         return;
 
@@ -366,7 +359,7 @@ QJsonObject AuthCustom::getRootObj(const QString &jsonStr)
     QJsonParseError jsonParseError;
     const QJsonDocument &resultDoc = QJsonDocument::fromJson(jsonStr.toLocal8Bit(), &jsonParseError);
     if (jsonParseError.error != QJsonParseError::NoError || resultDoc.isEmpty()) {
-        qWarning() << "Result json parse error";
+        qWarning() << "Result json parse error: " << jsonParseError.error;
         return QJsonObject();
     }
 

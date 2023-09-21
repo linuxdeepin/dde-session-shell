@@ -19,7 +19,6 @@ void DBusShutdownAgent::setModel(SessionBaseModel * const model)
 
 void DBusShutdownAgent::show()
 {
-    qInfo() << "DBusShutdownAgent::show";
     if (isUpdating() || !canShowShutDown())
         return;
 
@@ -29,7 +28,7 @@ void DBusShutdownAgent::show()
 
 void DBusShutdownAgent::Shutdown()
 {
-    qInfo() << "DBusShutdownAgent::Shutdown";
+    qInfo() << "Shutdown";
     if (isUpdating())
         return;
 
@@ -45,7 +44,7 @@ void DBusShutdownAgent::Shutdown()
 
 void DBusShutdownAgent::UpdateAndShutdown()
 {
-    qInfo() << "DBusShutdownAgent::UpdateAndShutdown";
+    qInfo() << "Update and shutdown";
     if (isUpdating())
         return;
 
@@ -56,7 +55,7 @@ void DBusShutdownAgent::UpdateAndShutdown()
 
 void DBusShutdownAgent::Restart()
 {
-    qInfo() << "DBusShutdownAgent::Restart";
+    qInfo() << "Restart";
     if (isUpdating())
         return;
 
@@ -72,7 +71,7 @@ void DBusShutdownAgent::Restart()
 
 void DBusShutdownAgent::UpdateAndReboot()
 {
-    qInfo() << "DBusShutdownAgent::UpdateAndReboot";
+    qInfo() << "Update and reboot";
     if (isUpdating())
         return;
 
@@ -83,7 +82,7 @@ void DBusShutdownAgent::UpdateAndReboot()
 
 void DBusShutdownAgent::Logout()
 {
-    qInfo() << "DBusShutdownAgent::Logout";
+    qInfo() << "Logout";
     if (isUpdating() || !canShowShutDown())
         return;
 
@@ -94,7 +93,7 @@ void DBusShutdownAgent::Logout()
 
 void DBusShutdownAgent::Suspend()
 {
-    qInfo() << "DBusShutdownAgent::Suspend";
+    qInfo() << "Suspend";
     if (isUpdating())
         return;
 
@@ -110,7 +109,7 @@ void DBusShutdownAgent::Suspend()
 
 void DBusShutdownAgent::Hibernate()
 {
-    qInfo() << "DBusShutdownAgent::Hibernate";
+    qInfo() << "Hibernate";
     if (isUpdating())
         return;
 
@@ -126,7 +125,7 @@ void DBusShutdownAgent::Hibernate()
 
 void DBusShutdownAgent::SwitchUser()
 {
-    qInfo() << "DBusShutdownAgent::SwitchUser";
+    qInfo() << "Switch user";
     if (isUpdating() || !canShowShutDown())
         return;
 
@@ -135,7 +134,7 @@ void DBusShutdownAgent::SwitchUser()
 
 void DBusShutdownAgent::Lock()
 {
-    qInfo() << "DBusShutdownAgent::Lock";
+    qInfo() << "Lock";
     if (isUpdating() || !canShowShutDown())
         return;
 
@@ -147,7 +146,7 @@ void DBusShutdownAgent::Lock()
 bool DBusShutdownAgent::canShowShutDown() const
 {
     // 如果当前界面已显示，而且不是关机模式，则当前已锁屏，因此不允许调用,以免在锁屏时被远程调用而进入桌面
-    qInfo() << Q_FUNC_INFO << " visible: " << m_model->visible() << ", mode: " << m_model->currentModeState();
+    qInfo() << "Can show shutdown, visible: " << m_model->visible() << ", mode: " << m_model->currentModeState();
 
     return !(m_model->visible() && m_model->currentModeState() != SessionBaseModel::ModeStatus::ShutDownMode);
 }
@@ -157,6 +156,6 @@ bool DBusShutdownAgent::canShowShutDown() const
  */
 bool DBusShutdownAgent::isUpdating() const
 {
-    qInfo() << "DBusShutdownAgent::isUpdating, current content type: " << m_model->currentContentType();
+    qInfo() << "DBus shutdown agent is updating, current content type: " << m_model->currentContentType();
     return m_model->currentContentType() == SessionBaseModel::UpdateContent;
 }

@@ -65,7 +65,6 @@ void MFAWidget::setModel(const SessionBaseModel *model)
 
 void MFAWidget::setAuthType(const AuthFlags type)
 {
-    qDebug() << "MFAWidget::setAuthType:" << type;
     m_index = 0;
     /* 面容 */
     if (type & AT_Face) {
@@ -165,7 +164,6 @@ void MFAWidget::setAuthType(const AuthFlags type)
  */
 void MFAWidget::setAuthState(const AuthCommon::AuthType type, const AuthCommon::AuthState state, const QString &message)
 {
-    qDebug() << "MFAWidget::setAuthState:" << type << state << message;
     switch (type) {
     case AT_Password:
         if (m_passwordAuth) {

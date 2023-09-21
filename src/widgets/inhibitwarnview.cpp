@@ -158,7 +158,7 @@ QString InhibitWarnView::iconString()
 bool InhibitWarnView::focusNextPrevChild(bool next)
 {
     if (!next) {
-        qWarning() << "focus handling error, nextPrevChild is False";
+        qWarning() << "Focus handling error, next prevent child is false";
         return WarningView::focusNextPrevChild(next);
     }
 

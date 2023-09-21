@@ -147,7 +147,7 @@ void AuthSingle::reset()
  */
 void AuthSingle::setAuthState(const AuthCommon::AuthState state, const QString &result)
 {
-    qDebug() << "AuthSingle::setAuthResult:" << state << result;
+    qDebug() << "Set auth state, state: " << state << ", result: " << result;
     m_state = state;
     switch (state) {
     case AS_Success:
@@ -216,7 +216,7 @@ void AuthSingle::setAuthState(const AuthCommon::AuthState state, const QString &
     default:
         setAnimationState(false);
         setLineEditInfo(result, AlertText);
-        qWarning() << "Error! The state of Password Auth is wrong!" << state << result;
+        qWarning() << "The state of password auth is wrong, state:" << state << ", result: " << result;
         break;
     }
     update();
@@ -250,7 +250,7 @@ void AuthSingle::setAnimationState(const bool start)
  */
 void AuthSingle::setLimitsInfo(const LimitsInfo &info)
 {
-    qDebug() << "AuthSingle::setLimitsInfo" << info.numFailures;
+    qDebug() << "Set limits info: " << info.numFailures;
     const bool lockStateChanged = (info.locked != m_limitsInfo->locked);
     AuthModule::setLimitsInfo(info);
     setPasswordHintBtnVisible(info.numFailures > 0 && !m_passwordHint.isEmpty());
@@ -258,7 +258,7 @@ void AuthSingle::setLimitsInfo(const LimitsInfo &info)
         bool isShow = lockStateChanged && this->isVisible() && QFile::exists(DEEPIN_DEEPINID_DAEMON_PATH) &&
                 QFile::exists(ResetPassword_Exe_Path) && m_currentUid <= 9999 && !IsCommunitySystem;
         if (isShow) {
-            qDebug() << "begin reset passoword";
+            qDebug() << "Begin reset passoword";
             setResetPasswordMessageVisible(true);
             updateResetPasswordUI();
         }
@@ -400,7 +400,7 @@ QString AuthSingle::lineEditText() const
  */
 void AuthSingle::updateUnlockPrompt()
 {
-    qDebug() << "AuthSingle::updateUnlockPrompt:" << m_integerMinutes;
+    qDebug() << "Update unlock prompt, integer minutes: " << m_integerMinutes;
     if (m_integerMinutes == 1) {
         m_lineEdit->setPlaceholderText(tr("Please try again 1 minute later"));
     } else if (m_integerMinutes > 1) {
@@ -480,7 +480,7 @@ void AuthSingle::showResetPasswordMessage()
         com::deepin::daemon::accounts::User user(AccountsService, path, QDBusConnection::systemBus());
         auto reply = user.SetPassword("");
         reply.waitForFinished();
-        qWarning() << "reply setpassword:" << reply.error().message();
+        qWarning() << "Show reset password message: " << reply.error().message();
 
         emit m_resetPasswordFloatingMessage->closeButtonClicked();
     });
@@ -523,7 +523,7 @@ bool AuthSingle::isUserAccountBinded()
     if (retUOSID.isValid()) {
         uosid = retUOSID.value();
     } else {
-        qWarning() << retUOSID.error().message();
+        qWarning() << "UOS ID is invalid, error: " << retUOSID.error().message();
         return false;
     }
 
@@ -548,8 +548,7 @@ bool AuthSingle::isUserAccountBinded()
             m_bindCheckTimer->stop();
         }
     } else {
-        qWarning() << "UOSID:" << uosid << "uuid:" << uuid;
-        qWarning() << retLocalBindCheck.error().message();
+        qWarning() << "Local bind check is invalid, UOSID:" << uosid << ", uuid:" << uuid << ", error: " << retLocalBindCheck.error().message();
         if (retLocalBindCheck.error().message().contains("network error")) {
             if (m_bindCheckTimer == nullptr) {
                 m_bindCheckTimer = new QTimer(this);

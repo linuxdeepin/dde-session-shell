@@ -17,7 +17,6 @@ void DBusLockAgent::setModel(SessionBaseModel *const model)
 
 void DBusLockAgent::Show()
 {
-    qInfo() << "DBusLockAgent::Show";
     if (isUpdating())
         return;
 
@@ -33,7 +32,6 @@ bool DBusLockAgent::Visible() const
 
 void DBusLockAgent::ShowAuth(bool active)
 {
-    qInfo() << "DBusLockAgent::ShowAuth";
     if (isUpdating())
         return;
 
@@ -44,7 +42,7 @@ void DBusLockAgent::ShowAuth(bool active)
 // 待机，enable=true：进入待机；enable=false：待机恢复
 void DBusLockAgent::Suspend(bool enable)
 {
-    qInfo() << "DBusLockAgent::Suspend";
+    qInfo() << (enable ? "Enter suspend" : "Suspend recovery");
     if (isUpdating())
         return;
 
@@ -68,7 +66,7 @@ void DBusLockAgent::Suspend(bool enable)
 
 void DBusLockAgent::Hibernate(bool enable)
 {
-    qInfo() << "DBusLockAgent::Hibernate";
+    qInfo() << (enable ? "Enter hibernate" : "Hibernate recovery");
     if (isUpdating())
         return;
 
@@ -78,7 +76,6 @@ void DBusLockAgent::Hibernate(bool enable)
 
 void DBusLockAgent::ShowUserList()
 {
-    qInfo() << "DBusLockAgent::ShowUserList";
     if (isUpdating())
         return;
 
@@ -91,7 +88,5 @@ void DBusLockAgent::ShowUserList()
 bool DBusLockAgent::isUpdating() const
 {
     const bool updating = m_model->currentContentType() == SessionBaseModel::UpdateContent;
-    qInfo() << "Is updating: " << updating;
-
     return updating;
 }

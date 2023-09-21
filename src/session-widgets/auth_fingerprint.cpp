@@ -141,7 +141,7 @@ void AuthFingerprint::setAuthState(const AuthCommon::AuthState state, const QStr
         setAnimationState(false);
         setAuthStateStyle(isMFA() ? LOGIN_WAIT : AUTH_LOCK);
         m_textLabel->setText(result);
-        qWarning() << "Error! The state of Fingerprint Auth is wrong!" << state << result;
+        qWarning() << "The state of Fingerprint Auth is wrong, state: " << state << ", result: " << result;
         break;
     }
     update();

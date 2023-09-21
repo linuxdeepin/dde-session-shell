@@ -148,7 +148,7 @@ void AuthIris::setAuthState(const AuthCommon::AuthState state, const QString &re
         setAnimationState(false);
         setAuthStateStyle(isMFA() ? LOGIN_WAIT : AUTH_LOCK);
         m_textLabel->setText(result);
-        qWarning() << "Error! The state of Iris Auth is wrong!" << state << result;
+        qWarning() << "The state of iris auth is wrong, state: " << state << ", result: " << result;
         break;
     }
     update();

@@ -69,13 +69,13 @@ void MediaWidget::initMediaPlayer()
                 return;
             }
 
-            qDebug() << "Got media player dbus service:" << service;
+            qDebug() << "Got media player DBus service:" << service;
             m_dbusInter = new DBusMediaPlayer2(service, "/org/mpris/MediaPlayer2", QDBusConnection::sessionBus(), this);
             m_dbusInter->MetadataChanged();
             m_dbusInter->PlaybackStatusChanged();
             m_dbusInter->VolumeChanged();
         } else {
-            qWarning() << "init media player error: " << call.error().message();
+            qWarning() << "Init media player error: " << call.error().message();
         }
 
         watcher->deleteLater();

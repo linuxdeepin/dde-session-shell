@@ -100,13 +100,13 @@ QByteArray EncryptHelper::SM2EncryptSymmetricalKey()
     size_t csize = 0;
     size_t psize = m_symmetricKey.length();
     if (1 != sm2_ciphertext_size(m_ecKey, EVP_sm3(), psize, &csize)) {
-        qCritical() << "Can't get sm2 ciphertext size";
+        qCritical() << "ERROR: Can't get sm2 ciphertext size";
         return "";
     }
 
     uint8_t *cipherText = new uint8_t[csize];
     if (1 != sm2_encrypt(m_ecKey, EVP_sm3(), (uint8_t *)m_symmetricKey.toStdString().c_str(), psize, cipherText, &csize)) {
-        qCritical() << "Can't encrypt sm2 cipher";
+        qCritical() << "ERROR:Can't encrypt sm2 cipher";
 	    delete[] cipherText;
 	    return "";
     }

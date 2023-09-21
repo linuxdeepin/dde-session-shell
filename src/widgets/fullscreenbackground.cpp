@@ -207,7 +207,7 @@ void FullScreenBackground::setScreen(QPointer<QScreen> screen, bool isVisible)
         return;
     }
 
-    qInfo() << "Screen:" << screen
+    qInfo() << "Set screen:" << screen
             << ", screen geometry:" << screen->geometry()
             << ", full screen background object:" << this;
     if (isVisible) {
@@ -343,7 +343,6 @@ void FullScreenBackground::tryActiveWindow(int count/* = 9*/)
 
 void FullScreenBackground::enterEvent(QEvent *event)
 {
-    qInfo() << Q_FUNC_INFO << this << ", m_enableEnterEvent: " << m_enableEnterEvent;
     if (m_enableEnterEvent && m_model->visible()) {
         updateCurrentFrame(this);
         // 多屏情况下，此Frame晚于其它Frame显示出来时，可能处于未激活状态（特别是在wayland环境下比较明显）
@@ -413,7 +412,7 @@ void FullScreenBackground::keyPressEvent(QKeyEvent *e)
 
 void FullScreenBackground::showEvent(QShowEvent *event)
 {
-    qInfo() << "Frame is already displayed:" << this;
+    qDebug() << "Frame is already displayed:" << this;
     if (m_model->isUseWayland()) {
         // fix bug 155019 此处是针对wayland下屏保退出，因qt没有发送enterEvent事件，进而导致密码框没有显示的规避方案
         // 如果鼠标的位置在当前屏幕内且锁屏状态为显示，将密码框显示出来
@@ -446,7 +445,7 @@ void FullScreenBackground::showEvent(QShowEvent *event)
 
 void FullScreenBackground::hideEvent(QHideEvent *event)
 {
-    qInfo() << "Frame is hidden:" << this;
+    qDebug() << "Frame is hidden:" << this;
     if (m_model->isUseWayland()) {
         Q_EMIT requestDisableGlobalShortcutsForWayland(false);
     }
@@ -477,7 +476,7 @@ void FullScreenBackground::updateGeometry()
         return;
     }
 
-    qInfo() << "set background m_screen:" << m_screen << " geometry:" << m_screen->geometry();
+    qInfo() << "Set background screen:" << m_screen << ", geometry:" << m_screen->geometry();
 
     // for bug:184943.系统修改分辨率后，登录界面获取的屏幕分辨率不正确,通过xrandr获取屏幕分辨率
     if (m_model->appType() == AuthCommon::Login && !m_model->isUseWayland()) {
@@ -492,7 +491,7 @@ void FullScreenBackground::updateGeometry()
                 setGeometry(m_screen->geometry());
             } else {
                 setGeometry(screensGeometry[m_screen->name()]);
-                qInfo() << "set geometry by xrandr - this:" << this << screensGeometry[m_screen->name()]
+                qDebug() << "Set geometry by xrandr, this:" << this << screensGeometry[m_screen->name()]
                         << " screen:" << m_screen->name() << "screen geometry:" << m_screen->geometry();
             }
         } else {
@@ -505,7 +504,7 @@ void FullScreenBackground::updateGeometry()
     if (!m_screen.isNull()) {
         setGeometry(m_screen->geometry());
 
-        qInfo() << "Screen:" << m_screen
+        qInfo() << "Update geometry, screen:" << m_screen
                 << ", screen geometry:" << m_screen->geometry()
                 << ", lockFrame:" << this
                 << ", frame geometry:" << this->geometry();
@@ -582,7 +581,7 @@ void FullScreenBackground::updatePixmap()
         QStringList cacheMapKeys = cacheMap.keys();
         for (auto &key : cacheMapKeys) {
             if (!frameSizeList.contains(key)) {
-                qInfo() << "remove not used pixmap:" << key;
+                qInfo() << "Remove not used pixmap:" << key;
                 cacheMap.remove(key);
             }
         }
@@ -628,7 +627,6 @@ void FullScreenBackground::moveEvent(QMoveEvent *event)
             }
         }
     }
-    qInfo() << "FullscreenBackground::moveEvent:this " << this << ", old pos: " << event->oldPos() << ", pos: " << event->pos();
     QWidget::moveEvent(event);
 }
 
@@ -639,7 +637,7 @@ QMap<QString, QRect> FullScreenBackground::getScreenGeometryByXrandr()
     // 获取缩放比例
     double scale = getScaleFactorFromDisplay();
     double scaleFromDisplayQt = qApp->devicePixelRatio();
-    qInfo() << "getScaleFactorFromDisplay scale:" << scale << " scaleFromDisplayQt:" << scaleFromDisplayQt;
+    qInfo() << "Get scale factor from display scale:" << scale << " scale from display qt:" << scaleFromDisplayQt;
     // 如果获取失败或者与从Qt获取的不一致，则不需要处理，使用Qt的屏幕信息
     if (scale <= 0 || scaleFromDisplayQt != scale) {
         return screensGeometry;
@@ -667,7 +665,7 @@ QMap<QString, QRect> FullScreenBackground::getScreenGeometryByXrandr()
             int y = match.captured(5).toInt();
             QRect rect(x, y, width / scale, height / scale);
             screensGeometry.insert(name, rect);
-            qInfo() << "Screen Name:" << name << "Screen Rect:" << rect;
+            qInfo() << "Screen name:" << name << ", screen rect:" << rect;
         }
     }
 
@@ -684,7 +682,7 @@ double FullScreenBackground::getScaleFactorFromDisplay()
     QDBusReply<QString> reply = display.call("GetConfig");
     QString jsonObjStr = reply.value();
     if (jsonObjStr.isNull()) {
-        qWarning() << "greeter get system display config failed(GetConfig's content is null)!";
+        qWarning() << "Greeter get system display config failed (`GetConfig` null)";
         return -1.0;
     }
 
@@ -697,19 +695,19 @@ double FullScreenBackground::getScaleFactorFromDisplay()
         return scaleFactors.value(key).toDouble();
     }
 
-    qWarning() << "greeter get system display config failed(scaleFactors is null)!";
+    qWarning() << "greeter get system display config failed(`scaleFactors` null)";
     return -1.0;
 }
 
 
 void FullScreenBackground::updateCurrentFrame(FullScreenBackground *frame) {
     if (!frame) {
-        qWarning() << "Frame is nullptr";
+        qWarning() << "Update current frame failed, frame is null";
         return;
     }
 
     if (frame->m_screen)
-        qInfo() << "Frame:" << frame << ", screen:" << frame->m_screen->name();
+        qInfo() << "Update current frame:" << frame << ", screen:" << frame->m_screen->name();
 
     currentFrame = frame;
     setContent(currentContent);

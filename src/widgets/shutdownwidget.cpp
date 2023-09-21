@@ -423,7 +423,6 @@ void ShutdownWidget::rightKeySwitch()
 
 void ShutdownWidget::onStatusChanged(SessionBaseModel::ModeStatus status)
 {
-    qInfo() << Q_FUNC_INFO << status;
     RoundItemButton *roundItemButton;
     if (m_modeStatus == status) {
         qInfo() << "Shutdown widget status not being changed";

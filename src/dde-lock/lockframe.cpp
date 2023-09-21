@@ -160,15 +160,16 @@ void LockFrame::resizeEvent(QResizeEvent *event)
 
 bool LockFrame::handlePoweroffKey()
 {
+    qInfo() << "Handle poweroff key";
     // 升级的时候，不响应电源按钮
     if (m_model->currentContentType() == SessionBaseModel::UpdateContent) {
-        qInfo() << "Updating, do not handle power off key";
+        qInfo() << "Is updating, do not handle power off key";
         return false;
     }
 
     QDBusInterface powerInter("com.deepin.daemon.Power","/com/deepin/daemon/Power","com.deepin.daemon.Power");
     if (!powerInter.isValid()) {
-        qDebug() << "powerInter is not valid";
+        qWarning() << "Poweroff interface is not valid";
         return false;
     }
     bool isBattery = powerInter.property("OnBattery").toBool();
@@ -178,7 +179,7 @@ bool LockFrame::handlePoweroffKey()
     } else {
         action = powerInter.property("LinePowerPressPowerBtnAction").toInt();
     }
-    qDebug() << "battery is: " << isBattery << "," << action;
+    qDebug() << "Whether on battery: " << isBattery << ", press poweroff button action: " << action;
     // 需要特殊处理：关机(0)和无任何操作(4)
     if (action == 0) {
         // 待机刚唤醒一段时间内不响应电源按键事件

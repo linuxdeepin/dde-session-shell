@@ -150,7 +150,7 @@ int SessionWidget::sessionCount() const
 
 void SessionWidget::switchToUser(const QString &userName)
 {
-    qDebug() << "switch to user" << userName;
+    qDebug() << "Switch to user" << userName;
     if (m_currentUser != userName)
         m_currentUser = userName;
 
@@ -163,7 +163,7 @@ void SessionWidget::switchToUser(const QString &userName)
 
     m_model->setSessionKey(currentSessionKey());
 
-    qDebug() << userName << "default session is: " << sessionName << m_currentSessionIndex;
+    qDebug() << "User name: " << userName << ", default session: " << sessionName << ", current session index: " << m_currentSessionIndex;
 }
 
 void SessionWidget::keyPressEvent(QKeyEvent *event)
@@ -293,7 +293,7 @@ void SessionWidget::loadSessionList()
         const QString hoverIcon = QString(":/img/sessions_icon/%1_hover.svg").arg(session_icon);
         const QString pressIcon = QString(":/img/sessions_icon/%1_press.svg").arg(session_icon);
 
-        qDebug() << "found session: " << session_name << session_icon;
+        qDebug() << "Load session list, found session, session name: " << session_name << "session icon: " << session_icon;
         RoundItemButton *sbtn = nullptr;
         if (session_name == "deepin") {
             sbtn = new RoundItemButton("X11", this);

@@ -189,7 +189,6 @@ void UserAvatar::setBorderColor(const QColor &borderColor)
 
 //}
 //void UserAvatar::showUserAvatar() {
-//    qDebug() << "UserAvatar" << "showButton";
 //    showButton();
 //}
 

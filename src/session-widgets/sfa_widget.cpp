@@ -238,7 +238,7 @@ AuthFlags SFAWidget::initAuthFactors(const AuthFlags authFactors)
  */
 void SFAWidget::setAuthState(const AuthType type, const AuthState state, const QString &message)
 {
-    qInfo() << "Auth type:" << type
+    qInfo() << "Set auth state, auth type:" << type
             << ", state:" << state
             << ", message:" << message;
     switch (type) {
@@ -698,7 +698,7 @@ void SFAWidget::initIrisAuth()
 
 void SFAWidget::initCustomMFAAuth()
 {
-    qDebug() << Q_FUNC_INFO << "init custom auth";
+    qDebug() << "Init custom auth";
 
     m_chooseAuthButtonBox->hide();
     if (m_passwordAuth) {
@@ -737,7 +737,7 @@ void SFAWidget::initCustomMFAAuth()
 
     connect(m_customAuth, &AuthCustom::requestSendToken, this, [this] (const QString &token) {
         m_lockButton->setEnabled(false);
-        qInfo() << "sfa custom sendToken name :" <<  m_user->name() << "token:" << token;
+        qInfo() << "SFA custom send token name :" <<  m_user->name() << ", token:" << token;
         Q_EMIT sendTokenToAuth(m_user->name(), AT_Custom, token);
     });
     connect(m_customAuth, &AuthCustom::authFinished, this, [ this ] (const int authStatus) {
@@ -830,7 +830,7 @@ void SFAWidget::initCustomAuth()
     m_authButtons.insert(AT_Custom, btn);
     connect(btn, &ButtonBoxButton::toggled, this, [this](const bool checked) {
         if (checked) {
-            qDebug() << Q_FUNC_INFO << "Custom auth is checked";
+            qDebug() << "Custom auth is checked";
             m_biometricAuthState->hide();
             setBioAuthStateVisible(nullptr, false);
             m_accountEdit->hide();
@@ -1092,10 +1092,9 @@ void SFAWidget::initAccount()
 
 void SFAWidget::onRequestChangeAuth(const AuthType authType)
 {
-    qInfo() << Q_FUNC_INFO
-            << ", authType" << authType
-            << ", chooseAuthButtonBox is enabled" << m_chooseAuthButtonBox->isEnabled()
-            << ", current authentication type" << m_currentAuthType;
+    qInfo() << "Request change auth, auth type: " << authType
+            << ", choose auth button box is enabled: " << m_chooseAuthButtonBox->isEnabled()
+            << ", current authentication type: " << m_currentAuthType;
 
     if (authType != AuthCommon::AT_Password && !m_chooseAuthButtonBox->isEnabled()) {
         qWarning() << "Authentication button box is disabled and authentication type is not password.";

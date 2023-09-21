@@ -78,6 +78,7 @@ void KeyboardPlatformWayland::run()
 
 void KeyboardPlatformWayland::setupRegistry(Registry *registry)
 {
+    qInfo() << "Set up registry: " << registry;
     connect(registry, &Registry::ddeSeatAnnounced, this, [this, registry](quint32 name, quint32 version) {
         m_ddeSeat = registry->createDDESeat(name, version, this);
         if (m_ddeSeat) {

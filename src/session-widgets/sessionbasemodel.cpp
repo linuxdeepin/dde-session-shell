@@ -336,7 +336,7 @@ std::shared_ptr<User> SessionBaseModel::json2User(const QString &userJson)
     QJsonParseError jsonParseError;
     const QJsonDocument userDoc = QJsonDocument::fromJson(userJson.toUtf8(), &jsonParseError);
     if (jsonParseError.error != QJsonParseError::NoError || userDoc.isEmpty()) {
-        qWarning("failed to obtain current user information from LockService!");
+        qWarning("Failed to obtain current user information from lock service!");
         return user_ptr;
     }
 
@@ -435,7 +435,7 @@ void SessionBaseModel::updateLoginedUserList(const QString &list)
     QJsonParseError jsonParseError;
     const QJsonDocument loginedUserListDoc = QJsonDocument::fromJson(list.toUtf8(), &jsonParseError);
     if (jsonParseError.error != QJsonParseError::NoError) {
-        qWarning("The logined user list is wrong!");
+        qWarning() << "The logined user list is wrong!";
         return;
     }
     const QJsonObject loginedUserListDocObj = loginedUserListDoc.object();
@@ -542,7 +542,6 @@ void SessionBaseModel::updateFuzzyMFA(const bool fuzzMFA)
  */
 void SessionBaseModel::updateMFAFlag(const bool MFAFlag)
 {
-    qInfo() << "MFA flag:" << MFAFlag;
     if (MFAFlag == m_authProperty.MFAFlag)
         return;
 
@@ -637,7 +636,6 @@ void SessionBaseModel::setLightdmPamStarted(bool lightdmPamStarted)
 
 void SessionBaseModel::setTerminalLocked(bool locked)
 {
-    qInfo() << "SessionBaseModel set terminal locked: " << locked;
     if (locked == m_isTerminalLocked)
         return;
 

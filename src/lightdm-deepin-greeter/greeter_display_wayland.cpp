@@ -59,7 +59,7 @@ GreeterDisplayWayland::GreeterDisplayWayland(QObject *parent)
                     QJsonObject Config = rootObj.value("Config").toObject();
                     m_screensObj = Config.value("Screens").toObject();
                     m_displayMode = Config.value("DisplayMode").toInt();
-                    qDebug() << "Getting displayMode:" << m_displayMode;
+                    qDebug() << "Getting display mode:" << m_displayMode;
                 }
         } else {
             qDebug() << "Failed to get display config:" << configReply.error().message();
@@ -97,12 +97,12 @@ void GreeterDisplayWayland::start()
 void GreeterDisplayWayland::setupRegistry(Registry *registry)
 {
     connect(registry, &Registry::outputManagementAnnounced, this, [ this, registry ](quint32 name, quint32 version) {
-        qDebug() << "Output mangement announced";
+        qDebug() << "Output mangement announced, name: " << name << ", version: " << version;
 
         if (!m_pManager) {
             m_pManager = registry->createOutputManagement(name, version, this);
             if (!m_pManager || !m_pManager->isValid()) {
-                qWarning() << "Creating output mangement failed!";
+                qWarning() << "Creating output mangement failed, output manager is null or invalid";
                 return;
             }
             if (!m_pConf) {
@@ -126,12 +126,12 @@ void GreeterDisplayWayland::setupRegistry(Registry *registry)
     });
 
     connect(registry, &Registry::outputDeviceAnnounced, this, [ this, registry ](quint32 name, quint32 version) {
-        qDebug() << "Output device announced";
+        qDebug() << "Output device announced, name: " << name << ", version: " << version;
 
         auto dev = registry->createOutputDevice(name, version);
         if (!dev || !dev->isValid())
         {
-            qWarning() << "Creating output device failed!";
+            qWarning() << "Creating output device failed, device is null or invalid";
             return;
         }
 
@@ -166,11 +166,16 @@ void GreeterDisplayWayland::setupRegistry(Registry *registry)
 
 void GreeterDisplayWayland::onDeviceChanged(OutputDevice *dev)
 {
-    qDebug() << "Output device changed:" << dev->model() << dev->uuid() << dev->globalPosition() << dev->geometry() << dev->refreshRate() << dev->pixelSize();
+    qDebug() << "Output device changed, device model: " << dev->model()
+             << ", device uuid: " << dev->uuid()
+             << ", device global position: " << dev->globalPosition()
+             << ", device geometry: " << dev->geometry()
+             << ", device refresh rate: " << dev->refreshRate()
+             << ", device pixel size: " << dev->pixelSize();
     QString uuid = dev->uuid();
     QPoint point = dev->globalPosition();
     if (MonitorConfigsForUuid_v1.find(uuid) == MonitorConfigsForUuid_v1.end()) {
-        qInfo() << "Adding output device:" << uuid;
+        qInfo() << "Adding output device, uuid:" << uuid;
         QString name = getOutputDeviceName(dev->model(), dev->manufacturer());
         QString stdName = getStdMonitorName(QByteArray(dev->edid(), dev->edid().size()));
         MonitorConfig cfg;
@@ -182,7 +187,7 @@ void GreeterDisplayWayland::onDeviceChanged(OutputDevice *dev)
             m_setOutputTimer->start();
         }
         if (dev->uuid() == m_removeUuid) {
-            qDebug() << "Reset the removed uuid";
+            qDebug() << "Reset the removed uuid: " << dev->uuid();
             m_removeUuid = "";
         }
     } else {

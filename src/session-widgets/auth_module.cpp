@@ -130,7 +130,7 @@ void AuthModule::setAuthStatueVisible(bool visible)
  */
 void AuthModule::updateUnlockPrompt()
 {
-    qInfo() << m_type << "has" << m_integerMinutes << "minutes left to unlock.";
+    qInfo() << "Update unlock prompt, type: " << m_type << ", which has " << m_integerMinutes << " minutes left to unlock.";
 }
 
 /**
