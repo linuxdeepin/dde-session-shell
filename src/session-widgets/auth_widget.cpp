@@ -78,8 +78,7 @@ void AuthWidget::initUI()
     m_accountEdit->setPlaceholderText(tr("Account"));
     m_accountEdit->lineEdit()->setValidator(new QRegExpValidator(QRegExp("[a-zA-Z0-9-_@]+$"), this));
     // 用户名
-    bool isDomainUser = m_user->uid() > 10000; // uid大于10000为域账户
-    m_userNameWidget = new UserNameWidget(false, true, isDomainUser, this);
+    m_userNameWidget = new UserNameWidget(false, true, this);
     /* 密码过期提示 */
     m_expiredStateLabel->setAccessibleName("ExpiredStateLabel");
     m_expiredStateLabel->setWordWrap(true);
@@ -303,6 +302,9 @@ void AuthWidget::updateUserDisplayNameLabel()
 {
     m_userNameWidget->updateFullName(m_user->fullName());
     m_userNameWidget->updateUserName(m_user->name());
+
+    bool isDomainUser = m_user->uid() > 10000 && m_user->isUserValid(); // uid大于10000为域账户
+    m_userNameWidget->setDomainUserVisible(isDomainUser);
 }
 
 /**

@@ -20,14 +20,14 @@ DWIDGET_USE_NAMESPACE
 DCORE_USE_NAMESPACE
 using namespace DDESESSIONCC;
 
-UserNameWidget::UserNameWidget(bool respondFontSizeChange, bool showDisplayName, bool showDomainUser, QWidget *parent)
+UserNameWidget::UserNameWidget(bool respondFontSizeChange, bool showDisplayName, QWidget *parent)
     : QWidget(parent)
     , m_userPicLabel(nullptr)
     , m_fullNameLabel(nullptr)
     , m_displayNameLabel(nullptr)
+    , m_domainUserLabel(nullptr)
     , m_showUserName(false)
     , m_showDisplayName(showDisplayName)
-    , m_showDomainUser(showDomainUser)
     , m_respondFontSizeChange(respondFontSizeChange)
 {
     initialize();
@@ -66,13 +66,13 @@ void UserNameWidget::initialize()
     displayNameHLayout->setMargin(0);
     displayNameHLayout->setSpacing(0);
     QPixmap isDomainUserpixmap = QIcon::fromTheme(":/misc/images/domainUser.svg").pixmap(24, 24);
-    DLabel *domainUserLabel = new DLabel(this);
-    domainUserLabel->setPixmap(isDomainUserpixmap);
-    domainUserLabel->setAlignment(Qt::AlignVCenter);
-    domainUserLabel->setContentsMargins(10, 5, 10, 0);
-    domainUserLabel->setVisible(m_showDomainUser);
-    displayNameHLayout->addStretch(m_showDomainUser ? 3 : 0);
-    displayNameHLayout->addWidget(domainUserLabel);
+    m_domainUserLabel = new DLabel(this);
+    m_domainUserLabel->setPixmap(isDomainUserpixmap);
+    m_domainUserLabel->setAlignment(Qt::AlignVCenter);
+    m_domainUserLabel->setContentsMargins(0, 5, 10, 0);
+    m_domainUserLabel->setVisible(false);
+    displayNameHLayout->addStretch();
+    displayNameHLayout->addWidget(m_domainUserLabel);
 
     if (m_showDisplayName) {
         m_displayNameLabel = new DLabel(this);
@@ -87,10 +87,8 @@ void UserNameWidget::initialize()
         displayNameHLayout->addWidget(m_displayNameLabel);
     }
 
-    displayNameHLayout->addStretch(m_showDomainUser ? 5 : 0);
-    QWidget *displayNameWidget = new QWidget(this);
-    displayNameWidget->setLayout(displayNameHLayout);
-    vLayout->addWidget(displayNameWidget);
+    displayNameHLayout->addStretch();
+    vLayout->addLayout(displayNameHLayout);
 
     vLayout->addLayout(displayNameHLayout);
     vLayout->addLayout(hLayout);
@@ -141,6 +139,11 @@ void UserNameWidget::updateFullName(const QString &fullName)
     m_fullNameStr = fullName;
     updateUserNameWidget();
     updateDisplayNameWidget();
+}
+
+void UserNameWidget::setDomainUserVisible(const bool visible)
+{
+    m_domainUserLabel->setVisible(visible);
 }
 
 /**

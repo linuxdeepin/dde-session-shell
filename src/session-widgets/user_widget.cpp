@@ -50,8 +50,8 @@ void UserWidget::initUI()
     QHBoxLayout *nameLayout = new QHBoxLayout(m_displayNameWidget);
     nameLayout->setMargin(0);
 
-    bool isDomainUser = m_user->uid() > 10000; // uid大于10000为域账户
-    nameLayout->addStretch(0);
+    bool isDomainUser = m_user->uid() > 10000 && m_user->isUserValid(); // uid大于10000为域账户
+    nameLayout->addStretch();
 
     QPixmap pixmap = DHiDPIHelper::loadNxPixmap(":/misc/images/select.svg");
     pixmap.setDevicePixelRatio(devicePixelRatioF());
@@ -88,11 +88,11 @@ void UserWidget::initUI()
     palette.setColor(QPalette::WindowText, Qt::white);
     m_displayNameLabel->setPalette(palette);
     nameLayout->addWidget(m_displayNameLabel);
-    nameLayout->addStretch(0);
+    nameLayout->addStretch();
 
     // 用户名，根据配置决定是否构造对象
     if (DConfigHelper::instance()->getConfig(SHOW_USER_NAME, false).toBool()) {
-        m_userNameWidget = new UserNameWidget(true, false, isDomainUser, this);
+        m_userNameWidget = new UserNameWidget(true, false, this);
         m_userNameWidget->updateFullName(m_user->fullName());
         setFixedHeight(heightHint());
     }
