@@ -123,6 +123,16 @@ void UserNameWidget::updateUserNameWidget()
     const int nameWidth = m_fullNameLabel->fontMetrics().boundingRect(m_fullNameStr).width();
     const int labelMaxWidth = width() - 20;
 
+    if (m_showUserName) {
+        if (m_fullNameStr.isEmpty()) {
+            m_fullNameLabel->setVisible(false);
+            m_userPicLabel->setVisible(false);
+        } else {
+            m_fullNameLabel->setVisible(true);
+            m_userPicLabel->setVisible(true);
+        }
+    }
+
     if (nameWidth > labelMaxWidth) {
         const QString &str = m_fullNameLabel->fontMetrics().elidedText(m_fullNameStr, Qt::ElideRight, labelMaxWidth);
         m_fullNameLabel->setText(str);
