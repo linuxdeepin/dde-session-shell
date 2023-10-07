@@ -387,6 +387,11 @@ void AuthWidget::updateBlurEffectGeometry()
  */
 void AuthWidget::updatePasswordExpiredState()
 {
+    // 锁定情况下不更新密码过期信息
+    if (m_model->terminalLocked()) {
+        return;
+    }
+
     switch (m_user->expiredState()) {
     case User::ExpiredNormal:
         m_expiredStateLabel->clear();

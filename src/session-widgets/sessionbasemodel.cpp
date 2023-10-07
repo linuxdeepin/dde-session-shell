@@ -642,3 +642,8 @@ void SessionBaseModel::setTerminalLocked(bool locked)
     m_isTerminalLocked = locked;
     emit terminalLockedChanged(locked);
 }
+
+void SessionBaseModel::sendTerminalLockedSignal()
+{
+    emit terminalLockedChanged(m_isTerminalLocked);
+}

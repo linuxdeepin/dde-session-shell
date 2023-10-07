@@ -164,6 +164,7 @@ public:
     UpdatePowerMode updatePowerMode() const { return m_updatePowerMode; }
     void setTerminalLocked(bool locked);
     inline bool terminalLocked() const { return m_isTerminalLocked; }
+    void sendTerminalLockedSignal();
 
     void setCurrentContentType(ContentType type) { m_currentContentType = type; }
     ContentType currentContentType() const { return m_currentContentType; }

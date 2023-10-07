@@ -453,6 +453,8 @@ void GreeterWorker::createAuthentication(const QString &account)
 {
     qInfo() << "Create auth entication, account: " << account;
     if (m_model->terminalLocked()) {
+        // 切换用户后，需要触发TerminalLocked信号
+        m_model->sendTerminalLockedSignal();
         return;
     }
 
