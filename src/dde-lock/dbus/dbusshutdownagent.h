@@ -24,6 +24,7 @@ public:
     void Lock();
     void UpdateAndShutdown();
     void UpdateAndReboot();
+    bool Visible() const;
 
 private:
     bool canShowShutDown() const;

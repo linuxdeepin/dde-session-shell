@@ -64,3 +64,8 @@ void DBusShutdownFrontService::Lock()
 {
     parent()->Lock();
 }
+
+bool DBusShutdownFrontService::visible() const
+{
+    return parent()->Visible();
+}

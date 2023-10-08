@@ -177,6 +177,9 @@ int main(int argc, char *argv[])
         QObject::connect(model, &SessionBaseModel::visibleChanged, lockFrame,[&](bool visible) {
             emit lockService.Visible(visible);
         });
+        QObject::connect(model, &SessionBaseModel::onStatusChanged, lockFrame,[&](SessionBaseModel::ModeStatus status) {
+            emit shutdownServices.Visible(model->visible() && (status == SessionBaseModel::ModeStatus::PowerMode || status == SessionBaseModel::ModeStatus::ShutDownMode));
+        });
         QObject::connect(lockFrame, &LockFrame::requestEnableHotzone, worker, &LockWorker::enableZoneDetected, Qt::UniqueConnection);
         QObject::connect(lockFrame, &LockFrame::sendKeyValue, [&](QString key) {
              emit lockService.ChangKey(key);

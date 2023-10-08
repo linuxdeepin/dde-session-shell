@@ -34,6 +34,11 @@ public:
     inline DBusShutdownAgent *parent() const
     { return static_cast<DBusShutdownAgent *>(QObject::parent()); }
 
+public: // PROPERTIES
+    Q_PROPERTY(bool Visible READ visible)
+
+    bool visible() const;
+
 public Q_SLOTS:
     void Show();
     void Shutdown();
@@ -48,6 +53,7 @@ public Q_SLOTS:
 
 Q_SIGNALS:
     void ChangKey(QString key);
+    void Visible(bool visible);
 };
 
 #endif // DBUSSHUTDOWNFRONTSERVICE_H

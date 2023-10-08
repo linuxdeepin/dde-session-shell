@@ -159,3 +159,8 @@ bool DBusShutdownAgent::isUpdating() const
     qInfo() << "DBus shutdown agent is updating, current content type: " << m_model->currentContentType();
     return m_model->currentContentType() == SessionBaseModel::UpdateContent;
 }
+
+bool DBusShutdownAgent::Visible() const
+{
+    return m_model->visible() && (m_model->currentModeState() == SessionBaseModel::ModeStatus::PowerMode || m_model->currentModeState() == SessionBaseModel::ModeStatus::ShutDownMode);
+}
