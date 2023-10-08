@@ -67,6 +67,7 @@ public:
 
     inline int accountType() const { return m_accountType; }
     bool isLdapUser();
+    bool isDomainUser();
 
     inline bool isAutomaticLogin() const { return m_isAutomaticLogin; }
     inline bool isPasswordValid() const { return m_isPasswordValid; }
@@ -97,6 +98,7 @@ public:
     inline QStringList desktopBackgrounds() const { return m_desktopBackgrounds; }
     inline QStringList keyboardLayoutList() const { return m_keyboardLayoutList; }
     inline uid_t uid() const { return m_uid; }
+    inline QStringList groups() const { return m_groups; }
 
     void updateLimitsInfo(const QString &info);
     void updateLoginState(const bool isLogin);
@@ -157,6 +159,7 @@ protected:
     QStringList m_desktopBackgrounds;    // 桌面背景（不同工作区壁纸不同，故是个 List）
     QStringList m_keyboardLayoutList;    // 键盘布局列表
     QMap<int, LimitsInfo> *m_limitsInfo; // 认证限制信息
+    QStringList m_groups;                // 用户组
 };
 
 class NativeUser : public User

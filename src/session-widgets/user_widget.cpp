@@ -50,9 +50,7 @@ void UserWidget::initUI()
     QHBoxLayout *nameLayout = new QHBoxLayout(m_displayNameWidget);
     nameLayout->setMargin(0);
 
-    bool isDomainUser = m_user->uid() > 10000 && m_user->isUserValid(); // uid大于10000为域账户
     nameLayout->addStretch();
-
     QPixmap pixmap = DHiDPIHelper::loadNxPixmap(":/misc/images/select.svg");
     pixmap.setDevicePixelRatio(devicePixelRatioF());
     m_loginState->setAccessibleName("LoginState");
@@ -71,7 +69,7 @@ void UserWidget::initUI()
     DLabel *domainUserLabel = new DLabel(this);
     domainUserLabel->setAccessibleName("isDomainUser");
     domainUserLabel->setPixmap(domainUserpixmap);
-    domainUserLabel->setVisible(isDomainUser);
+    domainUserLabel->setVisible(m_user->isDomainUser());
     domainUserLabel->setAlignment(Qt::AlignVCenter);
     QVBoxLayout *isDomainUserLayout = new QVBoxLayout;
     isDomainUserLayout->setContentsMargins(0, 5, 0, 0);

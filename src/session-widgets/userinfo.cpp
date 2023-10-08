@@ -64,6 +64,7 @@ User::User(const User &user)
     , m_desktopBackgrounds(user.m_desktopBackgrounds)
     , m_keyboardLayoutList(user.m_keyboardLayoutList)
     , m_limitsInfo(new QMap<int, LimitsInfo>(*user.m_limitsInfo))
+    , m_groups(user.groups())
 {
 }
 
@@ -94,6 +95,15 @@ bool User::isLdapUser()
         }
     }
     return false;
+}
+
+bool User::isDomainUser()
+{
+    /* 域账户判断条件：
+     * 1.用户组包含“domain”
+     * 2.用户组包含“udcp” 且 uid大于10000
+     */
+    return this->isUserValid() && (this->groups().contains("domain") || (this->groups().contains("udcp") && this->uid() > 10000));
 }
 
 /**
@@ -285,6 +295,7 @@ void NativeUser::initData()
     m_shortDateFormat = m_userInter->shortDateFormat();
     m_shortTimeFormat = m_userInter->shortTimeFormat();
     m_weekdayFormat = m_userInter->weekdayFormat();
+    m_groups = m_userInter->groups();
 
     const QString avatarPath = toLocalFile(m_userInter->iconFile());
     if (!avatarPath.isEmpty() && QFile(avatarPath).exists() && QFile(avatarPath).size() && checkPictureCanRead(avatarPath)) {

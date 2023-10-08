@@ -302,9 +302,7 @@ void AuthWidget::updateUserDisplayNameLabel()
 {
     m_userNameWidget->updateFullName(m_user->fullName());
     m_userNameWidget->updateUserName(m_user->name());
-
-    bool isDomainUser = m_user->uid() > 10000 && m_user->isUserValid(); // uid大于10000为域账户
-    m_userNameWidget->setDomainUserVisible(isDomainUser);
+    m_userNameWidget->setDomainUserVisible(m_user->isDomainUser());
 }
 
 /**
