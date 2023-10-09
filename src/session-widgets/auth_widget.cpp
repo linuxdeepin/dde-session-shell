@@ -372,11 +372,13 @@ void AuthWidget::updateBlurEffectGeometry()
 {
     QRect rect = this->rect();
     rect.setTop(m_userAvatar->geometry().top() + m_userAvatar->height() / 2);
-    if (m_user->expiredState() == User::ExpiredNormal) {
+
+    if (m_user->expiredState() == User::ExpiredNormal && !m_model->terminalLocked()) {
         rect.setBottom(m_lockButton->geometry().top() - 20);
     } else {
         rect.setBottom(m_expiredStateLabel->geometry().top() - 10);
     }
+
     m_blurEffectWidget->setGeometry(rect);
 }
 
