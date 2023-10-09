@@ -153,6 +153,7 @@ void LogoWidget::onDConfigPropertyChanged(const QString &key, const QVariant &va
         obj->m_logoVersionLabel->setVisible(value.toBool());
     } else if (key == CUSTOM_LOGO_PATH) {
         obj->loadCustomLogo();
+        obj->updateCustomLogoPos();
     } else if (key == CUSTOM_LOGO_POS) {
         obj->updateCustomLogoPos();
     }
