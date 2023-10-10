@@ -15,6 +15,8 @@
 #include <qpalette.h>
 
 const int USER_PIC_HEIGHT = 16;
+const QMargins FullNameContentsMargins(10,0,10,0);
+const int FullNameLayoutSpace = 8;
 
 DWIDGET_USE_NAMESPACE
 DCORE_USE_NAMESPACE
@@ -41,6 +43,7 @@ void UserNameWidget::initialize()
     vLayout->setSpacing(0);
     QHBoxLayout *hLayout = new QHBoxLayout;
     hLayout->setMargin(0);
+    hLayout->setContentsMargins(FullNameContentsMargins);
 
     m_userPicLabel = new DLabel(this);
     m_userPicLabel->setAlignment(Qt::AlignVCenter);
@@ -94,7 +97,7 @@ void UserNameWidget::initialize()
     vLayout->addLayout(hLayout);
     hLayout->addStretch();
     hLayout->addWidget(m_userPicLabel);
-    hLayout->addSpacing(8);
+    hLayout->addSpacing(FullNameLayoutSpace);
     hLayout->addWidget(m_fullNameLabel);
     hLayout->addStretch();
 
@@ -121,7 +124,7 @@ void UserNameWidget::updateUserName(const QString &userName)
 void UserNameWidget::updateUserNameWidget()
 {
     const int nameWidth = m_fullNameLabel->fontMetrics().boundingRect(m_fullNameStr).width();
-    const int labelMaxWidth = width() - 20;
+    const int labelMaxWidth = width() - FullNameContentsMargins.left() - m_userPicLabel->width() - FullNameLayoutSpace - FullNameContentsMargins.right();
 
     if (m_showUserName) {
         if (m_fullNameStr.isEmpty()) {
