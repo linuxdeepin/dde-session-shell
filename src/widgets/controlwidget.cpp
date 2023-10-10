@@ -162,6 +162,10 @@ void ControlWidget::updatePluginVisible(const QString module, bool state)
     for (auto key : m_modules.keys()) {
         if (key && key->objectName() == module) {
             m_modules.value(key)->setVisible(state);
+
+            if (m_model->currentModeState() != SessionBaseModel::ModeStatus::PasswordMode)
+                m_modules.value(key)->setVisible(false);
+
             return;
         }
     }
@@ -288,10 +292,11 @@ QString ControlWidget::messageCallback(const QString &message, void *app_data)
     QJsonObject messageObj = messageDoc.object();
 
     QString cmd = messageObj.value("Cmd").toString();
+    const QString pluginKey = messageObj.value("PluginKey").toString();
     if (cmd == "ShowContent") {
-        emit static_cast<ControlWidget *>(app_data)->requestShowModule(messageObj.value("PluginKey").toString(), true);
+        emit static_cast<ControlWidget *>(app_data)->requestShowModule(pluginKey, true);
     } else if (cmd == "PluginVisible") {
-        static_cast<ControlWidget *>(app_data)->updatePluginVisible(messageObj.value("PluginKey").toString(), messageObj.value("Visible").toBool());
+        static_cast<ControlWidget *>(app_data)->updatePluginVisible(pluginKey, messageObj.value("Visible").toBool());
     }
 
     return message;
