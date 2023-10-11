@@ -30,6 +30,7 @@ class AuthUKey;
 class AuthFingerprint;
 class AuthPassword;
 class AuthCustom;
+class AuthPasskey;
 class DLineEditEx;
 class KeyboardMonitor;
 class SessionBaseModel;
@@ -183,6 +184,7 @@ protected:
     QPointer<AuthUKey> m_ukeyAuth;               // UKey
     QPointer<AuthFace> m_faceAuth;               // 面容
     QPointer<AuthIris> m_irisAuth;               // 虹膜
+    QPointer<AuthPasskey> m_passkeyAuth;         // 安全密钥
     QPointer<AuthCustom> m_customAuth;           // 自定义认证
 
     QString m_passwordHint;     // 密码提示

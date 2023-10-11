@@ -6,6 +6,7 @@
 
 #include "auth_custom.h"
 #include "auth_face.h"
+#include "auth_passkey.h"
 #include "auth_fingerprint.h"
 #include "auth_iris.h"
 #include "auth_password.h"
@@ -66,7 +67,6 @@ void SFAWidget::initUI()
     /* 重试按钮 */
     m_retryButton->setIcon(QIcon(":/img/bottom_actions/reboot.svg"));
     m_retryButton->hide();
-
 
     m_mainLayout->setContentsMargins(10, 0, 10, 0);
     m_mainLayout->setSpacing(0);
@@ -224,6 +224,7 @@ AuthFlags SFAWidget::initAuthFactors(const AuthFlags authFactors)
     updateAuthType(AT_Face, m_faceAuth, &SFAWidget::initFaceAuth);
     updateAuthType(AT_Iris, m_irisAuth, &SFAWidget::initIrisAuth);
     updateAuthType(AT_Fingerprint, m_fingerprintAuth, &SFAWidget::initFingerprintAuth);
+    updateAuthType(AT_Passkey, m_passkeyAuth, &SFAWidget::initPasskeyAuth);
     updateAuthType(AT_Ukey, m_ukeyAuth, &SFAWidget::initUKeyAuth);
     updateAuthType(AT_PAM, m_singleAuth, &SFAWidget::initSingleAuth);
 
@@ -265,6 +266,11 @@ void SFAWidget::setAuthState(const AuthType type, const AuthState state, const Q
     case AT_Iris:
         if (m_irisAuth) {
             m_irisAuth->setAuthState(state, message);
+        }
+        break;
+    case AT_Passkey:
+        if (m_passkeyAuth) {
+            m_passkeyAuth->setAuthState(state, message);
         }
         break;
     case AT_PAM:
@@ -514,6 +520,54 @@ void SFAWidget::initFingerprintAuth()
 }
 
 /**
+ * @brief 初始化 Passkey 认证
+ */
+void SFAWidget::initPasskeyAuth()
+{
+    if (m_passkeyAuth) {
+        m_passkeyAuth->reset();
+        return;
+    }
+
+    m_passkeyAuth = new AuthPasskey(this);
+    m_passkeyAuth->hide();
+    m_passkeyAuth->setAuthFactorType(DDESESSIONCC::SingleAuthFactor);
+    m_passkeyAuth->setAuthStateLabel(m_biometricAuthState);
+
+    connect(m_passkeyAuth, &AuthPasskey::activeAuth, this, &SFAWidget::onActiveAuth);
+    connect(m_passkeyAuth, &AuthPasskey::authFinished, this, [this](const AuthState authState) {
+        checkAuthResult(AT_Passkey, authState);
+    });
+    connect(m_passkeyAuth, &AuthPasskey::retryButtonVisibleChanged, this, &SFAWidget::onRetryButtonVisibleChanged);
+    connect(m_retryButton, &DFloatingButton::clicked, this, [this] {
+        if (m_currentAuthType != AT_Passkey) {
+            return;
+        }
+        emit requestEndAuthentication(m_model->currentUser()->name(), AT_Passkey);
+        onRetryButtonVisibleChanged(false);
+        emit requestStartAuthentication(m_model->currentUser()->name(), AT_Passkey);
+    });
+
+    /* 认证选择按钮 */
+    ButtonBoxButton *btn = new ButtonBoxButton(QIcon(Face_Passkey), QString(), this);
+    btn->setIconSize(AuthButtonIconSize);
+    btn->setFixedSize(AuthButtonSize);
+    btn->setFocusPolicy(Qt::NoFocus);
+    m_authButtons.insert(AT_Passkey, btn);
+    connect(btn, &ButtonBoxButton::toggled, this, [this](const bool checked) {
+        if (checked) {
+            replaceWidget(m_passkeyAuth);
+            setBioAuthStateVisible(m_passkeyAuth, true);
+            emit requestStartAuthentication(m_user->name(), AT_Passkey);
+        } else {
+            m_passkeyAuth->hide();
+            m_lockButton->setEnabled(false);
+            emit requestEndAuthentication(m_user->name(), AT_Passkey);
+        }
+    });
+}
+
+/**
  * @brief 初始化 UKey 认证
  */
 void SFAWidget::initUKeyAuth()
@@ -586,6 +640,9 @@ void SFAWidget::initFaceAuth()
 
     connect(m_faceAuth, &AuthFace::retryButtonVisibleChanged, this, &SFAWidget::onRetryButtonVisibleChanged);
     connect(m_retryButton, &DFloatingButton::clicked, this, [this] {
+        if (m_currentAuthType != AT_Face) {
+            return;
+        }
         onRetryButtonVisibleChanged(false);
         emit requestStartAuthentication(m_model->currentUser()->name(), AT_Face);
     });
@@ -649,6 +706,9 @@ void SFAWidget::initIrisAuth()
 
     connect(m_irisAuth, &AuthIris::retryButtonVisibleChanged, this, &SFAWidget::onRetryButtonVisibleChanged);
     connect(m_retryButton, &DFloatingButton::clicked, this, [this] {
+        if (m_currentAuthType != AT_Iris) {
+            return;
+        }
         onRetryButtonVisibleChanged(false);
         emit requestStartAuthentication(m_model->currentUser()->name(), AT_Iris);
     });
@@ -712,6 +772,10 @@ void SFAWidget::initCustomMFAAuth()
     if (m_faceAuth) {
         m_faceAuth->hide();
         emit requestEndAuthentication(m_user->name(), AT_Face);
+    }
+    if (m_passkeyAuth) {
+        m_passkeyAuth->hide();
+        emit requestEndAuthentication(m_user->name(), AT_Passkey);
     }
     if (m_irisAuth) {
         m_irisAuth->hide();
@@ -1253,6 +1317,7 @@ void SFAWidget::sendAuthFinished()
     if ((m_passwordAuth && AS_Success == m_passwordAuth->authState())
         || (m_ukeyAuth && AS_Success == m_ukeyAuth->authState())
         || (m_fingerprintAuth && AS_Success == m_fingerprintAuth->authState())
+        || (m_passkeyAuth && AS_Success == m_passkeyAuth->authState())
         || (m_customAuth && m_customAuth->authState() == AS_Success)) {
         if (m_faceAuth) m_faceAuth->setAuthState(AS_Ended, "Ended");
         if (m_irisAuth) m_irisAuth->setAuthState(AS_Ended, "Ended");

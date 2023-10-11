@@ -7,6 +7,7 @@
 #include "auth_face.h"
 #include "auth_fingerprint.h"
 #include "auth_iris.h"
+#include "auth_passkey.h"
 #include "auth_password.h"
 #include "auth_single.h"
 #include "auth_ukey.h"
@@ -38,6 +39,7 @@ AuthWidget::AuthWidget(QWidget *parent)
     , m_ukeyAuth(nullptr)
     , m_faceAuth(nullptr)
     , m_irisAuth(nullptr)
+    , m_passkeyAuth(nullptr)
     , m_customAuth(nullptr)
     , m_refreshTimer(new QTimer(this))
     , m_authState(AuthCommon::AS_None)
@@ -263,6 +265,11 @@ void AuthWidget::setLimitsInfo(const QMap<int, User::LimitsInfo> *limitsInfo)
         case AT_Face:
             if (m_faceAuth) {
                 m_faceAuth->setLimitsInfo(limitsInfoTmp);
+            }
+            break;
+        case AT_Passkey:
+            if (m_passkeyAuth) {
+                m_passkeyAuth->setLimitsInfo(limitsInfoTmp);
             }
             break;
         case AT_Iris:

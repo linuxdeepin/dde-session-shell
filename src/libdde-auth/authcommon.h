@@ -59,7 +59,7 @@ enum AuthType {
     AT_Ukey            = 1 << 4,    // ukey
     AT_FingerVein      = 1 << 5,    // 指静脉
     AT_Iris            = 1 << 6,    // 虹膜
-    AT_PIN             = 1 << 7,    // PIN
+    AT_Passkey         = 1 << 7,    // Passkey
     AT_PAM             = 1 << 29,   // PAM
     AT_Custom          = 1 << 30,   // 自定义
     AT_All             = -1         // all

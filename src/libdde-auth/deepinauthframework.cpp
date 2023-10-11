@@ -326,7 +326,8 @@ void DeepinAuthFramework::CreateAuthController(const QString &account, const Aut
 
         // 当人脸或者虹膜认证成功 或者 指纹识别失败/成功 时唤醒屏幕
         if (((AT_Face == type || AT_Iris == type) && AS_Success == authState)
-            || (AT_Fingerprint == type && (AS_Failure == authState || AS_Success == authState))) {
+            || (AT_Fingerprint == type && (AS_Failure == authState || AS_Success == authState))
+            || (AT_Passkey == type && (AS_Failure == authState || AS_Success == authState))) {
             system("xset dpms force on");
         }
     });

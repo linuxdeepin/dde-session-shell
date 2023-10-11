@@ -65,6 +65,7 @@ private:
     void initSingleAuth();
     void initPasswdAuth();
     void initFingerprintAuth();
+    void initPasskeyAuth();
     void initUKeyAuth();
     void initFaceAuth();
     void initIrisAuth();
