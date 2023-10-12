@@ -877,6 +877,8 @@ void GreeterWorker::onCurrentUserChanged(const std::shared_ptr<User> &user)
 {
     recoveryUserKBState(user);
     loadTranslation(user->locale());
+    //  账户在变换的时候需要通知lockservice
+    setCurrentUser(user);
     emit requestUpdateBackground(m_model->currentUser()->greeterBackground());
 }
 

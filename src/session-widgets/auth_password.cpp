@@ -227,6 +227,9 @@ void AuthPassword::setAuthState(const AuthState state, const QString &result)
         emit requestChangeFocus();
         if (m_assistLoginWidget) {
             m_assistLoginWidget->resetAuth();
+            if (isPasswdAuthWidgetReplaced()) {
+                hidePlugin();
+            }
         }
         break;
     case AS_Failure: {
