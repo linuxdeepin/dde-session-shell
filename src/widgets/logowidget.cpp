@@ -178,9 +178,11 @@ void LogoWidget::loadCustomLogo()
     if (m_customLogoLabel == nullptr) {
         m_customLogoLabel = new QLabel(this);
         m_customLogoLabel->setObjectName("custom_Logo");
+        m_customLogoLabel->setSizePolicy(QSizePolicy::Expanding, QSizePolicy::Fixed);
     }
 
     m_customLogoLabel->setPixmap(pixmap);
+    m_customLogoLabel->resize(m_customLogoLabel->sizeHint());
 }
 
 void LogoWidget::updateCustomLogoPos()
@@ -194,5 +196,5 @@ void LogoWidget::updateCustomLogoPos()
     }
 
     QRect rect = m_logoLabel->geometry();
-    m_customLogoLabel->move(rect.x() + rect.width() + pos[0].toInt() , rect.y() - pos[1].toInt());
+    m_customLogoLabel->move(rect.x() + rect.width() + pos[0].toInt() , rect.y() - pos[1].toInt() + rect.height() - m_customLogoLabel->height());
 }
