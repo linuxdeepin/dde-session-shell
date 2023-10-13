@@ -48,6 +48,7 @@ public:
     bool isShowResetPasswordMessage();
     void updatePluginConfig();
     void startPluginAuth();
+    void hidePlugin();
 
     bool isPasswdAuthWidgetReplaced() const
     {
@@ -89,7 +90,6 @@ private:
     void showAlertMessage(const QString &text);
     void hidePasswordHintWidget();
     void updatePasswordTextMargins();
-    void hidePlugin();
 
 private:
     bool m_passwordLineEditEnabled;

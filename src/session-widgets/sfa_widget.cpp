@@ -477,6 +477,10 @@ void SFAWidget::initPasswdAuth()
     });
 
     if (m_passwordAuth->isPasswdAuthWidgetReplaced()) {
+        if (m_model->appType() == AppType::Lock) {
+            m_passwordAuth->hidePlugin();
+            return;
+        }
         m_passwordAuth->updatePluginConfig();
     }
 }
