@@ -60,6 +60,8 @@ public:
     void setEncryption(const int type, const ArrayInt method);
     bool authSessionExist(const QString &account) const;
     bool isDeepinAuthValid() const;
+    bool isDAStartupCompleted() const { return  m_isDAStartupCompleted;}
+
 
 signals:
     void startupCompleted();
@@ -108,6 +110,7 @@ private:
     QMap<QString, AuthControllerInter *> *m_authenticateControllers;
     bool m_cancelAuth;
     bool m_waitToken;
+    bool m_isDAStartupCompleted;
 };
 
 #endif // DEEPINAUTHFRAMEWORK_H

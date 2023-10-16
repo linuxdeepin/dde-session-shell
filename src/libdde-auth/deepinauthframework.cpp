@@ -33,6 +33,7 @@ DeepinAuthFramework::DeepinAuthFramework(QObject *parent)
     , m_authenticateControllers(new QMap<QString, AuthControllerInter *>())
     , m_cancelAuth(false)
     , m_waitToken(true)
+    , m_isDAStartupCompleted(false)
 {
     connect(m_authenticateInter, &AuthInter::FrameworkStateChanged, this, &DeepinAuthFramework::FramworkStateChanged);
     connect(m_authenticateInter, &AuthInter::LimitUpdated, this, &DeepinAuthFramework::LimitsInfoChanged);
@@ -40,22 +41,27 @@ DeepinAuthFramework::DeepinAuthFramework(QObject *parent)
     connect(m_authenticateInter, &AuthInter::SupportEncryptsChanged, this, &DeepinAuthFramework::SupportedEncryptsChanged);
     QDBusConnection::systemBus().connect(AUTHENTICATE_SERVICE, "/com/deepin/daemon/Authenticate", "com.deepin.daemon.Authenticate", "DeviceChange", this, SLOT(onDeviceChanged(const int, const int)));
 
-    // 异步拉起DA，避免阻塞主线程
-    QDBusMessage message = QDBusMessage::createMethodCall("org.freedesktop.DBus", "/", "org.freedesktop.DBus", "StartServiceByName");
-    message << "com.deepin.daemon.Authenticate" << 0u;
-    QDBusPendingCall async = QDBusConnection::systemBus().asyncCall(message);
-    auto *watcher = new QDBusPendingCallWatcher(async);
-    QObject::connect(watcher, &QDBusPendingCallWatcher::finished, [this, watcher](QDBusPendingCallWatcher *callWatcher) {
-        QDBusPendingReply<void> reply = *callWatcher;
-        if (!reply.isError()) {
-            Q_EMIT startupCompleted();
-        } else {
-            qWarning() << "DA startup has error: " << reply.error().message();
-        }
+    if (m_authenticateInter->isValid()) {
+        m_isDAStartupCompleted = true;
+    } else{
+        // 异步拉起DA，避免阻塞主线程
+        QDBusMessage message = QDBusMessage::createMethodCall("org.freedesktop.DBus", "/", "org.freedesktop.DBus", "StartServiceByName");
+        message << "com.deepin.daemon.Authenticate" << 0u;
+        QDBusPendingCall async = QDBusConnection::systemBus().asyncCall(message);
+        auto *watcher = new QDBusPendingCallWatcher(async);
+        QObject::connect(watcher, &QDBusPendingCallWatcher::finished, this, [this, watcher](QDBusPendingCallWatcher *callWatcher) {
+            QDBusPendingReply<void> reply = *callWatcher;
+            if (!reply.isError()) {
+                m_isDAStartupCompleted = true;
+                Q_EMIT startupCompleted();
+            } else {
+                qWarning() << "DA startup has error: " << reply.error().message();
+            }
 
-        callWatcher->deleteLater();
-        watcher->deleteLater();
-    });
+            callWatcher->deleteLater();
+            watcher->deleteLater();
+        });
+    }
 }
 
 void DeepinAuthFramework::onDeviceChanged(const int authType, const int state)
@@ -627,5 +633,5 @@ bool DeepinAuthFramework::authSessionExist(const QString &account) const
 bool DeepinAuthFramework::isDeepinAuthValid() const
 {
     return QDBusConnection::systemBus().interface()->isServiceRegistered(AUTHENTICATE_SERVICE)
-            && Available == GetFrameworkState();
+            && (Available == GetFrameworkState());
 }
