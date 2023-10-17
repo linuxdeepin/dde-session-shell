@@ -89,6 +89,7 @@ class ControlWidget : public QWidget
     Q_OBJECT
 public:
     explicit ControlWidget(const SessionBaseModel *model, QWidget *parent = nullptr);
+    ~ControlWidget() override;
 
     void setModel(const SessionBaseModel *model);
     void setUser(std::shared_ptr<User> user);

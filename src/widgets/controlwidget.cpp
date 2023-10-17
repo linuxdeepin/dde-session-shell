@@ -84,7 +84,7 @@ void FloatingButton::paintEvent(QPaintEvent *event)
 ControlWidget::ControlWidget(const SessionBaseModel *model, QWidget *parent)
     : QWidget(parent)
     , m_contextMenu(new QMenu(this))
-    , m_tipsWidget(new TipsWidget(this))
+    , m_tipsWidget(new TipsWidget())
     , m_arrowRectWidget(new DArrowRectangle(DArrowRectangle::ArrowBottom, this))
     , m_kbLayoutListView(nullptr)
     , m_keyboardBtn(nullptr)
@@ -95,6 +95,13 @@ ControlWidget::ControlWidget(const SessionBaseModel *model, QWidget *parent)
     setModel(model);
     initUI();
     initConnect();
+}
+
+ControlWidget::~ControlWidget()
+{
+    if (m_tipsWidget) {
+        m_tipsWidget->deleteLater();
+    }
 }
 
 void ControlWidget::setModel(const SessionBaseModel *model)
