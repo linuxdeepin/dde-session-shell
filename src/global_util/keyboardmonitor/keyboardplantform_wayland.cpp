@@ -16,6 +16,10 @@
 
 #include <QThread>
 #include <QDebug>
+#include <QDBusMessage>
+#include <QDBusPendingCall>
+#include <QDBusConnection>
+#include <QDBusPendingReply>
 
 KeyboardPlatformWayland::KeyboardPlatformWayland(QObject *parent)
     : KeyBoardPlatform(parent)
@@ -28,7 +32,7 @@ KeyboardPlatformWayland::KeyboardPlatformWayland(QObject *parent)
     , m_capsLock(false)
     , m_numLockOn(false)
 {
-
+    initStatus();
 }
 
 KeyboardPlatformWayland::~KeyboardPlatformWayland()
@@ -116,4 +120,29 @@ void KeyboardPlatformWayland::setupRegistry(Registry *registry)
     registry->create(m_connectionThreadObject);
     registry->setup();
 }
+
+// 对于dde-lock需要初始化大小写状态
+void KeyboardPlatformWayland::initStatus()
+{
+    QDBusMessage message = QDBusMessage::createMethodCall("org.kde.KWin", "/Xkb", "org.kde.kwin.Xkb", "getLeds");
+    QDBusPendingCall async = QDBusConnection::sessionBus().asyncCall(message);
+    auto *watcher = new QDBusPendingCallWatcher(async);
+    QObject::connect(watcher, &QDBusPendingCallWatcher::finished, this, [this, watcher](QDBusPendingCallWatcher *callWatcher) {
+        QDBusPendingReply<void> reply = *callWatcher;
+        if (!reply.isError()) {
+            int locked = reply.argumentAt(0).toInt();
+            m_capsLock = (locked & 0x02) != 0;
+            m_numLockOn = (locked & 0x10) != 0;
+            // 异步结果通过信号发布
+            Q_EMIT capsLockStatusChanged(m_capsLock);
+            Q_EMIT numLockStatusChanged(m_numLockOn);
+        } else {
+            qInfo() << "caps/num lock status init failed, ignore it in greeter :" << reply.error().message();
+        }
+
+        callWatcher->deleteLater();
+        watcher->deleteLater();
+    });
+}
+
 #endif

@@ -41,6 +41,7 @@ protected:
 
 private:
     void setupRegistry(Registry *registry);
+    void initStatus();
 
 private:
     QThread *m_connectionThread;
