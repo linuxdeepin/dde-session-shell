@@ -990,7 +990,7 @@ void SFAWidget::onRetryButtonVisibleChanged(bool visible)
 
 void SFAWidget::setBioAuthStateVisible(AuthModule *authModule, bool visible)
 {
-    bool hasBioAuth = (m_faceAuth || m_fingerprintAuth || m_irisAuth);
+    bool hasBioAuth = (m_faceAuth || m_fingerprintAuth || m_irisAuth || m_passkeyAuth);
     m_bioAuthStatePlaceHolder->changeSize(0, (visible || !hasBioAuth) ? 0 : BIO_AUTH_STATE_PLACE_HOLDER_HEIGHT);
     if (authModule)
         authModule->setAuthStatueVisible(visible);
@@ -1048,7 +1048,7 @@ void SFAWidget::updateSpaceItem()
 {
     m_authTypeBottomSpacingHolder->changeSize(0, showAuthButtonBox() ? calcCurrentHeight(CHOOSE_AUTH_TYPE_BUTTON_BOTTOM_SPACING) : 0);
 
-    if (m_faceAuth || m_fingerprintAuth || m_irisAuth) {
+    if (m_faceAuth || m_fingerprintAuth || m_irisAuth || m_passkeyAuth) {
         m_bioBottomSpacingHolder->changeSize(0, calcCurrentHeight(BIO_AUTH_STATE_BOTTOM_SPACING));
         m_bioAuthStatePlaceHolder->changeSize(0, m_bioAuthStatePlaceHolder->sizeHint().height() == 0 ? 0 : BIO_AUTH_STATE_PLACE_HOLDER_HEIGHT);
     } else {
