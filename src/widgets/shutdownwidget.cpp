@@ -473,11 +473,16 @@ void ShutdownWidget::setButtonsVisible()
         qInfo() << "Lastore daemon status: " << lastoreDaemonStatus;
         const bool isUpdateReady = lastoreDaemonStatus & IS_UPDATE_READY;
         const bool isUpdateDisabled = lastoreDaemonStatus & IS_UPDATE_DISABLED;
-        const bool isVisible = isUpdateReady && !isUpdateDisabled;
-        m_updateAndRebootButton->setVisible(isVisible);
-        m_updateAndRebootButton->setRedPointVisible(isVisible);
-        m_updateAndShutdownButton->setVisible(isVisible);
-        m_updateAndShutdownButton->setRedPointVisible(isVisible);
+        const bool isUpdateVisible = isUpdateReady && !isUpdateDisabled;
+        m_updateAndRebootButton->setVisible(isUpdateVisible);
+        m_updateAndRebootButton->setRedPointVisible(isUpdateVisible);
+        m_updateAndShutdownButton->setVisible(isUpdateVisible);
+        m_updateAndShutdownButton->setRedPointVisible(isUpdateVisible);
+        if (DConfigHelper::instance()->getConfig("forceUpdate", false).toBool() && isUpdateVisible) {
+            qInfo() << "Force update is enbaled, hide shutdown button and reboot button";
+            m_requireShutdownButton->setVisible(false);
+            m_requireRestartButton->setVisible(false);
+        }
     } else {
         m_requireLockButton->setVisible(false);
         m_requireSwitchUserBtn->setVisible(false);
