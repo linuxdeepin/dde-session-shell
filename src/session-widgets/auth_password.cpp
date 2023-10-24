@@ -232,7 +232,7 @@ void AuthPassword::setAuthState(const AuthState state, const QString &result)
     case AS_Failure: {
         setAnimationState(false);
         setAuthStateStyle(LOGIN_WAIT);
-        m_lineEdit->clear();
+        m_lineEdit->lineEdit()->selectAll();
         setLineEditEnabled(true);
         const int leftTimes = static_cast<int>(m_limitsInfo->maxTries - m_limitsInfo->numFailures);
         if (leftTimes > 1) {
@@ -288,7 +288,6 @@ void AuthPassword::setAuthState(const AuthState state, const QString &result)
     case AS_Started:
         break;
     case AS_Ended:
-        m_lineEdit->clear();
         break;
     case AS_Locked:
         setAnimationState(false);
