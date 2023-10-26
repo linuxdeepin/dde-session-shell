@@ -10,6 +10,8 @@
 #include "dconfig_helper.h"
 #include "login_plugin_util.h"
 
+#include <dde-api/eventlogger.hpp>
+
 #include <DSysInfo>
 #include <DGuiApplicationHelper>
 
@@ -735,6 +737,13 @@ void GreeterWorker::authenticationComplete()
     default:
         break;
     }
+
+    DDE_EventLogger::EventLoggerData data;
+    data.tid = EVENT_LOGGER_GREETER_LOGIN;
+    data.event = "startup";
+    data.target = "dde-session-shell";
+    data.message = {{"startup", "authenticationComplete"}, {"result", QString::number(result)}};
+    DDE_EventLogger::EventLogger::instance().writeEventLog(data);
 
     qInfo() << "Start session: " << m_model->sessionKey();
 
