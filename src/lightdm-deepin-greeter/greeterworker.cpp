@@ -595,10 +595,6 @@ void GreeterWorker::endAuthentication(const QString &account, const AuthFlags au
 void GreeterWorker::checkAccount(const QString &account)
 {
     qInfo() << "Check account, account: " << account;
-    if (m_greeter->authenticationUser() == account && m_account == account) {
-        qInfo() << "The current user is the incoming user, do not check again";
-        return;
-    }
 
     std::shared_ptr<User> user_ptr = m_model->findUserByName(account);
     // 当用户登录成功后，判断用户输入帐户有效性逻辑改为后端去做处理
@@ -629,6 +625,13 @@ void GreeterWorker::checkAccount(const QString &account)
             return;
         }
     }
+
+    // m_greeter->cancelAuthentication后m_greeter的数据不会发生改变，当前账户如果是无密码登陆则不需要判断m_greeter认证数据
+    if (m_greeter->authenticationUser() == account && m_account == account && !user_ptr->isNoPasswordLogin()) {
+        qInfo() << "The current user is the incoming user, do not check again";
+        return;
+    }
+
 
     m_model->updateCurrentUser(user_ptr);
     if (user_ptr->isNoPasswordLogin()) {
@@ -961,7 +964,9 @@ void GreeterWorker::restartResetSessionTimer()
 
 void GreeterWorker::startGreeterAuth(const QString &account)
 {
-    if (!m_greeter->inAuthentication() || m_greeter->authenticationUser() != account) {
+    std::shared_ptr<User> user_ptr = m_model->findUserByName(account);
+    // m_greeter->cancelAuthentication后m_greeter的数据不会发生改变，当前账户如果是无密码登陆则不需要判断m_greeter认证数据
+    if (!m_greeter->inAuthentication() || m_greeter->authenticationUser() != account || (user_ptr && user_ptr->isNoPasswordLogin())) {
         m_greeter->authenticate(account);
     } else {
         qInfo() << "Lightdm is in authentication, won't do it again, account: " << account;
@@ -1052,6 +1057,21 @@ void GreeterWorker::terminalLockedChanged(const QDBusMessage &msg)
 
         if (!locked) {
             createAuthentication(m_model->currentUser()->name());
+        }
+    }
+}
+
+void GreeterWorker::onNoPasswordLoginChanged(const QString &account, bool noPassword)
+{
+    if(m_model->currentUser()->name() == account && m_greeter->authenticationUser() == account) {
+
+        if (noPassword && m_greeter->inAuthentication()) {
+            m_greeter->cancelAuthentication();
+            return;
+        }
+
+        if (!noPassword && !m_greeter->inAuthentication()) {
+            createAuthentication(account);
         }
     }
 }

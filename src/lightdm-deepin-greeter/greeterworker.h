@@ -54,6 +54,7 @@ public slots:
     void checkAccount(const QString &account);
     void restartResetSessionTimer();
     void onAuthFinished();
+    void onNoPasswordLoginChanged(const QString &account, bool noPassword);
 
 private slots:
     void onAuthStateChanged(const int type, const int state, const QString &message);

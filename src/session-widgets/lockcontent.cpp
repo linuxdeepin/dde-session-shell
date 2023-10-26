@@ -244,6 +244,7 @@ void LockContent::initSFAWidget()
         m_centerSpacerItem->changeSize(0, calcTopSpacing(m_sfaWidget->getTopSpacing()));
         m_centerVLayout->invalidate();
     });
+    connect(m_sfaWidget, &AuthWidget::noPasswordLoginChanged, this, &LockContent::noPasswordLoginChanged);
 }
 
 // init full managed plugin widget

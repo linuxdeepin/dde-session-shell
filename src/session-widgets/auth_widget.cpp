@@ -330,6 +330,8 @@ void AuthWidget::onNoPasswordLoginChanged(bool noPassword)
 {
     if (noPassword)
         setAuthType(AT_None);
+
+    Q_EMIT noPasswordLoginChanged(m_user->name(), noPassword);
 }
 
 /**

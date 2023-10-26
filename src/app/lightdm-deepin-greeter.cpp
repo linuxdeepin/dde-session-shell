@@ -139,6 +139,7 @@ int main(int argc, char* argv[])
     QObject::connect(LoginContent::instance(), &LoginContent::sendTokenToAuth, worker, &GreeterWorker::sendTokenToAuth);
     QObject::connect(LoginContent::instance(), &LoginContent::requestEndAuthentication, worker, &GreeterWorker::endAuthentication);
     QObject::connect(LoginContent::instance(), &LoginContent::authFinished, worker, &GreeterWorker::onAuthFinished);
+    QObject::connect(LoginContent::instance(), &LoginContent::noPasswordLoginChanged, worker, &GreeterWorker::onNoPasswordLoginChanged);
 
     // 根据屏幕创建全屏背景窗口
     auto createFrame = [&](QPointer<QScreen> screen, int count) -> QWidget * {

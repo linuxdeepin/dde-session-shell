@@ -139,6 +139,7 @@ Q_SIGNALS:
     void requestEndAuthentication(const QString &account, const AuthCommon::AuthFlags authType);
     void authFinished();
     void updateParentLayout();
+    void noPasswordLoginChanged(const QString &account, bool noPassword);
 
 protected:
     void showEvent(QShowEvent *event) override;
