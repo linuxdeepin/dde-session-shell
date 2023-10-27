@@ -177,8 +177,6 @@ void WarningContent::doAcceptShutdownInhibit()
     }
 
     m_model->setPowerAction(m_powerAction);
-    if (!m_canReturnMainPage)
-        return;
 
     if (m_model->currentModeState() != SessionBaseModel::ModeStatus::ShutDownMode
         && m_powerAction != SessionBaseModel::RequireUpdateShutdown
