@@ -36,7 +36,7 @@ void AuthPasskey::initUI()
     m_spinner->setFixedSize(18, 18);
 
     /* 文案提示 */
-    m_textLabel->setText(tr("Please insert device"));
+    m_textLabel->setText(tr("Please plug in the security key"));
     m_textLabel->setWordWrap(true);
 
     /* 旋转提示和文案提示布局 */
@@ -73,7 +73,7 @@ void AuthPasskey::reset()
 {
     m_state = AuthCommon::AS_Ended;
     needSpinner(false);
-    m_textLabel->setText(tr("Please insert device"));
+    m_textLabel->setText(tr("Please plug in the security key"));
 }
 
 /**
@@ -142,7 +142,7 @@ void AuthPasskey::setAuthState(const AuthCommon::AuthState state, const QString 
         break;
     case AuthCommon::AS_Started:
         needSpinner(true);
-        m_textLabel->setText(tr("Identifying device"));
+        m_textLabel->setText(tr("Identifying the security key"));
         break;
     case AuthCommon::AS_Ended:
         needSpinner(false);
