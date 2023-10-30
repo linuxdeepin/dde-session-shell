@@ -473,6 +473,7 @@ void AuthPassword::updateUnlockPrompt()
     } else if (m_integerMinutes > 1) {
         m_lineEdit->setPlaceholderText(tr("Please try again %n minutes later", "", static_cast<int>(m_integerMinutes)));
     } else {
+        setLineEditInfo(tr("Password"), PlaceHolderText);
         QTimer::singleShot(1000, this, [this] {
             emit activeAuth(m_type);
         });
