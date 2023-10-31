@@ -215,23 +215,6 @@ void AuthPasskey::setAuthFactorType(AuthFactorType authFactorType)
     AuthModule::setAuthFactorType(authFactorType);
 }
 
-/**
- * @brief 更新认证锁定时的文案
- */
-void AuthPasskey::updateUnlockPrompt()
-{
-    AuthModule::updateUnlockPrompt();
-    if (m_limitsInfo->locked) {
-        m_textLabel->setText(tr("Passkey locked, use password please"));
-    } else {
-        QTimer::singleShot(1000, this, [this] {
-            emit activeAuth(m_type);
-        });
-        qInfo() << "Waiting authentication service...";
-    }
-    update();
-}
-
 void AuthPasskey::mouseReleaseEvent(QMouseEvent *event)
 {
     if (event->button() == Qt::LeftButton) {

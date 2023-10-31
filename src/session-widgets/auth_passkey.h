@@ -35,7 +35,6 @@ protected:
 private:
     void initUI();
     void initConnections();
-    void updateUnlockPrompt() override;
     void doAnimation() override;
     void needSpinner(bool need);
 
