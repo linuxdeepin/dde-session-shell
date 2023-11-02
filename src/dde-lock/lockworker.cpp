@@ -760,7 +760,6 @@ void LockWorker::lockServiceEvent(quint32 eventType, quint32 pid, const QString 
 
 void LockWorker::onAuthFinished()
 {
-    m_model->setVisible(false);
     onUnlockFinished(true);
     setCurrentUser(m_model->currentUser());
 }

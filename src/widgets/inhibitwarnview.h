@@ -47,6 +47,8 @@ public:
 
     void setInhibitorList(const QList<InhibitorData> & list);
     void setInhibitConfirmMessage(const QString &text, bool showLoading = false);
+    void setDelayView(bool showDelay);
+    bool delayView() const;
     void setAcceptReason(const QString &reason) override;
     void setAcceptVisible(const bool acceptable);
     bool hasInhibit() const;
@@ -80,6 +82,7 @@ private:
     QWidget *m_bottomWidget;
     int m_dataBindIndex;
     bool m_waitForAppPreparing;
+    bool m_showDelay;
 };
 
 #endif // INHIBITWARNVIEW_H
