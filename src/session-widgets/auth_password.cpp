@@ -468,8 +468,10 @@ void AuthPassword::updateUnlockPrompt()
 {
     AuthModule::updateUnlockPrompt();
     if (m_integerMinutes == 1) {
+        m_lineEdit->clear();
         m_lineEdit->setPlaceholderText(tr("Please try again 1 minute later"));
     } else if (m_integerMinutes > 1) {
+        m_lineEdit->clear();
         m_lineEdit->setPlaceholderText(tr("Please try again %n minutes later", "", static_cast<int>(m_integerMinutes)));
     } else {
         setLineEditInfo(tr("Password"), PlaceHolderText);
