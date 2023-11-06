@@ -14,6 +14,7 @@ WarningContent::WarningContent(QWidget *parent)
     , m_login1Inter(new DBusLogin1Manager("org.freedesktop.login1", "/org/freedesktop/login1", QDBusConnection::systemBus(), this))
     , m_powerAction(SessionBaseModel::PowerAction::None)
     , m_failures(0)
+    , m_canReturnMainPage(true)
 {
     setAccessibleName("WarningContent");
     m_inhibitorBlacklists << "NetworkManager" << "ModemManager" << "com.deepin.daemon.Power";
@@ -135,8 +136,7 @@ QList<InhibitWarnView::InhibitorData> WarningContent::listInhibitors(const Sessi
 
 void WarningContent::doCancelShutdownInhibit()
 {
-    InhibitWarnView *view = qobject_cast<InhibitWarnView *>(m_warningView);
-    if (view && view->delayView())
+    if (!m_canReturnMainPage)
         return;
 
     qInfo() << "Cancel shutdown inhibit";
@@ -155,27 +155,24 @@ void WarningContent::doAcceptShutdownInhibit()
     qInfo() << "Accept shutdown inhibit, power action: " << m_powerAction
             << ", current mode: " << m_model->currentModeState();
     InhibitWarnView *view = qobject_cast<InhibitWarnView *>(sender());
-    if (view) {
-        view->setDelayView(false);
-        if (view->hasInhibit() && view->waitForAppPerparing()) {
-            switch (m_powerAction) {
-            case SessionBaseModel::PowerAction::RequireShutdown:
-            case SessionBaseModel::PowerAction::RequireUpdateShutdown:
-                view->setDelayView(true);
-                view->setInhibitConfirmMessage(tr("Closing the programs and shutting down, please wait..."), true);
-                break;
-            case SessionBaseModel::PowerAction::RequireRestart:
-            case SessionBaseModel::PowerAction::RequireUpdateRestart:
-                view->setDelayView(true);
-                view->setInhibitConfirmMessage(tr("Closing the programs and rebooting, please wait..."), true);
-                break;
-            case SessionBaseModel::PowerAction::RequireLogout:
-                view->setDelayView(true);
-                view->setInhibitConfirmMessage(tr("Closing the programs and logging out, please wait..."), true);
-                break;
-            default:
-                break;
-            }
+    if (view && view->hasInhibit() && view->waitForAppPerparing()) {
+        switch (m_powerAction) {
+        case SessionBaseModel::PowerAction::RequireShutdown:
+        case SessionBaseModel::PowerAction::RequireUpdateShutdown:
+            view->setInhibitConfirmMessage(tr("Closing the programs and shutting down, please wait..."), true);
+            m_canReturnMainPage = false;
+            break;
+        case SessionBaseModel::PowerAction::RequireRestart:
+        case SessionBaseModel::PowerAction::RequireUpdateRestart:
+            view->setInhibitConfirmMessage(tr("Closing the programs and rebooting, please wait..."), true);
+            m_canReturnMainPage = false;
+            break;
+        case SessionBaseModel::PowerAction::RequireLogout:
+            view->setInhibitConfirmMessage(tr("Closing the programs and logging out, please wait..."), true);
+            m_canReturnMainPage = false;
+            break;
+        default:
+            break;
         }
     }
 
@@ -406,12 +403,6 @@ void WarningContent::setPowerAction(const SessionBaseModel::PowerAction action)
         return;
 
     m_powerAction = action;
-}
-
-bool WarningContent::supportDelayOrWait() const
-{
-    InhibitWarnView *view = qobject_cast<InhibitWarnView *>(m_warningView);
-    return (view && view->hasInhibit() && view->waitForAppPerparing() && view->delayView());
 }
 
 void WarningContent::mouseReleaseEvent(QMouseEvent *event)
