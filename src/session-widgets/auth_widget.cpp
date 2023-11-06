@@ -519,6 +519,11 @@ void AuthWidget::syncUKey(const QVariant &value)
 void AuthWidget::showEvent(QShowEvent *event)
 {
     activateWindow();
+
+    if (focusProxy()) {
+        focusProxy()->setFocus();
+    }
+
     QWidget::showEvent(event);
 }
 
