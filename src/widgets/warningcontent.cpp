@@ -44,6 +44,10 @@ void WarningContent::setModel(SessionBaseModel * const model)
 
 QList<InhibitWarnView::InhibitorData> WarningContent::listInhibitors(const SessionBaseModel::PowerAction action)
 {
+    std::shared_ptr<User> currentUser = m_model->currentUser();
+    if (!currentUser)
+        return QList<InhibitWarnView::InhibitorData>();
+
     QList<InhibitWarnView::InhibitorData> inhibitorList;
 
     if (m_login1Inter->isValid()) {
@@ -76,6 +80,9 @@ QList<InhibitWarnView::InhibitorData> WarningContent::listInhibitors(const Sessi
             for (int i = 0; i < inhibitList.count(); i++) {
                 // Just take care of DStore's inhibition, ignore others'.
                 const Inhibit &inhibitor = inhibitList.at(i);
+                if (inhibitor.uid != currentUser->uid())
+                    continue;
+
                 if (inhibitor.what.split(':', QString::SkipEmptyParts).contains(type)
                         && !m_inhibitorBlacklists.contains(inhibitor.who)) {
 
