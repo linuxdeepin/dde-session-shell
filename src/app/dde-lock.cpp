@@ -144,7 +144,15 @@ int main(int argc, char *argv[])
     QObject::connect(LockContent::instance(), &LockContent::requestStartAuthentication, worker, &LockWorker::startAuthentication);
     QObject::connect(LockContent::instance(), &LockContent::sendTokenToAuth, worker, &LockWorker::sendTokenToAuth);
     QObject::connect(LockContent::instance(), &LockContent::requestEndAuthentication, worker, &LockWorker::onEndAuthentication);
-    QObject::connect(LockContent::instance(), &LockContent::authFinished, worker, [worker] {
+    QObject::connect(LockContent::instance(), &LockContent::authFinished, worker, [worker, model] {
+        if (WarningContent::instance()->supportDelayOrWait()) {
+            qDebug() << "return to warningcontent";
+            FullScreenBackground::setContent(WarningContent::instance());
+            model->setCurrentContentType(SessionBaseModel::WarningContent);
+        } else {
+            model->setVisible(false);
+        }
+
         worker->onAuthFinished();
         worker->enableZoneDetected(true);
     });

@@ -64,6 +64,7 @@ InhibitWarnView::InhibitWarnView(SessionBaseModel::PowerAction inhibitType, QWid
     , m_cancelBtn(new InhibitButton(this))
     , m_bottomWidget(new QWidget(this))
     , m_waitForAppPreparing(true)
+    , m_showDelay(false)
 {
     initMember();
     initUi();
@@ -115,6 +116,16 @@ void InhibitWarnView::setInhibitConfirmMessage(const QString &text, bool showLoa
         m_loading->setFixedWidth(m_loading->height());
     m_loading->setVisible(showLoading);
     showLoading ? m_loading->start() : m_loading->stop();
+}
+
+void InhibitWarnView::setDelayView(bool showDelay)
+{
+    m_showDelay = showDelay;
+}
+
+bool InhibitWarnView::delayView() const
+{
+    return m_showDelay;
 }
 
 void InhibitWarnView::setAcceptReason(const QString &reason)

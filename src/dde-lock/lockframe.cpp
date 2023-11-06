@@ -57,7 +57,8 @@ LockFrame::LockFrame(SessionBaseModel *const model, QWidget *parent)
     connect(model, &SessionBaseModel::authFinished, this, [this](bool success) {
         if (success) {
             Q_EMIT requestEnableHotzone(true);
-            m_model->setVisible(false);
+            if (!WarningContent::instance()->supportDelayOrWait())
+                m_model->setVisible(false);
         }
     });
 

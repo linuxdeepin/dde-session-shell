@@ -26,6 +26,7 @@ public:
     void setModel(SessionBaseModel * const model);
     void beforeInvokeAction(bool needConfirm);
     void setPowerAction(const SessionBaseModel::PowerAction action);
+    bool supportDelayOrWait() const;
 
 signals:
     void requestLockFrameHide();
@@ -50,7 +51,6 @@ private:
     QStringList m_inhibitorBlacklists;
     SessionBaseModel::PowerAction m_powerAction;
     int m_failures;
-    bool m_canReturnMainPage;
 };
 
 class InhibitHint
