@@ -5,24 +5,23 @@
 #include "updateworker.h"
 #include "dconfig_helper.h"
 
-#include <QTimer>
+#include <QApplication>
+#include <QDBusMetaType>
+#include <QDBusPendingReply>
 #include <QDebug>
 #include <QDir>
-#include <QDBusPendingReply>
-#include <QDBusMetaType>
-#include <QMap>
-#include <QDebug>
+#include <QFile>
+#include <QFont>
 #include <QJsonDocument>
 #include <QJsonObject>
+#include <QMap>
+#include <QTimer>
 #include <QVariant>
-#include <QFont>
 #include <QWidget>
-#include <QApplication>
-#include <QFile>
 
 #include <DDBusSender>
 
-UpdateWorker::UpdateWorker(QObject *parent)
+UpdateWorker::UpdateWorker(QObject* parent)
     : QObject(parent)
     , m_powerInter(new PowerInter("com.deepin.system.Power", "/com/deepin/system/Power", QDBusConnection::systemBus(), this))
     , m_managerInter(new ManagerInter("com.deepin.lastore", "/com/deepin/lastore", QDBusConnection::systemBus(), this))
@@ -58,7 +57,7 @@ void UpdateWorker::init()
             UpdateModel::instance()->setUpdateStatus(UpdateModel::UpdateStatus::InstallFailed);
         }
     });
-    connect(m_abRecoveryInter, &RecoveryInter::JobEnd, this, [](const QString &kind, bool success, const QString &errMsg) {
+    connect(m_abRecoveryInter, &RecoveryInter::JobEnd, this, [](const QString& kind, bool success, const QString& errMsg) {
         qInfo() << "Backup job end, kind: " << kind << ", success: " << success << ", error message: " << errMsg;
         if ("backup" != kind) {
             qWarning() << "Kind error: " << kind;
@@ -175,14 +174,14 @@ void UpdateWorker::doDistUpgrade(bool doBackup)
     m_managerInter->setSync(false);
     qInfo() << "Update mode:" << updateMode;
     QDBusPendingReply<QDBusObjectPath> reply = m_managerInter->asyncCall("DistUpgradePartly", updateMode, doBackup);
-    QDBusPendingCallWatcher *watcher = new QDBusPendingCallWatcher(reply, this);
+    QDBusPendingCallWatcher* watcher = new QDBusPendingCallWatcher(reply, this);
     connect(watcher, &QDBusPendingCallWatcher::finished, this, [this, reply, watcher] {
         watcher->deleteLater();
         if (reply.isValid()) {
             UpdateModel::instance()->setUpdateStatus(UpdateModel::UpdateStatus::Installing);
             createDistUpgradeJob(reply.value().path());
         } else {
-            const QString &errorMessage = watcher->error().message();
+            const QString& errorMessage = watcher->error().message();
             qWarning() << "Do dist upgrade failed:" << watcher->error().message();
             UpdateModel::instance()->setLastErrorLog(errorMessage);
             UpdateModel::instance()->setUpdateError(UpdateModel::UpdateError::UnKnown);
@@ -191,11 +190,11 @@ void UpdateWorker::doDistUpgrade(bool doBackup)
     });
 }
 
-void UpdateWorker::onJobListChanged(const QList<QDBusObjectPath> &jobs)
+void UpdateWorker::onJobListChanged(const QList<QDBusObjectPath>& jobs)
 {
     qInfo() << "Job list changed";
-    for (const auto &job : jobs) {
-        const QString &jobPath = job.path();
+    for (const auto& job : jobs) {
+        const QString& jobPath = job.path();
         JobInter jobInter("com.deepin.lastore", jobPath, QDBusConnection::systemBus());
         if (!jobInter.isValid()) {
             qWarning() << "Job is invalid";
@@ -203,7 +202,7 @@ void UpdateWorker::onJobListChanged(const QList<QDBusObjectPath> &jobs)
         }
 
         // id maybe scrapped
-        const QString &id = jobInter.id();
+        const QString& id = jobInter.id();
         if (id == "dist_upgrade" && m_distUpgradeJob == nullptr) {
             qInfo() << "Create dist upgrade job";
             createDistUpgradeJob(jobPath);
@@ -231,14 +230,14 @@ void UpdateWorker::createDistUpgradeJob(const QString& jobPath)
     onDistUpgradeStatusChanged(m_distUpgradeJob->status());
 }
 
-void UpdateWorker::onDistUpgradeStatusChanged(const QString &status)
+void UpdateWorker::onDistUpgradeStatusChanged(const QString& status)
 {
     // 无需处理ready状态
     static const QMap<QString, UpdateModel::UpdateStatus> DIST_UPGRADE_STATUS_MAP = {
-        {"running", UpdateModel::UpdateStatus::Installing},
-        {"failed", UpdateModel::UpdateStatus::InstallFailed},
-        {"succeed", UpdateModel::UpdateStatus::InstallSuccess},
-        {"end", UpdateModel::UpdateStatus::InstallComplete}
+        { "running", UpdateModel::UpdateStatus::Installing },
+        { "failed", UpdateModel::UpdateStatus::InstallFailed },
+        { "succeed", UpdateModel::UpdateStatus::InstallSuccess },
+        { "end", UpdateModel::UpdateStatus::InstallComplete }
     };
 
     qInfo() << "Dist upgrade status changed " << status;
@@ -269,8 +268,8 @@ UpdateModel::UpdateError UpdateWorker::analyzeJobErrorMessage(QString jobDescrip
         qWarning() << "Json format error";
         return UpdateModel::UpdateError::UnKnown;
     }
-    const QJsonObject &object = jobErrorMessage.object();
-    QString errorType =  object.value("ErrType").toString();
+    const QJsonObject& object = jobErrorMessage.object();
+    QString errorType = object.value("ErrType").toString();
 
     if (errorType.contains("unmetDependencies", Qt::CaseInsensitive) || errorType.contains("dependenciesBroken", Qt::CaseInsensitive)) {
         return UpdateModel::UpdateError::DependenciesBrokenError;
@@ -289,7 +288,7 @@ void UpdateWorker::doDistUpgradeIfCanBackup()
 {
     qInfo() << "Prepare to do backup";
     QDBusPendingCall call = m_abRecoveryInter->CanBackup();
-    QDBusPendingCallWatcher *watcher = new QDBusPendingCallWatcher(call, this);
+    QDBusPendingCallWatcher* watcher = new QDBusPendingCallWatcher(call, this);
     connect(watcher, &QDBusPendingCallWatcher::finished, this, [this, call] {
         if (!call.isError()) {
             QDBusReply<bool> reply = call.reply();
@@ -324,27 +323,27 @@ void UpdateWorker::doAction(UpdateModel::UpdateAction action)
 {
     qInfo() << "Do action: " << action;
     switch (action) {
-        case UpdateModel::DoBackupAgain:
-            startUpdateProgress();
-            break;
-        case UpdateModel::ContinueUpdating:
-            doDistUpgrade(false);
-            break;
-        case UpdateModel::ExitUpdating:
-            Q_EMIT requestExitUpdating();
-            break;
-        case UpdateModel::Reboot:
-            doPowerAction(true);
-            break;
-        case UpdateModel::ShutDown:
-            doPowerAction(false);
-            break;
-        case UpdateModel::FixError:
-            // TODO 交互逻辑和UI需要重新设计
-            fixError();
-            break;
-        default:
-            break;
+    case UpdateModel::DoBackupAgain:
+        startUpdateProgress();
+        break;
+    case UpdateModel::ContinueUpdating:
+        doDistUpgrade(false);
+        break;
+    case UpdateModel::ExitUpdating:
+        Q_EMIT requestExitUpdating();
+        break;
+    case UpdateModel::Reboot:
+        doPowerAction(true);
+        break;
+    case UpdateModel::ShutDown:
+        doPowerAction(false);
+        break;
+    case UpdateModel::FixError:
+        // TODO 交互逻辑和UI需要重新设计
+        fixError();
+        break;
+    default:
+        break;
     }
 }
 
@@ -375,7 +374,7 @@ void UpdateWorker::fixError()
         return;
     }
 
-    if(UpdateModel::instance()->updateError() != UpdateModel::DpkgInterrupted) {
+    if (UpdateModel::instance()->updateError() != UpdateModel::DpkgInterrupted) {
         qWarning() << "Only support fixing `dpkgInterrupted` error now";
         return;
     }
@@ -398,7 +397,7 @@ void UpdateWorker::fixError()
             if (status == "succeed") {
                 m_fixErrorResult = false;
                 startUpdateProgress();
-            } else if(status == "failed") {
+            } else if (status == "failed") {
                 m_fixErrorResult = false;
             }
         }
@@ -413,13 +412,13 @@ void UpdateWorker::doPowerAction(bool reboot)
         QDBusPendingReply<InhibitorsList> reply = m_login1Manager->ListInhibitors();
         reply.waitForFinished();
         if (reply.isValid()) {
-            const auto &value = reply.value();
+            const auto& value = reply.value();
             qInfo() << "Inhibitors size: " << value.size();
-            for (const Inhibit &inhibit : value) {
+            for (const Inhibit& inhibit : value) {
                 qDebug() << "Inhibit details: who: " << inhibit.who
-                        << ", why:" << inhibit.why
-                        << ", pid:" << inhibit.pid
-                        << ", mode:" << inhibit.mode;
+                         << ", why:" << inhibit.why
+                         << ", pid:" << inhibit.pid
+                         << ", mode:" << inhibit.mode;
             }
         } else {
             qWarning() << "Get inhibitors failed, error: " << reply.error().message();
@@ -441,13 +440,13 @@ void UpdateWorker::enableShortcuts(bool enable)
 {
     qInfo() << "Enable shortcuts: " << enable;
     QDBusPendingCall reply = DDBusSender()
-        .service("com.deepin.dde.osd")
-        .path("/")
-        .interface("com.deepin.dde.osd")
-        .property("OSDEnabled")
-        .set(enable);
+                                 .service("com.deepin.dde.osd")
+                                 .path("/")
+                                 .interface("com.deepin.dde.osd")
+                                 .property("OSDEnabled")
+                                 .set(enable);
 
-    QDBusPendingCallWatcher *watcher = new QDBusPendingCallWatcher(reply, this);
+    QDBusPendingCallWatcher* watcher = new QDBusPendingCallWatcher(reply, this);
     connect(watcher, &QDBusPendingCallWatcher::finished, this, [reply, watcher] {
         watcher->deleteLater();
         if (!reply.isValid()) {
@@ -463,9 +462,9 @@ void UpdateWorker::enableShortcuts(bool enable)
  * @return true service is valid
  * @return false service is invalid
  */
-bool UpdateWorker::syncStartService(DBusExtendedAbstractInterface *interface)
+bool UpdateWorker::syncStartService(DBusExtendedAbstractInterface* interface)
 {
-    const QString &service = interface->service();
+    const QString& service = interface->service();
     DBusManager dbusManager("org.freedesktop.DBus", "/", QDBusConnection::systemBus());
     QDBusReply<uint32_t> reply = dbusManager.call("StartServiceByName", service, quint32(0));
     if (reply.isValid()) {
@@ -497,7 +496,7 @@ void UpdateWorker::checkStatusAfterSessionActive()
             return;
         }
     }
-    const int lastoreDaemonStatus = DConfigHelper::instance()->getConfig("org.deepin.lastore", "org.deepin.lastore", "","lastore-daemon-status", 0).toInt();
+    const int lastoreDaemonStatus = DConfigHelper::instance()->getConfig("org.deepin.lastore", "org.deepin.lastore", "", "lastore-daemon-status", 0).toInt();
     qInfo() << "Lastore daemon status: " << lastoreDaemonStatus;
     static const int IS_UPDATE_READY = 1; // 第一位表示更新是否可用
     const bool isUpdateReady = lastoreDaemonStatus & IS_UPDATE_READY;
@@ -531,31 +530,24 @@ void UpdateWorker::cleanLaStoreJob(QPointer<JobInter> dbusJob)
 void UpdateWorker::doUpdateAfterRestartLightdm()
 {
     qInfo() << "Do update after restart lightdm";
-    const static QString FILE_PATH = "/tmp/deepin_update_option.json";
-
-    // 写入更新配置，以便dde-update读取
-    QFile f(FILE_PATH);
-    if (!f.open(QIODevice::WriteOnly)) {
-        qWarning() << "Open " << FILE_PATH << " failed";
-        doDistUpgradeIfCanBackup();
-        return;
-    }
 
     QJsonObject content;
-    m_managerInter->setSync(true);
-    const int updateMode = m_managerInter->updateMode();
-    m_managerInter->setSync(false);
-    content["DoUpgradeMode"] = updateMode;
-    content["IsPowerOff"] = UpdateModel::instance()->isReboot() ? 0 : 1;
+    QDBusInterface managerInter("com.deepin.lastore",
+        "/com/deepin/lastore",
+        "com.deepin.lastore.Manager",
+        QDBusConnection::systemBus());
+    content["DoUpgradeMode"] = managerInter.property("CheckUpdateMode").toInt();
+    content["IsPowerOff"] = !UpdateModel::instance()->isReboot();
 
     QJsonDocument jsonDoc;
     jsonDoc.setObject(content);
-    f.write(jsonDoc.toJson());
-    f.close();
+
+    const QString& arg = jsonDoc.toJson();
+    qInfo() << "Call function `PrepareFullScreenUpgrade` with arg:" << arg;
 
     // 重启lightdm
-    QDBusPendingReply<QDBusObjectPath> reply = m_managerInter->asyncCall("PrepareFullScreenUpgrade", "");
-    QDBusPendingCallWatcher *watcher = new QDBusPendingCallWatcher(reply, this);
+    QDBusPendingReply<QDBusObjectPath> reply = m_managerInter->asyncCall("PrepareFullScreenUpgrade", arg);
+    QDBusPendingCallWatcher* watcher = new QDBusPendingCallWatcher(reply, this);
     connect(watcher, &QDBusPendingCallWatcher::finished, this, [this, reply, watcher] {
         watcher->deleteLater();
         if (reply.isValid()) {
