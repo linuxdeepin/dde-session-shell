@@ -100,10 +100,15 @@ bool User::isLdapUser()
 bool User::isDomainUser()
 {
     /* 域账户判断条件：
-     * 1.用户组包含“domain”
-     * 2.用户组包含“udcp” 且 uid大于10000
+     * 1.用户组包含“domain”（外部Linux上游）
+     * 2.用户组包含“udcp” 且 uid大于10000（统信域管）
+     * 3.用户组包含“domain users”且uid大于10000（windows AD域）
      */
-    return this->isUserValid() && (this->groups().contains("domain") || (this->groups().contains("udcp") && this->uid() > 10000));
+    bool isDomainUser = this->groups().contains("domain")
+            || (this->groups().contains("udcp") && this->uid() > 10000)
+            || (this->groups().contains("domain users") && this->uid() > 10000);
+
+    return this->isUserValid() && isDomainUser;
 }
 
 /**
