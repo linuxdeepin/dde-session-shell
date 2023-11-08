@@ -2,6 +2,7 @@
 //
 // SPDX-License-Identifier: GPL-3.0-or-later
 
+#include "dconfig_helper.h"
 #include "warningcontent.h"
 #include "fullscreenbackground.h"
 #include "lockcontent.h"
@@ -77,6 +78,8 @@ QList<InhibitWarnView::InhibitorData> WarningContent::listInhibitors(const Sessi
                 return {};
             }
 
+            QStringList delayInhibitIgnoreList = DConfigHelper::instance()->getConfig("delayInhibitIgnoreList", QStringList()).toStringList();
+
             for (int i = 0; i < inhibitList.count(); i++) {
                 // Just take care of DStore's inhibition, ignore others'.
                 const Inhibit &inhibitor = inhibitList.at(i);
@@ -88,6 +91,9 @@ QList<InhibitWarnView::InhibitorData> WarningContent::listInhibitors(const Sessi
 
                     // 待机时，非block暂不处理，因为目前没有倒计时待机功能
                     if (type == "sleep" && inhibitor.mode != "block")
+                        continue;
+
+                    if (inhibitor.mode == "delay" && delayInhibitIgnoreList.contains(inhibitor.who))
                         continue;
 
                     InhibitWarnView::InhibitorData inhibitData;

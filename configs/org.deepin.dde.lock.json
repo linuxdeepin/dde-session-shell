@@ -171,6 +171,16 @@
             "description": "系统可更新时，电源界面是否隐藏关机和重启按钮 \n值为true时隐藏 \n值为false时不隐藏 \n默认值为false",
             "permissions": "readwrite",
             "visibility": "public"
+        },
+        "delayInhibitIgnoreList":{
+            "value": [],
+            "serial": 0,
+            "flags": ["global"],
+            "name": "DelayInhibitIgnoreList",
+            "name[zh_CN]": "延迟关机忽略列表",
+            "description": "延迟关机忽略列表内的应用不在阻止关机列表中显示",
+            "permissions": "readwrite",
+            "visibility": "private"
         }
     }
 }
