@@ -10,6 +10,8 @@
 #include "login_plugin_util.h"
 #include "public_func.h"
 #include "dconfig_helper.h"
+#include "warningcontent.h"
+#include "fullscreenbackground.h"
 
 #include <DSysInfo>
 
@@ -838,6 +840,23 @@ void LockWorker::checkAccount(const QString &account)
 
     if (m_model->currentUser() && m_model->currentUser()->isNoPasswordLogin()) {
         qInfo() << "Current user has set 'no password login' : " << account;
-        onAuthFinished();
+
+        authFinishedAction();
     }
+}
+
+void LockWorker::authFinishedAction()
+{
+    if ((m_model->powerAction() == SessionBaseModel::PowerAction::RequireRestart
+            || m_model->powerAction() == SessionBaseModel::PowerAction::RequireShutdown)
+            && WarningContent::instance()->supportDelayOrWait()) {
+        qDebug() << "return to warningcontent";
+        FullScreenBackground::setContent(WarningContent::instance());
+        m_model->setCurrentContentType(SessionBaseModel::WarningContent);
+    } else {
+        qDebug() << "hide main window";
+        m_model->setVisible(false);
+    }
+    onAuthFinished();
+    enableZoneDetected(true);
 }
