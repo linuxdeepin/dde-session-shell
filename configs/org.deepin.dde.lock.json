@@ -162,15 +162,15 @@
             "permissions": "readwrite",
             "visibility": "private"
         },
-        "forceUpdate": {
+        "hidePowerButtonsWhenUpdatable": {
             "value": false,
             "serial": 0,
             "flags": ["global"],
-            "name": "Force update",
-            "name[zh_CN]": "强制更新",
-            "description": "在系统可更新的情况下，电源界面是否显示关机和重启按钮 \n值为false时显示 \n值为true不显示 \n默认值为false",
+            "name": "Hide power buttons when updatable",
+            "name[zh_CN]": "系统可更新时隐藏电源控制按钮",
+            "description": "系统可更新时，电源界面是否隐藏关机和重启按钮 \n值为true时隐藏 \n值为false时不隐藏 \n默认值为false",
             "permissions": "readwrite",
-            "visibility": "private"
+            "visibility": "public"
         }
     }
 }
