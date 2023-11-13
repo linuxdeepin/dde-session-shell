@@ -11,11 +11,11 @@
     </message>
     <message numerus="yes">
         <source>Verification failed, %n chances left</source>
-        <translation type="unfinished"><numerusform></numerusform><numerusform></numerusform><numerusform></numerusform><numerusform></numerusform></translation>
+        <translation><numerusform>Overenie zlyhalo, ostáva %d pokus</numerusform><numerusform>Overenie zlyhalo, ostávajú %d pokusy</numerusform><numerusform>Overenie zlyhalo, ostáva %d pokusov </numerusform><numerusform>Overenie zlyhalo, ostáva %d pokusov </numerusform></translation>
     </message>
     <message>
         <source>Verification failed, only one chance left</source>
-        <translation type="unfinished"/>
+        <translation>Overenie zlyhalo, ostáva iba jeden pokus</translation>
     </message>
     <message>
         <source>Verify your Face ID</source>
@@ -27,14 +27,14 @@
     </message>
     <message>
         <source>Device unavailable!</source>
-        <translation type="unfinished"/>
+        <translation>Zariadenie nie je dostupné!</translation>
     </message>
 </context>
 <context>
     <name>AuthFingerprint</name>
     <message>
         <source>Verify your fingerprint</source>
-        <translation type="unfinished"/>
+        <translation>Overte svoj odtlačok prsta</translation>
     </message>
     <message>
         <source>Verification successful</source>
@@ -42,11 +42,11 @@
     </message>
     <message numerus="yes">
         <source>Verification failed, %n chances left</source>
-        <translation type="unfinished"><numerusform></numerusform><numerusform></numerusform><numerusform></numerusform><numerusform></numerusform></translation>
+        <translation><numerusform>Overenie zlyhalo, ostáva %d pokus</numerusform><numerusform>Overenie zlyhalo, ostávajú %d pokusy</numerusform><numerusform>Overenie zlyhalo, ostáva %d pokusov </numerusform><numerusform>Overenie zlyhalo, ostáva %d pokusov </numerusform></translation>
     </message>
     <message>
         <source>Verification failed, only one chance left</source>
-        <translation type="unfinished"/>
+        <translation>Overenie zlyhalo, ostáva iba jeden pokus</translation>
     </message>
     <message>
         <source>Fingerprint locked, use password please</source>
@@ -65,11 +65,11 @@
     </message>
     <message numerus="yes">
         <source>Verification failed, %n chances left</source>
-        <translation type="unfinished"><numerusform></numerusform><numerusform></numerusform><numerusform></numerusform><numerusform></numerusform></translation>
+        <translation><numerusform>Overenie zlyhalo, ostáva %d pokus</numerusform><numerusform>Overenie zlyhalo, ostávajú %d pokusy</numerusform><numerusform>Overenie zlyhalo, ostáva %d pokusov </numerusform><numerusform>Overenie zlyhalo, ostáva %d pokusov </numerusform></translation>
     </message>
     <message>
         <source>Verification failed, only one chance left</source>
-        <translation type="unfinished"/>
+        <translation>Overenie zlyhalo, ostáva iba jeden pokus</translation>
     </message>
     <message>
         <source>Verify your Iris ID</source>
@@ -81,6 +81,25 @@
     </message>
 </context>
 <context>
+    <name>AuthPasskey</name>
+    <message>
+        <source>Please plug in the security key</source>
+        <translation type="unfinished"/>
+    </message>
+    <message>
+        <source>Verification successful</source>
+        <translation type="unfinished"/>
+    </message>
+    <message>
+        <source>Verification failed</source>
+        <translation type="unfinished"/>
+    </message>
+    <message>
+        <source>Identifying the security key</source>
+        <translation type="unfinished"/>
+    </message>
+</context>
+<context>
     <name>AuthPassword</name>
     <message>
         <source>Verification successful</source>
@@ -88,11 +107,11 @@
     </message>
     <message numerus="yes">
         <source>Verification failed, %n chances left</source>
-        <translation type="unfinished"><numerusform></numerusform><numerusform></numerusform><numerusform></numerusform><numerusform></numerusform></translation>
+        <translation><numerusform>Overenie zlyhalo, ostáva %d pokus</numerusform><numerusform>Overenie zlyhalo, ostávaju %d pokusy</numerusform><numerusform>Overenie zlyhalo, ostáva %d pokusov </numerusform><numerusform>Overenie zlyhalo, ostáva %d pokusov </numerusform></translation>
     </message>
     <message>
         <source>Verification failed, only one chance left</source>
-        <translation type="unfinished"/>
+        <translation>Overenie zlyhalo, ostáva iba jeden pokus</translation>
     </message>
     <message>
         <source>Wrong Password</source>
@@ -112,11 +131,11 @@
     </message>
     <message>
         <source>Reset Password</source>
-        <translation type="unfinished"/>
+        <translation>Obnoviť heslo</translation>
     </message>
     <message>
         <source>Forgot password?</source>
-        <translation type="unfinished"/>
+        <translation>Zabudli ste heslo?</translation>
     </message>
 </context>
 <context>
@@ -131,11 +150,11 @@
     </message>
     <message>
         <source>Reset Password</source>
-        <translation type="unfinished"/>
+        <translation>Obnoviť heslo</translation>
     </message>
     <message>
         <source>Forgot password?</source>
-        <translation type="unfinished"/>
+        <translation>Zabudli ste heslo?</translation>
     </message>
 </context>
 <context>
@@ -146,15 +165,15 @@
     </message>
     <message numerus="yes">
         <source>Verification failed, %n chances left</source>
-        <translation type="unfinished"><numerusform></numerusform><numerusform></numerusform><numerusform></numerusform><numerusform></numerusform></translation>
+        <translation><numerusform>Overenie zlyhalo, ostáva %d pokus</numerusform><numerusform>Overenie zlyhalo, ostávajú %d pokusy</numerusform><numerusform>Overenie zlyhalo, ostáva %d pokusov </numerusform><numerusform>Overenie zlyhalo, ostáva %d pokusov </numerusform></translation>
     </message>
     <message>
         <source>Verification failed, only one chance left</source>
-        <translation type="unfinished"/>
+        <translation>Overenie zlyhalo, ostáva iba jeden pokus</translation>
     </message>
     <message>
         <source>Wrong PIN</source>
-        <translation type="unfinished"/>
+        <translation>Nesprávny PIN</translation>
     </message>
     <message>
         <source>UKey is required</source>
@@ -162,7 +181,7 @@
     </message>
     <message>
         <source>Enter your PIN</source>
-        <translation type="unfinished"/>
+        <translation>Zadajte svoj PIN</translation>
     </message>
     <message numerus="yes">
         <source>Please try again %n minute(s) later</source>
@@ -204,7 +223,7 @@
     <name>GreeterWorker</name>
     <message>
         <source>Wrong account</source>
-        <translation type="unfinished"/>
+        <translation>Nesprávny účet</translation>
     </message>
     <message>
         <source>Wrong Password</source>
@@ -532,14 +551,21 @@
     </message>
 </context>
 <context>
+    <name>dss::module::AssistLoginWidget</name>
+    <message>
+        <source>Automatic login</source>
+        <translation type="unfinished"/>
+    </message>
+</context>
+<context>
     <name>dss::module::NetworkModule</name>
     <message>
         <source>Turn on</source>
-        <translation type="unfinished"/>
+        <translation>Zapnúť</translation>
     </message>
     <message>
         <source>Turn off</source>
-        <translation type="unfinished"/>
+        <translation>Vypnúť</translation>
     </message>
 </context>
 </TS>

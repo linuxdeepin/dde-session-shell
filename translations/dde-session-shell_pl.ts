@@ -81,6 +81,25 @@
     </message>
 </context>
 <context>
+    <name>AuthPasskey</name>
+    <message>
+        <source>Please plug in the security key</source>
+        <translation>Podłącz klucz bezpieczeństwa</translation>
+    </message>
+    <message>
+        <source>Verification successful</source>
+        <translation>Weryfikacja zakończona pomyślnie</translation>
+    </message>
+    <message>
+        <source>Verification failed</source>
+        <translation>Weryfikacja nie powiodła się</translation>
+    </message>
+    <message>
+        <source>Identifying the security key</source>
+        <translation>Identyfikuję klucz bezpieczeństwa</translation>
+    </message>
+</context>
+<context>
     <name>AuthPassword</name>
     <message>
         <source>Verification successful</source>
@@ -219,7 +238,7 @@
     </message>
     <message>
         <source>The reason of inhibit.</source>
-        <translation type="unfinished"/>
+        <translation>Powód wstrzymania.</translation>
     </message>
 </context>
 <context>
@@ -327,19 +346,19 @@
     <name>UdcpMFALoginWidget</name>
     <message>
         <source>发送验证码</source>
-        <translation type="unfinished"/>
+        <translation>CAPTCHA</translation>
     </message>
     <message>
         <source>请输入手机号</source>
-        <translation type="unfinished"/>
+        <translation>Wprowadź numer telefonu</translation>
     </message>
     <message>
         <source>请输入验证码</source>
-        <translation type="unfinished"/>
+        <translation>Wprowadź kod weryfikacyjny</translation>
     </message>
     <message>
         <source>获取验证码</source>
-        <translation type="unfinished"/>
+        <translation>Pobierz CAPTCHA</translation>
     </message>
 </context>
 <context>
@@ -520,15 +539,22 @@
     </message>
     <message>
         <source>Closing the programs and shutting down, please wait...</source>
-        <translation type="unfinished"/>
+        <translation>Zamykanie programów i wyłączanie, proszę czekać...</translation>
     </message>
     <message>
         <source>Closing the programs and rebooting, please wait...</source>
-        <translation type="unfinished"/>
+        <translation>Zamykanie programów i uruchamianie ponowne, proszę czekać...</translation>
     </message>
     <message>
         <source>Closing the programs and logging out, please wait...</source>
-        <translation type="unfinished"/>
+        <translation>Zamykanie programów i wylogowywanie, proszę czekać...</translation>
+    </message>
+</context>
+<context>
+    <name>dss::module::AssistLoginWidget</name>
+    <message>
+        <source>Automatic login</source>
+        <translation>Automatyczne logowanie</translation>
     </message>
 </context>
 <context>

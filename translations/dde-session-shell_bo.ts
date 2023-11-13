@@ -81,6 +81,25 @@
     </message>
 </context>
 <context>
+    <name>AuthPasskey</name>
+    <message>
+        <source>Please plug in the security key</source>
+        <translation>བདེ་འཇགས་གསང་ལྡེ་འཇུག་རོགས།</translation>
+    </message>
+    <message>
+        <source>Verification successful</source>
+        <translation>ར་འཕྲོད་པ།</translation>
+    </message>
+    <message>
+        <source>Verification failed</source>
+        <translation>ར་སྤྲོད་བྱེད་མ་ཐུབ།</translation>
+    </message>
+    <message>
+        <source>Identifying the security key</source>
+        <translation>བདེ་འཇགས་གསང་ལྡེ་དབྱེ་འབྱེད་བྱེད་བཞིན་པ།</translation>
+    </message>
+</context>
+<context>
     <name>AuthPassword</name>
     <message>
         <source>Verification successful</source>
@@ -197,7 +216,7 @@
     </message>
     <message>
         <source>Terminal locked, please contact administrator</source>
-        <translation type="unfinished"/>
+        <translation>སྒྲིག་ཆས་འདི་བཀག་ཟིན་པས། དོ་དམ་པར་འབྲེལ་བ་གནང་རོགས།</translation>
     </message>
 </context>
 <context>
@@ -219,7 +238,7 @@
     </message>
     <message>
         <source>The reason of inhibit.</source>
-        <translation type="unfinished"/>
+        <translation>The reason of inhibit.</translation>
     </message>
 </context>
 <context>
@@ -327,19 +346,19 @@
     <name>UdcpMFALoginWidget</name>
     <message>
         <source>发送验证码</source>
-        <translation type="unfinished"/>
+        <translation>ར་སྤྲོད་ཨང་རྟགས་བསྐུར་རོགས།</translation>
     </message>
     <message>
         <source>请输入手机号</source>
-        <translation type="unfinished"/>
+        <translation>ཁ་པར་ཨང་གྲངས་འཇུག་རོགས།</translation>
     </message>
     <message>
         <source>请输入验证码</source>
-        <translation type="unfinished"/>
+        <translation>ར་སྤྲོད་ཨང་རྟགས་འཇུག་རོགས།</translation>
     </message>
     <message>
         <source>获取验证码</source>
-        <translation type="unfinished"/>
+        <translation>ར་སྤྲོད་ཨང་རྟགས་ལེན་པ།</translation>
     </message>
 </context>
 <context>
@@ -520,14 +539,21 @@
     </message>
     <message>
         <source>Closing the programs and shutting down, please wait...</source>
-        <translation type="unfinished"/>
+        <translation>གོང་གི་བྱ་རིམ་ཁ་བརྒྱབ་ནས་གློ་སྒོ་བརྒྱབ་བཞིན་ཡོད་པས། ཏོག་ཙམ་སྒུག་རོགས།</translation>
     </message>
     <message>
         <source>Closing the programs and rebooting, please wait...</source>
-        <translation type="unfinished"/>
+        <translation>གོང་གི་བྱ་རིམ་ཁ་བརྒྱབ་ནས་བསྐྱར་སློང་བྱ་བཞིན་ཡོད་པས། ཏོག་ཙམ་སྒུག་རོགས།</translation>
     </message>
     <message>
         <source>Closing the programs and logging out, please wait...</source>
+        <translation>གོང་གི་བྱ་རིམ་ཁ་བརྒྱབ་ནས་རྩིས་ཐོ་བསུབ་བཞིན་ཡོད་པས། ཏོག་ཙམ་སྒུག་རོགས།</translation>
+    </message>
+</context>
+<context>
+    <name>dss::module::AssistLoginWidget</name>
+    <message>
+        <source>Automatic login</source>
         <translation type="unfinished"/>
     </message>
 </context>

@@ -81,6 +81,25 @@
     </message>
 </context>
 <context>
+    <name>AuthPasskey</name>
+    <message>
+        <source>Please plug in the security key</source>
+        <translation>Por favor ingrese la clave de seguridad</translation>
+    </message>
+    <message>
+        <source>Verification successful</source>
+        <translation>Verificación exitosa</translation>
+    </message>
+    <message>
+        <source>Verification failed</source>
+        <translation>La verificación falló</translation>
+    </message>
+    <message>
+        <source>Identifying the security key</source>
+        <translation>Identificando clave de seguridad</translation>
+    </message>
+</context>
+<context>
     <name>AuthPassword</name>
     <message>
         <source>Verification successful</source>
@@ -131,7 +150,7 @@
     </message>
     <message>
         <source>Reset Password</source>
-        <translation>Reestablecer contraseña</translation>
+        <translation>Restablecer contraseña</translation>
     </message>
     <message>
         <source>Forgot password?</source>
@@ -219,14 +238,14 @@
     </message>
     <message>
         <source>The reason of inhibit.</source>
-        <translation type="unfinished"/>
+        <translation>La razón de inhibir.</translation>
     </message>
 </context>
 <context>
     <name>LighterGreeter</name>
     <message>
         <source>Standard Mode</source>
-        <translation type="unfinished"/>
+        <translation>Modo estándar</translation>
     </message>
 </context>
 <context>
@@ -327,19 +346,19 @@
     <name>UdcpMFALoginWidget</name>
     <message>
         <source>发送验证码</source>
-        <translation type="unfinished"/>
+        <translation>Enviar código de verificación</translation>
     </message>
     <message>
         <source>请输入手机号</source>
-        <translation type="unfinished"/>
+        <translation>Por favor, introduzca el número de su teléfono móvil</translation>
     </message>
     <message>
         <source>请输入验证码</source>
-        <translation type="unfinished"/>
+        <translation>Por favor, introduzca el código de verificación</translation>
     </message>
     <message>
         <source>获取验证码</source>
-        <translation type="unfinished"/>
+        <translation>Obtener un código de verificación</translation>
     </message>
 </context>
 <context>
@@ -520,15 +539,22 @@
     </message>
     <message>
         <source>Closing the programs and shutting down, please wait...</source>
-        <translation type="unfinished"/>
+        <translation>Cerrando los programas y apagando, por favor espere…</translation>
     </message>
     <message>
         <source>Closing the programs and rebooting, please wait...</source>
-        <translation type="unfinished"/>
+        <translation>Cerrando los programas y reiniciando, por favor espere…</translation>
     </message>
     <message>
         <source>Closing the programs and logging out, please wait...</source>
-        <translation type="unfinished"/>
+        <translation>Cerrando los programas y cerrando la sesión, por favor espere...</translation>
+    </message>
+</context>
+<context>
+    <name>dss::module::AssistLoginWidget</name>
+    <message>
+        <source>Automatic login</source>
+        <translation>Inicio de sesión automático</translation>
     </message>
 </context>
 <context>

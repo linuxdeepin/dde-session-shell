@@ -81,6 +81,25 @@
     </message>
 </context>
 <context>
+    <name>AuthPasskey</name>
+    <message>
+        <source>Please plug in the security key</source>
+        <translation>請插入安全金鑰</translation>
+    </message>
+    <message>
+        <source>Verification successful</source>
+        <translation>驗證成功</translation>
+    </message>
+    <message>
+        <source>Verification failed</source>
+        <translation>驗證失敗</translation>
+    </message>
+    <message>
+        <source>Identifying the security key</source>
+        <translation>正在識別安全金鑰</translation>
+    </message>
+</context>
+<context>
     <name>AuthPassword</name>
     <message>
         <source>Verification successful</source>
@@ -293,7 +312,7 @@
     </message>
     <message>
         <source>Lock</source>
-        <translation>鎖定</translation>
+        <translation>鎖定螢幕</translation>
     </message>
     <message>
         <source>Log out</source>
@@ -529,6 +548,13 @@
     <message>
         <source>Closing the programs and logging out, please wait...</source>
         <translation>正在關閉以上程式並註銷，請稍後...</translation>
+    </message>
+</context>
+<context>
+    <name>dss::module::AssistLoginWidget</name>
+    <message>
+        <source>Automatic login</source>
+        <translation type="unfinished"/>
     </message>
 </context>
 <context>

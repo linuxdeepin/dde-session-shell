@@ -81,6 +81,25 @@
     </message>
 </context>
 <context>
+    <name>AuthPasskey</name>
+    <message>
+        <source>Please plug in the security key</source>
+        <translation>Kérjük csatlakoztassa a biztonsági kulcsot</translation>
+    </message>
+    <message>
+        <source>Verification successful</source>
+        <translation>Az ellenőrzés sikeres</translation>
+    </message>
+    <message>
+        <source>Verification failed</source>
+        <translation>Az ellenőrzés sikertelen</translation>
+    </message>
+    <message>
+        <source>Identifying the security key</source>
+        <translation>A biztonsági kulcs azonosítása</translation>
+    </message>
+</context>
+<context>
     <name>AuthPassword</name>
     <message>
         <source>Verification successful</source>
@@ -529,6 +548,13 @@
     <message>
         <source>Closing the programs and logging out, please wait...</source>
         <translation>A programok bezárása és kijelentkezés, kérjük várjon...</translation>
+    </message>
+</context>
+<context>
+    <name>dss::module::AssistLoginWidget</name>
+    <message>
+        <source>Automatic login</source>
+        <translation>Automatikus bejelentkezés</translation>
     </message>
 </context>
 <context>

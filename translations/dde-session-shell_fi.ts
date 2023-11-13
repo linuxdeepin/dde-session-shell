@@ -81,6 +81,25 @@
     </message>
 </context>
 <context>
+    <name>AuthPasskey</name>
+    <message>
+        <source>Please plug in the security key</source>
+        <translation>Liitä suojausavain</translation>
+    </message>
+    <message>
+        <source>Verification successful</source>
+        <translation>Tarkistus onnistui</translation>
+    </message>
+    <message>
+        <source>Verification failed</source>
+        <translation>Tarkistus epäonnistui</translation>
+    </message>
+    <message>
+        <source>Identifying the security key</source>
+        <translation>Suojausavaimella tunnistaminen</translation>
+    </message>
+</context>
+<context>
     <name>AuthPassword</name>
     <message>
         <source>Verification successful</source>
@@ -219,7 +238,7 @@
     </message>
     <message>
         <source>The reason of inhibit.</source>
-        <translation type="unfinished"/>
+        <translation>Estämisen syy.</translation>
     </message>
 </context>
 <context>
@@ -327,19 +346,19 @@
     <name>UdcpMFALoginWidget</name>
     <message>
         <source>发送验证码</source>
-        <translation type="unfinished"/>
+        <translation>Lähetä vahvistuskoodi</translation>
     </message>
     <message>
         <source>请输入手机号</source>
-        <translation type="unfinished"/>
+        <translation>Anna puhelinnumero</translation>
     </message>
     <message>
         <source>请输入验证码</source>
-        <translation type="unfinished"/>
+        <translation>Anna vahvistuskoodi</translation>
     </message>
     <message>
         <source>获取验证码</source>
-        <translation type="unfinished"/>
+        <translation>Hanki vahvistuskoodi</translation>
     </message>
 </context>
 <context>
@@ -520,15 +539,22 @@
     </message>
     <message>
         <source>Closing the programs and shutting down, please wait...</source>
-        <translation type="unfinished"/>
+        <translation>Suljetaan ohjelmat ja sammutetaan, odota...</translation>
     </message>
     <message>
         <source>Closing the programs and rebooting, please wait...</source>
-        <translation type="unfinished"/>
+        <translation>Suljetaan ohjelmat ja käynnistetään uudelleen, odota...</translation>
     </message>
     <message>
         <source>Closing the programs and logging out, please wait...</source>
-        <translation type="unfinished"/>
+        <translation>Suljetaan ohjelmat ja kirjaudutaan ulos, odota...</translation>
+    </message>
+</context>
+<context>
+    <name>dss::module::AssistLoginWidget</name>
+    <message>
+        <source>Automatic login</source>
+        <translation>Kirjaudu automaattisesti</translation>
     </message>
 </context>
 <context>

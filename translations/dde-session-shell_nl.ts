@@ -81,6 +81,25 @@
     </message>
 </context>
 <context>
+    <name>AuthPasskey</name>
+    <message>
+        <source>Please plug in the security key</source>
+        <translation>Plug de beveiligingssleutel in</translation>
+    </message>
+    <message>
+        <source>Verification successful</source>
+        <translation>Verificatie gelukt</translation>
+    </message>
+    <message>
+        <source>Verification failed</source>
+        <translation>Verificatie mislukt</translation>
+    </message>
+    <message>
+        <source>Identifying the security key</source>
+        <translation>Bezig met identificeren van sleutel…</translation>
+    </message>
+</context>
+<context>
     <name>AuthPassword</name>
     <message>
         <source>Verification successful</source>
@@ -529,6 +548,13 @@
     <message>
         <source>Closing the programs and logging out, please wait...</source>
         <translation>Bezig met afsluiten van programma&apos;s en uitloggen…</translation>
+    </message>
+</context>
+<context>
+    <name>dss::module::AssistLoginWidget</name>
+    <message>
+        <source>Automatic login</source>
+        <translation>Automatisch aanmelden</translation>
     </message>
 </context>
 <context>

@@ -81,6 +81,25 @@
     </message>
 </context>
 <context>
+    <name>AuthPasskey</name>
+    <message>
+        <source>Please plug in the security key</source>
+        <translation>Připojte bezpečnostní klíč</translation>
+    </message>
+    <message>
+        <source>Verification successful</source>
+        <translation>Úspěšně ověřeno</translation>
+    </message>
+    <message>
+        <source>Verification failed</source>
+        <translation>Ověření se nezdařilo</translation>
+    </message>
+    <message>
+        <source>Identifying the security key</source>
+        <translation>Bezpečnostní klíč je identifikován</translation>
+    </message>
+</context>
+<context>
     <name>AuthPassword</name>
     <message>
         <source>Verification successful</source>
@@ -219,14 +238,14 @@
     </message>
     <message>
         <source>The reason of inhibit.</source>
-        <translation type="unfinished"/>
+        <translation>Důvod inhibováni.</translation>
     </message>
 </context>
 <context>
     <name>LighterGreeter</name>
     <message>
         <source>Standard Mode</source>
-        <translation type="unfinished"/>
+        <translation>Standardní režim</translation>
     </message>
 </context>
 <context>
@@ -327,19 +346,19 @@
     <name>UdcpMFALoginWidget</name>
     <message>
         <source>发送验证码</source>
-        <translation type="unfinished"/>
+        <translation>CAPTCHA</translation>
     </message>
     <message>
         <source>请输入手机号</source>
-        <translation type="unfinished"/>
+        <translation>Zadejte prosím číslo svého mobilního telefonu</translation>
     </message>
     <message>
         <source>请输入验证码</source>
-        <translation type="unfinished"/>
+        <translation>Zadejte prosím ověřovací kód</translation>
     </message>
     <message>
         <source>获取验证码</source>
-        <translation type="unfinished"/>
+        <translation>Získat CAPTCHA</translation>
     </message>
 </context>
 <context>
@@ -520,15 +539,22 @@
     </message>
     <message>
         <source>Closing the programs and shutting down, please wait...</source>
-        <translation type="unfinished"/>
+        <translation>Zavírání aplikací a vypínání – vyčkejte…</translation>
     </message>
     <message>
         <source>Closing the programs and rebooting, please wait...</source>
-        <translation type="unfinished"/>
+        <translation>Zavírání aplikací a restartování – vyčkejte…</translation>
     </message>
     <message>
         <source>Closing the programs and logging out, please wait...</source>
-        <translation type="unfinished"/>
+        <translation>Zavírání aplikací a odhlašování – vyčkejte…</translation>
+    </message>
+</context>
+<context>
+    <name>dss::module::AssistLoginWidget</name>
+    <message>
+        <source>Automatic login</source>
+        <translation>Automatické přihlášení</translation>
     </message>
 </context>
 <context>

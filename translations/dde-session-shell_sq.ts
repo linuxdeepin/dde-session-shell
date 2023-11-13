@@ -81,6 +81,25 @@
     </message>
 </context>
 <context>
+    <name>AuthPasskey</name>
+    <message>
+        <source>Please plug in the security key</source>
+        <translation>Ju lutemi, futni kyçin e sigurisë</translation>
+    </message>
+    <message>
+        <source>Verification successful</source>
+        <translation>Verifikim i suksesshëm</translation>
+    </message>
+    <message>
+        <source>Verification failed</source>
+        <translation>Verifikimi dështoi</translation>
+    </message>
+    <message>
+        <source>Identifying the security key</source>
+        <translation>Po identifikohet kyçi i sigurisë</translation>
+    </message>
+</context>
+<context>
     <name>AuthPassword</name>
     <message>
         <source>Verification successful</source>
@@ -404,7 +423,7 @@
     </message>
     <message>
         <source>DPKG error</source>
-        <translation>Gabim dpkg</translation>
+        <translation>Gabim DPKG</translation>
     </message>
     <message>
         <source>Back Up Again</source>
@@ -424,7 +443,7 @@
     </message>
     <message>
         <source>Failed to connect to update services. Please check and retry again.</source>
-        <translation>S’u arrit të lidhej te shërbime përditësimi. Ju lutemi, kontrollojeni dhe riprovoni.</translation>
+        <translation>S’u arrit të lidhej me shërbime përditësimi. Ju lutemi, kontrollojeni dhe riprovoni.</translation>
     </message>
 </context>
 <context>
@@ -520,15 +539,22 @@
     </message>
     <message>
         <source>Closing the programs and shutting down, please wait...</source>
-        <translation type="unfinished"/>
+        <translation>Po mbyllen programet dhe po bëhet fikja, ju lutemi, prisni…</translation>
     </message>
     <message>
         <source>Closing the programs and rebooting, please wait...</source>
-        <translation type="unfinished"/>
+        <translation>Po mbyllen programet dhe po bëhet rinisje, ju lutemi, prisni…</translation>
     </message>
     <message>
         <source>Closing the programs and logging out, please wait...</source>
-        <translation type="unfinished"/>
+        <translation>Po mbyllen programet dhe po bëhet dalje nga llogaria, ju lutemi, prisni…</translation>
+    </message>
+</context>
+<context>
+    <name>dss::module::AssistLoginWidget</name>
+    <message>
+        <source>Automatic login</source>
+        <translation>Hyrje e automatizuar</translation>
     </message>
 </context>
 <context>

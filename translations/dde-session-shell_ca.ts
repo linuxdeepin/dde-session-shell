@@ -81,6 +81,25 @@
     </message>
 </context>
 <context>
+    <name>AuthPasskey</name>
+    <message>
+        <source>Please plug in the security key</source>
+        <translation>Si us plau, connecteu la clau de seguretat.</translation>
+    </message>
+    <message>
+        <source>Verification successful</source>
+        <translation>Verificació correcta</translation>
+    </message>
+    <message>
+        <source>Verification failed</source>
+        <translation>Ha fallat la verificació.</translation>
+    </message>
+    <message>
+        <source>Identifying the security key</source>
+        <translation>S&apos;identifica la clau de seguretat</translation>
+    </message>
+</context>
+<context>
     <name>AuthPassword</name>
     <message>
         <source>Verification successful</source>
@@ -219,7 +238,7 @@
     </message>
     <message>
         <source>The reason of inhibit.</source>
-        <translation type="unfinished"/>
+        <translation>El motiu de la inhibició</translation>
     </message>
 </context>
 <context>
@@ -327,19 +346,19 @@
     <name>UdcpMFALoginWidget</name>
     <message>
         <source>发送验证码</source>
-        <translation type="unfinished"/>
+        <translation>Envieu el codi de verificació</translation>
     </message>
     <message>
         <source>请输入手机号</source>
-        <translation type="unfinished"/>
+        <translation>Introduïu el número de telèfon</translation>
     </message>
     <message>
         <source>请输入验证码</source>
-        <translation type="unfinished"/>
+        <translation>Introduïu el codi de verificació</translation>
     </message>
     <message>
         <source>获取验证码</source>
-        <translation type="unfinished"/>
+        <translation>obtenir el codi de verificació</translation>
     </message>
 </context>
 <context>
@@ -520,15 +539,22 @@
     </message>
     <message>
         <source>Closing the programs and shutting down, please wait...</source>
-        <translation type="unfinished"/>
+        <translation>Es tanquen els programes i s&apos;atura. Espereu, si us plau...</translation>
     </message>
     <message>
         <source>Closing the programs and rebooting, please wait...</source>
-        <translation type="unfinished"/>
+        <translation>Es tanquen els programes i es reinicia. Espereu, si us plau...</translation>
     </message>
     <message>
         <source>Closing the programs and logging out, please wait...</source>
-        <translation type="unfinished"/>
+        <translation>Es tanquen els programes i se surt de la sessió. Espereu, si us plau...</translation>
+    </message>
+</context>
+<context>
+    <name>dss::module::AssistLoginWidget</name>
+    <message>
+        <source>Automatic login</source>
+        <translation>Entrada automàtica</translation>
     </message>
 </context>
 <context>

@@ -23,7 +23,7 @@
     </message>
     <message>
         <source>Face ID locked, use password please</source>
-        <translation type="unfinished"/>
+        <translation>Face ID заблокирован, пожалуйста, используйте пароль</translation>
     </message>
     <message>
         <source>Device unavailable!</source>
@@ -77,7 +77,26 @@
     </message>
     <message>
         <source>Iris ID locked, use password please</source>
-        <translation type="unfinished"/>
+        <translation>Face ID заблокирован, пожалуйста, используйте пароль</translation>
+    </message>
+</context>
+<context>
+    <name>AuthPasskey</name>
+    <message>
+        <source>Please plug in the security key</source>
+        <translation>Пожалуйста, подключите ключ безопасности</translation>
+    </message>
+    <message>
+        <source>Verification successful</source>
+        <translation>Проверка прошла успешно</translation>
+    </message>
+    <message>
+        <source>Verification failed</source>
+        <translation>Проверка завершилась неудачно</translation>
+    </message>
+    <message>
+        <source>Identifying the security key</source>
+        <translation>Пожалуйста, подключите ключ безопасности</translation>
     </message>
 </context>
 <context>
@@ -193,11 +212,11 @@
     </message>
     <message>
         <source>Your password has expired. Please contact the administrator to change it</source>
-        <translation type="unfinished"/>
+        <translation>Срок действия вашего пароля истек. Пожалуйста, свяжитесь с администратором, чтобы изменить его</translation>
     </message>
     <message>
         <source>Terminal locked, please contact administrator</source>
-        <translation type="unfinished"/>
+        <translation>Терминал заблокирован, пожалуйста, свяжитесь с администратором</translation>
     </message>
 </context>
 <context>
@@ -226,7 +245,7 @@
     <name>LighterGreeter</name>
     <message>
         <source>Standard Mode</source>
-        <translation type="unfinished"/>
+        <translation>Обычный режим</translation>
     </message>
 </context>
 <context>
@@ -309,11 +328,11 @@
     </message>
     <message>
         <source>Update and Shut Down</source>
-        <translation type="unfinished"/>
+        <translation>Обновить и Выключить</translation>
     </message>
     <message>
         <source>Update and Reboot</source>
-        <translation type="unfinished"/>
+        <translation>Обновить и Перезагрузить</translation>
     </message>
 </context>
 <context>
@@ -327,92 +346,92 @@
     <name>UdcpMFALoginWidget</name>
     <message>
         <source>发送验证码</source>
-        <translation type="unfinished"/>
+        <translation>Отправить проверочный код</translation>
     </message>
     <message>
         <source>请输入手机号</source>
-        <translation type="unfinished"/>
+        <translation>Пожалуйста, введите Ваш номер телефона</translation>
     </message>
     <message>
         <source>请输入验证码</source>
-        <translation type="unfinished"/>
+        <translation>Пожалуйста, введите проверочный код</translation>
     </message>
     <message>
         <source>获取验证码</source>
-        <translation type="unfinished"/>
+        <translation>Получить проверочный код</translation>
     </message>
 </context>
 <context>
     <name>UpdateCompleteWidget</name>
     <message>
         <source>View Logs</source>
-        <translation type="unfinished"/>
+        <translation>Просмотр журналов</translation>
     </message>
     <message>
         <source>Updates successful</source>
-        <translation type="unfinished"/>
+        <translation>Обновление успешно завершено</translation>
     </message>
     <message>
         <source>Your computer will reboot soon %1</source>
-        <translation type="unfinished"/>
+        <translation>Ваш компьютер перезагрузится через %1</translation>
     </message>
     <message>
         <source>Your computer will be turned off soon %1</source>
-        <translation type="unfinished"/>
+        <translation>Ваш компьютер выключится через %1</translation>
     </message>
 </context>
 <context>
     <name>UpdateLogWidget</name>
     <message>
         <source>Hide Logs</source>
-        <translation type="unfinished"/>
+        <translation>Скрыть журналы</translation>
     </message>
 </context>
 <context>
     <name>UpdateModel</name>
     <message>
         <source>Update failed</source>
-        <translation type="unfinished"/>
+        <translation>Ошибка обновления</translation>
     </message>
     <message>
         <source>Unknown error</source>
-        <translation type="unfinished"/>
+        <translation>Неизвестная ошибка</translation>
     </message>
     <message>
         <source>Backup failed</source>
-        <translation type="unfinished"/>
+        <translation>Ошибка резервного копирования</translation>
     </message>
     <message>
         <source>Dependency error</source>
-        <translation type="unfinished"/>
+        <translation>Ошибка зависимостей</translation>
     </message>
     <message>
         <source>Reboot</source>
-        <translation type="unfinished"/>
+        <translation>Перезагрузить</translation>
     </message>
     <message>
         <source>Shut Down</source>
-        <translation type="unfinished"/>
+        <translation>Выключить</translation>
     </message>
     <message>
         <source>Unable to perform system backup. If you continue the updates, you cannot roll back to the old system later.</source>
-        <translation type="unfinished"/>
+        <translation>Не удается выполнить резервное копирование системы. Если Вы продолжите обновление, позже Вы не сможете выполнить откат к старой системе.</translation>
     </message>
     <message>
         <source>Insufficient disk space. Please clean up your disk and try again.</source>
-        <translation type="unfinished"/>
+        <translation>Недостаточно места на диске. Пожалуйста, очистите Ваш диск и повторите попытку.</translation>
     </message>
     <message>
         <source>DPKG error</source>
-        <translation type="unfinished"/>
+        <translation>Ошибка DPKG</translation>
     </message>
     <message>
         <source>Back Up Again</source>
-        <translation type="unfinished"/>
+        <translation>Восстановить снова</translation>
     </message>
     <message>
         <source>Abort</source>
-        <translation type="unfinished"/>
+        <translation>Прервать</translation>
     </message>
     <message>
         <source>Proceed to Update</source>
@@ -420,36 +439,36 @@
     </message>
     <message>
         <source>Failed to connect to backup services. Please check and retry again.</source>
-        <translation type="unfinished"/>
+        <translation>Не удалось подключиться к службам резервного копирования. Пожалуйста, проверьте и повторите попытку еще раз.</translation>
     </message>
     <message>
         <source>Failed to connect to update services. Please check and retry again.</source>
-        <translation type="unfinished"/>
+        <translation>Не удалось подключиться к службам обновления. Пожалуйста, проверьте и повторите попытку еще раз.</translation>
     </message>
 </context>
 <context>
     <name>UpdatePrepareWidget</name>
     <message>
         <source>Preparing for updates…</source>
-        <translation type="unfinished"/>
+        <translation>Подготовка к обновлению...</translation>
     </message>
 </context>
 <context>
     <name>UpdateProgressWidget</name>
     <message>
         <source>Do not force a shutdown or power off when installing updates. Otherwise, your system may be damaged.</source>
-        <translation type="unfinished"/>
+        <translation>Не выключайте компьютер при установке обновлений. В противном случае Ваша система может быть повреждена.</translation>
     </message>
 </context>
 <context>
     <name>UpdateWorker</name>
     <message>
         <source>Update</source>
-        <translation type="unfinished"/>
+        <translation>Обновление</translation>
     </message>
     <message>
         <source>Please plug in and then install updates.</source>
-        <translation type="unfinished"/>
+        <translation>Пожалуйста, подключитесь, а затем установите обновления.</translation>
     </message>
 </context>
 <context>
@@ -512,23 +531,30 @@
     </message>
     <message>
         <source>Update and Shut Down</source>
-        <translation type="unfinished"/>
+        <translation>Обновить и Выключить</translation>
     </message>
     <message>
         <source>Update and Reboot</source>
-        <translation type="unfinished"/>
+        <translation>Обновить и Перезагрузить</translation>
     </message>
     <message>
         <source>Closing the programs and shutting down, please wait...</source>
-        <translation type="unfinished"/>
+        <translation>Закрытие программ и завершение работы, пожалуйста, подождите...</translation>
     </message>
     <message>
         <source>Closing the programs and rebooting, please wait...</source>
-        <translation type="unfinished"/>
+        <translation>Закрытие программ и перезагрузка, пожалуйста подождите...</translation>
     </message>
     <message>
         <source>Closing the programs and logging out, please wait...</source>
-        <translation type="unfinished"/>
+        <translation>Закрытие программ и выход из системы, пожалуйста подождите...</translation>
+    </message>
+</context>
+<context>
+    <name>dss::module::AssistLoginWidget</name>
+    <message>
+        <source>Automatic login</source>
+        <translation>Автоматическая авторизация</translation>
     </message>
 </context>
 <context>

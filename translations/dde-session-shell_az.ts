@@ -81,6 +81,25 @@
     </message>
 </context>
 <context>
+    <name>AuthPasskey</name>
+    <message>
+        <source>Please plug in the security key</source>
+        <translation>Təhlükəsizlik açarını qoşun</translation>
+    </message>
+    <message>
+        <source>Verification successful</source>
+        <translation>Doğrulama uğurlu oldu</translation>
+    </message>
+    <message>
+        <source>Verification failed</source>
+        <translation>Doğrulama alınmadı</translation>
+    </message>
+    <message>
+        <source>Identifying the security key</source>
+        <translation>Təhlükəsizlik açarı müəyyənləşdirilir</translation>
+    </message>
+</context>
+<context>
     <name>AuthPassword</name>
     <message>
         <source>Verification successful</source>
@@ -529,6 +548,13 @@
     <message>
         <source>Closing the programs and logging out, please wait...</source>
         <translation>Proqramlar bağlanır və sistemdən çıxılır, lütfən gözləyin...</translation>
+    </message>
+</context>
+<context>
+    <name>dss::module::AssistLoginWidget</name>
+    <message>
+        <source>Automatic login</source>
+        <translation>Birbaşa giriş</translation>
     </message>
 </context>
 <context>

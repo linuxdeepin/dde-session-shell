@@ -23,7 +23,7 @@
     </message>
     <message>
         <source>Face ID locked, use password please</source>
-        <translation>چىرايدا قۇلۇپ ئېچىش قۇلۇپلىنىپ قالدى، پارولنى كىرگۈزۈپ ئېچىڭ</translation>
+        <translation>چىرايدا قۇلۇپ ئېچىش قۇلۇپلىنىپ قالدى، پارولنى كىرگۈزۈڭ</translation>
     </message>
     <message>
         <source>Device unavailable!</source>
@@ -50,7 +50,7 @@
     </message>
     <message>
         <source>Fingerprint locked, use password please</source>
-        <translation>بارماق ئىزى قۇلۇپلاندى، پارول كىرگۈزۈڭ</translation>
+        <translation>بارماق ئىزىدا ئېچىش قۇلۇپلىنىپ قالدى، پارولنى كىرگۈزۈڭ</translation>
     </message>
 </context>
 <context>
@@ -77,7 +77,26 @@
     </message>
     <message>
         <source>Iris ID locked, use password please</source>
-        <translation> كۆز رەڭدار پەردىسىنى تونۇپ قۇلۇپنى ئېچىش مەغلۇپ بولدى ، پارولنى كىرگۈزۈڭ </translation>
+        <translation> كۆز رەڭدار پەردىسىنى تونۇپ قۇلۇپنى ئېچىش قۇلۇپلىنىپ قالدى ، پارولنى كىرگۈزۈڭ</translation>
+    </message>
+</context>
+<context>
+    <name>AuthPasskey</name>
+    <message>
+        <source>Please plug in the security key</source>
+        <translation>بىخەتەرلىك ئاچقۇچىنى كىرگۈزۈڭ</translation>
+    </message>
+    <message>
+        <source>Verification successful</source>
+        <translation>دەلىللەندى</translation>
+    </message>
+    <message>
+        <source>Verification failed</source>
+        <translation>دەلىللەش مەغلۇپ بولدى</translation>
+    </message>
+    <message>
+        <source>Identifying the security key</source>
+        <translation>بىخەتەرلىك ئاچقۇچىنى تونۇۋاتىدۇ</translation>
     </message>
 </context>
 <context>
@@ -197,7 +216,7 @@
     </message>
     <message>
         <source>Terminal locked, please contact administrator</source>
-        <translation>بۇ ئۈسكۈنە قۇلۇپلانغان، باشقۇرغۇچى بىلەن ئالاقىلىشىڭ</translation>
+        <translation>بۇ ئۈسكۈنە قۇلۇپلىنىپ قالدى، باشقۇرغۇچى بىلەن ئالاقىلىشىڭ</translation>
     </message>
 </context>
 <context>
@@ -237,7 +256,7 @@
     </message>
     <message>
         <source>Failed to lock screen</source>
-        <translation>ئېكراننى قۇلۇپلانمىدى</translation>
+        <translation>ئېكران قۇلۇپلانمىدى</translation>
     </message>
 </context>
 <context>
@@ -529,6 +548,13 @@
     <message>
         <source>Closing the programs and logging out, please wait...</source>
         <translation>يۇقىرىقى پىروگراممىلارنى تاقاپ چېكىنىۋاتىدۇ، سەل ساقلاڭ...</translation>
+    </message>
+</context>
+<context>
+    <name>dss::module::AssistLoginWidget</name>
+    <message>
+        <source>Automatic login</source>
+        <translation type="unfinished"/>
     </message>
 </context>
 <context>
