@@ -80,7 +80,8 @@ FullScreenBackground::FullScreenBackground(SessionBaseModel *model, QWidget *par
     connect(m_model, &SessionBaseModel::blackModeChanged, this, [this](bool is_black) {
         m_blackWidget->setBlackMode(is_black);
         if (currentContent) {
-            currentContent->show();
+            // 黑屏模式的时候需要隐藏中间的窗口
+            currentContent->setVisible(!is_black);
             currentContent->raise();
         }
     });
