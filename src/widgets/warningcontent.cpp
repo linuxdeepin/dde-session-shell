@@ -83,7 +83,7 @@ QList<InhibitWarnView::InhibitorData> WarningContent::listInhibitors(const Sessi
             for (int i = 0; i < inhibitList.count(); i++) {
                 // Just take care of DStore's inhibition, ignore others'.
                 const Inhibit &inhibitor = inhibitList.at(i);
-                if (inhibitor.uid != currentUser->uid())
+                if (inhibitor.uid != currentUser->uid() && inhibitor.uid != 0)
                     continue;
 
                 if (inhibitor.what.split(':', QString::SkipEmptyParts).contains(type)
