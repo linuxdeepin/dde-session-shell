@@ -740,20 +740,16 @@ stop
 
 ## 编程实例
 
-**头文件：**
+### 头文件
 
 ```c++
-// SPDX-FileCopyrightText: 2021 - 2022 UnionTech Software Technology Co., Ltd.
-//
-// SPDX-License-Identifier: GPL-3.0-or-later
-
 #ifndef LOGIN_MODULE_H
 #define LOGIN_MODULE_H
 
-#include "login_module_interface.h"
+#include "login_module_interface_v2.h"
 
 namespace dss {
-namespace module {
+namespace module_v2 {
 
 class LoginModule : public QObject
     , public LoginModuleInterfaceV2
@@ -772,29 +768,25 @@ public:
     inline QWidget *content() override { return m_loginWidget; }
     void reset() override;
     void setAppData(AppDataPtr) override;
-    void setAuthCallback(AuthCallbackFunc) override;
+    void setAuthCallback(AuthCallbackFun) override;
 
 private:
     void initUI();
 
 private:
     AppDataPtr m_appData;
-    AuthCallbackFunc m_authCallback;
+    AuthCallbackFun m_authCallback;
     QWidget *m_loginWidget;
 };
 
-} // namespace module
+} // namespace module_v2
 } // namespace dss
 #endif // LOGIN_MODULE_H
 ```
 
-**源文件：**
+### 源文件
 
 ```c++
-// SPDX-FileCopyrightText: 2021 - 2022 UnionTech Software Technology Co., Ltd.
-//
-// SPDX-License-Identifier: GPL-3.0-or-later
-
 #include "login_module.h"
 
 #include <QBoxLayout>
@@ -805,7 +797,7 @@ private:
 #include <QDBusMessage>
 
 namespace dss {
-namespace module {
+namespace module_v2 {
 
 LoginModule::LoginModule(QObject *parent)
     : QObject(parent)
@@ -839,7 +831,7 @@ void LoginModule::setAppData(AppDataPtr appData)
     m_appData = appData;
 }
 
-void LoginModule::setAuthCallback(AuthCallbackFunc authCallback)
+void LoginModule::setAuthCallback(AuthCallbackFun authCallback)
 {
     m_authCallback = authCallback;
 }
@@ -860,7 +852,7 @@ void LoginModule::initUI()
 
     connect(passButton, &QPushButton::clicked, this, [this] {
         AuthCallbackData data;
-        data.account = "uos";
+        data.account = "uos"; // 需要与当前的用户名匹配
         data.token = "1";
         data.result = AuthResult::Success;
         m_authCallback(&data, m_appData);
@@ -871,7 +863,14 @@ void LoginModule::initUI()
 } // namespace dss
 ```
 
-> 示例中的代码可以在[基础示例](https://github.com/linuxdeepin/dde-session-shell/tree/master/plugins/examples/login-plugins/login-basic)中看到，更多示例请查看链接：[更多示例](https://github.com/linuxdeepin/dde-session-shell/tree/master/plugins/examples/login-plugins)
+### 元数据文件
+
+```json
+{
+    "api": "2.0.0",
+    "pluginType": "Login"
+}
+```
 
 # 安装
 
