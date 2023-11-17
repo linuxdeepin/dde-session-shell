@@ -1048,7 +1048,7 @@ void SFAWidget::updateSpaceItem()
 {
     m_authTypeBottomSpacingHolder->changeSize(0, showAuthButtonBox() ? calcCurrentHeight(CHOOSE_AUTH_TYPE_BUTTON_BOTTOM_SPACING) : 0);
 
-    if (m_faceAuth || m_fingerprintAuth || m_irisAuth || m_passkeyAuth) {
+    if (m_faceAuth || m_fingerprintAuth || m_irisAuth || m_passkeyAuth || m_customAuth) {
         m_bioBottomSpacingHolder->changeSize(0, calcCurrentHeight(BIO_AUTH_STATE_BOTTOM_SPACING));
         m_bioAuthStatePlaceHolder->changeSize(0, m_bioAuthStatePlaceHolder->sizeHint().height() == 0 ? 0 : BIO_AUTH_STATE_PLACE_HOLDER_HEIGHT);
     } else {
