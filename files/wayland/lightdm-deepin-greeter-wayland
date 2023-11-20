@@ -11,7 +11,7 @@ display_daemon="/usr/lib/deepin-daemon/greeter-display-daemon"
 dde_wloutput_daemon="/usr/bin/dde-wloutput-daemon"
 if [ -x $display_daemon ]; then
     $dde_wloutput_daemon &
-    $display_daemon &
+    $display_daemon 1>/tmp/greeter-display-daemon.log 2>&1 &
 fi
 
 
