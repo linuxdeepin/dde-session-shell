@@ -1268,6 +1268,7 @@ void SFAWidget::initChooseAuthButtonBox(const AuthFlags authFlags)
     // 如果有自定义认证，且插件设置了不显示切换认证按钮，那么当认证因子大于2时才显示切换认证按钮组
     if (m_customAuth && !m_customAuth->pluginConfig().showSwitchButton) {
         m_chooseAuthButtonBox->button(AT_Custom)->hide();
+        m_chooseAuthButtonBox->setATCustomBtnHide(true);
         if (m_authButtons.count() <= 2)
             m_chooseAuthButtonBox->hide();
     }

@@ -51,6 +51,7 @@ public:
     inline QAbstractButton *button(int id) const { return m_group->button(id); }
     inline void setId(QAbstractButton *button, int id) { m_group->setId(button, id); }
     inline int checkedId() const { return m_group->checkedId(); }
+    inline void setATCustomBtnHide(bool btnHide) { m_atCustonBtnHide = btnHide; }
 
 protected:
     void paintEvent(QPaintEvent *event) override;
@@ -58,5 +59,6 @@ protected:
 private:
     QButtonGroup *m_group;
     QHBoxLayout *m_layout;
+    bool m_atCustonBtnHide;
 };
 #endif // BUTTONBOX_H
