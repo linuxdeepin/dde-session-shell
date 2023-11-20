@@ -44,7 +44,21 @@ LockContent::LockContent(QWidget *parent)
     , m_initialized(false)
     , m_isUserSwitchVisible(false)
     , m_popWin(nullptr)
+    , m_isPANGUCpu(false)
 {
+    QDBusInterface Interface("com.deepin.daemon.SystemInfo",
+                             "/com/deepin/daemon/SystemInfo",
+                             "org.freedesktop.DBus.Properties",
+                             QDBusConnection::sessionBus());
+    QDBusMessage replyCPU = Interface.call("Get", "com.deepin.daemon.SystemInfo", "CPUHardware");
+    QList<QVariant> outArgsCPU = replyCPU.arguments();
+    if (outArgsCPU.count()) {
+        QString cpuHardware = outArgsCPU.at(0).value<QDBusVariant>().variant().toString();
+        qInfo() << "Current cpu hardware:" << cpuHardware;
+        if (cpuHardware.contains("PANGU")) {
+            m_isPANGUCpu = true;
+        }
+    }
 
 }
 
@@ -423,7 +437,7 @@ void LockContent::onStatusChanged(SessionBaseModel::ModeStatus status)
     if(m_model->isServerModel())
         onUserListChanged(m_model->loginedUserList());
 
-    if (m_currentModeStatus == status)
+    if (!m_isPANGUCpu && m_currentModeStatus == status)
         return;
     m_currentModeStatus = status;
 

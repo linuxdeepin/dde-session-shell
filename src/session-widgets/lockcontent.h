@@ -123,6 +123,8 @@ protected:
     bool m_isUserSwitchVisible;
     PopupWindow *m_popWin;
     QPointer<QWidget> m_currentTray;
+
+    bool m_isPANGUCpu;
 };
 
 #endif // LOCKCONTENT_H
