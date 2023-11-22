@@ -578,9 +578,9 @@ bool ShutdownWidget::eventFilter(QObject *watched, QEvent *event)
             }
             return true;
         }
-    } else if (event->type() == QEvent::FocusOut && m_currentSelectedBtn && m_currentSelectedBtn->isVisible()) {
+    } else if (event->type() == QEvent::FocusOut && m_currentSelectedBtn && m_currentSelectedBtn->isVisible() && m_modeStatus != SessionBaseModel::ShutDownMode) {
         m_currentSelectedBtn->setChecked(false);
-    } else if (event->type() == QEvent::FocusIn && m_currentSelectedBtn && m_currentSelectedBtn->isVisible()) {
+    } else if (event->type() == QEvent::FocusIn && m_currentSelectedBtn && m_currentSelectedBtn->isVisible() && m_modeStatus != SessionBaseModel::ShutDownMode) {
         m_currentSelectedBtn->setChecked(true);
     }
 
