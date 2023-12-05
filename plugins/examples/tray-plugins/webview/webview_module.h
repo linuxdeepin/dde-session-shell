@@ -27,6 +27,10 @@ public:
     inline QString key() const override { return objectName(); }
     QWidget *content() override { return m_webviewContent; }
     inline QString icon() const override { return ":/img/deepin-system-monitor.svg"; }
+    QWidget *itemWidget() const override { return nullptr; }
+    QWidget *itemTipsWidget() const override { return nullptr; }
+    const QString itemContextMenu() const override { return QString(); }
+    void invokedMenuItem(const QString &menuId, const bool checked) const override { }
 
 private:
     void initUI();
