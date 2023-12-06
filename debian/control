@@ -48,7 +48,8 @@ Depends: ${shlibs:Depends}, ${misc:Depends}, ${dist:Depends},
 Provides: lightdm-greeter,
  deepin-greeter-wayland
 Recommends: onboard,
- dss-network-plugin
+ dss-network-plugin,
+ dde-wallpaper-cache
 Conflicts: dde-workspace,
  deepin-notifications,
  dde-session-ui (<< 5.0.0),

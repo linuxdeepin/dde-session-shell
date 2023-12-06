@@ -18,7 +18,6 @@ Q_DECLARE_LOGGING_CATEGORY(DDE_SS)
 
 class BlackWidget;
 class SessionBaseModel;
-class BackgroundHandlerThread;
 class FullScreenBackground : public QWidget, public AbstractFullBackgroundInterface
 {
     Q_OBJECT
@@ -41,6 +40,7 @@ public slots:
 signals:
     void requestDisableGlobalShortcutsForWayland(bool enable);
     void requestLockFrameHide();
+    void blurImageReturned();
 
 protected:
     void keyPressEvent(QKeyEvent *e) Q_DECL_OVERRIDE;
@@ -68,6 +68,7 @@ private:
     QMap<QString, QRect> getScreenGeometryByXrandr();
     double getScaleFactorFromDisplay();
     static void updateCurrentFrame(FullScreenBackground *frame);
+    bool getScaledBlurImage(const QString &originPath, QString &scaledPath);
 
 protected:
     static QPointer<QWidget> currentContent;
@@ -78,22 +79,16 @@ protected:
     static QString sizeToString(const QSize &size);
 
 private:
-    static QString backgroundPath;                             // 高清背景图片路径
     static QString blurBackgroundPath;                         // 模糊背景图片路径
-
-    static QMap<QString, QPixmap> backgroundCacheMap;
     static QMap<QString, QPixmap> blurBackgroundCacheMap;
 
-    QVariantAnimation *m_fadeOutAni;      // 背景动画
     QPointer<QScreen> m_screen;
     SessionBaseModel *m_model = nullptr;
     bool m_enableEnterEvent = true;
     bool m_useSolidBackground;
-    bool m_fadeOutAniFinished;
-    bool m_enableAnimation;
+    bool m_getBlurImageSuccess = false;
 
     BlackWidget *m_blackWidget;
-    BackgroundHandlerThread *m_backgroundHandlerThread = nullptr;
 };
 
 #endif // FULLSCREENBACKGROUND_H

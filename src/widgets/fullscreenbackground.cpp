@@ -9,7 +9,6 @@
 #include "public_func.h"
 #include "sessionbasemodel.h"
 #include "dconfig_helper.h"
-#include "backgroundhandlerThread.h"
 
 #include <DGuiApplicationHelper>
 
@@ -28,10 +27,8 @@ DGUI_USE_NAMESPACE
 const int PIXMAP_TYPE_BACKGROUND = 0;
 const int PIXMAP_TYPE_BLUR_BACKGROUND = 1;
 
-QString FullScreenBackground::backgroundPath;
 QString FullScreenBackground::blurBackgroundPath;
 
-QMap<QString, QPixmap> FullScreenBackground::backgroundCacheMap;
 QMap<QString, QPixmap> FullScreenBackground::blurBackgroundCacheMap;
 QList<FullScreenBackground *> FullScreenBackground::frameList;
 QPointer<FullScreenBackground> FullScreenBackground::currentFrame = nullptr;
@@ -39,11 +36,8 @@ QPointer<QWidget> FullScreenBackground::currentContent = nullptr;
 
 FullScreenBackground::FullScreenBackground(SessionBaseModel *model, QWidget *parent)
     : QWidget(parent)
-    , m_fadeOutAni(nullptr)
     , m_model(model)
     , m_useSolidBackground(false)
-    , m_fadeOutAniFinished(false)
-    , m_enableAnimation(true)
     , m_blackWidget(new BlackWidget(this))
 {
 #ifndef QT_DEBUG
@@ -59,22 +53,6 @@ FullScreenBackground::FullScreenBackground(SessionBaseModel *model, QWidget *par
 #endif
     frameList.append(this);
     m_useSolidBackground = DConfigHelper::instance()->getConfig("useSolidBackground", false).toBool();
-    m_enableAnimation = DGuiApplicationHelper::isSpecialEffectsEnvironment();
-    if (m_enableAnimation && !m_useSolidBackground) {
-        m_fadeOutAni = new QVariantAnimation(this);
-        m_fadeOutAni->setEasingCurve(QEasingCurve::InOutCubic);
-        m_fadeOutAni->setDuration(2000);
-        m_fadeOutAni->setStartValue(0.0);
-        m_fadeOutAni->setEndValue(1.0);
-
-        connect(m_fadeOutAni, &QVariantAnimation::valueChanged, this, [this] {
-            update();
-            // 动画播放完毕后不在需要清晰的壁纸，释放资源
-            if (m_fadeOutAni->currentValue() == 1.0) {
-                m_fadeOutAniFinished = true;
-            }
-        });
-    }
 
     m_blackWidget->setBlackMode(m_model->isBlackMode());
     connect(m_model, &SessionBaseModel::blackModeChanged, this, [this](bool is_black) {
@@ -90,60 +68,15 @@ FullScreenBackground::FullScreenBackground(SessionBaseModel *model, QWidget *par
 FullScreenBackground::~FullScreenBackground()
 {
     frameList.removeAll(this);
-
-    if (m_backgroundHandlerThread) {
-        m_backgroundHandlerThread->quit();
-        m_backgroundHandlerThread->wait();
-    }
 }
 
 void FullScreenBackground::updateBackground(const QString &path)
 {
-    if (m_useSolidBackground)
+    if (m_useSolidBackground || !isPicture(path))
         return;
 
-    if (isPicture(path)) {
-        // 动画播放完毕不再需要清晰的背景图片
-        if (!m_fadeOutAniFinished && !(backgroundPath == path && contains(PIXMAP_TYPE_BACKGROUND))) {
-            backgroundPath = path;
-
-            if (!m_backgroundHandlerThread) {
-                m_backgroundHandlerThread = new BackgroundHandlerThread(this);
-                connect(m_backgroundHandlerThread, &BackgroundHandlerThread::backgroundHandled, this, [this, path](const QPixmap &pixmap) {
-                    // screenGeometry发生变化导致线程处理的图片可能不可用
-                    QSize pixSize = pixmap.size();
-                    QSize curSize = trueSize();
-                    if (pixSize.width() >= curSize.width() && pixSize.height() >= curSize.height()) {
-                        addPixmap(pixmap, PIXMAP_TYPE_BACKGROUND);
-                    } else {
-                        // 只有少数情况: 复制模式且旋转屏幕，导致图片尺寸变化，此时需要重新获取图片
-                        // ex:2k(2166x1440)->1080p(1920x1080),复制且旋转屏幕90度，变成1080p(1080x1920)，
-                        // 线程获取的图片为2k(2166x1440),gemoetry变为为1080p(1080x1920)后，高度像素不够会有部分为白色.
-                        handleBackground(path, PIXMAP_TYPE_BACKGROUND);
-                    }
-
-                    if (m_enableAnimation)
-                        updateBlurBackground(path);
-                });
-            }
-
-            m_backgroundHandlerThread->setBackgroundInfo(path, trueSize(), devicePixelRatioF());
-            /* 如果是锁屏，不通过线程处理图片，处理图片时用到的QPainter相关接口，并不是线程安全的。多次执行dde-lock会有崩溃现象
-             * 如果是登录界面，走线程处理，可以加快进程的启动速度，且greeter不存在频繁重新启动的情况
-             */
-            if (m_model->appType() == APP_TYPE_LOCK) {
-                m_backgroundHandlerThread->handle();
-            } else {
-                m_backgroundHandlerThread->start(QThread::TimeCriticalPriority);
-            }
-
-            return;
-        }
-
-        // 需要播放动画的时候才更新模糊壁纸
-        if (m_enableAnimation)
-            updateBlurBackground(path);
-    }
+    m_getBlurImageSuccess = false;
+    updateBlurBackground(path);
 }
 
 void FullScreenBackground::updateBlurBackground(const QString &path)
@@ -153,13 +86,16 @@ void FullScreenBackground::updateBlurBackground(const QString &path)
             blurBackgroundPath = blurPath;
         }
 
-        handleBackground(blurBackgroundPath, PIXMAP_TYPE_BLUR_BACKGROUND);
+        QString scaledPath;
+        if (getScaledBlurImage(blurPath, scaledPath)) {
+            QPixmap pixmap;
+            loadPixmap(scaledPath, pixmap);
+            addPixmap(pixmap, PIXMAP_TYPE_BLUR_BACKGROUND);
+        } else {
+            handleBackground(blurBackgroundPath, PIXMAP_TYPE_BLUR_BACKGROUND);
+        }
 
-        // 只播放一次动画，后续背景图片变更直接更新模糊壁纸即可
-        if (m_fadeOutAni && !m_fadeOutAniFinished)
-            m_fadeOutAni->start();
-        else
-            update();
+        update();
     };
 
     QDBusMessage message = QDBusMessage::createMethodCall("com.deepin.daemon.ImageEffect", "/com/deepin/daemon/ImageEffect",
@@ -168,7 +104,7 @@ void FullScreenBackground::updateBlurBackground(const QString &path)
     // 异步调用
     QDBusPendingCall async = QDBusConnection::systemBus().asyncCall(message);
     auto *watcher = new QDBusPendingCallWatcher(async);
-    QObject::connect(watcher, &QDBusPendingCallWatcher::finished, this, [watcher, updateBlurBackgroundFunc](QDBusPendingCallWatcher *callWatcher) {
+    QObject::connect(watcher, &QDBusPendingCallWatcher::finished, this, [watcher, updateBlurBackgroundFunc, this](QDBusPendingCallWatcher *callWatcher) {
         // 获取模糊壁纸路径
         QDBusPendingReply<QString> reply = *callWatcher;
         QString blurPath;
@@ -182,6 +118,9 @@ void FullScreenBackground::updateBlurBackground(const QString &path)
             blurPath = "/usr/share/backgrounds/default_background.jpg";
             qCWarning(DDE_SHELL) << "Get blur background path error:" << reply.error().message();
         }
+
+        m_getBlurImageSuccess = true;
+        Q_EMIT blurImageReturned();
 
         // 处理模糊背景图和执行动画或update；
         updateBlurBackgroundFunc(blurPath);
@@ -293,31 +232,13 @@ void FullScreenBackground::paintEvent(QPaintEvent *e)
     if (m_useSolidBackground) {
         painter.fillRect(trueRect, QColor(DDESESSIONCC::SOLID_BACKGROUND_COLOR));
     } else {
-        const QPixmap &background = getPixmap(PIXMAP_TYPE_BACKGROUND);
         const QPixmap &blurBackground = getPixmap(PIXMAP_TYPE_BLUR_BACKGROUND);
-
-        if (m_fadeOutAni) {
-            const double currentAniValue = m_fadeOutAni->currentValue().toDouble();
-            if (!background.isNull() && currentAniValue != 1.0) {
-                painter.setOpacity(1);
-                painter.drawPixmap(trueRect,
-                                background,
-                                QRect(trueRect.topLeft(), trueRect.size() * background.devicePixelRatioF()));
-            }
-
-            if (!blurBackground.isNull()) {
-                painter.setOpacity(currentAniValue);
-                painter.drawPixmap(trueRect,
-                                blurBackground,
-                                QRect(trueRect.topLeft(), trueRect.size() * blurBackground.devicePixelRatioF()));
-            }
+        if (blurBackground.isNull()) {
+            painter.fillRect(trueRect, QColor(DDESESSIONCC::SOLID_BACKGROUND_COLOR));
         } else {
-            // 不使用的动画的过渡的时候直接绘制清晰的背景
-            if (!background.isNull()) {
-                painter.drawPixmap(trueRect,
-                                background,
-                                QRect(trueRect.topLeft(), trueRect.size() * background.devicePixelRatioF()));
-            }
+            painter.drawPixmap(trueRect,
+                               blurBackground,
+                               QRect(trueRect.topLeft(), trueRect.size() * devicePixelRatioF()));
         }
     }
 }
@@ -364,12 +285,23 @@ void FullScreenBackground::leaveEvent(QEvent *event)
 
 void FullScreenBackground::resizeEvent(QResizeEvent *event)
 {
-    if (!backgroundCacheMap.isEmpty() && isPicture(backgroundPath) && !contains(PIXMAP_TYPE_BACKGROUND)) {
-        handleBackground(backgroundPath, PIXMAP_TYPE_BACKGROUND);
+    if (!m_getBlurImageSuccess) {
+        // 避免页面显示出来，模糊壁纸还没返回导致先出现纯色背景的问题。
+        QEventLoop loop;
+        QTimer::singleShot(1*1000, &loop, &QEventLoop::quit);
+        connect(this, &FullScreenBackground::blurImageReturned, &loop, &QEventLoop::quit);
+        loop.exec();
     }
 
     if (!blurBackgroundCacheMap.isEmpty() && isPicture(blurBackgroundPath) && !contains(PIXMAP_TYPE_BLUR_BACKGROUND)) {
-        handleBackground(blurBackgroundPath, PIXMAP_TYPE_BLUR_BACKGROUND);
+        QString scaledPath;
+        if (getScaledBlurImage(blurBackgroundPath, scaledPath)) {
+            QPixmap pixmap;
+            loadPixmap(scaledPath, pixmap);
+            addPixmap(pixmap, PIXMAP_TYPE_BLUR_BACKGROUND);
+        } else {
+            handleBackground(blurBackgroundPath, PIXMAP_TYPE_BLUR_BACKGROUND);
+        }
     }
 
     updatePixmap();
@@ -430,11 +362,6 @@ void FullScreenBackground::showEvent(QShowEvent *event)
     // setScreen中有设置updateGeometry，单屏不需要再次设置
     if (qApp->screens().size() > 1) {
         updateGeometry();
-    }
-
-    // 避免页面显示出来，图片线程还没加载完成导致先出现白色背景的问题。
-    if (m_backgroundHandlerThread && m_backgroundHandlerThread->isRunning()) {
-        m_backgroundHandlerThread->wait();
     }
 
     // 显示的时候需要置顶，截图在上方的话无法显示锁屏 见Bug-140545
@@ -542,10 +469,7 @@ const QPixmap& FullScreenBackground::getPixmap(int type)
     static QPixmap nullPixmap;
 
     QString strSize = sizeToString(trueSize());
-    if (PIXMAP_TYPE_BACKGROUND == type && backgroundCacheMap.contains(strSize)) {
-        return backgroundCacheMap[strSize];
-    }
-    else if (PIXMAP_TYPE_BLUR_BACKGROUND == type && blurBackgroundCacheMap.contains(strSize)) {
+    if (PIXMAP_TYPE_BLUR_BACKGROUND == type && blurBackgroundCacheMap.contains(strSize)) {
         return blurBackgroundCacheMap[strSize];
     }
 
@@ -566,9 +490,7 @@ QSize FullScreenBackground::trueSize() const
 void FullScreenBackground::addPixmap(const QPixmap &pixmap, const int type)
 {
     QString strSize = sizeToString(trueSize());
-    if (type == PIXMAP_TYPE_BACKGROUND) {
-        backgroundCacheMap[strSize] = pixmap;
-    } else {
+    if (type == PIXMAP_TYPE_BLUR_BACKGROUND) {
         blurBackgroundCacheMap[strSize] = pixmap;
     }
 }
@@ -595,7 +517,6 @@ void FullScreenBackground::updatePixmap()
         frameSizeList.append(strSize);
     }
 
-    removeNotUsedPixmap(backgroundCacheMap, frameSizeList);
     removeNotUsedPixmap(blurBackgroundCacheMap, frameSizeList);
 }
 
@@ -611,10 +532,7 @@ bool FullScreenBackground::contains(int type)
     };
 
     QString strSize = sizeToString(trueSize());
-    if (PIXMAP_TYPE_BACKGROUND == type) {
-        return containPixmap(backgroundCacheMap, strSize);
-    }
-    else {
+    if (PIXMAP_TYPE_BLUR_BACKGROUND == type) {
         return containPixmap(blurBackgroundCacheMap, strSize);
     }
     return false;
@@ -737,4 +655,33 @@ void FullScreenBackground::handleBackground(const QString &path, int type)
 QString FullScreenBackground::sizeToString(const QSize &size)
 {
     return QString("%1x%2").arg(size.width()).arg(size.height());
+}
+
+bool FullScreenBackground::getScaledBlurImage(const QString &originPath, QString &scaledPath)
+{
+    // 为了兼容没有安装壁纸服务环境;Qt5.15高版本可以使用activatableServiceNames()遍历然后可判断系统有没有安装服务
+    const QString wallpaperServicePath = "/lib/systemd/system/dde-wallpaper-cache.service";
+    if (!QFile::exists(wallpaperServicePath)) {
+        qWarning() << "dde-wallpaper-cache service not existed";
+        return false;
+    }
+
+    // 壁纸服务dde-wallpaper-cache
+    QDBusInterface wallpaperCacheInterface("org.deepin.dde.WallpaperCache", "/org/deepin/dde/WallpaperCache",
+                                           "org.deepin.dde.WallpaperCache", QDBusConnection::systemBus());
+    QVariantList sizeArray;
+    sizeArray << QVariant::fromValue(this->trueSize());
+    QDBusReply<QStringList> pathList= wallpaperCacheInterface.call("GetProcessedImagePaths", originPath, sizeArray);
+    if (pathList.value().isEmpty()) {
+        return false;
+    }
+
+    QString path = pathList.value().at(0);
+    if (!path.isEmpty() &&  path != originPath) {
+        scaledPath = path;
+        qDebug() << "get scaled path:" << path;
+        return true;
+    }
+
+    return false;
 }
