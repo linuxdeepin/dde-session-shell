@@ -418,6 +418,7 @@ void LockWorker::doPowerAction(const SessionBaseModel::PowerAction action)
         if (delayTime < 0) {
             delayTime = 500;
         }
+        WarningContent::instance()->tryGrabKeyboard();
         QTimer::singleShot(delayTime, this, [this] {
             // 待机休眠前设置Locked为true,避免刚唤醒时locked状态不对
             setLocked(true);
@@ -438,6 +439,7 @@ void LockWorker::doPowerAction(const SessionBaseModel::PowerAction action)
             delayTime = 500;
         }
         if (m_powerManagerInter->CanHibernate()){
+            WarningContent::instance()->tryGrabKeyboard();
             QTimer::singleShot(delayTime, this, [this] {
                 // 待机休眠前设置Locked为true,避免刚唤醒时locked状态不对
                 setLocked(true);

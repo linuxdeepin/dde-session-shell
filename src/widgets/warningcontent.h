@@ -27,6 +27,7 @@ public:
     void beforeInvokeAction(bool needConfirm);
     void setPowerAction(const SessionBaseModel::PowerAction action);
     bool supportDelayOrWait() const;
+    void tryGrabKeyboard(bool exitIfFailed = true);
 
 signals:
     void requestLockFrameHide();
@@ -38,8 +39,6 @@ protected:
     QList<InhibitWarnView::InhibitorData> listInhibitors(const SessionBaseModel::PowerAction action);
     void doCancelShutdownInhibit();
     void doAcceptShutdownInhibit();
-    void tryGrabKeyboard(bool exitIfFailed = true);
-
 
 private slots:
     void shutdownInhibit(const SessionBaseModel::PowerAction action, bool needConfirm);
