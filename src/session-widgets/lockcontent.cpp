@@ -698,15 +698,16 @@ void LockContent::tryGrabKeyboard(bool exitIfFailed)
             m_failures = 0;
             return;
         }
+
+        // 模拟XF86Ungrab按键，从而取消其他窗口的grab状态；尝试unGrab，wayland需要
+        // x11使用xdotool key XF86Ungrab会导致空闲计时清零，从而使自动黑屏被点亮
+        QProcess::execute("bash -c \"originmap=$(setxkbmap -query | grep option | awk -F ' ' '{print $2}');/usr/bin/setxkbmap -option grab:break_actions&&/usr/bin/xdotool key XF86Ungrab&&setxkbmap -option $originmap\"");
     } else {
         if (window()->windowHandle() && window()->windowHandle()->setKeyboardGrabEnabled(true)) {
             m_failures = 0;
             return;
         }
     }
-
-    // 模拟XF86Ungrab按键，从而取消其他窗口的grab状态；尝试unGrab，x和wayland都需要
-    QProcess::execute("bash -c \"originmap=$(setxkbmap -query | grep option | awk -F ' ' '{print $2}');/usr/bin/setxkbmap -option grab:break_actions&&/usr/bin/xdotool key XF86Ungrab&&setxkbmap -option $originmap\"");
 
     m_failures++;
 
