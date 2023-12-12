@@ -10,7 +10,6 @@
 #include "dbuslogin1manager.h"
 #include "deepinauthframework.h"
 #include "sessionbasemodel.h"
-#include "greeter_display_wayland.h"
 
 #include <QLightDM/Greeter>
 #include <QLightDM/SessionsModel>
@@ -41,8 +40,6 @@ signals:
     void requestUpdateBackground(const QString &path);
     void requestShowPrompt(const QString &prompt);
     void requestShowMessage(const QString &message);
-    void showLoginWindow(bool isShow);
-
 public slots:
     /* New authentication framework */
     void createAuthentication(const QString &account);
@@ -89,9 +86,6 @@ private:
     DBusLockService *m_lockInter;
     QDBusInterface *m_systemDaemon;
     SoundThemePlayerInter *m_soundPlayerInter;
-#ifdef USE_DEEPIN_WAYLAND
-    GreeterDisplayWayland *m_greeterDisplayWayland;
-#endif
     QTimer *m_resetSessionTimer;
     QTimer *m_limitsUpdateTimer;
     QString m_account;

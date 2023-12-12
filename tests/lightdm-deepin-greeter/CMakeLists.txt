@@ -24,7 +24,6 @@ set(GREETER_TEST_SRCS
 if (USE_DEEPIN_WAYLAND)
   set(GREETER_TEST_SRCS
     ${GREETER_TEST_SRCS}
-    ${PROJECT_SOURCE_DIR}/src/lightdm-deepin-greeter/greeter_display_wayland.cpp
   )
 endif(USE_DEEPIN_WAYLAND)
 

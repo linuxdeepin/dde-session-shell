@@ -158,11 +158,7 @@ int main(int argc, char* argv[])
         }
         loginFrame->setScreen(screen, count <= 0);
         QObject::connect(worker, &GreeterWorker::requestUpdateBackground, loginFrame, &LoginWindow::updateBackground);
-        if (!IsWayland) {
-            loginFrame->setVisible(model->visible());
-        } else {
-            QObject::connect(worker, &GreeterWorker::showLoginWindow, loginFrame, &LoginWindow::setVisible);
-        }
+        loginFrame->setVisible(model->visible());
         return loginFrame;
     };
 
@@ -177,9 +173,7 @@ int main(int argc, char* argv[])
     checker.setOutputFormat(DAccessibilityChecker::FullFormat);
     checker.start();
 #endif
-    if (!IsWayland) {
-        model->setVisible(true);
-    }
+    model->setVisible(true);
 
     // 加载非login模块
     ModulesLoader::instance().setLoadLoginModule(false);

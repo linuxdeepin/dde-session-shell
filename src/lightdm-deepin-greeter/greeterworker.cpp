@@ -13,7 +13,6 @@
 #include <dde-api/eventlogger.hpp>
 
 #include <DSysInfo>
-#include <DGuiApplicationHelper>
 
 #include <QGSettings>
 
@@ -30,7 +29,6 @@ using PowerInter = com::deepin::system::Power;
 using namespace Auth;
 using namespace AuthCommon;
 DCORE_USE_NAMESPACE
-DGUI_USE_NAMESPACE
 
 const int NUM_LOCKED = 0;   // 禁用小键盘
 const int NUM_UNLOCKED = 1; // 启用小键盘
@@ -43,9 +41,6 @@ GreeterWorker::GreeterWorker(SessionBaseModel *const model, QObject *parent)
     , m_lockInter(new DBusLockService(LOCK_SERVICE_NAME, LOCK_SERVICE_PATH, QDBusConnection::systemBus(), this))
     , m_systemDaemon(new QDBusInterface("com.deepin.daemon.Daemon", QString("/com/deepin/daemon/Daemon"), "com.deepin.daemon.Daemon", QDBusConnection::systemBus(), this))
     , m_soundPlayerInter(new SoundThemePlayerInter("com.deepin.api.SoundThemePlayer", "/com/deepin/api/SoundThemePlayer", QDBusConnection::systemBus(), this))
-#ifdef USE_DEEPIN_WAYLAND
-    , m_greeterDisplayWayland(nullptr)
-#endif
     , m_resetSessionTimer(new QTimer(this))
     , m_limitsUpdateTimer(new QTimer(this))
     , m_retryAuth(false)
@@ -56,20 +51,6 @@ GreeterWorker::GreeterWorker(SessionBaseModel *const model, QObject *parent)
         exit(1);
     }
 #endif
-
-#ifdef USE_DEEPIN_WAYLAND
-    if (!DGuiApplicationHelper::isXWindowPlatform()) {
-        m_greeterDisplayWayland = new GreeterDisplayWayland();
-        connect(m_greeterDisplayWayland, &GreeterDisplayWayland::setOutputFinished, this, [this] {
-            QTimer::singleShot(100, this, [this] { // 延时等待显示数据设置完成
-                Q_EMIT showLoginWindow(true);
-                m_model->setVisible(true);
-            });
-        });
-        m_greeterDisplayWayland->start();
-    }
-#endif
-
     checkDBusServer(m_accountsInter->isValid());
 
     initConnections();
@@ -99,11 +80,6 @@ GreeterWorker::GreeterWorker(SessionBaseModel *const model, QObject *parent)
 
 GreeterWorker::~GreeterWorker()
 {
-#ifdef USE_DEEPIN_WAYLAND
-    if(m_greeterDisplayWayland) {
-       m_greeterDisplayWayland->deleteLater();
-    }
-#endif
 }
 
 void GreeterWorker::initConnections()

@@ -248,7 +248,6 @@ set(GREETER_SRCS
 if (USE_DEEPIN_WAYLAND)
   set(GREETER_SRCS
     ${GREETER_SRCS}
-    src/lightdm-deepin-greeter/greeter_display_wayland.cpp
   )
 endif(USE_DEEPIN_WAYLAND)
 
