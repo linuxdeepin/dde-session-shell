@@ -48,10 +48,8 @@ find_package(Threads REQUIRED)
 find_package(Qt5 COMPONENTS
     Core
     Widgets
-    Concurrent
     X11Extras
     DBus
-    Xml
     Svg
     Network
 REQUIRED)
@@ -68,7 +66,6 @@ set(Qt_LIBS
     Qt5::DBus
     Qt5::Widgets
     Qt5::X11Extras
-    Qt5::Xml
     Qt5::Svg
 )
 
@@ -213,7 +210,6 @@ target_link_libraries(dde-lock PRIVATE
     ${DtkWidget_LIBRARIES}
     ${DtkCore_LIBRARIES}
     ${Qt5Widgets_LIBRARIES}
-    ${Qt5Concurrent_LIBRARIES}
     ${Qt5X11Extras_LIBRARIES}
     ${Qt5DBus_LIBRARIES}
     ${Qt5Network_LIBRARIES}
@@ -283,7 +279,6 @@ target_link_libraries(lightdm-deepin-greeter PRIVATE
     ${DtkWidget_LIBRARIES}
     ${DtkCore_LIBRARIES}
     ${Qt5Widgets_LIBRARIES}
-    ${Qt5Concurrent_LIBRARIES}
     ${Qt5X11Extras_LIBRARIES}
     ${Qt5DBus_LIBRARIES}
     ${Qt5Network_LIBRARIES}

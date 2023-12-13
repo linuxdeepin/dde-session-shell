@@ -59,7 +59,6 @@ target_link_libraries(${BIN_NAME} PRIVATE
     ${DtkWidget_LIBRARIES}
     ${DtkCore_LIBRARIES}
     ${Qt5Widgets_LIBRARIES}
-    ${Qt5Concurrent_LIBRARIES}
     ${Qt5X11Extras_LIBRARIES}
     ${Qt5DBus_LIBRARIES}
     ${Qt5Network_LIBRARIES}

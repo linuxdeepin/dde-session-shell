@@ -54,7 +54,6 @@ target_link_libraries(${BIN_NAME} PRIVATE
     ${Qt_LIBS}
     ${PAM_LIBRARIES}
     ${XCB_EWMH_LIBRARIES}
-    ${Qt5Concurrent_LIBRARIES}
     ${Qt5X11Extras_LIBRARIES}
     ${Qt5Network_LIBRARIES}
     KF5::WaylandClient
