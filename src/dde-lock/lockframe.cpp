@@ -9,7 +9,6 @@
 #include "userinfo.h"
 #include "warningcontent.h"
 #include "public_func.h"
-#include "updatewidget.h"
 #include "dconfig_helper.h"
 
 #include <QApplication>

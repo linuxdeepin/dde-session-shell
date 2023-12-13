@@ -15,7 +15,6 @@
 #include "multiscreenmanager.h"
 #include "sessionbasemodel.h"
 #include "warningcontent.h"
-#include "updatewidget.h"
 
 #include <DApplication>
 #include <DGuiApplicationHelper>
@@ -137,7 +136,6 @@ int main(int argc, char *argv[])
 
     LockContent::instance()->init(model);
     WarningContent::instance()->setModel(model);
-    UpdateWidget::instance()->setModel(model);
 
     QObject::connect(LockContent::instance(), &LockContent::requestSwitchToUser, worker, &LockWorker::switchToUser);
     QObject::connect(LockContent::instance(), &LockContent::requestSetLayout, worker, &LockWorker::setKeyboardLayout);

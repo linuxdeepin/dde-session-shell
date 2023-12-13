@@ -16,7 +16,6 @@
 #include "virtualkbinstance.h"
 #include "plugin_manager.h"
 #include "fullmanagedauthwidget.h"
-#include "updatemodel.h"
 
 #include <DDBusSender>
 

@@ -12,6 +12,7 @@
 #include "dconfig_helper.h"
 #include "warningcontent.h"
 #include "fullscreenbackground.h"
+#include "updateworker.h"
 
 #include <DSysInfo>
 
@@ -218,6 +219,10 @@ void LockWorker::initConnections()
 
         createAuthentication(m_model->currentUser()->name());
         m_model->setCurrentModeState(SessionBaseModel::PasswordMode);
+    });
+
+    connect(UpdateWorker::instance(), &UpdateWorker::requestExitUpdating, this, [this] {
+        m_model->setVisible(false);
     });
 }
 
@@ -479,10 +484,10 @@ void LockWorker::doPowerAction(const SessionBaseModel::PowerAction action)
         m_model->setCurrentModeState(SessionBaseModel::ModeStatus::UserMode);
         break;
     case SessionBaseModel::PowerAction::RequireUpdateRestart:
-        Q_EMIT m_model->showUpdate(true);
+        UpdateWorker::instance()->doUpdate(false);
         break;
     case SessionBaseModel::PowerAction::RequireUpdateShutdown:
-        Q_EMIT m_model->showUpdate(false);
+        UpdateWorker::instance()->doUpdate(true);
         break;
     default:
         break;
