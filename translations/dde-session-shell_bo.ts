@@ -312,7 +312,7 @@
     </message>
     <message>
         <source>Lock</source>
-        <translation>ཟྭ་རྒྱག</translation>
+        <translation>བརྙན་ཡོལ་སྒོ་ལྕགས་བརྒྱབ།</translation>
     </message>
     <message>
         <source>Log out</source>

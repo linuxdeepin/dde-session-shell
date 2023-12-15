@@ -200,7 +200,7 @@
     <name>AuthWidget</name>
     <message>
         <source>Account</source>
-        <translation>帳戶</translation>
+        <translation>賬戶</translation>
     </message>
     <message numerus="yes">
         <source>Your password will expire in %n days, please change it timely</source>
@@ -223,7 +223,7 @@
     <name>GreeterWorker</name>
     <message>
         <source>Wrong account</source>
-        <translation>帳戶錯誤</translation>
+        <translation>賬戶錯誤</translation>
     </message>
     <message>
         <source>Wrong Password</source>
@@ -278,7 +278,7 @@
     </message>
     <message>
         <source>The above users are still logged in and data will be lost due to shutdown, are you sure you want to shut down?</source>
-        <translation>此電腦還有以上帳戶在登錄，關閉電腦會導致其數據丟失，是否要關閉此電腦？</translation>
+        <translation>此電腦還有以上賬戶在登錄，關閉電腦會導致其數據丟失，是否要關閉此電腦？</translation>
     </message>
     <message>
         <source>The above users are still logged in and data will be lost due to reboot, are you sure you want to reboot?</source>

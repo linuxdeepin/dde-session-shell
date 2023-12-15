@@ -245,7 +245,7 @@
     <name>LighterGreeter</name>
     <message>
         <source>Standard Mode</source>
-        <translation type="unfinished"/>
+        <translation>Modo Padrão</translation>
     </message>
 </context>
 <context>

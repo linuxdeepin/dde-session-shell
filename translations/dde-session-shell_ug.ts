@@ -77,7 +77,7 @@
     </message>
     <message>
         <source>Iris ID locked, use password please</source>
-        <translation> كۆز رەڭدار پەردىسىنى تونۇپ قۇلۇپنى ئېچىش قۇلۇپلىنىپ قالدى ، پارولنى كىرگۈزۈڭ</translation>
+        <translation> كۆز رەڭدار پەردىسىنى تونۇپ قۇلۇپنى ئېچىش قۇلۇپلىنىپ قالدى، پارولنى كىرگۈزۈڭ</translation>
     </message>
 </context>
 <context>
@@ -312,7 +312,7 @@
     </message>
     <message>
         <source>Lock</source>
-        <translation>قۇلۇپلاش</translation>
+        <translation>ئېكران قۇلۇپلاش</translation>
     </message>
     <message>
         <source>Log out</source>
