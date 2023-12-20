@@ -12,6 +12,12 @@ TransparentButton::TransparentButton(QWidget *parent)
 
 };
 
+void TransparentButton::setColor(const QColor &color)
+{
+    m_color = color;
+    update();
+}
+
 void TransparentButton::paintEvent(QPaintEvent *event)
 {
     Q_UNUSED(event)
@@ -20,10 +26,18 @@ void TransparentButton::paintEvent(QPaintEvent *event)
     DStylePainter p(this);
     DStyleOptionButton opt;
     initStyleOption(&opt);
+
+    if (!m_color.isValid()) {
+        opt.palette.setBrush(QPalette::Button, qApp->palette().highlight());
+    } else {
+        opt.palette.setBrush(QPalette::Button, m_color);
+    }
+
     if (isEnabled()) {
         p.setOpacity(1.0);
     } else {
         p.setOpacity(0.4);
     }
+
     p.drawControl(DStyle::CE_IconButton, opt);
 };

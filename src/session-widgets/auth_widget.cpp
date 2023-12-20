@@ -344,11 +344,11 @@ void AuthWidget::setLockButtonType(const int type)
     switch (type) {
     case SessionBaseModel::RequireRestart:
         m_lockButton->setIcon(QIcon(":/img/bottom_actions/reboot.svg"));
-        lockPalette.setColor(QPalette::Highlight, ShutdownColor);
+        m_lockButton->setColor(ShutdownColor);
         break;
     case SessionBaseModel::RequireShutdown:
         m_lockButton->setIcon(QIcon(":/img/bottom_actions/shutdown.svg"));
-        lockPalette.setColor(QPalette::Highlight, ShutdownColor);
+        m_lockButton->setColor(ShutdownColor);
         break;
     default:
         if (m_model->appType() == Login) {
@@ -356,13 +356,10 @@ void AuthWidget::setLockButtonType(const int type)
         } else {
             m_lockButton->setIcon(DStyle::SP_LockElement);
         }
+        // 设置为无效值，自动取活动色
+        m_lockButton->setColor(QColor());
         break;
     }
-
-    // 按钮不可用时颜色还是使用活动色，然后需要40%透明
-    QColor color = lockPalette.color(QPalette::Active, QPalette::Highlight);
-    lockPalette.setColor(QPalette::Disabled, QPalette::Highlight, color);
-    m_lockButton->setPalette(lockPalette);
 }
 
 /**

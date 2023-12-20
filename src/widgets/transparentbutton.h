@@ -16,8 +16,13 @@ class TransparentButton : public DFloatingButton
 public:
     explicit TransparentButton(QWidget *parent = nullptr);
 
+    void setColor(const QColor &color);
+
 protected:
     void paintEvent(QPaintEvent *event) override;
+
+private:
+    QColor m_color;
 };
 
 #endif // TRANSPARENTBUTTON_H
