@@ -154,6 +154,7 @@ int main(int argc, char *argv[])
     QObject::connect(LockContent::instance(), &LockContent::requestLockFrameHide, [model] {
         model->setVisible(false);
     });
+    QObject::connect(LockContent::instance(), &LockContent::noPasswordLoginChanged, worker, &LockWorker::onNoPasswordLoginChanged);
     QObject::connect(WarningContent::instance(), &WarningContent::requestLockFrameHide, [model] {
         model->setVisible(false);
     });

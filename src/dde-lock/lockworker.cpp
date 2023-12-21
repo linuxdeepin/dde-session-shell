@@ -867,3 +867,13 @@ void LockWorker::authFinishedAction()
     onAuthFinished();
     enableZoneDetected(true);
 }
+
+void LockWorker::onNoPasswordLoginChanged(const QString &account, bool noPassword)
+{
+    qDebug() << "user:" << account << ", noPassword:" << noPassword << ", visible :" << m_model->visible();
+    if(m_model->currentUser()->name() == account && m_model->visible()) {
+        if (m_model->currentModeState() != SessionBaseModel::ShutDownMode && m_model->currentModeState() != SessionBaseModel::UserMode) {
+            createAuthentication(account);
+        }
+    }
+}

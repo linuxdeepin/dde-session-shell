@@ -56,6 +56,8 @@ public slots:
     void checkAccount(const QString &account);
     void authFinishedAction();
 
+    void onNoPasswordLoginChanged(const QString &account, bool noPassword);
+
 private:
     void initConnections();
     void initData();
