@@ -616,6 +616,7 @@ bool FullScreenBackground::contains(int type)
     else {
         return containPixmap(blurBackgroundCacheMap, strSize);
     }
+    return false;
 }
 
 void FullScreenBackground::moveEvent(QMoveEvent *event)
