@@ -9,6 +9,7 @@
 #include "authcommon.h"
 
 #include <memory>
+#include <DConfig>
 
 class LoginContent;
 class SessionBaseModel;
@@ -41,6 +42,7 @@ protected:
 
 private:
     SessionBaseModel *m_model;
+    DTK_CORE_NAMESPACE::DConfig *m_dconfig;
 };
 
 #endif // LOGINWINDOW_H

@@ -8,10 +8,12 @@
 
 #include <QWindow>
 #include <QKeyEvent>
+DCORE_USE_NAMESPACE
 
 LoginWindow::LoginWindow(SessionBaseModel *const model, QWidget *parent)
     : FullScreenBackground(model, parent)
     , m_model(model)
+    , m_dconfig(DConfig::create("org.deepin.dde.daemon", "org.deepin.dde.daemon.account", QString(), this))
 {
     setAccessibleName("LoginWindow");
     setContent(LoginContent::instance());
@@ -78,10 +80,17 @@ bool LoginWindow::event(QEvent *event)
         }
         case Qt::Key_Escape: {
             // TODO for test
-            qInfo() << "Terminal locked: false";
-            QProcess process;
-            process.start("dbus-send --print-reply --system --dest=com.deepin.daemon.Accounts /com/deepin/daemon/Accounts com.deepin.daemon.Accounts.SetTerminalLocked boolean:false");
-            process.waitForFinished();
+            qInfo() << "loginWindow::keyPressEvent set terminal false";
+            if (m_dconfig) {
+                bool allowLocalUnlockTerminal = m_dconfig->value("isAllowLocalUnlockTerminal", false).toBool();
+                qInfo() << "allowLocalUnlockTerminal : "<<allowLocalUnlockTerminal;
+                if(allowLocalUnlockTerminal){
+                    QProcess process;
+                    process.start("dbus-send --print-reply --system --dest=com.deepin.daemon.Accounts /com/deepin/daemon/Accounts com.deepin.daemon.Accounts.SetTerminalLocked boolean:false");
+                    process.waitForFinished();
+                }
+            }
+
             break;
         }
         default:
