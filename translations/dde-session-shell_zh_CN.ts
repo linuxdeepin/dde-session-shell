@@ -282,7 +282,7 @@
     </message>
     <message>
         <source>The above users are still logged in and data will be lost due to reboot, are you sure you want to reboot?</source>
-        <translation>此电脑还有以上帐户在登录，重启电脑会导致其数据丢失，是否要重启此电脑？</translation>
+        <translation>此电脑还有以上账户在登录，重启电脑会导致其数据丢失，是否要重启此电脑？</translation>
     </message>
 </context>
 <context>

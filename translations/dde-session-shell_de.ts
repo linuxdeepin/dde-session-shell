@@ -245,7 +245,7 @@
     <name>LighterGreeter</name>
     <message>
         <source>Standard Mode</source>
-        <translation type="unfinished"/>
+        <translation>Standardmodus</translation>
     </message>
 </context>
 <context>
@@ -328,11 +328,11 @@
     </message>
     <message>
         <source>Update and Shut Down</source>
-        <translation type="unfinished"/>
+        <translation>Aktualisieren und herunterfahren</translation>
     </message>
     <message>
         <source>Update and Reboot</source>
-        <translation type="unfinished"/>
+        <translation>Aktualisieren und neu starten</translation>
     </message>
 </context>
 <context>
@@ -373,11 +373,11 @@
     </message>
     <message>
         <source>Your computer will reboot soon %1</source>
-        <translation type="unfinished"/>
+        <translation>Ihr Computer wird bald neu gestartet %1</translation>
     </message>
     <message>
         <source>Your computer will be turned off soon %1</source>
-        <translation type="unfinished"/>
+        <translation>Ihr Computer wird bald ausgeschaltet %1</translation>
     </message>
 </context>
 <context>
@@ -407,7 +407,7 @@
     </message>
     <message>
         <source>Reboot</source>
-        <translation type="unfinished"/>
+        <translation>Neu starten</translation>
     </message>
     <message>
         <source>Shut Down</source>
@@ -415,11 +415,11 @@
     </message>
     <message>
         <source>Unable to perform system backup. If you continue the updates, you cannot roll back to the old system later.</source>
-        <translation type="unfinished"/>
+        <translation>Es kann keine Systemsicherung durchgeführt werden. Wenn Sie die Aktualisierungen fortsetzen, können Sie später nicht zum alten System zurückkehren.</translation>
     </message>
     <message>
         <source>Insufficient disk space. Please clean up your disk and try again.</source>
-        <translation type="unfinished"/>
+        <translation>Unzureichender Speicherplatz. Bitte bereinigen Sie Ihre Festplatte und versuchen Sie es erneut.</translation>
     </message>
     <message>
         <source>DPKG error</source>
@@ -450,14 +450,14 @@
     <name>UpdatePrepareWidget</name>
     <message>
         <source>Preparing for updates…</source>
-        <translation type="unfinished"/>
+        <translation>Vorbereitungen für Aktualisierungen...</translation>
     </message>
 </context>
 <context>
     <name>UpdateProgressWidget</name>
     <message>
         <source>Do not force a shutdown or power off when installing updates. Otherwise, your system may be damaged.</source>
-        <translation type="unfinished"/>
+        <translation>Erzwingen Sie kein Herunterfahren oder Ausschalten, wenn Sie Aktualisierungen installieren. Andernfalls kann Ihr System beschädigt werden.</translation>
     </message>
 </context>
 <context>
@@ -531,11 +531,11 @@
     </message>
     <message>
         <source>Update and Shut Down</source>
-        <translation type="unfinished"/>
+        <translation>Aktualisieren und herunterfahren</translation>
     </message>
     <message>
         <source>Update and Reboot</source>
-        <translation type="unfinished"/>
+        <translation>Aktualisieren und neu starten</translation>
     </message>
     <message>
         <source>Closing the programs and shutting down, please wait...</source>
@@ -554,7 +554,7 @@
     <name>dss::module::AssistLoginWidget</name>
     <message>
         <source>Automatic login</source>
-        <translation type="unfinished"/>
+        <translation>Automatische Anmeldung</translation>
     </message>
 </context>
 <context>
