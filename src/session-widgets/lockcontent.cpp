@@ -17,8 +17,11 @@
 #include "plugin_manager.h"
 #include "fullmanagedauthwidget.h"
 #include "keyboardmonitor.h"
+#include "dconfig_helper.h"
+#include "constants.h"
 
 #include <DDBusSender>
+#include <DConfig>
 
 #include <QLocalSocket>
 #include <QMouseEvent>
@@ -45,6 +48,8 @@ LockContent::LockContent(QWidget *parent)
     , m_isUserSwitchVisible(false)
     , m_popWin(nullptr)
     , m_isPANGUCpu(false)
+    , m_MPRISEnable(false)
+    , m_showMediaWidget(DConfigHelper::instance()->getConfig(SHOW_MEDIA_WIDGET, false).toBool())
 {
     QDBusInterface Interface("com.deepin.daemon.SystemInfo",
                              "/com/deepin/daemon/SystemInfo",
@@ -106,6 +111,8 @@ void LockContent::init(SessionBaseModel *model)
     if (!m_localServer->listen(serverName)) { // 监听特定的连接
         qCWarning(DDE_SHELL) << "Listen local server failed!" << m_localServer->errorString();
     }
+
+    DConfigHelper::instance()->bind(this, SHOW_MEDIA_WIDGET, &LockContent::OnDConfigPropertyChanged);
 }
 
 void LockContent::initUI()
@@ -411,6 +418,12 @@ void LockContent::pushShutdownFrame()
 
 void LockContent::setMPRISEnable(const bool state)
 {
+    m_MPRISEnable = state;
+
+    if (!m_showMediaWidget) {
+        return;
+    }
+
     if (!m_mediaWidget) {
         m_mediaWidget = new MediaWidget;
         m_mediaWidget->setAccessibleName("MediaWidget");
@@ -590,6 +603,32 @@ void LockContent::updateDesktopBackgroundPath(const QString &path)
     }
 
     emit requestBackground(path);
+}
+
+void LockContent::OnDConfigPropertyChanged(const QString &key, const QVariant &value, QObject *objPtr)
+{
+    auto obj = qobject_cast<LockContent*>(objPtr);
+    if (!obj)
+        return;
+
+    if (key == SHOW_MEDIA_WIDGET) {
+        if (value.toBool()) {
+            if (!obj->m_mediaWidget) {
+                obj->m_mediaWidget = new MediaWidget;
+                obj->m_mediaWidget->setAccessibleName("MediaWidget");
+                obj->m_mediaWidget->initMediaPlayer();
+            }
+
+            obj->m_mediaWidget->setVisible(obj->m_MPRISEnable);
+            obj->setCenterBottomWidget(obj->m_mediaWidget);
+        } else {
+            if (obj->m_mediaWidget) {
+                obj->m_mediaWidget->setVisible(false);
+                obj->m_mediaWidget->deleteLater();
+                obj->m_mediaWidget = nullptr;
+            }
+        }
+    }
 }
 
 void LockContent::toggleVirtualKB()

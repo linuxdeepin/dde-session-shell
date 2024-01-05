@@ -271,6 +271,16 @@
             "description[zh_CN]": "认证插件的认证优先级，此配置优先级最高，会覆盖其它的优先级设置 \n类型：字符串数组，内部填充插件的 key 值\n默认值：空数组\n生效时机：重启后生效",
             "permissions": "readwrite",
             "visibility": "private"
+        },
+        "showMediaWidget":{
+            "value": true,
+            "serial": 0,
+            "flags": ["global"],
+            "name": "ShowMediaWidget",
+            "name[zh_CN]": "是否显示多媒体控制界面",
+            "description": "是否显示多媒体控制界面，true-显示，false-隐藏",
+            "permissions": "readwrite",
+            "visibility": "private"
         }
     }
 }

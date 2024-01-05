@@ -45,6 +45,7 @@ public:
     void updateGreeterBackgroundPath(const QString &path);
     void updateDesktopBackgroundPath(const QString &path);
     void hideEvent(QHideEvent *event) override;
+    static void OnDConfigPropertyChanged(const QString &key, const QVariant &value, QObject *objPtr);
 
 signals:
     void requestBackground(const QString &path);
@@ -127,6 +128,8 @@ protected:
     QPointer<QWidget> m_currentTray;
 
     bool m_isPANGUCpu;
+    bool m_MPRISEnable;
+    bool m_showMediaWidget;
 };
 
 #endif // LOCKCONTENT_H

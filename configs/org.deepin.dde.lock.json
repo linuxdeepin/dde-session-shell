@@ -251,6 +251,16 @@
             "description": "是否在shutdown页面点击关机或重启时，隐藏shutdown页面；false：隐藏，true：不隐藏。默认值为true；",
             "permissions": "readwrite",
             "visibility": "private"
+        },
+        "showMediaWidget":{
+            "value": true,
+            "serial": 0,
+            "flags": ["global"],
+            "name": "ShowMediaWidget",
+            "name[zh_CN]": "是否显示多媒体控制界面",
+            "description": "是否显示多媒体控制界面，true-显示，false-隐藏",
+            "permissions": "readwrite",
+            "visibility": "private"
         }
     }
 }

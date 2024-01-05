@@ -79,6 +79,7 @@ const QString USER_FRAME_MAX_WIDTH = QStringLiteral("userFrameMaxWidth");
 const QString FULL_NAME_FONT = QStringLiteral("fullNameFont");
 const QString LOGIN_PLUGIN_DISPLAY_ORDER = QStringLiteral("loginPluginsDisplayOrder");
 const QString LOGIN_PLUGIN_AUTH_ORDER = QStringLiteral("loginPluginsAuthOrder");
+const QString SHOW_MEDIA_WIDGET = "showMediaWidget";
 
 // 系统版本显示配置
 const QString SHOW_SYSTEM_VERSION = QStringLiteral("showSystemVersion");
