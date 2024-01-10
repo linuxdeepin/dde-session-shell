@@ -27,6 +27,7 @@ DGUI_USE_NAMESPACE
 const int PIXMAP_TYPE_BACKGROUND = 0;
 const int PIXMAP_TYPE_BLUR_BACKGROUND = 1;
 
+QString FullScreenBackground::originBackgroundPath;
 QString FullScreenBackground::blurBackgroundPath;
 
 QMap<QString, QPixmap> FullScreenBackground::blurBackgroundCacheMap;
@@ -75,7 +76,15 @@ void FullScreenBackground::updateBackground(const QString &path)
     if (m_useSolidBackground || !isPicture(path))
         return;
 
-    m_getBlurImageSuccess = false;
+    if (path == originBackgroundPath && !blurBackgroundPath.isEmpty()) {
+        if (isVisible()) {
+            update();
+        }
+
+        return;
+    }
+
+    originBackgroundPath = path;
     updateBlurBackground(path);
 }
 
@@ -101,33 +110,22 @@ void FullScreenBackground::updateBlurBackground(const QString &path)
     QDBusMessage message = QDBusMessage::createMethodCall("com.deepin.daemon.ImageEffect", "/com/deepin/daemon/ImageEffect",
                                                           "com.deepin.daemon.ImageEffect", "Get");
     message << "" << path;
-    // 异步调用
-    QDBusPendingCall async = QDBusConnection::systemBus().asyncCall(message);
-    auto *watcher = new QDBusPendingCallWatcher(async);
-    QObject::connect(watcher, &QDBusPendingCallWatcher::finished, this, [watcher, updateBlurBackgroundFunc, this](QDBusPendingCallWatcher *callWatcher) {
-        // 获取模糊壁纸路径
-        QDBusPendingReply<QString> reply = *callWatcher;
-        QString blurPath;
-        if (!reply.isError()) {
-            blurPath = reply.value();
-            bool isPicture = QFile::exists(blurPath) && QFile(blurPath).size() && checkPictureCanRead(blurPath);
-            if (!isPicture) {
-                blurPath = "/usr/share/backgrounds/default_background.jpg";
-            }
-        } else {
+    QDBus::CallMode callMode = isVisible() ? QDBus::BlockWithGui : QDBus::Block;
+    QDBusPendingReply<QString> reply = QDBusConnection::systemBus().call(message, callMode, 2*1000);
+    QString blurPath;
+    if (!reply.isError()) {
+        blurPath = reply.value();
+        bool isPicture = QFile::exists(blurPath) && QFile(blurPath).size() && checkPictureCanRead(blurPath);
+        if (!isPicture) {
             blurPath = "/usr/share/backgrounds/default_background.jpg";
-            qCWarning(DDE_SHELL) << "Get blur background path error:" << reply.error().message();
         }
-
-        m_getBlurImageSuccess = true;
-        Q_EMIT blurImageReturned();
-
-        // 处理模糊背景图和执行动画或update；
-        updateBlurBackgroundFunc(blurPath);
-
-        callWatcher->deleteLater();
-        watcher->deleteLater();
-    });
+    } else {
+        blurPath = "/usr/share/backgrounds/default_background.jpg";
+        qCWarning(DDE_SHELL) << "Get blur background path error:" << reply.error().message();
+    }
+    
+    // 处理模糊背景图和执行动画或update；
+    updateBlurBackgroundFunc(blurPath);
 }
 
 bool FullScreenBackground::contentVisible() const
@@ -285,14 +283,6 @@ void FullScreenBackground::leaveEvent(QEvent *event)
 
 void FullScreenBackground::resizeEvent(QResizeEvent *event)
 {
-    if (!m_getBlurImageSuccess) {
-        // 避免页面显示出来，模糊壁纸还没返回导致先出现纯色背景的问题。
-        QEventLoop loop;
-        QTimer::singleShot(1*1000, &loop, &QEventLoop::quit);
-        connect(this, &FullScreenBackground::blurImageReturned, &loop, &QEventLoop::quit);
-        loop.exec();
-    }
-
     if (!blurBackgroundCacheMap.isEmpty() && isPicture(blurBackgroundPath) && !contains(PIXMAP_TYPE_BLUR_BACKGROUND)) {
         QString scaledPath;
         if (getScaledBlurImage(blurBackgroundPath, scaledPath)) {

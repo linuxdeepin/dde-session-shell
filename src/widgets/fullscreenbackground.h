@@ -40,7 +40,6 @@ public slots:
 signals:
     void requestDisableGlobalShortcutsForWayland(bool enable);
     void requestLockFrameHide();
-    void blurImageReturned();
 
 protected:
     void keyPressEvent(QKeyEvent *e) Q_DECL_OVERRIDE;
@@ -79,14 +78,14 @@ protected:
     static QString sizeToString(const QSize &size);
 
 private:
-    static QString blurBackgroundPath;                         // 模糊背景图片路径
+    static QString originBackgroundPath; // 原图路径
+    static QString blurBackgroundPath; // 模糊背景图片路径
     static QMap<QString, QPixmap> blurBackgroundCacheMap;
 
     QPointer<QScreen> m_screen;
     SessionBaseModel *m_model = nullptr;
     bool m_enableEnterEvent = true;
     bool m_useSolidBackground;
-    bool m_getBlurImageSuccess = false;
 
     BlackWidget *m_blackWidget;
 };
