@@ -28,7 +28,9 @@ start_lightdm_deepin_greeter() {
   while true; do
       /usr/bin/lightdm-deepin-greeter
       exit_status=$?
-      if [ $exit_status -eq 0 ]; then
+      # 143 为收到kill信号后退出码
+      if [ $exit_status -eq 0 ] || [ $exit_status -eq 143 ]; then
+          echo "-lightdm-deepin-greeter exit code: $exit_status" 1>&2
           break
       else
           current_time=$(date '+%Y-%m-%d %H:%M:%S')
