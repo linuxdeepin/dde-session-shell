@@ -26,6 +26,8 @@ using namespace dss;
 using namespace dss::module;
 DCORE_USE_NAMESPACE
 
+#define DPMS_STATE_FILE "/tmp/dpms-state" //black screen state;bug:222049
+
 LockContent::LockContent(QWidget *parent)
     : SessionBaseWindow(parent)
     , m_model(nullptr)
@@ -698,14 +700,17 @@ void LockContent::tryGrabKeyboard(bool exitIfFailed)
             return;
         }
 
-        // 模拟XF86Ungrab按键，从而取消其他窗口的grab状态；尝试unGrab，wayland需要
-        // x11使用xdotool key XF86Ungrab会导致空闲计时清零，从而使自动黑屏被点亮
-        QProcess::execute("bash -c \"originmap=$(setxkbmap -query | grep option | awk -F ' ' '{print $2}');/usr/bin/setxkbmap -option grab:break_actions&&/usr/bin/xdotool key XF86Ungrab&&setxkbmap -option $originmap\"");
     } else {
         if (window()->windowHandle() && window()->windowHandle()->setKeyboardGrabEnabled(true)) {
             m_failures = 0;
             return;
         }
+    }
+
+    if (!(QFile::exists(DPMS_STATE_FILE) && QFile(DPMS_STATE_FILE).readAll() == "1")) {
+        // 模拟XF86Ungrab按键，从而取消其他窗口的grab状态；尝试unGrab，wayland需要
+        // x11使用xdotool key XF86Ungrab会导致空闲计时清零，从而使自动黑屏被点亮
+        QProcess::execute("bash -c \"originmap=$(setxkbmap -query | grep option | awk -F ' ' '{print $2}');/usr/bin/setxkbmap -option grab:break_actions&&/usr/bin/xdotool key XF86Ungrab&&setxkbmap -option $originmap\"");
     }
 
     m_failures++;
