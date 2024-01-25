@@ -36,7 +36,7 @@ AuthInterface::AuthInterface(SessionBaseModel *const model, QObject *parent)
        m_login1SessionSelf = new Login1SessionSelf("org.freedesktop.login1", session_self, QDBusConnection::systemBus(), this);
        m_login1SessionSelf->setSync(false);
     } else {
-        qWarning() << "Login interface is invalid, error:" << m_login1Inter->lastError().type();
+        qCWarning(DDE_SHELL) << "Login interface is invalid, error:" << m_login1Inter->lastError().type();
     }
 }
 

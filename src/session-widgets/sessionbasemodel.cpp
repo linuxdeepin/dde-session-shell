@@ -76,7 +76,7 @@ void SessionBaseModel::setAppType(const AppType type)
 
 void SessionBaseModel::setSessionKey(const QString &sessionKey)
 {
-    qInfo() << "Set session key:" << sessionKey;
+    qCInfo(DDE_SHELL) << "Set session key:" << sessionKey;
 
     if (m_sessionKey == sessionKey)
         return;
@@ -88,7 +88,7 @@ void SessionBaseModel::setSessionKey(const QString &sessionKey)
 
 void SessionBaseModel::setPowerAction(const PowerAction &powerAction)
 {
-    qInfo() << "Incoming action:" << powerAction << ", current action:" << m_powerAction;
+    qCInfo(DDE_SHELL) << "Incoming action:" << powerAction << ", current action:" << m_powerAction;
 
     if (powerAction == m_powerAction)
         return;
@@ -100,7 +100,7 @@ void SessionBaseModel::setPowerAction(const PowerAction &powerAction)
 
 void SessionBaseModel::setCurrentModeState(const ModeStatus &currentModeState)
 {
-    qInfo() << "Incoming state:" << currentModeState << ", current state:" << m_currentModeState;
+    qCInfo(DDE_SHELL) << "Incoming state:" << currentModeState << ", current state:" << m_currentModeState;
 
     if (m_currentModeState == currentModeState)
         return;
@@ -133,7 +133,7 @@ void SessionBaseModel::setHasVirtualKB(bool hasVirtualKB)
 
 void SessionBaseModel::setHasSwap(bool hasSwap)
 {
-    qInfo() << "Has swap:" << hasSwap;
+    qCInfo(DDE_SHELL) << "Has swap:" << hasSwap;
     if (m_hasSwap == hasSwap)
         return;
 
@@ -149,7 +149,7 @@ void SessionBaseModel::setHasSwap(bool hasSwap)
  */
 void SessionBaseModel::setVisible(const bool visible)
 {
-    qInfo() << "Set visible:" << visible << ", current visible:" << m_visible;
+    qCInfo(DDE_SHELL) << "Set visible:" << visible << ", current visible:" << m_visible;
 
     if (m_visible == visible) {
         return;
@@ -164,7 +164,7 @@ void SessionBaseModel::setVisible(const bool visible)
 
 void SessionBaseModel::setCanSleep(bool canSleep)
 {
-    qInfo() << "Can sleep:" << canSleep;
+    qCInfo(DDE_SHELL) << "Can sleep:" << canSleep;
     if (m_canSleep == canSleep)
         return;
 
@@ -361,7 +361,7 @@ std::shared_ptr<User> SessionBaseModel::json2User(const QString &userJson)
  */
 bool SessionBaseModel::updateCurrentUser(const QString &userJson)
 {
-    qInfo() << "Update current user:" << userJson;
+    qCInfo(DDE_SHELL) << "Update current user:" << userJson;
     std::shared_ptr<User> user_ptr = json2User(userJson);
     if (!user_ptr) {
         if (m_currentUser)
@@ -382,11 +382,11 @@ bool SessionBaseModel::updateCurrentUser(const QString &userJson)
 bool SessionBaseModel::updateCurrentUser(const std::shared_ptr<User> user)
 {
     if (!user) {
-        qWarning() << "Failed to set current user!" << user.get();
+        qCWarning(DDE_SHELL) << "Failed to set current user!" << user.get();
         return false;
     }
 
-    qInfo() << "Update current user:" << user->name();
+    qCInfo(DDE_SHELL) << "Update current user:" << user->name();
 
     if (m_currentUser && *m_currentUser == *user) {
         m_currentUser->updateUserInfo();
@@ -406,7 +406,7 @@ bool SessionBaseModel::updateCurrentUser(const std::shared_ptr<User> user)
  */
 void SessionBaseModel::updateUserList(const QStringList &list)
 {
-    qInfo() << "Update user list: " << list;
+    qCInfo(DDE_SHELL) << "Update user list: " << list;
     QStringList listTmp = m_users->keys();
     for (const QString &path : list) {
         if (m_users->contains(path)) {
@@ -429,13 +429,13 @@ void SessionBaseModel::updateUserList(const QStringList &list)
  */
 void SessionBaseModel::updateLoginedUserList(const QString &list)
 {
-    qDebug() << "Logined user list: " << list;
+    qCDebug(DDE_SHELL) << "Logined user list: " << list;
 
     QList<QString> loginedUsersTmp = m_loginedUsers->keys();
     QJsonParseError jsonParseError;
     const QJsonDocument loginedUserListDoc = QJsonDocument::fromJson(list.toUtf8(), &jsonParseError);
     if (jsonParseError.error != QJsonParseError::NoError) {
-        qWarning() << "The logined user list is wrong!";
+        qCWarning(DDE_SHELL) << "The logined user list is wrong!";
         return;
     }
     const QJsonObject loginedUserListDocObj = loginedUserListDoc.object();
@@ -466,7 +466,7 @@ void SessionBaseModel::updateLoginedUserList(const QString &list)
         m_users->value(path)->updateLoginState(false);
     }
 
-    qInfo() << "Logined users: " << m_loginedUsers->keys();
+    qCInfo(DDE_SHELL) << "Logined users: " << m_loginedUsers->keys();
     emit loginedUserListChanged(m_loginedUsers->values());
 }
 
@@ -487,7 +487,7 @@ void SessionBaseModel::updateLimitedInfo(const QString &info)
  */
 void SessionBaseModel::updateFrameworkState(const int state)
 {
-    qInfo() << "Deepin authenticate framework state:" << state;
+    qCInfo(DDE_SHELL) << "Deepin authenticate framework state:" << state;
 
     if (state == m_authProperty.FrameworkState) {
         return;
@@ -515,7 +515,7 @@ void SessionBaseModel::updateSupportedMixAuthFlags(const int flags)
  */
 void SessionBaseModel::updateSupportedEncryptionType(const QString &type)
 {
-    qInfo() << "Support encryption type:" << type;
+    qCInfo(DDE_SHELL) << "Support encryption type:" << type;
     if (type == m_authProperty.EncryptionType)
         return;
 
@@ -581,7 +581,7 @@ void SessionBaseModel::updatePrompt(const QString &prompt)
  */
 void SessionBaseModel::updateFactorsInfo(const MFAInfoList &infoList)
 {
-    qInfo() << "Factors info:" << infoList;
+    qCInfo(DDE_SHELL) << "Factors info:" << infoList;
     m_authProperty.AuthType = AT_None;
     switch (m_authProperty.FrameworkState) {
     case Available:

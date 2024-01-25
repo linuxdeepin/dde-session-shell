@@ -70,7 +70,7 @@ GreeterWorker::GreeterWorker(SessionBaseModel *const model, QObject *parent)
 
     m_resetSessionTimer->setSingleShot(true);
     connect(m_resetSessionTimer, &QTimer::timeout, this, [this] {
-        qInfo() << "Reset session time out";
+        qCInfo(DDE_SHELL) << "Reset session time out";
         endAuthentication(m_account, AT_All);
         m_model->updateAuthState(AT_All, AS_Cancel, "Cancel");
         destroyAuthentication(m_account);
@@ -92,7 +92,7 @@ void GreeterWorker::initConnections()
     connect(m_accountsInter, &AccountsInter::UserAdded, m_model, static_cast<void (SessionBaseModel::*)(const QString &)>(&SessionBaseModel::addUser));
     connect(m_accountsInter, &AccountsInter::UserDeleted, m_model, static_cast<void (SessionBaseModel::*)(const QString &)>(&SessionBaseModel::removeUser));
     connect(m_accountsInter, &AccountsInter::UserDeleted, this, [this](const QString &path) {
-        qInfo() << "User delete, path:" << path;
+        qCInfo(DDE_SHELL) << "User delete, path:" << path;
         if (path == m_model->currentUser()->path()) {
             m_model->updateCurrentUser(m_lockInter->CurrentUser());
             m_model->updateAuthState(AT_All, AS_Cancel, "Cancel");
@@ -115,7 +115,7 @@ void GreeterWorker::initConnections()
         }
     });
     connect(m_authFramework, &DeepinAuthFramework::DeviceChanged, this, [this](const int type, const int state) {
-        qInfo() << "Device changed, type: " << type << ", state: " << state;
+        qCInfo(DDE_SHELL) << "Device changed, type: " << type << ", state: " << state;
         // 如果是单因或者多因且包含该类型认证，需要重新创建认证
         if (m_model->visible() && (!m_model->getAuthProperty().MFAFlag || (m_model->getAuthProperty().MFAFlag && (m_model->getAuthProperty().AuthType & type)))) {
             endAuthentication(m_account, AT_All);
@@ -136,9 +136,9 @@ void GreeterWorker::initConnections()
 
     /* org.freedesktop.login1.Session */
     connect(m_login1SessionSelf, &Login1SessionSelf::ActiveChanged, this, [this](bool active) {
-        qInfo() << "Login1SessionSelf::ActiveChanged:" << active;
+        qCInfo(DDE_SHELL) << "Login1SessionSelf::ActiveChanged:" << active;
         if (m_model->currentUser() == nullptr || m_model->currentUser()->name().isEmpty()) {
-            qWarning() << "Current user is invalid or current user's name is empty";
+            qCWarning(DDE_SHELL) << "Current user is invalid or current user's name is empty";
             return;
         }
         if (active) {
@@ -158,7 +158,7 @@ void GreeterWorker::initConnections()
 
     /* org.freedesktop.login1.Manager */
     connect(m_login1Inter, &DBusLogin1Manager::PrepareForSleep, this, [this](bool isSleep) {
-        qInfo() << "DBus login1 manager prepare for sleep:" << isSleep;
+        qCInfo(DDE_SHELL) << "DBus login1 manager prepare for sleep:" << isSleep;
         // 登录界面待机或休眠时提供显示假黑屏，唤醒时显示正常界面
         m_model->setIsBlackMode(isSleep);
 
@@ -172,7 +172,7 @@ void GreeterWorker::initConnections()
         }
     });
     connect(m_login1Inter, &DBusLogin1Manager::SessionRemoved, this, [this] {
-        qInfo() << "DBus login1 manager session removed";
+        qCInfo(DDE_SHELL) << "DBus login1 manager session removed";
         if (m_model->updateCurrentUser(m_lockInter->CurrentUser())) {
             m_model->updateAuthState(AT_All, AS_Cancel, "Cancel");
             destroyAuthentication(m_account);
@@ -186,7 +186,7 @@ void GreeterWorker::initConnections()
     });
     /* com.deepin.dde.LockService */
     connect(m_lockInter, &DBusLockService::UserChanged, this, [this](const QString &json) {
-        qInfo() << "User changed: " << json;
+        qCInfo(DDE_SHELL) << "User changed: " << json;
         // 如果是已登录用户则返回，否则已登录用户和未登录用户来回切换时会造成用户信息错误
         std::shared_ptr<User> user_ptr = m_model->json2User(json);
         if (!user_ptr || user_ptr->isLogin())
@@ -205,7 +205,7 @@ void GreeterWorker::initConnections()
     });
     /* model */
     connect(m_model, &SessionBaseModel::authTypeChanged, this, [this](const AuthFlags type) {
-        qInfo() << "Auth type changed, incoming type:" << type
+        qCInfo(DDE_SHELL) << "Auth type changed, incoming type:" << type
                 << ", mfa flag:" << m_model->getAuthProperty().MFAFlag;
         if (type > 0 && m_model->getAuthProperty().MFAFlag) {
             startAuthentication(m_account, m_model->getAuthProperty().AuthType);
@@ -265,7 +265,7 @@ void GreeterWorker::initConnections()
 void GreeterWorker::initData()
 {
     if (isSecurityEnhanceOpen()) {
-        qInfo() << "Security enhance is open";
+        qCInfo(DDE_SHELL) << "Security enhance is open";
         m_model->setSEType(true);
     }
 
@@ -385,7 +385,7 @@ void GreeterWorker::switchToUser(std::shared_ptr<User> user)
         }
         return;
     }
-    qInfo() << "Switch user from" << m_account
+    qCInfo(DDE_SHELL) << "Switch user from" << m_account
             << ", to:" << user->name()
             << ", user id:" << user->uid()
             << ", is login:" << user->isLogin();
@@ -418,7 +418,7 @@ bool GreeterWorker::isSecurityEnhanceOpen()
                                QDBusConnection::systemBus());
     QDBusReply<QString> reply = securityEnhanceInterface.call("Status");
     if (!reply.isValid()) {
-       qWarning() << "Get security enhance status error: " << reply.error();
+       qCWarning(DDE_SHELL) << "Get security enhance status error: " << reply.error();
        return false;
     }
     return reply.value() == "open" || reply.value() == "opening";
@@ -431,7 +431,7 @@ bool GreeterWorker::isSecurityEnhanceOpen()
  */
 void GreeterWorker::createAuthentication(const QString &account)
 {
-    qInfo() << "Create auth entication, account: " << account;
+    qCInfo(DDE_SHELL) << "Create auth entication, account: " << account;
     if (m_model->terminalLocked()) {
         // 切换用户后，需要触发TerminalLocked信号
         m_model->sendTerminalLockedSignal();
@@ -481,7 +481,7 @@ void GreeterWorker::createAuthentication(const QString &account)
  */
 void GreeterWorker::destroyAuthentication(const QString &account)
 {
-    qInfo() << "Destroy authentication, account:" << account;
+    qCInfo(DDE_SHELL) << "Destroy authentication, account:" << account;
     switch (m_model->getAuthProperty().FrameworkState) {
     case Available:
         m_authFramework->DestroyAuthController(account);
@@ -501,10 +501,10 @@ void GreeterWorker::destroyAuthentication(const QString &account)
 void GreeterWorker::startAuthentication(const QString &account, const AuthFlags authType)
 {
     if (!m_model->currentUser()->allowToChangePassword()) {
-        qInfo() << "Authentication exit because of user's authority";
+        qCInfo(DDE_SHELL) << "Authentication exit because of user's authority";
         return;
     }
-    qInfo() << "Start authentication, account:" << account << ", auth type:" << authType;
+    qCInfo(DDE_SHELL) << "Start authentication, account:" << account << ", auth type:" << authType;
     switch (m_model->getAuthProperty().FrameworkState) {
     case Available:
         m_authFramework->StartAuthentication(account, authType, -1);
@@ -525,7 +525,7 @@ void GreeterWorker::startAuthentication(const QString &account, const AuthFlags 
  */
 void GreeterWorker::sendTokenToAuth(const QString &account, const AuthType authType, const QString &token)
 {
-    qInfo() << "Send token:" << account << ", auth type:" << authType;
+    qCInfo(DDE_SHELL) << "Send token:" << account << ", auth type:" << authType;
     switch (m_model->getAuthProperty().FrameworkState) {
     case Available:
         if (AT_PAM == authType) {
@@ -551,7 +551,7 @@ void GreeterWorker::sendTokenToAuth(const QString &account, const AuthType authT
  */
 void GreeterWorker::endAuthentication(const QString &account, const AuthFlags authType)
 {
-    qInfo() << "End authentication, account:" << account << ", auth type:" << authType;
+    qCInfo(DDE_SHELL) << "End authentication, account:" << account << ", auth type:" << authType;
 
     switch (m_model->getAuthProperty().FrameworkState) {
     case Available:
@@ -572,7 +572,7 @@ void GreeterWorker::endAuthentication(const QString &account, const AuthFlags au
  */
 void GreeterWorker::checkAccount(const QString &account)
 {
-    qInfo() << "Check account, account: " << account;
+    qCInfo(DDE_SHELL) << "Check account, account: " << account;
 
     std::shared_ptr<User> user_ptr = m_model->findUserByName(account);
     // 当用户登录成功后，判断用户输入帐户有效性逻辑改为后端去做处理
@@ -581,7 +581,7 @@ void GreeterWorker::checkAccount(const QString &account)
         user_ptr = std::make_shared<NativeUser>(userPath);
         // 对于没有设置密码的账户,直接认定为错误账户
         if (!user_ptr->isPasswordValid()) {
-            qWarning() << "The user's password is invalid, user path: " << userPath;
+            qCWarning(DDE_SHELL) << "The user's password is invalid, user path: " << userPath;
             emit m_model->authFailedTipsMessage(tr("Wrong account"));
             m_model->setAuthType(AT_None);
             return;
@@ -597,7 +597,7 @@ void GreeterWorker::checkAccount(const QString &account)
             dynamic_cast<ADDomainUser *>(user_ptr.get())->setName(userName);
             dynamic_cast<ADDomainUser *>(user_ptr.get())->setFullName(userFullName);
         } else {
-            qWarning() << "Password is null, user path: " << userPath;
+            qCWarning(DDE_SHELL) << "Password is null, user path: " << userPath;
             emit m_model->authFailedTipsMessage(tr("Wrong account"));
             m_model->setAuthType(AT_None);
             return;
@@ -606,7 +606,7 @@ void GreeterWorker::checkAccount(const QString &account)
 
     // m_greeter->cancelAuthentication后m_greeter的数据不会发生改变，当前账户如果是无密码登陆则不需要判断m_greeter认证数据
     if (m_greeter->authenticationUser() == account && m_account == account && !user_ptr->isNoPasswordLogin()) {
-        qInfo() << "The current user is the incoming user, do not check again";
+        qCInfo(DDE_SHELL) << "The current user is the incoming user, do not check again";
         return;
     }
 
@@ -633,7 +633,7 @@ void GreeterWorker::checkDBusServer(bool isValid)
     } else {
         // FIXME: 我不希望这样做，但是QThread::msleep会导致无限递归
         QTimer::singleShot(300, this, [this] {
-            qWarning() << "com.deepin.daemon.Accounts is not start, rechecking!";
+            qCWarning(DDE_SHELL) << "com.deepin.daemon.Accounts is not start, rechecking!";
             checkDBusServer(m_accountsInter->isValid());
         });
     }
@@ -647,7 +647,7 @@ void GreeterWorker::checkDBusServer(bool isValid)
  */
 void GreeterWorker::showPrompt(const QString &text, const QLightDM::Greeter::PromptType type)
 {
-    qInfo() << "Greeter prompt: " << text << ", type:" << type;
+    qCInfo(DDE_SHELL) << "Greeter prompt: " << text << ", type:" << type;
     m_model->setLightdmPamStarted(true);
     switch (type) {
     case QLightDM::Greeter::PromptTypeSecret:
@@ -668,7 +668,7 @@ void GreeterWorker::showPrompt(const QString &text, const QLightDM::Greeter::Pro
  */
 void GreeterWorker::showMessage(const QString &text, const QLightDM::Greeter::MessageType type)
 {
-    qInfo() << "Greeter message:" << text << ", type:" << type;
+    qCInfo(DDE_SHELL) << "Greeter message:" << text << ", type:" << type;
     m_model->setLightdmPamStarted(true);
     switch (type) {
     case QLightDM::Greeter::MessageTypeInfo:
@@ -687,7 +687,7 @@ void GreeterWorker::showMessage(const QString &text, const QLightDM::Greeter::Me
 void GreeterWorker::authenticationComplete()
 {
     const bool result = m_greeter->isAuthenticated();
-    qInfo() << "Authentication result:" << result << ", retry auth" << m_retryAuth;
+    qCInfo(DDE_SHELL) << "Authentication result:" << result << ", retry auth" << m_retryAuth;
 
     if (!result) {
         if (m_retryAuth && !m_model->getAuthProperty().MFAFlag) {
@@ -721,7 +721,7 @@ void GreeterWorker::authenticationComplete()
     data.message = {{"startup", "authenticationComplete"}, {"result", QString::number(result)}};
     DDE_EventLogger::EventLogger::instance().writeEventLog(data);
 
-    qInfo() << "Start session: " << m_model->sessionKey();
+    qCInfo(DDE_SHELL) << "Start session: " << m_model->sessionKey();
 
     emit requestUpdateBackground(m_model->currentUser()->greeterBackground());
     setCurrentUser(m_model->currentUser());
@@ -732,13 +732,13 @@ void GreeterWorker::authenticationComplete()
     //清理所有TTY输出
     QDBusReply<void> reply = m_systemDaemon->call("ClearTtys");
     if (!reply.isValid()) {
-        qWarning() << "Clear ttys failed, error messages: " << reply.error().message();
+        qCWarning(DDE_SHELL) << "Clear ttys failed, error messages: " << reply.error().message();
     };
 }
 
 void GreeterWorker::onAuthFinished()
 {
-    qInfo() << "Auth finished";
+    qCInfo(DDE_SHELL) << "Auth finished";
     if (m_greeter->inAuthentication()) {
         m_greeter->respond(m_authFramework->AuthSessionPath(m_account) + QString(";") + m_password);
         updatePasswordExpiredStateBySPName(m_account);
@@ -746,13 +746,13 @@ void GreeterWorker::onAuthFinished()
             changePasswd();
         }
     } else {
-        qWarning() << "The lightdm is not in authentication!";
+        qCWarning(DDE_SHELL) << "The lightdm is not in authentication!";
     }
 }
 
 void GreeterWorker::onAuthStateChanged(const int type, const int state, const QString &message)
 {
-    qInfo() << "Auth type:" << type << ", state:" << state << ", message:" << message;
+    qCInfo(DDE_SHELL) << "Auth type:" << type << ", state:" << state << ", message:" << message;
     if (m_model->getAuthProperty().MFAFlag) {
         if (type == AT_All) {
             switch (state) {
@@ -765,7 +765,7 @@ void GreeterWorker::onAuthStateChanged(const int type, const int state, const QS
                         changePasswd();
                     }
                 } else {
-                    qWarning() << "The lightdm is not in authentication!";
+                    qCWarning(DDE_SHELL) << "The lightdm is not in authentication!";
                 }
                 break;
             case AS_Cancel:
@@ -884,9 +884,9 @@ void GreeterWorker::onCurrentUserChanged(const std::shared_ptr<User> &user)
 
 void GreeterWorker::onSessionCreated()
 {
-    qInfo() << "Set privileges enable";
+    qCInfo(DDE_SHELL) << "Set privileges enable";
     if (!m_authFramework->SetPrivilegesEnable(m_account, QString("/usr/sbin/lightdm"))) {
-        qWarning() << "Failed to set privileges!";
+        qCWarning(DDE_SHELL) << "Failed to set privileges!";
     }
 }
 
@@ -930,7 +930,7 @@ void GreeterWorker::recoveryUserKBState(std::shared_ptr<User> user)
 
     const bool enabled = getNumLockState(user->name()) == NUM_UNLOCKED;
 
-    qWarning() << "Restore numlock state to " << enabled;
+    qCWarning(DDE_SHELL) << "Restore numlock state to " << enabled;
 
     // Resync numlock light with numlock status
     if (!m_model->isUseWayland()) {
@@ -956,13 +956,13 @@ void GreeterWorker::startGreeterAuth(const QString &account)
     if (!m_greeter->inAuthentication() || m_greeter->authenticationUser() != account || (user_ptr && user_ptr->isNoPasswordLogin())) {
         m_greeter->authenticate(account);
     } else {
-        qInfo() << "Lightdm is in authentication, won't do it again, account: " << account;
+        qCInfo(DDE_SHELL) << "Lightdm is in authentication, won't do it again, account: " << account;
     }
 }
 
 void GreeterWorker::changePasswd()
 {
-    qInfo() << "Change password";
+    qCInfo(DDE_SHELL) << "Change password";
     m_model->updateMFAFlag(false);
     m_model->setAuthType(AT_PAM);
 }
@@ -1027,7 +1027,7 @@ void GreeterWorker::terminalLockedChanged(const QDBusMessage &msg)
 {
     QList<QVariant> arguments = msg.arguments();
     if (arguments.size() != 3) {
-        qWarning() << "Terminal locked changed invalid arguments size, size: " << arguments.size();
+        qCWarning(DDE_SHELL) << "Terminal locked changed invalid arguments size, size: " << arguments.size();
         return;
     }
 
@@ -1039,7 +1039,7 @@ void GreeterWorker::terminalLockedChanged(const QDBusMessage &msg)
     QVariantMap changedProps = qdbus_cast<QVariantMap>(arguments.at(1).value<QDBusArgument>());
     if (changedProps.contains("IsTerminalLocked")) {
         bool locked = changedProps.value("IsTerminalLocked").toBool();
-        qInfo() << "Terminal locked changed, locked: " << locked;
+        qCInfo(DDE_SHELL) << "Terminal locked changed, locked: " << locked;
         m_model->setTerminalLocked(locked);
 
         if (!locked) {

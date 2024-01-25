@@ -425,7 +425,7 @@ void ShutdownWidget::onStatusChanged(SessionBaseModel::ModeStatus status)
 {
     RoundItemButton *roundItemButton;
     if (m_modeStatus == status) {
-        qInfo() << "Shutdown widget status not being changed";
+        qCInfo(DDE_SHELL) << "Shutdown widget status not being changed";
         return;
     }
     m_modeStatus = status;
@@ -470,7 +470,7 @@ void ShutdownWidget::setButtonsVisible()
         }
         // 根据lastore的lastore-daemon-status配置决定是否显示更新按钮
         const int lastoreDaemonStatus = DConfigHelper::instance()->getConfig(LASTORE_DCONFIG_NAME, LASTORE_DCONFIG_NAME, "", LASTORE_DAEMON_STATUS, 0).toInt();
-        qInfo() << "Lastore daemon status: " << lastoreDaemonStatus;
+        qCInfo(DDE_SHELL) << "Lastore daemon status: " << lastoreDaemonStatus;
         const bool isUpdateReady = lastoreDaemonStatus & IS_UPDATE_READY;
         const bool isUpdateDisabled = lastoreDaemonStatus & IS_UPDATE_DISABLED;
         const bool isUpdateVisible = isUpdateReady && !isUpdateDisabled;
@@ -479,7 +479,7 @@ void ShutdownWidget::setButtonsVisible()
         m_updateAndShutdownButton->setVisible(isUpdateVisible);
         m_updateAndShutdownButton->setRedPointVisible(isUpdateVisible);
         if (DConfigHelper::instance()->getConfig("hidePowerButtonsWhenUpdatable", false).toBool() && isUpdateVisible) {
-            qInfo() << "Force update is enbaled, hide shutdown button and reboot button";
+            qCInfo(DDE_SHELL) << "Force update is enbaled, hide shutdown button and reboot button";
             m_requireShutdownButton->setVisible(false);
             m_requireRestartButton->setVisible(false);
         }
@@ -525,7 +525,7 @@ void ShutdownWidget::recoveryLayout()
 
 void ShutdownWidget::onRequirePowerAction(SessionBaseModel::PowerAction powerAction, bool needConfirm)
 {
-    qInfo() << "Require power action: " << powerAction << ", need confirm: " << needConfirm;
+    qCInfo(DDE_SHELL) << "Require power action: " << powerAction << ", need confirm: " << needConfirm;
     //锁屏或关机模式时，需要确认是否关机或检查是否有阻止关机
     if (m_model->appType() == Lock) {
         switch (powerAction) {

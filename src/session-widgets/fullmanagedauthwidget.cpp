@@ -87,7 +87,7 @@ void FullManagedAuthWidget::setAuthType(const AuthFlags type)
         // 这是只是一个规避方案，主要是因为每个屏幕都会创建一个sfa，这看起来不太合理，特别是处理单例对象时，带来很大的不便。
 
         // TODO 每个屏幕只创建一个LockContent，鼠标在屏幕间移动的时候重新设置LockContent的parent即可。
-        qInfo() << "FMA is inited: " << m_inited << ", FMA widgets size: " << FullManagedAuthWidgetObjs.size();
+        qCInfo(DDE_SHELL) << "FMA is inited: " << m_inited << ", FMA widgets size: " << FullManagedAuthWidgetObjs.size();
         if (m_inited || FullManagedAuthWidgetObjs.size() <= 1) {
             if (m_customAuth->pluginConfig().defaultAuthLevel == LoginPlugin::DefaultAuthLevel::Default) {
                 m_currentAuthType = m_currentAuthType == AT_All ? AT_Custom : m_currentAuthType;
@@ -106,14 +106,14 @@ void FullManagedAuthWidget::setAuthType(const AuthFlags type)
 
 void FullManagedAuthWidget::setAuthState(const AuthCommon::AuthType type, const AuthCommon::AuthState state, const QString &message)
 {
-    qDebug() << "Set auth state, type: " << type << ", state: " << state << ", message: " << message;
+    qCDebug(DDE_SHELL) << "Set auth state, type: " << type << ", state: " << state << ", message: " << message;
     if (!isPluginLoaded()) {
-        qDebug() << "Plugin not load or actived";
+        qCDebug(DDE_SHELL) << "Plugin not load or actived";
         return;
     }
 
     if (!m_customAuth) {
-        qDebug() << Q_FUNC_INFO << "custom auth not init";
+        qCDebug(DDE_SHELL) << Q_FUNC_INFO << "custom auth not init";
         return;
     }
 
@@ -144,14 +144,14 @@ void FullManagedAuthWidget::setAuthState(const AuthCommon::AuthType type, const 
 
 void FullManagedAuthWidget::initCustomAuth()
 {
-    qDebug() << "Init custom auth";
+    qCDebug(DDE_SHELL) << "Init custom auth";
     if (m_customAuth) {
         return;
     }
 
     auto plugin = PluginManager::instance()->getFullManagedLoginPlugin();
     if (!plugin) {
-        qDebug() << "No full managed plugin found";
+        qCDebug(DDE_SHELL) << "No full managed plugin found";
         return;
     }
 
@@ -165,15 +165,15 @@ void FullManagedAuthWidget::initCustomAuth()
     setLayout(m_mainLayout);
 
     connect(m_customAuth, &AuthCustom::requestSendToken, this, [this](const QString &token) {
-        qInfo() << "Fma custom send token name :" << m_user->name();
+        qCInfo(DDE_SHELL) << "Fma custom send token name :" << m_user->name();
         Q_EMIT sendTokenToAuth(m_user->name(), AT_Custom, token);
     });
 
     connect(m_customAuth, &AuthCustom::requestCheckAccount, this, [this](const QString &account) {
-        qInfo() << "Request check account: " << account;
+        qCInfo(DDE_SHELL) << "Request check account: " << account;
 
         if (account.isEmpty()) {
-            qInfo() << "Account is empty" << account;
+            qCInfo(DDE_SHELL) << "Account is empty" << account;
             return;
         }
 
@@ -183,12 +183,12 @@ void FullManagedAuthWidget::initCustomAuth()
             // 切换用户
             Q_EMIT requestCheckAccount(account);
         } else {
-            qDebug() << "Start to send token";
+            qCDebug(DDE_SHELL) << "Start to send token";
             LoginPlugin::AuthCallbackData data = m_customAuth->getCurrentAuthData();
             if (data.result == LoginPlugin::AuthResult::Success) {
                 Q_EMIT sendTokenToAuth(m_user->name(), AT_Custom, data.token);
             } else {
-                qWarning() << "Token auth failed , result: " << data.result;
+                qCWarning(DDE_SHELL) << "Token auth failed , result: " << data.result;
             }
         }
     });

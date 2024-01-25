@@ -82,7 +82,7 @@ void SessionBaseWindow::setCenterContent(QWidget * const widget, int stretch, Qt
     m_centerWidget = widget;
     widget->show();
 
-    qInfo() << "centerWidgetHeight: " << widget->height() << "centerWidgetTopSpacerHeight: " << spacerHeight;
+    qCInfo(DDE_SHELL) << "centerWidgetHeight: " << widget->height() << "centerWidgetTopSpacerHeight: " << spacerHeight;
 
     setFocusProxy(widget);
     setFocus();

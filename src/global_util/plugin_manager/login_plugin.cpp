@@ -17,7 +17,7 @@ bool LoginPlugin::isPluginEnabled()
     QJsonObject message;
     message["CmdType"] = "IsPluginEnabled";
     const QString &result = this->message(toJson(message));
-    qDebug() << "Is plugin enabled: " << result;
+    qCDebug(DDE_SHELL) << "Is plugin enabled: " << result;
     const QJsonObject &dataObj = getDataObj(result);
     if (dataObj.isEmpty() || !dataObj.contains("IsPluginEnabled"))
         return true;
@@ -47,7 +47,7 @@ int LoginPlugin::loginType()
     };
 
     const QString &result = this->message(toJson(message));
-    qDebug() << "Login type, result: " << result;
+    qCDebug(DDE_SHELL) << "Login type, result: " << result;
     const QJsonObject &dataObj = getDataObj(result);
     if (!dataObj.contains("LoginType")) {
         return CustomLoginType::CLT_Default;
@@ -79,7 +79,7 @@ int LoginPlugin::updateLoginType()
     };
 
     const QString &result = this->message(toJson(message));
-    qDebug() << "Update login type, result: " << result;
+    qCDebug(DDE_SHELL) << "Update login type, result: " << result;
     const QJsonObject &dataObj = getDataObj(result);
     if (!dataObj.contains("LoginType")) {
         return CustomLoginType::CLT_Default;
@@ -95,7 +95,7 @@ int LoginPlugin::sessionTimeout()
     };
 
     const QString &result = this->message(toJson(message));
-    qDebug() << "Get session timeout, result: " << result;
+    qCDebug(DDE_SHELL) << "Get session timeout, result: " << result;
     const QJsonObject &dataObj = getDataObj(result);
     if (!dataObj.contains("SessionTimeout")) {
         return DEFAULT_SESSION_TIMEOUT;
@@ -132,18 +132,18 @@ void LoginPlugin::updateConfig()
     QJsonObject message;
     message["CmdType"] = "GetConfigs";
     QString result = this->message(toJson(message));
-    qInfo() << "Get configs result: " << result;
+    qCInfo(DDE_SHELL) << "Get configs result: " << result;
 
     QJsonParseError jsonParseError;
     const QJsonDocument resultDoc = QJsonDocument::fromJson(result.toLatin1(), &jsonParseError);
     if (jsonParseError.error != QJsonParseError::NoError || resultDoc.isEmpty()) {
-        qWarning() << "Result json parse error, error: " << jsonParseError.error;
+        qCWarning(DDE_SHELL) << "Result json parse error, error: " << jsonParseError.error;
         return;
     }
 
     QJsonObject resultObj = resultDoc.object();
     if (!resultObj.contains("Data")) {
-        qWarning() << "Result doesn't contains the 'data' field";
+        qCWarning(DDE_SHELL) << "Result doesn't contains the 'data' field";
         return;
     }
 

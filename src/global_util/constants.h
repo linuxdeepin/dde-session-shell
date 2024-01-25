@@ -9,7 +9,9 @@
 
 #include <QString>
 #include <QStringList>
+#include <QLoggingCategory>
 
+Q_DECLARE_LOGGING_CATEGORY(DDE_SHELL)
 namespace DDESESSIONCC
 {
 

@@ -55,7 +55,7 @@ DeepinAuthFramework::DeepinAuthFramework(QObject *parent)
                 m_isDAStartupCompleted = true;
                 Q_EMIT startupCompleted();
             } else {
-                qWarning() << "DA startup has error: " << reply.error().message();
+                qCWarning(DDE_SHELL) << "DA startup has error: " << reply.error().message();
             }
 
             callWatcher->deleteLater();
@@ -66,7 +66,7 @@ DeepinAuthFramework::DeepinAuthFramework(QObject *parent)
 
 void DeepinAuthFramework::onDeviceChanged(const int authType, const int state)
 {
-    qInfo() << "Device changed, auth type:" << authType << ", state:" << state;
+    qCInfo(DDE_SHELL) << "Device changed, auth type:" << authType << ", state:" << state;
     Q_EMIT DeviceChanged(authType, state);
 }
 
@@ -89,7 +89,7 @@ void DeepinAuthFramework::CreateAuthenticate(const QString &account)
     if (account == m_account && m_PAMAuthThread != 0) {
         return;
     }
-    qInfo() << "Create PAM authenticate thread, accout: " << account << "PAM auth thread: " << m_PAMAuthThread;
+    qCInfo(DDE_SHELL) << "Create PAM authenticate thread, accout: " << account << "PAM auth thread: " << m_PAMAuthThread;
     m_account = account;
     DestroyAuthenticate();
     m_cancelAuth = false;
@@ -133,22 +133,22 @@ void DeepinAuthFramework::PAMAuthentication(const QString &account)
     if (ret != PAM_SUCCESS) {
         qCritical() << "ERROR: PAM start failed, error: " << pam_strerror(m_pamHandle, ret) << ", start infomation: " << ret;
     } else {
-        qDebug() << "PAM start...";
+        qCDebug(DDE_SHELL) << "PAM start...";
     }
 
     int rc = pam_authenticate(m_pamHandle, 0);
     if (rc != PAM_SUCCESS) {
-        qWarning() << "PAM authenticate failed, error: " << pam_strerror(m_pamHandle, rc) << ", PAM authenticate: " << rc;
+        qCWarning(DDE_SHELL) << "PAM authenticate failed, error: " << pam_strerror(m_pamHandle, rc) << ", PAM authenticate: " << rc;
         if (m_message.isEmpty()) m_message = pam_strerror(m_pamHandle, rc);
     } else {
-        qDebug() << "PAM authenticate finished.";
+        qCDebug(DDE_SHELL) << "PAM authenticate finished.";
     }
 
     int re = pam_end(m_pamHandle, rc);
     if (re != PAM_SUCCESS) {
         qCritical() << "PAM end failed:" << pam_strerror(m_pamHandle, re) << "PAM end infomation: " << re;
     } else {
-        qDebug() << "PAM end...";
+        qCDebug(DDE_SHELL) << "PAM end...";
     }
 
     if (rc == 0) {
@@ -178,17 +178,17 @@ int DeepinAuthFramework::PAMConversation(int num_msg, const pam_message **msg, p
 
     QPointer<DeepinAuthFramework> isThreadAlive(app_ptr);
     if (!isThreadAlive) {
-        qWarning() << "PAM conversation: application is null";
+        qCWarning(DDE_SHELL) << "PAM conversation: application is null";
         return PAM_CONV_ERR;
     }
 
     if (num_msg <= 0 || num_msg > PAM_MAX_NUM_MSG) {
-        qWarning() << "PAM conversation: message num error :" << num_msg;
+        qCWarning(DDE_SHELL) << "PAM conversation: message num error :" << num_msg;
         return PAM_CONV_ERR;
     }
 
     if ((aresp = static_cast<struct pam_response *>(calloc(static_cast<size_t>(num_msg), sizeof(*aresp)))) == nullptr) {
-        qWarning() << "PAM conversation buffer error: " << aresp;
+        qCWarning(DDE_SHELL) << "PAM conversation buffer error: " << aresp;
         return PAM_BUF_ERR;
     }
     const QString message = QString::fromLocal8Bit(PAM_MSG_MEMBER(msg, idx, msg));
@@ -196,11 +196,11 @@ int DeepinAuthFramework::PAMConversation(int num_msg, const pam_message **msg, p
         switch (PAM_MSG_MEMBER(msg, idx, msg_style)) {
         case PAM_PROMPT_ECHO_ON:
         case PAM_PROMPT_ECHO_OFF: {
-            qDebug() << "PAM auth echo:" << message;
+            qCDebug(DDE_SHELL) << "PAM auth echo:" << message;
             app_ptr->UpdateAuthState(AS_Prompt, message);
             /* 等待用户输入密码 */
             while (app_ptr->m_waitToken) {
-                qDebug() << "Waiting for the password...";
+                qCDebug(DDE_SHELL) << "Waiting for the password...";
                 if (app_ptr->m_cancelAuth) {
                     app_ptr->m_cancelAuth = false;
                     return PAM_ABORT;
@@ -224,14 +224,14 @@ int DeepinAuthFramework::PAMConversation(int num_msg, const pam_message **msg, p
             break;
         }
         case PAM_ERROR_MSG: {
-            qDebug() << "PAM auth error: " << message;
+            qCDebug(DDE_SHELL) << "PAM auth error: " << message;
             app_ptr->m_message = message;
             app_ptr->UpdateAuthState(AS_Failure, message);
             aresp[idx].resp_retcode = PAM_SUCCESS;
             break;
         }
         case PAM_TEXT_INFO: {
-            qDebug() << "PAM auth info: " << message;
+            qCDebug(DDE_SHELL) << "PAM auth info: " << message;
             app_ptr->m_message = message;
             app_ptr->UpdateAuthState(AS_Prompt, message);
             aresp[idx].resp_retcode = PAM_SUCCESS;
@@ -264,7 +264,7 @@ void DeepinAuthFramework::SendToken(const QString &token)
     if (!m_waitToken) {
         return;
     }
-    qInfo() << "Send token to PAM, token: " << token;
+    qCInfo(DDE_SHELL) << "Send token to PAM, token: " << token;
     m_token = token;
     m_waitToken = false;
 }
@@ -288,7 +288,7 @@ void DeepinAuthFramework::DestroyAuthenticate()
     if (m_PAMAuthThread == 0) {
         return;
     }
-    qInfo() << "Destroy PAM authenticate thread";
+    qCInfo(DDE_SHELL) << "Destroy PAM authenticate thread";
     m_cancelAuth = true;
     pthread_cancel(m_PAMAuthThread);
     pthread_join(m_PAMAuthThread, nullptr);
@@ -313,7 +313,7 @@ void DeepinAuthFramework::CreateAuthController(const QString &account, const Aut
         return;
     }
     const QString authControllerInterPath = m_authenticateInter->Authenticate(account, authType, appType);
-    qInfo() << "Create auth controller, account:" << account
+    qCInfo(DDE_SHELL) << "Create auth controller, account:" << account
             << ", Auth type:"<< authType
             << ", App type:" << appType
             << ", Authentication session path: " << authControllerInterPath;
@@ -379,7 +379,7 @@ void DeepinAuthFramework::DestroyAuthController(const QString &account)
         return;
     }
     AuthControllerInter *authControllerInter = m_authenticateControllers->value(account);
-    qInfo() << "Destroy authenticate session:" << account  << ", interface path: " << authControllerInter->path();
+    qCInfo(DDE_SHELL) << "Destroy authenticate session:" << account  << ", interface path: " << authControllerInter->path();
     authControllerInter->End(AT_All);
     authControllerInter->Quit();
     m_authenticateControllers->remove(account);
@@ -400,7 +400,7 @@ void DeepinAuthFramework::StartAuthentication(const QString &account, const Auth
         return;
     }
     int ret = m_authenticateControllers->value(account)->Start(authType, timeout);
-    qInfo() << "Start authentication, account:" << account << ", auth type" << authType << ", ret:" << ret;
+    qCInfo(DDE_SHELL) << "Start authentication, account:" << account << ", auth type" << authType << ", ret:" << ret;
 }
 
 /**
@@ -414,7 +414,7 @@ void DeepinAuthFramework::EndAuthentication(const QString &account, const AuthFl
     if (!m_authenticateControllers->contains(account)) {
         return;
     }
-    qInfo() << "End authentication:" << ", account: " << account << "auth type: " << authType;
+    qCInfo(DDE_SHELL) << "End authentication:" << ", account: " << account << "auth type: " << authType;
     m_authenticateControllers->value(account)->End(authType).waitForFinished();
 }
 
@@ -430,7 +430,7 @@ void DeepinAuthFramework::SendTokenToAuth(const QString &account, const AuthType
     if (!m_authenticateControllers->contains(account)) {
         return;
     }
-    qInfo() << "Send token to auth, account: " << account << ", auth type:" << authType;
+    qCInfo(DDE_SHELL) << "Send token to auth, account: " << account << ", auth type:" << authType;
 
     QByteArray ba = EncryptHelper::ref().getEncryptedToken(token);
     m_authenticateControllers->value(account)->SetToken(authType, ba);

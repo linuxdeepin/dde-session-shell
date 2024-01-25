@@ -74,16 +74,17 @@ bool LoginWindow::event(QEvent *event)
             if (!qgetenv("XDG_SESSION_TYPE").contains("wayland")) {
                 if (qApp->queryKeyboardModifiers().testFlag(Qt::MetaModifier)) {
                     auto ret = QProcess::execute("xrandr", QStringList() << "-q");
+                    qCInfo(DDE_SHELL) << "Exec `xrandr -q` ret:" << ret;
                 }
             }
             break;
         }
         case Qt::Key_Escape: {
             // TODO for test
-            qInfo() << "loginWindow::keyPressEvent set terminal false";
+            qCInfo(DDE_SHELL) << "loginWindow::keyPressEvent set terminal false";
             if (m_dconfig) {
                 bool allowLocalUnlockTerminal = m_dconfig->value("isAllowLocalUnlockTerminal", false).toBool();
-                qInfo() << "allowLocalUnlockTerminal : "<<allowLocalUnlockTerminal;
+                qCInfo(DDE_SHELL) << "allowLocalUnlockTerminal : "<<allowLocalUnlockTerminal;
                 if(allowLocalUnlockTerminal){
                     QProcess process;
                     process.start("dbus-send --print-reply --system --dest=com.deepin.daemon.Accounts /com/deepin/daemon/Accounts com.deepin.daemon.Accounts.SetTerminalLocked boolean:false");

@@ -268,7 +268,7 @@ void UserWidget::onDConfigPropertyChanged(const QString &key, const QVariant &va
     if (!obj)
         return;
 
-    qInfo() << "DConfig property changed, key: " << key << ", value: " << value;
+    qCInfo(DDE_SHELL) << "DConfig property changed, key: " << key << ", value: " << value;
     if (key == SHOW_USER_NAME) {
         const bool showUserName = value.toBool();
         if (showUserName) {

@@ -4,6 +4,7 @@
 
 #ifdef USE_DEEPIN_WAYLAND
 #include "keyboardplantform_wayland.h"
+#include "constants.h"
 
 #include <linux/input-event-codes.h>
 
@@ -82,7 +83,7 @@ void KeyboardPlatformWayland::run()
 
 void KeyboardPlatformWayland::setupRegistry(Registry *registry)
 {
-    qInfo() << "Set up registry: " << registry;
+    qCInfo(DDE_SHELL) << "Set up registry: " << registry;
     connect(registry, &Registry::ddeSeatAnnounced, this, [this, registry](quint32 name, quint32 version) {
         m_ddeSeat = registry->createDDESeat(name, version, this);
         if (m_ddeSeat) {
@@ -109,7 +110,7 @@ void KeyboardPlatformWayland::setupRegistry(Registry *registry)
         qDebug() << "Create fakeinput.";
         m_fakeInput = registry->createFakeInput(name, version, this);
         if (!m_fakeInput->isValid()) {
-            qWarning() << "Create fakeinput failed.";
+            qCWarning(DDE_SHELL) << "Create fakeinput failed.";
             return;
         }
 
@@ -137,7 +138,7 @@ void KeyboardPlatformWayland::initStatus()
             Q_EMIT capsLockStatusChanged(m_capsLock);
             Q_EMIT numLockStatusChanged(m_numLockOn);
         } else {
-            qInfo() << "caps/num lock status init failed, ignore it in greeter :" << reply.error().message();
+            qCInfo(DDE_SHELL) << "caps/num lock status init failed, ignore it in greeter :" << reply.error().message();
         }
 
         callWatcher->deleteLater();

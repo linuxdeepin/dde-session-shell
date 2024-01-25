@@ -26,7 +26,7 @@ void PluginManager::addPlugin(dss::module::BaseModuleInterface *module, const QS
 
     PluginBase *plugin = createPlugin(module, version);
     if (!plugin) {
-        qWarning() << "Create plugin failed.";
+        qCWarning(DDE_SHELL) << "Create plugin failed.";
         return;
     }
 
@@ -84,18 +84,18 @@ PluginBase* PluginManager::createPlugin(dss::module::BaseModuleInterface *module
         return plugin;
     }
 
-    qWarning() << "This plug-in type is not recognized: " << module->type();
+    qCWarning(DDE_SHELL) << "This plug-in type is not recognized: " << module->type();
     return nullptr;
 }
 
 LoginPlugin* PluginManager::createLoginPlugin(dss::module::BaseModuleInterface *module, const QString &version)
 {
-    qInfo() << "Create login plugin, meta version: " << version;
+    qCInfo(DDE_SHELL) << "Create login plugin, meta version: " << version;
     if (checkVersion(version, LoginPlugin_V2::API_VERSION)) {
-        qInfo() << "Create LoginPluginV2";
+        qCInfo(DDE_SHELL) << "Create LoginPluginV2";
         return new LoginPlugin_V2::LoginPluginV2(dynamic_cast<dss::module_v2::LoginModuleInterfaceV2 *>(module));
     } else if (checkVersion(version, LoginPlugin_V1::API_VERSION)){
-        qInfo() << "Create LoginPluginV1";
+        qCInfo(DDE_SHELL) << "Create LoginPluginV1";
         return new LoginPlugin_V1::LoginPluginV1(dynamic_cast<dss::module::LoginModuleInterface *>(module));
     }
 

@@ -165,7 +165,7 @@ void ControlWidget::initKeyboardLayoutList()
 
 void ControlWidget::updatePluginVisible(const QString module, bool state)
 {
-    qInfo() << "Update plugin visible, state: " << state;
+    qCInfo(DDE_SHELL) << "Update plugin visible, state: " << state;
     for (auto key : m_modules.keys()) {
         if (key && key->objectName() == module) {
             m_modules.value(key)->setVisible(state);
@@ -284,7 +284,7 @@ void ControlWidget::initConnect()
 QString ControlWidget::messageCallback(const QString &message, void *app_data)
 {
     if (!app_data && static_cast<ControlWidget *>(app_data)) {
-        qWarning() << "Appdata is null, app data: " << app_data;
+        qCWarning(DDE_SHELL) << "Appdata is null, app data: " << app_data;
         return QString();
     }
     QJsonObject retObj;
@@ -293,7 +293,7 @@ QString ControlWidget::messageCallback(const QString &message, void *app_data)
     if (jsonParseError.error != QJsonParseError::NoError || messageDoc.isEmpty()) {
         retObj["Code"] = "-1";
         retObj["Message"] = "Failed to analysis message info from plugin!";
-        qWarning() << "Failed to analysis message info from plugin!: " << message;
+        qCWarning(DDE_SHELL) << "Failed to analysis message info from plugin!: " << message;
         return toJson(retObj);
     }
     QJsonObject messageObj = messageDoc.object();
@@ -384,7 +384,7 @@ void ControlWidget::addModule(TrayPlugin *trayModule)
         if (!m_model->isUseWayland() && m_doGrabKeyboard) {
             QWindow *winHandle = topLevelWidget()->windowHandle();
             if (!winHandle || !winHandle->setKeyboardGrabEnabled(true)) {
-                qWarning() << "Grab keyboard failed";
+                qCWarning(DDE_SHELL) << "Grab keyboard failed";
             }
         }
     });
@@ -538,7 +538,7 @@ void ControlWidget::setSessionSwitchEnable(const bool visible)
 void ControlWidget::chooseToSession(const QString &session)
 {
     if (m_sessionBtn && m_sessionTip) {
-        qDebug() << "Chosen session: " << session;
+        qCDebug(DDE_SHELL) << "Chosen session: " << session;
         if (session.isEmpty())
             return;
 

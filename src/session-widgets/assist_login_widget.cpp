@@ -34,13 +34,13 @@ void AssistLoginWidget::setModule(LoginPlugin *module)
 
 void AssistLoginWidget::initUI()
 {
-    qInfo() << Q_FUNC_INFO << "AssistLoginWidget initUi";
+    qCInfo(DDE_SHELL) << Q_FUNC_INFO << "AssistLoginWidget initUi";
     if (!m_module) {
         return;
     }
 
     if (!m_module->content() || m_module->content()->parent() == nullptr) {
-        qInfo() << Q_FUNC_INFO << "m_module->init()";
+        qCInfo(DDE_SHELL) << Q_FUNC_INFO << "m_module->init()";
         m_module->init();
         m_mainLayout->addWidget(m_module->content());
     }
@@ -49,7 +49,7 @@ void AssistLoginWidget::initUI()
 void AssistLoginWidget::setCallback()
 {
     if (!m_module) {
-        qWarning() << "Plugin module is null";
+        qCWarning(DDE_SHELL) << "Plugin module is null";
         return;
     }
     m_module->setMessageCallback(&AssistLoginWidget::messageCallback);
@@ -59,7 +59,7 @@ void AssistLoginWidget::setCallback()
 
 void AssistLoginWidget::authCallback(const LoginPlugin::AuthCallbackData *callbackData, void *app_data)
 {
-    qInfo() << Q_FUNC_INFO << "AuthCustom::authCallback";
+    qCInfo(DDE_SHELL) << Q_FUNC_INFO << "AuthCustom::authCallback";
     AssistLoginWidget *assistLoginWidget = getAssistLoginWidgetObj(app_data);
     if (callbackData && assistLoginWidget) {
         assistLoginWidget->setAuthData(*callbackData);
@@ -68,7 +68,7 @@ void AssistLoginWidget::authCallback(const LoginPlugin::AuthCallbackData *callba
 
 QString AssistLoginWidget::messageCallback(const QString &message, void *app_data)
 {
-    qDebug() << Q_FUNC_INFO << "Received message: " << message;
+    qCDebug(DDE_SHELL) << Q_FUNC_INFO << "Received message: " << message;
     QJsonParseError jsonParseError;
     const QJsonDocument messageDoc = QJsonDocument::fromJson(message.toLatin1(), &jsonParseError);
 
@@ -79,7 +79,7 @@ QString AssistLoginWidget::messageCallback(const QString &message, void *app_dat
     if (jsonParseError.error != QJsonParseError::NoError || messageDoc.isEmpty()) {
         retObj["Code"] = -1;
         retObj["Message"] = "Failed to analysis message info";
-        qWarning() << "Failed to analysis message info from plugin!: " << message;
+        qCWarning(DDE_SHELL) << "Failed to analysis message info from plugin!: " << message;
         return toJson(retObj);
     }
 
@@ -92,7 +92,7 @@ QString AssistLoginWidget::messageCallback(const QString &message, void *app_dat
     }
 
     QString cmdType = messageObj.value("CmdType").toString();
-    qInfo() << "Cmd type: " << cmdType;
+    qCInfo(DDE_SHELL) << "Cmd type: " << cmdType;
     if (cmdType == "GetProperties") {
     } else if (cmdType == "setAuthTypeInfo") {
     }
@@ -105,14 +105,14 @@ void AssistLoginWidget::setAuthData(const LoginPlugin::AuthCallbackData &callbac
 {
     m_currentAuthData = callbackData;
     if (dss::module::AuthResult::Success != callbackData.result) {
-        qWarning() << "Custom auth result is not success";
+        qCWarning(DDE_SHELL) << "Custom auth result is not success";
         return;
     }
-    qDebug() << Q_FUNC_INFO << m_currentAuthData.result;
+    qCDebug(DDE_SHELL) << Q_FUNC_INFO << m_currentAuthData.result;
     const QString &account = callbackData.account;
     const QString &token = callbackData.token;
     if (!account.isEmpty()) {
-        qInfo() << Q_FUNC_INFO << "requestSendToken: " << account << token;
+        qCInfo(DDE_SHELL) << Q_FUNC_INFO << "requestSendToken: " << account << token;
         emit requestSendToken(account, token);
     }
 }
@@ -152,7 +152,7 @@ QSize AssistLoginWidget::contentSize() const
 
 void AssistLoginWidget::startAuth()
 {
-    qDebug() << Q_FUNC_INFO << m_currentAuthData.result;
+    qCDebug(DDE_SHELL) << Q_FUNC_INFO << m_currentAuthData.result;
     if (m_currentAuthData.result != 0) {
         setAuthData(m_currentAuthData);
     }
@@ -160,7 +160,7 @@ void AssistLoginWidget::startAuth()
 
 void AssistLoginWidget::resetAuth()
 {
-    qInfo() << Q_FUNC_INFO << "Reset AssistLoginWidget auth";
+    qCInfo(DDE_SHELL) << Q_FUNC_INFO << "Reset AssistLoginWidget auth";
     m_currentAuthData = LoginPlugin::AuthCallbackData();
 }
 

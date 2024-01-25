@@ -28,7 +28,7 @@ void DBusShutdownAgent::show()
 
 void DBusShutdownAgent::Shutdown()
 {
-    qInfo() << "Shutdown";
+    qCInfo(DDE_SHELL) << "Shutdown";
     if (isUpdating())
         return;
 
@@ -44,7 +44,7 @@ void DBusShutdownAgent::Shutdown()
 
 void DBusShutdownAgent::UpdateAndShutdown()
 {
-    qInfo() << "Update and shutdown";
+    qCInfo(DDE_SHELL) << "Update and shutdown";
     if (isUpdating())
         return;
 
@@ -55,7 +55,7 @@ void DBusShutdownAgent::UpdateAndShutdown()
 
 void DBusShutdownAgent::Restart()
 {
-    qInfo() << "Restart";
+    qCInfo(DDE_SHELL) << "Restart";
     if (isUpdating())
         return;
 
@@ -71,7 +71,7 @@ void DBusShutdownAgent::Restart()
 
 void DBusShutdownAgent::UpdateAndReboot()
 {
-    qInfo() << "Update and reboot";
+    qCInfo(DDE_SHELL) << "Update and reboot";
     if (isUpdating())
         return;
 
@@ -82,7 +82,7 @@ void DBusShutdownAgent::UpdateAndReboot()
 
 void DBusShutdownAgent::Logout()
 {
-    qInfo() << "Logout";
+    qCInfo(DDE_SHELL) << "Logout";
     if (isUpdating() || !canShowShutDown())
         return;
 
@@ -93,7 +93,7 @@ void DBusShutdownAgent::Logout()
 
 void DBusShutdownAgent::Suspend()
 {
-    qInfo() << "Suspend";
+    qCInfo(DDE_SHELL) << "Suspend";
     if (isUpdating())
         return;
 
@@ -109,7 +109,7 @@ void DBusShutdownAgent::Suspend()
 
 void DBusShutdownAgent::Hibernate()
 {
-    qInfo() << "Hibernate";
+    qCInfo(DDE_SHELL) << "Hibernate";
     if (isUpdating())
         return;
 
@@ -125,7 +125,7 @@ void DBusShutdownAgent::Hibernate()
 
 void DBusShutdownAgent::SwitchUser()
 {
-    qInfo() << "Switch user";
+    qCInfo(DDE_SHELL) << "Switch user";
     if (isUpdating() || !canShowShutDown())
         return;
 
@@ -134,7 +134,7 @@ void DBusShutdownAgent::SwitchUser()
 
 void DBusShutdownAgent::Lock()
 {
-    qInfo() << "Lock";
+    qCInfo(DDE_SHELL) << "Lock";
     if (isUpdating() || !canShowShutDown())
         return;
 
@@ -146,7 +146,7 @@ void DBusShutdownAgent::Lock()
 bool DBusShutdownAgent::canShowShutDown() const
 {
     // 如果当前界面已显示，而且不是关机模式，则当前已锁屏，因此不允许调用,以免在锁屏时被远程调用而进入桌面
-    qInfo() << "Can show shutdown, visible: " << m_model->visible() << ", mode: " << m_model->currentModeState();
+    qCInfo(DDE_SHELL) << "Can show shutdown, visible: " << m_model->visible() << ", mode: " << m_model->currentModeState();
 
     return !(m_model->visible() && m_model->currentModeState() != SessionBaseModel::ModeStatus::ShutDownMode);
 }
@@ -156,7 +156,7 @@ bool DBusShutdownAgent::canShowShutDown() const
  */
 bool DBusShutdownAgent::isUpdating() const
 {
-    qInfo() << "DBus shutdown agent is updating, current content type: " << m_model->currentContentType();
+    qCInfo(DDE_SHELL) << "DBus shutdown agent is updating, current content type: " << m_model->currentContentType();
     return m_model->currentContentType() == SessionBaseModel::UpdateContent;
 }
 

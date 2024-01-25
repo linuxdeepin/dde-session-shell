@@ -48,7 +48,7 @@ QJsonObject PluginBase::getRootObj(const QString &jsonStr)
     QJsonParseError jsonParseError;
     const QJsonDocument &resultDoc = QJsonDocument::fromJson(jsonStr.toLocal8Bit(), &jsonParseError);
     if (jsonParseError.error != QJsonParseError::NoError || resultDoc.isEmpty()) {
-        qWarning() << "Result json parse error, error: " << jsonParseError.error;
+        qCWarning(DDE_SHELL) << "Result json parse error, error: " << jsonParseError.error;
         return QJsonObject();
     }
 
@@ -59,7 +59,7 @@ QJsonObject PluginBase::getDataObj(const QString &jsonStr)
 {
     const QJsonObject &rootObj = getRootObj(jsonStr);
     if (!rootObj.contains("Data")) {
-        qWarning() << "Result doesn't contains the 'data' field";
+        qCWarning(DDE_SHELL) << "Result doesn't contains the 'data' field";
         return QJsonObject();
     }
 

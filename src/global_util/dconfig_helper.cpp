@@ -33,7 +33,7 @@ DConfig *DConfigHelper::initializeDConfig(const QString &appId,
     QMutexLocker locker(&m_mutex);
     DConfig *dConfig = DConfig::create(appId, name, subpath);
     if (!dConfig) {
-        qWarning() << "Create DConfig failed, appId: " << appId << ", name: " << name
+        qCWarning(DDE_SHELL) << "Create DConfig failed, appId: " << appId << ", name: " << name
                    << ", subpath: " << subpath;
         return nullptr;
     }
@@ -81,13 +81,13 @@ void DConfigHelper::bind(const QString &appId,
 
     DConfig *dConfig = dConfigObject(appId, name, subpath);
     if (!dConfig) {
-        qWarning() << "DConfig is nullptr";
+        qCWarning(DDE_SHELL) << "DConfig is nullptr";
         return;
     }
 
     auto it = m_bindInfos.find(dConfig);
     if (it == m_bindInfos.end()) {
-        qWarning() << "Can not find bind info";
+        qCWarning(DDE_SHELL) << "Can not find bind info";
         return;
     }
 
@@ -113,9 +113,9 @@ DConfig *DConfigHelper::defaultDConfigObject()
 
 void DConfigHelper::unBind(QObject *obj, const QString &key)
 {
-    qInfo() << "Unbind, obj: " << obj << ", key: " << key;
+    qCInfo(DDE_SHELL) << "Unbind, obj: " << obj << ", key: " << key;
     if (!obj) {
-        qWarning() << "Unbinding object is null";
+        qCWarning(DDE_SHELL) << "Unbinding object is null";
         return;
     }
 
@@ -166,7 +166,7 @@ QVariant DConfigHelper::getConfig(const QString &appId,
 {
     DConfig *dConfig = dConfigObject(appId, name, subpath);
     if (!dConfig) {
-        qWarning() << "DConfig object is null";
+        qCWarning(DDE_SHELL) << "DConfig object is null";
         return defaultValue;
     }
 
@@ -185,12 +185,12 @@ void DConfigHelper::setConfig(const QString &appId,
 {
     DConfig *dConfig = dConfigObject(appId, name, subpath);
     if (!dConfig) {
-        qWarning() << "DConfig object is null";
+        qCWarning(DDE_SHELL) << "DConfig object is null";
         return;
     }
 
     if (!dConfig->keyList().contains(key)) {
-        qWarning() << "DConfig does not contain key: " << key;
+        qCWarning(DDE_SHELL) << "DConfig does not contain key: " << key;
         return;
     }
 

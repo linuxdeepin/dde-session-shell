@@ -153,7 +153,7 @@ void CenterTopWidget::onDConfigPropertyChanged(const QString &key, const QVarian
         if (ok && fontSize > 0 && fontSize < 9)
             DFontSizeManager::instance()->bind(obj->m_topTip, static_cast<DFontSizeManager::SizeType>(fontSize));
         else
-            qWarning() << "Top tip text font format error, font size: " << fontSize;
+            qCWarning(DDE_SHELL) << "Top tip text font format error, font size: " << fontSize;
     }
 }
 

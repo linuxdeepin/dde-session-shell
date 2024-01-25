@@ -63,7 +63,7 @@ void LoginContent::onCurrentUserChanged(std::shared_ptr<User> user)
 
 void LoginContent::onStatusChanged(SessionBaseModel::ModeStatus status)
 {
-    qInfo() << "Status changed, status" << status << ", current status: " << m_currentModeStatus;
+    qCInfo(DDE_SHELL) << "Status changed, status" << status << ", current status: " << m_currentModeStatus;
     switch (status) {
     case SessionBaseModel::ModeStatus::SessionMode:
         if (m_currentModeStatus == status)

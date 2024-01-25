@@ -117,11 +117,11 @@ void SFAWidget::setModel(const SessionBaseModel *model)
  */
 void SFAWidget::setAuthType(const AuthFlags type)
 {
-    qInfo() << "Auth type:" << type;
+    qCInfo(DDE_SHELL) << "Auth type:" << type;
     AuthFlags authType = type;
     // 如果密码已过期且当前用户不允许修改密码，则将认证类型改为密码认证
     if (!m_model->currentUser()->allowToChangePassword() && m_model->appType() == Login) {
-        qInfo() << "Password is expired, current user is not allowed to change the password, set authentication type to `AT_Password`";
+        qCInfo(DDE_SHELL) << "Password is expired, current user is not allowed to change the password, set authentication type to `AT_Password`";
         authType = AT_Password;
     }
 
@@ -239,7 +239,7 @@ AuthFlags SFAWidget::initAuthFactors(const AuthFlags authFactors)
  */
 void SFAWidget::setAuthState(const AuthType type, const AuthState state, const QString &message)
 {
-    qInfo() << "Set auth state, auth type:" << type
+    qCInfo(DDE_SHELL) << "Set auth state, auth type:" << type
             << ", state:" << state
             << ", message:" << message;
     switch (type) {
@@ -281,16 +281,16 @@ void SFAWidget::setAuthState(const AuthType type, const AuthState state, const Q
         }
 
         // 这里是为了让自定义登陆知道lightdm已经开启验证了
-        qInfo() << "Current auth type is: " << m_currentAuthType;
+        qCInfo(DDE_SHELL) << "Current auth type is: " << m_currentAuthType;
         if (m_customAuth && state == AS_Prompt && m_currentAuthType == AT_Custom) {
             // 有可能DA发送了验证开始，但是lightdm的验证还未开始，此时发送token的话lightdm无法验证通过。
             // lightdm的pam发送prompt后则认为lightdm验证已经开始
-            qInfo() << "LightDM is in authentication right now";
+            qCInfo(DDE_SHELL) << "LightDM is in authentication right now";
             m_customAuth->lightdmAuthStarted();
         }
 
         if (m_passwordAuth && m_passwordAuth->isPasswdAuthWidgetReplaced()) {
-            qDebug() << Q_FUNC_INFO << type << state << message << "startAuth";
+            qCDebug(DDE_SHELL) << Q_FUNC_INFO << type << state << message << "startAuth";
             m_passwordAuth->startPluginAuth();
         }
         break;
@@ -411,7 +411,7 @@ void SFAWidget::initPasswdAuth()
         m_passwordAuth->setAnimationState(true);
         m_passwordAuth->setLineEditEnabled(false);
         m_lockButton->setEnabled(false);
-        qInfo() << "Request check account: " << account << token;
+        qCInfo(DDE_SHELL) << "Request check account: " << account << token;
         if (m_user && m_user->name() == account) {
             emit sendTokenToAuth(account, AT_Password, token);
             return;
@@ -762,7 +762,7 @@ void SFAWidget::initIrisAuth()
 
 void SFAWidget::initCustomMFAAuth()
 {
-    qDebug() << "Init custom auth";
+    qCDebug(DDE_SHELL) << "Init custom auth";
 
     m_chooseAuthButtonBox->hide();
     if (m_passwordAuth) {
@@ -805,7 +805,7 @@ void SFAWidget::initCustomMFAAuth()
 
     connect(m_customAuth, &AuthCustom::requestSendToken, this, [this] (const QString &token) {
         m_lockButton->setEnabled(false);
-        qInfo() << "SFA custom send token name :" <<  m_user->name() << ", token:" << token;
+        qCInfo(DDE_SHELL) << "SFA custom send token name :" <<  m_user->name() << ", token:" << token;
         Q_EMIT sendTokenToAuth(m_user->name(), AT_Custom, token);
     });
     connect(m_customAuth, &AuthCustom::authFinished, this, [ this ] (const int authStatus) {
@@ -814,13 +814,13 @@ void SFAWidget::initCustomMFAAuth()
         }
     });
     connect(m_customAuth, &AuthCustom::requestCheckAccount, this, [this] (const QString &account) {
-        qInfo() << "Request check account: " << account;
+        qCInfo(DDE_SHELL) << "Request check account: " << account;
         if (m_user && m_user->name() == account) {
             LoginPlugin::AuthCallbackData data = m_customAuth->getCurrentAuthData();
             if (data.result == LoginPlugin::AuthResult::Success)
                 Q_EMIT sendTokenToAuth(m_user->name(), AT_Custom, data.token);
             else
-                qWarning() << Q_FUNC_INFO << "auth failed";
+                qCWarning(DDE_SHELL) << Q_FUNC_INFO << "auth failed";
             return;
         }
 
@@ -844,7 +844,7 @@ void SFAWidget::initCustomMFAAuth()
  */
 void SFAWidget::initCustomAuth()
 {
-    qDebug() << "Init custom auth";
+    qCDebug(DDE_SHELL) << "Init custom auth";
     if (m_customAuth) {
         m_customAuth->reset();
         return;
@@ -860,7 +860,7 @@ void SFAWidget::initCustomAuth()
 
     connect(m_customAuth, &AuthCustom::requestSendToken, this, [this](const QString &token) {
         m_lockButton->setEnabled(false);
-        qInfo() << "Request send token, user name:" <<  m_user->name() << ", token:" << token;
+        qCInfo(DDE_SHELL) << "Request send token, user name:" <<  m_user->name() << ", token:" << token;
         Q_EMIT sendTokenToAuth(m_user->name(), AT_Custom, token);
     });
     connect(m_customAuth, &AuthCustom::authFinished, this, [this](const int authStatus) {
@@ -869,13 +869,13 @@ void SFAWidget::initCustomAuth()
         }
     });
     connect(m_customAuth, &AuthCustom::requestCheckAccount, this, [this](const QString &account) {
-        qInfo() << "Request check account:" << account;
+        qCInfo(DDE_SHELL) << "Request check account:" << account;
         if (m_user && m_user->name() == account) {
             LoginPlugin::AuthCallbackData data = m_customAuth->getCurrentAuthData();
             if (data.result == LoginPlugin::AuthResult::Success)
                 Q_EMIT sendTokenToAuth(m_user->name(), AT_Custom, data.token);
             else
-                qWarning() << "Custom auth failed";
+                qCWarning(DDE_SHELL) << "Custom auth failed";
 
             return;
         }
@@ -898,7 +898,7 @@ void SFAWidget::initCustomAuth()
     m_authButtons.insert(AT_Custom, btn);
     connect(btn, &ButtonBoxButton::toggled, this, [this](const bool checked) {
         if (checked) {
-            qDebug() << "Custom auth is checked";
+            qCDebug(DDE_SHELL) << "Custom auth is checked";
             m_biometricAuthState->hide();
             setBioAuthStateVisible(nullptr, false);
             m_accountEdit->hide();
@@ -1032,7 +1032,7 @@ int SFAWidget::getTopSpacing() const
             - (showAuthButtonBox() ? BIO_AUTH_STATE_PLACE_HOLDER_HEIGHT : 0)
             - (showAuthButtonBox() ? calcCurrentHeight(CHOOSE_AUTH_TYPE_BUTTON_BOTTOM_SPACING) : 0);
 
-    qInfo() << "deltaY: " << deltaY << "topHeight: " << topHeight;
+    qCInfo(DDE_SHELL) << "deltaY: " << deltaY << "topHeight: " << topHeight;
 
     return qMax(15, deltaY);
 }
@@ -1136,7 +1136,7 @@ void SFAWidget::updateBlurEffectGeometry()
 
 void SFAWidget::initAccount()
 {
-    qDebug() << "Init switch button of account";
+    qCDebug(DDE_SHELL) << "Init switch button of account";
     /* 认证选择按钮 */
     if (m_authButtons.contains(AT_None)) {
         return;
@@ -1160,17 +1160,17 @@ void SFAWidget::initAccount()
 
 void SFAWidget::onRequestChangeAuth(const AuthType authType)
 {
-    qInfo() << "Request change auth, auth type: " << authType
+    qCInfo(DDE_SHELL) << "Request change auth, auth type: " << authType
             << ", choose auth button box is enabled: " << m_chooseAuthButtonBox->isEnabled()
             << ", current authentication type: " << m_currentAuthType;
 
     if (authType != AuthCommon::AT_Password && !m_chooseAuthButtonBox->isEnabled()) {
-        qWarning() << "Authentication button box is disabled and authentication type is not password.";
+        qCWarning(DDE_SHELL) << "Authentication button box is disabled and authentication type is not password.";
         return;
     }
 
     if (!m_authButtons.contains(authType)) {
-        qWarning() << "Authentication buttons do not contain the type";
+        qCWarning(DDE_SHELL) << "Authentication buttons do not contain the type";
 
         // 登录选项默认显示上一次认证方式，当不存在上一次认证，默认显示第一种认证方式
         QAbstractButton *button = nullptr;
@@ -1182,7 +1182,7 @@ void SFAWidget::onRequestChangeAuth(const AuthType authType)
         if (button) {
             button->setChecked(true);
         } else {
-            qWarning() << "Authentication button is nullptr";
+            qCWarning(DDE_SHELL) << "Authentication button is nullptr";
         }
 
         return ;
@@ -1190,7 +1190,7 @@ void SFAWidget::onRequestChangeAuth(const AuthType authType)
 
     QAbstractButton *btn = m_chooseAuthButtonBox->button(authType);
     if (!btn) {
-        qWarning() << "The button of authentication is null";
+        qCWarning(DDE_SHELL) << "The button of authentication is null";
         return;
     }
 
@@ -1202,25 +1202,25 @@ bool SFAWidget::useCustomAuth() const
     // 无密码登录或者自动登录不使用自定义认证
     // 去掉自动登录的判定，详见bug176463
     if (m_model->currentUser()->isNoPasswordLogin()) {
-        qInfo() << "No password login is enabled";
+        qCInfo(DDE_SHELL) << "No password login is enabled";
         return false;
     }
 
     // 是否加载了认证插件
     LoginPlugin* plugin = PluginManager::instance()->getLoginPlugin();
     if (!plugin) {
-        qInfo() << "There is no login plugin";
+        qCInfo(DDE_SHELL) << "There is no login plugin";
         return false;
     }
 
     // 当前插件是否启动，由插件自己决定
     if (!plugin->isPluginEnabled()) {
-        qInfo() << "Plugin is disabled";
+        qCInfo(DDE_SHELL) << "Plugin is disabled";
         return false;
     }
 
     if (plugin->level() != 1) {
-        qInfo() << "Plugin level does not match";
+        qCInfo(DDE_SHELL) << "Plugin level does not match";
         return false;
     }
 
@@ -1228,19 +1228,19 @@ bool SFAWidget::useCustomAuth() const
     if (m_user && m_user->type() == User::Default) {
         const bool supportDefaultUser = plugin->supportDefaultUser();
         if (!supportDefaultUser) {
-            qInfo() << "Do not support default user";
+            qCInfo(DDE_SHELL) << "Do not support default user";
             return false;
         }
     }
 
-    qInfo() << "Use authenticate plugin:" << plugin->key();
+    qCInfo(DDE_SHELL) << "Use authenticate plugin:" << plugin->key();
     return true;
 }
 
 void SFAWidget::onActiveAuth(AuthType authType)
 {
     if (m_currentAuthType != authType) {
-        qWarning() << "Active authentication mismatch the current authentication type";
+        qCWarning(DDE_SHELL) << "Active authentication mismatch the current authentication type";
         return;
     }
 

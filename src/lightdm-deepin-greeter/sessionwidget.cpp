@@ -72,7 +72,7 @@ SessionWidget::SessionWidget(QWidget *parent)
         if (QDBusError::NoError == reply.error().type())
             m_allowSwitchingToWayland = reply.value();
         else
-            qWarning() << "Get support wayland property failed: " << reply.error().message();
+            qCWarning(DDE_SHELL) << "Get support wayland property failed: " << reply.error().message();
     }
 }
 
@@ -250,7 +250,7 @@ int SessionWidget::sessionIndex(const QString &sessionName)
     }
 
     // NOTE: The current session does not exist
-    qWarning() << "The session does not exist, using the default value.";
+    qCWarning(DDE_SHELL) << "The session does not exist, using the default value.";
     return defaultSessionIndex;
 }
 

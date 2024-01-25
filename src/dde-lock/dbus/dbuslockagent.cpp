@@ -42,7 +42,7 @@ void DBusLockAgent::ShowAuth(bool active)
 // 待机，enable=true：进入待机；enable=false：待机恢复
 void DBusLockAgent::Suspend(bool enable)
 {
-    qInfo() << (enable ? "Enter suspend" : "Suspend recovery");
+    qCInfo(DDE_SHELL) << (enable ? "Enter suspend" : "Suspend recovery");
     if (isUpdating())
         return;
 
@@ -66,7 +66,7 @@ void DBusLockAgent::Suspend(bool enable)
 
 void DBusLockAgent::Hibernate(bool enable)
 {
-    qInfo() << (enable ? "Enter hibernate" : "Hibernate recovery");
+    qCInfo(DDE_SHELL) << (enable ? "Enter hibernate" : "Hibernate recovery");
     if (isUpdating())
         return;
 

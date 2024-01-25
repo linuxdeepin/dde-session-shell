@@ -190,7 +190,7 @@ bool User::checkUserIsNoPWGrp(const User *user) const
     /* Fetch passwd structure (contains first group ID for user) */
     pw = getpwnam(user->name().toUtf8().data());
     if (pw == nullptr) {
-        qDebug() << "Fetch password structure failed, username: " << user->name();
+        qCDebug(DDE_SHELL) << "Fetch password structure failed, username: " << user->name();
         return false;
     }
 
@@ -320,7 +320,7 @@ void NativeUser::initData()
     m_uid = m_userInter->uid().toUInt();
     m_accountType = m_userInter->accountType();
 
-    qDebug() << "Init data, user name:" << m_userInter->userName()
+    qCDebug(DDE_SHELL) << "Init data, user name:" << m_userInter->userName()
             << ", Is no password login:" << m_isNoPasswordLogin
             << ", Is auto login:" << m_isAutomaticLogin
             << ", Is password valid:" << m_isPasswordValid
@@ -348,7 +348,7 @@ void NativeUser::initConfiguration(const QString &config)
     if (desktopBackgrounds.size() >= index && index > 0) {
         // m_desktopBackgrounds = toLocalFile(desktopBackgrounds.at(index - 1));
     } else {
-        qDebug() << "configAccountInfo get error index:" << index << ", backgrounds:" << desktopBackgrounds;
+        qCDebug(DDE_SHELL) << "configAccountInfo get error index:" << index << ", backgrounds:" << desktopBackgrounds;
     }
 }
 
@@ -389,7 +389,7 @@ void NativeUser::updateAvatar(const QString &path)
  */
 void NativeUser::updateAutomaticLogin(const bool autoLoginState)
 {
-    qInfo() << "Update automatic login: " << autoLoginState;
+    qCInfo(DDE_SHELL) << "Update automatic login: " << autoLoginState;
     if (autoLoginState == m_isAutomaticLogin) {
         return;
     }
@@ -414,7 +414,7 @@ void NativeUser::updateDesktopBackgrounds(const QStringList &backgrounds)
         // m_desktopBackgrounds = toLocalFile(backgrounds.at(index - 1));
         // emit desktopBackgroundChanged(m_desktopBackgrounds);
     } else {
-        qDebug() << "DesktopBackgroundsChanged get error index:" << index << ", paths:" << backgrounds;
+        qCDebug(DDE_SHELL) << "DesktopBackgroundsChanged get error index:" << index << ", paths:" << backgrounds;
     }
 }
 
@@ -441,7 +441,7 @@ void NativeUser::updateGreeterBackground(const QString &path)
 {
     const QString pathTmp = toLocalFile(path);
     if (pathTmp.isEmpty() || !QFile(pathTmp).exists() || !QFile(pathTmp).size() || !checkPictureCanRead(pathTmp)) {
-        qWarning() << "Update greeter background, path is invalid: " << pathTmp;
+        qCWarning(DDE_SHELL) << "Update greeter background, path is invalid: " << pathTmp;
         return;
     }
     if (pathTmp == m_greeterBackground) {
@@ -514,7 +514,7 @@ void NativeUser::updateName(const QString &name)
  */
 void NativeUser::updateNoPasswordLogin(const bool isNoPasswordLogin)
 {
-    qInfo() << "Update user no password login flag: " << isNoPasswordLogin;
+    qCInfo(DDE_SHELL) << "Update user no password login flag: " << isNoPasswordLogin;
     if (isNoPasswordLogin == m_isNoPasswordLogin) {
         return;
     }
@@ -543,7 +543,7 @@ void NativeUser::updatePasswordHint(const QString &hint)
 void NativeUser::updatePasswordExpiredInfo()
 {
     m_expiredState = m_userInter->PasswordExpiredInfo(m_expiredDayLeft).value();
-    qInfo() << "User expired state: " << m_expiredState << ", expired day left: " << m_expiredDayLeft;
+    qCInfo(DDE_SHELL) << "User expired state: " << m_expiredState << ", expired day left: " << m_expiredDayLeft;
 
     emit passwordExpiredInfoChanged();
 }
@@ -553,9 +553,9 @@ void NativeUser::updatePasswordExpiredInfo()
  */
 void NativeUser::updateUserInfo()
 {
-    qDebug() << "Update user info";
+    qCDebug(DDE_SHELL) << "Update user info";
     if (!m_userInter) {
-        qWarning() << "User interface is null";
+        qCWarning(DDE_SHELL) << "User interface is null";
         return;
     }
     updateAutomaticLogin(m_userInter->automaticLogin());
@@ -579,7 +579,7 @@ void NativeUser::updateUserInfo()
 void NativeUser::updateAccountType()
 {
     m_accountType = m_userInter->accountType();
-    qInfo() << "User account type: " << m_accountType;
+    qCInfo(DDE_SHELL) << "User account type: " << m_accountType;
 }
 
 /**
@@ -590,7 +590,7 @@ void NativeUser::updateAccountType()
 void NativeUser::updatePasswordState(const QString &state)
 {
     const bool isPasswordValidTmp = state == "P" ? true : false;
-    qInfo() << "Password state: " << isPasswordValidTmp;
+    qCInfo(DDE_SHELL) << "Password state: " << isPasswordValidTmp;
     if (isPasswordValidTmp == m_isPasswordValid) {
         return;
     }

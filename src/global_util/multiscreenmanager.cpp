@@ -4,6 +4,7 @@
 
 #include "multiscreenmanager.h"
 #include "fullscreenbackground.h"
+#include "constants.h"
 
 #include <QApplication>
 #include <QDesktopWidget>
@@ -35,7 +36,7 @@ MultiScreenManager::MultiScreenManager(QObject *parent)
 void MultiScreenManager::register_for_multi_screen(std::function<QWidget *(QScreen *, int)> function)
 {
     m_registerFunction = function;
-    qInfo() << "Copy mode:" << m_isCopyMode;
+    qCInfo(DDE_SHELL) << "Copy mode:" << m_isCopyMode;
     // update all screen
     if (m_isCopyMode) {
         if (!qApp->screens().isEmpty()) {
@@ -55,7 +56,7 @@ void MultiScreenManager::register_for_multi_screen(std::function<QWidget *(QScre
         for (QScreen *screen : qApp->screens()) {
             // 当greeter刚起来处理第一个屏幕时，第二个屏幕被拔掉，这时第二个屏幕指针被释放，不应该在继续处理，否则会导致崩溃
             if (!qApp->screens().contains(screen)) {
-                qWarning() << "Screen pointer has been released";
+                qCWarning(DDE_SHELL) << "Screen pointer has been released";
                 continue;
             }
             onScreenAdded(screen);
@@ -86,7 +87,7 @@ bool MultiScreenManager::eventFilter(QObject *watched, QEvent *event)
 
 void MultiScreenManager::onScreenAdded(QPointer<QScreen> screen)
 {
-    qInfo() << "Is copy mode:" << m_isCopyMode << ", screen: " << screen;
+    qCInfo(DDE_SHELL) << "Is copy mode:" << m_isCopyMode << ", screen: " << screen;
 
     // 虚拟屏幕不处理
     if (screen.isNull() || (screen->name().isEmpty() && (screen->geometry().width() == 0 || screen->geometry().height() == 0))) {
@@ -127,7 +128,7 @@ void MultiScreenManager::onScreenRemoved(QPointer<QScreen> screen)
     qDebug() << "Is copy mode: " << m_isCopyMode << ", screen: " << screen;
     // 虚拟屏幕不处理
     if (screen.isNull() || (screen->name().isEmpty() && (screen->geometry().width() == 0 || screen->geometry().height() == 0))) {
-        qWarning() << "Remove skipped, screen error";
+        qCWarning(DDE_SHELL) << "Remove skipped, screen error";
         return;
     }
 
@@ -204,7 +205,7 @@ void MultiScreenManager::onDisplayModeChanged(const QString &)
 {
     m_isCopyMode = (COPY_MODE == getDisplayModeByConfig(m_systemDisplay->GetConfig()));
 
-    qInfo() << "Display mode changed, copy mode: " << m_isCopyMode << ", screen size: " << qApp->screens().size();
+    qCInfo(DDE_SHELL) << "Display mode changed, copy mode: " << m_isCopyMode << ", screen size: " << qApp->screens().size();
     if (m_isCopyMode) {
         QScreen *validScreen = nullptr;
         for (QScreen *screen : qApp->screens()) {
@@ -228,7 +229,7 @@ void MultiScreenManager::checkLockFrameLocation()
 {
     for (QScreen *screen : m_frames.keys()) {
         if (screen) {
-            qInfo() << "Check lock frame location, screen:" << screen << ", location:" << screen->geometry()
+            qCInfo(DDE_SHELL) << "Check lock frame location, screen:" << screen << ", location:" << screen->geometry()
                        << ", lockframe:" << m_frames.value(screen) << ", location:" << m_frames.value(screen)->geometry();
         }
     }

@@ -1,8 +1,8 @@
 // SPDX-FileCopyrightText: 2015 - 2022 UnionTech Software Technology Co., Ltd.
 //
 // SPDX-License-Identifier: GPL-3.0-or-later
+#include "constants.h"
 
-#include <DConfig>
 #include <QDBusInterface>
 #include <QDBusReply>
 #include <QJsonParseError>
@@ -11,6 +11,8 @@
 #include <QFile>
 #include <QProcess>
 
+#include <DConfig>
+
 #include <X11/Xlib.h>
 #include <X11/extensions/Xfixes.h>
 #include <X11/extensions/Xrandr.h>
@@ -18,6 +20,8 @@
 #include <iostream>
 
 DCORE_USE_NAMESPACE
+
+Q_LOGGING_CATEGORY(DDE_SHELL, "org.deepin.dde.shell")
 
 const bool IsWayland = qgetenv("XDG_SESSION_TYPE").contains("wayland");
 
@@ -44,7 +48,7 @@ bool isScaleConfigExists() {
             return false;
         }
     } else {
-        qWarning() << "Call `GetConfig` failed: " << configReply.error().message();
+        qCWarning(DDE_SHELL) << "Call `GetConfig` failed: " << configReply.error().message();
         return false;
     }
 }
@@ -85,7 +89,7 @@ static double getScaleFactor() {
 
     if (!resources) {
         resources = XRRGetScreenResources(display, DefaultRootWindow(display));
-        qWarning() << "Get current XRR screen resources failed, instead of getting XRR screen resources, resources: " << resources;
+        qCWarning(DDE_SHELL) << "Get current XRR screen resources failed, instead of getting XRR screen resources, resources: " << resources;
     }
 
     if (resources) {
@@ -106,7 +110,7 @@ static double getScaleFactor() {
         }
     }
     else {
-        qWarning() << "Get scale factor failed, please check X11 Extension";
+        qCWarning(DDE_SHELL) << "Get scale factor failed, please check X11 Extension";
     }
 
     return scaleFactor;
@@ -154,7 +158,7 @@ double getScaleFormConfig()
             return defaultScaleFactor;
         }
     } else {
-        qWarning() << "DBus call `GetConfig` failed, reply is invaild, error: " << configReply.error().message();
+        qCWarning(DDE_SHELL) << "DBus call `GetConfig` failed, reply is invaild, error: " << configReply.error().message();
         return defaultScaleFactor;
     }
 }

@@ -281,7 +281,7 @@ void AuthWidget::setLimitsInfo(const QMap<int, User::LimitsInfo> *limitsInfo)
         case AT_Custom:
             break;
         default:
-            qWarning() << "Authentication type is wrong." << i.key();
+            qCWarning(DDE_SHELL) << "Authentication type is wrong." << i.key();
             break;
         }
         ++i;
@@ -540,7 +540,7 @@ int AuthWidget::calcCurrentHeight(const int height) const
 
 void AuthWidget::terminalLockedChanged(bool locked)
 {
-    qInfo() << "AuthWidget terminal locked changed:" << locked;
+    qCInfo(DDE_SHELL) << "AuthWidget terminal locked changed:" << locked;
     if (locked) {
         m_expiredStateLabel->setText(tr("Terminal locked, please contact administrator"));
         m_expiredStateLabel->show();

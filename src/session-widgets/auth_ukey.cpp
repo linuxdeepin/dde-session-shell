@@ -199,7 +199,7 @@ void AuthUKey::setAuthState(const AuthCommon::AuthState state, const QString &re
         setAuthStateStyle(LOGIN_WAIT);
         setLineEditInfo(result, AlertText);
         m_showPrompt = true;
-        qWarning() << "The state of ukey auth is wrong, state:" << state << ", result: " << result;
+        qCWarning(DDE_SHELL) << "The state of ukey auth is wrong, state:" << state << ", result: " << result;
         break;
     }
     update();
@@ -232,7 +232,7 @@ void AuthUKey::setCapsLockVisible(const bool on)
  */
 void AuthUKey::setLimitsInfo(const LimitsInfo &info)
 {
-    qDebug() << "Set limits info: " << info.numFailures;
+    qCDebug(DDE_SHELL) << "Set limits info: " << info.numFailures;
     AuthModule::setLimitsInfo(info);
 }
 
@@ -304,7 +304,7 @@ void AuthUKey::updateUnlockPrompt()
         QTimer::singleShot(1000, this, [this] {
             emit activeAuth(m_type);
         });
-        qInfo() << "Waiting authentication service...";
+        qCInfo(DDE_SHELL) << "Waiting authentication service...";
     }
     update();
 }

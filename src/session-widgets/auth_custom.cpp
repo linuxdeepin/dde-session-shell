@@ -66,7 +66,7 @@ void AuthCustom::setModel(const SessionBaseModel *model)
 void AuthCustom::setCallback()
 {
     if (!m_plugin) {
-        qWarning() << "Plugin module is null";
+        qCWarning(DDE_SHELL) << "Plugin module is null";
         return;
     }
     m_plugin->setMessageCallback(&AuthCustom::messageCallback);
@@ -80,7 +80,7 @@ void AuthCustom::initUi()
         return;
 
     if (!m_plugin->content() || m_plugin->content()->parent() == nullptr) {
-        qInfo() << "Init module";
+        qCInfo(DDE_SHELL) << "Init module";
         m_plugin->init();
         m_mainLayout->addWidget(m_plugin->content());
         setFocusProxy(m_plugin->content());
@@ -122,13 +122,13 @@ void AuthCustom::setAuthData(const LoginPlugin::AuthCallbackData &callbackData)
 {
     m_currentAuthData = callbackData;
     if (LoginPlugin::AuthResult::Success != callbackData.result) {
-        qWarning() << "Custom auth result is not success";
+        qCWarning(DDE_SHELL) << "Custom auth result is not success";
         return;
     }
 
     const QString &account = callbackData.account;
     if (!account.isEmpty()) {
-        qInfo() << "Request check account: " << account;
+        qCInfo(DDE_SHELL) << "Request check account: " << account;
         emit requestCheckAccount(account);
     } else {
         emit requestSendToken("");
@@ -155,7 +155,7 @@ QString AuthCustom::messageCallback(const QString &message, void *app_data)
     if (jsonParseError.error != QJsonParseError::NoError || messageDoc.isEmpty()) {
         retObj["Code"] = -1;
         retObj["Message"] = "Failed to analysis message info";
-        qWarning() << "Failed to analysis message from plugin: " << message;
+        qCWarning(DDE_SHELL) << "Failed to analysis message from plugin: " << message;
         return toJson(retObj);
     }
 
@@ -175,7 +175,7 @@ QString AuthCustom::messageCallback(const QString &message, void *app_data)
     }
 
     QString cmdType = messageObj.value("CmdType").toString();
-    qInfo() << "Cmd type: " << cmdType;
+    qCInfo(DDE_SHELL) << "Cmd type: " << cmdType;
     if (cmdType == "GetProperties") {
         QJsonArray properties;
         properties = messageObj.value("Data").toArray();
@@ -288,11 +288,11 @@ LoginPlugin::PluginConfig AuthCustom::pluginConfig() const
 
 void AuthCustom::sendAuthToken()
 {
-    qInfo() << "Send auth token";
+    qCInfo(DDE_SHELL) << "Send auth token";
     if (m_currentAuthData.result == LoginPlugin::AuthResult::Success) {
         Q_EMIT requestSendToken(m_currentAuthData.token);
     } else {
-        qWarning() << "Current validation is not successfully";
+        qCWarning(DDE_SHELL) << "Current validation is not successfully";
     }
     resetAuth();
 }
@@ -313,12 +313,12 @@ void AuthCustom::lightdmAuthStarted()
     retDataObj["AuthObjectType"] = AuthObjectType::LightDM;
     message["Data"] = retDataObj;
     QString result = m_plugin->message(toJson(message));
-    qInfo() << "Plugin message: " << result;
+    qCInfo(DDE_SHELL) << "Plugin message: " << result;
 }
 
 void AuthCustom::notifyAuthState(AuthCommon::AuthFlags authType, AuthCommon::AuthState state)
 {
-    qInfo() << "Notify auth state, auth type: " << authType << ", auth state: " << state;
+    qCInfo(DDE_SHELL) << "Notify auth state, auth type: " << authType << ", auth state: " << state;
     if (!m_plugin)
         return;
 
@@ -359,7 +359,7 @@ QJsonObject AuthCustom::getRootObj(const QString &jsonStr)
     QJsonParseError jsonParseError;
     const QJsonDocument &resultDoc = QJsonDocument::fromJson(jsonStr.toLocal8Bit(), &jsonParseError);
     if (jsonParseError.error != QJsonParseError::NoError || resultDoc.isEmpty()) {
-        qWarning() << "Result json parse error: " << jsonParseError.error;
+        qCWarning(DDE_SHELL) << "Result json parse error: " << jsonParseError.error;
         return QJsonObject();
     }
 
@@ -370,7 +370,7 @@ QJsonObject AuthCustom::getDataObj(const QString &jsonStr)
 {
     const QJsonObject &rootObj = getRootObj(jsonStr);
     if (!rootObj.contains("Data")) {
-        qWarning() << "Result doesn't contains the 'data' field";
+        qCWarning(DDE_SHELL) << "Result doesn't contains the 'data' field";
         return QJsonObject();
     }
 

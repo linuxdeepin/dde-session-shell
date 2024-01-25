@@ -128,7 +128,7 @@ void UserFrameList::addUser(const std::shared_ptr<User> user)
 //删除用户
 void UserFrameList::removeUser(const std::shared_ptr<User> user)
 {
-    qDebug() << "User frame list remove user:" << user->path();
+    qCDebug(DDE_SHELL) << "User frame list remove user:" << user->path();
     foreach (auto w, m_loginWidgets) {
         if (w->uid() == user->uid()) {
             m_loginWidgets.removeOne(w);

@@ -150,7 +150,7 @@ QString MultiUsersWarningView::iconString()
 bool MultiUsersWarningView::focusNextPrevChild(bool next)
 {
     if (!next) {
-        qWarning() << "Focus handling error, next prevent child is false";
+        qCWarning(DDE_SHELL) << "Focus handling error, next prevent child is false";
         return WarningView::focusNextPrevChild(next);
     }
     return WarningView::focusNextPrevChild(next);

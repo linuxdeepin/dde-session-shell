@@ -370,3 +370,9 @@ install(FILES ${PAM_CONFIG} DESTINATION ${CMAKE_INSTALL_SYSCONFDIR}/pam.d/)
 # config
 dconfig_meta_files(APPID org.deepin.dde.lock FILES configs/org.deepin.dde.lock.json)
 dconfig_meta_files(APPID org.deepin.dde.lightdm-deepin-greeter FILES configs/org.deepin.dde.lightdm-deepin-greeter.json)
+
+# debug config file
+install(FILES files/deepin-debug-config/org.deepin.dde.session-shell.json
+    DESTINATION ${CMAKE_INSTALL_DATADIR}/deepin-debug-config/deepin-debug-config.d)
+install(FILES files/deepin-log-config/org.deepin.dde.session-shell.json
+    DESTINATION ${CMAKE_INSTALL_DATADIR}/deepin-log-viewer/deepin-log.conf.d)

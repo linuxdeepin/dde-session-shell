@@ -3,6 +3,7 @@
 // SPDX-License-Identifier: GPL-3.0-or-later
 
 #include "keyboardplantform_x11.h"
+#include "constants.h"
 
 #include <QX11Info>
 #include <QDebug>

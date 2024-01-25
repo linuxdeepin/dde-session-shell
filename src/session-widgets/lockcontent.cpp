@@ -55,7 +55,7 @@ LockContent::LockContent(QWidget *parent)
     QList<QVariant> outArgsCPU = replyCPU.arguments();
     if (outArgsCPU.count()) {
         QString cpuHardware = outArgsCPU.at(0).value<QDBusVariant>().variant().toString();
-        qInfo() << "Current cpu hardware:" << cpuHardware;
+        qCInfo(DDE_SHELL) << "Current cpu hardware:" << cpuHardware;
         if (cpuHardware.contains("PANGU")) {
             m_isPANGUCpu = true;
         }
@@ -76,7 +76,7 @@ LockContent* LockContent::instance()
 void LockContent::init(SessionBaseModel *model)
 {
     if (m_initialized) {
-        qWarning() << "Has been initialized, don't do it again";
+        qCWarning(DDE_SHELL) << "Has been initialized, don't do it again";
         return;
     }
     m_initialized = true;
@@ -107,7 +107,7 @@ void LockContent::init(SessionBaseModel *model)
     // 将之前的server删除，如果是旧文件，即使监听成功，客户端也无法连接。
     QLocalServer::removeServer(serverName);
     if (!m_localServer->listen(serverName)) { // 监听特定的连接
-        qWarning() << "Listen local server failed!" << m_localServer->errorString();
+        qCWarning(DDE_SHELL) << "Listen local server failed!" << m_localServer->errorString();
     }
 }
 
@@ -190,7 +190,7 @@ void LockContent::initConnections()
     connect(m_localServer, &QLocalServer::newConnection, this, &LockContent::onNewConnection);
     connect(m_controlWidget, &ControlWidget::notifyKeyboardLayoutHidden, this, [this]{
         if (!m_model->isUseWayland() && isVisible() && window()->windowHandle()) {
-            qDebug() << "Grab keyboard after keyboard layout hidden";
+            qCDebug(DDE_SHELL) << "Grab keyboard after keyboard layout hidden";
             window()->windowHandle()->setKeyboardGrabEnabled(true);
         }
     });
@@ -210,7 +210,7 @@ void LockContent::initConnections()
  */
 void LockContent::initMFAWidget()
 {
-    qDebug() << "Init MFA widget, sfa widget: " << m_sfaWidget << ", mfa widget: " << m_mfaWidget;
+    qCDebug(DDE_SHELL) << "Init MFA widget, sfa widget: " << m_sfaWidget << ", mfa widget: " << m_mfaWidget;
     if (m_sfaWidget) {
         m_sfaWidget->hide();
         delete m_sfaWidget;
@@ -338,7 +338,7 @@ void LockContent::pushPasswordFrame()
 
 void LockContent::pushUserFrame()
 {
-    qInfo() << "Push user frame";
+    qCInfo(DDE_SHELL) << "Push user frame";
     if(m_model->isServerModel())
         m_controlWidget->setUserSwitchEnable(false);
 
@@ -368,7 +368,7 @@ void LockContent::pushConfirmFrame()
 
 void LockContent::pushShutdownFrame()
 {
-    qInfo() << "Push shutdown frame";
+    qCInfo(DDE_SHELL) << "Push shutdown frame";
     // 设置关机选项界面大小为中间区域的大小,并移动到左上角，避免显示后出现移动现象
     auto config = PluginConfigMap::instance().getConfig();
     if (config) {
@@ -404,7 +404,7 @@ void LockContent::onNewConnection()
 
     // 重置密码程序启动连接成功锁屏界面才释放键盘，避免点击重置密码过程中使用快捷键切走锁屏
     if (window()->windowHandle() && window()->windowHandle()->setKeyboardGrabEnabled(false)) {
-        qDebug() << "Set keyboard grab enabled to false success!";
+        qCDebug(DDE_SHELL) << "Set keyboard grab enabled to false success!";
     }
 
     if (m_localServer->hasPendingConnections()) {
@@ -425,7 +425,7 @@ void LockContent::onDisConnect()
 
 void LockContent::onStatusChanged(SessionBaseModel::ModeStatus status)
 {
-    qInfo() << "Incoming status:" << status << ", current status:" << m_currentModeStatus;
+    qCInfo(DDE_SHELL) << "Incoming status:" << status << ", current status:" << m_currentModeStatus;
     refreshLayout(status);
 
     // select plugin config
@@ -557,7 +557,7 @@ void LockContent::toggleVirtualKB()
         VirtualKBInstance::Instance();
         QTimer::singleShot(500, this, [this] {
             m_virtualKB = VirtualKBInstance::Instance().virtualKBWidget();
-            qDebug() << "Init virtual keyboard over: " << m_virtualKB;
+            qCDebug(DDE_SHELL) << "Init virtual keyboard over: " << m_virtualKB;
             toggleVirtualKB();
         });
         return;
@@ -587,7 +587,7 @@ void LockContent::showModule(const QString &name, const bool callShowForce)
     case PluginBase::ModuleType::TrayType: {
         m_currentTray = m_controlWidget->getTray(name);
         if (!m_currentTray || !plugin->content()) {
-            qWarning() << "TrayButton or plugin`s content is null";
+            qCWarning(DDE_SHELL) << "TrayButton or plugin`s content is null";
             return;
         }
         if (!m_popWin) {
@@ -689,7 +689,7 @@ void LockContent::tryGrabKeyboard(bool exitIfFailed)
     if (m_model->isUseWayland()) {
         static QDBusInterface *kwinInter = new QDBusInterface("org.kde.KWin","/KWin","org.kde.KWin", QDBusConnection::sessionBus());
         if (!kwinInter || !kwinInter->isValid()) {
-            qWarning() << "Kwin interface is invalid";
+            qCWarning(DDE_SHELL) << "Kwin interface is invalid";
             m_failures = 0;
             return;
         }
@@ -718,7 +718,7 @@ void LockContent::tryGrabKeyboard(bool exitIfFailed)
     m_failures++;
 
     if (m_failures == 15) {
-        qWarning() << "Trying to grab keyboard has exceeded the upper limit, dde-lock will quit.";
+        qCWarning(DDE_SHELL) << "Trying to grab keyboard has exceeded the upper limit, dde-lock will quit.";
 
         m_failures = 0;
 
@@ -748,7 +748,7 @@ void LockContent::tryGrabKeyboard(bool exitIfFailed)
             .method(QString("SimulateUserActivity"))
             .call();
 
-        qInfo() << "Request hide lock frame";
+        qCInfo(DDE_SHELL) << "Request hide lock frame";
         emit requestLockFrameHide();
         return;
     }
@@ -768,7 +768,7 @@ void LockContent::currentWorkspaceChanged()
             QDBusReply<QString> reply = call.reply();
             updateWallpaper(reply.value());
         } else {
-            qWarning() << "Get current workspace background error: " << call.error().message();
+            qCWarning(DDE_SHELL) << "Get current workspace background error: " << call.error().message();
             updateWallpaper("/usr/share/backgrounds/deepin/desktop.jpg");
         }
         watcher->deleteLater();

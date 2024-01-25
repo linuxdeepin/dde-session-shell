@@ -44,19 +44,19 @@ void ModulesLoader::findModule(const QString &path)
 {
     QDir dir(path);
     if (!dir.exists()) {
-        qDebug() << "Find module, Path: " << path << "is not exists.";
+        qCDebug(DDE_SHELL) << "Find module, Path: " << path << "is not exists.";
         return;
     }
 
     auto blackList = DConfigHelper::instance()->getConfig("pluginBlackList", QStringList()).toStringList();
-    qInfo() << "Find module, plugin black list:" << blackList;
+    qCInfo(DDE_SHELL) << "Find module, plugin black list:" << blackList;
     const QFileInfoList modules = dir.entryInfoList();
     for (QFileInfo module : modules) {
         const QString path = module.absoluteFilePath();
         if (!QLibrary::isLibrary(path)) {
             continue;
         }
-        qInfo() << "About to process " << module;
+        qCInfo(DDE_SHELL) << "About to process " << module;
         QPluginLoader loader(path);
 
         // 检查兼容性
@@ -64,7 +64,7 @@ void ModulesLoader::findModule(const QString &path)
         const QString version = meta.value("api").toString();
         // 版本过低则不加载，可能会导致登录器崩溃
         if (!checkVersion(version, LOWEST_VERSION)) {
-            qWarning() << "The module version is too low.";
+            qCWarning(DDE_SHELL) << "The module version is too low.";
             continue;
         }
 
@@ -76,33 +76,33 @@ void ModulesLoader::findModule(const QString &path)
         }
 
         if (pluginType.isEmpty()) {
-            qWarning() << "plugin has no pluginType in json file, will not load:" << module;
+            qCWarning(DDE_SHELL) << "plugin has no pluginType in json file, will not load:" << module;
             continue;
         }
 
         auto *moduleInstance = dynamic_cast<dss::module::BaseModuleInterface *>(loader.instance());
         if (!moduleInstance) {
-            qWarning() << "Load plugin failed, error:" << loader.errorString();
+            qCWarning(DDE_SHELL) << "Load plugin failed, error:" << loader.errorString();
             loader.unload();
             continue;
         }
 
-        qInfo() << "Current plugin key:" << moduleInstance->key();
+        qCInfo(DDE_SHELL) << "Current plugin key:" << moduleInstance->key();
         if (blackList.contains(moduleInstance->key())) {
-            qInfo() << "The plugin is in black list, won't be loaded.";
+            qCInfo(DDE_SHELL) << "The plugin is in black list, won't be loaded.";
             loader.unload();
             continue;
         }
 
         int loadPluginType = moduleInstance->loadPluginType();
         if (loadPluginType != dss::module::BaseModuleInterface::Load) {
-            qInfo() << "The plugin dose not want to be loaded.";
+            qCInfo(DDE_SHELL) << "The plugin dose not want to be loaded.";
             loader.unload();
             continue;
         }
 
         if (PluginManager::instance()->contains(moduleInstance->key())) {
-            qWarning() << "The plugin has been loaded.";
+            qCWarning(DDE_SHELL) << "The plugin has been loaded.";
             loader.unload();
             continue;
         }

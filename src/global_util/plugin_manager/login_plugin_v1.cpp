@@ -67,7 +67,7 @@ void LoginPluginV1::setAuthCallback(LoginPlugin::AuthCallbackFun func)
     authCallbackFunc = func;
     m_loginCallBack.authCallbackFun = &LoginPluginV1::authCallBack;
     if (!m_loginCallBack.authCallbackFun || !m_loginCallBack.app_data) {
-        qWarning() << "Auth callback funtion or app data is null";
+        qCWarning(DDE_SHELL) << "Auth callback funtion or app data is null";
     }
 
     loginPlugin->setCallback(&m_loginCallBack);
@@ -86,12 +86,12 @@ void LoginPluginV1::reset()
 void LoginPluginV1::authCallBack(const dss::module::AuthCallbackData *authData, void *appData)
 {
     if (!authCallbackFunc) {
-        qWarning() << "Authentication call back function is null";
+        qCWarning(DDE_SHELL) << "Authentication call back function is null";
         return;
     }
 
     if (!appData) {
-        qWarning() << "App data is nullptr";
+        qCWarning(DDE_SHELL) << "App data is nullptr";
         return;
     }
 
@@ -108,12 +108,12 @@ void LoginPluginV1::authCallBack(const dss::module::AuthCallbackData *authData, 
 std::string LoginPluginV1::messageCallBack(const std::string & message, void *appData)
 {
     if (!messageCallbackFunc) {
-        qWarning() << "Message callback function pointer is nullptr";
+        qCWarning(DDE_SHELL) << "Message callback function pointer is nullptr";
         return "";
     }
 
     if (!appData) {
-        qWarning() << "Appdata is nullptr";
+        qCWarning(DDE_SHELL) << "Appdata is nullptr";
         return "";
     }
 

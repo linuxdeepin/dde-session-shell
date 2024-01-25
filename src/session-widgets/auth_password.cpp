@@ -320,7 +320,7 @@ void AuthPassword::setAuthState(const AuthState state, const QString &result)
         setAuthStateStyle(LOGIN_WAIT);
         setLineEditEnabled(true);
         setLineEditInfo(result, AlertText);
-        qWarning() << "Error! The state of Password Auth is wrong, state: " << state << ", result: " << result;
+        qCWarning(DDE_SHELL) << "Error! The state of Password Auth is wrong, state: " << state << ", result: " << result;
         break;
     }
     update();
@@ -368,7 +368,7 @@ void AuthPassword::setLimitsInfo(const LimitsInfo &info)
         }
 
         if (this->isVisible() && isShowResetPasswordMessage()) {
-            qDebug() << "Begin reset passoword";
+            qCDebug(DDE_SHELL) << "Begin reset passoword";
             setResetPasswordMessageVisible(true);
             updateResetPasswordUI();
         }
@@ -481,7 +481,7 @@ void AuthPassword::updateUnlockPrompt()
         QTimer::singleShot(1000, this, [this] {
             emit activeAuth(m_type);
         });
-        qInfo() << "Waiting authentication service...";
+        qCInfo(DDE_SHELL) << "Waiting authentication service...";
     }
     update();
 }
@@ -523,7 +523,7 @@ void AuthPassword::setPasswordHintBtnVisible(const bool isVisible)
  */
 void AuthPassword::setResetPasswordMessageVisible(const bool isVisible, bool fromResetDialog)
 {
-    qDebug() << "Set reset password message visible, incoming visible:" << isVisible
+    qCDebug(DDE_SHELL) << "Set reset password message visible, incoming visible:" << isVisible
              << " current visible:" << m_resetPasswordMessageVisible
              << " fromResetDialog " << fromResetDialog;
     if (isVisible && fromResetDialog) {
@@ -593,7 +593,7 @@ void AuthPassword::showResetPasswordMessage()
         m_resetDialogShow = true;
         reply.waitForFinished();
         if (reply.isError())
-            qWarning() << "Reset password message error: " << reply.error().message();
+            qCWarning(DDE_SHELL) << "Reset password message error: " << reply.error().message();
 
         emit m_resetPasswordFloatingMessage->closeButtonClicked();
     });
@@ -639,7 +639,7 @@ bool AuthPassword::isUserAccountBinded()
     if (retUOSID.isValid()) {
         uosid = retUOSID.value();
     } else {
-        qWarning() << "UOS ID is invalid, error: " << retUOSID.error().message();
+        qCWarning(DDE_SHELL) << "UOS ID is invalid, error: " << retUOSID.error().message();
         return false;
     }
 
@@ -664,13 +664,13 @@ bool AuthPassword::isUserAccountBinded()
             m_bindCheckTimer->stop();
         }
     } else {
-        qWarning() << "UOSID:" << uosid << "uuid:" << uuid;
-        qWarning() << "Local bind check is invalid, error: " << retLocalBindCheck.error().message();
+        qCWarning(DDE_SHELL) << "UOSID:" << uosid << "uuid:" << uuid;
+        qCWarning(DDE_SHELL) << "Local bind check is invalid, error: " << retLocalBindCheck.error().message();
         if (retLocalBindCheck.error().message().contains("network error")) {
             if (m_bindCheckTimer == nullptr) {
                 m_bindCheckTimer = new QTimer(this);
                 connect(m_bindCheckTimer, &QTimer::timeout, this, [this] {
-                    qWarning() << "BindCheck retry!";
+                    qCWarning(DDE_SHELL) << "BindCheck retry!";
                     if(isUserAccountBinded()) {
                         setResetPasswordMessageVisible(true);
                         updateResetPasswordUI();
@@ -757,7 +757,7 @@ void AuthPassword::showEvent(QShowEvent *event)
         }
 
         if (isShowResetPasswordMessage()) {
-            qDebug() << "Begin reset passoword";
+            qCDebug(DDE_SHELL) << "Begin reset passoword";
             setResetPasswordMessageVisible(true);
             updateResetPasswordUI();
         }

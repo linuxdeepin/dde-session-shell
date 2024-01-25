@@ -175,7 +175,7 @@ void AuthPasskey::setAuthState(const AuthCommon::AuthState state, const QString 
         setAuthStateStyle(AUTH_LOCK);
         m_textLabel->setText(result);
         emit retryButtonVisibleChanged(false);
-        qWarning() << "The state of passkey auth is wrong, state: " << state << ", result: " << result;
+        qCWarning(DDE_SHELL) << "The state of passkey auth is wrong, state: " << state << ", result: " << result;
         break;
     }
     update();

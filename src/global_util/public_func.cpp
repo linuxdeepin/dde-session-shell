@@ -25,6 +25,8 @@ using namespace std;
 
 DCORE_USE_NAMESPACE
 
+Q_LOGGING_CATEGORY(DDE_SHELL, "org.deepin.dde.shell")
+
 static int appType = APP_TYPE_LOCK;
 
 //Load the System cursor --begin
@@ -75,7 +77,7 @@ static unsigned long loadCursorHandle(Display *dpy, const char *name, int size)
 int setRootWindowCursor() {
     Display* display = XOpenDisplay(nullptr);
     if (!display) {
-        qWarning() << "Open display failed, display is empty";
+        qCWarning(DDE_SHELL) << "Open display failed, display is empty";
         return -1;
     }
 

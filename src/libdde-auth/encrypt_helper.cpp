@@ -61,7 +61,7 @@ void EncryptHelper::initEncryptionService()
  */
 void EncryptHelper::setEncryption(const int type, ArrayInt method)
 {
-    qInfo() << "Set encryption type: " << type;
+    qCInfo(DDE_SHELL) << "Set encryption type: " << type;
     m_encryptType = type;
     m_encryptMethod = method;
 }
@@ -140,7 +140,7 @@ QByteArray EncryptHelper::getEncryptedToken(const QString &token)
     do {
         if (ET_SM2 == m_encryptType) {
 #ifdef PREFER_USING_GM
-            qInfo() << "PREFER_USING_GM";
+            qCInfo(DDE_SHELL) << "PREFER_USING_GM";
             ctx = EVP_CIPHER_CTX_new();
             if (ctx == nullptr) {
                 break;

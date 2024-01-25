@@ -102,7 +102,7 @@ int main(int argc, char* argv[])
     const QString serviceName = "com.deepin.daemon.Accounts";
     QDBusConnectionInterface *interface = QDBusConnection::systemBus().interface();
     if (!interface->isServiceRegistered(serviceName)) {
-        qWarning() << "Accounts service is not registered wait...";
+        qCWarning(DDE_SHELL) << "Accounts service is not registered wait...";
         QDBusServiceWatcher *serviceWatcher = new QDBusServiceWatcher(serviceName, QDBusConnection::systemBus());
         QObject::connect(serviceWatcher, &QDBusServiceWatcher::serviceUnregistered, [serviceName](const QString &service) {
             if (service == serviceName) {
@@ -159,7 +159,7 @@ int main(int argc, char* argv[])
         if (screen.isNull()) {
             loginFrame->deleteLater();
             loginFrame = nullptr;
-            qWarning() << "Screen was released when the frame was created";
+            qCWarning(DDE_SHELL) << "Screen was released when the frame was created";
             return nullptr;
         }
         loginFrame->setScreen(screen, count <= 0);

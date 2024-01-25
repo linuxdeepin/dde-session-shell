@@ -180,7 +180,7 @@ void FullScreenBackground::updateBlurBackground(const QString &path)
             }
         } else {
             blurPath = "/usr/share/backgrounds/default_background.jpg";
-            qWarning() << "Get blur background path error:" << reply.error().message();
+            qCWarning(DDE_SHELL) << "Get blur background path error:" << reply.error().message();
         }
 
         // 处理模糊背景图和执行动画或update；
@@ -204,11 +204,11 @@ void FullScreenBackground::setEnterEnable(bool enable)
 void FullScreenBackground::setScreen(QPointer<QScreen> screen, bool isVisible)
 {
     if (screen.isNull()) {
-        qWarning() << "Screen is nullptr";
+        qCWarning(DDE_SHELL) << "Screen is nullptr";
         return;
     }
 
-    qInfo() << "Set screen:" << screen
+    qCInfo(DDE_SHELL) << "Set screen:" << screen
             << ", screen geometry:" << screen->geometry()
             << ", full screen background object:" << this;
     if (isVisible) {
@@ -229,13 +229,13 @@ void FullScreenBackground::setScreen(QPointer<QScreen> screen, bool isVisible)
 void FullScreenBackground::setContent(QWidget *const w)
 {
     if (!w) {
-        qWarning() << "Content is null";
+        qCWarning(DDE_SHELL) << "Content is null";
         return;
     }
-    qInfo() << "Incoming  content:" << w << ", current content:" << currentContent;
+    qCInfo(DDE_SHELL) << "Incoming  content:" << w << ", current content:" << currentContent;
     // 不重复设置content
     if (currentContent && currentContent->isVisible() && currentContent == w && currentFrame && w->parent() == currentFrame) {
-        qDebug() << "Parent is current frame";
+        qCDebug(DDE_SHELL) << "Parent is current frame";
         return;
     }
 
@@ -245,7 +245,7 @@ void FullScreenBackground::setContent(QWidget *const w)
     }
     currentContent = w;
     if (!currentFrame) {
-        qWarning() << "Current frame is null";
+        qCWarning(DDE_SHELL) << "Current frame is null";
         return;
     }
 
@@ -413,7 +413,7 @@ void FullScreenBackground::keyPressEvent(QKeyEvent *e)
 
 void FullScreenBackground::showEvent(QShowEvent *event)
 {
-    qDebug() << "Frame is already displayed:" << this;
+    qCDebug(DDE_SHELL) << "Frame is already displayed:" << this;
     if (m_model->isUseWayland()) {
 
         Q_EMIT requestDisableGlobalShortcutsForWayland(true);
@@ -447,7 +447,7 @@ void FullScreenBackground::showEvent(QShowEvent *event)
 
 void FullScreenBackground::hideEvent(QHideEvent *event)
 {
-    qDebug() << "Frame is hidden:" << this;
+    qCDebug(DDE_SHELL) << "Frame is hidden:" << this;
     if (m_model->isUseWayland()) {
         Q_EMIT requestDisableGlobalShortcutsForWayland(false);
     }
@@ -478,7 +478,7 @@ void FullScreenBackground::updateGeometry()
         return;
     }
 
-    qInfo() << "Set background screen:" << m_screen << ", geometry:" << m_screen->geometry();
+    qCInfo(DDE_SHELL) << "Set background screen:" << m_screen << ", geometry:" << m_screen->geometry();
 
     // for bug:184943.系统修改分辨率后，登录界面获取的屏幕分辨率不正确,通过xrandr获取屏幕分辨率
     if (m_model->appType() == AuthCommon::Login && !m_model->isUseWayland()) {
@@ -493,7 +493,7 @@ void FullScreenBackground::updateGeometry()
                 setGeometry(m_screen->geometry());
             } else {
                 setGeometry(screensGeometry[m_screen->name()]);
-                qDebug() << "Set geometry by xrandr, this:" << this << screensGeometry[m_screen->name()]
+                qCDebug(DDE_SHELL) << "Set geometry by xrandr, this:" << this << screensGeometry[m_screen->name()]
                         << " screen:" << m_screen->name() << "screen geometry:" << m_screen->geometry();
             }
         } else {
@@ -506,12 +506,12 @@ void FullScreenBackground::updateGeometry()
     if (!m_screen.isNull()) {
         setGeometry(m_screen->geometry());
 
-        qInfo() << "Update geometry, screen:" << m_screen
+        qCInfo(DDE_SHELL) << "Update geometry, screen:" << m_screen
                 << ", screen geometry:" << m_screen->geometry()
                 << ", lockFrame:" << this
                 << ", frame geometry:" << this->geometry();
     } else {
-        qWarning() << "Screen is nullptr";
+        qCWarning(DDE_SHELL) << "Screen is nullptr";
     }
 }
 
@@ -583,7 +583,7 @@ void FullScreenBackground::updatePixmap()
         QStringList cacheMapKeys = cacheMap.keys();
         for (auto &key : cacheMapKeys) {
             if (!frameSizeList.contains(key)) {
-                qInfo() << "Remove not used pixmap:" << key;
+                qCInfo(DDE_SHELL) << "Remove not used pixmap:" << key;
                 cacheMap.remove(key);
             }
         }
@@ -640,7 +640,7 @@ QMap<QString, QRect> FullScreenBackground::getScreenGeometryByXrandr()
     // 获取缩放比例
     double scale = getScaleFactorFromDisplay();
     double scaleFromDisplayQt = qApp->devicePixelRatio();
-    qInfo() << "Get scale factor from display scale:" << scale << " scale from display qt:" << scaleFromDisplayQt;
+    qCInfo(DDE_SHELL) << "Get scale factor from display scale:" << scale << " scale from display qt:" << scaleFromDisplayQt;
     // 如果获取失败或者与从Qt获取的不一致，则不需要处理，使用Qt的屏幕信息
     if (scale <= 0 || scaleFromDisplayQt != scale) {
         return screensGeometry;
@@ -668,7 +668,7 @@ QMap<QString, QRect> FullScreenBackground::getScreenGeometryByXrandr()
             int y = match.captured(5).toInt();
             QRect rect(x, y, width / scale, height / scale);
             screensGeometry.insert(name, rect);
-            qInfo() << "Screen name:" << name << ", screen rect:" << rect;
+            qCInfo(DDE_SHELL) << "Screen name:" << name << ", screen rect:" << rect;
         }
     }
 
@@ -685,7 +685,7 @@ double FullScreenBackground::getScaleFactorFromDisplay()
     QDBusReply<QString> reply = display.call("GetConfig");
     QString jsonObjStr = reply.value();
     if (jsonObjStr.isNull()) {
-        qWarning() << "Greeter get system display config failed (`GetConfig` null)";
+        qCWarning(DDE_SHELL) << "Greeter get system display config failed (`GetConfig` null)";
         return -1.0;
     }
 
@@ -698,19 +698,19 @@ double FullScreenBackground::getScaleFactorFromDisplay()
         return scaleFactors.value(key).toDouble();
     }
 
-    qWarning() << "greeter get system display config failed(`scaleFactors` null)";
+    qCWarning(DDE_SHELL) << "greeter get system display config failed(`scaleFactors` null)";
     return -1.0;
 }
 
 
 void FullScreenBackground::updateCurrentFrame(FullScreenBackground *frame) {
     if (!frame) {
-        qWarning() << "Update current frame failed, frame is null";
+        qCWarning(DDE_SHELL) << "Update current frame failed, frame is null";
         return;
     }
 
     if (frame->m_screen)
-        qInfo() << "Update current frame:" << frame << ", screen:" << frame->m_screen->name();
+        qCInfo(DDE_SHELL) << "Update current frame:" << frame << ", screen:" << frame->m_screen->name();
 
     currentFrame = frame;
     setContent(currentContent);

@@ -23,7 +23,6 @@
 
 #include <QDBusInterface>
 #include <QSurfaceFormat>
-
 #include <unistd.h>
 
 DCORE_USE_NAMESPACE
@@ -31,6 +30,9 @@ DWIDGET_USE_NAMESPACE
 
 int main(int argc, char *argv[])
 {
+#if (DTK_VERSION >= DTK_VERSION_CHECK(5, 6, 8, 7))
+    DLogManager::registerLoggingRulesWatcher("org.deepin.dde.lock");
+#endif
     if (qgetenv("XDG_SESSION_TYPE").contains("wayland")) {
         QSurfaceFormat format;
         format.setRenderableType(QSurfaceFormat::OpenGLES);
@@ -166,14 +168,14 @@ int main(int argc, char *argv[])
         if (screen.isNull()) {
             lockFrame->deleteLater();
             lockFrame = nullptr;
-            qWarning() << "Screen was released when the frame was created";
+            qCWarning(DDE_SHELL) << "Screen was released when the frame was created";
             return nullptr;
         }
         lockFrame->setScreen(screen, count <= 0);
         QObject::connect(model, &SessionBaseModel::visibleChanged, lockFrame, [lockFrame](const bool visible) {
             lockFrame->setVisible(visible);
             QTimer::singleShot(300, lockFrame, [lockFrame] {
-                qDebug() << "Update frame after lock frame visible changed";
+                qCDebug(DDE_SHELL) << "Update frame after lock frame visible changed";
                 lockFrame->update();
             });
         });
@@ -222,7 +224,7 @@ int main(int argc, char *argv[])
         !conn.registerService(DBUS_SHUTDOWN_NAME) ||
         !conn.registerObject(DBUS_SHUTDOWN_PATH, &shutdownAgent) ||
         !isSingle) {
-        qWarning() << "Register DBus failed, maybe lock front is running, error: " << conn.lastError();
+        qCWarning(DDE_SHELL) << "Register DBus failed, maybe lock front is running, error: " << conn.lastError();
 
         if (!runDaemon) {
             const char *lockFrontInter = "com.deepin.dde.lockFront";
