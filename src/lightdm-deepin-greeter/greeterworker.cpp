@@ -167,7 +167,15 @@ void GreeterWorker::initConnections()
             destroyAuthentication(m_account);
         } else {
             if (!m_model->currentUser()->isNoPasswordLogin()) {
-                createAuthentication(m_model->currentUser()->name());
+                bool useOnekeylogin = DConfigHelper::instance()->getConfig("enableOneKeylogin", false).toBool();
+                if (useOnekeylogin) {
+                    // 当有一键登录的时候，需要保证一键登录插件中待机唤醒处理逻辑在此之前；否则greeter待机唤醒一键登录功能异常
+                    QTimer::singleShot(0, this, [this]{
+                        createAuthentication(m_model->currentUser()->name());
+                    });
+                } else {
+                    createAuthentication(m_model->currentUser()->name());
+                }
             }
         }
     });

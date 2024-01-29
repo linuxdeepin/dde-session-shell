@@ -1206,6 +1206,12 @@ bool SFAWidget::useCustomAuth() const
         return false;
     }
 
+    // 主账户登录，切换用户b(在greeter界面），回到主账户后删除b账户，这个时候greeter切换用户到主账户
+    if (m_user->isLogin()) {
+        qInfo() << "current user is logged in";
+        return false;
+    }
+
     // 是否加载了认证插件
     LoginPlugin* plugin = PluginManager::instance()->getLoginPlugin();
     if (!plugin) {

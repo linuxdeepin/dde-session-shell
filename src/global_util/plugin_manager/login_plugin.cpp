@@ -16,6 +16,7 @@ bool LoginPlugin::isPluginEnabled()
 {
     QJsonObject message;
     message["CmdType"] = "IsPluginEnabled";
+
     const QString &result = this->message(toJson(message));
     qCDebug(DDE_SHELL) << "Is plugin enabled: " << result;
     const QJsonObject &dataObj = getDataObj(result);
