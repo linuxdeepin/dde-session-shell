@@ -21,6 +21,7 @@
 #include <QDBusPendingCall>
 #include <QDBusConnection>
 #include <QDBusPendingReply>
+#include <QApplication>
 
 KeyboardPlatformWayland::KeyboardPlatformWayland(QObject *parent)
     : KeyBoardPlatform(parent)
@@ -33,7 +34,9 @@ KeyboardPlatformWayland::KeyboardPlatformWayland(QObject *parent)
     , m_capsLock(false)
     , m_numLockOn(false)
 {
-    initStatus();
+    // 只有锁屏需要从 kwin 获取 numlock 的状态，greeter 的 numlock 状态是从 dconfig 中读取的
+    if (qApp && qApp->applicationName().contains("lock"))
+        initStatus();
 }
 
 KeyboardPlatformWayland::~KeyboardPlatformWayland()
