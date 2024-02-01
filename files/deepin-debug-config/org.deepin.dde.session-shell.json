@@ -3,8 +3,8 @@
     "group": "dde",
     "submodules": [
         {
-            "name": "com.deepin.dde.lock",
-            "exec": "com.deepin.dde.lock.sh"
+            "name": "org.deepin.dde.lock",
+            "exec": "org.deepin.dde.lock.sh"
         }
     ],
     "version": "V1.0"
