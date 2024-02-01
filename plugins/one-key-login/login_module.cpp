@@ -143,30 +143,33 @@ void LoginModule::initConnect()
 
 void LoginModule::startCallHuaweiFingerprint()
 {
+    auto failedHandler = [this] {
+        m_isAcceptFingerprintSignal = false;
+        // FIXME 此处不能调用回调，因为还没初始化，此处的逻辑应该在setCallBack函数完成后再进行。
+        sendAuthTypeToSession(AuthType::AT_Fingerprint);
+    };
+
     QDBusMessage m = QDBusMessage::createMethodCall("com.deepin.daemon.Authenticate", "/com/deepin/daemon/Authenticate/Fingerprint",
                                                                              "com.deepin.daemon.Authenticate.Fingerprint",
                                                                              "IdentifyWithMultipleUser");
     // 将消息发送到Dbus
     QDBusPendingCall identifyCall = QDBusConnection::systemBus().asyncCall(m);
     QDBusPendingCallWatcher *watcher = new QDBusPendingCallWatcher(identifyCall, this);
-    connect(watcher, &QDBusPendingCallWatcher::finished, [this, identifyCall, watcher] {
+    connect(watcher, &QDBusPendingCallWatcher::finished, [this, identifyCall, failedHandler, watcher] {
         if (!identifyCall.isError()) {
             QDBusMessage response = identifyCall.reply();
             //判断Method是否被正确返回
             if (response.type()== QDBusMessage::ReplyMessage) {
                 m_IdentifyWithMultipleUserStarted = true;
-                qDebug() << "Call `IdentifyWithMultipleUser` success";
+                m_waitAcceptSignalTimer->start();
             } else {
-                qWarning() << "Call `IdentifyWithMultipleUser` failed";
-                m_isAcceptFingerprintSignal = false;
-                //FIXME 此处不能调用回调，因为还没初始化，此处的逻辑应该在setCallBack函数完成后再进行。
-                sendAuthTypeToSession(AuthType::AT_Fingerprint);
+                failedHandler();
             }
+        } else {
+            failedHandler();
         }
         watcher->deleteLater();
     });
-
-    m_waitAcceptSignalTimer->start();
 }
 
 void LoginModule::init()
@@ -453,6 +456,7 @@ void LoginModule::slotPrepareForSleep(bool active)
     }
 
     if (isSessionActive) {
+        m_authStatus = AuthStatus::Start;
         m_isAcceptFingerprintSignal = false;
         m_loginAuthenticated = false;
         sendAuthTypeToSession(AuthType::AT_Custom);
