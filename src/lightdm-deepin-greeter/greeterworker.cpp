@@ -152,8 +152,12 @@ void GreeterWorker::initConnections()
     });
 
     connect(m_login1Inter, &DBusLogin1Manager::PrepareForSleep, this, [this](bool active) {
-        qDebug() << "Prepare for sleep, whether set dpms: " << (!active ? "on" : "off");
-        screenSwitchByWldpms(!active);
+        const bool sessionIsActive = m_login1SessionSelf->active();
+        qDebug() << "Prepare for sleep, whether set dpms: " << (!active ? "on" : "off")
+                 << ", curren session is active:" << sessionIsActive;
+        // session 未激活的时候使用 dde-wldpms 无效，且 dde-wldpms 无法收到 modeChanged 信号，会一直处于等待状态不退出
+        if (sessionIsActive)
+            screenSwitchByWldpms(!active);
     });
 
     /* org.freedesktop.login1.Manager */
