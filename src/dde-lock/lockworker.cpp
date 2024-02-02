@@ -13,6 +13,7 @@
 #include "warningcontent.h"
 #include "fullscreenbackground.h"
 #include "updateworker.h"
+#include "lockcontent.h"
 
 #include <DSysInfo>
 
@@ -223,6 +224,10 @@ void LockWorker::initConnections()
 
     connect(UpdateWorker::instance(), &UpdateWorker::requestExitUpdating, this, [this] {
         m_model->setVisible(false);
+        m_model->setUpdatePowerMode(SessionBaseModel::UPM_None);
+        m_model->setCurrentModeState(SessionBaseModel::PasswordMode);
+        FullScreenBackground::setContent(LockContent::instance());
+        m_model->setCurrentContentType(SessionBaseModel::LockContent);
     });
 }
 
