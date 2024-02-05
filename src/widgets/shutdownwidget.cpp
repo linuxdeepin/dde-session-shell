@@ -17,6 +17,7 @@ const QString LASTORE_DCONFIG_NAME = "org.deepin.lastore";
 const QString LASTORE_DAEMON_STATUS = "lastore-daemon-status";
 const int IS_UPDATE_READY       = 1 << 0;
 const int IS_UPDATE_DISABLED    = 1 << 1;
+const int IS_UPDATE_FORCE       = 1 << 2;
 
 DCORE_USE_NAMESPACE
 
@@ -282,7 +283,6 @@ void ShutdownWidget::initUI()
     m_updateAndShutdownButton->setObjectName("UpdateAndShutdownButton");
     m_updateAndShutdownButton->setAutoExclusive(true);
     m_updateAndShutdownButton->setVisible(false);
-    GSettingWatcher::instance()->bind("systemShutdown", m_updateAndShutdownButton);  // GSettings配置项
 
     m_updateAndRebootButton = new RoundItemButton(tr("Update and Reboot"));
     setPic(m_updateAndRebootButton, "reboot");
@@ -458,6 +458,14 @@ void ShutdownWidget::onStatusChanged(SessionBaseModel::ModeStatus status)
 
 void ShutdownWidget::setButtonsVisible()
 {
+    // 根据lastore的lastore-daemon-status配置决定是否显示更新按钮
+    const int lastoreDaemonStatus = DConfigHelper::instance()->getConfig(LASTORE_DCONFIG_NAME, LASTORE_DCONFIG_NAME, "", LASTORE_DAEMON_STATUS, 0).toInt();
+    qCInfo(DDE_SHELL) << "Lastore daemon status: " << lastoreDaemonStatus;
+    const bool isUpdateReady = lastoreDaemonStatus & IS_UPDATE_READY;
+    const bool isUpdateDisabled = lastoreDaemonStatus & IS_UPDATE_DISABLED;
+    const bool isUpdateForce = lastoreDaemonStatus & IS_UPDATE_FORCE;
+    const bool isUpdateVisible = isUpdateReady && !isUpdateDisabled;
+
     if (m_model->currentModeState() == SessionBaseModel::ModeStatus::ShutDownMode) {
         m_requireLockButton->setVisible(GSettingWatcher::instance()->getStatus("systemLock") != "Hiden");
         m_requireSwitchUserBtn->setVisible(m_switchUserEnable);
@@ -468,21 +476,10 @@ void ShutdownWidget::setButtonsVisible()
             const bool hideLogoutButton = DConfigHelper::instance()->getConfig("hideLogoutButton", false).toBool();
             m_requireLogoutButton->setVisible(!hideLogoutButton);
         }
-        // 根据lastore的lastore-daemon-status配置决定是否显示更新按钮
-        const int lastoreDaemonStatus = DConfigHelper::instance()->getConfig(LASTORE_DCONFIG_NAME, LASTORE_DCONFIG_NAME, "", LASTORE_DAEMON_STATUS, 0).toInt();
-        qCInfo(DDE_SHELL) << "Lastore daemon status: " << lastoreDaemonStatus;
-        const bool isUpdateReady = lastoreDaemonStatus & IS_UPDATE_READY;
-        const bool isUpdateDisabled = lastoreDaemonStatus & IS_UPDATE_DISABLED;
-        const bool isUpdateVisible = isUpdateReady && !isUpdateDisabled;
         m_updateAndRebootButton->setVisible(isUpdateVisible);
         m_updateAndRebootButton->setRedPointVisible(isUpdateVisible);
         m_updateAndShutdownButton->setVisible(isUpdateVisible);
         m_updateAndShutdownButton->setRedPointVisible(isUpdateVisible);
-        if (DConfigHelper::instance()->getConfig("hidePowerButtonsWhenUpdatable", false).toBool() && isUpdateVisible) {
-            qCInfo(DDE_SHELL) << "Force update is enbaled, hide shutdown button and reboot button";
-            m_requireShutdownButton->setVisible(false);
-            m_requireRestartButton->setVisible(false);
-        }
     } else {
         m_requireLockButton->setVisible(false);
         m_requireSwitchUserBtn->setVisible(false);
@@ -492,6 +489,12 @@ void ShutdownWidget::setButtonsVisible()
         m_requireLogoutButton->setVisible(false);
         m_updateAndShutdownButton->setVisible(false);
         m_updateAndRebootButton->setVisible(false);
+    }
+
+    if (isUpdateForce && isUpdateVisible) {
+        qCInfo(DDE_SHELL) << "Force update is enabled, hide shutdown button and reboot button";
+        m_requireShutdownButton->setVisible(false);
+        m_requireRestartButton->setVisible(false);
     }
 }
 

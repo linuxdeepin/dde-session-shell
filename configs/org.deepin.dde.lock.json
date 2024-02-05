@@ -162,16 +162,6 @@
             "permissions": "readwrite",
             "visibility": "private"
         },
-        "hidePowerButtonsWhenUpdatable": {
-            "value": false,
-            "serial": 0,
-            "flags": ["global"],
-            "name": "Hide power buttons when updatable",
-            "name[zh_CN]": "系统可更新时隐藏电源控制按钮",
-            "description": "系统可更新时，电源界面是否隐藏关机和重启按钮 \n值为true时隐藏 \n值为false时不隐藏 \n默认值为false",
-            "permissions": "readwrite",
-            "visibility": "public"
-        },
         "delayInhibitIgnoreList":{
             "value": [],
             "serial": 0,
