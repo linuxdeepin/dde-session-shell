@@ -816,6 +816,7 @@ void LockContent::keyPressEvent(QKeyEvent *event)
         if (m_model->currentModeState() == SessionBaseModel::ModeStatus::ConfirmPasswordMode) {
             m_model->setAbortConfirm(false);
             m_model->setPowerAction(SessionBaseModel::PowerAction::None);
+            m_model->setCurrentModeState(SessionBaseModel::ModeStatus::PasswordMode);
         } else if (m_model->currentModeState() == SessionBaseModel::ModeStatus::ShutDownMode) {
             m_model->setCurrentModeState(SessionBaseModel::ModeStatus::PasswordMode);
             m_model->setVisible(false);
