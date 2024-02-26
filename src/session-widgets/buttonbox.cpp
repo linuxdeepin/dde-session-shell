@@ -160,6 +160,8 @@ void ButtonBox::setButtonList(const QList<ButtonBoxButton *> &list, bool checkab
         if (!button)
             continue;
 
+        button->setLeftRoundedEnabled(false);
+        button->setRightRoundedEnabled(false);
         button->setSizePolicy(QSizePolicy::Minimum, QSizePolicy::Expanding);
         m_layout->addWidget(button);
         m_layout->setSpacing(0);
