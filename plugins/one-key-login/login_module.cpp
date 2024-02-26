@@ -166,7 +166,7 @@ void LoginModule::startCallHuaweiFingerprint()
                 failedHandler();
             }
         } else {
-            failedHandler();
+            m_waitAcceptSignalTimer->start();
         }
         watcher->deleteLater();
     });
