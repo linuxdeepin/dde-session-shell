@@ -7,6 +7,8 @@
 #include <DStyle>
 #include <DFontSizeManager>
 #include <DSpinner>
+#include <DLabel>
+#include <DToolTip>
 
 #include <QHBoxLayout>
 
@@ -14,16 +16,17 @@ DWIDGET_USE_NAMESPACE
 
 const int ButtonWidth = 200;
 const int ButtonHeight = 64;
+const int FIXED_INHIBITOR_WIDTH = 328;
 const QSize iconSize = QSize(24, 24);
 
 InhibitorRow::InhibitorRow(const QString &who, const QString &why, const QIcon &icon, QWidget *parent)
     : QWidget(parent)
 {
     QHBoxLayout *layout = new QHBoxLayout;
-    QLabel *whoLabel = new QLabel(who);
-    QLabel *whyLabel = new QLabel("- " + why);
+    DLabel *whoLabel = new DLabel(who);
+    whoLabel->setElideMode(Qt::ElideRight);
 
-    layout->addStretch();
+    DToolTip::setToolTipShowMode(whoLabel, DToolTip::ShowWhenElided);
 
     if (!icon.isNull()) {
         QLabel *iconLabel = new QLabel(this);
@@ -34,10 +37,8 @@ InhibitorRow::InhibitorRow(const QString &who, const QString &why, const QIcon &
     }
 
     layout->addWidget(whoLabel);
-    layout->addWidget(whyLabel);
     layout->addStretch();
     this->setFixedHeight(ButtonHeight);
-    this->setSizePolicy(QSizePolicy::Fixed, QSizePolicy::Fixed);
     this->setLayout(layout);
 }
 
@@ -104,7 +105,7 @@ void InhibitWarnView::setInhibitorList(const QList<InhibitorData> &list)
         QWidget *inhibitorWidget = new InhibitorRow(inhibitor.who, inhibitor.why, icon, this);
 
         m_inhibitorPtrList.append(inhibitorWidget);
-        m_inhibitorListLayout->addWidget(inhibitorWidget, 0, Qt::AlignHCenter);
+        m_inhibitorListLayout->addWidget(inhibitorWidget);
     }
 }
 
@@ -223,7 +224,11 @@ void InhibitWarnView::initUi()
     m_cancelBtn->setText(tr("Cancel"));
     m_cancelBtn->setFocusPolicy(Qt::StrongFocus);
 
-    m_inhibitorListLayout = new QVBoxLayout;
+    auto inhibitorListWidget = new QWidget(this);
+    inhibitorListWidget->setFixedWidth(FIXED_INHIBITOR_WIDTH);
+    m_inhibitorListLayout = new QVBoxLayout(inhibitorListWidget);
+    m_inhibitorListLayout->setMargin(0);
+    m_inhibitorListLayout->setSpacing(10);
     QVBoxLayout *buttonLayout = new QVBoxLayout(m_bottomWidget);
     buttonLayout->setAlignment(Qt::AlignBottom);
 
@@ -244,7 +249,8 @@ void InhibitWarnView::initUi()
 
     QVBoxLayout *centralLayout = new QVBoxLayout;
     centralLayout->addStretch();
-    centralLayout->addLayout(m_inhibitorListLayout);
+
+    centralLayout->addWidget(inhibitorListWidget, 0, Qt::AlignHCenter);
     centralLayout->addSpacing(50);
     centralLayout->addWidget(m_bottomWidget);
     centralLayout->addStretch();
