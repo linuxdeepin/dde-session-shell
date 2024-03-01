@@ -11,8 +11,6 @@
 
 MediaWidget::MediaWidget(QWidget *parent) : QWidget(parent)
 {
-    initUI();
-    initConnect();
 }
 
 void MediaWidget::initUI()
@@ -71,6 +69,8 @@ void MediaWidget::initMediaPlayer()
 
             qCDebug(DDE_SHELL) << "Got media player DBus service:" << service;
             m_dbusInter = new DBusMediaPlayer2(service, "/org/mpris/MediaPlayer2", QDBusConnection::sessionBus(), this);
+            initUI();
+            initConnect();
             m_dbusInter->MetadataChanged();
             m_dbusInter->PlaybackStatusChanged();
             m_dbusInter->VolumeChanged();
