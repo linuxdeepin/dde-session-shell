@@ -5,26 +5,31 @@
 #include "mediawidget.h"
 #include "util_updateui.h"
 #include "constants.h"
+#include "dbusmediaplayer2.h"
 
 #include <QHBoxLayout>
 #include <QWheelEvent>
 
 MediaWidget::MediaWidget(QWidget *parent) : QWidget(parent)
+    , m_dmprisWidget(nullptr)
 {
 }
 
 void MediaWidget::initUI()
 {
+    if (m_dmprisWidget)
+        return;
     m_dmprisWidget = new DMPRISControl;
     m_dmprisWidget->setAccessibleName("MPRISWidget");
     m_dmprisWidget->setFixedHeight(DDESESSIONCC::LOCK_CONTENT_TOP_WIDGET_HEIGHT);
     m_dmprisWidget->setPictureVisible(false);
 
-    auto *mainLayout = new QVBoxLayout;
+    auto mainLayout = new QVBoxLayout;
     mainLayout->setMargin(0);
     mainLayout->addWidget(m_dmprisWidget);
-
     setLayout(mainLayout);
+
+    initConnect();
 }
 
 void MediaWidget::initConnect()
@@ -68,12 +73,12 @@ void MediaWidget::initMediaPlayer()
             }
 
             qCDebug(DDE_SHELL) << "Got media player DBus service:" << service;
-            m_dbusInter = new DBusMediaPlayer2(service, "/org/mpris/MediaPlayer2", QDBusConnection::sessionBus(), this);
             initUI();
-            initConnect();
-            m_dbusInter->MetadataChanged();
-            m_dbusInter->PlaybackStatusChanged();
-            m_dbusInter->VolumeChanged();
+            auto dbusInter = new DBusMediaPlayer2(service, "/org/mpris/MediaPlayer2", QDBusConnection::sessionBus(), this);
+            dbusInter->MetadataChanged();
+            dbusInter->PlaybackStatusChanged();
+            dbusInter->VolumeChanged();
+            dbusInter->deleteLater();
         } else {
             qCWarning(DDE_SHELL) << "Init media player error: " << call.error().message();
         }
@@ -84,6 +89,5 @@ void MediaWidget::initMediaPlayer()
 
 void MediaWidget::changeVisible()
 {
-    const bool isWorking = m_dmprisWidget->isWorking();
-    m_dmprisWidget->setVisible(isWorking);
+    m_dmprisWidget->setVisible(m_dmprisWidget->isWorking());
 }
