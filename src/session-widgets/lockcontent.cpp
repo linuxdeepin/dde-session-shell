@@ -175,11 +175,6 @@ void LockContent::initConnections()
     connect(m_model, &SessionBaseModel::userListChanged, this, &LockContent::onUserListChanged);
     connect(m_model, &SessionBaseModel::userListLoginedChanged, this, &LockContent::onUserListChanged);
     connect(m_model, &SessionBaseModel::authFinished, this, [this](bool successful) {
-        // 验证成功后不主动隐藏登录界面，lightdm 会终止 greeter 进程，界面上保留认证成功的效果就行了
-        // 隐藏登录界面的时候会做一些状态重置的工作，影响界面的展示效果（比如密码框会在一瞬间变成请输入密码）
-        if (successful && m_model->appType() == AuthCommon::Login)
-            return;
-
         if (successful)
             setVisible(false);
         restoreMode();
