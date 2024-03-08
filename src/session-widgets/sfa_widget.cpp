@@ -844,15 +844,21 @@ void SFAWidget::initCustomMFAAuth()
  */
 void SFAWidget::initCustomAuth()
 {
-    qCDebug(DDE_SHELL) << "Init custom auth";
+    qCInfo(DDE_SHELL) << "Init custom auth";
     if (m_customAuth) {
         m_customAuth->reset();
-        return;
+        qCInfo(DDE_SHELL) << "Current auth plugin:" << m_customAuth->getModule();
+        if (m_customAuth->getModule() == PluginManager::instance()->getLoginPlugin())
+            return;
+
+        m_customAuth->deleteLater();
     }
 
     m_customAuth = new AuthCustom(this);
 
     LoginPlugin *plugin = PluginManager::instance()->getLoginPlugin();
+    qCInfo(DDE_SHELL) << "The plugin that will be put into use is:" << plugin->key();
+
     m_customAuth->setModule(plugin);
     m_customAuth->setModel(m_model);
     m_customAuth->initUi();

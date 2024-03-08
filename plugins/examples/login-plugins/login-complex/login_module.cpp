@@ -22,7 +22,7 @@ LoginModule::LoginModule(QObject *parent)
     , m_loginWidget(nullptr)
     , m_appType(AppType::Lock)
 {
-    setObjectName(QStringLiteral("LoginModule"));
+    setObjectName(QStringLiteral("complex-login-plugin"));
 }
 
 LoginModule::~LoginModule()

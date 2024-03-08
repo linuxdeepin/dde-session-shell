@@ -211,6 +211,26 @@
             "description": "系统版本显示；false：不显示，true：显示。默认值为true；",
             "permissions": "readwrite",
             "visibility": "private"
+        },
+        "designatedLoginPlugin":{
+            "value": "",
+            "serial": 0,
+            "flags": ["global"],
+            "name": "Designated login plugin",
+            "name[zh_CN]": "指定的认证插件",
+            "description": "重启后生效",
+            "permissions": "readwrite",
+            "visibility": "private"
+        },
+        "defaultLoginPlugin":{
+            "value": "",
+            "serial": 0,
+            "flags": ["global"],
+            "name": "Default login plugin",
+            "name[zh_CN]": "默认的认证插件，默认为空，有加域退域场景的时候需要使用。",
+            "description": "重启后生效",
+            "permissions": "readwrite",
+            "visibility": "private"
         }
     }
 }

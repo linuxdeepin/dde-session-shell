@@ -6,6 +6,7 @@
 #include "login_plugin_v1.h"
 #include "login_plugin_v2.h"
 #include "public_func.h"
+#include "dconfig_helper.h"
 
 static PluginManager pluginManager;
 
@@ -39,13 +40,30 @@ void PluginManager::addPlugin(dss::module::BaseModuleInterface *module, const QS
 
 LoginPlugin* PluginManager::getLoginPlugin() const
 {
+    // 指定插件 >> 默认插件 >> 第一个插件
+    const auto designatedLoginPlugin = DConfigHelper::instance()->getConfig("designatedLoginPlugin", "").toString();
+    const auto defaultLoginPlugin = DConfigHelper::instance()->getConfig("defaultLoginPlugin", "").toString();
+    qCInfo(DDE_SHELL) << "Designated login plugin:" << designatedLoginPlugin;
+    qCInfo(DDE_SHELL) << "Default login plugin:" << defaultLoginPlugin;
+    LoginPlugin* ret = nullptr;
     for (const auto &plugin : m_plugins.values()) {
         if (plugin && PluginBase::ModuleType::LoginType == plugin->type()) {
-            return dynamic_cast<LoginPlugin*>(plugin);
+            // 第一个插件
+            if (!ret)
+                ret = dynamic_cast<LoginPlugin*>(plugin);
+            // 指定插件
+            if (!designatedLoginPlugin.isEmpty() && plugin->key() == designatedLoginPlugin) {
+                ret = dynamic_cast<LoginPlugin*>(plugin);
+                break;
+            }
+            // 默认插件
+            else if (!defaultLoginPlugin.isEmpty() && plugin->key() == defaultLoginPlugin ) {
+                ret = dynamic_cast<LoginPlugin*>(plugin);
+            }
         }
     }
 
-    return nullptr;
+    return ret;
 }
 
 

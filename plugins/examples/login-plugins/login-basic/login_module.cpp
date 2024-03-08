@@ -20,7 +20,7 @@ LoginModule::LoginModule(QObject *parent)
     , m_authCallback(nullptr)
     , m_loginWidget(nullptr)
 {
-    setObjectName(QStringLiteral("LoginModule"));
+    setObjectName(QStringLiteral("basic-login-plugin"));
 }
 
 LoginModule::~LoginModule()
