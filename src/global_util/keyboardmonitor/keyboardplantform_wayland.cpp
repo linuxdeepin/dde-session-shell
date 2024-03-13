@@ -33,10 +33,14 @@ KeyboardPlatformWayland::KeyboardPlatformWayland(QObject *parent)
     , m_eventQueue(nullptr)
     , m_capsLock(false)
     , m_numLockOn(false)
+    , m_repeatTimer(new QTimer(this))
 {
     // 只有锁屏需要从 kwin 获取 numlock 的状态，greeter 的 numlock 状态是从 dconfig 中读取的
     if (qApp && qApp->applicationName().contains("lock"))
         initStatus();
+
+    m_repeatTimer->setInterval(100);
+    m_repeatTimer->setSingleShot(true);
 }
 
 KeyboardPlatformWayland::~KeyboardPlatformWayland()
@@ -63,6 +67,7 @@ bool KeyboardPlatformWayland::setNumLockStatus(const bool &on)
         m_fakeInput->authenticate(QStringLiteral("lightdm-deepin-greeter"), QStringLiteral("Set num lock state"));
         m_fakeInput->requestKeyboardKeyPress(KEY_NUMLOCK);
         m_fakeInput->requestKeyboardKeyRelease(KEY_NUMLOCK);
+        m_repeatTimer->start();
         m_numLockOn = !m_numLockOn;
         return true;
     }
@@ -100,6 +105,9 @@ void KeyboardPlatformWayland::setupRegistry(Registry *registry)
                         qDebug() << "CapsLock state: " << m_capsLock;
                         Q_EMIT capsLockStatusChanged(m_capsLock);
                     } else if (key == KEY_NUMLOCK) {
+                        if (m_repeatTimer->isActive())
+                            return;
+
                         m_numLockOn = !m_numLockOn;
                         qDebug() << "NumLock state: " << m_numLockOn;
                         Q_EMIT numLockStatusChanged(m_numLockOn);

@@ -9,6 +9,8 @@
 
 #include "keyboardplatform.h"
 
+#include <QTimer>
+
 class QThread;
 
 namespace KWayland
@@ -52,6 +54,7 @@ private:
     EventQueue *m_eventQueue;
     bool m_capsLock;
     bool m_numLockOn;
+    QTimer *m_repeatTimer;
 };
 
 #endif
