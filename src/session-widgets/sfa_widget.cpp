@@ -482,6 +482,7 @@ void SFAWidget::initPasswdAuth()
         }
     });
 
+    connect(m_passwordAuth, &AuthPassword::requestUpdateBlurEffectGeometry, this, &SFAWidget::updateBlurEffectGeometry);
     connect(m_lockButton, &QPushButton::clicked, m_passwordAuth, &AuthPassword::requestAuthenticate);
     connect(KeyboardMonitor::instance(), &KeyboardMonitor::capsLockStatusChanged, m_passwordAuth, &AuthPassword::setCapsLockVisible);
     connect(m_passwordAuth, &AuthPassword::lineEditTextChanged, this, [this](const QString &value) {

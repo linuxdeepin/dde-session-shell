@@ -583,6 +583,9 @@ void LockContent::resizeEvent(QResizeEvent *event)
     if (SessionBaseModel::PasswordMode == m_model->currentModeState() || (SessionBaseModel::ConfirmPasswordMode == m_model->currentModeState())) {
         m_centerSpacerItem->changeSize(0, calcTopSpacing(m_authWidget->getTopSpacing()));
         m_centerVLayout->invalidate();
+        QTimer::singleShot(0, this, [ = ] {
+            m_authWidget->updatePasswordErrortipUi();
+        });
     }
 
     SessionBaseWindow::resizeEvent(event);

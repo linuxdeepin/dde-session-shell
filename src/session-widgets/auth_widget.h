@@ -130,6 +130,8 @@ public:
     void setAccountErrorMsg(const QString &message);
     void syncPasswordResetPasswordVisibleChanged(const QVariant &value);
     void syncResetPasswordUI();
+    void syncPasswordErrorTipsClearChanged(const QVariant &value);
+    void updatePasswordErrortipUi();
 
 Q_SIGNALS:
     void requestCheckSameNameAccount(const QString &account, bool switchUser = true);

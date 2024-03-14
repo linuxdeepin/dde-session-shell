@@ -179,6 +179,8 @@ set(LOCK_SRCS
     src/dde-lock/dbus/dbuslockfrontservice.cpp
     src/dde-lock/dbus/dbusshutdownagent.cpp
     src/dde-lock/dbus/dbusshutdownfrontservice.cpp
+    src/widgets/passworderrortipswidget.cpp
+    src/widgets/passworderrortipswidget.h
 )
 
 link_libraries(

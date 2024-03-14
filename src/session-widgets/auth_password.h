@@ -7,6 +7,7 @@
 
 #include "auth_module.h"
 #include "assist_login_widget.h"
+#include "passworderrortipswidget.h"
 
 #include <DIconButton>
 #include <DLabel>
@@ -59,6 +60,11 @@ public:
     {
         m_isPasswdAuthWidgetReplaced = isPasswdAuthWidgetReplaced;
     }
+    bool isShowPasswrodErrorTip();
+    bool canShowPasswrodErrorTip();
+    void showErrorTip(const QString &text);
+    void clearPasswrodErrorTip(bool isClear);
+    void updatePasswrodErrorTipUi();
 
 signals:
     void focusChanged(const bool);
@@ -70,6 +76,8 @@ signals:
     void requestPluginConfigChanged(const LoginPlugin::PluginConfig &PluginConfig);
     void requestHidePlugin();
     void requestPluginAuthToken(const QString accout, const QString token);
+    void requestUpdateBlurEffectGeometry();
+    void passwordErrorTipsClearChanged(const bool isClear);
 
 public slots:
     void setResetPasswordMessageVisible(const bool isVisible, bool fromResetDialog = false);
@@ -79,6 +87,8 @@ protected:
     bool eventFilter(QObject *watched, QEvent *event) override;
     void hideEvent(QHideEvent *event) override;
     void showEvent(QShowEvent *event) override;
+    void resizeEvent(QResizeEvent *event) Q_DECL_OVERRIDE;
+    void moveEvent(QMoveEvent *event) Q_DECL_OVERRIDE;
 
 private:
     void initUI();
@@ -97,6 +107,7 @@ private:
     DLineEditEx *m_lineEdit;        // 密码输入框
     DIconButton *m_passwordShowBtn; // 密码显示按钮
     DIconButton *m_passwordHintBtn; // 密码提示按钮
+    PasswordErrorTipsWidget* m_passwordTipsWidget;  // 认证错误提示窗口
     QString m_passwordHint;         // 密码提示
     bool m_resetPasswordMessageVisible;
     DFloatingMessage *m_resetPasswordFloatingMessage;
@@ -108,6 +119,7 @@ private:
 
     bool m_isPasswdAuthWidgetReplaced;
     AssistLoginWidget *m_assistLoginWidget;
+    DConfig *m_authenticationDconfig;
 };
 
 #endif // AUTHPASSWORD_H

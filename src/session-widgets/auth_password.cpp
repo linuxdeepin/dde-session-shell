@@ -26,6 +26,7 @@
 #include <QWindow>
 #include <QValidator>
 #include <QRegExp>
+#include <DConfig>
 
 #include <com_deepin_daemon_accounts_user.h>
 
@@ -40,6 +41,7 @@ AuthPassword::AuthPassword(QWidget *parent)
     , m_lineEdit(new DLineEditEx(this))
     , m_passwordShowBtn(new DIconButton(this))
     , m_passwordHintBtn(new DIconButton(this))
+    , m_passwordTipsWidget(new PasswordErrorTipsWidget(this))
     , m_resetPasswordMessageVisible(false)
     , m_resetPasswordFloatingMessage(nullptr)
     , m_bindCheckTimer(nullptr)
@@ -48,9 +50,11 @@ AuthPassword::AuthPassword(QWidget *parent)
     , m_resetDialogShow(false)
     , m_isPasswdAuthWidgetReplaced(false)
     , m_assistLoginWidget(nullptr)
+    , m_authenticationDconfig(DConfig::create("org.deepin.dde.authentication", "org.deepin.dde.authentication.errorecho", QString(), this))
 {
     qRegisterMetaType<LoginPlugin::PluginConfig>("LoginPlugin::PluginConfig");
 
+    setMaximumSize(500,200);
     setObjectName(QStringLiteral("AuthPassword"));
     setAccessibleName(QStringLiteral("AuthPassword"));
 
@@ -70,7 +74,7 @@ void AuthPassword::initUI()
 {
     QVBoxLayout *mainLayout = new QVBoxLayout(this);
     mainLayout->setContentsMargins(0, 0, 0, 0);
-    mainLayout->setSpacing(0);
+    mainLayout->setSpacing(5);
 
     m_lineEdit->setClearButtonEnabled(false);
     m_lineEdit->setEchoMode(QLineEdit::Password);
@@ -135,6 +139,7 @@ void AuthPassword::initUI()
     }
 
     updatePasswordTextMargins();
+    m_passwordTipsWidget->hide();
 }
 
 /**
@@ -161,6 +166,13 @@ void AuthPassword::initConnections()
         hidePasswordHintWidget();
         m_lineEdit->setAlert(false);
         updatePasswordTextMargins();
+        if (canShowPasswrodErrorTip() && isShowPasswrodErrorTip()) {
+            m_passwordTipsWidget->reset();
+            m_passwordTipsWidget->setErrDetailVisible(false);
+            m_passwordTipsWidget->setVisible(false);
+            m_passwordTipsWidget->adjustSize();
+            emit passwordErrorTipsClearChanged(true);
+        }
         emit lineEditTextChanged(text);
     });
     connect(m_lineEdit, &DLineEditEx::returnPressed, this, [this] {
@@ -202,6 +214,13 @@ void AuthPassword::reset()
     hidePasswordHintWidget();
     setLineEditEnabled(true);
     setLineEditInfo(tr("Password"), PlaceHolderText);
+    if (m_passwordTipsWidget && canShowPasswrodErrorTip()) {
+        m_passwordTipsWidget->reset();
+        m_passwordTipsWidget->setErrDetailVisible(false);
+        m_passwordTipsWidget->setVisible(false);
+        m_passwordTipsWidget->adjustSize();
+        emit passwordErrorTipsClearChanged(true);
+    }
 }
 
 /**
@@ -245,8 +264,9 @@ void AuthPassword::setAuthState(const AuthState state, const QString &result)
         } else if (leftTimes == 1) {
             setLineEditInfo(tr("Verification failed, only one chance left"), PlaceHolderText);
         }
-        // 如果在锁定状态，没有必要发出警告信息
-        if(!m_limitsInfo->locked) {
+        if (canShowPasswrodErrorTip()) {
+            showErrorTip(tr("Wrong Password"));
+        } else if (!m_limitsInfo->locked) {
             setLineEditInfo(tr("Wrong Password"), AlertText);
         }
 
@@ -395,6 +415,12 @@ void AuthPassword::setLineEditInfo(const QString &text, const TextType type)
     case AlertText:
         showAlertMessage(text);
         m_lineEdit->setAlert(true);
+        if (canShowPasswrodErrorTip()) {
+            m_passwordTipsWidget->addErrorDetailMsg(text);
+        } else {
+            m_lineEdit->showAlertMessage(text, this, 5000);
+            m_lineEdit->setAlert(true);
+        }
         break;
     case InputText: {
         const int cursorPos = m_lineEdit->lineEdit()->cursorPosition();
@@ -746,6 +772,7 @@ void AuthPassword::hideEvent(QHideEvent *event)
     hidePasswordHintWidget();
     setLineEditInfo(tr("Password"), PlaceHolderText);
     closeResetPasswordMessage();
+    m_passwordTipsWidget->hide();
     AuthModule::hideEvent(event);
 }
 
@@ -766,6 +793,12 @@ void AuthPassword::showEvent(QShowEvent *event)
     } else {
         setResetPasswordMessageVisible(false);
         updateResetPasswordUI();
+    }
+
+    if (canShowPasswrodErrorTip()) {
+        QTimer::singleShot(0, this, [ = ] {
+            updatePasswrodErrorTipUi();
+        });
     }
 
     AuthModule::showEvent(event);
@@ -842,3 +875,69 @@ void AuthPassword::startPluginAuth()
     }
 }
 
+bool AuthPassword::isShowPasswrodErrorTip()
+{
+    return m_passwordTipsWidget->isVisible();
+}
+
+bool AuthPassword::canShowPasswrodErrorTip()
+{
+    // 从da的dconfig配置获取
+    if (!m_authenticationDconfig) {
+        return false;
+    }
+    return m_authenticationDconfig->value("PasswordErrorEcho", false).toBool();
+}
+
+void AuthPassword::showErrorTip(const QString &text)
+{
+    if (canShowPasswrodErrorTip()) {
+        m_lineEdit->hideAlertMessage();
+        m_lineEdit->setAlert(false);
+        m_passwordTipsWidget->setErrorTips(text);
+        m_passwordTipsWidget->setVisible(isVisible());
+    } else {
+        m_lineEdit->showAlertMessage(text, this, 5000);
+        m_lineEdit->setAlert(true);
+    }
+}
+
+void AuthPassword::clearPasswrodErrorTip(bool isClear)
+{
+    if (isClear) {
+        m_passwordTipsWidget->reset();
+    }
+}
+
+void AuthPassword::updatePasswrodErrorTipUi()
+{
+    m_passwordTipsWidget->setVisible(m_passwordTipsWidget->hasErrorTips());
+    QRect rc =  m_lineEdit->geometry();
+
+    QPoint pt(rc.x(), rc.y() + rc.height() +5);
+
+    pt = m_lineEdit->mapToGlobal(pt);
+    m_passwordTipsWidget->move(pt);
+}
+
+void AuthPassword::resizeEvent(QResizeEvent *event)
+{
+    qInfo() << Q_FUNC_INFO << event->size() << event->oldSize();
+    if (canShowPasswrodErrorTip()) {
+        QTimer::singleShot(0, this, [ = ] {
+            updatePasswrodErrorTipUi();
+        });
+    }
+    QWidget::resizeEvent(event);
+}
+
+void AuthPassword::moveEvent(QMoveEvent *event)
+{
+    qInfo() << Q_FUNC_INFO << event->pos() << event->oldPos();
+    if (canShowPasswrodErrorTip()) {
+        QTimer::singleShot(0, this, [ = ] {
+            updatePasswrodErrorTipUi();
+        });
+    }
+    QWidget::moveEvent(event);
+}

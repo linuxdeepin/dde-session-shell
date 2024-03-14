@@ -559,3 +559,17 @@ void AuthWidget::terminalLockedChanged(bool locked)
         m_expiredStateLabel->hide();
     }
 }
+
+void AuthWidget::syncPasswordErrorTipsClearChanged(const QVariant &value)
+{
+    if (m_passwordAuth ) {
+        m_passwordAuth->clearPasswrodErrorTip(value.toBool());
+    }
+}
+
+void AuthWidget::updatePasswordErrortipUi()
+{
+    if (m_passwordAuth && m_passwordAuth->canShowPasswrodErrorTip()) {
+        m_passwordAuth->updatePasswrodErrorTipUi();
+    }
+}
