@@ -143,6 +143,43 @@ int main(int argc, char *argv[])
     shutdownAgent.setModel(model);
     DBusShutdownFrontService shutdownServices(&shutdownAgent);
 
+    // 这里提前进行单实例判断，避免后面数据初始化后再进行单实例判断而导致各种问题（例如：多次调用LockContent::instance()->init(model) 导致的localserver失效）
+    auto isSingle = app->setSingleInstance(QString("dde-lock%1").arg(getuid()), DApplication::UserScope);
+    QDBusConnection conn = QDBusConnection::sessionBus();
+    if (!conn.registerService(DBUS_LOCK_NAME) ||
+        !conn.registerObject(DBUS_LOCK_PATH, &lockAgent) ||
+        !conn.registerService(DBUS_SHUTDOWN_NAME) ||
+        !conn.registerObject(DBUS_SHUTDOWN_PATH, &shutdownAgent) ||
+        !isSingle) {
+        qCWarning(DDE_SHELL) << "Register DBus failed, maybe lock front is running, error: " << conn.lastError();
+
+        if (!runDaemon) {
+            const char *lockFrontInter = "com.deepin.dde.lockFront";
+            const char *shutdownFrontInter = "com.deepin.dde.shutdownFront";
+            if (showUserList) {
+                QDBusInterface ifc(DBUS_LOCK_NAME, DBUS_LOCK_PATH, lockFrontInter, QDBusConnection::sessionBus(), nullptr);
+                ifc.asyncCall("ShowUserList");
+            } else if (showShutdown) {
+                QDBusInterface ifc(DBUS_SHUTDOWN_NAME, DBUS_SHUTDOWN_PATH, shutdownFrontInter, QDBusConnection::sessionBus(), nullptr);
+                ifc.asyncCall("Show");
+            } else if (showLockScreen) {
+                do {
+                    // 当前会话被锁定时，强制等待10ms后再获取一次锁定状态，如果变了直接退出，避免快速锁屏解锁时，lock状态未及时更新导致再启动dde-lock直接进入了锁屏状态,From bug: 200415
+                    if (worker->isLocked()) {
+                        QThread::msleep(10);
+                        if (!worker->isLocked())
+                            return 0;
+                    }
+                } while (false);
+
+                QDBusInterface ifc(DBUS_LOCK_NAME, DBUS_LOCK_PATH, lockFrontInter, QDBusConnection::sessionBus(), nullptr);
+                ifc.asyncCall("Show");
+            }
+        }
+
+        return 0;
+    }
+
     LockContent::instance()->init(model);
     WarningContent::instance()->setModel(model);
 
@@ -216,52 +253,14 @@ int main(int argc, char *argv[])
     ModulesLoader::instance().setLoadLoginModule(false);
     ModulesLoader::instance().start(QThread::LowestPriority);
 
-    auto isSingle = app->setSingleInstance(QString("dde-lock%1").arg(getuid()), DApplication::UserScope);
-    QDBusConnection conn = QDBusConnection::sessionBus();
-    int ret = 0;
-    if (!conn.registerService(DBUS_LOCK_NAME) ||
-        !conn.registerObject(DBUS_LOCK_PATH, &lockAgent) ||
-        !conn.registerService(DBUS_SHUTDOWN_NAME) ||
-        !conn.registerObject(DBUS_SHUTDOWN_PATH, &shutdownAgent) ||
-        !isSingle) {
-        qCWarning(DDE_SHELL) << "Register DBus failed, maybe lock front is running, error: " << conn.lastError();
-
-        if (!runDaemon) {
-            const char *lockFrontInter = "com.deepin.dde.lockFront";
-            const char *shutdownFrontInter = "com.deepin.dde.shutdownFront";
-            if (showUserList) {
-                QDBusInterface ifc(DBUS_LOCK_NAME, DBUS_LOCK_PATH, lockFrontInter, QDBusConnection::sessionBus(), nullptr);
-                ifc.asyncCall("ShowUserList");
-            } else if (showShutdown) {
-                QDBusInterface ifc(DBUS_SHUTDOWN_NAME, DBUS_SHUTDOWN_PATH, shutdownFrontInter, QDBusConnection::sessionBus(), nullptr);
-                ifc.asyncCall("Show");
-            } else if (showLockScreen) {
-                do {
-                    // 当前会话被锁定时，强制等待10ms后再获取一次锁定状态，如果变了直接退出，避免快速锁屏解锁时，lock状态未及时更新导致再启动dde-lock直接进入了锁屏状态,From bug: 200415
-                    if (worker->isLocked()) {
-                        QThread::msleep(10);
-
-                        if (!worker->isLocked())
-                            return 0;
-                    }
-
-                } while (false);
-
-                QDBusInterface ifc(DBUS_LOCK_NAME, DBUS_LOCK_PATH, lockFrontInter, QDBusConnection::sessionBus(), nullptr);
-                ifc.asyncCall("Show");
-            }
+    if (!runDaemon) {
+        if (showUserList) {
+            emit model->showUserList();
+        } else if (showShutdown) {
+            emit model->showShutdown();
+        } else if (showLockScreen) {
+            emit model->showLockScreen();
         }
-    } else {
-        if (!runDaemon) {
-            if (showUserList) {
-                emit model->showUserList();
-            } else if (showShutdown) {
-                emit model->showShutdown();
-            } else if (showLockScreen) {
-                emit model->showLockScreen();
-            }
-        }
-        ret = app->exec();
     }
-    return ret;
+    return app->exec();
 }
