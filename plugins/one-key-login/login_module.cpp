@@ -60,6 +60,24 @@ LoginModule::LoginModule(QObject *parent)
         m_loadPluginType = showPlugin ? Load : Notload;
         if (!showPlugin)
             return;
+
+        //OPTIMIZE 不应该和这两个配置耦合，更不应该把开启一键登录的逻辑放到构造函数中！
+        const auto &designatedLoginPlugin =  m_dconfig->value("designatedLoginPlugin", "").toString();
+        const auto &defaultLoginPlugin =  m_dconfig->value("defaultLoginPlugin", "").toString();
+        bool useMe = false;
+        if (designatedLoginPlugin.isEmpty() && defaultLoginPlugin.isEmpty()) {
+            useMe = true;
+        } else if (!designatedLoginPlugin.isEmpty()) {
+            useMe = designatedLoginPlugin == key();
+        } else if (!defaultLoginPlugin.isEmpty()) {
+            useMe = defaultLoginPlugin == key();
+        }
+        qInfo() << "Load one-key-plugin:" << useMe
+                << ", designated login plugin:" << designatedLoginPlugin
+                << ", default login plugin:" << defaultLoginPlugin;
+        m_loadPluginType = useMe ? Load :Notload;
+        if (!useMe)
+            return;
     }
 
     QDBusInterface login1Inter("org.freedesktop.login1", "/org/freedesktop/login1",
