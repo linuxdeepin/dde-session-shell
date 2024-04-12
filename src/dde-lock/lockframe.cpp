@@ -11,10 +11,14 @@
 #include "public_func.h"
 #include "dconfig_helper.h"
 
+#include <DPlatformWindowHandle>
+
 #include <QApplication>
 #include <QDBusInterface>
 #include <QGSettings>
 #include <QX11Info>
+
+#define LOCK_START_EFFECT 16 //锁屏动效比较特殊，窗管根据这个动效值进行处理
 
 xcb_atom_t internAtom(xcb_connection_t *connection, const char *name, bool only_if_exists)
 {
@@ -47,6 +51,9 @@ LockFrame::LockFrame(SessionBaseModel *const model, QWidget *parent)
     }
 
     setAccessibleName("LockFrame");
+    DPlatformWindowHandle handle(this, this);
+    handle.setWindowStartUpEffect(static_cast<DPlatformWindowHandle::EffectType>(LOCK_START_EFFECT));
+
     if (!currentContent) {
         setContent(LockContent::instance());
         m_model->setCurrentContentType(SessionBaseModel::LockContent);
