@@ -996,6 +996,7 @@ void SFAWidget::onRetryButtonVisibleChanged(bool visible)
 {
     m_lockButton->setVisible(!visible && !(m_customAuth && AT_Custom == m_currentAuthType && !m_customAuth->pluginConfig().showLockButton));
     m_retryButton->setVisible(visible);
+    visible ? m_retryButton->setFocus() : updateFocus();
 }
 
 void SFAWidget::setBioAuthStateVisible(AuthModule *authModule, bool visible)
