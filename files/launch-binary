@@ -10,9 +10,9 @@ else
 fi
 
 # 判断是否有脚本需要在greeter之前调用
-exec_path=$(/usr/share/dde-session-shell/greeters.d/pre-greeter | tail -1)
-
+pre_greeter_out=$(/usr/share/dde-session-shell/greeters.d/pre-greeter)
 exit_code=$?
+exec_path=$(printf "%b\n" "$pre_greeter_out" | tail -1)
 
 if [[ $exit_code == 0 ]]; then
     echo "Pre-greeter path is: "$exec_path
