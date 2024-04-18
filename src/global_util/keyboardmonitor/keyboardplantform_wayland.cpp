@@ -35,20 +35,18 @@ KeyboardPlatformWayland::KeyboardPlatformWayland(QObject *parent)
     , m_numLockOn(false)
     , m_repeatTimer(new QTimer(this))
 {
-    // 只有锁屏需要从 kwin 获取 numlock 的状态，greeter 的 numlock 状态是从 dconfig 中读取的
-    if (qApp && qApp->applicationName().contains("lock"))
-        initStatus();
+    initStatus();
 
     m_repeatTimer->setInterval(100);
     m_repeatTimer->setSingleShot(true);
 }
 
 KeyboardPlatformWayland::~KeyboardPlatformWayland()
- {
+{
     m_connectionThread->quit();
     m_connectionThread->wait();
     m_connectionThreadObject->deleteLater();
- }
+}
 
 bool KeyboardPlatformWayland::isCapsLockOn()
 {
@@ -144,12 +142,18 @@ void KeyboardPlatformWayland::initStatus()
         if (!reply.isError()) {
             int locked = reply.argumentAt(0).toInt();
             m_capsLock = (locked & 0x02) != 0;
-            m_numLockOn = (locked & 0x10) != 0;
             // 异步结果通过信号发布
             Q_EMIT capsLockStatusChanged(m_capsLock);
-            Q_EMIT numLockStatusChanged(m_numLockOn);
+            qCDebug(DDE_SHELL) << "capslock status init : " << m_capsLock;
+
+            // greeter中numlock状态来自配置
+            if (qApp && qApp->applicationName().contains("lock")) {
+                m_numLockOn = (locked & 0x10) != 0;
+                Q_EMIT numLockStatusChanged(m_numLockOn);
+                qCDebug(DDE_SHELL) << "numlock status init : " << m_numLockOn;
+            }
         } else {
-            qCInfo(DDE_SHELL) << "caps/num lock status init failed, ignore it in greeter :" << reply.error().message();
+            qCWarning(DDE_SHELL) << "failed to init caps/num lock status :" << reply.error().message();
         }
 
         callWatcher->deleteLater();
