@@ -189,6 +189,7 @@ void MultiScreenManager::raiseContentFrame()
         if (it.value() && it.value()->property("contentVisible").toBool()) {
             it.value()->raise();
             if (QGuiApplication::platformName().startsWith("wayland", Qt::CaseInsensitive)) {
+                it.value()->activateWindow();
                 it.value()->setFocus();
             }
 
