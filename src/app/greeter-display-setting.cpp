@@ -77,6 +77,36 @@ float toListedScaleFactor(float s)  {
 	return max;
 }
 
+static double calcMaxScaleFactor(unsigned int width, unsigned int height) {
+    const QList<double> scaleFactors = {1.0, 1.25, 1.5, 1.75, 2.0, 2.25, 2.5, 2.75, 3.0};
+
+    // 如果是竖屏，则反置width, height，防止计算的缩放有误
+    if (width < height) {
+        std::swap(width, height);
+    }
+
+    double maxWScale = width / 1024.0;
+    double maxHScale = height / 768.0;
+
+    double maxValue = 0.0;
+    if (maxWScale < maxHScale) {
+        maxValue = maxWScale;
+    } else {
+        maxValue = maxHScale;
+    }
+
+    if (maxValue > 3.0) {
+        maxValue = 3.0;
+    }
+
+    double maxScale = 1.0;
+    for (int idx = 0; (idx*0.25 + 1.0) <= maxValue; idx++) {
+        maxScale = scaleFactors[idx];
+    }
+
+    return maxScale;
+}
+
 static double getScaleFactor() {
     Display *display = XOpenDisplay(nullptr);
     double scaleFactor = 0.0;
@@ -93,6 +123,7 @@ static double getScaleFactor() {
     }
 
     if (resources) {
+        double minScaleFactor = 3.0;
         for (int i = 0; i < resources->noutput; i++) {
             XRROutputInfo* outputInfo = XRRGetOutputInfo(display, resources, resources->outputs[i]);
             if (outputInfo->crtc == 0 || outputInfo->mm_width == 0) continue;
@@ -107,7 +138,16 @@ static double getScaleFactor() {
             float fix = (lenMm - lenMmStd) * (lenPx / lenPxStd) * 0.00158;
             float scale = (lenPx / lenMm) / (lenPxStd / lenMmStd) + fix;
             scaleFactor = toListedScaleFactor(scale);
+
+            double maxScaleFactor = calcMaxScaleFactor(crtInfo->width, crtInfo->height);
+            if (scaleFactor > maxScaleFactor) {
+                scaleFactor = maxScaleFactor;
+            }
+            if (minScaleFactor > scaleFactor) {
+                minScaleFactor = scaleFactor;
+            }
         }
+        scaleFactor = minScaleFactor;
     }
     else {
         qCWarning(DDE_SHELL) << "Get scale factor failed, please check X11 Extension";
