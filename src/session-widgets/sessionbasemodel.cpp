@@ -8,6 +8,7 @@
 
 #include <QDebug>
 #include <QGSettings>
+#include "dconfig_helper.h"
 
 DCORE_USE_NAMESPACE
 
@@ -36,6 +37,7 @@ SessionBaseModel::SessionBaseModel(QObject *parent)
     , m_currentContentType(NoContent)
     , m_lightdmPamStarted(false)
     , m_authResult{AuthType::AT_None, AuthState::AS_None, ""}
+    , m_enableShellBlackMode(DConfigHelper::instance()->getConfig("enableShellBlack", false).toBool())
 {
 }
 
@@ -204,6 +206,10 @@ void SessionBaseModel::setAbortConfirm(bool abortConfirm)
 
 void SessionBaseModel::setIsBlackMode(bool is_black)
 {
+    if (!m_enableShellBlackMode) {
+        return;
+    }
+
     if (m_isBlackMode == is_black)
         return;
 

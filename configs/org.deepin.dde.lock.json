@@ -191,6 +191,16 @@
             "description": "重启后生效",
             "permissions": "readwrite",
             "visibility": "private"
+        },
+        "enableShellBlack":{
+            "value": true,
+            "serial": 0,
+            "flags": ["global"],
+            "name": "EnableShellBlack",
+            "name[zh_CN]": "是否打开shell的黑屏模式",
+            "description": "是否打开shell的黑屏模；false：不开，true：开启。默认值为true；",
+            "permissions": "readwrite",
+            "visibility": "private"
         }
     }
 }

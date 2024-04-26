@@ -280,6 +280,7 @@ private:
 
     bool m_lightdmPamStarted; // 标志lightdmpam是否已经开启，主要用于greeter,lock不涉及lightdm
     AuthResult m_authResult; // 记录认证结果
+    bool m_enableShellBlackMode;
 };
 
 #endif // SESSIONBASEMODEL_H
