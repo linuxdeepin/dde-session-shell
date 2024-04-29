@@ -647,3 +647,11 @@ void SessionBaseModel::sendTerminalLockedSignal()
 {
     emit terminalLockedChanged(m_isTerminalLocked);
 }
+
+void SessionBaseModel::setUserlistVisible(bool visible)
+{
+    if (visible == m_userlistVisible) {
+        return;
+    }
+    m_userlistVisible = visible;
+}

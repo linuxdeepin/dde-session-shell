@@ -173,6 +173,10 @@ public:
     void setLightdmPamStarted(bool lightPamStarted);
 
     inline const AuthResult &getAuthResult() const { return m_authResult; }
+
+    inline bool userlistVisible() const { return m_userlistVisible; }
+    void setUserlistVisible(bool visible);
+
 signals:
     /* com.deepin.daemon.Accounts */
     void currentUserChanged(const std::shared_ptr<User>);
@@ -261,6 +265,7 @@ private:
     bool m_isUseWayland;
     int m_userListSize = 0;
     bool m_isTerminalLocked = false;
+    bool m_userlistVisible = true;
     AppType m_appType;
     QList<std::shared_ptr<User>> m_userList;
     std::shared_ptr<User> m_currentUser;

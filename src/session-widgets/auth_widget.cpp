@@ -169,6 +169,7 @@ void AuthWidget::setUser(std::shared_ptr<User> user)
     if (user->type() == User::Default) {
         m_userNameWidget->hide();
         m_accountEdit->show();
+        this->setFocusProxy(m_accountEdit);
         m_accountEdit->setFocus();
     } else {
         m_userNameWidget->show();

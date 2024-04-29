@@ -237,9 +237,11 @@ void LockWorker::initData()
     m_model->updateUserList(m_accountsInter->userList());
     m_model->updateLoginedUserList(m_loginedInter->userList());
 
+    m_model->setUserlistVisible(valueByQSettings<bool>("", "userlist", true));
     /* com.deepin.udcp.iam */
     QDBusInterface ifc("com.deepin.udcp.iam", "/com/deepin/udcp/iam", "com.deepin.udcp.iam", QDBusConnection::systemBus(), this);
-    const bool allowShowCustomUser = valueByQSettings<bool>("", "loginPromptInput", false) || ifc.property("Enable").toBool() || checkIsADDomain();
+    const bool allowShowCustomUser = (!m_model->userlistVisible()) || valueByQSettings<bool>("", "loginPromptInput", false) ||
+        ifc.property("Enable").toBool() || checkIsADDomain();
     m_model->setAllowShowCustomUser(allowShowCustomUser);
 
     /* init server user or custom user */
@@ -486,7 +488,14 @@ void LockWorker::doPowerAction(const SessionBaseModel::PowerAction action)
         QTimer::singleShot(200, this, [this] { m_sessionManagerInter->RequestReboot(); });
         break;
     case SessionBaseModel::PowerAction::RequireSwitchUser:
-        m_model->setCurrentModeState(SessionBaseModel::ModeStatus::UserMode);
+        if (m_model->userlistVisible()) {
+            m_model->setCurrentModeState(SessionBaseModel::ModeStatus::UserMode);
+        } else {
+            std::shared_ptr<User> user_ptr = m_model->findUserByName("...");
+            if (user_ptr) {
+                switchToUser(user_ptr);
+            }
+        }
         break;
     case SessionBaseModel::PowerAction::RequireUpdateRestart:
         UpdateWorker::instance()->doUpdate(false);

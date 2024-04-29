@@ -95,7 +95,6 @@ void LockContent::init(SessionBaseModel *model)
 
     QTimer::singleShot(0, this, [this] {
         onCurrentUserChanged(m_model->currentUser());
-        onUserListChanged(m_model->isServerModel() ? m_model->loginedUserList() : m_model->userList());
     });
 
     // 创建套接字连接，用于与重置密码弹窗通讯
@@ -320,6 +319,8 @@ void LockContent::onCurrentUserChanged(std::shared_ptr<User> user)
 
     m_centerTopWidget->setCurrentUser(user.get());
     m_logoWidget->updateLocale(locale);
+
+    onUserListChanged(m_model->isServerModel() ? m_model->loginedUserList() : m_model->userList());
 }
 
 void LockContent::pushPasswordFrame()
@@ -339,6 +340,18 @@ void LockContent::pushPasswordFrame()
 void LockContent::pushUserFrame()
 {
     qCInfo(DDE_SHELL) << "Push user frame";
+
+    if (!m_model->userlistVisible()) {
+        std::shared_ptr<User> user_ptr = m_model->findUserByName("...");
+        if (user_ptr) {
+            m_controlWidget->setUserSwitchEnable(false);
+            emit requestSwitchToUser(user_ptr);
+            return;
+        }
+        m_model->setCurrentModeState(SessionBaseModel::ModeStatus::PasswordMode);
+        return;
+    }
+
     if(m_model->isServerModel())
         m_controlWidget->setUserSwitchEnable(false);
 
@@ -668,7 +681,8 @@ void LockContent::onUserListChanged(QList<std::shared_ptr<User> > list)
                     (list.size() > (m_model->isServerModel() ? 0 : 1)))) &&
                   haveLoginedUser;
 
-    m_controlWidget->setUserSwitchEnable(enable);
+    bool controlEnable = enable && (m_model->userlistVisible() || m_model->currentUser()->name() != "...");
+    m_controlWidget->setUserSwitchEnable(controlEnable);
     m_shutdownFrame->setUserSwitchEnable(enable);
 
     m_isUserSwitchVisible = enable;
@@ -829,10 +843,17 @@ void LockContent::keyPressEvent(QKeyEvent *event)
 
 void LockContent::showUserList()
 {
-    m_model->setCurrentModeState(SessionBaseModel::ModeStatus::UserMode);
-    QTimer::singleShot(10, this, [this] {
-        m_model->setVisible(true);
-    });
+    if (m_model->userlistVisible()) {
+        m_model->setCurrentModeState(SessionBaseModel::ModeStatus::UserMode);
+        QTimer::singleShot(10, this, [ = ] {
+            m_model->setVisible(true);
+        });
+    } else {
+        std::shared_ptr<User> user_ptr = m_model->findUserByName("...");
+        if (user_ptr) {
+            emit requestSwitchToUser(user_ptr);
+        }
+    }
 }
 
 void LockContent::showLockScreen()
