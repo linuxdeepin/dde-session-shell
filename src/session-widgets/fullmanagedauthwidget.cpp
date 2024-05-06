@@ -239,7 +239,7 @@ bool FullManagedAuthWidget::isPluginLoaded() const
         return false;
     }
 
-    auto plugin = m_customAuth->getModule();
+    auto plugin = m_customAuth->getLoginPlugin();
     if (!plugin) {
         return false;
     }
@@ -255,7 +255,7 @@ bool FullManagedAuthWidget::isUserSwitchButtonVisiable() const
             break;
         }
 
-        auto plugin = m_customAuth->getModule();
+        auto plugin = m_customAuth->getLoginPlugin();
         if (!plugin) {
             break;
         }

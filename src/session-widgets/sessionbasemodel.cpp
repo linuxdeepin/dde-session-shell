@@ -353,8 +353,10 @@ std::shared_ptr<User> SessionBaseModel::json2User(const QString &userJson)
         const uid_t uid = static_cast<uid_t>(userObj["Uid"].toInt());
         user_ptr = findUserByUid(uid);
     }
-    if (user_ptr)
+    if (user_ptr) {
         user_ptr->setLastAuthType(AUTH_TYPE_CAST(userObj["AuthType"].toInt()));
+        user_ptr->setLastCustomAuth(userObj["LastCustomAuth"].toString());
+    }
 
     return user_ptr;
 }

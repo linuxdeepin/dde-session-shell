@@ -22,6 +22,7 @@ namespace module_v2 {
 UdcpMFALoginModule::UdcpMFALoginModule(QObject *parent)
     : QObject(parent)
 {
+    setObjectName("LoginModule");
 }
 
 UdcpMFALoginModule::~UdcpMFALoginModule() noexcept

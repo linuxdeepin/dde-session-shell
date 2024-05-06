@@ -57,8 +57,8 @@ protected Q_SLOTS:
 private:
     void initUI();
     void initConnections();
-    AuthCommon::AuthFlags initAuthFactors(const AuthCommon::AuthFlags type);
-    AuthCommon::AuthFlags initCustomFactor(const AuthCommon::AuthFlags type);
+    void initAuthFactors(const AuthCommon::AuthFlags type);
+    void initCustomFactors(const AuthCommon::AuthFlags type);
     void chooseAuthType(const AuthCommon::AuthFlags authFlags);
     void initChooseAuthButtonBox(const AuthCommon::AuthFlags authFlags);
 
@@ -69,7 +69,7 @@ private:
     void initUKeyAuth();
     void initFaceAuth();
     void initIrisAuth();
-    void initCustomAuth();
+    void initCustomAuth(LoginPlugin* plugin);
     void initCustomMFAAuth();
 
     void checkAuthResult(const AuthCommon::AuthType type, const AuthCommon::AuthState state) override;
@@ -82,6 +82,8 @@ private:
     bool useCustomAuth() const;
     bool showAuthButtonBox() const;
     void sendAuthFinished();
+    QList<LoginPlugin*> filtrateAuthPlugins(const QList<LoginPlugin*> &plugins) const;
+    AuthCustom *currentAuthCustom() const;
 
 private:
     QVBoxLayout *m_mainLayout;
@@ -89,12 +91,14 @@ private:
     ButtonBox *m_chooseAuthButtonBox; // 认证选择按钮
     DLabel *m_biometricAuthState;      // 生物认证状态
 
-    QMap<AuthCommon::AuthType, ButtonBoxButton *> m_authButtons;
     DFloatingButton *m_retryButton;
     QSpacerItem *m_bioAuthStatePlaceHolder;
     QSpacerItem *m_bioBottomSpacingHolder;
     QSpacerItem *m_authTypeBottomSpacingHolder;
-    AuthCommon::AuthType m_currentAuthType;
+    int m_currentAuthType;
+
+    QMap<int, ButtonBoxButton *> m_authButtons;
+    QMap<QString, QPointer<AuthCustom>> m_customAuths;
 };
 
 #endif // SFAWIDGET_H

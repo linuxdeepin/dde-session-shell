@@ -137,6 +137,7 @@ void AuthCustom::setAuthData(const LoginPlugin::AuthCallbackData &callbackData)
 
 void AuthCustom::authCallback(const LoginPlugin::AuthCallbackData *callbackData, void *app_data)
 {
+    qCInfo(DDE_SHELL) << "Receive auth callback";
     AuthCustom *authCustom = getAuthCustomObj(app_data);
     if (callbackData && authCustom) {
         authCustom->setAuthData(*callbackData);
@@ -231,9 +232,17 @@ void AuthCustom::changeAuthType(AuthCommon::AuthType type)
     emit notifyAuthTypeChange(type);
 }
 
-LoginPlugin* AuthCustom::getModule() const
+LoginPlugin* AuthCustom::getLoginPlugin() const
 {
     return m_plugin;
+}
+
+QString AuthCustom::loginPluginKey() const
+{
+    if (m_plugin)
+        return m_plugin->key();
+
+    return QStringLiteral();
 }
 
 bool AuthCustom::event(QEvent *e)
@@ -269,14 +278,6 @@ QSize AuthCustom::contentSize() const
     return m_plugin->content()->size();
 }
 
-
-LoginPlugin::AuthType AuthCustom::authType() const
-{
-    if (!m_plugin)
-        return LoginPlugin::AuthType::AT_Password;
-
-    return m_plugin->defaultAuthType();
-}
 
 LoginPlugin::PluginConfig AuthCustom::pluginConfig() const
 {

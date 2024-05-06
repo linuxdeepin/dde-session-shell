@@ -263,6 +263,7 @@ void LockWorker::initData()
         } else {
             const QJsonObject userObj = userDoc.object();
             m_model->currentUser()->setLastAuthType(AUTH_TYPE_CAST(userObj["AuthType"].toInt()));
+            m_model->currentUser()->setLastCustomAuth(userObj["LastCustomAuth"].toString());
         }
     } else {
         m_model->updateCurrentUser(m_lockInter->CurrentUser());
@@ -535,6 +536,7 @@ void LockWorker::setCurrentUser(const std::shared_ptr<User> user)
     json["Name"] = user->name();
     json["Type"] = user->type();
     json["Uid"] = static_cast<int>(user->uid());
+    json["LastCustomAuth"] = user->lastCustomAuth(); // 上一次认证通过自定义认证类型
     m_lockInter->SwitchToUser(QString(QJsonDocument(json).toJson(QJsonDocument::Compact)));
 }
 

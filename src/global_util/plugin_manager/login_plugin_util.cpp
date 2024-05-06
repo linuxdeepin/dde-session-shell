@@ -9,7 +9,7 @@
 
 int LPUtil::loginType()
 {
-    auto *plugin = PluginManager::instance()->getLoginPlugin();
+    auto *plugin = getLevel2LoginPlugin();
     if (!plugin) {
         return LoginPlugin::CustomLoginType::CLT_Default;
     }
@@ -19,7 +19,7 @@ int LPUtil::loginType()
 
 int LPUtil::updateLoginType()
 {
-    auto plugin = PluginManager::instance()->getLoginPlugin();
+    auto plugin = getLevel2LoginPlugin();
     if (!plugin) {
         return LoginPlugin::CustomLoginType::CLT_Default;
     }
@@ -28,7 +28,7 @@ int LPUtil::updateLoginType()
 
 int LPUtil::sessionTimeout()
 {
-    auto plugin = PluginManager::instance()->getLoginPlugin();
+    auto plugin = getLevel2LoginPlugin();
     if (!plugin) {
         return DEFAULT_SESSION_TIMEOUT;
     }
@@ -37,9 +37,15 @@ int LPUtil::sessionTimeout()
 
 bool LPUtil::hasSecondLevel(const QString &user)
 {
-    auto plugin = PluginManager::instance()->getLoginPlugin();
+    auto plugin = getLevel2LoginPlugin();
     if (!plugin) {
         return false;
     }
     return plugin->hasSecondLevel(user);
+}
+
+LoginPlugin* LPUtil::getLevel2LoginPlugin()
+{
+    const auto &plugins = PluginManager::instance()->getLoginPlugins(2);
+    return plugins.empty() ? nullptr : plugins.first();
 }

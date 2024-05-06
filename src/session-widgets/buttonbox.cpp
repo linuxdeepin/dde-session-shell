@@ -16,20 +16,13 @@ const int Radius = 10;
 
 ButtonBoxButton::ButtonBoxButton(const QIcon& icon, const QString &text, QWidget *parent)
     : QAbstractButton(parent)
-    , m_isChecked(false)
     , m_radius(0)
     , m_leftRoundEnabled(false)
     , m_rightRoundEnabled(false)
+    , m_visible(true)
 {
     QAbstractButton::setIcon(icon);
     QAbstractButton::setText(text);
-    connect(this, &QAbstractButton::toggled, this, [ this ]( bool checked) {
-        if (m_isChecked == checked)
-            return;
-
-        m_isChecked = checked;
-        update();
-    });
 }
 
 ButtonBoxButton::ButtonBoxButton(DStyle::StandardPixmap iconType, const QString &text, QWidget *parent)
@@ -73,15 +66,6 @@ void ButtonBoxButton::setRightRoundedEnabled(bool enabled)
     update();
 }
 
-void ButtonBoxButton::setChecked(bool checked)
-{
-    if (m_isChecked == checked)
-        return;
-
-    m_isChecked = checked;
-    update();
-}
-
 void ButtonBoxButton::paintEvent(QPaintEvent *event)
 {
     QPainter p(this);
@@ -121,7 +105,7 @@ void ButtonBoxButton::paintEvent(QPaintEvent *event)
         p.setBrush(color);
     }
 
-    if (m_isChecked) {
+    if (isChecked()) {
         p.setBrush(this->palette().highlight());
     }
 
@@ -155,6 +139,7 @@ void ButtonBox::setButtonList(const QList<ButtonBoxButton *> &list, bool checkab
         m_layout->removeWidget(button);
     }
 
+    ButtonBoxButton *lastVisibleButton = list.first();
     for (int i = 0; i < list.count(); ++i) {
         ButtonBoxButton *button = list.at(i);
         if (!button)
@@ -167,22 +152,16 @@ void ButtonBox::setButtonList(const QList<ButtonBoxButton *> &list, bool checkab
         m_layout->setSpacing(0);
         m_group->addButton(button);
         button->setCheckable(checkable);
+        if (button->testVisibleAttr())
+            lastVisibleButton = button;
     }
 
     list.first()->setLeftRoundedEnabled(true);
     list.first()->setRadius(Radius);
 
-    // wayland 环境下greeter读取的buttonbox列表会包含自定义登录按钮（即使该按钮已被隐藏），导致绘制圆角绘制的是自定义登录按钮的圆角，实际显示的最后一个按钮没有圆角，
-    // 因此做如下处理，如果是wayland而且是greeter, 而且自定义登录按钮被隐藏，不去绘制最后一个而是倒数第二个
-    if (qApp->applicationName() == "org.deepin.dde.lightdm-deepin-greeter"
-            && qgetenv("XDG_SESSION_TYPE").contains("wayland")
-            && list.size() > 2
-            && m_atCustonBtnHide) {
-        list[list.size()-2]->setRightRoundedEnabled(true);
-        list[list.size()-2]->setRadius(Radius);
-    } else {
-        list.last()->setRightRoundedEnabled(true);
-        list.last()->setRadius(Radius);
+    if (lastVisibleButton) {
+        lastVisibleButton->setRightRoundedEnabled(true);
+        lastVisibleButton->setRadius(Radius);
     }
 }
 
@@ -194,4 +173,14 @@ void ButtonBox::paintEvent(QPaintEvent *event)
     p.setPen(Qt::NoPen);
     p.drawRoundedRect(this->rect(), Radius, Radius);
     QWidget::paintEvent(event);
+}
+
+QList<ButtonBoxButton *> ButtonBox::buttonBoxList() const
+{
+    QList<ButtonBoxButton *> list;
+    for (const auto &btn : m_group->buttons()) {
+        if (const auto bbtn = dynamic_cast<ButtonBoxButton*>(btn))
+            list.append(bbtn);
+    }
+    return list;
 }

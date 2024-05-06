@@ -21,7 +21,7 @@ public:
     static PluginManager* instance();
 
     void addPlugin(dss::module::BaseModuleInterface *module, const QString &version);
-    LoginPlugin *getLoginPlugin() const;
+    QList<LoginPlugin*> getLoginPlugins(int level = 1) const;
     LoginPlugin *getFullManagedLoginPlugin() const;
     LoginPlugin *getAssistloginPlugin() const;
     QList<TrayPlugin*> trayPlugins() const;

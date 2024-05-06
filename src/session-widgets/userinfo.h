@@ -99,10 +99,12 @@ public:
     inline QStringList keyboardLayoutList() const { return m_keyboardLayoutList; }
     inline uid_t uid() const { return m_uid; }
     inline QStringList groups() const { return m_groups; }
+    inline QString lastCustomAuth() const { return m_lastCustomAuth; }
 
     void updateLimitsInfo(const QString &info);
     void updateLoginState(const bool isLogin);
     void setLastAuthType(const AuthCommon::AuthType type);
+    void setLastCustomAuth(const QString &key) { m_lastCustomAuth = key; }
     bool allowToChangePassword() const;
 
     virtual void setKeyboardLayout(const QString &keyboard) { Q_UNUSED(keyboard) }
@@ -156,6 +158,7 @@ protected:
     QString m_locale;                    // 语言环境
     QString m_name;                      // 用户名
     QString m_passwordHint;              // 密码提示
+    QString m_lastCustomAuth;            // 上次成功的认证插件的 key
     QStringList m_desktopBackgrounds;    // 桌面背景（不同工作区壁纸不同，故是个 List）
     QStringList m_keyboardLayoutList;    // 键盘布局列表
     QMap<int, LimitsInfo> *m_limitsInfo; // 认证限制信息

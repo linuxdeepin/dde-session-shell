@@ -16,6 +16,7 @@ public:
     static int updateLoginType();
     static int sessionTimeout();
     static bool hasSecondLevel(const QString &user);
+    static LoginPlugin* getLevel2LoginPlugin();
 };
 
 

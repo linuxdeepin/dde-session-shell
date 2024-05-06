@@ -25,17 +25,17 @@ public:
     void setRadius(int radius);
     void setLeftRoundedEnabled(bool enabled);
     void setRightRoundedEnabled(bool enabled);
-    inline bool checked() { return m_isChecked; }
-    void setChecked(bool checked);
+    void setVisibleAttr(bool visible) { m_visible = visible; }
+    inline bool testVisibleAttr() const { return m_visible; }
 
 protected:
     void paintEvent(QPaintEvent *event) override;
 
 private:
-    bool m_isChecked;
     int m_radius;
     bool m_leftRoundEnabled;
     bool m_rightRoundEnabled;
+    bool m_visible; // 标识 button 是否需要显示
 };
 
 //ButtonBox类
@@ -47,6 +47,7 @@ public:
 
     void setButtonList(const QList<ButtonBoxButton*> &list, bool checkable);
     inline QList<QAbstractButton *> buttonList() const { return m_group->buttons(); }
+    QList<ButtonBoxButton *> buttonBoxList() const;
     inline QAbstractButton *checkedButton() const { return m_group->checkedButton(); }
     inline QAbstractButton *button(int id) const { return m_group->button(id); }
     inline void setId(QAbstractButton *button, int id) { m_group->setId(button, id); }

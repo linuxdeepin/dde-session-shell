@@ -64,25 +64,27 @@ const DSysInfo::UosEdition UosEdition = DSysInfo::uosEditionType();
 const bool IsCommunitySystem = (DSysInfo::UosCommunity == UosEdition);//是否是社区版
 
 // dconfig 配置名称
-const QString USE_SOLID_BACKGROUND = "useSolidBackground";
-const QString AUTO_EXIT = "autoExit";
-const QString HIDE_LOGOUT_BUTTON = "hideLogoutButton";
-const QString HIDE_ONBOARD = "hideOnboard";
-const QString ENABLE_ONE_KEY_LOGIN = "enableOneKeylogin";
-const QString ENABLE_SHORTCUT_FOR_LOCK = "enableShortcutForLock";
-const QString SHOW_TOP_TIP = "showTopTip";
-const QString TOP_TIP_TEXT = "topTipText";
-const QString TOP_TIP_TEXT_FONT = "topTipTextFont";
-const QString SHOW_USER_NAME = "showUserName";
-const QString CHANGE_PASSWORD_FOR_NORMAL_USER = "changePasswordForNormalUser";
-const QString USER_FRAME_MAX_WIDTH = "userFrameMaxWidth";
-const QString FULL_NAME_FONT = "fullNameFont";
+const QString USE_SOLID_BACKGROUND = QStringLiteral("useSolidBackground");
+const QString AUTO_EXIT = QStringLiteral("autoExit");
+const QString HIDE_LOGOUT_BUTTON = QStringLiteral("hideLogoutButton");
+const QString HIDE_ONBOARD = QStringLiteral("hideOnboard");
+const QString ENABLE_ONE_KEY_LOGIN = QStringLiteral("enableOneKeylogin");
+const QString ENABLE_SHORTCUT_FOR_LOCK = QStringLiteral("enableShortcutForLock");
+const QString SHOW_TOP_TIP = QStringLiteral("showTopTip");
+const QString TOP_TIP_TEXT = QStringLiteral("topTipText");
+const QString TOP_TIP_TEXT_FONT = QStringLiteral("topTipTextFont");
+const QString SHOW_USER_NAME = QStringLiteral("showUserName");
+const QString CHANGE_PASSWORD_FOR_NORMAL_USER = QStringLiteral("changePasswordForNormalUser");
+const QString USER_FRAME_MAX_WIDTH = QStringLiteral("userFrameMaxWidth");
+const QString FULL_NAME_FONT = QStringLiteral("fullNameFont");
+const QString LOGIN_PLUGIN_DISPLAY_ORDER = QStringLiteral("loginPluginsDisplayOrder");
+const QString LOGIN_PLUGIN_AUTH_ORDER = QStringLiteral("loginPluginsAuthOrder");
 
 // 系统版本显示配置
-const QString SHOW_SYSTEM_VERSION = "showSystemVersion";
+const QString SHOW_SYSTEM_VERSION = QStringLiteral("showSystemVersion");
 // 第三方logo相关配置
-const QString CUSTOM_LOGO_PATH = "customLogoPath";
-const QString CUSTOM_LOGO_POS = "customLogoPos";
+const QString CUSTOM_LOGO_PATH = QStringLiteral("customLogoPath");
+const QString CUSTOM_LOGO_POS = QStringLiteral("customLogoPos");
 }
 
 
