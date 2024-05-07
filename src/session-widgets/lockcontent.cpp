@@ -548,9 +548,7 @@ void LockContent::updateGreeterBackgroundPath(const QString &path)
         return;
     }
 
-    if (m_model->currentModeState() != SessionBaseModel::ModeStatus::ShutDownMode) {
-        emit requestBackground(path);
-    }
+    emit requestBackground(path);
 }
 
 void LockContent::updateDesktopBackgroundPath(const QString &path)
@@ -559,9 +557,7 @@ void LockContent::updateDesktopBackgroundPath(const QString &path)
         return;
     }
 
-    if (m_model->currentModeState() == SessionBaseModel::ModeStatus::ShutDownMode) {
-        emit requestBackground(path);
-    }
+    emit requestBackground(path);
 }
 
 void LockContent::toggleVirtualKB()
