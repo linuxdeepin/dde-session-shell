@@ -19,6 +19,7 @@ public:
     bool isNumLockOn() override;
     bool setNumLockStatus(const bool &on) override;
     void run() override;
+    void ungrabKeyboard() override;
 
 private:
     int listen(Display *display);

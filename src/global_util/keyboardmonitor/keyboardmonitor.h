@@ -11,6 +11,8 @@
 #include "keyboardplantform_wayland.h"
 #endif
 
+#define DPMS_STATE_FILE "/tmp/dpms-state" //black screen state;bug:222049
+
 class KeyboardMonitor : public QThread
 {
     Q_OBJECT
@@ -20,6 +22,7 @@ public:
     bool isCapsLockOn();
     bool isNumLockOn();
     bool setNumLockStatus(const bool &on);
+    void ungrabKeyboard();
 
 signals:
     void capsLockStatusChanged(bool on);

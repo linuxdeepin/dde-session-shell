@@ -18,6 +18,7 @@ public:
     virtual bool isNumLockOn() = 0;
     virtual bool setNumLockStatus(const bool &on) = 0;
     virtual void run() = 0;
+    virtual void ungrabKeyboard() = 0;
 
 signals:
     void capsLockStatusChanged(bool on);

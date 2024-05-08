@@ -37,6 +37,7 @@ public:
     bool isCapsLockOn() override;
     bool isNumLockOn() override;
     bool setNumLockStatus(const bool &on) override;
+    void ungrabKeyboard() override;
 
 protected:
     void run() Q_DECL_OVERRIDE;

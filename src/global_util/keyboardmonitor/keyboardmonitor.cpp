@@ -3,7 +3,10 @@
 // SPDX-License-Identifier: GPL-3.0-or-later
 
 #include "keyboardmonitor.h"
+
 #include <DGuiApplicationHelper>
+
+#include <QFile>
 
 DGUI_USE_NAMESPACE
 
@@ -69,4 +72,14 @@ void KeyboardMonitor::run()
         return;
 
     m_keyBoardPlatform->run();
+}
+
+void KeyboardMonitor::ungrabKeyboard()
+{
+    if (!m_keyBoardPlatform)
+        return;
+
+    if (!(QFile::exists(DPMS_STATE_FILE) && QFile(DPMS_STATE_FILE).readAll() == "1")) {
+        m_keyBoardPlatform->ungrabKeyboard();
+    }
 }

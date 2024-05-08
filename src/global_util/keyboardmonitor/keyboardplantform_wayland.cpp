@@ -22,6 +22,7 @@
 #include <QDBusConnection>
 #include <QDBusPendingReply>
 #include <QApplication>
+#include <QProcess>
 
 KeyboardPlatformWayland::KeyboardPlatformWayland(QObject *parent)
     : KeyBoardPlatform(parent)
@@ -159,6 +160,11 @@ void KeyboardPlatformWayland::initStatus()
         callWatcher->deleteLater();
         watcher->deleteLater();
     });
+}
+
+void KeyboardPlatformWayland::ungrabKeyboard()
+{
+    QProcess::execute("bash -c \"originmap=$(setxkbmap -query | grep option | awk -F ' ' '{print $2}');/usr/bin/setxkbmap -option grab:break_actions&&/usr/bin/xdotool key XF86Ungrab&&setxkbmap -option $originmap\"");
 }
 
 #endif

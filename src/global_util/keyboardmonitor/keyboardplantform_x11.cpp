@@ -213,3 +213,14 @@ void KeyboardPlatformX11::run()
     select_events(display);
     listen(display);
 }
+
+void KeyboardPlatformX11::ungrabKeyboard()
+{
+    static Display *d = QX11Info::display();
+    if (d == NULL) {
+        fprintf(stderr, "display pointer is NULL when try ungrab keyboard.\n");
+        return;
+    }
+
+    XUngrabKeyboard(d, CurrentTime);
+}
