@@ -261,6 +261,16 @@
             "description": "是否显示多媒体控制界面，true-显示，false-隐藏",
             "permissions": "readwrite",
             "visibility": "private"
+        },
+        "accountExpression":{
+            "value": "[a-zA-Z0-9-_@.]+$",
+            "serial": 0,
+            "flags": ["global"],
+            "name": "AccountExpression",
+            "name[zh_CN]": "账户名命名规则",
+            "description": "账户名命名规则",
+            "permissions": "readwrite",
+            "visibility": "private"
         }
     }
 }

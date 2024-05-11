@@ -16,6 +16,7 @@
 #include "keyboardmonitor.h"
 #include "sessionbasemodel.h"
 #include "useravatar.h"
+#include "dconfig_helper.h"
 
 #include <DFontSizeManager>
 
@@ -78,7 +79,12 @@ void AuthWidget::initUI()
     m_accountEdit->lineEdit()->setAlignment(Qt::AlignCenter);
     m_accountEdit->setClearButtonEnabled(false);
     m_accountEdit->setPlaceholderText(tr("Account"));
-    m_accountEdit->lineEdit()->setValidator(new QRegExpValidator(QRegExp("[a-zA-Z0-9-_@]+$"), this));
+
+    // 账户名有效字符使用dsg配置
+    const QString accountExpression = DConfigHelper::instance()->getConfig("accountExpression", "[a-zA-Z0-9-_@]+$").toString();
+    if (!accountExpression.isEmpty()) {
+        m_accountEdit->lineEdit()->setValidator(new QRegExpValidator(QRegExp(accountExpression), this));
+    }
     // 用户名
     m_userNameWidget = new UserNameWidget(false, true, this);
     /* 密码过期提示 */
