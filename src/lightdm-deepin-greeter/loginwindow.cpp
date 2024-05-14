@@ -69,6 +69,10 @@ bool LoginWindow::event(QEvent *event)
              m_model->setPowerAction(SessionBaseModel::RequireSuspend);
              break;
         }
+        case Qt::Key_PowerOff: {
+            m_model->setCurrentModeState(SessionBaseModel::ModeStatus::PowerMode);
+            break;
+        }
         // win+p时,触发xrandr -q.用于规避联想机型GT730显卡热插拔问题
         case Qt::Key_P: {
             if (!qgetenv("XDG_SESSION_TYPE").contains("wayland")) {
