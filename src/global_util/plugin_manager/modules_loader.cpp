@@ -68,17 +68,23 @@ void ModulesLoader::findModule(const QString &path)
             continue;
         }
 
+        // 分类加载为了兼容老插件（没有pluginType），避免重复加载
+        if (m_loadedModules.contains(path)) {
+            continue;
+        }
+
         QString pluginType = meta.value("pluginType").toString();
-
-        // 分类加载
-        if ((pluginType == LoginType && !m_loadLoginModule) || (pluginType == TrayType && m_loadLoginModule)) {
-            continue;
+        if (!pluginType.isEmpty()) {
+            // 分类加载
+            if ((pluginType == LoginType && !m_loadLoginModule) || (pluginType == TrayType && m_loadLoginModule)) {
+                continue;
+            }
+        } else {
+            // （兼容）没有pluginType的插件在第一次加载插件的时候就加载
+            qWarning() << "old plugin has no pluginType in json file:" << module;
         }
 
-        if (pluginType.isEmpty()) {
-            qCWarning(DDE_SHELL) << "plugin has no pluginType in json file, will not load:" << module;
-            continue;
-        }
+        m_loadedModules.append(path);
 
         auto *moduleInstance = dynamic_cast<dss::module::BaseModuleInterface *>(loader.instance());
         if (!moduleInstance) {

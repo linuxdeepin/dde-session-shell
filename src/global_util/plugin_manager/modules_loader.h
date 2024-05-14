@@ -29,6 +29,7 @@ private:
 
 private:
     bool m_loadLoginModule = false;
+    QStringList m_loadedModules;
 };
 
 #endif // MODULES_LOADER_H
