@@ -142,8 +142,13 @@ void LockContent::initConnections()
 {
     connect(m_model, &SessionBaseModel::currentUserChanged, this, &LockContent::onCurrentUserChanged);
     connect(m_controlWidget, &ControlWidget::requestSwitchUser, this, [this] {
-        m_model->setCurrentModeState(SessionBaseModel::ModeStatus::UserMode);
-        emit requestEndAuthentication(m_model->currentUser()->name(), AuthCommon::AT_All);
+        if (!m_model->userlistVisible() && m_model->currentUser()->name() == "...") {
+            emit requestSwitchToUser(m_model->currentUser());
+            m_model->setCurrentModeState(SessionBaseModel::ModeStatus::PasswordMode);
+        } else {
+            m_model->setCurrentModeState(SessionBaseModel::ModeStatus::UserMode);
+            emit requestEndAuthentication(m_model->currentUser()->name(), AuthCommon::AT_All);
+        }
     });
     connect(m_controlWidget, &ControlWidget::requestShutdown, this, [this] {
         m_model->setCurrentModeState(SessionBaseModel::ModeStatus::PowerMode);
@@ -324,6 +329,10 @@ void LockContent::onCurrentUserChanged(std::shared_ptr<User> user)
 
 void LockContent::pushPasswordFrame()
 {
+    if (!m_model->userlistVisible() && m_model->currentUser()->name() == "...") {
+        m_controlWidget->setUserSwitchEnable(false);
+    }
+
     setCenterContent(m_authWidget, 0, Qt::AlignTop, calcTopSpacing(m_authWidget->getTopSpacing()));
 
     m_authWidget->syncResetPasswordUI();
@@ -671,10 +680,16 @@ void LockContent::onUserListChanged(QList<std::shared_ptr<User> > list)
         haveLoginedUser = !m_model->loginedUserList().isEmpty();
     }
 
-    bool enable = (alwaysShowUserSwitchButton ||
-                   (allowShowUserSwitchButton &&
-                    (list.size() > (m_model->isServerModel() ? 0 : 1)))) &&
-                  haveLoginedUser;
+    int userList = list.size();
+    if (!m_model->isServerModel() && !m_model->userlistVisible()) {
+        foreach (auto user, list) {
+            if (user->name() == "...") {
+                userList--;
+            }
+        }
+    }
+
+    bool enable = (alwaysShowUserSwitchButton || (allowShowUserSwitchButton && (userList > (m_model->isServerModel() ? 0 : 1)))) && haveLoginedUser;
 
     bool controlEnable = enable && (m_model->userlistVisible() || m_model->currentUser()->name() != "...");
     m_controlWidget->setUserSwitchEnable(controlEnable);
