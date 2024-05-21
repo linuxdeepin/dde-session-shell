@@ -109,6 +109,10 @@ void AuthWidget::initConnections()
     connect(m_model, &SessionBaseModel::onPowerActionChanged, this, [this](SessionBaseModel::PowerAction action) {
         setLockButtonType(action);
     });
+    connect(m_model, &SessionBaseModel::checkAccountFinished, this, [this] {
+        m_accountEdit->clear();
+    });
+
     /* 用户名 */
     connect(qGuiApp, &QGuiApplication::fontChanged, this, &AuthWidget::updateUserDisplayNameLabel);
     /* 用户名输入框 */

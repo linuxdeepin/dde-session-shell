@@ -219,6 +219,7 @@ signals:
     void authFailedMessage(const QString &message, AuthFailedType type = KEYBOARD);
     void authFailedTipsMessage(const QString &message, AuthFailedType type = KEYBOARD);
     void authFinished(bool success);
+    void checkAccountFinished();
     void onPowerActionChanged(PowerAction poweraction);
     void onRequirePowerAction(PowerAction poweraction, bool needConfirm);
     void onSessionKeyChanged(const QString &sessionKey);

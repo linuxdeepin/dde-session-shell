@@ -587,8 +587,8 @@ void GreeterWorker::endAuthentication(const QString &account, const AuthFlags au
 void GreeterWorker::checkAccount(const QString &account)
 {
     qCInfo(DDE_SHELL) << "Check account, account: " << account;
-
-    std::shared_ptr<User> user_ptr = m_model->findUserByName(account);
+    const auto &originalUsePtr = m_model->findUserByName(account);
+    std::shared_ptr<User> user_ptr = originalUsePtr;
     // 当用户登录成功后，判断用户输入帐户有效性逻辑改为后端去做处理
     const QString userPath = m_accountsInter->FindUserByName(account);
     if (userPath.startsWith("/")) {
@@ -624,6 +624,14 @@ void GreeterWorker::checkAccount(const QString &account)
         return;
     }
 
+    // 如果用户已经登录了，直接切换用户
+    if (originalUsePtr->isLogin()) {
+        qCInfo(DDE_SHELL) << "Current user is already logged in";
+        Q_EMIT m_model->checkAccountFinished();
+        user_ptr->updateLoginState(true); // 初始化 NativeUser 的时候没有处理登录状态
+        switchToUser(user_ptr);
+        return;
+    }
 
     m_model->updateCurrentUser(user_ptr);
     if (user_ptr->isNoPasswordLogin()) {
