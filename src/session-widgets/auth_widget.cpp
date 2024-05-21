@@ -121,9 +121,6 @@ void AuthWidget::initConnections()
             emit requestCheckAccount(m_accountEdit->text());
         }
     });
-    connect(m_accountEdit, &DLineEditEx::editingFinished, this, [this] {
-        emit m_accountEdit->returnPressed();
-    });
     /* 解锁按钮 */
     connect(m_lockButton, &DFloatingButton::clicked, this, [this] {
         if (m_user->isNoPasswordLogin()) {
