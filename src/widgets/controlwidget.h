@@ -79,6 +79,7 @@ Q_SIGNALS:
     void requestShowMenu();
     void requestShowTips();
     void requestHideTips();
+    void buttonHide();
 
 protected:
     bool eventFilter(QObject *watch, QEvent *event) override;

@@ -36,6 +36,10 @@ DGUI_USE_NAMESPACE
 bool FloatingButton::eventFilter(QObject *watch, QEvent *event)
 {
     if (watch == this) {
+        if (event->type() == QEvent::Hide) {
+            Q_EMIT buttonHide();
+            return false;
+        }
         QMouseEvent *e = static_cast<QMouseEvent *>(event);
         if (event->type() == QEvent::MouseButtonRelease) {
             m_State = underMouse() ? Hover : Normal;

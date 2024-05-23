@@ -617,6 +617,7 @@ void LockContent::showModule(const QString &name, const bool callShowForce)
             connect(m_popWin, &PopupWindow::visibleChanged, this, [this] (bool visible) {
                 m_controlWidget->setCanShowMenu(!visible);
             });
+            connect(qobject_cast<FloatingButton*>(m_currentTray), &FloatingButton::buttonHide, m_popWin, &PopupWindow::hide);
             connect(this, &LockContent::parentChanged, this, [this] {
                 if (m_popWin && m_popWin->isVisible()) {
                     const QPoint &point = mapFromGlobal(m_currentTray->mapToGlobal(QPoint(m_currentTray->size().width() / 2, 0)));
