@@ -382,7 +382,7 @@ void GreeterWorker::doPowerAction(const SessionBaseModel::PowerAction action)
  */
 void GreeterWorker::setCurrentUser(const std::shared_ptr<User> user)
 {
-    qDebug() << "Set current user, user:" << user->name();
+    qCInfo(DDE_SHELL) << "Set current user, user:" << user->name();
     QJsonObject json;
     json["AuthType"] = static_cast<int>(user->lastAuthType());
     json["Name"] = user->name();
@@ -408,10 +408,11 @@ void GreeterWorker::switchToUser(std::shared_ptr<User> user)
     if (user->uid() == INT_MAX) {
         m_model->setAuthType(AT_None);
     }
+
+    setCurrentUser(user);
     if (user->isLogin()) { // switch to user Xorg
         QProcess::startDetached("dde-switchtogreeter", QStringList() << user->name());
     } else {
-        setCurrentUser(user);
         m_model->updateAuthState(AT_All, AS_Cancel, "Cancel");
         destroyAuthentication(m_account);
         m_model->updateCurrentUser(user);

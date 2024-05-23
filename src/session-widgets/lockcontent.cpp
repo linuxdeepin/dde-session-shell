@@ -329,8 +329,12 @@ void LockContent::onCurrentUserChanged(std::shared_ptr<User> user)
 
 void LockContent::pushPasswordFrame()
 {
-    if (!m_model->userlistVisible() && m_model->currentUser()->name() == "...") {
-        m_controlWidget->setUserSwitchEnable(false);
+    if (!m_model->userlistVisible()) {
+        if (m_model->currentUser()->name() == "...") {
+            m_controlWidget->setUserSwitchEnable(false);
+        } else {
+            m_controlWidget->setUserSwitchEnable(m_isUserSwitchVisible);
+        }
     }
 
     setCenterContent(m_authWidget, 0, Qt::AlignTop, calcTopSpacing(m_authWidget->getTopSpacing()));
