@@ -7,7 +7,6 @@
 #include <DSysInfo>
 
 #include <QDebug>
-#include <QGSettings>
 #include "dconfig_helper.h"
 
 DCORE_USE_NAMESPACE
@@ -37,14 +36,27 @@ SessionBaseModel::SessionBaseModel(QObject *parent)
     , m_currentContentType(NoContent)
     , m_lightdmPamStarted(false)
     , m_authResult{AuthType::AT_None, AuthState::AS_None, ""}
-    , m_enableShellBlackMode(DConfigHelper::instance()->getConfig("enableShellBlack", false).toBool())
+    , m_enableShellBlackMode(DConfigHelper::instance()->getConfig("enableShellBlack", true).toBool())
+    , m_visibleShutdownWhenRebootOrShutdown(DConfigHelper::instance()->getConfig("visibleShutdownWhenRebootOrShutdown", true).toBool())
 {
+    if (QGSettings::isSchemaInstalled("com.deepin.dde.power")) {
+        m_powerGsettings = new QGSettings("com.deepin.dde.power", "/com/deepin/dde/power/", this);
+    }
 }
 
 SessionBaseModel::~SessionBaseModel()
 {
     delete m_users;
     delete m_loginedUsers;
+}
+
+QVariant SessionBaseModel::getPowerGSettings(const QString &node, const QString &key)
+{
+    QVariant value = valueByQSettings<QVariant>(node, key, true);
+    if (m_powerGsettings != nullptr && m_powerGsettings->keys().contains(key)) {
+        value = m_powerGsettings->get(key);
+    }
+    return value;
 }
 
 std::shared_ptr<User> SessionBaseModel::findUserByUid(const uint uid) const

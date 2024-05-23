@@ -417,12 +417,17 @@ void LockWorker::onAuthStateChanged(const int type, const int state, const QStri
 
 void LockWorker::doPowerAction(const SessionBaseModel::PowerAction action)
 {
+    bool sleepLock = m_model->getPowerGSettings("", "sleepLock").toBool();
     qCInfo(DDE_SHELL) << "Do power action:" << action;
     switch (action) {
     case SessionBaseModel::PowerAction::RequireSuspend:
     {
         m_model->setIsBlackMode(true);
         m_model->setCurrentModeState(SessionBaseModel::ModeStatus::PasswordMode);
+        if (!sleepLock) {
+            m_model->setVisible(false);
+        }
+
         int delayTime = 500;
         if(m_gsettings && m_gsettings->keys().contains("delaytime")){
             delayTime = m_gsettings->get("delaytime").toInt();
@@ -432,9 +437,11 @@ void LockWorker::doPowerAction(const SessionBaseModel::PowerAction action)
             delayTime = 500;
         }
         WarningContent::instance()->tryGrabKeyboard();
-        QTimer::singleShot(delayTime, this, [this] {
+        QTimer::singleShot(delayTime, this, [=] {
             // 待机休眠前设置Locked为true,避免刚唤醒时locked状态不对
-            setLocked(true);
+            if (sleepLock) {
+                setLocked(true);
+            }
             m_sessionManagerInter->RequestSuspend();
         });
     }
@@ -443,6 +450,10 @@ void LockWorker::doPowerAction(const SessionBaseModel::PowerAction action)
     {
         m_model->setIsBlackMode(true);
         m_model->setCurrentModeState(SessionBaseModel::ModeStatus::PasswordMode);
+        if (!sleepLock) {
+            m_model->setVisible(false);
+        }
+
         int delayTime = 500;
         if(m_gsettings && m_gsettings->keys().contains("delaytime")){
             delayTime = m_gsettings->get("delaytime").toInt();
@@ -453,29 +464,47 @@ void LockWorker::doPowerAction(const SessionBaseModel::PowerAction action)
         }
         if (m_powerManagerInter->CanHibernate()){
             WarningContent::instance()->tryGrabKeyboard();
-            QTimer::singleShot(delayTime, this, [this] {
+            QTimer::singleShot(delayTime, this, [=] {
                 // 待机休眠前设置Locked为true,避免刚唤醒时locked状态不对
-                setLocked(true);
+                if (sleepLock) {
+                    setLocked(true);
+                }
                 m_sessionManagerInter->RequestHibernate();
             });
         }
     }
         break;
     case SessionBaseModel::PowerAction::RequireRestart:
+        QProcess::startDetached("/usr/lib/deepin-daemon/dde-blackwidget", QStringList() << "nodbus");
         if (!isLocked() || m_model->currentModeState() == SessionBaseModel::ModeStatus::ShutDownMode || !isCheckPwdBeforeRebootOrShut()) {
             m_sessionManagerInter->RequestReboot();
         } else {
             createAuthentication(m_account);
             m_model->setCurrentModeState(SessionBaseModel::ModeStatus::ConfirmPasswordMode);
         }
+
+        if (m_model->visibleShutdownWhenRebootOrShutdown()) {
+            return;
+        }
+        QTimer::singleShot(250, this, [=] {
+            m_model->setVisible(false);
+        });
         return;
     case SessionBaseModel::PowerAction::RequireShutdown:
+        QProcess::startDetached("/usr/lib/deepin-daemon/dde-blackwidget", QStringList() << "nodbus");
         if (!isLocked() || m_model->currentModeState() == SessionBaseModel::ModeStatus::ShutDownMode || !isCheckPwdBeforeRebootOrShut()) {
             m_sessionManagerInter->RequestShutdown();
         } else {
             createAuthentication(m_account);
             m_model->setCurrentModeState(SessionBaseModel::ModeStatus::ConfirmPasswordMode);
         }
+
+        if (m_model->visibleShutdownWhenRebootOrShutdown()) {
+            return;
+        }
+        QTimer::singleShot(250, this, [=] {
+            m_model->setVisible(false);
+        });
         return;
     case SessionBaseModel::PowerAction::RequireLock:
         m_model->setCurrentModeState(SessionBaseModel::ModeStatus::PasswordMode);
@@ -627,7 +656,9 @@ void LockWorker::createAuthentication(const QString &account)
         if (user_ptr->isNoPasswordLogin()) {
             qCInfo(DDE_SHELL) << "User is no password login";
             // 无密码登录锁定后也属于锁屏，需要设置lock属性
-            setLocked(true);
+            if (m_model->getPowerGSettings("", "sleepLock").toBool()) {
+                setLocked(true);
+            }
             return;
         }
     }

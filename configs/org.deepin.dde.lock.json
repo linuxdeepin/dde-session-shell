@@ -241,6 +241,16 @@
             "description": "是否打开shell的黑屏模；false：不开，true：开启。默认值为true；",
             "permissions": "readwrite",
             "visibility": "private"
+        },
+        "visibleShutdownWhenRebootOrShutdown":{
+            "value": true,
+            "serial": 0,
+            "flags": ["global"],
+            "name": "VisibleShutdownWhenRebootOrShutdown",
+            "name[zh_CN]": "是否在shutdown页面点击关机或重启时，隐藏shutdown页面",
+            "description": "是否在shutdown页面点击关机或重启时，隐藏shutdown页面；false：隐藏，true：不隐藏。默认值为true；",
+            "permissions": "readwrite",
+            "visibility": "private"
         }
     }
 }

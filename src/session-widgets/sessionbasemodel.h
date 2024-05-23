@@ -11,6 +11,7 @@
 #include <DSysInfo>
 
 #include <QObject>
+#include <QGSettings>
 
 #include <memory>
 #include <types/mfainfolist.h>
@@ -172,6 +173,8 @@ public:
     bool isLightdmPamStarted() const;
     void setLightdmPamStarted(bool lightPamStarted);
 
+    inline bool visibleShutdownWhenRebootOrShutdown() const { return m_visibleShutdownWhenRebootOrShutdown; }
+
     inline const AuthResult &getAuthResult() const { return m_authResult; }
 
     inline bool userlistVisible() const { return m_userlistVisible; }
@@ -214,6 +217,8 @@ public slots:
     void updatePINLen(const int PINLen);
     void updatePrompt(const QString &prompt);
 
+    QVariant getPowerGSettings(const QString &node, const QString &key);
+
 signals:
     void authTipsMessage(const QString &message, AuthFailedType type = KEYBOARD);
     void authFailedMessage(const QString &message, AuthFailedType type = KEYBOARD);
@@ -251,6 +256,17 @@ signals:
     void hidePluginMenu();
     void terminalLockedChanged(bool isLocked);
 
+protected:
+    template <typename T>
+    T valueByQSettings(const QString & group,
+                       const QString & key,
+                       const QVariant &failback) {
+        return findValueByQSettings<T>(DDESESSIONCC::session_ui_configs,
+                                       group,
+                                       key,
+                                       failback);
+    }
+
 private:
     bool m_hasSwap;
     bool m_visible;
@@ -278,10 +294,12 @@ private:
     QMap<QString, std::shared_ptr<User>> *m_loginedUsers;
     UpdatePowerMode m_updatePowerMode;
     ContentType m_currentContentType;
+    QGSettings* m_powerGsettings = nullptr;
 
     bool m_lightdmPamStarted; // 标志lightdmpam是否已经开启，主要用于greeter,lock不涉及lightdm
     AuthResult m_authResult; // 记录认证结果
     bool m_enableShellBlackMode;
+    bool m_visibleShutdownWhenRebootOrShutdown;
 };
 
 #endif // SESSIONBASEMODEL_H

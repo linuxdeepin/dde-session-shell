@@ -102,7 +102,9 @@ void DBusShutdownAgent::Suspend()
         m_model->setPowerAction(SessionBaseModel::RequireSuspend);
     } else {
         m_model->setCurrentModeState(SessionBaseModel::ModeStatus::ShutDownMode);
-        m_model->setVisible(true);
+        if (m_model->getPowerGSettings("", "sleepLock").toBool()) {
+            m_model->setVisible(true);
+        }
         emit m_model->onRequirePowerAction(SessionBaseModel::RequireSuspend, true);
     }
 }
@@ -118,7 +120,9 @@ void DBusShutdownAgent::Hibernate()
         m_model->setPowerAction(SessionBaseModel::RequireHibernate);
     } else {
         m_model->setCurrentModeState(SessionBaseModel::ModeStatus::ShutDownMode);
-        m_model->setVisible(true);
+        if (m_model->getPowerGSettings("", "sleepLock").toBool()) {
+            m_model->setVisible(true);
+        }
         emit m_model->onRequirePowerAction(SessionBaseModel::RequireHibernate, true);
     }
 }

@@ -248,17 +248,15 @@ void LockFrame::prepareForSleep(bool isSleep)
             m_enablePowerOffKey = true;
         });
     }
-    //待机时由锁屏提供假黑屏，唤醒时显示正常界面
-    m_model->setIsBlackMode(isSleep);
-    m_model->setVisible(true);
 
-    if (!isSleep) {
+    bool sleepLock = m_model->getPowerGSettings("", "sleepLock").toBool();
+    if (!m_model->visible() && sleepLock) {
+        m_model->setIsBlackMode(isSleep);
+        m_model->setVisible(true);
+    }
+
+    if (!isSleep && !sleepLock) {
         //待机唤醒后检查是否需要密码，若不需要密码直接隐藏锁定界面
-        if (QGSettings::isSchemaInstalled("com.deepin.dde.power")) {
-            QGSettings powerSettings("com.deepin.dde.power", QByteArray(), this);
-            if (!powerSettings.get("sleep-lock").toBool()) {
-                m_model->setVisible(false);
-            }
-        }
+        m_model->setVisible(false);
     }
 }
