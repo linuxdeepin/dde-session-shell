@@ -626,7 +626,7 @@ void GreeterWorker::checkAccount(const QString &account)
     }
 
     // 如果用户已经登录了，直接切换用户
-    if (originalUsePtr->isLogin()) {
+    if (originalUsePtr && originalUsePtr->isLogin() && user_ptr) {
         qCInfo(DDE_SHELL) << "Current user is already logged in";
         Q_EMIT m_model->checkAccountFinished();
         user_ptr->updateLoginState(true); // 初始化 NativeUser 的时候没有处理登录状态
