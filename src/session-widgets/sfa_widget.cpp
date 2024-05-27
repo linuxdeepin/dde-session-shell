@@ -1342,59 +1342,71 @@ void SFAWidget::chooseAuthType(const AuthFlags authFlags)
     {
         // 只有一种认证类型，直接使用
         if (m_authButtons.count() == 1) {
+            qCInfo(DDE_SHELL) << "Only one authentication type, use first auth type";
             m_currentAuthType = m_authButtons.firstKey();
             break;
         }
         // 如果密码锁定，那么切换到密码认证且不允许切换认证类型
         if (m_passwordAuth && m_passwordAuth->isLocked()) {
+            qCInfo(DDE_SHELL) << "Password is locked, use password authentication";
             m_chooseAuthButtonBox->setEnabled(false);
             m_user->setLastAuthType(AT_Password);
             m_currentAuthType = AT_Password;
-        }
-        // order 的优先级最高
-        int customAuth = -1;
-        const auto& authOrder = DConfigHelper::instance()->getConfig(DDESESSIONCC::LOGIN_PLUGIN_AUTH_ORDER, {}).toStringList();
-        qCInfo(DDE_SHELL) << "Login plugin auth order:" << authOrder;
-        for (const auto &authType : authOrder) {
-            if (m_customAuths.contains(authType)) {
-                customAuth = m_customAuths.value(authType)->customAuthType();
-                break;
-            }
-        }
-        if (customAuth != -1) {
-            m_currentAuthType = customAuth;
             break;
         }
-        // 遍历自定义认证，找到级别最高的
-        for (const auto &auth : m_customAuths) {
-             if (auth->pluginConfig().defaultAuthLevel == LoginPlugin::DefaultAuthLevel::StrongDefault) {
-                customAuth = auth->customAuthType();
+        // 自定义认证插件的认证顺序
+        if (!m_customAuths.isEmpty()) {
+            // order 的优先级最高
+            int customAuth = -1;
+            const auto& authOrder = DConfigHelper::instance()->getConfig(DDESESSIONCC::LOGIN_PLUGIN_AUTH_ORDER, {}).toStringList();
+            qCInfo(DDE_SHELL) << "Login plugin auth order:" << authOrder;
+            for (const auto &authType : authOrder) {
+                if (m_customAuths.contains(authType)) {
+                    customAuth = m_customAuths.value(authType)->customAuthType();
+                    break;
+                }
+            }
+            if (customAuth != -1) {
+                m_currentAuthType = customAuth;
                 break;
             }
-        }
-        if (customAuth != -1) {
-            m_currentAuthType = customAuth;
-            break;
+            // 遍历自定义认证，找到级别最高的
+            for (const auto &auth : m_customAuths) {
+                if (auth->pluginConfig().defaultAuthLevel == LoginPlugin::DefaultAuthLevel::StrongDefault) {
+                    customAuth = auth->customAuthType();
+                    break;
+                }
+            }
+            if (customAuth != -1) {
+                m_currentAuthType = customAuth;
+                break;
+            }
         }
         // 使用上一次认证成功类型
         if (authFlags & m_user->lastAuthType()) {
             m_currentAuthType = m_user->lastAuthType();
+            qCInfo(DDE_SHELL) << "Last auth type:" << m_currentAuthType;
             // 上一次认证成功的类型是自定义认证
-            if ((!m_customAuths.isEmpty() && m_currentAuthType == AT_Custom)) {
-                m_currentAuthType = AT_Custom + 1;
-                // 获取上次自定义认证的类型
-                const auto lastCustomAuth = m_user->lastCustomAuth();
-                qCInfo(DDE_SHELL) << "Last custom auth:" << lastCustomAuth;
-                if (!lastCustomAuth.isEmpty() && m_customAuths.contains(lastCustomAuth)) {
-                    auto it = m_customAuths.find(lastCustomAuth);
-                    if (it != m_customAuths.end() && it.value() != nullptr) {
-                        m_currentAuthType = it.value()->customAuthType();
+            if (m_currentAuthType == AT_Custom) {
+                if (!m_customAuths.isEmpty()) {
+                    m_currentAuthType = AT_Custom + 1;
+                    // 获取上次自定义认证的类型
+                    const auto lastCustomAuth = m_user->lastCustomAuth();
+                    qCInfo(DDE_SHELL) << "Last custom auth:" << lastCustomAuth;
+                    if (!lastCustomAuth.isEmpty() && m_customAuths.contains(lastCustomAuth)) {
+                        auto it = m_customAuths.find(lastCustomAuth);
+                        if (it != m_customAuths.end() && it.value() != nullptr) {
+                            m_currentAuthType = it.value()->customAuthType();
+                        }
                     }
+                } else {
+                    qCInfo(DDE_SHELL) << "No custom auth, use first auth type";
+                    m_currentAuthType = m_authButtons.firstKey();
                 }
             }
         }
         // 防呆处理，排除异常情况
-        if (!(authFlags & m_currentAuthType) || m_currentAuthType == AT_All)
+        if (!(authFlags & m_currentAuthType) || m_currentAuthType == AT_All || !m_authButtons.contains(m_currentAuthType))
             m_currentAuthType = m_authButtons.firstKey();
     } while(0);
 
