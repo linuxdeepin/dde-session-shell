@@ -286,6 +286,13 @@ QSize AuthCustom::contentSize() const
     return m_plugin->content()->size();
 }
 
+QSize AuthCustom::contentSizeHint() const
+{
+    if (!m_plugin || !m_plugin->content())
+        return QSize();
+
+    return m_plugin->content()->sizeHint();
+}
 
 LoginPlugin::PluginConfig AuthCustom::pluginConfig() const
 {

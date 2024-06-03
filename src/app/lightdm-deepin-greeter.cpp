@@ -48,6 +48,9 @@ int main(int argc, char* argv[])
         setenv("XDG_CURRENT_DESKTOP", "Deepin", 1);
     }
 
+    // 禁用 qwebengine 调试功能
+    qunsetenv("QTWEBENGINE_REMOTE_DEBUGGING");
+
     DGuiApplicationHelper::setAttribute(DGuiApplicationHelper::UseInactiveColorGroup, false);
     if (qgetenv("XDG_SESSION_TYPE").contains("wayland")) {
         QSurfaceFormat format;

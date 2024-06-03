@@ -1070,16 +1070,26 @@ int SFAWidget::getTopSpacing() const
     // 在低分辨率（高度<916）的时候，如果用户头像到屏幕顶端的距离为整个高度的35%，那么验证窗口整体是偏下的。
     // 计算居中时的顶部高度，用来保证验证窗口最起码是居中（在分辨率非常低的时候也无法保证，根据测试768是没问题的）。
     int centerTop = static_cast<int>((topLevelWidget()->geometry().height() - MIN_AUTH_WIDGET_HEIGHT) / 2);
-    const auto currentCustom = currentAuthCustom();
-    if (currentCustom) {
+    if (!m_customAuths.isEmpty()) {
         // 一般自定义的类型控件尺寸都会比较大，尽量保证能够居中显示。
         // 根据头像、用户名、锁屏以及插件自身的高度来计算居中时顶部间隔
         // 这是一个相对比较严格的高度，如果插件还是无法显示完整，或者界面偏下的话，只能插件调整content界面的大小了
-        const auto &pluginConfig = currentCustom->pluginConfig();
-        int height = pluginConfig.showAvatar ? m_userAvatar->height() + 10 : 0;
-        height += pluginConfig.showUserName ? m_userNameWidget->height() + 10 : 0;
-        height += pluginConfig.showLockButton ? m_lockButton->height() + 10 : 0;
-        centerTop = static_cast<int>((topLevelWidget()->geometry().height() - height - currentCustom->contentSize().height()) / 2);
+        bool showAvatar = false;
+        bool showUserName = false;
+        bool showLockButton = false;
+        int maxContentHeight = 0;
+        for (const auto &auth : m_customAuths) {
+            const auto &pluginConfig = auth->pluginConfig();
+            showAvatar = showAvatar || pluginConfig.showAvatar;
+            showUserName = showUserName || pluginConfig.showUserName;
+            showLockButton = showLockButton || pluginConfig.showLockButton;
+            maxContentHeight = qMax(maxContentHeight, auth->contentSizeHint().height());
+        }
+
+        int height = showAvatar ? m_userAvatar->height() + 10 : 0;
+        height += showUserName ? m_userNameWidget->height() + 10 : 0;
+        height += showLockButton ? m_lockButton->height() + 10 : 0;
+        centerTop = static_cast<int>((topLevelWidget()->geometry().height() - height - maxContentHeight) / 2);
     }
     const int topHeight = qMin(calcTopHeight, centerTop);
 
@@ -1110,7 +1120,7 @@ void SFAWidget::updateSpaceItem()
 {
     m_authTypeBottomSpacingHolder->changeSize(0, showAuthButtonBox() ? calcCurrentHeight(CHOOSE_AUTH_TYPE_BUTTON_BOTTOM_SPACING) : 0);
 
-    if (m_faceAuth || m_fingerprintAuth || m_irisAuth || m_passkeyAuth || currentAuthCustom()) {
+    if (m_faceAuth || m_fingerprintAuth || m_irisAuth || m_passkeyAuth) {
         m_bioBottomSpacingHolder->changeSize(0, calcCurrentHeight(BIO_AUTH_STATE_BOTTOM_SPACING));
         m_bioAuthStatePlaceHolder->changeSize(0, m_bioAuthStatePlaceHolder->sizeHint().height() == 0 ? 0 : BIO_AUTH_STATE_PLACE_HOLDER_HEIGHT);
     } else {

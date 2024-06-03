@@ -85,7 +85,7 @@ void ModulesLoader::findModule(const QString& path)
         const QString version = meta.value("api").toString();
         // 版本过低则不加载，可能会导致登录器崩溃
         if (!checkVersion(version, LOWEST_VERSION)) {
-            qCWarning(DDE_SHELL) << "The module version is too low.";
+            qCWarning(DDE_SHELL) << "The module version is too low, version:" << version << ", lowest version:" << LOWEST_VERSION;
             continue;
         }
 

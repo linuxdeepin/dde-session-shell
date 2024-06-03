@@ -40,6 +40,9 @@ int main(int argc, char *argv[])
         QSurfaceFormat::setDefaultFormat(format);
     }
 
+    // 禁用 qwebengine 调试功能
+    qunsetenv("QTWEBENGINE_REMOTE_DEBUGGING");
+
     DApplication *app = nullptr;
 #if (DTK_VERSION < DTK_VERSION_CHECK(5, 4, 0, 0))
     app = new DApplication(argc, argv);

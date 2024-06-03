@@ -40,6 +40,7 @@ public:
     void resetAuth();
     void reset();
     QSize contentSize() const;
+    QSize contentSizeHint() const;
 
     LoginPlugin::PluginConfig pluginConfig() const;
     void sendAuthToken();
