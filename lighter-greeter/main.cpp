@@ -33,6 +33,7 @@ int main(int argc, char *argv[])
     qApp->setOrganizationName("deepin");
     qApp->setApplicationName("org.deepin.dde.lightdm-deepin-greeter");
     setAppType(APP_TYPE_LOGIN);
+    qApp->setProperty("dssAppType", APP_TYPE_LOGIN);
 
     DPalette pa = DGuiApplicationHelper::instance()->standardPalette(DGuiApplicationHelper::LightType);
     pa.setColor(QPalette::Normal, DPalette::WindowText, QColor("#FFFFFF"));

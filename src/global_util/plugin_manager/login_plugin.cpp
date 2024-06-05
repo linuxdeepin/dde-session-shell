@@ -117,12 +117,13 @@ bool LoginPlugin::supportDefaultUser()
     return dataObj["SupportDefaultUser"].toBool(true);
 }
 
-void LoginPlugin::notifyCurrentUserChanged(const QString &userName)
+void LoginPlugin::notifyCurrentUserChanged(const QString &userName, uid_t uid)
 {
     QJsonObject message;
     message["CmdType"] = "CurrentUserChanged";
     QJsonObject user;
     user["Name"] = userName;
+    user["Uid"] = static_cast<int>(uid);
     message["Data"] = user;
 
     this->message(toJson(message));

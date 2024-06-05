@@ -59,7 +59,6 @@ LockContent::LockContent(QWidget *parent)
             m_isPANGUCpu = true;
         }
     }
-
 }
 
 LockContent* LockContent::instance()

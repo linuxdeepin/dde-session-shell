@@ -13,6 +13,7 @@
 #include "propertygroup.h"
 #include "sessionbasemodel.h"
 #include "public_func.h"
+#include "plugin_manager.h"
 
 #include <dde-api/eventlogger.hpp>
 
@@ -77,6 +78,7 @@ int main(int argc, char* argv[])
     AppEventFilter appEventFilter;
     a.installEventFilter(&appEventFilter);
     setAppType(APP_TYPE_LOGIN);
+    qApp->setProperty("dssAppType", APP_TYPE_LOGIN);
 
     DGuiApplicationHelper::instance()->setSizeMode(DGuiApplicationHelper::SizeMode::NormalMode);
     DPalette pa = DGuiApplicationHelper::instance()->standardPalette(DGuiApplicationHelper::LightType);
@@ -133,6 +135,8 @@ int main(int argc, char* argv[])
 
     /* load translation files */
     loadTranslation(model->currentUser()->locale());
+
+    PluginManager::instance()->setModel(model);
 
     // 设置系统登录成功的加载光标
     QObject::connect(model, &SessionBaseModel::authFinished, model, [=](bool isSuccess) {

@@ -75,7 +75,7 @@ public:
 
     bool supportDefaultUser();
 
-    void notifyCurrentUserChanged(const QString &userName);
+    void notifyCurrentUserChanged(const QString &userName, uid_t uid);
 
     void updateConfig();
 

@@ -8,12 +8,16 @@
 #include "login_plugin_v1.h"
 #include "login_plugin_v2.h"
 #include "public_func.h"
+#include "modules_loader.h"
 
 static PluginManager pluginManager;
 
 PluginManager::PluginManager(QObject* parent)
     : QObject(parent)
 {
+    // 有些插件需要通过 MessageCallback 获取信息来判断自己是否要被启用，但是 CustomAuth 需要判断为被启用后才会被创建，这里有冲突
+    // TODO MessageCallback 应该走 PluginManager，而不是CustomAuth
+    connect(&ModulesLoader::instance(), &ModulesLoader::loadPluginsFinished, this, &PluginManager::broadcastCurrentUser);
 }
 
 PluginManager* PluginManager::instance()
@@ -23,9 +27,12 @@ PluginManager* PluginManager::instance()
 
 void PluginManager::addPlugin(dss::module::BaseModuleInterface* module, const QString& version)
 {
-    if (!module)
+    if (!module) {
+        qCWarning(DDE_SHELL) << "Module is null.";
         return;
+    }
 
+    qCInfo(DDE_SHELL) << "Add plugin:" << module->key() << ", version:" << version;
     PluginBase* plugin = createPlugin(module, version);
     if (!plugin) {
         qCWarning(DDE_SHELL) << "Create plugin failed.";
@@ -38,6 +45,21 @@ void PluginManager::addPlugin(dss::module::BaseModuleInterface* module, const QS
         m_plugins.remove(key);
     });
 }
+
+void PluginManager::removePlugin(const QString &key)
+{
+    qCInfo(DDE_SHELL) << "Remove plugin:" << key;
+    auto it = m_plugins.find(key);
+    if (it == m_plugins.end()) {
+        qCWarning(DDE_SHELL) << "Plugin not found:" << key;
+        return;
+    }
+    Q_EMIT pluginAboutToBeRemoved(key);
+    if (it.value())
+        it.value()->deleteLater();
+    m_plugins.remove(key);
+}
+
 
 /**
  * @brief 获取登录插件
@@ -170,4 +192,33 @@ LoginPlugin* PluginManager::getAssistloginPlugin() const
     }
 
     return nullptr;
+}
+
+void PluginManager::setModel(SessionBaseModel *model)
+{
+    if (!model)
+        return;
+
+    m_model = model;
+
+    connect(m_model, &SessionBaseModel::currentUserChanged, this, &PluginManager::broadcastCurrentUser);
+    broadcastCurrentUser();
+}
+
+void PluginManager::broadcastCurrentUser()
+{
+    if (!m_model)
+        return;
+
+    const auto &currentUser = m_model->currentUser();
+    if (!currentUser)
+        return;
+
+    for (const auto &plugin : m_plugins.values()) {
+        auto loginPlugin = dynamic_cast<LoginPlugin*>(plugin);
+        if (!loginPlugin)
+            continue;
+
+        loginPlugin->notifyCurrentUserChanged(currentUser->name(), currentUser->uid());
+    }
 }

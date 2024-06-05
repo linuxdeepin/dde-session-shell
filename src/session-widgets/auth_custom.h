@@ -52,6 +52,8 @@ public:
     void setCustomAuthIndex(int index) { m_customAuthIndex = index; }
     int customAuthType() const { return static_cast<int>(AuthCommon::AT_Custom) + m_customAuthIndex; }
 
+    void detachPlugin();
+
 protected:
     bool event(QEvent *e) override;
 

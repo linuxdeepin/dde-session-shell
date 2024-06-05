@@ -97,6 +97,33 @@ void SFAWidget::initConnections()
         m_lockButton->setEnabled(!value.isEmpty());
     });
     connect(SpacerItemBinder::instance(), &SpacerItemBinder::requestInvalidateLayout, m_mainLayout, &QVBoxLayout::invalidate);
+    connect(PluginManager::instance(), &PluginManager::pluginAboutToBeRemoved, this, [this] (const QString &key) {
+        qCInfo(DDE_SHELL) << key << " about to be removed, destruct custom auth now";
+        auto it = m_customAuths.find(key);
+        if (it == m_customAuths.end()) {
+            qCWarning(DDE_SHELL) << "Can not find plugin:" << key;
+            return;
+        }
+        const auto &auth = it.value();
+        if (!auth) {
+            qCWarning(DDE_SHELL) << "Custom auth object is nullptr";
+            return;
+        }
+        const bool isCurrentAuthCustom = currentAuthCustom() == auth;
+        m_chooseAuthButtonBox->removeButton(m_authButtons.value(auth->customAuthType()));
+        removeAuthButton(auth);
+        m_customAuths.remove(auth->getLoginPlugin()->key());
+        auth->detachPlugin();
+        auth->deleteLater();
+        if (isCurrentAuthCustom) {
+            qCInfo(DDE_SHELL) << key << " is current custom auth, change to first auth";
+            if (m_authButtons.size() >= 1) {
+                emit m_chooseAuthButtonBox->button(m_authButtons.firstKey())->toggled(true);
+            } else {
+                qCritical(DDE_SHELL) << "No other auth left, can not change to first auth";
+            }
+        }
+    });
 }
 
 void SFAWidget::setModel(const SessionBaseModel *model)
@@ -156,14 +183,6 @@ void SFAWidget::setAuthType(const AuthFlags type)
  */
 void SFAWidget::initCustomFactors(const AuthFlags type)
 {
-    auto removeAuthButtonFunc = [this] (AuthCustom *auth) {
-        auto btn = m_authButtons.value(auth->customAuthType());
-        if (btn) {
-            btn->deleteLater();
-            m_authButtons.remove(auth->customAuthType());
-        }
-    };
-
     auto plugins = filtrateAuthPlugins(PluginManager::instance()->getLoginPlugins());
     qCInfo(DDE_SHELL) << "Login plugin size:" << plugins.size();
     if (!m_model->terminalLocked() && !plugins.isEmpty() && (type & AT_Custom)) {
@@ -174,7 +193,7 @@ void SFAWidget::initCustomFactors(const AuthFlags type)
         for (const auto &auth : m_customAuths.values()) {
             if (!plugins.contains(auth->getLoginPlugin())) {
                 qCInfo(DDE_SHELL) << "Remove custom auth:" << auth->getLoginPlugin()->key();
-                removeAuthButtonFunc(auth);
+                removeAuthButton(auth);
                 m_customAuths.remove(auth->getLoginPlugin()->key());
                 auth->deleteLater();
             }
@@ -186,7 +205,7 @@ void SFAWidget::initCustomFactors(const AuthFlags type)
     } else {
         qCInfo(DDE_SHELL) << "Remove all custom auths";
         for (const auto& auth : m_customAuths.values())
-            removeAuthButtonFunc(auth);
+            removeAuthButton(auth);
         qDeleteAll(m_customAuths);
         m_customAuths.clear();
 
@@ -1455,5 +1474,17 @@ void SFAWidget::sendAuthFinished()
         } else {
             emit authFinished();
         }
+    }
+}
+
+void SFAWidget::removeAuthButton(AuthCustom *auth)
+{
+    if (!auth)
+        return;
+
+    auto btn = m_authButtons.value(auth->customAuthType());
+    if (btn) {
+        btn->deleteLater();
+        m_authButtons.remove(auth->customAuthType());
     }
 }

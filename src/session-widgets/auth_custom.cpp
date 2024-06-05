@@ -30,12 +30,19 @@ AuthCustom::AuthCustom(QWidget *parent)
 
 AuthCustom::~AuthCustom()
 {
+    detachPlugin();
+    // FIXME 这种处理方式不通用，应该由插件请求登陆器把自己卸载掉
+    AuthCustomObjs.removeAll(this);
+}
+
+void AuthCustom::detachPlugin()
+{
+    qCInfo(DDE_SHELL) << "Detach plugin";
     if (m_plugin && m_plugin->content() && m_plugin->content()->parent() == this) {
         m_plugin->content()->setParent(nullptr);
     }
 
-    // FIXME 这种处理方式不通用，应该由插件请求登陆器把自己卸载掉
-    AuthCustomObjs.removeAll(this);
+    m_plugin = nullptr;
 }
 
 void AuthCustom::setModule(LoginPlugin* module)
@@ -59,7 +66,7 @@ void AuthCustom::setModel(const SessionBaseModel *model)
         if (!currentUser || !m_plugin)
             return;
 
-        m_plugin->notifyCurrentUserChanged(currentUser->name());
+        m_plugin->notifyCurrentUserChanged(currentUser->name(), currentUser->uid());
     });
 }
 
@@ -189,6 +196,7 @@ QString AuthCustom::messageCallback(const QString &message, void *app_data)
             if (model->currentUser()) {
                 QJsonObject user;
                 user["Name"] = model->currentUser()->name();
+                user["Uid"] = static_cast<int>(model->currentUser()->uid());
                 dataObj["CurrentUser"] = user;
             } else {
                 retObj["Code"] = -1;

@@ -9,6 +9,7 @@
 #include "login_plugin.h"
 #include "tray_plugin.h"
 #include "plugin_base.h"
+#include "sessionbasemodel.h"
 
 #include <QObject>
 #include <QJsonObject>
@@ -20,7 +21,9 @@ public:
     explicit PluginManager(QObject *parent = nullptr);
     static PluginManager* instance();
 
+    void setModel(SessionBaseModel *model);
     void addPlugin(dss::module::BaseModuleInterface *module, const QString &version);
+    void removePlugin(const QString &key);
     QList<LoginPlugin*> getLoginPlugins(int level = 1) const;
     LoginPlugin *getFullManagedLoginPlugin() const;
     LoginPlugin *getAssistloginPlugin() const;
@@ -30,8 +33,10 @@ public:
 
 signals:
     void trayPluginAdded(TrayPlugin *);
+    void pluginAboutToBeRemoved(const QString &key);
 
-public slots:
+private slots:
+    void broadcastCurrentUser();
 
 private:
     PluginBase* createPlugin(dss::module::BaseModuleInterface *module, const QString &version);
@@ -39,6 +44,7 @@ private:
     TrayPlugin *createTrayPlugin(dss::module::BaseModuleInterface *module, const QString &version);
 
 private:
+    QPointer<SessionBaseModel> m_model;
     QMap<QString, PluginBase*> m_plugins;
 };
 

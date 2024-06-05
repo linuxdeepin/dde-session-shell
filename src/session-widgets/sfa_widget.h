@@ -84,6 +84,7 @@ private:
     void sendAuthFinished();
     QList<LoginPlugin*> filtrateAuthPlugins(const QList<LoginPlugin*> &plugins) const;
     AuthCustom *currentAuthCustom() const;
+    void removeAuthButton(AuthCustom *auth);
 
 private:
     QVBoxLayout *m_mainLayout;

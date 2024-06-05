@@ -47,6 +47,7 @@ public:
 
     void setButtonList(const QList<ButtonBoxButton*> &list, bool checkable);
     inline QList<QAbstractButton *> buttonList() const { return m_group->buttons(); }
+    void removeButton(ButtonBoxButton* button);
     QList<ButtonBoxButton *> buttonBoxList() const;
     inline QAbstractButton *checkedButton() const { return m_group->checkedButton(); }
     inline QAbstractButton *button(int id) const { return m_group->button(id); }

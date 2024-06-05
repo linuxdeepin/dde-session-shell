@@ -165,6 +165,14 @@ void ButtonBox::setButtonList(const QList<ButtonBoxButton *> &list, bool checkab
     }
 }
 
+void ButtonBox::removeButton(ButtonBoxButton* button)
+{
+    if (!button)
+        return;
+    m_group->removeButton(button);
+    m_layout->removeWidget(button);
+}
+
 void ButtonBox::paintEvent(QPaintEvent *event)
 {
     QPainter p(this);

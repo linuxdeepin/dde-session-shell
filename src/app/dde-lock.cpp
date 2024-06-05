@@ -15,6 +15,7 @@
 #include "multiscreenmanager.h"
 #include "sessionbasemodel.h"
 #include "warningcontent.h"
+#include "plugin_manager.h"
 
 #include <DApplication>
 #include <DGuiApplicationHelper>
@@ -58,6 +59,7 @@ int main(int argc, char *argv[])
     AppEventFilter appEventFilter;
     app->installEventFilter(&appEventFilter);
     setAppType(APP_TYPE_LOCK);
+    qApp->setProperty("dssAppType", APP_TYPE_LOCK);
 
     DGuiApplicationHelper::instance()->setSizeMode(DGuiApplicationHelper::SizeMode::NormalMode);
     DGuiApplicationHelper::instance()->setPaletteType(DGuiApplicationHelper::LightType);
@@ -142,6 +144,8 @@ int main(int argc, char *argv[])
     DBusShutdownAgent shutdownAgent;
     shutdownAgent.setModel(model);
     DBusShutdownFrontService shutdownServices(&shutdownAgent);
+
+    PluginManager::instance()->setModel(model);
 
     // 这里提前进行单实例判断，避免后面数据初始化后再进行单实例判断而导致各种问题（例如：多次调用LockContent::instance()->init(model) 导致的localserver失效）
     auto isSingle = app->setSingleInstance(QString("dde-lock%1").arg(getuid()), DApplication::UserScope);
