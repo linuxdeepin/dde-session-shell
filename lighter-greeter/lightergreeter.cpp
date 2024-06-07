@@ -170,7 +170,7 @@ void LighterGreeter::initConnections()
         m_passwordEdit->hideAlertMessage();
     });
     connect(m_userCbx, QOverload<int>::of(&QComboBox::currentIndexChanged), this, &LighterGreeter::updateFocus);
-    connect(m_loginBtn, &TransparentButton::clicked, this, &LighterGreeter::onStartAuthentication);
+    connect(m_loginBtn, &TransparentButton::btnClicked, this, &LighterGreeter::onStartAuthentication);
     connect(m_switchGreeter, &QPushButton::clicked, this, &LighterGreeter::resetToNormalGreeter);
 
     connect(m_greeter, &QLightDM::Greeter::authenticationComplete, this, &LighterGreeter::onAuthenticationComplete);

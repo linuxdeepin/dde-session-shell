@@ -122,7 +122,7 @@ void AuthWidget::initConnections()
         }
     });
     /* 解锁按钮 */
-    connect(m_lockButton, &DFloatingButton::clicked, this, [this] {
+    connect(m_lockButton, &TransparentButton::btnClicked, this, [this] {
         if (m_user->isNoPasswordLogin()) {
             emit requestCheckAccount(m_user->name());
         } else if (!m_passwordAuth && !m_ukeyAuth && !m_singleAuth) {
