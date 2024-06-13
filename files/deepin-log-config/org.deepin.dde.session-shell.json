@@ -3,8 +3,14 @@
     "group": "dde",
     "submodules": [
         {
-            "name": "session-shell.lock",
-            "filter": "org.deepin.dde.lock",
+            "name": "session-shell.shell",
+            "filter": "org.deepin.dde.shell",
+            "exec": "/usr/bin/dde-lock",
+            "logType": "journal"
+        },
+        {
+            "name": "session-shell.active",
+            "filter": "dss.active",
             "exec": "/usr/bin/dde-lock",
             "logType": "journal"
         }
