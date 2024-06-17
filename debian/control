@@ -49,7 +49,8 @@ Provides: lightdm-greeter,
  deepin-greeter-wayland
 Recommends: onboard,
  dss-network-plugin,
- dde-wallpaper-cache
+ dde-wallpaper-cache,
+ dss-wechat-auth-plugin
 Conflicts: dde-workspace,
  deepin-notifications,
  dde-session-ui (<< 5.0.0),
