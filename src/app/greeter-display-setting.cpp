@@ -136,6 +136,12 @@ static double getScaleFactor() {
             float lenPxStd = hypot(1920, 1080);
             float lenMmStd = hypot(477, 268);
             float fix = (lenMm - lenMmStd) * (lenPx / lenPxStd) * 0.00158;
+            if (fix > 0.5) {
+                fix = 0.5;
+            }
+            if (fix < -0.5) {
+                fix = -0.5;
+            }
             float scale = (lenPx / lenMm) / (lenPxStd / lenMmStd) + fix;
             scaleFactor = toListedScaleFactor(scale);
 
