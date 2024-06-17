@@ -38,7 +38,7 @@ TEST_F(UT_GreeterWorker, BasicTest)
 TEST_F(UT_GreeterWorker, AuthTest)
 {
     const QString UserName("uos");
-    m_worker->checkAccount(UserName);
+    m_worker->checkAccount(UserName, true);
 //    m_worker->createAuthentication(UserName);
 //    m_worker->startAuthentication(UserName, 19);
 //    m_worker->sendTokenToAuth(UserName, 1, "123");

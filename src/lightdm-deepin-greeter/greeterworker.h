@@ -48,7 +48,7 @@ public slots:
     void endAuthentication(const QString &account, const AuthFlags authType);
     void sendTokenToAuth(const QString &account, const AuthType authType, const QString &token);
 
-    void checkAccount(const QString &account);
+    void checkAccount(const QString &account, bool switchUser);
     void restartResetSessionTimer();
     void onAuthFinished();
     void onNoPasswordLoginChanged(const QString &account, bool noPassword);

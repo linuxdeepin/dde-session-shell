@@ -888,9 +888,10 @@ void LockWorker::disableGlobalShortcutsForWayland(const bool enable)
     }
 }
 
-void LockWorker::checkAccount(const QString &account)
+void LockWorker::checkAccount(const QString &account, bool switchUser)
 {
     Q_UNUSED(account)
+    Q_UNUSED(switchUser)
 
     if (m_model->currentUser() && m_model->currentUser()->isNoPasswordLogin()) {
         qCInfo(DDE_SHELL) << "Current user has set 'no password login' : " << account;

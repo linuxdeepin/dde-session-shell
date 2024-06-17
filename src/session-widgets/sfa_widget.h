@@ -53,6 +53,7 @@ protected:
 protected Q_SLOTS:
     void updateBlurEffectGeometry();
     void onActiveAuth(AuthCommon::AuthType authType);
+    void onAccountError();
 
 private:
     void initUI();

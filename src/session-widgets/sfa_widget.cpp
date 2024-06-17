@@ -93,6 +93,7 @@ void SFAWidget::initConnections()
     connect(m_model, &SessionBaseModel::authTypeChanged, this, &SFAWidget::setAuthType);
     connect(m_model, &SessionBaseModel::authStateChanged, this, &SFAWidget::setAuthState);
     connect(m_model, &SessionBaseModel::lightdmPamStartedChanged, this, &SFAWidget::onLightdmPamStartChanged);
+    connect(m_model, &SessionBaseModel::accountError, this, &SFAWidget::onAccountError);
     connect(m_accountEdit, &DLineEditEx::textChanged, this, [this](const QString &value) {
         m_lockButton->setEnabled(!value.isEmpty());
     });
@@ -850,7 +851,7 @@ void SFAWidget::initCustomMFAAuth()
             m_lockButton->setEnabled(true);
         }
     });
-    connect(m_customAuth, &AuthCustom::requestCheckAccount, this, [this] (const QString &account) {
+    connect(m_customAuth, &AuthCustom::requestCheckAccount, this, [this] (const QString &account, bool switchUser) {
         qCInfo(DDE_SHELL) << "Request check account: " << account;
         if (m_user && m_user->name() == account) {
             LoginPlugin::AuthCallbackData data = m_customAuth->getCurrentAuthData();
@@ -861,7 +862,7 @@ void SFAWidget::initCustomMFAAuth()
             return;
         }
 
-        Q_EMIT requestCheckAccount(account);
+        Q_EMIT requestCheckAccount(account, switchUser);
     });
 
     connect(m_customAuth, &AuthCustom::notifyAuthTypeChange, this, &SFAWidget::onRequestChangeAuth);
@@ -872,6 +873,7 @@ void SFAWidget::initCustomMFAAuth()
     m_userAvatar->setVisible(m_customAuth->pluginConfig().showAvatar);
     m_userNameWidget->setVisible(m_customAuth->pluginConfig().showUserName);
     m_lockButton->setVisible(m_customAuth->pluginConfig().showLockButton);
+    m_blurEffectWidget->setVisible(m_customAuth->pluginConfig().showBackGroundColor);
     replaceWidget(m_customAuth);
     Q_EMIT requestStartAuthentication(m_user->name(), AT_Custom);
 }
@@ -903,6 +905,7 @@ void SFAWidget::initCustomAuth(LoginPlugin* plugin)
     customAuth->initUi();
     customAuth->hide();
     customAuth->setCustomAuthIndex(m_customAuths.count() + 1);
+    m_blurEffectWidget->setVisible(customAuth->pluginConfig().showBackGroundColor);
     m_customAuths.insert(plugin->key(), customAuth);
 
     connect(customAuth, &AuthCustom::requestSendToken, this, [this, customAuth](const QString &token) {
@@ -916,7 +919,7 @@ void SFAWidget::initCustomAuth(LoginPlugin* plugin)
         if (m_user)
             m_user->setLastCustomAuth(customAuth->loginPluginKey());
     });
-    connect(customAuth, &AuthCustom::requestCheckAccount, this, [this, customAuth](const QString &account) {
+    connect(customAuth, &AuthCustom::requestCheckAccount, this, [this, customAuth](const QString &account, bool switchUser) {
         qCInfo(DDE_SHELL) << customAuth->loginPluginKey() << " request check account:" << account;
         if (m_user && m_user->name() == account) {
             LoginPlugin::AuthCallbackData data = customAuth->getCurrentAuthData();
@@ -928,7 +931,7 @@ void SFAWidget::initCustomAuth(LoginPlugin* plugin)
             return;
         }
 
-        Q_EMIT requestCheckAccount(account);
+        Q_EMIT requestCheckAccount(account, switchUser);
     });
 
     connect(customAuth, &AuthCustom::notifyAuthTypeChange, this, &SFAWidget::onRequestChangeAuth);
@@ -1343,6 +1346,15 @@ void SFAWidget::onActiveAuth(AuthType authType)
     }
 
     emit requestStartAuthentication(m_model->currentUser()->name(), authType);
+}
+
+void SFAWidget::onAccountError()
+{
+    QList<QPointer<AuthCustom>> authCustomWidgets = m_customAuths.values();
+    for (const QPointer<AuthCustom> &authCustonWidget : authCustomWidgets) {
+        LoginPlugin *loginPlugin = authCustonWidget->getLoginPlugin();
+        loginPlugin->accountError();
+    }
 }
 
 void SFAWidget::initChooseAuthButtonBox(const AuthFlags authFlags)

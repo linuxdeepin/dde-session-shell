@@ -53,7 +53,7 @@ public slots:
     void onAuthStateChanged(const int type, const int state, const QString &message);
 
     void disableGlobalShortcutsForWayland(const bool enable);
-    void checkAccount(const QString &account);
+    void checkAccount(const QString &account, bool switchUser);
     void authFinishedAction();
 
     void onNoPasswordLoginChanged(const QString &account, bool noPassword);

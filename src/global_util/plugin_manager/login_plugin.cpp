@@ -155,5 +155,14 @@ void LoginPlugin::updateConfig()
     m_pluginConfig.showSwitchButton = dataObj["ShowSwitchButton"].toBool(m_pluginConfig.showSwitchButton);
     m_pluginConfig.showLockButton = dataObj["ShowLockButton"].toBool(m_pluginConfig.showLockButton);
     m_pluginConfig.defaultAuthLevel = (DefaultAuthLevel)dataObj["DefaultAuthLevel"].toInt();
+    m_pluginConfig.showBackGroundColor = dataObj["ShowBackGroundColor"].toBool(m_pluginConfig.showBackGroundColor);
+    m_pluginConfig.switchUserWhenCheckAccount = dataObj["SwitchUserWhenCheckAccount"].toBool(m_pluginConfig.switchUserWhenCheckAccount);
     m_authType = (AuthType)dataObj["AuthType"].toInt();
+}
+
+void LoginPlugin::accountError()
+{
+    QJsonObject jsonObject;
+    jsonObject["CmdType"] = "AccountError";
+    this->message(toJson(jsonObject));
 }

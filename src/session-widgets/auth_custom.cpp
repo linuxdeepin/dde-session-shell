@@ -136,7 +136,7 @@ void AuthCustom::setAuthData(const LoginPlugin::AuthCallbackData &callbackData)
     const QString &account = callbackData.account;
     if (!account.isEmpty()) {
         qCInfo(DDE_SHELL) << "Request check account: " << account;
-        emit requestCheckAccount(account);
+        emit requestCheckAccount(account, m_plugin->pluginConfig().switchUserWhenCheckAccount);
     } else {
         emit requestSendToken("");
     }

@@ -585,7 +585,7 @@ void GreeterWorker::endAuthentication(const QString &account, const AuthFlags au
  *
  * @param account
  */
-void GreeterWorker::checkAccount(const QString &account)
+void GreeterWorker::checkAccount(const QString &account, bool switchUser)
 {
     qCInfo(DDE_SHELL) << "Check account, account: " << account;
     const auto &originalUsePtr = m_model->findUserByName(account);
@@ -597,6 +597,7 @@ void GreeterWorker::checkAccount(const QString &account)
         // 对于没有设置密码的账户,直接认定为错误账户
         if (!user_ptr->isPasswordValid()) {
             qCWarning(DDE_SHELL) << "The user's password is invalid, user path: " << userPath;
+            emit m_model->accountError();
             emit m_model->authFailedTipsMessage(tr("Wrong account"));
             m_model->setAuthType(AT_None);
             return;
@@ -613,6 +614,7 @@ void GreeterWorker::checkAccount(const QString &account)
             dynamic_cast<ADDomainUser *>(user_ptr.get())->setFullName(userFullName);
         } else {
             qCWarning(DDE_SHELL) << "Password is null, user path: " << userPath;
+            emit m_model->accountError();
             emit m_model->authFailedTipsMessage(tr("Wrong account"));
             m_model->setAuthType(AT_None);
             return;
@@ -626,7 +628,7 @@ void GreeterWorker::checkAccount(const QString &account)
     }
 
     // 如果用户已经登录了，直接切换用户
-    if (originalUsePtr && originalUsePtr->isLogin() && user_ptr) {
+    if (switchUser && originalUsePtr && originalUsePtr->isLogin() && user_ptr) {
         qCInfo(DDE_SHELL) << "Current user is already logged in";
         Q_EMIT m_model->checkAccountFinished();
         user_ptr->updateLoginState(true); // 初始化 NativeUser 的时候没有处理登录状态

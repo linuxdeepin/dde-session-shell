@@ -55,7 +55,7 @@ signals:
     void sendTokenToAuth(const QString &account, const AuthType authType, const QString &token);
     void requestEndAuthentication(const QString &account, const AuthFlags authType);
     void authFinished();
-    void requestCheckAccount(const QString &account);
+    void requestCheckAccount(const QString &account, bool switchUser);
     void requestLockFrameHide();
     void parentChanged();
     void noPasswordLoginChanged(const QString &account, bool noPassword);

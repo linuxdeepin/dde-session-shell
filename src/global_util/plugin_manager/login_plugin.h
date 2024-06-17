@@ -27,10 +27,12 @@ public:
     // 认证插件配置
     struct PluginConfig
     {
-        bool showAvatar = true;         // 是否显示头像
-        bool showUserName = true;       // 是否显示用户名
-        bool showSwitchButton = true;   // 是否显示类型切换按钮
-        bool showLockButton = true;     // 是否显示解锁按钮
+        bool showAvatar = true;                     // 是否显示头像
+        bool showUserName = true;                   // 是否显示用户名
+        bool showSwitchButton = true;               // 是否显示类型切换按钮
+        bool showLockButton = true;                 // 是否显示解锁按钮
+        bool showBackGroundColor = true;            // 是否显示灰色背景
+        bool switchUserWhenCheckAccount = true;     // 检测用户已经登录后是否切换到这个已登录的用户
         // 默认使用此认证类型的强度
         DefaultAuthLevel defaultAuthLevel = DefaultAuthLevel::Default;
 
@@ -40,7 +42,9 @@ public:
                    this->showLockButton == b.showAvatar &&
                    this->showSwitchButton == b.showSwitchButton &&
                    this->showUserName == b.showUserName &&
-                   this->defaultAuthLevel == b.defaultAuthLevel;
+                   this->defaultAuthLevel == b.defaultAuthLevel &&
+                   this->showBackGroundColor == b.showBackGroundColor &&
+                   this->switchUserWhenCheckAccount == b.switchUserWhenCheckAccount;
         }
 
         bool operator!=(const PluginConfig b) const
@@ -49,7 +53,9 @@ public:
                    this->showLockButton != b.showAvatar ||
                    this->showSwitchButton != b.showSwitchButton ||
                    this->showUserName != b.showUserName ||
-                   this->defaultAuthLevel != b.defaultAuthLevel;
+                   this->defaultAuthLevel != b.defaultAuthLevel ||
+                   this->showBackGroundColor != b.showBackGroundColor ||
+                   this->switchUserWhenCheckAccount != b.switchUserWhenCheckAccount;
         }
     };
 
@@ -78,6 +84,8 @@ public:
     void notifyCurrentUserChanged(const QString &userName, uid_t uid);
 
     void updateConfig();
+
+    void accountError();
 
     inline AuthType defaultAuthType() const { return m_authType; }
 

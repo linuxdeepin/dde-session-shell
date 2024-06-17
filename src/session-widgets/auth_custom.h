@@ -70,7 +70,7 @@ private:
     static QJsonObject getRootObj(const QString &jsonStr);
 
 Q_SIGNALS:
-    void requestCheckAccount(const QString &account);
+    void requestCheckAccount(const QString &account, bool switchUser = true);
     void requestSendToken(const QString &token);
     void notifyResizeEvent();
     void notifyAuthTypeChange(const AuthCommon::AuthType authType);

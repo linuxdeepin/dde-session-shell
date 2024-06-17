@@ -132,7 +132,7 @@ public:
     void syncResetPasswordUI();
 
 Q_SIGNALS:
-    void requestCheckAccount(const QString &account);
+    void requestCheckAccount(const QString &account, bool switchUser = true);
     void requestSetKeyboardType(const QString &key);
     void requestStartAuthentication(const QString &account, const AuthCommon::AuthFlags authType);
     void sendTokenToAuth(const QString &account, const AuthCommon::AuthType authType, const QString &token);
