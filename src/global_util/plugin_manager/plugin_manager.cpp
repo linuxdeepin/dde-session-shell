@@ -42,6 +42,7 @@ void PluginManager::addPlugin(dss::module::BaseModuleInterface* module, const QS
     const QString& key = plugin->key();
     m_plugins.insert(key, plugin);
     connect(plugin, &QObject::destroyed, this, [this, key] {
+        qCInfo(DDE_SHELL) << key << " was destroyed.";
         m_plugins.remove(key);
     });
 }
@@ -85,6 +86,7 @@ QList<LoginPlugin*> PluginManager::getLoginPlugins(int level) const
         defaultLoginPlugins.append(defaultLoginPlugin);
     const auto& finalPlugins = !designatedLoginPlugins.isEmpty() ? designatedLoginPlugins : defaultLoginPlugins;
     qCInfo(DDE_SHELL) << "Final login plugins:" << finalPlugins;
+    qCInfo(DDE_SHELL) << "All plugins:" << m_plugins.keys();
     QMap<QString, LoginPlugin*> map;
     for (const auto& plugin : m_plugins.values()) {
         if (plugin && PluginBase::ModuleType::LoginType == plugin->type()) {

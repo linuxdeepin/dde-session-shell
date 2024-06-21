@@ -66,8 +66,8 @@ void ModulesLoader::findModule(const QString& path)
         // 检查是否要加载插件
         if (!isPluginEnabled(module)) {
             qCInfo(DDE_SHELL) << "The plugin dose not want to be loaded, path:" << path;
-            // Unload 插件
-            QMetaObject::invokeMethod(this, "unloadPlugin", Qt::QueuedConnection, Q_ARG(QString, path));
+            // Unload 后再次加载插件会导致插件不显示，且 unload不会降低内存，意义不大
+            // QMetaObject::invokeMethod(this, "unloadPlugin", Qt::QueuedConnection, Q_ARG(QString, path));
             continue;
         }
 
