@@ -388,6 +388,7 @@ void GreeterWorker::setCurrentUser(const std::shared_ptr<User> user)
     json["Name"] = user->name();
     json["Type"] = user->type();
     json["Uid"] = static_cast<int>(user->uid());
+    json["LastCustomAuth"] = user->lastCustomAuth(); // 上一次认证通过自定义认证类型
     m_lockInter->SwitchToUser(QString(QJsonDocument(json).toJson(QJsonDocument::Compact))).waitForFinished();
 }
 

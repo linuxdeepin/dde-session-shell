@@ -1244,12 +1244,7 @@ void SFAWidget::onRequestChangeAuth(const AuthType authType)
             << ", choose auth button box is enabled: " << m_chooseAuthButtonBox->isEnabled()
             << ", current authentication type: " << m_currentAuthType;
     const auto customAuth = qobject_cast<AuthCustom*>(sender());
-    if (!customAuth) {
-        qCWarning(DDE_SHELL) << "Sender is not custom auth";
-        return;
-    }
-
-    if (customAuth->customAuthType() != m_currentAuthType) {
+    if (customAuth && customAuth->customAuthType() != m_currentAuthType) {
         qCInfo(DDE_SHELL) << "Custom auth dismath with current auth type";
         return;
     }
@@ -1264,11 +1259,28 @@ void SFAWidget::onRequestChangeAuth(const AuthType authType)
 
         // 登录选项默认显示上一次认证方式，当不存在上一次认证，默认显示第一种认证方式
         QAbstractButton *button = nullptr;
-        if (m_authButtons.contains(m_user->lastAuthType())) {
-            button = m_chooseAuthButtonBox->button(m_user->lastAuthType());
+        const auto lastAuthType = m_user->lastAuthType();
+        qCInfo(DDE_SHELL) << "Last authtication type:" << lastAuthType;
+        if (lastAuthType == AuthCommon::AT_Custom) {
+            int authType = m_authButtons.firstKey();
+            // 获取上次自定义认证的类型
+            const auto &lastCustomAuth = m_user->lastCustomAuth();
+            qCInfo(DDE_SHELL) << "Last custom auth:" << lastCustomAuth;
+            if (!lastCustomAuth.isEmpty() && m_customAuths.contains(lastCustomAuth)) {
+                const auto &it = m_customAuths.find(lastCustomAuth);
+                if (it != m_customAuths.end() && it.value() != nullptr) {
+                    // 排除重复使用了当前自定义认证类型的情况
+                    if (!customAuth || customAuth->customAuthType() != it.value()->customAuthType())
+                        authType = it.value()->customAuthType();
+                }
+            }
+            button = m_chooseAuthButtonBox->button(authType);
+        } else if (m_authButtons.contains(lastAuthType)) {
+            button = m_chooseAuthButtonBox->button(lastAuthType);
         } else {
             button = m_chooseAuthButtonBox->button(m_authButtons.firstKey());
         }
+
         if (button) {
             button->setChecked(true);
         } else {
