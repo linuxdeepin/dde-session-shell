@@ -18,12 +18,8 @@ public:
 
     void setColor(const QColor &color);
 
-Q_SIGNALS:
-    void btnClicked();
-
 protected:
     void paintEvent(QPaintEvent *event) override;
-    void mouseReleaseEvent(QMouseEvent *event) override;
 
 private:
     QColor m_color;

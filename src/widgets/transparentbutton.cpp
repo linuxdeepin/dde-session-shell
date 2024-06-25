@@ -5,7 +5,6 @@
 #include "transparentbutton.h"
 
 #include <DStyleOptionButton>
-#include <QMouseEvent>
 
 TransparentButton::TransparentButton(QWidget *parent)
     : DFloatingButton (parent)
@@ -41,13 +40,4 @@ void TransparentButton::paintEvent(QPaintEvent *event)
     }
 
     p.drawControl(DStyle::CE_IconButton, opt);
-}
-
-void TransparentButton::mouseReleaseEvent(QMouseEvent *event)
-{
-    DFloatingButton::mouseReleaseEvent(event);
-
-    // 开启快速登录后锁屏启动很早，父类的clicked信号有几率发不出来，使用自己的点击信号
-    if (event->button() == Qt::LeftButton && rect().contains(event->pos()))
-        Q_EMIT btnClicked();
 };
