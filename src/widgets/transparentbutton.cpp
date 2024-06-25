@@ -50,15 +50,4 @@ void TransparentButton::mouseReleaseEvent(QMouseEvent *event)
     // 开启快速登录后锁屏启动很早，父类的clicked信号有几率发不出来，使用自己的点击信号
     if (event->button() == Qt::LeftButton && rect().contains(event->pos()))
         Q_EMIT btnClicked();
-}
-
-void TransparentButton::keyPressEvent(QKeyEvent *event)
-{
-    DFloatingButton::keyPressEvent(event);
-    if (this->hasFocus() && (event->key() == Qt::Key_Space
-                            || event->key() == Qt::Key_Return
-                            || event->key() == Qt::Key_Enter))
-    {
-        Q_EMIT btnClicked();
-    }
 };

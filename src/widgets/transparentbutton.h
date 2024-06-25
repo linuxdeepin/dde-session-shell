@@ -24,7 +24,6 @@ Q_SIGNALS:
 protected:
     void paintEvent(QPaintEvent *event) override;
     void mouseReleaseEvent(QMouseEvent *event) override;
-    void keyPressEvent(QKeyEvent *event) override;
 
 private:
     QColor m_color;
