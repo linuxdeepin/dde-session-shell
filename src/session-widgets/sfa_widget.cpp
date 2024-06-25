@@ -1315,14 +1315,15 @@ QList<LoginPlugin*> SFAWidget::filtrateAuthPlugins(const QList<LoginPlugin*> &pl
     }
 
     // 主账户登录，切换用户b(在greeter界面），回到主账户后删除b账户，这个时候greeter切换用户到主账户
-    if (m_model->appType() == Login && m_user->isLogin()) {
-        qCInfo(DDE_SHELL) << "Current user is logged in";
-        return retList;
-    }
+    const bool isLoginedUserInGreeter = m_model->appType() == Login && m_user->isLogin();
+    qCInfo(DDE_SHELL) << "Current user is logged in: " << isLoginedUserInGreeter;
 
     for (const auto plugin : plugins) {
-        if (plugin->isPluginEnabled())
-            retList.append(plugin);
+        if (!plugin->isPluginEnabled())
+            continue;
+        if (isLoginedUserInGreeter && plugin->pluginConfig().notUsedByLoginedUserInGreeter)
+            continue;
+        retList.append(plugin);
     }
 
     // 判断认证插件是否支持"..."用户

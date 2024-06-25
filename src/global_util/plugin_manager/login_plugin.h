@@ -33,6 +33,7 @@ public:
         bool showLockButton = true;                 // 是否显示解锁按钮
         bool showBackGroundColor = true;            // 是否显示灰色背景
         bool switchUserWhenCheckAccount = true;     // 检测用户已经登录后是否切换到这个已登录的用户
+        bool notUsedByLoginedUserInGreeter = false; // 在登录界面且当前用户已登录时不使用插件
         // 默认使用此认证类型的强度
         DefaultAuthLevel defaultAuthLevel = DefaultAuthLevel::Default;
 
@@ -44,7 +45,8 @@ public:
                    this->showUserName == b.showUserName &&
                    this->defaultAuthLevel == b.defaultAuthLevel &&
                    this->showBackGroundColor == b.showBackGroundColor &&
-                   this->switchUserWhenCheckAccount == b.switchUserWhenCheckAccount;
+                   this->switchUserWhenCheckAccount == b.switchUserWhenCheckAccount &&
+                   this->notUsedByLoginedUserInGreeter == b.notUsedByLoginedUserInGreeter;
         }
 
         bool operator!=(const PluginConfig b) const
@@ -55,7 +57,8 @@ public:
                    this->showUserName != b.showUserName ||
                    this->defaultAuthLevel != b.defaultAuthLevel ||
                    this->showBackGroundColor != b.showBackGroundColor ||
-                   this->switchUserWhenCheckAccount != b.switchUserWhenCheckAccount;
+                   this->switchUserWhenCheckAccount != b.switchUserWhenCheckAccount ||
+                   this->notUsedByLoginedUserInGreeter != b.notUsedByLoginedUserInGreeter;
         }
     };
 
