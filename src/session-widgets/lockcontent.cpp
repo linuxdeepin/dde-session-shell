@@ -671,6 +671,16 @@ bool LockContent::eventFilter(QObject *watched, QEvent *e)
     return false;
 }
 
+bool LockContent::event(QEvent *event)
+{
+    if (event->type() == QEvent::WindowDeactivate) {
+        if (m_popWin && m_currentTray && m_popWin->isVisible()) {
+            m_popWin->activateWindow();
+        }
+    }
+    return SessionBaseWindow::event(event);
+}
+
 void LockContent::updateVirtualKBPosition()
 {
     const QPoint point = mapToParent(QPoint((width() - m_virtualKB->width()) / 2, height() - m_virtualKB->height() - 50));
