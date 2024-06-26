@@ -610,6 +610,7 @@ void LockContent::showModule(const QString &name, const bool callShowForce)
             qCWarning(DDE_SHELL) << "TrayButton or plugin`s content is null";
             return;
         }
+
         if (!m_popWin) {
             m_popWin = new PopupWindow(this);
             connect(m_model, &SessionBaseModel::visibleChanged, this, [this] (const bool visible) {
@@ -627,10 +628,12 @@ void LockContent::showModule(const QString &name, const bool callShowForce)
                     m_popWin->show(point);
                 }
             });
-            // 隐藏后需要removeEventFilter，后期优化
-            for (auto child : this->findChildren<QWidget*>()) {
-                child->installEventFilter(this);
-            }
+        }
+
+        // 隐藏后需要removeEventFilter，后期优化
+        for (auto child : this->findChildren<QWidget*>()) {
+            child->removeEventFilter(this);
+            child->installEventFilter(this);
         }
 
         if (!m_popWin->getContent() || m_popWin->getContent() != plugin->content())
