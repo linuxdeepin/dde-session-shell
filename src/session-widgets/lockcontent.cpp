@@ -662,7 +662,7 @@ bool LockContent::eventFilter(QObject *watched, QEvent *e)
             Q_EMIT qobject_cast<FloatingButton*>(m_currentTray)->requestHideTips();
         } else if (watched != m_currentTray && !isChild && e->type() == QEvent::MouseButtonRelease) {
             QMouseEvent *ev = static_cast<QMouseEvent *>(e);
-            if (!m_popWin->geometry().contains(ev->pos())) {
+            if (!m_popWin->geometry().contains(this->mapFromGlobal(QCursor::pos()))) {
                 m_popWin->hide();
             }
         }
