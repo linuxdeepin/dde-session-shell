@@ -1068,13 +1068,14 @@ void SFAWidget::setBioAuthStateVisible(AuthModule *authModule, bool visible)
  */
 int SFAWidget::getTopSpacing() const
 {
-    const int calcTopHeight = static_cast<int>(topLevelWidget()->geometry().height() * AUTH_WIDGET_TOP_SPACING_PERCENT);
     const qreal pixelRatio = qApp->devicePixelRatio();
+    const int topLevelWidgetHeight = topLevelWidget()->geometry().height() * pixelRatio;
+    const int calcTopHeight = static_cast<int>(topLevelWidgetHeight * AUTH_WIDGET_TOP_SPACING_PERCENT);
     const bool showAuthButton = showAuthButtonBox();
     const bool hasBioAuth = (m_faceAuth || m_fingerprintAuth || m_irisAuth || m_passkeyAuth);
     // 在低分辨率（高度<916）的时候，如果用户头像到屏幕顶端的距离为整个高度的35%，那么验证窗口整体是偏下的。
     // 计算居中时的顶部高度，用来保证验证窗口最起码是居中（在分辨率非常低的时候也无法保证，根据测试768是没问题的）。
-    int centerTop = static_cast<int>((topLevelWidget()->geometry().height() - MIN_AUTH_WIDGET_HEIGHT * pixelRatio) / 2);
+    int centerTop = static_cast<int>((topLevelWidgetHeight - MIN_AUTH_WIDGET_HEIGHT) / 2);
     if (!m_customAuths.isEmpty()) {
         // 一般自定义的类型控件尺寸都会比较大，尽量保证能够居中显示。
         // 根据头像、用户名、锁屏以及插件自身的高度来计算居中时顶部间隔
@@ -1088,25 +1089,29 @@ int SFAWidget::getTopSpacing() const
             showAvatar = showAvatar || pluginConfig.showAvatar;
             showUserName = showUserName || pluginConfig.showUserName;
             showLockButton = showLockButton || pluginConfig.showLockButton;
-            maxContentHeight = qMax(maxContentHeight, auth->contentSizeHint().height());
+            maxContentHeight = qMax(maxContentHeight, static_cast<int>(auth->contentSizeHint().height() * pixelRatio));
         }
 
         int height = showAvatar ? m_userAvatar->height() + 10 : 0;
         height += showUserName ? m_userNameWidget->height() + 10 : 0;
         height += showLockButton ? m_lockButton->height() + 10 : 0;
         height += showAuthButton ? m_chooseAuthButtonBox->height() + 10 : 0;
-        centerTop = static_cast<int>((topLevelWidget()->geometry().height() - height - maxContentHeight) / 2);
+        centerTop = static_cast<int>((topLevelWidgetHeight - height * pixelRatio - maxContentHeight) / 2);
 // Just for debug
 #if 0
     qCInfo(DDE_SHELL) << "Height:" << height << ", show avatar:" << showAvatar << ", show user name:" << showUserName << ", show lock button:" << showLockButton << ", show auth button:" << showAuthButton;
 #endif
     }
     const int topHeight = qMin(calcTopHeight, centerTop);
-    // 需要额外增加的顶部间隔高度 = 屏幕高度*0.35 - 时间控件高度 - 布局间隔 - 生物认证按钮底部间隔
+    // 需要额外增加的顶部间隔高度 = 屏幕高度*0.35 - 布局间隔 - 生物认证按钮底部间隔
     // - 生物认证切换按钮底部间隔 - 生物认证图标高度(如果有生物认证因子) - 切换验证类型按钮高度（如果认证因子数量大于1)
-    int deltaY = topHeight - calcCurrentHeight(LOCK_CONTENT_CENTER_LAYOUT_MARGIN * pixelRatio)
-            - (hasBioAuth ? BIO_AUTH_STATE_PLACE_HOLDER_HEIGHT : 0)
-            - (m_authTypeBottomSpacingHolder->geometry().size().height());
+    int deltaY = topHeight - calcCurrentHeight(LOCK_CONTENT_CENTER_LAYOUT_MARGIN)* pixelRatio
+            - (hasBioAuth ? calcCurrentHeight(BIO_AUTH_STATE_PLACE_HOLDER_HEIGHT)* pixelRatio : 0)
+            - (m_bioBottomSpacingHolder->geometry().height() * pixelRatio)
+            - (showAuthButtonBox() ? calcCurrentHeight(CHOOSE_AUTH_TYPE_BUTTON_BOTTOM_SPACING) * pixelRatio : 0)
+            - m_chooseAuthButtonBox->geometry().height() * pixelRatio;
+
+    deltaY = deltaY / pixelRatio;
 
 // Just for debug
 #if 0
