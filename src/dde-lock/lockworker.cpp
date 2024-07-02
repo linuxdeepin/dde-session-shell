@@ -424,9 +424,6 @@ void LockWorker::doPowerAction(const SessionBaseModel::PowerAction action)
     {
         m_model->setIsBlackMode(true);
         m_model->setCurrentModeState(SessionBaseModel::ModeStatus::PasswordMode);
-        if (!sleepLock) {
-            m_model->setVisible(false);
-        }
 
         int delayTime = 500;
         if(m_gsettings && m_gsettings->keys().contains("delaytime")){
@@ -450,9 +447,6 @@ void LockWorker::doPowerAction(const SessionBaseModel::PowerAction action)
     {
         m_model->setIsBlackMode(true);
         m_model->setCurrentModeState(SessionBaseModel::ModeStatus::PasswordMode);
-        if (!sleepLock) {
-            m_model->setVisible(false);
-        }
 
         int delayTime = 500;
         if(m_gsettings && m_gsettings->keys().contains("delaytime")){
