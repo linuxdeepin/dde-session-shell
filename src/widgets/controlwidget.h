@@ -154,6 +154,8 @@ private:
     QPropertyAnimation *m_tipsAni = nullptr;
 #endif
     QMap<QPointer<QWidget>, QPointer<QWidget>> m_modules;
+    QMap<QString, bool> m_modulesVisible;
+
     QMenu *m_contextMenu;
     TipsWidget *m_tipsWidget;
     const SessionBaseModel *m_model;

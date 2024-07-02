@@ -173,6 +173,7 @@ void ControlWidget::updatePluginVisible(const QString module, bool state)
     for (auto key : m_modules.keys()) {
         if (key && key->objectName() == module) {
             m_modules.value(key)->setVisible(state);
+            m_modulesVisible.insert(module, state);
 
             if (m_model->currentModeState() != SessionBaseModel::ModeStatus::PasswordMode)
                 m_modules.value(key)->setVisible(false);
@@ -677,8 +678,15 @@ void ControlWidget::onItemClicked(const QString &str)
 
 void ControlWidget::updateModuleVisible()
 {
-    for (QWidget *moduleWidget : m_modules.values()) {
-        moduleWidget->setVisible(m_model->currentModeState() == SessionBaseModel::ModeStatus::PasswordMode);
+    for (auto key : m_modules.keys()) {
+        if (key) {
+            const QString &module = key->objectName();
+            bool visible = m_model->currentModeState() == SessionBaseModel::ModeStatus::PasswordMode;
+            if(m_modulesVisible.contains(module)){
+                visible &= m_modulesVisible.value(module);
+            }
+            m_modules.value(key)->setVisible(visible);
+        }
     }
 }
 
