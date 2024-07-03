@@ -1,5 +1,5 @@
 {
-    "name": "dde-session-shell",
+    "name": "dde-lock",
     "group": "dde",
     "submodules": [
         {
