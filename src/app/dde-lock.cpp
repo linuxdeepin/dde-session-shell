@@ -34,14 +34,9 @@ int main(int argc, char *argv[])
 #if (DTK_VERSION >= DTK_VERSION_CHECK(5, 6, 8, 7))
     DLogManager::registerLoggingRulesWatcher("org.deepin.dde.lock");
 #endif
-    if (qgetenv("XDG_SESSION_TYPE").contains("wayland")) {
-        QSurfaceFormat format;
-        format.setRenderableType(QSurfaceFormat::OpenGLES);
-        QSurfaceFormat::setDefaultFormat(format);
-    }
 
-    // 禁用 qwebengine 调试功能
-    qunsetenv("QTWEBENGINE_REMOTE_DEBUGGING");
+    // 配置 qwebengine
+    configWebEngine();
 
     DApplication *app = nullptr;
 #if (DTK_VERSION < DTK_VERSION_CHECK(5, 4, 0, 0))

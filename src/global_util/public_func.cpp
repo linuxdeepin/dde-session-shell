@@ -15,6 +15,7 @@
 #include <QJsonDocument>
 #include <QApplication>
 #include <QScreen>
+#include <QSurfaceFormat>
 
 #include <X11/Xcursor/Xcursor.h>
 #include <X11/Xlib.h>
@@ -290,4 +291,35 @@ bool checkVersion(const QString &target, const QString &base)
         return targetVersion[i].toInt() > baseVersion[i].toInt() ? true : false;
     }
     return true;
+}
+
+void configWebEngine()
+{
+    // 华为机型只支持OpenGLES，导致使用到webengine的地方都不能用
+    // 登录锁屏用到了二维码解锁，二维码又依赖了webengine来显示
+    if (qgetenv("XDG_SESSION_TYPE").contains("wayland")) {
+        QSurfaceFormat format;
+        format.setRenderableType(QSurfaceFormat::OpenGLES);
+        QSurfaceFormat::setDefaultFormat(format);
+    }
+
+    // 禁用 qwebengine 调试功能
+    qunsetenv("QTWEBENGINE_REMOTE_DEBUGGING");
+
+#ifdef __sw_64__
+    qputenv("QTWEBENGINE_CHROMIUM_FLAGS", "--no-sandbox");
+#endif
+
+    // Disable function: Qt::AA_ForceRasterWidgets, solve the display problem of domestic platform (loongson mips)
+    qputenv("QTWEBENGINE_CHROMIUM_FLAGS", "--disable-gpu");
+    qputenv("QTWEBENGINE_CHROMIUM_FLAGS", "--disable-web-security");
+    qputenv("DXCB_FAKE_PLATFORM_NAME_XCB", "true");
+
+    //龙芯机器配置,使得DApplication能正确加载QTWEBENGINE
+    qputenv("DTK_FORCE_RASTER_WIDGETS", "FALSE");
+    qputenv("_d_disableDBusFileDialog", "true");
+    setenv("PULSE_PROP_media.role", "video", 1);
+
+    // FIXME 使用--single-process可加快启动速度，但是在设置了自动代理的情况下会导致崩溃，待 QT 解决后再放开
+    // qputenv("QTWEBENGINE_CHROMIUM_FLAGS", "--single-process");
 }

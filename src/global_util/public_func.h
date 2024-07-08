@@ -80,4 +80,9 @@ QString toJson(const QJsonObject &jsonObj);
 
 bool checkVersion(const QString &target, const QString &base);
 
+/**
+ * @brief 配置 qwebengine 相关环境
+ */
+void configWebEngine();
+
 #endif // PUBLIC_FUNC_H
