@@ -316,6 +316,7 @@ QString LoginModule::message(const QString &message)
         retDataObj["AuthType"] = AuthType::AT_Custom;
         retDataObj["SupportDefaultUser"] = false;
         retDataObj["NotUsedByLoginedUserInGreeter"] = true;
+        retDataObj["SaveLastAuthType"] = false;
 
         retObj["Data"] = retDataObj;
     } else if (cmdType == "StartAuth"){

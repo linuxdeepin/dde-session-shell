@@ -997,7 +997,13 @@ void SFAWidget::checkAuthResult(const AuthCommon::AuthType type, const AuthCommo
             currentAuthCustom()->resetAuth();
         }
     } else if (type != AT_All && state == AS_Success) {
-        m_user->setLastAuthType(type);
+        if (type == AuthCommon::AT_Custom ) {
+            const auto customAuth = currentAuthCustom();
+            if (customAuth && customAuth->pluginConfig().saveLastAuthType)
+                m_user->setLastAuthType(type);
+        } else {
+            m_user->setLastAuthType(type);
+        }
         m_lockButton->setEnabled(true);
         m_lockButton->setFocus();
 
