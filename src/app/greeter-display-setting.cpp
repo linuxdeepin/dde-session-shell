@@ -153,7 +153,7 @@ static double getScaleFactor() {
                 minScaleFactor = scaleFactor;
             }
         }
-        scaleFactor = minScaleFactor;
+        scaleFactor = scaleFactor > 0.0 ? minScaleFactor : 1;
     }
     else {
         qCWarning(DDE_SHELL) << "Get scale factor failed, please check X11 Extension";
