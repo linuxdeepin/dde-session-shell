@@ -37,6 +37,21 @@ void MultiScreenManager::register_for_multi_screen(std::function<QWidget *(QScre
 {
     m_registerFunction = function;
     qCInfo(DDE_SHELL) << "Copy mode:" << m_isCopyMode;
+
+    int maxAttempts = 0;
+    while (true) {
+        if (qApp->screens().count() < 1) {
+            // 没有屏幕数据延时2s再取一次
+            QThread::sleep(2);
+            qWarning(" #### qApp->screens : %d, repeat times : %d .", qApp->screens().count(),  maxAttempts++);
+            if (maxAttempts == 50) {
+                break;
+            }
+        } else {
+            break;
+        }
+    }
+
     // update all screen
     if (m_isCopyMode) {
         if (!qApp->screens().isEmpty()) {
