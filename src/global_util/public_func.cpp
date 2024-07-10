@@ -16,6 +16,7 @@
 #include <QApplication>
 #include <QScreen>
 #include <QSurfaceFormat>
+#include <QNetworkProxyQuery>
 
 #include <X11/Xcursor/Xcursor.h>
 #include <X11/Xlib.h>
@@ -320,6 +321,16 @@ void configWebEngine()
     qputenv("_d_disableDBusFileDialog", "true");
     setenv("PULSE_PROP_media.role", "video", 1);
 
-    // FIXME 使用--single-process可加快启动速度，但是在设置了自动代理的情况下会导致崩溃，待 QT 解决后再放开
-    // qputenv("QTWEBENGINE_CHROMIUM_FLAGS", "--single-process");
+    // 使用--single-process可加快启动速度，sw 架构必须使用，否则页面加载不出来
+    qputenv("QTWEBENGINE_CHROMIUM_FLAGS", "--single-process");
+    // FIXME 在设置了自动代理的情况下，使用--single-process会导致崩溃，暂时去掉自动代理环境变量
+    const QString auto_proxy = qgetenv("auto_proxy");
+    if (!auto_proxy.isEmpty()) {
+        qputenv("auto_proxy", "");
+    }
+    QNetworkProxyQuery query(QUrl("https://login.uniontech.com"));
+    QList<QNetworkProxy> proxyList =  QNetworkProxyFactory::systemProxyForQuery(query);
+    if (proxyList.size() > 0) {
+        QNetworkProxy::setApplicationProxy(proxyList[0]);
+    }
 }
