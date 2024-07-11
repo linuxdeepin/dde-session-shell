@@ -1101,7 +1101,6 @@ int SFAWidget::getTopSpacing() const
         int height = showAvatar ? m_userAvatar->height() + 10 : 0;
         height += showUserName ? m_userNameWidget->height() + 10 : 0;
         height += showLockButton ? m_lockButton->height() + 10 : 0;
-        height += showAuthButton ? m_chooseAuthButtonBox->height() + 10 : 0;
         centerTop = static_cast<int>((topLevelWidgetHeight - height * pixelRatio - maxContentHeight) / 2);
 // Just for debug
 #if 0
@@ -1111,19 +1110,18 @@ int SFAWidget::getTopSpacing() const
     const int topHeight = qMin(calcTopHeight, centerTop);
     // 需要额外增加的顶部间隔高度 = 屏幕高度*0.35 - 布局间隔 - 生物认证按钮底部间隔
     // - 生物认证切换按钮底部间隔 - 生物认证图标高度(如果有生物认证因子) - 切换验证类型按钮高度（如果认证因子数量大于1)
-    int deltaY = topHeight - calcCurrentHeight(LOCK_CONTENT_CENTER_LAYOUT_MARGIN)* pixelRatio
-            - (hasBioAuth ? calcCurrentHeight(BIO_AUTH_STATE_PLACE_HOLDER_HEIGHT)* pixelRatio : 0)
-            - (m_bioBottomSpacingHolder->geometry().height() * pixelRatio)
-            - (showAuthButtonBox() ? calcCurrentHeight(CHOOSE_AUTH_TYPE_BUTTON_BOTTOM_SPACING) * pixelRatio : 0)
-            - m_chooseAuthButtonBox->geometry().height() * pixelRatio;
-
-    deltaY = deltaY / pixelRatio;
+    int deltaY = topHeight - calcCurrentHeight(LOCK_CONTENT_CENTER_LAYOUT_MARGIN) * pixelRatio
+            - (hasBioAuth ? BIO_AUTH_STATE_PLACE_HOLDER_HEIGHT * pixelRatio : 0)
+            - (hasBioAuth ? calcCurrentHeight(BIO_AUTH_STATE_BOTTOM_SPACING) * pixelRatio : 0)
+            - (showAuthButton ? calcCurrentHeight(CHOOSE_AUTH_TYPE_BUTTON_BOTTOM_SPACING) * pixelRatio : 0)
+            - (showAuthButton ? CHOOSE_AUTH_TYPE_PLACE_HOLDER_HEIGHT * pixelRatio : 0);
 
 // Just for debug
 #if 0
-    qCInfo(DDE_SHELL) << "Top height:" << topHeight << ", center top:" << centerTop << ", deltaY:" << deltaY;
+    qCInfo(DDE_SHELL) << "Top height:" << topHeight << ", center top:" << centerTop << ", deltaY:" << deltaY << ", pixelRatio:" << pixelRatio << ", show auth button:" << showAuthButton << ", hasBioAuth: " << hasBioAuth;
 #endif
 
+    deltaY = deltaY / pixelRatio;
     return qMax(15, deltaY);
 }
 
