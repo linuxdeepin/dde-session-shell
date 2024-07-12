@@ -196,6 +196,7 @@ void WarningContent::doAcceptShutdownInhibit()
     m_model->setPowerAction(m_powerAction);
 
     if (m_model->currentModeState() != SessionBaseModel::ModeStatus::ShutDownMode
+        && m_model->currentModeState() != SessionBaseModel::ModeStatus::PowerMode
         && m_powerAction != SessionBaseModel::RequireUpdateShutdown
         && m_powerAction != SessionBaseModel::RequireUpdateRestart ) {
         FullScreenBackground::setContent(LockContent::instance());
