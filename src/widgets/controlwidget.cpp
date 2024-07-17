@@ -762,7 +762,7 @@ void ControlWidget::showEvent(QShowEvent *event)
             if (!value) {
                 continue;
             }
-            value->setVisible(key->isVisible());
+            value->setVisible(key->isVisibleTo(this));
         }
     });
 
