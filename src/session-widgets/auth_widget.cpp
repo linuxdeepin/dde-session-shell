@@ -94,6 +94,7 @@ void AuthWidget::initUI()
     } else {
         m_lockButton->setIcon(DStyle::SP_ArrowNext);
     }
+    m_lockButton->setAccessibleName("LockButton");
     /* 模糊背景 */
     m_blurEffectWidget->setMaskColor(DBlurEffectWidget::LightColor);
     m_blurEffectWidget->setMaskAlpha(BlurTransparency);
