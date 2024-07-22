@@ -7,6 +7,7 @@
 
 #include "plugin_base.h"
 #include "login_module_interface_v2.h"
+#include "authcommon.h"
 
 #include <QObject>
 #include <QJsonObject>
@@ -37,6 +38,7 @@ public:
         bool saveLastAuthType = true;               // 是否保存上一次认证类型
         // 默认使用此认证类型的强度
         DefaultAuthLevel defaultAuthLevel = DefaultAuthLevel::Default;
+        AuthCommon::AuthType assignAuthType = AuthCommon::AuthType::AT_Custom;
 
         bool operator==(const PluginConfig b) const
         {
@@ -48,7 +50,8 @@ public:
                    this->showBackGroundColor == b.showBackGroundColor &&
                    this->switchUserWhenCheckAccount == b.switchUserWhenCheckAccount &&
                    this->notUsedByLoginedUserInGreeter == b.notUsedByLoginedUserInGreeter &&
-                   this->saveLastAuthType == b.saveLastAuthType;
+                   this->saveLastAuthType == b.saveLastAuthType &&
+                   this->assignAuthType == b.assignAuthType;
         }
 
         bool operator!=(const PluginConfig b) const
@@ -61,7 +64,8 @@ public:
                    this->showBackGroundColor != b.showBackGroundColor ||
                    this->switchUserWhenCheckAccount != b.switchUserWhenCheckAccount ||
                    this->notUsedByLoginedUserInGreeter != b.notUsedByLoginedUserInGreeter ||
-                   this->saveLastAuthType != b.saveLastAuthType;
+                   this->saveLastAuthType != b.saveLastAuthType ||
+                   this->assignAuthType != b.assignAuthType;
         }
     };
 

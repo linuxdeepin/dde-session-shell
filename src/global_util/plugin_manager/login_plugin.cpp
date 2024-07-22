@@ -159,7 +159,8 @@ void LoginPlugin::updateConfig()
     m_pluginConfig.switchUserWhenCheckAccount = dataObj["SwitchUserWhenCheckAccount"].toBool(m_pluginConfig.switchUserWhenCheckAccount);
     m_pluginConfig.notUsedByLoginedUserInGreeter = dataObj["NotUsedByLoginedUserInGreeter"].toBool(m_pluginConfig.notUsedByLoginedUserInGreeter);
     m_pluginConfig.saveLastAuthType = dataObj["SaveLastAuthType"].toBool(m_pluginConfig.saveLastAuthType);
-
+    if (dataObj.contains("AssignAuthType"))
+        m_pluginConfig.assignAuthType = static_cast<AuthCommon::AuthType>(dataObj["AssignAuthType"].toInt());
     m_authType = (AuthType)dataObj["AuthType"].toInt();
 }
 
