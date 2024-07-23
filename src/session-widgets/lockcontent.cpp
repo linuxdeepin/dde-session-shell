@@ -421,10 +421,20 @@ void LockContent::setMPRISEnable(const bool state)
     setCenterBottomWidget(m_mediaWidget);
 }
 
+void LockContent::enableSystemShortcut(const QStringList &shortcuts, bool enabled, bool isPersistent)
+{
+    QDBusInterface inter("com.deepin.daemon.Keybinding", "/com/deepin/daemon/Keybinding", "com.deepin.daemon.Keybinding", QDBusConnection::sessionBus());
+    QList<QVariant> argumentList;
+    argumentList << QVariant::fromValue(shortcuts) << QVariant::fromValue(enabled) << QVariant::fromValue(isPersistent);
+    inter.asyncCallWithArgumentList(QStringLiteral("EnableSystemShortcut"), argumentList);
+}
+
 void LockContent::onNewConnection()
 {
     // 重置密码界面显示前需要隐藏插件右键菜单，避免抢占键盘
     Q_EMIT m_model->hidePluginMenu();
+    enableSystemShortcut(QStringList() << "screenshot" << "screenshot-window" << "screenshot-delayed"
+                                    << "screenshot-ocr" << "screenshot-scroll" << "deepin-screen-recorder", false, false);
 
     // 重置密码程序启动连接成功锁屏界面才释放键盘，避免点击重置密码过程中使用快捷键切走锁屏
     if (window()->windowHandle() && window()->windowHandle()->setKeyboardGrabEnabled(false)) {
@@ -445,6 +455,8 @@ void LockContent::onDisConnect()
     }
     // 这种情况下不必强制要求可以抓取到键盘，因为可能是网络弹窗抓取了键盘
     tryGrabKeyboard(false);
+    enableSystemShortcut(QStringList() << "screenshot" << "screenshot-window" << "screenshot-delayed"
+                                    << "screenshot-ocr" << "screenshot-scroll" << "deepin-screen-recorder", true, false);
 }
 
 void LockContent::onStatusChanged(SessionBaseModel::ModeStatus status)

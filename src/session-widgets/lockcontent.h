@@ -97,6 +97,7 @@ protected:
     void initSFAWidget();
     void initFMAWidget();
     void initUserListWidget();
+    void enableSystemShortcut(const QStringList &shortcuts, bool enabled, bool isPersistent);
 
 protected:
     SessionBaseModel *m_model;
