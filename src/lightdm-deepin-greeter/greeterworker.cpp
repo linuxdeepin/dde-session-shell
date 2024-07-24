@@ -89,12 +89,32 @@ void GreeterWorker::initConnections()
     connect(m_greeter, &QLightDM::Greeter::showMessage, this, &GreeterWorker::showMessage);
     connect(m_greeter, &QLightDM::Greeter::authenticationComplete, this, &GreeterWorker::authenticationComplete);
     /* com.deepin.daemon.Accounts */
-    connect(m_accountsInter, &AccountsInter::UserAdded, m_model, static_cast<void (SessionBaseModel::*)(const QString &)>(&SessionBaseModel::addUser));
-    connect(m_accountsInter, &AccountsInter::UserDeleted, m_model, static_cast<void (SessionBaseModel::*)(const QString &)>(&SessionBaseModel::removeUser));
+    connect(m_accountsInter, &AccountsInter::UserAdded, this, [this](const QString &path) {
+        // Account接口中的path可能被不同用户复用，导致model中数据未更新
+        qCInfo(DDE_SHELL) << "User add, path:" << path;
+        auto userPtr = m_model->findUserByPath(path);
+        if (userPtr) {
+            auto userName = userPtr->name();
+            QString accountPath = m_accountsInter->FindUserByName(userName);
+            if (accountPath != path) {
+                // 查询结果空或者变动
+                qCWarning(DDE_SHELL) << "users updated, force remove : " << path << userName;
+                m_model->removeUser(path);
+            }
+        }
+        m_model->addUser(path);
+    });
     connect(m_accountsInter, &AccountsInter::UserDeleted, this, [this](const QString &path) {
         qCInfo(DDE_SHELL) << "User delete, path:" << path;
+        // Account接口中的path可能被不同用户复用，导致model中数据未更新
+        // 先remove
+        m_model->removeUser(path);
+        m_model->updateUserList(m_accountsInter->userList());
+
         if (path == m_model->currentUser()->path()) {
-            m_model->updateCurrentUser(m_lockInter->CurrentUser());
+            if (!m_model->updateCurrentUser(m_lockInter->CurrentUser())) {
+                qCWarning(DDE_SHELL) << "updateCurrentUser failed";
+            }
             m_model->updateAuthState(AT_All, AS_Cancel, "Cancel");
             destroyAuthentication(m_account);
             if (!m_model->currentUser()->isNoPasswordLogin()) {

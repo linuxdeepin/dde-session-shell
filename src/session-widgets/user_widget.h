@@ -27,6 +27,7 @@ public:
     explicit UserWidget(QWidget *parent = nullptr);
 
     void setUser(std::shared_ptr<User> user);
+    const std::shared_ptr<User> & user() const;
 
     inline bool isSelected() const { return m_isSelected; }
     void setSelected(bool isSelected);

@@ -50,6 +50,7 @@ private:
     void switchNextUser();
     void switchPreviousUser();
     void onOtherPageChanged(const QVariant &value);
+    void onUserListChanged(const QList<std::shared_ptr<User> > &list);
 
 private:
     QScrollArea *m_scrollArea;

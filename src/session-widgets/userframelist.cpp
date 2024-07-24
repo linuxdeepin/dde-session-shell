@@ -73,6 +73,10 @@ void UserFrameList::setModel(SessionBaseModel *model)
 
     connect(model, &SessionBaseModel::userAdded, this, &UserFrameList::handlerBeforeAddUser);
     connect(model, &SessionBaseModel::userRemoved, this, &UserFrameList::removeUser);
+    if (m_model->appType() == AppType::Login) {
+        // 处理greeter用户增删信号阻塞问题
+        connect(model, &SessionBaseModel::userListChanged, this, &UserFrameList::onUserListChanged);
+    }
 
     QList<std::shared_ptr<User>> userList = m_model->userList();
     for (auto user : userList) {
@@ -228,6 +232,17 @@ void UserFrameList::onOtherPageChanged(const QVariant &value)
 {
     foreach (auto w, m_loginWidgets) {
         w->setSelected(w->uid() == value.toUInt());
+    }
+}
+
+void UserFrameList::onUserListChanged(const QList<std::shared_ptr<User> > &list)
+{
+    qDeleteAll(m_loginWidgets);
+    m_loginWidgets.clear();
+    currentSelectedUser = nullptr;
+
+    foreach(auto user, list) {
+       handlerBeforeAddUser(user);
     }
 }
 

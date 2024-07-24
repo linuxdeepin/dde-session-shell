@@ -101,6 +101,7 @@ public:
 
     std::shared_ptr<User> findUserByUid(const uint uid) const;
     std::shared_ptr<User> findUserByName(const QString &name) const;
+    std::shared_ptr<User> findUserByPath(const QString &path) const;
 
     inline AppType appType() const { return m_appType; }
     void setAppType(const AppType type);

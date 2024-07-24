@@ -83,6 +83,11 @@ std::shared_ptr<User> SessionBaseModel::findUserByName(const QString &name) cons
     return std::shared_ptr<User>(nullptr);
 }
 
+std::shared_ptr<User> SessionBaseModel::findUserByPath(const QString &path) const
+{
+    return m_users->value(path, std::shared_ptr<User>(nullptr));
+}
+
 void SessionBaseModel::setAppType(const AppType type)
 {
     m_appType = type;
@@ -409,6 +414,7 @@ bool SessionBaseModel::updateCurrentUser(const std::shared_ptr<User> user)
     qCInfo(DDE_SHELL) << "Update current user:" << user->name();
 
     if (m_currentUser && *m_currentUser == *user) {
+        qCWarning(DDE_SHELL) << "Same user to be updated" << user.get();
         m_currentUser->updateUserInfo();
         return false;
     }

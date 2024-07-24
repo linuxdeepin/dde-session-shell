@@ -138,6 +138,11 @@ void UserWidget::setUser(std::shared_ptr<User> user)
     updateUserNameLabel();
 }
 
+const std::shared_ptr<User> &UserWidget::user() const
+{
+    return m_user;
+}
+
 /**
  * @brief 设置用户选中标识
  * @param isSelected
