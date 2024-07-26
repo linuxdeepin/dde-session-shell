@@ -389,7 +389,7 @@ bool SessionBaseModel::updateCurrentUser(const QString &userJson)
     qCInfo(DDE_SHELL) << "Update current user:" << userJson;
     std::shared_ptr<User> user_ptr = json2User(userJson);
     if (!user_ptr) {
-        if (m_currentUser)
+        if (m_currentUser || m_users->isEmpty())
             return false;
 
         user_ptr = m_users->first();
