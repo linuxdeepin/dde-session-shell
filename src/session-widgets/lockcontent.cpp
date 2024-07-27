@@ -433,8 +433,6 @@ void LockContent::onNewConnection()
 {
     // 重置密码界面显示前需要隐藏插件右键菜单，避免抢占键盘
     Q_EMIT m_model->hidePluginMenu();
-    enableSystemShortcut(QStringList() << "screenshot" << "screenshot-window" << "screenshot-delayed"
-                                    << "screenshot-ocr" << "screenshot-scroll" << "deepin-screen-recorder", false, false);
 
     // 重置密码程序启动连接成功锁屏界面才释放键盘，避免点击重置密码过程中使用快捷键切走锁屏
     if (window()->windowHandle() && window()->windowHandle()->setKeyboardGrabEnabled(false)) {
@@ -444,6 +442,17 @@ void LockContent::onNewConnection()
     if (m_localServer->hasPendingConnections()) {
         QLocalSocket *socket = m_localServer->nextPendingConnection();
         connect(socket, &QLocalSocket::disconnected, this, &LockContent::onDisConnect);
+    }
+
+    // 仅在锁屏界面使用
+    if (m_model->appType() == AuthCommon::Lock) {
+        enableSystemShortcut(QStringList() << "screenshot"
+                                           << "screenshot-window"
+                                           << "screenshot-delayed"
+                                           << "screenshot-ocr"
+                                           << "screenshot-scroll"
+                                           << "deepin-screen-recorder",
+            false, false);
     }
 }
 
