@@ -83,7 +83,11 @@ void KBLayoutListView::updateSelectState(const QString &name)
             continue;
         }
 
-        QIcon icon = qobject_cast<DStyle *>(style())->standardIcon(DStyle::SP_MarkElement);
+        QIcon icon;
+        DStyle *style_ptr = qobject_cast<DStyle *>(style());
+        if (style_ptr) {
+            icon = style_ptr->standardIcon(DStyle::SP_MarkElement);
+        }
         action->setIcon(icon);
         setCurrentIndex(item->index());
         update(item->index());
@@ -125,10 +129,11 @@ void KBLayoutListView::addItem(const QString &name)
     QSize iconSize(12, 10);
     auto leftAction = new DViewItemAction(Qt::AlignVCenter, iconSize, iconSize, true);
     QIcon icon;
-    if (name != m_curLanguage) {
-        icon = QIcon();
-    } else {
-        icon = qobject_cast<DStyle *>(style())->standardIcon(DStyle::SP_MarkElement);
+    if (name == m_curLanguage) {
+        DStyle *style_ptr = qobject_cast<DStyle *>(style());
+        if (style_ptr) {
+            icon = style_ptr->standardIcon(DStyle::SP_MarkElement);
+        }
     }
 
     leftAction->setIcon(icon);
