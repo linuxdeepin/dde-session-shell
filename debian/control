@@ -67,6 +67,6 @@ Description: deepin desktop-environment - dde-session-shell module
 
 Package: dde-session-shell-dev
 Architecture: any
-Depends: dde-session-shell (= ${binary:Version}), ${shlibs:Depends}, ${misc:Depends}
+Depends: ${shlibs:Depends}, ${misc:Depends}
 Description: deepin desktop-environment - dde-session-shell module development files
  DDE Session Shell module development files of deepin desktop-environment
