@@ -158,7 +158,7 @@ void ShutdownWidget::enterKeyPushed()
     }
 
     // 在按回车键时，若m_currentSelectedBtn不存在，则退出
-    if (!m_currentSelectedBtn || !m_currentSelectedBtn->isEnabled())
+    if (!m_currentSelectedBtn || !m_currentSelectedBtn->isEnabled() || !m_currentSelectedBtn->isVisible())
         return;
 
     if (m_currentSelectedBtn == m_requireShutdownButton)
