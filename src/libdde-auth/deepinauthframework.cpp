@@ -139,7 +139,13 @@ void DeepinAuthFramework::PAMAuthentication(const QString &account)
     int rc = pam_authenticate(m_pamHandle, 0);
     if (rc != PAM_SUCCESS) {
         qCWarning(DDE_SHELL) << "PAM authenticate failed, error: " << pam_strerror(m_pamHandle, rc) << ", PAM authenticate: " << rc;
-        if (m_message.isEmpty()) m_message = pam_strerror(m_pamHandle, rc);
+	if (m_message.isEmpty()){
+            if(rc == PAM_AUTH_ERR){
+                m_message = tr("Wrong Password");
+            }else{
+                m_message = pam_strerror(m_pamHandle, rc);
+            }
+        }
     } else {
         qCDebug(DDE_SHELL) << "PAM authenticate finished.";
     }
