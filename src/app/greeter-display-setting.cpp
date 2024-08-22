@@ -221,8 +221,9 @@ static void setQtScaleFactorEnv() {
 
 int main(int argc, char* argv[])
 {
-    // 设置缩放，文件存在的情况下，由后端去设置，否则前端自行设置
-    if (!QFile::exists("/etc/lightdm/deepin/xsettingsd.conf") || !isScaleConfigExists() || IsWayland) {
+    // x11下，dxcb设置Qt::AA_EnableHighDpiScaling属性后，平台插件会处理缩放，不需要再主动设置QT_SCALE_FACTOR，否则会导致缩放系数相乘，得出错误的qApp->devicePixelRatio()
+    // wayland下，dwayland平台插件不会处理缩放，需要手动设置QT_SCALE_FACTOR
+    if (IsWayland) {
         setQtScaleFactorEnv();
     }
 
