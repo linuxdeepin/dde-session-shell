@@ -28,9 +28,14 @@ public:
     QPixmap normalPixmap();
     void setHoverPixmap(const QPixmap &hoverPixmap);
     QPixmap hoverPixmap();
+    void setState(State state);
+    void setSelected(bool isSelected);
+    bool isSelected() { return m_isSelected; }
 
 Q_SIGNALS:
     void clicked();
+    void mouseEnter();
+    void mouseLeave();
 
 protected:
     void enterEvent(QEvent *event) override;
@@ -41,6 +46,7 @@ protected:
     void showEvent(QShowEvent *event) override;
 
 private:
+    bool m_isSelected;
     State m_state;
     QLabel *m_iconLabel;
     QLabel *m_textLabel;

@@ -9,6 +9,7 @@
 
 LoginContent::LoginContent(QWidget *parent)
     : LockContent(parent)
+    , m_usersWithTheSameName(nullptr)
 {
 
 }
@@ -106,4 +107,20 @@ void LoginContent::popTipsFrame()
     setTopFrameVisible(true);
     setBottomFrameVisible(true);
     LockContent::onStatusChanged(m_model->currentModeState());
+}
+
+void LoginContent::showUsersWithTheSameName(const QString &nativeUserName, const QString &doMainAccountDetail)
+{
+    if (!m_usersWithTheSameName) {
+        m_usersWithTheSameName = new UsersWithTheSameName(m_model);
+        connect(m_usersWithTheSameName, &UsersWithTheSameName::requestCheckAccount, this, &LoginContent::requestCheckAccount);
+        connect(m_usersWithTheSameName, &UsersWithTheSameName::clicked, this, &LoginContent::restoreMode);
+    }
+
+    if (!m_usersWithTheSameName->findUsers(nativeUserName, doMainAccountDetail))
+        return;
+    m_model->setCurrentModeState(SessionBaseModel::SelectSameNameUserMode);
+    QSize size = getCenterContentSize();
+    m_usersWithTheSameName->setFixedSize(size);
+    setCenterContent(m_usersWithTheSameName);
 }

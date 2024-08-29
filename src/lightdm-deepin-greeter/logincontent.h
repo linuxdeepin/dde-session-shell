@@ -6,6 +6,7 @@
 #define LOGINCONTENT_H
 
 #include "lockcontent.h"
+#include "userswiththesamename.h"
 
 class SessionWidget;
 class LoginTipsWindow;
@@ -23,11 +24,13 @@ public:
     void pushSessionFrame();
     void pushTipsFrame();
     void popTipsFrame();
+    void showUsersWithTheSameName(const QString &nativeUserName, const QString &doMainAccountDetail);
 
 private:
     SessionWidget *m_sessionFrame;
     LoginTipsWindow *m_loginTipsWindow;
     bool m_showTipsWidget = true;
+    UsersWithTheSameName *m_usersWithTheSameName;
 };
 
 #endif // LOGINCONTENT_H

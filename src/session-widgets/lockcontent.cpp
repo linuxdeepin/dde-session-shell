@@ -237,6 +237,7 @@ void LockContent::initMFAWidget()
     connect(m_mfaWidget, &MFAWidget::sendTokenToAuth, this, &LockContent::sendTokenToAuth);
     connect(m_mfaWidget, &MFAWidget::requestEndAuthentication, this, &LockContent::requestEndAuthentication);
     connect(m_mfaWidget, &MFAWidget::requestCheckAccount, this, &LockContent::requestCheckAccount);
+    connect(m_mfaWidget, &MFAWidget::requestCheckSameNameAccount, this, &LockContent::requestCheckSameNameAccount);
 }
 
 /**
@@ -261,6 +262,7 @@ void LockContent::initSFAWidget()
     connect(m_sfaWidget, &SFAWidget::sendTokenToAuth, this, &LockContent::sendTokenToAuth);
     connect(m_sfaWidget, &SFAWidget::requestEndAuthentication, this, &LockContent::requestEndAuthentication);
     connect(m_sfaWidget, &SFAWidget::requestCheckAccount, this, &LockContent::requestCheckAccount);
+    connect(m_sfaWidget, &SFAWidget::requestCheckSameNameAccount, this, &LockContent::requestCheckSameNameAccount);
     connect(m_sfaWidget, &SFAWidget::authFinished, this, &LockContent::authFinished);
     connect(m_sfaWidget, &SFAWidget::updateParentLayout, this, [this] {
         if (!m_sfaWidget->isVisible())
@@ -289,6 +291,7 @@ void LockContent::initFMAWidget()
     connect(m_fmaWidget, &FullManagedAuthWidget::sendTokenToAuth, this, &LockContent::sendTokenToAuth);
     connect(m_fmaWidget, &FullManagedAuthWidget::requestEndAuthentication, this, &LockContent::requestEndAuthentication);
     connect(m_fmaWidget, &FullManagedAuthWidget::requestCheckAccount, this, &LockContent::requestCheckAccount);
+    connect(m_fmaWidget, &FullManagedAuthWidget::requestCheckSameNameAccount, this, &LockContent::requestCheckSameNameAccount);
     connect(m_fmaWidget, &FullManagedAuthWidget::authFinished, this, &LockContent::authFinished);
 }
 

@@ -40,6 +40,8 @@ signals:
     void requestUpdateBackground(const QString &path);
     void requestShowPrompt(const QString &prompt);
     void requestShowMessage(const QString &message);
+    void requestShowUsersWithTheSameName(const QString nativeUserName, const QString &doMainAccountDetail);
+
 public slots:
     /* New authentication framework */
     void createAuthentication(const QString &account);
@@ -49,6 +51,7 @@ public slots:
     void sendTokenToAuth(const QString &account, const AuthType authType, const QString &token);
 
     void checkAccount(const QString &account, bool switchUser);
+    void checkSameNameAccount(const QString &account, bool switchUser);
     void restartResetSessionTimer();
     void onAuthFinished();
     void onNoPasswordLoginChanged(const QString &account, bool noPassword);

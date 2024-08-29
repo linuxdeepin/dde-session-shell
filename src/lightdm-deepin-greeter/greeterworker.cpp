@@ -672,6 +672,31 @@ void GreeterWorker::checkAccount(const QString &account, bool switchUser)
     }
 }
 
+void GreeterWorker::checkSameNameAccount(const QString &account, bool switchUser)
+{
+    qCInfo(DDE_SHELL) << "Start check same name account, name: " << account;
+    QDBusInterface ifc("com.deepin.udcp.iam", "/com/deepin/udcp/iam", "com.deepin.udcp.iam", QDBusConnection::systemBus());
+    QDBusPendingReply<QString> reply = ifc.asyncCall(QStringLiteral("GetPwName"), account);
+    QDBusPendingCallWatcher *watcher = new QDBusPendingCallWatcher(reply, this);
+    connect(watcher, &QDBusPendingCallWatcher::finished, [this, account, switchUser, reply, watcher] {
+        if (reply.error().message().isEmpty()) {
+            const auto &originalUsePtr = m_model->findUserByName(account);
+            const QString &userDetail = reply.value();
+            if (originalUsePtr && !originalUsePtr->isDomainUser() && !userDetail.isEmpty()) {
+                qCInfo(DDE_SHELL) << "Find same name account, user detail: " << userDetail;
+                Q_EMIT requestShowUsersWithTheSameName(account, userDetail);
+            } else {
+                qCInfo(DDE_SHELL) << "Not find same name account";
+                checkAccount(account, switchUser);
+            }
+        } else {
+            qCWarning(DDE_SHELL) << "Check same name account failed, error:" << reply.error().message();
+            checkAccount(account, switchUser);
+        }
+        watcher->deleteLater();
+    });
+}
+
 void GreeterWorker::checkDBusServer(bool isValid)
 {
     if (isValid) {

@@ -183,6 +183,8 @@
         <file>img/list_actions/userswitch_normal.svg</file>
         <file>img/list_actions/userswitch_press.svg</file>
         <file>img/deepin-system-monitor.svg</file>
+        <file>img/back-normal.svg</file>
+        <file>img/back-hover.svg</file>
         <file>img/user_name.svg</file>
         <file>img/update/failed.svg</file>
         <file>img/update/success.svg</file>

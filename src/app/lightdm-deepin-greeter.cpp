@@ -147,6 +147,8 @@ int main(int argc, char* argv[])
     QObject::connect(LoginContent::instance(), &LoginContent::requestSwitchToUser, worker, &GreeterWorker::switchToUser);
     QObject::connect(LoginContent::instance(), &LoginContent::requestSetLayout, worker, &GreeterWorker::setKeyboardLayout);
     QObject::connect(LoginContent::instance(), &LoginContent::requestCheckAccount, worker, &GreeterWorker::checkAccount);
+    QObject::connect(LoginContent::instance(), &LoginContent::requestCheckSameNameAccount, worker, &GreeterWorker::checkSameNameAccount);
+    QObject::connect(worker, &GreeterWorker::requestShowUsersWithTheSameName, LoginContent::instance(), &LoginContent::showUsersWithTheSameName);
     QObject::connect(LoginContent::instance(), &LoginContent::requestStartAuthentication, worker, &GreeterWorker::startAuthentication);
     QObject::connect(LoginContent::instance(), &LoginContent::sendTokenToAuth, worker, &GreeterWorker::sendTokenToAuth);
     QObject::connect(LoginContent::instance(), &LoginContent::requestEndAuthentication, worker, &GreeterWorker::endAuthentication);

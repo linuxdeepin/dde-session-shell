@@ -17,6 +17,7 @@ const int penWidth = 2;
 
 InhibitButton::InhibitButton(QWidget *parent)
     : QWidget(parent)
+    , m_isSelected(false)
     , m_state(Leave)
     , m_iconLabel(new QLabel(this))
     , m_textLabel(new QLabel(this))
@@ -74,14 +75,33 @@ QPixmap InhibitButton::normalPixmap()
     return m_normalPixmap;
 }
 
+void InhibitButton::setState(State state)
+{
+    m_state = state;
+}
+
+void InhibitButton::setSelected(bool isSelected)
+{
+    m_isSelected = isSelected;
+    setState(isSelected ? Enter : Leave);
+    QPalette palette = this->palette();
+    palette.setColor(QPalette::WindowText, m_isSelected ? Qt::black : Qt::white);
+    this->setPalette(palette);
+
+    m_iconLabel->setPixmap(m_isSelected ? m_hoverPixmap : m_normalPixmap);
+    update();
+}
+
 void InhibitButton::enterEvent(QEvent *event)
 {
     m_state = Enter;
+    m_isSelected = true;
     QPalette palette = this->palette();
     palette.setColor(QPalette::WindowText, Qt::black);
     this->setPalette(palette);
 
     m_iconLabel->setPixmap(m_hoverPixmap);
+    Q_EMIT mouseEnter();
 
     QWidget::enterEvent(event);
     update();
@@ -90,11 +110,13 @@ void InhibitButton::enterEvent(QEvent *event)
 void InhibitButton::leaveEvent(QEvent *event)
 {
     m_state = Leave;
+    m_isSelected = false;
     QPalette palette = this->palette();
     palette.setColor(QPalette::WindowText, Qt::white);
     this->setPalette(palette);
 
     m_iconLabel->setPixmap(m_normalPixmap);
+    Q_EMIT mouseLeave();
 
     QWidget::leaveEvent(event);
     update();

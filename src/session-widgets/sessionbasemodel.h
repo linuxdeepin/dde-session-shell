@@ -54,6 +54,7 @@ public:
         ShutDownMode,
         ResetPasswdMode,
         UpdateMode,
+        SelectSameNameUserMode,
     };
     Q_ENUM(ModeStatus)
 

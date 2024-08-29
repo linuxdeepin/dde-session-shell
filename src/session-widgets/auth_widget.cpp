@@ -119,7 +119,7 @@ void AuthWidget::initConnections()
     /* 用户名输入框 */
     connect(m_accountEdit, &DLineEditEx::returnPressed, this, [this] {
         if (m_accountEdit->isVisible() && !m_accountEdit->text().isEmpty()) {
-            emit requestCheckAccount(m_accountEdit->text());
+            emit requestCheckSameNameAccount(m_accountEdit->text());
         }
     });
     /* 解锁按钮 */
