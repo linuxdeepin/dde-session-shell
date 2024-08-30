@@ -911,7 +911,7 @@ void SFAWidget::initCustomAuth(LoginPlugin* plugin)
     connect(customAuth, &AuthCustom::requestSendToken, this, [this, customAuth](const QString &token) {
         m_lockButton->setEnabled(false);
         qCInfo(DDE_SHELL) << customAuth->loginPluginKey() << " request send token, user name:" <<  m_user->name();
-        Q_EMIT sendTokenToAuth(m_user->name(), m_customAuth->pluginConfig().assignAuthType, token);
+        Q_EMIT sendTokenToAuth(m_user->name(), AT_Custom, token);
     });
     connect(customAuth, &AuthCustom::authFinished, customAuth, [this, customAuth](const AuthState authState) {
         qCInfo(DDE_SHELL) << customAuth->loginPluginKey() <<  " auth finished, state:" << authState;
@@ -924,7 +924,7 @@ void SFAWidget::initCustomAuth(LoginPlugin* plugin)
         if (m_user && m_user->name() == account) {
             LoginPlugin::AuthCallbackData data = customAuth->getCurrentAuthData();
             if (data.result == LoginPlugin::AuthResult::Success)
-                Q_EMIT sendTokenToAuth(m_user->name(), m_customAuth->pluginConfig().assignAuthType, data.token);
+                Q_EMIT sendTokenToAuth(m_user->name(), AT_Custom, data.token);
             else
                 qCWarning(DDE_SHELL) << "Custom auth failed";
 
@@ -960,7 +960,7 @@ void SFAWidget::initCustomAuth(LoginPlugin* plugin)
             m_userNameWidget->setVisible(customAuth->pluginConfig().showUserName);
             m_lockButton->setVisible(customAuth->pluginConfig().showLockButton);
             replaceWidget(customAuth);
-            Q_EMIT requestStartAuthentication(m_user->name(), m_customAuth->pluginConfig().assignAuthType);
+            Q_EMIT requestStartAuthentication(m_user->name(), AT_Custom);
         } else {
             qCInfo(DDE_SHELL) << customAuth->loginPluginKey() << " is unchecked";
             customAuth->hide();
@@ -973,7 +973,7 @@ void SFAWidget::initCustomAuth(LoginPlugin* plugin)
                 m_accountEdit->show();
                 m_accountEdit->setFocus();
             }
-            Q_EMIT requestEndAuthentication(m_user->name(), m_customAuth->pluginConfig().assignAuthType);
+            Q_EMIT requestEndAuthentication(m_user->name(), AT_Custom);
         }
     });
 }
