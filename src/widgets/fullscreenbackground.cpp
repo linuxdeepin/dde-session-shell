@@ -111,7 +111,7 @@ void FullScreenBackground::updateBlurBackground(const QString &path)
                                                           "com.deepin.daemon.ImageEffect", "Get");
     message << "" << path;
     QDBus::CallMode callMode = isVisible() ? QDBus::BlockWithGui : QDBus::Block;
-    QDBusPendingReply<QString> reply = QDBusConnection::systemBus().call(message, callMode, 2*1000);
+    QDBusPendingReply<QString> reply = QDBusConnection::systemBus().call(message, callMode, 2 * 1000);
     QString blurPath;
     if (!reply.isError()) {
         blurPath = reply.value();
@@ -123,7 +123,7 @@ void FullScreenBackground::updateBlurBackground(const QString &path)
         blurPath = "/usr/share/backgrounds/default_background.jpg";
         qCWarning(DDE_SHELL) << "Get blur background path error:" << reply.error().message();
     }
-    
+
     // 处理模糊背景图和执行动画或update；
     updateBlurBackgroundFunc(blurPath);
 }
@@ -146,8 +146,8 @@ void FullScreenBackground::setScreen(QPointer<QScreen> screen, bool isVisible)
     }
 
     qCInfo(DDE_SHELL) << "Set screen:" << screen
-            << ", screen geometry:" << screen->geometry()
-            << ", full screen background object:" << this;
+                      << ", screen geometry:" << screen->geometry()
+                      << ", full screen background object:" << this;
     if (isVisible) {
         updateCurrentFrame(this);
     } else {
@@ -197,7 +197,7 @@ void FullScreenBackground::setContent(QWidget *const w)
         currentContent->raise();
         currentContent->show();
     };
-    auto lockContent = dynamic_cast<LockContent*>(w);
+    auto lockContent = dynamic_cast<LockContent *>(w);
     if (lockContent)
         Q_EMIT lockContent->parentChanged();
 }
@@ -241,7 +241,7 @@ void FullScreenBackground::paintEvent(QPaintEvent *e)
     }
 }
 
-void FullScreenBackground::tryActiveWindow(int count/* = 9*/)
+void FullScreenBackground::tryActiveWindow(int count /* = 9*/)
 {
     if (count < 0 || m_model->isUseWayland())
         return;
@@ -258,7 +258,7 @@ void FullScreenBackground::tryActiveWindow(int count/* = 9*/)
         qCDebug(DDE_SS) << "hide..." << count;
         return;
     }
-    QTimer::singleShot(50 , this, std::bind(&FullScreenBackground::tryActiveWindow, this, count -1));
+    QTimer::singleShot(50, this, std::bind(&FullScreenBackground::tryActiveWindow, this, count - 1));
 }
 
 void FullScreenBackground::enterEvent(QEvent *event)
@@ -337,7 +337,6 @@ void FullScreenBackground::showEvent(QShowEvent *event)
 {
     qCDebug(DDE_SHELL) << "Frame is already displayed:" << this;
     if (m_model->isUseWayland()) {
-
         Q_EMIT requestDisableGlobalShortcutsForWayland(true);
     }
     // fix bug 155019 此处是针对wayland下屏保退出，因qt没有发送enterEvent事件，进而导致密码框没有显示的规避方案
@@ -411,7 +410,7 @@ void FullScreenBackground::updateGeometry()
             } else {
                 setGeometry(screensGeometry[m_screen->name()]);
                 qCDebug(DDE_SHELL) << "Set geometry by xrandr, this:" << this << screensGeometry[m_screen->name()]
-                        << " screen:" << m_screen->name() << "screen geometry:" << m_screen->geometry();
+                                   << " screen:" << m_screen->name() << "screen geometry:" << m_screen->geometry();
             }
         } else {
             setGeometry(m_screen->geometry());
@@ -424,9 +423,9 @@ void FullScreenBackground::updateGeometry()
         setGeometry(m_screen->geometry());
 
         qCInfo(DDE_SHELL) << "Update geometry, screen:" << m_screen
-                << ", screen geometry:" << m_screen->geometry()
-                << ", lockFrame:" << this
-                << ", frame geometry:" << this->geometry();
+                          << ", screen geometry:" << m_screen->geometry()
+                          << ", lockFrame:" << this
+                          << ", frame geometry:" << this->geometry();
     } else {
         qCWarning(DDE_SHELL) << "Screen is nullptr";
     }
@@ -454,7 +453,7 @@ bool FullScreenBackground::event(QEvent *e)
     return QWidget::event(e);
 }
 
-const QPixmap& FullScreenBackground::getPixmap(int type)
+const QPixmap &FullScreenBackground::getPixmap(int type)
 {
     static QPixmap nullPixmap;
 
@@ -557,7 +556,8 @@ QMap<QString, QRect> FullScreenBackground::getScreenGeometryByXrandr()
     // 启动 xrandr | grep connected 进程
     QProcess process;
     QStringList arguments;
-    arguments << "-c" << "xrandr | grep connected";
+    arguments << "-c"
+              << "xrandr | grep connected";
     process.start("/bin/sh", arguments);
     process.waitForStarted();
     process.waitForFinished();
@@ -586,9 +586,9 @@ QMap<QString, QRect> FullScreenBackground::getScreenGeometryByXrandr()
 double FullScreenBackground::getScaleFactorFromDisplay()
 {
     QDBusInterface display("com.deepin.system.Display",
-                                 "/com/deepin/system/Display",
-                                 "com.deepin.system.Display",
-                                 QDBusConnection::systemBus(), this);
+                           "/com/deepin/system/Display",
+                           "com.deepin.system.Display",
+                           QDBusConnection::systemBus(), this);
 
     QDBusReply<QString> reply = display.call("GetConfig");
     QString jsonObjStr = reply.value();
@@ -602,7 +602,7 @@ double FullScreenBackground::getScaleFactorFromDisplay()
     QJsonObject scaleFactors = json.value("Config").toObject().value("ScaleFactors").toObject();
 
     // 遍历 ScaleFactors 对象
-    for (const auto& key : scaleFactors.keys()) {
+    for (const auto &key : scaleFactors.keys()) {
         return scaleFactors.value(key).toDouble();
     }
 
@@ -610,8 +610,8 @@ double FullScreenBackground::getScaleFactorFromDisplay()
     return -1.0;
 }
 
-
-void FullScreenBackground::updateCurrentFrame(FullScreenBackground *frame) {
+void FullScreenBackground::updateCurrentFrame(FullScreenBackground *frame)
+{
     if (!frame) {
         qCWarning(DDE_SHELL) << "Update current frame failed, frame is null";
         return;
@@ -659,15 +659,30 @@ bool FullScreenBackground::getScaledBlurImage(const QString &originPath, QString
     // 壁纸服务dde-wallpaper-cache
     QDBusInterface wallpaperCacheInterface("org.deepin.dde.WallpaperCache", "/org/deepin/dde/WallpaperCache",
                                            "org.deepin.dde.WallpaperCache", QDBusConnection::systemBus());
+
+    QFile file(originPath);
+    if (!file.open(QIODevice::ReadOnly)) {
+        qWarning() << "Failed to open file.";
+        return false;
+    }
+    const int fd = file.handle();
+    if (fd <= 0) {
+        qWarning() << "originPath file fd error";
+        return false;
+    }
+
+    QDBusUnixFileDescriptor dbusFd(fd);
+    const QString &pathmd5 = QCryptographicHash::hash(originPath.toUtf8(), QCryptographicHash::Md5).toHex();
     QVariantList sizeArray;
     sizeArray << QVariant::fromValue(this->trueSize());
-    QDBusReply<QStringList> pathList= wallpaperCacheInterface.call("GetProcessedImagePaths", originPath, sizeArray);
+    QDBusReply<QStringList> pathList = wallpaperCacheInterface.call("GetProcessedImagePathByFd", QVariant::fromValue(dbusFd), pathmd5, sizeArray);
     if (pathList.value().isEmpty()) {
+        qWarning() << "GetProcessedImagePathByFd interface return null";
         return false;
     }
 
     QString path = pathList.value().at(0);
-    if (!path.isEmpty() &&  path != originPath) {
+    if (!path.isEmpty() && path != originPath) {
         scaledPath = path;
         qDebug() << "get scaled path:" << path;
         return true;
