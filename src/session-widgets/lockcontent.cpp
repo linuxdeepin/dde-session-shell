@@ -50,6 +50,7 @@ LockContent::LockContent(QWidget *parent)
     , m_isPANGUCpu(false)
     , m_MPRISEnable(false)
     , m_showMediaWidget(DConfigHelper::instance()->getConfig(SHOW_MEDIA_WIDGET, false).toBool())
+    , m_hasResetPasswordDialog(false)
 {
     QDBusInterface Interface("com.deepin.daemon.SystemInfo",
                              "/com/deepin/daemon/SystemInfo",
@@ -470,6 +471,7 @@ void LockContent::onNewConnection()
                                            << "deepin-screen-recorder",
             false, false);
     }
+    m_hasResetPasswordDialog = true;
 }
 
 void LockContent::onDisConnect()
@@ -482,6 +484,7 @@ void LockContent::onDisConnect()
     tryGrabKeyboard(false);
     enableSystemShortcut(QStringList() << "screenshot" << "screenshot-window" << "screenshot-delayed"
                                     << "screenshot-ocr" << "screenshot-scroll" << "deepin-screen-recorder", true, false);
+    m_hasResetPasswordDialog = false;
 }
 
 void LockContent::onStatusChanged(SessionBaseModel::ModeStatus status)
@@ -818,11 +821,16 @@ void LockContent::tryGrabKeyboard(bool exitIfFailed)
     m_failures++;
 
     if (m_failures == 15) {
-        qCWarning(DDE_SHELL) << "Trying to grab keyboard has exceeded the upper limit, dde-lock will quit.";
+        qCWarning(DDE_SHELL) << "Trying to grab keyboard has exceeded the upper limit";
 
         m_failures = 0;
 
         if (!exitIfFailed) {
+            return;
+        }
+
+        if (m_hasResetPasswordDialog) {
+            qCWarning(DDE_SHELL) << "There is a reset password dialog, can not grab keyboard";
             return;
         }
 

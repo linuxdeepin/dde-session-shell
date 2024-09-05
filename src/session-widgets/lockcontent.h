@@ -131,6 +131,7 @@ protected:
     bool m_isPANGUCpu;
     bool m_MPRISEnable;
     bool m_showMediaWidget;
+    bool m_hasResetPasswordDialog;
 };
 
 #endif // LOCKCONTENT_H
