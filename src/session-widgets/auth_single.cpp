@@ -43,6 +43,8 @@ AuthSingle::AuthSingle(QWidget *parent)
     initConnections();
 
     m_lineEdit->installEventFilter(this);
+    m_lineEdit->setCopyEnabled(false);
+    m_lineEdit->setCutEnabled(false);
     setFocusProxy(m_lineEdit);
 }
 
