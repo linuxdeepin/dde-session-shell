@@ -3,7 +3,7 @@
     <name>AuthFace</name>
     <message>
         <source>Face ID</source>
-        <translation type="unfinished"/>
+        <translation>Face ID</translation>
     </message>
     <message>
         <source>Verification successful</source>
@@ -19,15 +19,15 @@
     </message>
     <message>
         <source>Verify your Face ID</source>
-        <translation type="unfinished"/>
+        <translation>Verifique seu Face ID</translation>
     </message>
     <message>
         <source>Face ID locked, use password please</source>
-        <translation type="unfinished"/>
+        <translation>Face ID bloqueado, use a senha</translation>
     </message>
     <message>
         <source>Device unavailable!</source>
-        <translation type="unfinished"/>
+        <translation>Dispositivo indisponível!</translation>
     </message>
 </context>
 <context>
@@ -57,7 +57,7 @@
     <name>AuthIris</name>
     <message>
         <source>Iris ID</source>
-        <translation type="unfinished"/>
+        <translation>Íris ID</translation>
     </message>
     <message>
         <source>Verification successful</source>
@@ -73,30 +73,30 @@
     </message>
     <message>
         <source>Verify your Iris ID</source>
-        <translation type="unfinished"/>
+        <translation>Verifique sua Íris ID</translation>
     </message>
     <message>
         <source>Iris ID locked, use password please</source>
-        <translation type="unfinished"/>
+        <translation>Íris ID bloqueado, use a senha</translation>
     </message>
 </context>
 <context>
     <name>AuthPasskey</name>
     <message>
         <source>Please plug in the security key</source>
-        <translation type="unfinished"/>
+        <translation>Conecte a chave de segurança</translation>
     </message>
     <message>
         <source>Verification successful</source>
-        <translation type="unfinished"/>
+        <translation>Verificação bem-sucedida</translation>
     </message>
     <message>
         <source>Verification failed</source>
-        <translation type="unfinished"/>
+        <translation>A verificação falhou</translation>
     </message>
     <message>
         <source>Identifying the security key</source>
-        <translation type="unfinished"/>
+        <translation>Identificando chave de segurança</translation>
     </message>
 </context>
 <context>
@@ -131,7 +131,7 @@
     </message>
     <message>
         <source>Reset Password</source>
-        <translation>Redefinir a senha</translation>
+        <translation>Redefinir senha</translation>
     </message>
     <message>
         <source>Forgot password?</source>
@@ -150,7 +150,7 @@
     </message>
     <message>
         <source>Reset Password</source>
-        <translation>Redefinir a senha</translation>
+        <translation>Redefinir senha</translation>
     </message>
     <message>
         <source>Forgot password?</source>
@@ -181,7 +181,7 @@
     </message>
     <message>
         <source>Enter your PIN</source>
-        <translation>Insira o PIN</translation>
+        <translation>Insira seu PIN</translation>
     </message>
     <message numerus="yes">
         <source>Please try again %n minute(s) later</source>
@@ -204,7 +204,7 @@
     </message>
     <message numerus="yes">
         <source>Your password will expire in %n days, please change it timely</source>
-        <translation type="unfinished"><numerusform></numerusform><numerusform></numerusform><numerusform></numerusform></translation>
+        <translation><numerusform>Sua senha expirará em %n dia, altere-a em tempo hábil</numerusform><numerusform>Sua senha expirará em %n dias, altere-a em tempo hábil</numerusform><numerusform>Sua senha expirará em %n dias, altere-a em tempo hábil</numerusform></translation>
     </message>
     <message>
         <source>Password expired, please change</source>
@@ -212,10 +212,17 @@
     </message>
     <message>
         <source>Your password has expired. Please contact the administrator to change it</source>
-        <translation type="unfinished"/>
+        <translation>Sua senha expirou. Entre em contato com o administrador para alterá-la</translation>
     </message>
     <message>
         <source>Terminal locked, please contact administrator</source>
+        <translation>Terminal bloqueado, entre em contato com o administrador</translation>
+    </message>
+</context>
+<context>
+    <name>DeepinAuthFramework</name>
+    <message>
+        <source>Wrong Password</source>
         <translation type="unfinished"/>
     </message>
 </context>
@@ -238,7 +245,7 @@
     </message>
     <message>
         <source>The reason of inhibit.</source>
-        <translation type="unfinished"/>
+        <translation>O motivo da inibição.</translation>
     </message>
 </context>
 <context>
@@ -263,7 +270,7 @@
     <name>LockWorker</name>
     <message>
         <source>Fingerprint verification timed out, please enter your password manually</source>
-        <translation>O tempo de verificação da impressão digital expirou; digite a senha</translation>
+        <translation>O tempo de verificação da impressão digital expirou, insira sua senha manualmente</translation>
     </message>
     <message>
         <source>Failed to match fingerprint</source>
@@ -289,7 +296,7 @@
     <name>SessionWidget</name>
     <message>
         <source>You have enabled the high system security level, thus cannot switch to the Wayland mode, please disable the high security level in Security Center and try again.</source>
-        <translation type="unfinished"/>
+        <translation>Você ativou o nível alto de segurança do sistema e, portanto, não pode alternar para o modo Wayland. Desative o nível alto de segurança na Central de Segurança e tente novamente.</translation>
     </message>
 </context>
 <context>
@@ -320,7 +327,7 @@
     </message>
     <message>
         <source>Switch user</source>
-        <translation>Alternar usuário</translation>
+        <translation>Trocar usuário</translation>
     </message>
     <message>
         <source>Switch system</source>
@@ -328,11 +335,11 @@
     </message>
     <message>
         <source>Update and Shut Down</source>
-        <translation type="unfinished"/>
+        <translation>Atualizar e desligar</translation>
     </message>
     <message>
         <source>Update and Reboot</source>
-        <translation type="unfinished"/>
+        <translation>Atualizar e reiniciar</translation>
     </message>
 </context>
 <context>
@@ -346,128 +353,48 @@
     <name>UdcpMFALoginWidget</name>
     <message>
         <source>发送验证码</source>
-        <translation type="unfinished"/>
+        <translation>Enviar código de verificação</translation>
     </message>
     <message>
         <source>请输入手机号</source>
-        <translation type="unfinished"/>
+        <translation>Digite o número de telefone</translation>
     </message>
     <message>
         <source>请输入验证码</source>
-        <translation type="unfinished"/>
+        <translation>Digite o código de verificação</translation>
     </message>
     <message>
         <source>获取验证码</source>
-        <translation type="unfinished"/>
-    </message>
-</context>
-<context>
-    <name>UpdateCompleteWidget</name>
-    <message>
-        <source>View Logs</source>
-        <translation type="unfinished"/>
-    </message>
-    <message>
-        <source>Updates successful</source>
-        <translation type="unfinished"/>
-    </message>
-    <message>
-        <source>Your computer will reboot soon %1</source>
-        <translation type="unfinished"/>
-    </message>
-    <message>
-        <source>Your computer will be turned off soon %1</source>
-        <translation type="unfinished"/>
-    </message>
-</context>
-<context>
-    <name>UpdateLogWidget</name>
-    <message>
-        <source>Hide Logs</source>
-        <translation type="unfinished"/>
-    </message>
-</context>
-<context>
-    <name>UpdateModel</name>
-    <message>
-        <source>Update failed</source>
-        <translation type="unfinished"/>
-    </message>
-    <message>
-        <source>Unknown error</source>
-        <translation type="unfinished"/>
-    </message>
-    <message>
-        <source>Backup failed</source>
-        <translation type="unfinished"/>
-    </message>
-    <message>
-        <source>Dependency error</source>
-        <translation type="unfinished"/>
-    </message>
-    <message>
-        <source>Reboot</source>
-        <translation type="unfinished"/>
-    </message>
-    <message>
-        <source>Shut Down</source>
-        <translation type="unfinished"/>
-    </message>
-    <message>
-        <source>Unable to perform system backup. If you continue the updates, you cannot roll back to the old system later.</source>
-        <translation type="unfinished"/>
-    </message>
-    <message>
-        <source>Insufficient disk space. Please clean up your disk and try again.</source>
-        <translation type="unfinished"/>
-    </message>
-    <message>
-        <source>DPKG error</source>
-        <translation type="unfinished"/>
-    </message>
-    <message>
-        <source>Back Up Again</source>
-        <translation type="unfinished"/>
-    </message>
-    <message>
-        <source>Abort</source>
-        <translation type="unfinished"/>
-    </message>
-    <message>
-        <source>Proceed to Update</source>
-        <translation type="unfinished"/>
-    </message>
-    <message>
-        <source>Failed to connect to backup services. Please check and retry again.</source>
-        <translation type="unfinished"/>
-    </message>
-    <message>
-        <source>Failed to connect to update services. Please check and retry again.</source>
-        <translation type="unfinished"/>
-    </message>
-</context>
-<context>
-    <name>UpdatePrepareWidget</name>
-    <message>
-        <source>Preparing for updates…</source>
-        <translation type="unfinished"/>
-    </message>
-</context>
-<context>
-    <name>UpdateProgressWidget</name>
-    <message>
-        <source>Do not force a shutdown or power off when installing updates. Otherwise, your system may be damaged.</source>
-        <translation type="unfinished"/>
+        <translation>Obter código de verificação</translation>
     </message>
 </context>
 <context>
     <name>UpdateWorker</name>
     <message>
         <source>Update</source>
-        <translation type="unfinished"/>
+        <translation>Atualizar</translation>
     </message>
     <message>
         <source>Please plug in and then install updates.</source>
+        <translation>Conecte o carregador para instalar as atualizações.</translation>
+    </message>
+</context>
+<context>
+    <name>UsersWithTheSameName</name>
+    <message>
+        <source>Return</source>
+        <translation type="unfinished"/>
+    </message>
+    <message>
+        <source>Please select the account for login</source>
+        <translation type="unfinished"/>
+    </message>
+    <message>
+        <source>Local Account</source>
+        <translation type="unfinished"/>
+    </message>
+    <message>
+        <source>Domain Account</source>
         <translation type="unfinished"/>
     </message>
 </context>
@@ -531,30 +458,30 @@
     </message>
     <message>
         <source>Update and Shut Down</source>
-        <translation type="unfinished"/>
+        <translation>Atualizar e desligar</translation>
     </message>
     <message>
         <source>Update and Reboot</source>
-        <translation type="unfinished"/>
+        <translation>Atualizar e reiniciar</translation>
     </message>
     <message>
         <source>Closing the programs and shutting down, please wait...</source>
-        <translation type="unfinished"/>
+        <translation>Fechando os programas e desligando, aguarde...</translation>
     </message>
     <message>
         <source>Closing the programs and rebooting, please wait...</source>
-        <translation type="unfinished"/>
+        <translation>Fechando os programas e reiniciando, aguarde...</translation>
     </message>
     <message>
         <source>Closing the programs and logging out, please wait...</source>
-        <translation type="unfinished"/>
+        <translation>Fechando os programas e saindo, aguarde...</translation>
     </message>
 </context>
 <context>
     <name>dss::module::AssistLoginWidget</name>
     <message>
         <source>Automatic login</source>
-        <translation type="unfinished"/>
+        <translation>Login automático</translation>
     </message>
 </context>
 <context>

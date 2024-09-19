@@ -220,6 +220,13 @@
     </message>
 </context>
 <context>
+    <name>DeepinAuthFramework</name>
+    <message>
+        <source>Wrong Password</source>
+        <translation type="unfinished"/>
+    </message>
+</context>
+<context>
     <name>GreeterWorker</name>
     <message>
         <source>Wrong account</source>
@@ -362,105 +369,6 @@
     </message>
 </context>
 <context>
-    <name>UpdateCompleteWidget</name>
-    <message>
-        <source>View Logs</source>
-        <translation>Näytä lokit</translation>
-    </message>
-    <message>
-        <source>Updates successful</source>
-        <translation>Päivitykset onnistuivat</translation>
-    </message>
-    <message>
-        <source>Your computer will reboot soon %1</source>
-        <translation>Tietokoneesi käynnistyy pian uudelleen %1</translation>
-    </message>
-    <message>
-        <source>Your computer will be turned off soon %1</source>
-        <translation>Tietokoneesi sammutetaan pian %1</translation>
-    </message>
-</context>
-<context>
-    <name>UpdateLogWidget</name>
-    <message>
-        <source>Hide Logs</source>
-        <translation>Piilota lokit</translation>
-    </message>
-</context>
-<context>
-    <name>UpdateModel</name>
-    <message>
-        <source>Update failed</source>
-        <translation>Päivitys epäonnistui</translation>
-    </message>
-    <message>
-        <source>Unknown error</source>
-        <translation>Tuntematon virhe</translation>
-    </message>
-    <message>
-        <source>Backup failed</source>
-        <translation>Varmuuskopio epäonnistui</translation>
-    </message>
-    <message>
-        <source>Dependency error</source>
-        <translation>Riippuvuudet virhe</translation>
-    </message>
-    <message>
-        <source>Reboot</source>
-        <translation>Käynnistä</translation>
-    </message>
-    <message>
-        <source>Shut Down</source>
-        <translation>Sammuta</translation>
-    </message>
-    <message>
-        <source>Unable to perform system backup. If you continue the updates, you cannot roll back to the old system later.</source>
-        <translation>Järjestelmän varmuuskopio ei onnistunut. Jos jatkat päivityksiä, et voi palata takaisin vanhaan järjestelmään.</translation>
-    </message>
-    <message>
-        <source>Insufficient disk space. Please clean up your disk and try again.</source>
-        <translation>Ei riittävästi levytilaa. Puhdista levytilaa ja yritä uudelleen.</translation>
-    </message>
-    <message>
-        <source>DPKG error</source>
-        <translation>DPKG virhe</translation>
-    </message>
-    <message>
-        <source>Back Up Again</source>
-        <translation>Varmista uudelleen</translation>
-    </message>
-    <message>
-        <source>Abort</source>
-        <translation>Keskeytä</translation>
-    </message>
-    <message>
-        <source>Proceed to Update</source>
-        <translation>Suorita päivitys</translation>
-    </message>
-    <message>
-        <source>Failed to connect to backup services. Please check and retry again.</source>
-        <translation>Yhteys varmistuksen palveluihin epäonnistui. Tarkista ja yritä uudelleen.</translation>
-    </message>
-    <message>
-        <source>Failed to connect to update services. Please check and retry again.</source>
-        <translation>Yhteys päivityspalveluihin epäonnistui. Tarkista ja yritä uudelleen.</translation>
-    </message>
-</context>
-<context>
-    <name>UpdatePrepareWidget</name>
-    <message>
-        <source>Preparing for updates…</source>
-        <translation>Valmistellaan päivityksiä…</translation>
-    </message>
-</context>
-<context>
-    <name>UpdateProgressWidget</name>
-    <message>
-        <source>Do not force a shutdown or power off when installing updates. Otherwise, your system may be damaged.</source>
-        <translation>Älä sammutta virtaa päivityksiä asentaessa. Järjestelmäsi voi vaurioitua.</translation>
-    </message>
-</context>
-<context>
     <name>UpdateWorker</name>
     <message>
         <source>Update</source>
@@ -469,6 +377,25 @@
     <message>
         <source>Please plug in and then install updates.</source>
         <translation>Kytke kone sähköverkkoon ja asenna sitten päivitykset.</translation>
+    </message>
+</context>
+<context>
+    <name>UsersWithTheSameName</name>
+    <message>
+        <source>Return</source>
+        <translation>Palaa</translation>
+    </message>
+    <message>
+        <source>Please select the account for login</source>
+        <translation>Valitse tili kirjautumiseen</translation>
+    </message>
+    <message>
+        <source>Local Account</source>
+        <translation>Paikallinen tili</translation>
+    </message>
+    <message>
+        <source>Domain Account</source>
+        <translation>Toimialueen tili</translation>
     </message>
 </context>
 <context>

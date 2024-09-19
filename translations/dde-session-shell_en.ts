@@ -92,6 +92,25 @@
     </message>
 </context>
 <context>
+    <name>AuthPasskey</name>
+    <message>
+        <source>Please plug in the security key</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Verification successful</source>
+        <translation type="unfinished">Verification successful</translation>
+    </message>
+    <message>
+        <source>Verification failed</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Identifying the security key</source>
+        <translation type="unfinished"></translation>
+    </message>
+</context>
+<context>
     <name>AuthPassword</name>
     <message>
         <source>Verification successful</source>
@@ -233,6 +252,13 @@
     </message>
 </context>
 <context>
+    <name>DeepinAuthFramework</name>
+    <message>
+        <source>Wrong Password</source>
+        <translation type="unfinished">Wrong Password</translation>
+    </message>
+</context>
+<context>
     <name>GreeterWorker</name>
     <message>
         <source>Wrong account</source>
@@ -356,101 +382,21 @@
     </message>
 </context>
 <context>
-    <name>UpdateCompleteWidget</name>
+    <name>UdcpMFALoginWidget</name>
     <message>
-        <source>View Logs</source>
+        <source>发送验证码</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <source>Updates successful</source>
+        <source>请输入手机号</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <source>Your computer will reboot soon %1</source>
+        <source>请输入验证码</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <source>Your computer will be turned off soon %1</source>
-        <translation type="unfinished"></translation>
-    </message>
-</context>
-<context>
-    <name>UpdateLogWidget</name>
-    <message>
-        <source>Hide Logs</source>
-        <translation type="unfinished"></translation>
-    </message>
-</context>
-<context>
-    <name>UpdateModel</name>
-    <message>
-        <source>Update failed</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <source>Unknown error</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <source>Backup failed</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <source>Dependency error</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <source>Reboot</source>
-        <translation type="unfinished">Reboot</translation>
-    </message>
-    <message>
-        <source>Shut Down</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <source>Unable to perform system backup. If you continue the updates, you cannot roll back to the old system later.</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <source>Insufficient disk space. Please clean up your disk and try again.</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <source>DPKG error</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <source>Back Up Again</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <source>Abort</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <source>Proceed to Update</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <source>Failed to connect to backup services. Please check and retry again.</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <source>Failed to connect to update services. Please check and retry again.</source>
-        <translation type="unfinished"></translation>
-    </message>
-</context>
-<context>
-    <name>UpdatePrepareWidget</name>
-    <message>
-        <source>Preparing for updates…</source>
-        <translation type="unfinished"></translation>
-    </message>
-</context>
-<context>
-    <name>UpdateProgressWidget</name>
-    <message>
-        <source>Do not force a shutdown or power off when installing updates. Otherwise, your system may be damaged.</source>
+        <source>获取验证码</source>
         <translation type="unfinished"></translation>
     </message>
 </context>
@@ -462,6 +408,25 @@
     </message>
     <message>
         <source>Please plug in and then install updates.</source>
+        <translation type="unfinished"></translation>
+    </message>
+</context>
+<context>
+    <name>UsersWithTheSameName</name>
+    <message>
+        <source>Return</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Please select the account for login</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Local Account</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Domain Account</source>
         <translation type="unfinished"></translation>
     </message>
 </context>
@@ -541,6 +506,13 @@
     </message>
     <message>
         <source>Closing the programs and logging out, please wait...</source>
+        <translation type="unfinished"></translation>
+    </message>
+</context>
+<context>
+    <name>dss::module::AssistLoginWidget</name>
+    <message>
+        <source>Automatic login</source>
         <translation type="unfinished"></translation>
     </message>
 </context>

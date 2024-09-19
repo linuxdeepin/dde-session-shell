@@ -3,7 +3,7 @@
     <name>AuthFace</name>
     <message>
         <source>Face ID</source>
-        <translation type="unfinished"/>
+        <translation>Face ID</translation>
     </message>
     <message>
         <source>Verification successful</source>
@@ -19,7 +19,7 @@
     </message>
     <message>
         <source>Verify your Face ID</source>
-        <translation type="unfinished"/>
+        <translation>Overte svoje Face ID</translation>
     </message>
     <message>
         <source>Face ID locked, use password please</source>
@@ -57,7 +57,7 @@
     <name>AuthIris</name>
     <message>
         <source>Iris ID</source>
-        <translation type="unfinished"/>
+        <translation>Iris ID</translation>
     </message>
     <message>
         <source>Verification successful</source>
@@ -73,7 +73,7 @@
     </message>
     <message>
         <source>Verify your Iris ID</source>
-        <translation type="unfinished"/>
+        <translation>Overte svoje Iris ID</translation>
     </message>
     <message>
         <source>Iris ID locked, use password please</source>
@@ -204,7 +204,7 @@
     </message>
     <message numerus="yes">
         <source>Your password will expire in %n days, please change it timely</source>
-        <translation type="unfinished"><numerusform></numerusform><numerusform></numerusform><numerusform></numerusform><numerusform></numerusform></translation>
+        <translation><numerusform>Vaše heslo vyprší za %d deň, zmeňte si ho prosím včas</numerusform><numerusform>Vaše heslo vyprší za %d dni, zmeňte si ho prosím včas</numerusform><numerusform>Vaše heslo vyprší za %d dní, zmeňte si ho prosím včas</numerusform><numerusform>Vaše heslo vyprší za %d dní, zmeňte si ho prosím včas</numerusform></translation>
     </message>
     <message>
         <source>Password expired, please change</source>
@@ -216,6 +216,13 @@
     </message>
     <message>
         <source>Terminal locked, please contact administrator</source>
+        <translation type="unfinished"/>
+    </message>
+</context>
+<context>
+    <name>DeepinAuthFramework</name>
+    <message>
+        <source>Wrong Password</source>
         <translation type="unfinished"/>
     </message>
 </context>
@@ -362,105 +369,6 @@
     </message>
 </context>
 <context>
-    <name>UpdateCompleteWidget</name>
-    <message>
-        <source>View Logs</source>
-        <translation type="unfinished"/>
-    </message>
-    <message>
-        <source>Updates successful</source>
-        <translation type="unfinished"/>
-    </message>
-    <message>
-        <source>Your computer will reboot soon %1</source>
-        <translation type="unfinished"/>
-    </message>
-    <message>
-        <source>Your computer will be turned off soon %1</source>
-        <translation type="unfinished"/>
-    </message>
-</context>
-<context>
-    <name>UpdateLogWidget</name>
-    <message>
-        <source>Hide Logs</source>
-        <translation type="unfinished"/>
-    </message>
-</context>
-<context>
-    <name>UpdateModel</name>
-    <message>
-        <source>Update failed</source>
-        <translation type="unfinished"/>
-    </message>
-    <message>
-        <source>Unknown error</source>
-        <translation type="unfinished"/>
-    </message>
-    <message>
-        <source>Backup failed</source>
-        <translation type="unfinished"/>
-    </message>
-    <message>
-        <source>Dependency error</source>
-        <translation type="unfinished"/>
-    </message>
-    <message>
-        <source>Reboot</source>
-        <translation type="unfinished"/>
-    </message>
-    <message>
-        <source>Shut Down</source>
-        <translation type="unfinished"/>
-    </message>
-    <message>
-        <source>Unable to perform system backup. If you continue the updates, you cannot roll back to the old system later.</source>
-        <translation type="unfinished"/>
-    </message>
-    <message>
-        <source>Insufficient disk space. Please clean up your disk and try again.</source>
-        <translation type="unfinished"/>
-    </message>
-    <message>
-        <source>DPKG error</source>
-        <translation type="unfinished"/>
-    </message>
-    <message>
-        <source>Back Up Again</source>
-        <translation type="unfinished"/>
-    </message>
-    <message>
-        <source>Abort</source>
-        <translation type="unfinished"/>
-    </message>
-    <message>
-        <source>Proceed to Update</source>
-        <translation type="unfinished"/>
-    </message>
-    <message>
-        <source>Failed to connect to backup services. Please check and retry again.</source>
-        <translation type="unfinished"/>
-    </message>
-    <message>
-        <source>Failed to connect to update services. Please check and retry again.</source>
-        <translation type="unfinished"/>
-    </message>
-</context>
-<context>
-    <name>UpdatePrepareWidget</name>
-    <message>
-        <source>Preparing for updates…</source>
-        <translation type="unfinished"/>
-    </message>
-</context>
-<context>
-    <name>UpdateProgressWidget</name>
-    <message>
-        <source>Do not force a shutdown or power off when installing updates. Otherwise, your system may be damaged.</source>
-        <translation type="unfinished"/>
-    </message>
-</context>
-<context>
     <name>UpdateWorker</name>
     <message>
         <source>Update</source>
@@ -468,6 +376,25 @@
     </message>
     <message>
         <source>Please plug in and then install updates.</source>
+        <translation type="unfinished"/>
+    </message>
+</context>
+<context>
+    <name>UsersWithTheSameName</name>
+    <message>
+        <source>Return</source>
+        <translation type="unfinished"/>
+    </message>
+    <message>
+        <source>Please select the account for login</source>
+        <translation type="unfinished"/>
+    </message>
+    <message>
+        <source>Local Account</source>
+        <translation type="unfinished"/>
+    </message>
+    <message>
+        <source>Domain Account</source>
         <translation type="unfinished"/>
     </message>
 </context>

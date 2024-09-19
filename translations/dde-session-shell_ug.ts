@@ -220,6 +220,13 @@
     </message>
 </context>
 <context>
+    <name>DeepinAuthFramework</name>
+    <message>
+        <source>Wrong Password</source>
+        <translation type="unfinished"/>
+    </message>
+</context>
+<context>
     <name>GreeterWorker</name>
     <message>
         <source>Wrong account</source>
@@ -282,7 +289,7 @@
     </message>
     <message>
         <source>The above users are still logged in and data will be lost due to reboot, are you sure you want to reboot?</source>
-        <translation>بۇ كومپيۇتېردا يەنە يۇقارقى ھېساباتلار ئوچۇق، قايتا قوزغاتسىڭىز سانلىق مەلۇماتلار يوقاپ كېتىشى مۇمكىن، راستلا قايتا قوزغىتامسىز؟</translation>
+        <translation>بۇ كومپيۇتېردا يەنە يۇقارقى ھېساباتلار ئوچۇق، كومپيۇتېرنى قايتا قوزغاتسىڭىز سانلىق مەلۇماتلار يوقاپ كېتىدۇ، راستلا قايتا قوزغىتامسىز؟</translation>
     </message>
 </context>
 <context>
@@ -362,105 +369,6 @@
     </message>
 </context>
 <context>
-    <name>UpdateCompleteWidget</name>
-    <message>
-        <source>View Logs</source>
-        <translation>كۈندىلىك خاتىرىنى كۆرۈش</translation>
-    </message>
-    <message>
-        <source>Updates successful</source>
-        <translation>يېڭىلاندى</translation>
-    </message>
-    <message>
-        <source>Your computer will reboot soon %1</source>
-        <translation>كومپيۇتېرىڭىز قايتا قوزغىلىدۇ %1</translation>
-    </message>
-    <message>
-        <source>Your computer will be turned off soon %1</source>
-        <translation>كومپيۇتېرىڭىز تاقىلىدۇ %1</translation>
-    </message>
-</context>
-<context>
-    <name>UpdateLogWidget</name>
-    <message>
-        <source>Hide Logs</source>
-        <translation>كۈندىلىك خاتىرىنى يىغىش</translation>
-    </message>
-</context>
-<context>
-    <name>UpdateModel</name>
-    <message>
-        <source>Update failed</source>
-        <translation>يېڭىلاش مەغلۇب بولدى</translation>
-    </message>
-    <message>
-        <source>Unknown error</source>
-        <translation>نامەلۇم خاتالىق</translation>
-    </message>
-    <message>
-        <source>Backup failed</source>
-        <translation>زاپاسلانمىدى</translation>
-    </message>
-    <message>
-        <source>Dependency error</source>
-        <translation>بېقىنىش خاتالىقى</translation>
-    </message>
-    <message>
-        <source>Reboot</source>
-        <translation>قايتا قوزغىتىش</translation>
-    </message>
-    <message>
-        <source>Shut Down</source>
-        <translation>تاقاش</translation>
-    </message>
-    <message>
-        <source>Unable to perform system backup. If you continue the updates, you cannot roll back to the old system later.</source>
-        <translation>سىستېمىنى زاپاسلىغىلى بولمىدى، سىستېمىنى داۋاملىق يېڭىلىسىڭىز ئەسلىگە قايتۇرالمايسىز</translation>
-    </message>
-    <message>
-        <source>Insufficient disk space. Please clean up your disk and try again.</source>
-        <translation>دىسكا بوشلۇقى يېتەرسىز، دىسكىڭىزنى تازىلاپ ئاندىن يېڭىلاڭ</translation>
-    </message>
-    <message>
-        <source>DPKG error</source>
-        <translation>dpkg خاتالىقى</translation>
-    </message>
-    <message>
-        <source>Back Up Again</source>
-        <translation>قايتا زاپاسلاش</translation>
-    </message>
-    <message>
-        <source>Abort</source>
-        <translation>يېڭىلاشتىن چېكىنىش</translation>
-    </message>
-    <message>
-        <source>Proceed to Update</source>
-        <translation>داۋاملىق يېڭىلاش</translation>
-    </message>
-    <message>
-        <source>Failed to connect to backup services. Please check and retry again.</source>
-        <translation>زاپاسلاش مۇلازىمىتىنى قوزغاتقىلى بولمىدى، تەكشۈرۈپ قايتا سىناڭ</translation>
-    </message>
-    <message>
-        <source>Failed to connect to update services. Please check and retry again.</source>
-        <translation>يېڭىلاش مۇلازىمىتىنى قوزغاتقىلى بولمىدى، تەكشۈرۈپ قايتا سىناڭ</translation>
-    </message>
-</context>
-<context>
-    <name>UpdatePrepareWidget</name>
-    <message>
-        <source>Preparing for updates…</source>
-        <translation>يېڭىلاشقا تەييارلىنىۋاتىدۇ...</translation>
-    </message>
-</context>
-<context>
-    <name>UpdateProgressWidget</name>
-    <message>
-        <source>Do not force a shutdown or power off when installing updates. Otherwise, your system may be damaged.</source>
-        <translation>يېڭىلىغاندا كومپيۇتېرنى مەجبۇرىي تاقىۋەتمەڭ ياكى توكتىن ئۈزۈۋەتمەڭ، بولمىسا سىستېما بۇزۇلۇپ كېتىدۇ</translation>
-    </message>
-</context>
-<context>
     <name>UpdateWorker</name>
     <message>
         <source>Update</source>
@@ -469,6 +377,25 @@
     <message>
         <source>Please plug in and then install updates.</source>
         <translation>توكقا چېتىپ ئاندىن يېڭىلاڭ</translation>
+    </message>
+</context>
+<context>
+    <name>UsersWithTheSameName</name>
+    <message>
+        <source>Return</source>
+        <translation type="unfinished"/>
+    </message>
+    <message>
+        <source>Please select the account for login</source>
+        <translation type="unfinished"/>
+    </message>
+    <message>
+        <source>Local Account</source>
+        <translation type="unfinished"/>
+    </message>
+    <message>
+        <source>Domain Account</source>
+        <translation type="unfinished"/>
     </message>
 </context>
 <context>

@@ -220,6 +220,13 @@
     </message>
 </context>
 <context>
+    <name>DeepinAuthFramework</name>
+    <message>
+        <source>Wrong Password</source>
+        <translation type="unfinished"/>
+    </message>
+</context>
+<context>
     <name>GreeterWorker</name>
     <message>
         <source>Wrong account</source>
@@ -362,105 +369,6 @@
     </message>
 </context>
 <context>
-    <name>UpdateCompleteWidget</name>
-    <message>
-        <source>View Logs</source>
-        <translation>View Logs</translation>
-    </message>
-    <message>
-        <source>Updates successful</source>
-        <translation>Updates successful</translation>
-    </message>
-    <message>
-        <source>Your computer will reboot soon %1</source>
-        <translation>Your computer will reboot soon %1</translation>
-    </message>
-    <message>
-        <source>Your computer will be turned off soon %1</source>
-        <translation>Your computer will be turned off soon %1</translation>
-    </message>
-</context>
-<context>
-    <name>UpdateLogWidget</name>
-    <message>
-        <source>Hide Logs</source>
-        <translation>Hide Logs</translation>
-    </message>
-</context>
-<context>
-    <name>UpdateModel</name>
-    <message>
-        <source>Update failed</source>
-        <translation>Update failed</translation>
-    </message>
-    <message>
-        <source>Unknown error</source>
-        <translation>Unknown error</translation>
-    </message>
-    <message>
-        <source>Backup failed</source>
-        <translation>Backup failed</translation>
-    </message>
-    <message>
-        <source>Dependency error</source>
-        <translation>Dependency error</translation>
-    </message>
-    <message>
-        <source>Reboot</source>
-        <translation>Reboot</translation>
-    </message>
-    <message>
-        <source>Shut Down</source>
-        <translation>Shut Down</translation>
-    </message>
-    <message>
-        <source>Unable to perform system backup. If you continue the updates, you cannot roll back to the old system later.</source>
-        <translation>Unable to perform system backup. If you continue the updates, you cannot roll back to the old system later.</translation>
-    </message>
-    <message>
-        <source>Insufficient disk space. Please clean up your disk and try again.</source>
-        <translation>Insufficient disk space. Please clean up your disk and try again.</translation>
-    </message>
-    <message>
-        <source>DPKG error</source>
-        <translation>DPKG error</translation>
-    </message>
-    <message>
-        <source>Back Up Again</source>
-        <translation>Back Up Again</translation>
-    </message>
-    <message>
-        <source>Abort</source>
-        <translation>Abort</translation>
-    </message>
-    <message>
-        <source>Proceed to Update</source>
-        <translation>Proceed to Update</translation>
-    </message>
-    <message>
-        <source>Failed to connect to backup services. Please check and retry again.</source>
-        <translation>Failed to connect to backup services. Please check and retry again.</translation>
-    </message>
-    <message>
-        <source>Failed to connect to update services. Please check and retry again.</source>
-        <translation>Failed to connect to update services. Please check and retry again.</translation>
-    </message>
-</context>
-<context>
-    <name>UpdatePrepareWidget</name>
-    <message>
-        <source>Preparing for updates…</source>
-        <translation>Preparing for updates…</translation>
-    </message>
-</context>
-<context>
-    <name>UpdateProgressWidget</name>
-    <message>
-        <source>Do not force a shutdown or power off when installing updates. Otherwise, your system may be damaged.</source>
-        <translation>Do not force a shutdown or power off when installing updates. Otherwise, your system may be damaged.</translation>
-    </message>
-</context>
-<context>
     <name>UpdateWorker</name>
     <message>
         <source>Update</source>
@@ -469,6 +377,25 @@
     <message>
         <source>Please plug in and then install updates.</source>
         <translation>Please plug in and then install updates.</translation>
+    </message>
+</context>
+<context>
+    <name>UsersWithTheSameName</name>
+    <message>
+        <source>Return</source>
+        <translation type="unfinished"/>
+    </message>
+    <message>
+        <source>Please select the account for login</source>
+        <translation type="unfinished"/>
+    </message>
+    <message>
+        <source>Local Account</source>
+        <translation type="unfinished"/>
+    </message>
+    <message>
+        <source>Domain Account</source>
+        <translation type="unfinished"/>
     </message>
 </context>
 <context>

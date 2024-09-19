@@ -220,6 +220,13 @@
     </message>
 </context>
 <context>
+    <name>DeepinAuthFramework</name>
+    <message>
+        <source>Wrong Password</source>
+        <translation type="unfinished"/>
+    </message>
+</context>
+<context>
     <name>GreeterWorker</name>
     <message>
         <source>Wrong account</source>
@@ -234,7 +241,7 @@
     <name>InhibitWarnView</name>
     <message>
         <source>Cancel</source>
-        <translation type="unfinished"/>
+        <translation>Ακύρωση</translation>
     </message>
     <message>
         <source>The reason of inhibit.</source>
@@ -274,7 +281,7 @@
     <name>MultiUsersWarningView</name>
     <message>
         <source>Cancel</source>
-        <translation type="unfinished"/>
+        <translation>Ακύρωση</translation>
     </message>
     <message>
         <source>The above users are still logged in and data will be lost due to shutdown, are you sure you want to shut down?</source>
@@ -296,7 +303,7 @@
     <name>ShutdownWidget</name>
     <message>
         <source>Shut down</source>
-        <translation type="unfinished"/>
+        <translation>Τερματισμός λειτουργίας</translation>
     </message>
     <message>
         <source>Reboot</source>
@@ -304,7 +311,7 @@
     </message>
     <message>
         <source>Suspend</source>
-        <translation type="unfinished"/>
+        <translation>Αναστολή λειτουργίας</translation>
     </message>
     <message>
         <source>Hibernate</source>
@@ -362,105 +369,6 @@
     </message>
 </context>
 <context>
-    <name>UpdateCompleteWidget</name>
-    <message>
-        <source>View Logs</source>
-        <translation type="unfinished"/>
-    </message>
-    <message>
-        <source>Updates successful</source>
-        <translation type="unfinished"/>
-    </message>
-    <message>
-        <source>Your computer will reboot soon %1</source>
-        <translation type="unfinished"/>
-    </message>
-    <message>
-        <source>Your computer will be turned off soon %1</source>
-        <translation type="unfinished"/>
-    </message>
-</context>
-<context>
-    <name>UpdateLogWidget</name>
-    <message>
-        <source>Hide Logs</source>
-        <translation type="unfinished"/>
-    </message>
-</context>
-<context>
-    <name>UpdateModel</name>
-    <message>
-        <source>Update failed</source>
-        <translation type="unfinished"/>
-    </message>
-    <message>
-        <source>Unknown error</source>
-        <translation type="unfinished"/>
-    </message>
-    <message>
-        <source>Backup failed</source>
-        <translation type="unfinished"/>
-    </message>
-    <message>
-        <source>Dependency error</source>
-        <translation type="unfinished"/>
-    </message>
-    <message>
-        <source>Reboot</source>
-        <translation type="unfinished"/>
-    </message>
-    <message>
-        <source>Shut Down</source>
-        <translation type="unfinished"/>
-    </message>
-    <message>
-        <source>Unable to perform system backup. If you continue the updates, you cannot roll back to the old system later.</source>
-        <translation type="unfinished"/>
-    </message>
-    <message>
-        <source>Insufficient disk space. Please clean up your disk and try again.</source>
-        <translation type="unfinished"/>
-    </message>
-    <message>
-        <source>DPKG error</source>
-        <translation type="unfinished"/>
-    </message>
-    <message>
-        <source>Back Up Again</source>
-        <translation type="unfinished"/>
-    </message>
-    <message>
-        <source>Abort</source>
-        <translation type="unfinished"/>
-    </message>
-    <message>
-        <source>Proceed to Update</source>
-        <translation type="unfinished"/>
-    </message>
-    <message>
-        <source>Failed to connect to backup services. Please check and retry again.</source>
-        <translation type="unfinished"/>
-    </message>
-    <message>
-        <source>Failed to connect to update services. Please check and retry again.</source>
-        <translation type="unfinished"/>
-    </message>
-</context>
-<context>
-    <name>UpdatePrepareWidget</name>
-    <message>
-        <source>Preparing for updates…</source>
-        <translation type="unfinished"/>
-    </message>
-</context>
-<context>
-    <name>UpdateProgressWidget</name>
-    <message>
-        <source>Do not force a shutdown or power off when installing updates. Otherwise, your system may be damaged.</source>
-        <translation type="unfinished"/>
-    </message>
-</context>
-<context>
     <name>UpdateWorker</name>
     <message>
         <source>Update</source>
@@ -468,6 +376,25 @@
     </message>
     <message>
         <source>Please plug in and then install updates.</source>
+        <translation type="unfinished"/>
+    </message>
+</context>
+<context>
+    <name>UsersWithTheSameName</name>
+    <message>
+        <source>Return</source>
+        <translation type="unfinished"/>
+    </message>
+    <message>
+        <source>Please select the account for login</source>
+        <translation type="unfinished"/>
+    </message>
+    <message>
+        <source>Local Account</source>
+        <translation type="unfinished"/>
+    </message>
+    <message>
+        <source>Domain Account</source>
         <translation type="unfinished"/>
     </message>
 </context>

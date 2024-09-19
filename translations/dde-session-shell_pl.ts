@@ -220,6 +220,13 @@
     </message>
 </context>
 <context>
+    <name>DeepinAuthFramework</name>
+    <message>
+        <source>Wrong Password</source>
+        <translation type="unfinished"/>
+    </message>
+</context>
+<context>
     <name>GreeterWorker</name>
     <message>
         <source>Wrong account</source>
@@ -252,7 +259,7 @@
     <name>LockContent</name>
     <message>
         <source>Lock Screen</source>
-        <translation>Zablokuj ekran</translation>
+        <translation>Ekran blokady</translation>
     </message>
     <message>
         <source>Failed to lock screen</source>
@@ -278,18 +285,18 @@
     </message>
     <message>
         <source>The above users are still logged in and data will be lost due to shutdown, are you sure you want to shut down?</source>
-        <translation>Powyżsi użytkownicy są wciąż zalogowani i ich dane mogą zostać utracone w wyniku wyłączenia komputera. Czy na pewno wyłączyć komputer?</translation>
+        <translation>Powyżsi użytkownicy są wciąż zalogowani, a ich dane mogą zostać utracone poprzez wyłączenie. Czy na pewno wyłączyć?</translation>
     </message>
     <message>
         <source>The above users are still logged in and data will be lost due to reboot, are you sure you want to reboot?</source>
-        <translation>Powyżsi użytkownicy są wciąż zalogowani i ich dane mogą zostać utracone w wyniku ponownego uruchomienia komputera. Czy na pewno chcesz ponownie uruchomić komputer?</translation>
+        <translation>Powyżsi użytkownicy są wciąż zalogowani, a ich dane mogą zostać utracone poprzez ponowne uruchomienie. Czy na pewno uruchomić ponownie?</translation>
     </message>
 </context>
 <context>
     <name>SessionWidget</name>
     <message>
         <source>You have enabled the high system security level, thus cannot switch to the Wayland mode, please disable the high security level in Security Center and try again.</source>
-        <translation>Wysoki poziom został włączony, z tego powodu nie jesteś w stanie przełączyć się na sesję Wayland. Wyłącz wysoki poziom zabezpieczeń w Centrum Bezpieczeństwa, a następnie spróbuj ponownie.</translation>
+        <translation>Wysoki poziom bezpieczeństwa jest aktywny, więc nie można przełączyć na sesję Wayland. Wyłącz wysoki poziom bezpieczeństwa w Centrum Bezpieczeństwa, a następnie spróbuj ponownie.</translation>
     </message>
 </context>
 <context>
@@ -362,105 +369,6 @@
     </message>
 </context>
 <context>
-    <name>UpdateCompleteWidget</name>
-    <message>
-        <source>View Logs</source>
-        <translation>Wyświetl dzienniki</translation>
-    </message>
-    <message>
-        <source>Updates successful</source>
-        <translation>Zaktualizowano pomyślnie</translation>
-    </message>
-    <message>
-        <source>Your computer will reboot soon %1</source>
-        <translation>Komputer uruchomi się ponownie za %1</translation>
-    </message>
-    <message>
-        <source>Your computer will be turned off soon %1</source>
-        <translation>Komputer zostanie wyłączony za %1</translation>
-    </message>
-</context>
-<context>
-    <name>UpdateLogWidget</name>
-    <message>
-        <source>Hide Logs</source>
-        <translation>Ukryj dzienniki</translation>
-    </message>
-</context>
-<context>
-    <name>UpdateModel</name>
-    <message>
-        <source>Update failed</source>
-        <translation>Błąd aktualizacji</translation>
-    </message>
-    <message>
-        <source>Unknown error</source>
-        <translation>Nieznany błąd</translation>
-    </message>
-    <message>
-        <source>Backup failed</source>
-        <translation>Błąd tworzenia kopii zapasowej</translation>
-    </message>
-    <message>
-        <source>Dependency error</source>
-        <translation>Błąd zależności</translation>
-    </message>
-    <message>
-        <source>Reboot</source>
-        <translation>Uruchom ponownie</translation>
-    </message>
-    <message>
-        <source>Shut Down</source>
-        <translation>Zamknij</translation>
-    </message>
-    <message>
-        <source>Unable to perform system backup. If you continue the updates, you cannot roll back to the old system later.</source>
-        <translation>Nie udało się utworzyć kopii zapasowej. Jeśli kontynuujesz aktualizacje, nie będziesz mógł przywrócić starego systemu.</translation>
-    </message>
-    <message>
-        <source>Insufficient disk space. Please clean up your disk and try again.</source>
-        <translation>Za mało miejsca na dysku. Uprzątnij go i spróbuj ponownie.</translation>
-    </message>
-    <message>
-        <source>DPKG error</source>
-        <translation>Błąd DPKG</translation>
-    </message>
-    <message>
-        <source>Back Up Again</source>
-        <translation>Utwórz ponownie kopię zapasową</translation>
-    </message>
-    <message>
-        <source>Abort</source>
-        <translation>Przerwij</translation>
-    </message>
-    <message>
-        <source>Proceed to Update</source>
-        <translation>Przejdź do aktualizacji</translation>
-    </message>
-    <message>
-        <source>Failed to connect to backup services. Please check and retry again.</source>
-        <translation>Nie udało się połączyć z usługami kopii zapasowej. Sprawdź problem i spróbuj ponownie.</translation>
-    </message>
-    <message>
-        <source>Failed to connect to update services. Please check and retry again.</source>
-        <translation>Nie udało się połączyć z usługami aktualizacji. Sprawdź problem i spróbuj ponownie.</translation>
-    </message>
-</context>
-<context>
-    <name>UpdatePrepareWidget</name>
-    <message>
-        <source>Preparing for updates…</source>
-        <translation>Przygotowanie aktualizacji...</translation>
-    </message>
-</context>
-<context>
-    <name>UpdateProgressWidget</name>
-    <message>
-        <source>Do not force a shutdown or power off when installing updates. Otherwise, your system may be damaged.</source>
-        <translation>Nie wymuszaj zamknięcia, ani nie odłączaj źródła zasilania podczas instalowania aktualizacji. W przeciwnym razie Twój system może ulec uszkodzeniu.</translation>
-    </message>
-</context>
-<context>
     <name>UpdateWorker</name>
     <message>
         <source>Update</source>
@@ -469,6 +377,25 @@
     <message>
         <source>Please plug in and then install updates.</source>
         <translation>Najpierw podłącz się do zasilania, aby zainstalować aktualizacje.</translation>
+    </message>
+</context>
+<context>
+    <name>UsersWithTheSameName</name>
+    <message>
+        <source>Return</source>
+        <translation>Wróć</translation>
+    </message>
+    <message>
+        <source>Please select the account for login</source>
+        <translation>Wybierz konto do zalogowania</translation>
+    </message>
+    <message>
+        <source>Local Account</source>
+        <translation>Konto lokalne</translation>
+    </message>
+    <message>
+        <source>Domain Account</source>
+        <translation>Konto domeny</translation>
     </message>
 </context>
 <context>

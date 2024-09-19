@@ -220,6 +220,13 @@
     </message>
 </context>
 <context>
+    <name>DeepinAuthFramework</name>
+    <message>
+        <source>Wrong Password</source>
+        <translation type="unfinished"/>
+    </message>
+</context>
+<context>
     <name>GreeterWorker</name>
     <message>
         <source>Wrong account</source>
@@ -238,7 +245,7 @@
     </message>
     <message>
         <source>The reason of inhibit.</source>
-        <translation type="unfinished"/>
+        <translation>Arsyeja e pengimit.</translation>
     </message>
 </context>
 <context>
@@ -362,105 +369,6 @@
     </message>
 </context>
 <context>
-    <name>UpdateCompleteWidget</name>
-    <message>
-        <source>View Logs</source>
-        <translation>Shihni Regjistra</translation>
-    </message>
-    <message>
-        <source>Updates successful</source>
-        <translation>Përditësime me sukses</translation>
-    </message>
-    <message>
-        <source>Your computer will reboot soon %1</source>
-        <translation>Kompjuteri juaj do të riniset së shpejti %1</translation>
-    </message>
-    <message>
-        <source>Your computer will be turned off soon %1</source>
-        <translation>Kompjuteri juaj do të fiket së shpejti %1</translation>
-    </message>
-</context>
-<context>
-    <name>UpdateLogWidget</name>
-    <message>
-        <source>Hide Logs</source>
-        <translation>Fshihi Regjistrat</translation>
-    </message>
-</context>
-<context>
-    <name>UpdateModel</name>
-    <message>
-        <source>Update failed</source>
-        <translation>Përditësimi dështoi</translation>
-    </message>
-    <message>
-        <source>Unknown error</source>
-        <translation>Gabim i panjohur</translation>
-    </message>
-    <message>
-        <source>Backup failed</source>
-        <translation>Kopjeruajtja dështoi</translation>
-    </message>
-    <message>
-        <source>Dependency error</source>
-        <translation>Gabim varësish</translation>
-    </message>
-    <message>
-        <source>Reboot</source>
-        <translation>Rinisu</translation>
-    </message>
-    <message>
-        <source>Shut Down</source>
-        <translation>Fiku</translation>
-    </message>
-    <message>
-        <source>Unable to perform system backup. If you continue the updates, you cannot roll back to the old system later.</source>
-        <translation>S’arrihet të kryhet kopjeruajtje sistemi. Nëse vazhdoni përditësimet, s’mund të ktheheni prapa te sistemi i vjetër më vonë.</translation>
-    </message>
-    <message>
-        <source>Insufficient disk space. Please clean up your disk and try again.</source>
-        <translation>Hapësirë e pamjaftueshme disku. Ju lutemi, pastroni diskun dhe riprovoni.</translation>
-    </message>
-    <message>
-        <source>DPKG error</source>
-        <translation>Gabim DPKG</translation>
-    </message>
-    <message>
-        <source>Back Up Again</source>
-        <translation>Ribëj Kopjeruajtje</translation>
-    </message>
-    <message>
-        <source>Abort</source>
-        <translation>Ndërprite</translation>
-    </message>
-    <message>
-        <source>Proceed to Update</source>
-        <translation>Vazhdo me Përditësimin</translation>
-    </message>
-    <message>
-        <source>Failed to connect to backup services. Please check and retry again.</source>
-        <translation>S’u arrit të lidhej te shërbime kopjeruajtjeje. Ju lutemi, kontrollojeni dhe riprovoni.</translation>
-    </message>
-    <message>
-        <source>Failed to connect to update services. Please check and retry again.</source>
-        <translation>S’u arrit të lidhej me shërbime përditësimi. Ju lutemi, kontrollojeni dhe riprovoni.</translation>
-    </message>
-</context>
-<context>
-    <name>UpdatePrepareWidget</name>
-    <message>
-        <source>Preparing for updates…</source>
-        <translation>Po përgatitet për përditësime…</translation>
-    </message>
-</context>
-<context>
-    <name>UpdateProgressWidget</name>
-    <message>
-        <source>Do not force a shutdown or power off when installing updates. Otherwise, your system may be damaged.</source>
-        <translation>Mos bëni fikje ose heqje energjie të makinës, kur instalohen përditësime. Përndryshe, sistemi juaj mund të dëmtohet.</translation>
-    </message>
-</context>
-<context>
     <name>UpdateWorker</name>
     <message>
         <source>Update</source>
@@ -469,6 +377,25 @@
     <message>
         <source>Please plug in and then install updates.</source>
         <translation>Ju lutemi, vëreni në prizë dhe mandej instaloni përditësimet.</translation>
+    </message>
+</context>
+<context>
+    <name>UsersWithTheSameName</name>
+    <message>
+        <source>Return</source>
+        <translation type="unfinished"/>
+    </message>
+    <message>
+        <source>Please select the account for login</source>
+        <translation>Ju lutemi, përzgjidhni llogarinë për hyrje</translation>
+    </message>
+    <message>
+        <source>Local Account</source>
+        <translation>Llogari Vendore</translation>
+    </message>
+    <message>
+        <source>Domain Account</source>
+        <translation>Llogari Përkatësie</translation>
     </message>
 </context>
 <context>

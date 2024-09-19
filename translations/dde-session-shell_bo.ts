@@ -220,6 +220,13 @@
     </message>
 </context>
 <context>
+    <name>DeepinAuthFramework</name>
+    <message>
+        <source>Wrong Password</source>
+        <translation type="unfinished"/>
+    </message>
+</context>
+<context>
     <name>GreeterWorker</name>
     <message>
         <source>Wrong account</source>
@@ -362,105 +369,6 @@
     </message>
 </context>
 <context>
-    <name>UpdateCompleteWidget</name>
-    <message>
-        <source>View Logs</source>
-        <translation>ཉིན་ཐོར་ལྟ་བ།</translation>
-    </message>
-    <message>
-        <source>Updates successful</source>
-        <translation>གསར་དུ་བསྒྱུར་ཟིན།</translation>
-    </message>
-    <message>
-        <source>Your computer will reboot soon %1</source>
-        <translation>ཁྱེད་ཀྱི་གློག་ཀླད་བསྐྱར་དུ་འགོ་སློང་གྲབས་ཡོད། %1</translation>
-    </message>
-    <message>
-        <source>Your computer will be turned off soon %1</source>
-        <translation>ཁྱེད་ཀྱི་གློག་ཀླད་སྒོ་རྒྱག་གྲབས་ཡོད། %1</translation>
-    </message>
-</context>
-<context>
-    <name>UpdateLogWidget</name>
-    <message>
-        <source>Hide Logs</source>
-        <translation>ཉིན་ཐོ་བསྡུ་བ།</translation>
-    </message>
-</context>
-<context>
-    <name>UpdateModel</name>
-    <message>
-        <source>Update failed</source>
-        <translation>གསར་སྒྱུར་མི་ཐུབ་པ། </translation>
-    </message>
-    <message>
-        <source>Unknown error</source>
-        <translation>རྒྱུ་མཚན་མ་ཤེས་པའི་ནོར་འཁྲུལ།</translation>
-    </message>
-    <message>
-        <source>Backup failed</source>
-        <translation>གྲབས་ཉར་བྱེད་མ་ཐུབ།</translation>
-    </message>
-    <message>
-        <source>Dependency error</source>
-        <translation>རྟེན་གཞི་ནོར་བ།</translation>
-    </message>
-    <message>
-        <source>Reboot</source>
-        <translation>བསྐྱར་སློང་།</translation>
-    </message>
-    <message>
-        <source>Shut Down</source>
-        <translation>ཁ་བརྒྱབ།</translation>
-    </message>
-    <message>
-        <source>Unable to perform system backup. If you continue the updates, you cannot roll back to the old system later.</source>
-        <translation>རྒྱུད་ཁོངས་གྲབས་ཉར་བྱེད་ཐབས་བྲལ། མུ་མཐུད་རིམ་པ་སྤར་ཚེ་རྒྱུད་ཁོངས་ཕྱིར་ལོག་བྱེད་ཐབས་བྲལ་སྲིད། </translation>
-    </message>
-    <message>
-        <source>Insufficient disk space. Please clean up your disk and try again.</source>
-        <translation>སྡུད་སྡེར་གྱི་ཤོང་ཚད་མི་འདང་བས་དུས་ཐོག་ཏུ་གཙང་སེལ་བྱས་རྗེས་གསར་སྒྱུར་བྱོས།</translation>
-    </message>
-    <message>
-        <source>DPKG error</source>
-        <translation>dpkgནོར་བ།</translation>
-    </message>
-    <message>
-        <source>Back Up Again</source>
-        <translation>ཡང་བསྐྱར་གྲབས་ཉར།</translation>
-    </message>
-    <message>
-        <source>Abort</source>
-        <translation>གསར་སྒྱུར་མི་བྱེད་པ།</translation>
-    </message>
-    <message>
-        <source>Proceed to Update</source>
-        <translation>མུ་མཐུད་གསར་སྒྱུར།</translation>
-    </message>
-    <message>
-        <source>Failed to connect to backup services. Please check and retry again.</source>
-        <translation>གྲབས་ཉར་ཞབས་ཞུ་འགོ་སློང་ཐབས་བྲལ་བས། ཞིབ་བཤེར་བྱས་རྗེས་ཡང་བསྐྱར་ཚོད་ལྟ་བྱོས།</translation>
-    </message>
-    <message>
-        <source>Failed to connect to update services. Please check and retry again.</source>
-        <translation>གསར་སྒྱུར་ཞབས་ཞུ་འགོ་སློང་ཐབས་བྲལ་བས། ཞིབ་བཤེར་བྱས་རྗེས་ཡང་བསྐྱར་ཚོད་ལྟ་བྱོས།</translation>
-    </message>
-</context>
-<context>
-    <name>UpdatePrepareWidget</name>
-    <message>
-        <source>Preparing for updates…</source>
-        <translation>གསར་དུ་བསྒྱུར་རྩིས་བྱེད་བཞིན་པ།</translation>
-    </message>
-</context>
-<context>
-    <name>UpdateProgressWidget</name>
-    <message>
-        <source>Do not force a shutdown or power off when installing updates. Otherwise, your system may be damaged.</source>
-        <translation>གསར་དུ་སྒྱུར་སྐབས་བཙན་ཤེད་ཀྱིས་སྒོ་རྒྱག་པའམ་གློག་གསོད་པ་བྱེད་མི་རུང་། དེ་མིན་ན་རྒྱུད་ཁོངས་འཕྲོ་བརླག་ཐེབས་སྲིད།</translation>
-    </message>
-</context>
-<context>
     <name>UpdateWorker</name>
     <message>
         <source>Update</source>
@@ -469,6 +377,25 @@
     <message>
         <source>Please plug in and then install updates.</source>
         <translation>གློག་ཁུངས་དང་གཏུགས་རྗེས་གསར་སྒྱུར་བྱེད་འགོ་རྩོམ།</translation>
+    </message>
+</context>
+<context>
+    <name>UsersWithTheSameName</name>
+    <message>
+        <source>Return</source>
+        <translation type="unfinished"/>
+    </message>
+    <message>
+        <source>Please select the account for login</source>
+        <translation type="unfinished"/>
+    </message>
+    <message>
+        <source>Local Account</source>
+        <translation type="unfinished"/>
+    </message>
+    <message>
+        <source>Domain Account</source>
+        <translation type="unfinished"/>
     </message>
 </context>
 <context>

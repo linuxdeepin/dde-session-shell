@@ -220,6 +220,13 @@
     </message>
 </context>
 <context>
+    <name>DeepinAuthFramework</name>
+    <message>
+        <source>Wrong Password</source>
+        <translation type="unfinished"/>
+    </message>
+</context>
+<context>
     <name>GreeterWorker</name>
     <message>
         <source>Wrong account</source>
@@ -362,105 +369,6 @@
     </message>
 </context>
 <context>
-    <name>UpdateCompleteWidget</name>
-    <message>
-        <source>View Logs</source>
-        <translation>Переглянути журнал</translation>
-    </message>
-    <message>
-        <source>Updates successful</source>
-        <translation>Успішно оновлено</translation>
-    </message>
-    <message>
-        <source>Your computer will reboot soon %1</source>
-        <translation>Ваш комп&apos;ютер невдовзі буде перезавантажено %1</translation>
-    </message>
-    <message>
-        <source>Your computer will be turned off soon %1</source>
-        <translation>Ваш комп&apos;ютер невдовзі буде вимкнено %1</translation>
-    </message>
-</context>
-<context>
-    <name>UpdateLogWidget</name>
-    <message>
-        <source>Hide Logs</source>
-        <translation>Приховати журнал</translation>
-    </message>
-</context>
-<context>
-    <name>UpdateModel</name>
-    <message>
-        <source>Update failed</source>
-        <translation>Помилка оновлення</translation>
-    </message>
-    <message>
-        <source>Unknown error</source>
-        <translation>Невідома помилка</translation>
-    </message>
-    <message>
-        <source>Backup failed</source>
-        <translation>Не вдалося створити резервну копію</translation>
-    </message>
-    <message>
-        <source>Dependency error</source>
-        <translation>Помилка у залежностях</translation>
-    </message>
-    <message>
-        <source>Reboot</source>
-        <translation>Перезавантажити</translation>
-    </message>
-    <message>
-        <source>Shut Down</source>
-        <translation>Вимкнути</translation>
-    </message>
-    <message>
-        <source>Unable to perform system backup. If you continue the updates, you cannot roll back to the old system later.</source>
-        <translation>Не вдалося виконати резервне копіювання системи. Якщо продовжити процедуру оновлення, ви не зможете повернутися до попереднього стану системи пізніше.</translation>
-    </message>
-    <message>
-        <source>Insufficient disk space. Please clean up your disk and try again.</source>
-        <translation>Недостатньо вільного місця на диску. Будь ласка, звільніть місце і повторіть спробу.</translation>
-    </message>
-    <message>
-        <source>DPKG error</source>
-        <translation>Помилка DPKG</translation>
-    </message>
-    <message>
-        <source>Back Up Again</source>
-        <translation>Повторити спробу копіювання</translation>
-    </message>
-    <message>
-        <source>Abort</source>
-        <translation>Перервати</translation>
-    </message>
-    <message>
-        <source>Proceed to Update</source>
-        <translation>Перейти до оновлення</translation>
-    </message>
-    <message>
-        <source>Failed to connect to backup services. Please check and retry again.</source>
-        <translation>Не вдалося встановити зв&apos;язок із службами резервного копіювання. Будь ласка, перевірте зв&apos;язок і повторіть спробу</translation>
-    </message>
-    <message>
-        <source>Failed to connect to update services. Please check and retry again.</source>
-        <translation>Не вдалося встановити зв&apos;язок із службами оновлення. Будь ласка, перевірте зв&apos;язок і повторіть спробу</translation>
-    </message>
-</context>
-<context>
-    <name>UpdatePrepareWidget</name>
-    <message>
-        <source>Preparing for updates…</source>
-        <translation>Готуємося до оновлень…</translation>
-    </message>
-</context>
-<context>
-    <name>UpdateProgressWidget</name>
-    <message>
-        <source>Do not force a shutdown or power off when installing updates. Otherwise, your system may be damaged.</source>
-        <translation>Не виконуйте примусового вимикання або знеструмлення комп&apos;ютера при встановленні оновлень. Якщо ви так зробите, системі може бути завдано шкоди.</translation>
-    </message>
-</context>
-<context>
     <name>UpdateWorker</name>
     <message>
         <source>Update</source>
@@ -469,6 +377,25 @@
     <message>
         <source>Please plug in and then install updates.</source>
         <translation>Будь ласка, з&apos;єднайте комп&apos;ютер з джерелом живлення, потім встановлюйте оновлення.</translation>
+    </message>
+</context>
+<context>
+    <name>UsersWithTheSameName</name>
+    <message>
+        <source>Return</source>
+        <translation type="unfinished"/>
+    </message>
+    <message>
+        <source>Please select the account for login</source>
+        <translation type="unfinished"/>
+    </message>
+    <message>
+        <source>Local Account</source>
+        <translation type="unfinished"/>
+    </message>
+    <message>
+        <source>Domain Account</source>
+        <translation type="unfinished"/>
     </message>
 </context>
 <context>

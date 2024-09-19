@@ -220,6 +220,13 @@
     </message>
 </context>
 <context>
+    <name>DeepinAuthFramework</name>
+    <message>
+        <source>Wrong Password</source>
+        <translation type="unfinished"/>
+    </message>
+</context>
+<context>
     <name>GreeterWorker</name>
     <message>
         <source>Wrong account</source>
@@ -362,105 +369,6 @@
     </message>
 </context>
 <context>
-    <name>UpdateCompleteWidget</name>
-    <message>
-        <source>View Logs</source>
-        <translation>查看日誌</translation>
-    </message>
-    <message>
-        <source>Updates successful</source>
-        <translation>更新成功</translation>
-    </message>
-    <message>
-        <source>Your computer will reboot soon %1</source>
-        <translation>您的電腦即將重啟 %1</translation>
-    </message>
-    <message>
-        <source>Your computer will be turned off soon %1</source>
-        <translation>您的電腦即將關機 %1</translation>
-    </message>
-</context>
-<context>
-    <name>UpdateLogWidget</name>
-    <message>
-        <source>Hide Logs</source>
-        <translation>收起日誌</translation>
-    </message>
-</context>
-<context>
-    <name>UpdateModel</name>
-    <message>
-        <source>Update failed</source>
-        <translation>更新失敗</translation>
-    </message>
-    <message>
-        <source>Unknown error</source>
-        <translation>未知錯誤</translation>
-    </message>
-    <message>
-        <source>Backup failed</source>
-        <translation>備份失敗</translation>
-    </message>
-    <message>
-        <source>Dependency error</source>
-        <translation>依賴錯誤</translation>
-    </message>
-    <message>
-        <source>Reboot</source>
-        <translation>重啟</translation>
-    </message>
-    <message>
-        <source>Shut Down</source>
-        <translation>關機</translation>
-    </message>
-    <message>
-        <source>Unable to perform system backup. If you continue the updates, you cannot roll back to the old system later.</source>
-        <translation>系統無法備份，繼續升級，系統將無法回退</translation>
-    </message>
-    <message>
-        <source>Insufficient disk space. Please clean up your disk and try again.</source>
-        <translation>磁碟空間不足，請清理磁碟後再更新</translation>
-    </message>
-    <message>
-        <source>DPKG error</source>
-        <translation>dpkg錯誤</translation>
-    </message>
-    <message>
-        <source>Back Up Again</source>
-        <translation>重新備份</translation>
-    </message>
-    <message>
-        <source>Abort</source>
-        <translation>退出更新</translation>
-    </message>
-    <message>
-        <source>Proceed to Update</source>
-        <translation>繼續更新</translation>
-    </message>
-    <message>
-        <source>Failed to connect to backup services. Please check and retry again.</source>
-        <translation>無法啟動備份服務，請檢查後重試</translation>
-    </message>
-    <message>
-        <source>Failed to connect to update services. Please check and retry again.</source>
-        <translation>無法啟動更新服務，請檢查後重試</translation>
-    </message>
-</context>
-<context>
-    <name>UpdatePrepareWidget</name>
-    <message>
-        <source>Preparing for updates…</source>
-        <translation>正在準備更新...</translation>
-    </message>
-</context>
-<context>
-    <name>UpdateProgressWidget</name>
-    <message>
-        <source>Do not force a shutdown or power off when installing updates. Otherwise, your system may be damaged.</source>
-        <translation>更新時請勿強制關機或斷電，否則會導致系統損壞</translation>
-    </message>
-</context>
-<context>
     <name>UpdateWorker</name>
     <message>
         <source>Update</source>
@@ -469,6 +377,25 @@
     <message>
         <source>Please plug in and then install updates.</source>
         <translation>請插入電源後再開始更新</translation>
+    </message>
+</context>
+<context>
+    <name>UsersWithTheSameName</name>
+    <message>
+        <source>Return</source>
+        <translation>返回</translation>
+    </message>
+    <message>
+        <source>Please select the account for login</source>
+        <translation>請選擇登入的帳戶</translation>
+    </message>
+    <message>
+        <source>Local Account</source>
+        <translation>本機帳戶</translation>
+    </message>
+    <message>
+        <source>Domain Account</source>
+        <translation>域帳戶</translation>
     </message>
 </context>
 <context>

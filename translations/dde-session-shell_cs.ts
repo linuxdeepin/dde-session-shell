@@ -220,6 +220,13 @@
     </message>
 </context>
 <context>
+    <name>DeepinAuthFramework</name>
+    <message>
+        <source>Wrong Password</source>
+        <translation type="unfinished"/>
+    </message>
+</context>
+<context>
     <name>GreeterWorker</name>
     <message>
         <source>Wrong account</source>
@@ -362,105 +369,6 @@
     </message>
 </context>
 <context>
-    <name>UpdateCompleteWidget</name>
-    <message>
-        <source>View Logs</source>
-        <translation>Zobrazit záznamy událostí</translation>
-    </message>
-    <message>
-        <source>Updates successful</source>
-        <translation>Aktualizace úspěšná</translation>
-    </message>
-    <message>
-        <source>Your computer will reboot soon %1</source>
-        <translation>Váš počítač se brzy restartuje %1</translation>
-    </message>
-    <message>
-        <source>Your computer will be turned off soon %1</source>
-        <translation>Váš počítač bude brzy vypnut %1</translation>
-    </message>
-</context>
-<context>
-    <name>UpdateLogWidget</name>
-    <message>
-        <source>Hide Logs</source>
-        <translation>Skrýt záznamy</translation>
-    </message>
-</context>
-<context>
-    <name>UpdateModel</name>
-    <message>
-        <source>Update failed</source>
-        <translation>Aktualizace se nezdařila</translation>
-    </message>
-    <message>
-        <source>Unknown error</source>
-        <translation>Neznámá chyba</translation>
-    </message>
-    <message>
-        <source>Backup failed</source>
-        <translation>Záloha se nezdařila</translation>
-    </message>
-    <message>
-        <source>Dependency error</source>
-        <translation>Chyba v závislostech</translation>
-    </message>
-    <message>
-        <source>Reboot</source>
-        <translation>Restartovat</translation>
-    </message>
-    <message>
-        <source>Shut Down</source>
-        <translation>Vypnout</translation>
-    </message>
-    <message>
-        <source>Unable to perform system backup. If you continue the updates, you cannot roll back to the old system later.</source>
-        <translation>Nedaří se provést zazálohování systému. Pokud budete pokračovat v aktualizacích, nepůjde se později vrátit k původnímu stavu.</translation>
-    </message>
-    <message>
-        <source>Insufficient disk space. Please clean up your disk and try again.</source>
-        <translation>Nedostatek místa na disku. Vyčistěte prosím disk a zkuste to znovu.</translation>
-    </message>
-    <message>
-        <source>DPKG error</source>
-        <translation>Chyba z nástroje DPKG</translation>
-    </message>
-    <message>
-        <source>Back Up Again</source>
-        <translation>Znovu zazálohovat</translation>
-    </message>
-    <message>
-        <source>Abort</source>
-        <translation>Přerušit</translation>
-    </message>
-    <message>
-        <source>Proceed to Update</source>
-        <translation>Přejít k aktualizaci</translation>
-    </message>
-    <message>
-        <source>Failed to connect to backup services. Please check and retry again.</source>
-        <translation>Nepodařilo se připojit ke službám zálohování. Zkontrolujte to a zkuste to znovu.</translation>
-    </message>
-    <message>
-        <source>Failed to connect to update services. Please check and retry again.</source>
-        <translation>Nepodařilo se připojit ke službám zálohování. Zkontrolujte to a zkuste to znovu.</translation>
-    </message>
-</context>
-<context>
-    <name>UpdatePrepareWidget</name>
-    <message>
-        <source>Preparing for updates…</source>
-        <translation>Příprava na aktualizace…</translation>
-    </message>
-</context>
-<context>
-    <name>UpdateProgressWidget</name>
-    <message>
-        <source>Do not force a shutdown or power off when installing updates. Otherwise, your system may be damaged.</source>
-        <translation>Při instalaci aktualizací nevynucujte vypnutí systému nebo nevypínejte/neodpojujte napájení. Mohlo by tím dojít k poškození systému.</translation>
-    </message>
-</context>
-<context>
     <name>UpdateWorker</name>
     <message>
         <source>Update</source>
@@ -469,6 +377,25 @@
     <message>
         <source>Please plug in and then install updates.</source>
         <translation>Připojte se a nainstalujte aktualizace.</translation>
+    </message>
+</context>
+<context>
+    <name>UsersWithTheSameName</name>
+    <message>
+        <source>Return</source>
+        <translation type="unfinished"/>
+    </message>
+    <message>
+        <source>Please select the account for login</source>
+        <translation type="unfinished"/>
+    </message>
+    <message>
+        <source>Local Account</source>
+        <translation type="unfinished"/>
+    </message>
+    <message>
+        <source>Domain Account</source>
+        <translation type="unfinished"/>
     </message>
 </context>
 <context>

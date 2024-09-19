@@ -220,6 +220,13 @@
     </message>
 </context>
 <context>
+    <name>DeepinAuthFramework</name>
+    <message>
+        <source>Wrong Password</source>
+        <translation type="unfinished"/>
+    </message>
+</context>
+<context>
     <name>GreeterWorker</name>
     <message>
         <source>Wrong account</source>
@@ -362,105 +369,6 @@
     </message>
 </context>
 <context>
-    <name>UpdateCompleteWidget</name>
-    <message>
-        <source>View Logs</source>
-        <translation>Jurnal qeydlərinə baxış</translation>
-    </message>
-    <message>
-        <source>Updates successful</source>
-        <translation>Yenilənmə uğurlu oldu</translation>
-    </message>
-    <message>
-        <source>Your computer will reboot soon %1</source>
-        <translation>Kompyuteriniz tezliklə yenidən başladılacaqdır: %1</translation>
-    </message>
-    <message>
-        <source>Your computer will be turned off soon %1</source>
-        <translation>Komppyuteriniz tezliklə sönəcəkdir: %1</translation>
-    </message>
-</context>
-<context>
-    <name>UpdateLogWidget</name>
-    <message>
-        <source>Hide Logs</source>
-        <translation>Jurnal qeydlərini gizlətmək</translation>
-    </message>
-</context>
-<context>
-    <name>UpdateModel</name>
-    <message>
-        <source>Update failed</source>
-        <translation>Yenilənmə baş tutmadı</translation>
-    </message>
-    <message>
-        <source>Unknown error</source>
-        <translation>Naməlum xəta</translation>
-    </message>
-    <message>
-        <source>Backup failed</source>
-        <translation>Ehtiyyat nüsxələmə mümkün olmadı</translation>
-    </message>
-    <message>
-        <source>Dependency error</source>
-        <translation>Asılılıq xətası</translation>
-    </message>
-    <message>
-        <source>Reboot</source>
-        <translation>Yenidən başlat</translation>
-    </message>
-    <message>
-        <source>Shut Down</source>
-        <translation>Söndür</translation>
-    </message>
-    <message>
-        <source>Unable to perform system backup. If you continue the updates, you cannot roll back to the old system later.</source>
-        <translation>Sistemin ehtiyyat nüsxəsinin saxlanılmasını icra etmək mümkün olmadı. Əgər yeniləməyə davam etsəniz geri, köhnə sistemə qayıda bilməyəcəksiniz?</translation>
-    </message>
-    <message>
-        <source>Insufficient disk space. Please clean up your disk and try again.</source>
-        <translation>Disk sahəsi kifayət etmir. Diskinizi təmizləyin və yenidən cəhd edin</translation>
-    </message>
-    <message>
-        <source>DPKG error</source>
-        <translation>DPKG xətası</translation>
-    </message>
-    <message>
-        <source>Back Up Again</source>
-        <translation>Yenidən ehtiyyat nüsxə yaradın</translation>
-    </message>
-    <message>
-        <source>Abort</source>
-        <translation>Ləğv edin</translation>
-    </message>
-    <message>
-        <source>Proceed to Update</source>
-        <translation>Yenilənməyə davam edin</translation>
-    </message>
-    <message>
-        <source>Failed to connect to backup services. Please check and retry again.</source>
-        <translation>Ehtiyyat nüsxələmə xidmətləri ilə bağlantı baş tutmadı. Lütfən yoxlayın və yenidən cəhd edin.</translation>
-    </message>
-    <message>
-        <source>Failed to connect to update services. Please check and retry again.</source>
-        <translation>Yenilənmə xidmətləri ilə bağlantı alınmadı. Lütfən, yoxlayın və yenidən cəhd edin.</translation>
-    </message>
-</context>
-<context>
-    <name>UpdatePrepareWidget</name>
-    <message>
-        <source>Preparing for updates…</source>
-        <translation>Yenilənmələr üçün hazırlıq...</translation>
-    </message>
-</context>
-<context>
-    <name>UpdateProgressWidget</name>
-    <message>
-        <source>Do not force a shutdown or power off when installing updates. Otherwise, your system may be damaged.</source>
-        <translation>Yenilənmələr quraşdırılan zaman məcburi söndürmək və ya yenidən başlatmaq olmaz. Əks halda sisteminiz sıradan çıxa bilər.</translation>
-    </message>
-</context>
-<context>
     <name>UpdateWorker</name>
     <message>
         <source>Update</source>
@@ -469,6 +377,25 @@
     <message>
         <source>Please plug in and then install updates.</source>
         <translation>Elektrik şəbəkəsinə qoşun və yenilənmələri yenidən quraşdırın.</translation>
+    </message>
+</context>
+<context>
+    <name>UsersWithTheSameName</name>
+    <message>
+        <source>Return</source>
+        <translation type="unfinished"/>
+    </message>
+    <message>
+        <source>Please select the account for login</source>
+        <translation type="unfinished"/>
+    </message>
+    <message>
+        <source>Local Account</source>
+        <translation type="unfinished"/>
+    </message>
+    <message>
+        <source>Domain Account</source>
+        <translation type="unfinished"/>
     </message>
 </context>
 <context>
