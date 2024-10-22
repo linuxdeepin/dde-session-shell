@@ -40,6 +40,7 @@ FullScreenBackground::FullScreenBackground(SessionBaseModel *model, QWidget *par
     , m_model(model)
     , m_useSolidBackground(false)
     , m_blackWidget(new BlackWidget(this))
+    , m_resetGeometryTimer(new QTimer(this))
 {
 #ifndef QT_DEBUG
     if (!m_model->isUseWayland()) {
@@ -63,6 +64,10 @@ FullScreenBackground::FullScreenBackground(SessionBaseModel *model, QWidget *par
             currentContent->setVisible(!is_black);
             currentContent->raise();
         }
+    });
+    connect(m_resetGeometryTimer, &QTimer::timeout, this, [this] {
+        qCDebug(DDE_SHELL) << " setGeometry : " << m_geometryRect;
+        setGeometry(m_geometryRect);
     });
 }
 
@@ -406,21 +411,21 @@ void FullScreenBackground::updateGeometry()
             QSize xrandrScreenSize = screensGeometry[m_screen->name()].size();
             if (qtScreenSize == xrandrScreenSize) {
                 // fix205519。获取到的屏幕尺寸一致，但qt的位置可能是错的，但不影响窗口位置。
-                setGeometry(m_screen->geometry());
+                setddeGeometry(m_screen->geometry());
             } else {
-                setGeometry(screensGeometry[m_screen->name()]);
+                setddeGeometry(screensGeometry[m_screen->name()]);
                 qCDebug(DDE_SHELL) << "Set geometry by xrandr, this:" << this << screensGeometry[m_screen->name()]
                                    << " screen:" << m_screen->name() << "screen geometry:" << m_screen->geometry();
             }
         } else {
-            setGeometry(m_screen->geometry());
+            setddeGeometry(m_screen->geometry());
         }
 
         return;
     }
 
     if (!m_screen.isNull()) {
-        setGeometry(m_screen->geometry());
+        setddeGeometry(m_screen->geometry());
 
         qCInfo(DDE_SHELL) << "Update geometry, screen:" << m_screen
                           << ", screen geometry:" << m_screen->geometry()
@@ -693,4 +698,13 @@ bool FullScreenBackground::getScaledBlurImage(const QString &originPath, QString
     }
 
     return false;
+}
+
+//增加一个定时器，每隔50ms再设置一次Geometry，避免出现xorg初始化未完成的情况，导致界面显示不全
+void FullScreenBackground::setddeGeometry(const QRect &rect)
+{
+    setGeometry(rect);
+    m_geometryRect = rect;
+    m_resetGeometryTimer->start(200);
+    QTimer::singleShot(200 * 5, m_resetGeometryTimer, &QTimer::stop);
 }

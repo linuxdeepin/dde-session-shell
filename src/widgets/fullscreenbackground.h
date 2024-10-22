@@ -68,6 +68,7 @@ private:
     double getScaleFactorFromDisplay();
     static void updateCurrentFrame(FullScreenBackground *frame);
     bool getScaledBlurImage(const QString &originPath, QString &scaledPath);
+    void setddeGeometry(const QRect &rect);
 
 protected:
     static QPointer<QWidget> currentContent;
@@ -88,6 +89,8 @@ private:
     bool m_useSolidBackground;
 
     BlackWidget *m_blackWidget;
+    QTimer *m_resetGeometryTimer;
+    QRect m_geometryRect;
 };
 
 #endif // FULLSCREENBACKGROUND_H
