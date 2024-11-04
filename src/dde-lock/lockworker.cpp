@@ -198,7 +198,10 @@ void LockWorker::initConnections()
             m_model->updateLimitedInfo(m_authFramework->GetLimitedInfo(m_account));
     });
     connect(m_dbusInter, &DBusObjectInter::NameOwnerChanged, this, [this](const QString &name, const QString &oldOwner, const QString &newOwner) {
-        Q_UNUSED(oldOwner)
+        //该dbus监听主要处理DA升级使用，如果oldOwner为空，说明是第一次使用，不需要重新开启认证
+        if (oldOwner == "")
+            return;
+
         if (name == "com.deepin.daemon.Authenticate" && newOwner != "" && m_model->visible() && m_sessionManagerInter->locked()) {
             m_resetSessionTimer->stop();
             endAuthentication(m_account, AT_All);
