@@ -10,6 +10,9 @@
 
 DWIDGET_USE_NAMESPACE
 
+const int iconWidthHeight = 74;
+const int iconTextGap = 11;
+
 RoundItemButton::RoundItemButton(QWidget *parent)
     : RoundItemButton("", parent)
 {
@@ -65,7 +68,7 @@ void RoundItemButton::initConnect()
 void RoundItemButton::initUI()
 {
     setFocusPolicy(Qt::NoFocus);
-    setFixedSize(144, 164);
+    setFixedSize(144, 230);
     setCheckable(true);
     DFontSizeManager::instance()->bind(this, DFontSizeManager::T5);
 }
@@ -141,6 +144,12 @@ void RoundItemButton::paintEvent(QPaintEvent* event)
     if (str.length() != m_text.length() && m_text.contains(str)) {
         textList.append(fontMetrics().elidedText(m_text.mid(m_text.indexOf(str) + str.length()), Qt::ElideRight, width() - 20));
     }
+    // 计算图标绘制的区域
+    QRect iconRect;
+    iconRect.setX((width() - iconWidthHeight) / 2);
+    iconRect.setY((height() - 2 * lineHeight- iconWidthHeight) / 2);
+    iconRect.setWidth(iconWidthHeight);
+    iconRect.setHeight(iconWidthHeight);
 
     // 计算文本绘制的区域
     int textWidth = 0;
@@ -149,17 +158,10 @@ void RoundItemButton::paintEvent(QPaintEvent* event)
     }
     QRect textRect;
     textRect.setX((width() - qMin(width(), textWidth + 2 * padding)) / 2);
-    textRect.setY(rect().y() + height() - 2 * lineHeight);
+    textRect.setY(iconRect.bottom() + iconTextGap);
     textRect.setWidth(qMin(width(), textWidth + 2 * padding));
     textRect.setHeight(textList.size() * lineHeight);
 
-    // 计算图标绘制的区域
-    const int minSize = qMin(width(), height() - 2 * lineHeight - 2 * padding);
-    QRect iconRect;
-    iconRect.setX((width() - minSize) / 2);
-    iconRect.setY((height() - 2 * lineHeight- minSize) / 2);
-    iconRect.setWidth(minSize);
-    iconRect.setHeight(minSize);
 
     if (m_state == Checked) {
         QColor color(Qt::white);
