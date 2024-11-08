@@ -684,6 +684,10 @@ bool FullScreenBackground::getScaledBlurImage(const QString &originPath, QString
     QString path = pathList.value().at(0);
     if (!path.isEmpty() && path != originPath) {
         scaledPath = path;
+        // 图片处理完之后会添加_xxxx尺寸后缀，升级场景第一次登录只能获取到正在处理的原生图片，此时不能进行设置
+        if (!path.contains("_")) {
+            return false;
+        }
         qDebug() << "get scaled path:" << path;
         return true;
     }
