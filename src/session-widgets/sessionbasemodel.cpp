@@ -681,3 +681,8 @@ void SessionBaseModel::setUserlistVisible(bool visible)
     }
     m_userlistVisible = visible;
 }
+
+void SessionBaseModel::setQuickLoginProcess(bool val)
+{
+    m_isQuickLoginProcess = val;
+}

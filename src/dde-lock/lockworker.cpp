@@ -655,7 +655,13 @@ void LockWorker::createAuthentication(const QString &account)
             // 无密码登录锁定后也属于锁屏，需要设置lock属性
             if (m_model->getPowerGSettings("", "sleepLock").toBool()) {
                 setLocked(true);
+            } else if (m_model->isQuickLoginProcess()) {
+                //若此次程序拉起为快速登录流程，需要锁屏
+                qCInfo(DDE_SHELL) << "Quick login requires screen lock";
+                setLocked(true);
+                m_model->setQuickLoginProcess(false);
             }
+
             return;
         }
     }

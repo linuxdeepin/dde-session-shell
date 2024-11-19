@@ -111,6 +111,9 @@ int main(int argc, char *argv[])
     QCommandLineOption lockScreen(QStringList() << "l" << "lockscreen", "show lock screen");
     cmdParser.addOption(lockScreen);
 
+    QCommandLineOption quickLoginProcess(QStringList() << "q" << "quicklogin", "show for quick login");
+    cmdParser.addOption(quickLoginProcess);
+
     QStringList xddd = app->arguments();
     cmdParser.process(*app);
 
@@ -118,6 +121,7 @@ int main(int argc, char *argv[])
     bool showUserList = cmdParser.isSet(switchUser);
     bool showShutdown = cmdParser.isSet(shutdown);
     bool showLockScreen = cmdParser.isSet(lockScreen);
+    bool isQuickLoginProcess= cmdParser.isSet(quickLoginProcess);
 
 #ifdef  QT_DEBUG
     showLockScreen = true;
@@ -125,6 +129,8 @@ int main(int argc, char *argv[])
 
     SessionBaseModel *model = new SessionBaseModel();
     model->setAppType(Lock);
+    //是否为快速登录拉起判断
+    model->setQuickLoginProcess(isQuickLoginProcess);
     LockWorker *worker = new LockWorker(model);
     QObject::connect(&appEventFilter, &AppEventFilter::userIsActive, worker, &LockWorker::restartResetSessionTimer);
 

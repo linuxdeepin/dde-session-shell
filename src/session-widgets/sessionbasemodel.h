@@ -182,6 +182,9 @@ public:
     inline bool userlistVisible() const { return m_userlistVisible; }
     void setUserlistVisible(bool visible);
 
+    inline bool isQuickLoginProcess() const { return m_isQuickLoginProcess; }
+    void setQuickLoginProcess(bool );
+
 signals:
     /* com.deepin.daemon.Accounts */
     void currentUserChanged(const std::shared_ptr<User>);
@@ -303,6 +306,7 @@ private:
     AuthResult m_authResult; // 记录认证结果
     bool m_enableShellBlackMode;
     bool m_visibleShutdownWhenRebootOrShutdown;
+    bool m_isQuickLoginProcess=false;//标志当前界面展示是否为快速登录流程
 };
 
 #endif // SESSIONBASEMODEL_H
