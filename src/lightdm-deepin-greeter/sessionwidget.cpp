@@ -95,6 +95,7 @@ void SessionWidget::updateLayout()
 {
     const int itemPadding = 20;
     const int itemWidth = m_sessionBtns.first()->width();
+    const int itemHeight = m_sessionBtns.first()->height();
     const int itemTotal = itemPadding + itemWidth;
 
     // checked default session button
@@ -136,7 +137,7 @@ void SessionWidget::updateLayout()
     m_warningLabel->setFixedSize(width(), 50);
     m_warningLabel->hide();
 
-    setFixedHeight(itemWidth * (row + 1) + 50);
+    setFixedHeight(itemHeight * (row + 1) + 50);
 }
 
 int SessionWidget::sessionCount() const
