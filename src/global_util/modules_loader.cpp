@@ -15,7 +15,7 @@
 namespace dss {
 namespace module {
 
-const QString ModulesDir = "/usr/lib/dde-session-shell/modules";
+const QString ModulesDir = QString("%1/dde-session-shell/modules"),arg(CMAKE_INSTALL_FULL_LIBDIR);
 ModulesLoader::ModulesLoader(QObject *parent)
     : QThread(parent)
 {
