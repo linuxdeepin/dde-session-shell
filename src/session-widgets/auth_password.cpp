@@ -32,6 +32,7 @@
 
 const QString PASSWORD_HIDE = QStringLiteral(":/misc/images/password-hide.svg");
 const QString PASSWORD_SHOWN = QStringLiteral(":/misc/images/password-shown.svg");
+const QString DConfig_LongPressDisplayPassword = "longPressDisplayPassword";
 
 using namespace AuthCommon;
 
@@ -180,17 +181,33 @@ void AuthPassword::initConnections()
             emit requestAuthenticate();
     });
 
-    connect(m_passwordShowBtn, &DSuggestButton::clicked, this, [this] {
-        if (m_lineEdit->echoMode() == QLineEdit::EchoMode::Password) {
+    if (DConfigHelper::instance()->getConfig(DConfig_LongPressDisplayPassword, true).toBool()) {
+        connect(m_passwordShowBtn, &DSuggestButton::pressed, this, [this] {
             m_passwordShowBtn->setIcon(QIcon(PASSWORD_HIDE));
-            m_lineEdit->lineEdit()->setEchoMode(QLineEdit::Normal);
-            updatePasswordTextMargins();
-        } else {
+            if (m_lineEdit) {
+                m_lineEdit->setEchoMode(QLineEdit::Normal);
+            }
+        });
+
+        connect(m_passwordShowBtn, &DSuggestButton::released, this, [this] {
             m_passwordShowBtn->setIcon(QIcon(PASSWORD_SHOWN));
-            m_lineEdit->lineEdit()->setEchoMode(QLineEdit::Password);
-            updatePasswordTextMargins();
-        }
-    });
+            if (m_lineEdit) {
+                m_lineEdit->setEchoMode(QLineEdit::Password);
+            }
+        });
+    } else {
+        connect(m_passwordShowBtn, &DSuggestButton::clicked, this, [this] {
+            if (m_lineEdit->echoMode() == QLineEdit::EchoMode::Password) {
+                m_passwordShowBtn->setIcon(QIcon(PASSWORD_HIDE));
+                m_lineEdit->lineEdit()->setEchoMode(QLineEdit::Normal);
+                updatePasswordTextMargins();
+            } else {
+                m_passwordShowBtn->setIcon(QIcon(PASSWORD_SHOWN));
+                m_lineEdit->lineEdit()->setEchoMode(QLineEdit::Password);
+                updatePasswordTextMargins();
+            }
+        });
+    }
 
     if (m_assistLoginWidget && m_isPasswdAuthWidgetReplaced) {
         connect(m_assistLoginWidget, &AssistLoginWidget::requestPluginConfigChanged, this, [this] (const LoginPlugin::PluginConfig pluginConfig) {

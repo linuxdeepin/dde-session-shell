@@ -291,6 +291,16 @@
             "description": "账户名命名规则",
             "permissions": "readwrite",
             "visibility": "private"
+        },
+        "longPressDisplayPassword":{
+            "value": true,
+            "serial": 0,
+            "flags": ["global"],
+            "name": "LongPressDisplayPassword",
+            "name[zh_CN]": "是否长按小眼睛显示密码",
+            "description": "是否长按小眼睛显示密码，true-鼠按长按小眼睛才显示密码，false-鼠标点击一下就一直显示密码",
+            "permissions": "readwrite",
+            "visibility": "private"
         }
     }
 }
