@@ -374,6 +374,7 @@ QString LoginModule::message(const QString &message)
 
 void LoginModule::slotIdentifyStatus(const QString &name, const int errorCode, const QString &msg)
 {
+    qInfo() << "Handle identify status, user name: " << name << ", errorCode: " << errorCode << ", msg: " << msg;
     m_waitAcceptSignalTimer->stop();
     if(m_IdentifyWithMultipleUserStarted){
         stopIdentify();

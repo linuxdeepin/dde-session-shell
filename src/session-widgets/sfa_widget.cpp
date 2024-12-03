@@ -1260,6 +1260,11 @@ void SFAWidget::onRequestChangeAuth(const AuthType authType)
         return;
     }
 
+    if (authType == m_currentAuthType) {
+        qCInfo(DDE_SHELL) << "Current auth type is same with request auth type";
+        return;
+    }
+
     if (authType != AuthCommon::AT_Password && !m_chooseAuthButtonBox->isEnabled()) {
         qCWarning(DDE_SHELL) << "Authentication button box is disabled and authentication type is not password.";
         return;

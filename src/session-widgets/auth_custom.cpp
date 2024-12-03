@@ -237,7 +237,12 @@ AuthCustom *AuthCustom::getAuthCustomObj(void *app_data)
 
 void AuthCustom::changeAuthType(AuthCommon::AuthType type)
 {
-    emit notifyAuthTypeChange(type);
+    // 多个自定义插件时需要匹配当前的类型
+    auto tmpType = type;
+    if (type == AuthCommon::AT_Custom)
+        tmpType = static_cast<AuthCommon::AuthType>(customAuthType());
+
+    emit notifyAuthTypeChange(tmpType);
 }
 
 LoginPlugin* AuthCustom::getLoginPlugin() const
