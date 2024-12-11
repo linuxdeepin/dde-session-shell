@@ -130,7 +130,8 @@ void AuthWidget::initConnections()
     });
     /* 解锁按钮 */
     connect(m_lockButton, &DFloatingButton::clicked, this, [this] {
-        if (m_user->isNoPasswordLogin()) {
+        // 账户锁定后密码是无效的，这时开启快速登录会直接进入桌面，这里需要排除密码无效的情况
+        if (m_user->isNoPasswordLogin() && m_user->isPasswordValid()) {
             emit requestCheckAccount(m_user->name());
         } else if (!m_passwordAuth && !m_ukeyAuth && !m_singleAuth) {
             emit m_accountEdit->returnPressed();
