@@ -62,6 +62,7 @@ private slots:
     void onCurrentUserChanged(const std::shared_ptr<User> &user);
     void onSessionCreated();
     void terminalLockedChanged(const QDBusMessage &msg);
+    void resetAuth(const QString &);
 
 private:
     void initConnections();

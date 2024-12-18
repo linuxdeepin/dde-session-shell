@@ -153,6 +153,7 @@ void GreeterWorker::initConnections()
     connect(m_authFramework, &DeepinAuthFramework::PINLenChanged, m_model, &SessionBaseModel::updatePINLen);
     connect(m_authFramework, &DeepinAuthFramework::PromptChanged, m_model, &SessionBaseModel::updatePrompt);
     connect(m_authFramework, &DeepinAuthFramework::SessionCreated, this, &GreeterWorker::onSessionCreated);
+    connect(m_authFramework, &DeepinAuthFramework::TokenAccountMismatch, this, &GreeterWorker::resetAuth);
 
     /* org.freedesktop.login1.Session */
     connect(m_login1SessionSelf, &Login1SessionSelf::ActiveChanged, this, [this](bool active) {
@@ -223,6 +224,11 @@ void GreeterWorker::initConnections()
         std::shared_ptr<User> user_ptr = m_model->json2User(json);
         if (!user_ptr || user_ptr->isLogin())
             return;
+
+        if (user_ptr->name() == User().name()) {
+            qCWarning(DDE_SHELL) << "Avoid set invalid user from lockservice";
+            return;
+        }
 
         m_resetSessionTimer->stop();
         m_model->updateCurrentUser(user_ptr);
@@ -402,6 +408,12 @@ void GreeterWorker::doPowerAction(const SessionBaseModel::PowerAction action)
  */
 void GreeterWorker::setCurrentUser(const std::shared_ptr<User> user)
 {
+    // 不要把用于域用户UI控制的“...”用户写给后端
+    if (user && user->name() == User().name()) {
+        qCWarning(DDE_SHELL) << "Avoid set invalid user to lockservice";
+        return;
+    }
+
     qCInfo(DDE_SHELL) << "Set current user, user:" << user->name();
     QJsonObject json;
     json["AuthType"] = static_cast<int>(user->lastAuthType());
@@ -1117,6 +1129,19 @@ void GreeterWorker::terminalLockedChanged(const QDBusMessage &msg)
             createAuthentication(m_model->currentUser()->name());
         }
     }
+}
+
+void GreeterWorker::resetAuth(const QString &account)
+{
+    qCWarning(DDE_SHELL) << "reset auth for user : " << account;
+    if (account.isEmpty()) {
+        return;
+    }
+
+    endAuthentication(account, AT_All);
+    m_model->updateAuthState(AT_All, AS_Cancel, "Cancel");
+    destroyAuthentication(account);
+    createAuthentication(account);
 }
 
 void GreeterWorker::onNoPasswordLoginChanged(const QString &account, bool noPassword)

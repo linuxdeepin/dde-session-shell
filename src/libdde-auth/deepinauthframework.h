@@ -79,6 +79,7 @@ signals:
     void AuthStateChanged(const int, const int, const QString &);
     void SessionCreated();
     void DeviceChanged(const int, const int);
+    void TokenAccountMismatch(const QString &);
 
 public slots:
     /* New authentication framework */
@@ -111,6 +112,9 @@ private:
     bool m_cancelAuth;
     bool m_waitToken;
     bool m_isDAStartupCompleted;
+
+    QTimer m_authReminder;
+    QString m_lastAuthUser;
 };
 
 #endif // DEEPINAUTHFRAMEWORK_H

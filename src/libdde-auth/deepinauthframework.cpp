@@ -405,8 +405,11 @@ void DeepinAuthFramework::StartAuthentication(const QString &account, const Auth
     if (!m_authenticateControllers->contains(account)) {
         return;
     }
+
     int ret = m_authenticateControllers->value(account)->Start(authType, timeout);
     qCInfo(DDE_SHELL) << "Start authentication, account:" << account << ", auth type" << authType << ", ret:" << ret;
+
+    m_lastAuthUser = account;
 }
 
 /**
@@ -434,6 +437,10 @@ void DeepinAuthFramework::EndAuthentication(const QString &account, const AuthFl
 void DeepinAuthFramework::SendTokenToAuth(const QString &account, const AuthType authType, const QString &token)
 {
     if (!m_authenticateControllers->contains(account)) {
+        qCWarning(DDE_SHELL) << "account not included";
+        // 无论出于什么原因到这个逻辑，必须更新前端当前认证状态
+        // 否则将导致登录停在这里
+        Q_EMIT TokenAccountMismatch(m_lastAuthUser);
         return;
     }
     qCInfo(DDE_SHELL) << "Send token to auth, account: " << account << ", auth type:" << authType;
