@@ -41,7 +41,7 @@ Depends: ${shlibs:Depends}, ${misc:Depends}, ${dist:Depends},
  dbus-x11,
  deepin-authenticate(>=1.2.27),
  xsettingsd,
- libssl-dev,
+ libssl1.1,
  libxcb-util0 | libxcb-util1,
  dde-dconfig-daemon,
  dde-wayland-config(>>1.0.10-1)
