@@ -46,6 +46,7 @@ LoginModule::LoginModule(QObject *parent)
     , m_login1SessionSelf(nullptr)
     , m_IdentifyWithMultipleUserStarted(false)
     , m_loginAuthenticated(false)
+    , m_authFactors(AuthType::AT_None)
 {
     setObjectName(QStringLiteral("LoginModule"));
 
@@ -354,17 +355,25 @@ QString LoginModule::message(const QString &message)
         // 1. 在登录界面时，一键登录仅在启动或待机休眠唤醒的时候认证一下。
         // 2. 在锁屏界面，休眠或待机唤醒后。
         // 3. 上次A账户验证通过(登录时根据验证结果去跳转对应的用户)
-        const bool enable = (m_appType == AppType::Login && !m_loginAuthenticated) || (m_appType == AppType::Lock && m_acceptSleepSignal) ||
-                (m_appType == AppType::Login && m_lastAuthResult.result == AuthResult::Success && m_lastAuthResult.account == m_userName);
+        bool enable = (m_appType == AppType::Login && !m_loginAuthenticated)
+            || (m_appType == AppType::Lock && m_acceptSleepSignal)
+            || (m_appType == AppType::Login && m_lastAuthResult.result == AuthResult::Success && m_lastAuthResult.account == m_userName);
+        // 包含指纹认证
+        enable = enable && (m_authFactors & AuthType::AT_Fingerprint);
         qInfo() << "Enable plugin: " << enable
                 << ", app type: " << m_appType
                 << ", authenticated: " << m_loginAuthenticated
                 << ", accepted sleep signal: " << m_acceptSleepSignal
                 << ", last auth account: " << m_lastAuthResult.account
-                << ", current auth account: "<< m_userName;
+                << ", current auth account: "<< m_userName
+                << ", auth factors: " << m_authFactors;
 
         retDataObj["IsPluginEnabled"] = enable;
         retObj["Data"] = retDataObj;
+    } else if (cmdType == "AuthFactorsChanged") {
+        QJsonObject data = msgObj.value("Data").toObject();
+        m_authFactors = data.value("AuthFactors").toInt();
+        qInfo() << "Auth factors changed:" << m_authFactors;
     }
 
     QJsonDocument doc;

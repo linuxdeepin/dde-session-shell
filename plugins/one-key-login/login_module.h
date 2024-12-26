@@ -83,6 +83,7 @@ private:
     QDBusInterface*  m_login1SessionSelf;
     bool m_IdentifyWithMultipleUserStarted;
     bool m_loginAuthenticated;  // 登录界面是否已经验证过了
+    int m_authFactors;
 };
 
 } // namespace module

@@ -93,6 +93,8 @@ public:
 
     void notifyCurrentUserChanged(const QString &userName, uid_t uid);
 
+    void notifyAuthFactorsChanged(int authFactors);
+
     void updateConfig();
 
     void accountError();

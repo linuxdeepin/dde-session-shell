@@ -184,6 +184,7 @@ void SFAWidget::setAuthType(const AuthFlags type)
  */
 void SFAWidget::initCustomFactors(const AuthFlags type)
 {
+    PluginManager::instance()->broadcastAuthFactors(type);
     auto plugins = filtrateAuthPlugins(PluginManager::instance()->getLoginPlugins());
     qCInfo(DDE_SHELL) << "Login plugin size:" << plugins.size();
     if (!m_model->terminalLocked() && !plugins.isEmpty() && (type & AT_Custom)) {

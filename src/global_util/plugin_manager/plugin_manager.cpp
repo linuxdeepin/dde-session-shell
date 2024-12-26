@@ -224,3 +224,14 @@ void PluginManager::broadcastCurrentUser()
         loginPlugin->notifyCurrentUserChanged(currentUser->name(), currentUser->uid());
     }
 }
+
+void PluginManager::broadcastAuthFactors(int authFactors)
+{
+    for (const auto &plugin : m_plugins.values()) {
+        auto loginPlugin = dynamic_cast<LoginPlugin*>(plugin);
+        if (!loginPlugin)
+            continue;
+
+        loginPlugin->notifyAuthFactorsChanged(authFactors);
+    }
+}

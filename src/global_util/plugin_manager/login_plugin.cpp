@@ -170,3 +170,14 @@ void LoginPlugin::accountError()
     jsonObject["CmdType"] = "AccountError";
     this->message(toJson(jsonObject));
 }
+
+void LoginPlugin::notifyAuthFactorsChanged(int authFactors)
+{
+    QJsonObject message;
+    message["CmdType"] = "AuthFactorsChanged";
+    QJsonObject data;
+    data["AuthFactors"] = authFactors;
+    message["Data"] = data;
+
+    this->message(toJson(message));
+}
