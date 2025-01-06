@@ -542,9 +542,13 @@ void LockContent::mouseReleaseEvent(QMouseEvent *event)
 
     if (m_model->currentModeState() == SessionBaseModel::UserMode
         || m_model->currentModeState() == SessionBaseModel::PowerMode) {
-        // 触屏点击空白处不退出用户列表界面
-        if (event->source() == Qt::MouseEventSynthesizedByQt)
+
+        // 在用户列表界面，用户达到一定数量需要支持滚动，触屏滚动容易触发回到当前用户界面
+        // ，所以这个界面触屏点击空白处不退出用户列表界面
+        if (event->source() == Qt::MouseEventSynthesizedByQt
+                && m_model->currentModeState() == SessionBaseModel::UserMode) {
             return SessionBaseWindow::mouseReleaseEvent(event);
+        }
 
         // 点击空白处的时候切换到当前用户，以开启验证。
         emit requestSwitchToUser(m_model->currentUser());
