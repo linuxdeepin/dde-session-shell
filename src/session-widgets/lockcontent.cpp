@@ -52,19 +52,7 @@ LockContent::LockContent(QWidget *parent)
     , m_showMediaWidget(DConfigHelper::instance()->getConfig(SHOW_MEDIA_WIDGET, false).toBool())
     , m_hasResetPasswordDialog(false)
 {
-    QDBusInterface Interface("com.deepin.daemon.SystemInfo",
-                             "/com/deepin/daemon/SystemInfo",
-                             "org.freedesktop.DBus.Properties",
-                             QDBusConnection::sessionBus());
-    QDBusMessage replyCPU = Interface.call("Get", "com.deepin.daemon.SystemInfo", "CPUHardware");
-    QList<QVariant> outArgsCPU = replyCPU.arguments();
-    if (outArgsCPU.count()) {
-        QString cpuHardware = outArgsCPU.at(0).value<QDBusVariant>().variant().toString();
-        qCInfo(DDE_SHELL) << "Current cpu hardware:" << cpuHardware;
-        if (cpuHardware.contains("PANGU")) {
-            m_isPANGUCpu = true;
-        }
-    }
+
 }
 
 LockContent* LockContent::instance()
@@ -85,6 +73,30 @@ void LockContent::init(SessionBaseModel *model)
     }
     m_initialized = true;
     m_model = model;
+    // 异步获取CPU硬件信息，判断是否为PANGU CPU
+    // FIXME: CPU硬件信息可能会改且其它的机型也可能会有PANGU CPU，这里的判断不准确
+    if (m_model->appType() == AuthCommon::Lock) {
+        QDBusInterface interface("com.deepin.daemon.SystemInfo",
+            "/com/deepin/daemon/SystemInfo",
+            "org.freedesktop.DBus.Properties",
+            QDBusConnection::sessionBus(),
+            this);
+        QDBusPendingReply<QDBusVariant> reply = interface.asyncCall("Get", "com.deepin.daemon.SystemInfo", "CPUHardware");
+        QDBusPendingCallWatcher* watcher = new QDBusPendingCallWatcher(reply, this);
+        connect(watcher, &QDBusPendingCallWatcher::finished, this, [this, watcher] {
+            QDBusPendingReply<QDBusVariant> reply = *watcher;
+            if (reply.isValid()) {
+                QString cpuHardware = reply.value().variant().toString();
+                qCInfo(DDE_SHELL) << "Current cpu hardware:" << cpuHardware;
+                if (cpuHardware.contains("PANGU")) {
+                    m_isPANGUCpu = true;
+                }
+            } else {
+                qCWarning(DDE_SHELL) << "Failed to get CPU hardware:" << reply.error().message();
+            }
+            watcher->deleteLater();
+        });
+    }
     // 在已显示关机或用户列表界面时，再插入另外一个显示器，会新构建一个LockContent，此时会设置为PasswordMode造成界面状态异常
     if (!m_model->visible()) {
         m_model->setCurrentModeState(SessionBaseModel::ModeStatus::PasswordMode);
