@@ -11,6 +11,8 @@ link_libraries(
 
 set(LIB_NAME webview)
 
+set(MODULESDIR ${CMAKE_INSTALL_LIBDIR}/dde-session-shell/modules)
+
 aux_source_directory(. SRCS)
 
 # add_library(${LIB_NAME} STATIC ${SRCS})
@@ -22,4 +24,4 @@ target_link_libraries(${LIB_NAME} PRIVATE
     Qt${QT_VERSION_MAJOR}::WebEngineWidgets
 )
 
-install(TARGETS ${LIB_NAME} LIBRARY DESTINATION lib/dde-session-shell/modules)
+install(TARGETS ${LIB_NAME} LIBRARY DESTINATION ${MODULESDIR})
