@@ -52,7 +52,6 @@ public:
     void setAcceptReason(const QString &reason) override;
     void setAcceptVisible(const bool acceptable);
     bool hasInhibit() const;
-    bool waitForAppPerparing() const;
 
 signals:
     void cancelled() const;
@@ -65,7 +64,6 @@ protected:
 
 private:
     void initUi();
-    void initMember();
     void initConnection();
 
 private slots:
@@ -81,7 +79,6 @@ private:
     InhibitButton *m_cancelBtn;
     QWidget *m_bottomWidget;
     int m_dataBindIndex;
-    bool m_waitForAppPreparing;
     bool m_showDelay;
 };
 

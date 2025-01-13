@@ -171,7 +171,7 @@ void WarningContent::doAcceptShutdownInhibit()
     InhibitWarnView *view = qobject_cast<InhibitWarnView *>(sender());
     if (view) {
         view->setDelayView(false);
-        if (view->hasInhibit() && view->waitForAppPerparing()) {
+        if (view->hasInhibit()) {
             switch (m_powerAction) {
             case SessionBaseModel::PowerAction::RequireShutdown:
             case SessionBaseModel::PowerAction::RequireUpdateShutdown:
@@ -429,7 +429,7 @@ void WarningContent::setPowerAction(const SessionBaseModel::PowerAction action)
 bool WarningContent::supportDelayOrWait() const
 {
     InhibitWarnView *view = qobject_cast<InhibitWarnView *>(m_warningView);
-    return (view && view->hasInhibit() && view->waitForAppPerparing() && view->delayView());
+    return (view && view->hasInhibit() && view->delayView());
 }
 
 void WarningContent::mouseReleaseEvent(QMouseEvent *event)

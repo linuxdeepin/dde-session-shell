@@ -64,10 +64,8 @@ InhibitWarnView::InhibitWarnView(SessionBaseModel::PowerAction inhibitType, QWid
     , m_acceptBtn(new InhibitButton(this))
     , m_cancelBtn(new InhibitButton(this))
     , m_bottomWidget(new QWidget(this))
-    , m_waitForAppPreparing(true)
     , m_showDelay(false)
 {
-    initMember();
     initUi();
     initConnection();
 }
@@ -142,11 +140,6 @@ void InhibitWarnView::setAcceptVisible(const bool acceptable)
 bool InhibitWarnView::hasInhibit() const
 {
     return !m_inhibitorPtrList.isEmpty();
-}
-
-bool InhibitWarnView::waitForAppPerparing() const
-{
-    return m_waitForAppPreparing;
 }
 
 QString InhibitWarnView::iconString()
@@ -266,14 +259,6 @@ void InhibitWarnView::initUi()
     m_loading->hide();
 }
 
-void InhibitWarnView::initMember()
-{
-    QDBusInterface dbusInterface("com.deepin.SessionManager", "/com/deepin/SessionManager", "com.deepin.SessionManager");
-    QDBusPendingReply<bool> reply = dbusInterface.asyncCall("WaitForAppPrepare");
-    reply.waitForFinished();
-    m_waitForAppPreparing = reply.value();
-}
-
 void InhibitWarnView::initConnection()
 {
     connect(m_cancelBtn, &InhibitButton::clicked, this, &InhibitWarnView::cancelled);
@@ -282,7 +267,7 @@ void InhibitWarnView::initConnection()
 
 void InhibitWarnView::onAccept()
 {
-    if (!m_inhibitorPtrList.isEmpty() && m_waitForAppPreparing) {
+    if (!m_inhibitorPtrList.isEmpty()) {
         int height = m_bottomWidget->height();
         m_cancelBtn->hide();
         m_acceptBtn->hide();
