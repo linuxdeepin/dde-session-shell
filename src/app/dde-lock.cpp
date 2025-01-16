@@ -90,12 +90,6 @@ int main(int argc, char *argv[])
     DLogManager::registerFileAppender();
     DLogManager::registerJournalAppender();
 
-    /* load translation files */
-    loadTranslation(QLocale::system().name());
-
-    ModulesLoader::instance().setLoadLoginModule(true);
-    ModulesLoader::instance().start(QThread::LowestPriority);
-
     QCommandLineParser cmdParser;
     cmdParser.addHelpOption();
     cmdParser.addVersionOption();
@@ -149,8 +143,6 @@ int main(int argc, char *argv[])
     shutdownAgent.setModel(model);
     DBusShutdownFrontService shutdownServices(&shutdownAgent);
 
-    PluginManager::instance()->setModel(model);
-
     // 这里提前进行单实例判断，避免后面数据初始化后再进行单实例判断而导致各种问题（例如：多次调用LockContent::instance()->init(model) 导致的localserver失效）
     auto isSingle = app->setSingleInstance(QString("dde-lock%1").arg(getuid()), DApplication::UserScope);
     QDBusConnection conn = QDBusConnection::sessionBus();
@@ -187,6 +179,14 @@ int main(int argc, char *argv[])
 
         return 0;
     }
+
+    /* load translation files */
+    loadTranslation(QLocale::system().name());
+
+    ModulesLoader::instance().setLoadLoginModule(true);
+    ModulesLoader::instance().start(QThread::LowestPriority);
+
+    PluginManager::instance()->setModel(model);
 
     LockContent::instance()->init(model);
     WarningContent::instance()->setModel(model);
