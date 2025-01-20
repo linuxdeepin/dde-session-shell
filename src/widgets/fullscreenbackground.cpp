@@ -82,10 +82,7 @@ void FullScreenBackground::updateBackground(const QString &path)
         return;
 
     if (path == originBackgroundPath && !blurBackgroundPath.isEmpty()) {
-        if (isVisible()) {
-            update();
-        }
-
+        updateScreenBluBackground(blurBackgroundPath);
         return;
     }
 
@@ -93,25 +90,28 @@ void FullScreenBackground::updateBackground(const QString &path)
     updateBlurBackground(path);
 }
 
+void FullScreenBackground::updateScreenBluBackground(const QString &blurPath)
+{
+    if (!blurPath.isEmpty() && blurBackgroundPath != blurPath) {
+        blurBackgroundPath = blurPath;
+    }
+
+    QString scaledPath;
+    if (getScaledBlurImage(blurPath, scaledPath)) {
+        QPixmap pixmap;
+        loadPixmap(scaledPath, pixmap);
+        addPixmap(pixmap, PIXMAP_TYPE_BLUR_BACKGROUND);
+    } else {
+        handleBackground(blurBackgroundPath, PIXMAP_TYPE_BLUR_BACKGROUND);
+    }
+
+    if (isVisible()) {
+        update();
+    }
+}
+
 void FullScreenBackground::updateBlurBackground(const QString &path)
 {
-    auto updateBlurBackgroundFunc = [this](const QString &blurPath) {
-        if (!blurPath.isEmpty() && blurBackgroundPath != blurPath) {
-            blurBackgroundPath = blurPath;
-        }
-
-        QString scaledPath;
-        if (getScaledBlurImage(blurPath, scaledPath)) {
-            QPixmap pixmap;
-            loadPixmap(scaledPath, pixmap);
-            addPixmap(pixmap, PIXMAP_TYPE_BLUR_BACKGROUND);
-        } else {
-            handleBackground(blurBackgroundPath, PIXMAP_TYPE_BLUR_BACKGROUND);
-        }
-
-        update();
-    };
-
     QDBusMessage message = QDBusMessage::createMethodCall("com.deepin.daemon.ImageEffect", "/com/deepin/daemon/ImageEffect",
                                                           "com.deepin.daemon.ImageEffect", "Get");
     message << "" << path;
@@ -130,7 +130,7 @@ void FullScreenBackground::updateBlurBackground(const QString &path)
     }
 
     // 处理模糊背景图和执行动画或update；
-    updateBlurBackgroundFunc(blurPath);
+    updateScreenBluBackground(blurPath);
 }
 
 bool FullScreenBackground::contentVisible() const

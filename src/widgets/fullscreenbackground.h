@@ -69,6 +69,7 @@ private:
     static void updateCurrentFrame(FullScreenBackground *frame);
     bool getScaledBlurImage(const QString &originPath, QString &scaledPath);
     void setddeGeometry(const QRect &rect);
+    void updateScreenBluBackground(const QString &path);
 
 protected:
     static QPointer<QWidget> currentContent;
