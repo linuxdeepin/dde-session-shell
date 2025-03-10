@@ -146,6 +146,8 @@ void LockWorker::initConnections()
             return;
         }
 
+        const bool sleepLock = m_model->getPowerGSettings("", "sleepLock").toBool();
+        qCInfo(DDE_SHELL) << "Lock screen when system wakes up: " << sleepLock << ", is visible:" << m_model->visible();
         if (isSleep) {
             endAuthentication(m_account, AT_All);
             destroyAuthentication(m_account);
@@ -153,15 +155,18 @@ void LockWorker::initConnections()
             // 非黑屏mode
             m_model->setIsBlackMode(isSleep);
 
-            bool wakeUpLock = true;
             // 如果待机唤醒后需要密码则创建验证
-            if (QGSettings::isSchemaInstalled("com.deepin.dde.power")) {
-                QGSettings powerSettings("com.deepin.dde.power", QByteArray(), this);
-                wakeUpLock = powerSettings.get("sleep-lock").toBool();
-            }
-            qCInfo(DDE_SHELL) << "Lock screen when system wakes up: " << wakeUpLock;
-            if(m_login1SessionSelf->active() && wakeUpLock)
+            if(m_login1SessionSelf->active() && sleepLock)
                 createAuthentication(m_model->currentUser()->name());
+        }
+        if (!m_model->visible() && sleepLock) {
+            m_model->setIsBlackMode(isSleep);
+            m_model->setVisible(true);
+        }
+
+        if (!isSleep && !sleepLock) {
+            //待机唤醒后检查是否需要密码，若不需要密码直接隐藏锁定界面
+            m_model->setVisible(false);
         }
         emit m_model->prepareForSleep(isSleep);
     });

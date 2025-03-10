@@ -258,15 +258,4 @@ void LockFrame::prepareForSleep(bool isSleep)
             m_enablePowerOffKey = true;
         });
     }
-
-    bool sleepLock = m_model->getPowerGSettings("", "sleepLock").toBool();
-    if (!m_model->visible() && sleepLock) {
-        m_model->setIsBlackMode(isSleep);
-        m_model->setVisible(true);
-    }
-
-    if (!isSleep && !sleepLock) {
-        //待机唤醒后检查是否需要密码，若不需要密码直接隐藏锁定界面
-        m_model->setVisible(false);
-    }
 }
