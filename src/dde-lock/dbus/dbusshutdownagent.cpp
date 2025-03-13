@@ -19,6 +19,8 @@ void DBusShutdownAgent::setModel(SessionBaseModel * const model)
 
 void DBusShutdownAgent::show()
 {
+    getCallerBySender();
+
     if (isUpdating() || !canShowShutDown())
         return;
 
@@ -29,6 +31,9 @@ void DBusShutdownAgent::show()
 void DBusShutdownAgent::Shutdown()
 {
     qCInfo(DDE_SHELL) << "Shutdown";
+
+    getCallerBySender();
+
     if (isUpdating())
         return;
 
@@ -45,6 +50,9 @@ void DBusShutdownAgent::Shutdown()
 void DBusShutdownAgent::UpdateAndShutdown()
 {
     qCInfo(DDE_SHELL) << "Update and shutdown";
+
+    getCallerBySender();
+
     if (isUpdating())
         return;
 
@@ -56,6 +64,9 @@ void DBusShutdownAgent::UpdateAndShutdown()
 void DBusShutdownAgent::Restart()
 {
     qCInfo(DDE_SHELL) << "Restart";
+
+    getCallerBySender();
+
     if (isUpdating())
         return;
 
@@ -72,6 +83,9 @@ void DBusShutdownAgent::Restart()
 void DBusShutdownAgent::UpdateAndReboot()
 {
     qCInfo(DDE_SHELL) << "Update and reboot";
+
+    getCallerBySender();
+
     if (isUpdating())
         return;
 
@@ -83,6 +97,9 @@ void DBusShutdownAgent::UpdateAndReboot()
 void DBusShutdownAgent::Logout()
 {
     qCInfo(DDE_SHELL) << "Logout";
+
+    getCallerBySender();
+
     if (isUpdating() || !canShowShutDown())
         return;
 
@@ -94,6 +111,9 @@ void DBusShutdownAgent::Logout()
 void DBusShutdownAgent::Suspend()
 {
     qCInfo(DDE_SHELL) << "Suspend";
+
+    getCallerBySender();
+
     if (isUpdating())
         return;
 
@@ -112,6 +132,9 @@ void DBusShutdownAgent::Suspend()
 void DBusShutdownAgent::Hibernate()
 {
     qCInfo(DDE_SHELL) << "Hibernate";
+
+    getCallerBySender();
+
     if (isUpdating())
         return;
 
@@ -130,6 +153,9 @@ void DBusShutdownAgent::Hibernate()
 void DBusShutdownAgent::SwitchUser()
 {
     qCInfo(DDE_SHELL) << "Switch user";
+
+    getCallerBySender();
+
     if (isUpdating() || !canShowShutDown())
         return;
 
@@ -139,6 +165,9 @@ void DBusShutdownAgent::SwitchUser()
 void DBusShutdownAgent::Lock()
 {
     qCInfo(DDE_SHELL) << "Lock";
+
+    getCallerBySender();
+
     if (isUpdating() || !canShowShutDown())
         return;
 
@@ -162,6 +191,90 @@ bool DBusShutdownAgent::isUpdating() const
 {
     qCInfo(DDE_SHELL) << "DBus shutdown agent is updating, current content type: " << m_model->currentContentType();
     return m_model->currentContentType() == SessionBaseModel::UpdateContent;
+}
+
+void DBusShutdownAgent::getPathByPid(quint32 pid)
+{
+    if (pid <= 0) {
+        return;
+    }
+
+    QString cmdlinePath = QString("/proc/%1/cmdline").arg(pid);
+    if (QFile::exists(cmdlinePath)) {
+        QFile file(cmdlinePath);
+        if (file.open(QIODevice::ReadOnly | QIODevice::Text)) {
+            QByteArray line = file.readAll().trimmed();
+            QString path = QString::fromLocal8Bit(line.split(' ').last());
+            qWarning() << "Caller path : " << path;
+        }
+    }
+}
+
+void DBusShutdownAgent::getPPidByPid(quint32 pid)
+{
+    if (pid <= 0) {
+        return;
+    }
+
+    QString statusFilePath = QString("/proc/%1/status").arg(pid);
+    if (!QFile::exists(statusFilePath)) {
+        qWarning() << " File not exists :" <<statusFilePath;
+        return;
+    }
+
+    QFile file(statusFilePath);
+    if (!file.open(QIODevice::ReadOnly)) {
+        qWarning() << " Read status file failed";
+        return;
+    }
+
+    QByteArray byteArray = file.readAll();
+    file.close();
+
+    QTextStream textStream(&byteArray);
+    textStream.setCodec("UTF-8");
+    while (!textStream.atEnd()) {
+        QString line = textStream.readLine();
+        if (line.startsWith("PPid:")) {
+            QStringList parts = line.split(QChar(':'));
+            if (parts.size() > 1) {
+                bool ok = false;
+                 quint32 ppid = parts.at(1).trimmed().toInt(&ok);
+                 if (ok) {
+                     getPathByPid(ppid);
+                     getPPidByPid(ppid);
+                 }
+            }
+        }
+    }
+}
+
+void DBusShutdownAgent::getCallerBySender()
+{
+    QString DDE_DEBUG_LEVEL = qgetenv("DDE_DEBUG_LEVEL");
+    if ( DDE_DEBUG_LEVEL.toLower() != "debug") {
+        return;
+    }
+
+    QDBusMessage msg = message();
+
+    if (msg.type() == QDBusMessage::MethodCallMessage) {
+        QString caller = msg.service();
+        if (!caller.isEmpty()) {
+            QDBusInterface dbusInterface("org.freedesktop.DBus", "/org/freedesktop/DBus", "org.freedesktop.DBus", QDBusConnection::sessionBus());
+            // 调用 GetConnectionUnixProcessID 方法查询 PID
+            QDBusReply<quint32> reply = dbusInterface.call("GetConnectionUnixProcessID", caller);
+            if (reply.isValid()) {
+                quint32 pid = reply.value();
+                qWarning() << "Caller Pid :" << pid;
+
+                getPathByPid(pid);
+                getPPidByPid(pid);
+           } else {
+               qWarning() << "Get caller pid failed :" << reply.error().message();
+           }
+       }
+   }
 }
 
 bool DBusShutdownAgent::Visible() const
