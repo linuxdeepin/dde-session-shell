@@ -14,6 +14,8 @@ link_libraries(
 
 set(LIB_NAME login)
 
+set(MODULESDIR ${CMAKE_INSTALL_LIBDIR}/dde-session-shell/modules)
+
 aux_source_directory(. SRCS)
 
 # add_library(${LIB_NAME} STATIC ${SRCS})
@@ -22,4 +24,4 @@ add_library(${LIB_NAME} SHARED ${SRCS})
 
 set(LIBRARY_OUTPUT_PATH ${PROJECT_BINARY_DIR}/modules)
 
-install(TARGETS ${LIB_NAME} LIBRARY DESTINATION lib/dde-session-shell/modules)
+install(TARGETS ${LIB_NAME} LIBRARY DESTINATION ${MODULESDIR})
