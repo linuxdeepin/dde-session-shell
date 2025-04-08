@@ -20,6 +20,8 @@
 #include <QTimer>
 #include <QWindow>
 
+#include "dbusconstant.h"
+
 Q_LOGGING_CATEGORY(DDE_SS, "dss.active")
 
 DGUI_USE_NAMESPACE
@@ -112,8 +114,8 @@ void FullScreenBackground::updateScreenBluBackground(const QString &blurPath)
 
 void FullScreenBackground::updateBlurBackground(const QString &path)
 {
-    QDBusMessage message = QDBusMessage::createMethodCall("com.deepin.daemon.ImageEffect", "/com/deepin/daemon/ImageEffect",
-                                                          "com.deepin.daemon.ImageEffect", "Get");
+    QDBusMessage message = QDBusMessage::createMethodCall(DSS_DBUS::imageEffectService, DSS_DBUS::imageEffectPath,
+                                                          DSS_DBUS::imageEffectService, "Get");
     message << "" << path;
     QDBus::CallMode callMode = isVisible() ? QDBus::BlockWithGui : QDBus::Block;
     QDBusPendingReply<QString> reply = QDBusConnection::systemBus().call(message, callMode, 2 * 1000);
@@ -266,7 +268,11 @@ void FullScreenBackground::tryActiveWindow(int count /* = 9*/)
     QTimer::singleShot(50, this, std::bind(&FullScreenBackground::tryActiveWindow, this, count - 1));
 }
 
+#if QT_VERSION >= QT_VERSION_CHECK(6, 0, 0)
+void FullScreenBackground::enterEvent(QEnterEvent *event)
+#else
 void FullScreenBackground::enterEvent(QEvent *event)
+#endif
 {
     if (m_enableEnterEvent && m_model->visible()) {
         updateCurrentFrame(this);
@@ -590,9 +596,9 @@ QMap<QString, QRect> FullScreenBackground::getScreenGeometryByXrandr()
 
 double FullScreenBackground::getScaleFactorFromDisplay()
 {
-    QDBusInterface display("com.deepin.system.Display",
-                           "/com/deepin/system/Display",
-                           "com.deepin.system.Display",
+    QDBusInterface display(DSS_DBUS::systemDisplayService,
+                           DSS_DBUS::systemDisplayPath,
+                           DSS_DBUS::systemDisplayService,
                            QDBusConnection::systemBus(), this);
 
     QDBusReply<QString> reply = display.call("GetConfig");

@@ -51,7 +51,11 @@ protected:
 
 private:
     void paintEvent(QPaintEvent *e) Q_DECL_OVERRIDE;
+#if QT_VERSION >= QT_VERSION_CHECK(6, 0, 0)
+    void enterEvent(QEnterEvent *event) Q_DECL_OVERRIDE;
+#else
     void enterEvent(QEvent *event) Q_DECL_OVERRIDE;
+#endif
     void leaveEvent(QEvent *event) Q_DECL_OVERRIDE;
     void mouseMoveEvent(QMouseEvent *event) Q_DECL_OVERRIDE;
     void updateScreen(QPointer<QScreen> screen);

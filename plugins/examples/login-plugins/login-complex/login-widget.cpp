@@ -57,7 +57,11 @@ void LoginWidget::init()
 
     QVBoxLayout* layout = new QVBoxLayout(this);
     setLayout(layout);
+#if QT_VERSION >= QT_VERSION_CHECK(6, 0, 0)
+    layout->setContentsMargins(15, 15, 15, 15);
+#else
     layout->setMargin(15);
+#endif
     layout->addLayout(userNameLayout);
     layout->addSpacing(30);
     layout->addLayout(tokenLayout);

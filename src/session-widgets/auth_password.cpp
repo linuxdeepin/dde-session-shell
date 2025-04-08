@@ -8,6 +8,7 @@
 #include "authcommon.h"
 #include "dlineeditex.h"
 #include "dstyle.h"
+#include "dbusconstant.h"
 
 #include <DHiDPIHelper>
 #include <DLabel>
@@ -20,15 +21,17 @@
 #include <QVBoxLayout>
 #include <QDBusConnection>
 #include <QDBusInterface>
-#include <QApplication>
-#include <QDesktopWidget>
 #include <QDBusReply>
 #include <QWindow>
 #include <QValidator>
-#include <QRegExp>
-#include <DConfig>
 
+#include <DConfig>
+#ifndef ENABLE_DSS_SNIPE
+#include <QRegExp>
 #include <com_deepin_daemon_accounts_user.h>
+#else
+#include "userinterface.h"
+#endif
 
 const QString PASSWORD_HIDE = QStringLiteral(":/misc/images/password-hide.svg");
 const QString PASSWORD_SHOWN = QStringLiteral(":/misc/images/password-shown.svg");
@@ -82,7 +85,11 @@ void AuthPassword::initUI()
     m_lineEdit->setContextMenuPolicy(Qt::NoContextMenu);
     m_lineEdit->setFocusPolicy(Qt::StrongFocus);
     m_lineEdit->lineEdit()->setAlignment(Qt::AlignCenter);
+#if QT_VERSION >= QT_VERSION_CHECK(6, 0, 0)
+    m_lineEdit->lineEdit()->setValidator(new QRegularExpressionValidator(QRegularExpression("^[ -~]+$")));
+#else
     m_lineEdit->lineEdit()->setValidator(new QRegExpValidator(QRegExp("^[ -~]+$")));
+#endif
     DFontSizeManager::instance()->bind(m_lineEdit, DFontSizeManager::T6);
 
     setLineEditInfo(tr("Password"), PlaceHolderText);
@@ -608,7 +615,11 @@ void AuthPassword::showResetPasswordMessage()
     }
 
     QPalette pa;
+#if QT_VERSION >= QT_VERSION_CHECK(6, 0, 0)
+    pa.setColor(QPalette::Window, QColor(247, 247, 247, 51));
+#else
     pa.setColor(QPalette::Background, QColor(247, 247, 247, 51));
+#endif
     pa.setColor(QPalette::Highlight, Qt::white);
     pa.setColor(QPalette::HighlightedText, Qt::black);
     m_resetPasswordFloatingMessage = new DFloatingMessage(DFloatingMessage::MessageType::ResidentType);
@@ -631,9 +642,12 @@ void AuthPassword::showResetPasswordMessage()
     m_resetPasswordFloatingMessage->setWidget(suggestButton);
     m_resetPasswordFloatingMessage->setMessage(tr("Forgot password?"));
     connect(suggestButton, &QPushButton::clicked, this, [this] {
-        const QString AccountsService("com.deepin.daemon.Accounts");
-        const QString path = QString("/com/deepin/daemon/Accounts/User%1").arg(m_currentUid);
-        com::deepin::daemon::accounts::User user(AccountsService, path, QDBusConnection::systemBus());
+#ifndef ENABLE_DSS_SNIPE
+    com::deepin::daemon::accounts::User
+#else
+    org::deepin::dde::accounts1::User
+#endif
+        user(DSS_DBUS::accountsService, QString(DSS_DBUS::accountsUserPath).arg(m_currentUid), QDBusConnection::systemBus());
         auto reply = user.SetPassword("");
         m_resetDialogShow = true;
         reply.waitForFinished();
@@ -688,9 +702,9 @@ bool AuthPassword::isUserAccountBinded()
         return false;
     }
 
-    QDBusInterface accountsInter("com.deepin.daemon.Accounts",
-                                 QString("/com/deepin/daemon/Accounts/User%1").arg(m_currentUid),
-                                 "com.deepin.daemon.Accounts.User",
+    QDBusInterface accountsInter(DSS_DBUS::accountsService,
+                                 QString(DSS_DBUS::accountsUserPath).arg(m_currentUid),
+                                 DSS_DBUS::accountsUserInterface,
                                  QDBusConnection::systemBus());
     QVariant retUUID = accountsInter.property("UUID");
     if (!accountsInter.isValid()) {
@@ -855,7 +869,11 @@ void AuthPassword::updatePasswordTextMargins()
     // 左侧控件宽度
     const int leftWidth = (m_capsLock->isVisible() ? m_capsLock->width() + 5: 0);
     textMargins.setRight(rightWidth);
+#if QT_VERSION >= QT_VERSION_CHECK(6, 6, 0)
+    const int displayTextWidth = m_lineEdit->lineEdit()->fontMetrics().horizontalAdvance(m_lineEdit->lineEdit()->displayText());
+#else
     const int displayTextWidth = m_lineEdit->lineEdit()->fontMetrics().width(m_lineEdit->lineEdit()->displayText());
+#endif
     // 计算当前文字长度+图标+间距所需长度 和 编辑框长度的差值，如果空间不足，则缩减左边的margin，但是不小于左侧控件的宽度
     const int diff = m_lineEdit->lineEdit()->width() - 10 /*borer padding等宽度*/ - (displayTextWidth + 15 /*content margin*/ + textMargins.right() * 2);
     textMargins.setLeft(qMax(leftWidth, rightWidth + (diff < 0 ? diff : 0)));

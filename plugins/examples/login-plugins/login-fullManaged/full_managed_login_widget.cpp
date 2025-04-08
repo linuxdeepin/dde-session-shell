@@ -71,7 +71,12 @@ void FullManagedLoginWidget::initUI()
 
     QVBoxLayout *m_layout = new QVBoxLayout(this);
     setLayout(m_layout);
+
+#if QT_VERSION >= QT_VERSION_CHECK(6, 0, 0)
+    m_layout->setContentsMargins(15, 15, 15, 15);
+#else
     m_layout->setMargin(15);
+#endif
     m_layout->addLayout(m_userNameLayout);
     m_layout->addSpacing(30);
     m_layout->addLayout(tokenLayout);

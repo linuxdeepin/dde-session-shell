@@ -25,6 +25,11 @@ private:
     int listen(Display *display);
     static int xinput_version(Display *display);
     static void select_events(Display* display);
+
+#ifdef ENABLE_DSS_SNIPE
+private:
+    Display *m_display = nullptr;
+#endif
 };
 
 #endif // KEYBOARDPLANTFORM_X11_H

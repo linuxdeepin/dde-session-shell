@@ -1,3 +1,5 @@
-add_subdirectory(one-key-login)
+if (DISABLE_DSS_SNIPE)
+    add_subdirectory(one-key-login)
+endif()
 # add_subdirectory(examples)
 # add_subdirectory(assist_login)

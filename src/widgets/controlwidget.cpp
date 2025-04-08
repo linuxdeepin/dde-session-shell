@@ -340,7 +340,11 @@ void ControlWidget::addModule(TrayPlugin *trayModule)
         trayWidget->setParent(button);
         QHBoxLayout *layout = new QHBoxLayout(button);
         layout->setSpacing(0);
+#if QT_VERSION >= QT_VERSION_CHECK(6, 0, 0)
+        layout->setContentsMargins(0, 0, 0, 0);
+#else
         layout->setMargin(0);
+#endif
         layout->addWidget(trayWidget);
         button->setVisible(trayWidget->isVisible());
         trayWidget->setObjectName(trayModule->key());
@@ -415,10 +419,15 @@ void ControlWidget::addModule(TrayPlugin *trayModule)
         update();
     });
 
+#if QT_VERSION >= QT_VERSION_CHECK(6, 0, 0)
+    connect(button, &FloatingButton::clicked, this, [this, trayModule] {
+            emit requestShowModule(trayModule->key());
+    });
+#else
     connect(button, &FloatingButton::clicked, this, [this, trayModule] {
         emit requestShowModule(trayModule->key());
     }, Qt::UniqueConnection);
-
+#endif
     updateLayout();
 }
 
@@ -736,7 +745,11 @@ void ControlWidget::keyReleaseEvent(QKeyEvent *event)
     case Qt::Key_Tab:
         auto it = std::find_if(m_btnList.begin(), m_btnList.end(),
                                [](DFloatingButton *btn) { return btn->hasFocus(); });
+#if QT_VERSION >= QT_VERSION_CHECK(6, 0, 0)
+        m_index = it != m_btnList.end() ? m_btnList.indexOf(*it) : 0;
+#else
         m_index = it != m_btnList.end() ? m_btnList.indexOf(it.i->t()) : 0;
+#endif
         break;
     }
 }

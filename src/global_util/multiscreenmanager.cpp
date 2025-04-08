@@ -7,16 +7,17 @@
 #include "constants.h"
 
 #include <QApplication>
-#include <QDesktopWidget>
 #include <QDebug>
 #include <QJsonDocument>
 #include <QJsonObject>
+
+#include "dbusconstant.h"
 
 MultiScreenManager::MultiScreenManager(QObject *parent)
     : QObject(parent)
     , m_registerFunction(nullptr)
     , m_raiseContentFrameTimer(new QTimer(this))
-    , m_systemDisplay(new SystemDisplayInter("com.deepin.system.Display", "/com/deepin/system/Display", QDBusConnection::systemBus(), this))
+    , m_systemDisplay(new SystemDisplayInter(DSS_DBUS::systemDisplayService, DSS_DBUS::systemDisplayPath, QDBusConnection::systemBus(), this))
     , m_isCopyMode(false)
 {
     connect(qApp, &QGuiApplication::screenAdded, this, &MultiScreenManager::onScreenAdded, Qt::DirectConnection);

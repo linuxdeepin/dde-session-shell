@@ -8,18 +8,18 @@
 #include "mediawidget.h"
 #include "sessionbasemodel.h"
 #include "sessionbasewindow.h"
-#include "systemmonitor.h"
 #include "centertopwidget.h"
 #include "popupwindow.h"
 
 #include <QWidget>
 #include <QLocalServer>
-#include <QWidget>
-#include <QLocalServer>
 
 #include <memory>
+#ifndef ENABLE_DSS_SNIPE
 #include <com_deepin_wm.h>
-#include <memory>
+#else
+#include "wminterface.h"
+#endif
 
 class AuthWidget;
 class MFAWidget;

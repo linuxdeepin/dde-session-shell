@@ -9,17 +9,8 @@
 #include "sessionbasemodel.h"
 
 #include <QKeyEvent>
-#include <QDBusConnection>
-#include <QDBusAbstractAdaptor>
-#include <QTimer>
 
 #include <memory>
-
-const QString DBUS_LOCK_PATH = "/com/deepin/dde/lockFront";
-const QString DBUS_LOCK_NAME = "com.deepin.dde.lockFront";
-
-const QString DBUS_SHUTDOWN_PATH = "/com/deepin/dde/shutdownFront";
-const QString DBUS_SHUTDOWN_NAME = "com.deepin.dde.shutdownFront";
 
 class DBusLockService;
 class LockContent;

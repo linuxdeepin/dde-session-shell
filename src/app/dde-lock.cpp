@@ -16,6 +16,7 @@
 #include "sessionbasemodel.h"
 #include "warningcontent.h"
 #include "plugin_manager.h"
+#include "dbusconstant.h"
 
 #include <DApplication>
 #include <DGuiApplicationHelper>
@@ -23,7 +24,6 @@
 #include <DPlatformTheme>
 
 #include <QDBusInterface>
-#include <QSurfaceFormat>
 #include <unistd.h>
 
 DCORE_USE_NAMESPACE
@@ -31,7 +31,7 @@ DWIDGET_USE_NAMESPACE
 
 int main(int argc, char *argv[])
 {
-#if (DTK_VERSION >= DTK_VERSION_CHECK(5, 6, 8, 7))
+#if (DTK_VERSION >= DTK_VERSION_CHECK(5, 6, 8, 7) && DTK_VERSION < DTK_VERSION_CHECK(6, 0, 0, 0))
     DLogManager::registerLoggingRulesWatcher("org.deepin.dde.lock");
 #endif
 
@@ -146,21 +146,19 @@ int main(int argc, char *argv[])
     // 这里提前进行单实例判断，避免后面数据初始化后再进行单实例判断而导致各种问题（例如：多次调用LockContent::instance()->init(model) 导致的localserver失效）
     auto isSingle = app->setSingleInstance(QString("dde-lock%1").arg(getuid()), DApplication::UserScope);
     QDBusConnection conn = QDBusConnection::sessionBus();
-    if (!conn.registerService(DBUS_LOCK_NAME) ||
-        !conn.registerObject(DBUS_LOCK_PATH, &lockAgent) ||
-        !conn.registerService(DBUS_SHUTDOWN_NAME) ||
-        !conn.registerObject(DBUS_SHUTDOWN_PATH, &shutdownAgent) ||
+    if (!conn.registerService(DSS_DBUS::lockFrontService) ||
+        !conn.registerObject(DSS_DBUS::lockFrontPath, &lockAgent) ||
+        !conn.registerService(DSS_DBUS::shutdownService) ||
+        !conn.registerObject(DSS_DBUS::shutdownPath, &shutdownAgent) ||
         !isSingle) {
         qCWarning(DDE_SHELL) << "Register DBus failed, maybe lock front is running, error: " << conn.lastError();
 
         if (!runDaemon) {
-            const char *lockFrontInter = "com.deepin.dde.lockFront";
-            const char *shutdownFrontInter = "com.deepin.dde.shutdownFront";
             if (showUserList) {
-                QDBusInterface ifc(DBUS_LOCK_NAME, DBUS_LOCK_PATH, lockFrontInter, QDBusConnection::sessionBus(), nullptr);
+                QDBusInterface ifc(DSS_DBUS::lockFrontService, DSS_DBUS::lockFrontPath, DSS_DBUS::lockFrontService, QDBusConnection::sessionBus(), nullptr);
                 ifc.asyncCall("ShowUserList");
             } else if (showShutdown) {
-                QDBusInterface ifc(DBUS_SHUTDOWN_NAME, DBUS_SHUTDOWN_PATH, shutdownFrontInter, QDBusConnection::sessionBus(), nullptr);
+                QDBusInterface ifc(DSS_DBUS::shutdownService, DSS_DBUS::shutdownPath, DSS_DBUS::shutdownService, QDBusConnection::sessionBus(), nullptr);
                 ifc.asyncCall("Show");
             } else if (showLockScreen) {
                 do {
@@ -172,7 +170,7 @@ int main(int argc, char *argv[])
                     }
                 } while (false);
 
-                QDBusInterface ifc(DBUS_LOCK_NAME, DBUS_LOCK_PATH, lockFrontInter, QDBusConnection::sessionBus(), nullptr);
+                QDBusInterface ifc(DSS_DBUS::lockFrontService, DSS_DBUS::lockFrontPath, DSS_DBUS::lockFrontService, QDBusConnection::sessionBus(), nullptr);
                 ifc.asyncCall("Show");
             }
         }

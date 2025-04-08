@@ -1,5 +1,4 @@
 include_directories(
-    ${DFrameworkDBus_INCLUDE_DIRS}
     global
 )
 

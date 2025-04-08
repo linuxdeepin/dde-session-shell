@@ -6,23 +6,21 @@
 
 #include "authcommon.h"
 #include "dlineeditex.h"
+#include "dbusconstant.h"
 
 #include <DHiDPIHelper>
 #include <DDialogCloseButton>
 
 #include <QKeyEvent>
-#include <QTimer>
-#include <QDBusConnection>
-#include <QDBusInterface>
-#include <QApplication>
-#include <QDesktopWidget>
-#include <QDBusReply>
 #include <QWindow>
 #include <QValidator>
+#ifndef ENABLE_DSS_SNIPE
 #include <QRegExp>
 
 #include <com_deepin_daemon_accounts_user.h>
-
+#else
+#include "userinterface.h"
+#endif
 using namespace AuthCommon;
 
 AuthSingle::AuthSingle(QWidget *parent)
@@ -62,7 +60,11 @@ void AuthSingle::initUI()
     m_lineEdit->setContextMenuPolicy(Qt::NoContextMenu);
     m_lineEdit->setFocusPolicy(Qt::StrongFocus);
     m_lineEdit->lineEdit()->setAlignment(Qt::AlignCenter);
+#if QT_VERSION >= QT_VERSION_CHECK(6, 0, 0)
+    m_lineEdit->lineEdit()->setValidator(new QRegularExpressionValidator(QRegularExpression("^[ -~]+$")));
+#else
     m_lineEdit->lineEdit()->setValidator(new QRegExpValidator(QRegExp("^[ -~]+$"), this));
+#endif
 
     auto *passwordLayout = new QHBoxLayout(m_lineEdit->lineEdit());
     passwordLayout->setContentsMargins(0, 0, 10, 0);
@@ -454,7 +456,11 @@ void AuthSingle::showResetPasswordMessage()
     }
 
     QPalette pa;
+#if QT_VERSION >= QT_VERSION_CHECK(6, 0, 0)
+    pa.setColor(QPalette::Window, QColor(247, 247, 247, 51));
+#else
     pa.setColor(QPalette::Background, QColor(247, 247, 247, 51));
+#endif
     pa.setColor(QPalette::Highlight, Qt::white);
     pa.setColor(QPalette::HighlightedText, Qt::black);
     m_resetPasswordFloatingMessage = new DFloatingMessage(DFloatingMessage::MessageType::ResidentType);
@@ -477,9 +483,12 @@ void AuthSingle::showResetPasswordMessage()
     m_resetPasswordFloatingMessage->setWidget(suggestButton);
     m_resetPasswordFloatingMessage->setMessage(tr("Forgot password?"));
     connect(suggestButton, &QPushButton::clicked, this, [this]{
-        const QString AccountsService("com.deepin.daemon.Accounts");
-        const QString path = QString("/com/deepin/daemon/Accounts/User%1").arg(m_currentUid);
-        com::deepin::daemon::accounts::User user(AccountsService, path, QDBusConnection::systemBus());
+#ifndef ENABLE_DSS_SNIPE
+        com::deepin::daemon::accounts::User
+#else
+        org::deepin::dde::accounts1::User
+#endif
+        user(DSS_DBUS::accountsService, QString(DSS_DBUS::accountsUserPath).arg(m_currentUid), QDBusConnection::systemBus());
         auto reply = user.SetPassword("");
         reply.waitForFinished();
         qCWarning(DDE_SHELL) << "Show reset password message: " << reply.error().message();
@@ -529,9 +538,9 @@ bool AuthSingle::isUserAccountBinded()
         return false;
     }
 
-    QDBusInterface accountsInter("com.deepin.daemon.Accounts",
-                                 QString("/com/deepin/daemon/Accounts/User%1").arg(m_currentUid),
-                                 "com.deepin.daemon.Accounts.User",
+    QDBusInterface accountsInter(DSS_DBUS::accountsService,
+                                 QString(DSS_DBUS::accountsUserPath).arg(m_currentUid),
+                                 DSS_DBUS::accountsUserInterface,
                                  QDBusConnection::systemBus());
     QVariant retUUID = accountsInter.property("UUID");
     if (!accountsInter.isValid()) {

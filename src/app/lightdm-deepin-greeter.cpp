@@ -10,30 +10,27 @@
 #include "loginwindow.h"
 #include "modules_loader.h"
 #include "multiscreenmanager.h"
-#include "propertygroup.h"
 #include "sessionbasemodel.h"
 #include "public_func.h"
 #include "plugin_manager.h"
 
+#ifndef ENABLE_DSS_SNIPE
 #include <dde-api/eventlogger.hpp>
-
+#endif
 #include <DApplication>
 #include <DGuiApplicationHelper>
 #include <DLog>
-#include <DPlatformTheme>
 
 #include <QGuiApplication>
 #include <QScreen>
-#include <QSettings>
 #include <QSurfaceFormat>
 
 #include <X11/Xcursor/Xcursor.h>
 #include <X11/Xlib.h>
-#include <X11/extensions/Xfixes.h>
-#include <X11/extensions/Xrandr.h>
 #include <cstdlib>
-#include <DConfig>
 #include <cmath>
+
+#include "dbusconstant.h"
 
 DCORE_USE_NAMESPACE
 DWIDGET_USE_NAMESPACE
@@ -63,7 +60,9 @@ int main(int argc, char* argv[])
 
     DApplication a(argc, argv);
 
+#ifndef ENABLE_DSS_SNIPE
     DDE_EventLogger::EventLogger::instance().init("org.deepin.dde.lightdm-deepin-greeter", false);
+#endif
     // qt默认当最后一个窗口析构后，会自动退出程序，这里设置成false，防止插拔时，没有屏幕，导致进程退出
     QApplication::setQuitOnLastWindowClosed(false);
     QApplication::setAttribute(Qt::AA_UseHighDpiPixmaps);
@@ -99,13 +98,12 @@ int main(int argc, char* argv[])
     DLogManager::setLogFormat("%{time}{yyyy-MM-dd, HH:mm:ss.zzz} [%{type:-7}] [ %{function:-35} %{line}] %{message}\n");
     DLogManager::registerConsoleAppender();
 
-    const QString serviceName = "com.deepin.daemon.Accounts";
     QDBusConnectionInterface *interface = QDBusConnection::systemBus().interface();
-    if (!interface->isServiceRegistered(serviceName)) {
+    if (!interface->isServiceRegistered(DSS_DBUS::accountsService)) {
         qCWarning(DDE_SHELL) << "Accounts service is not registered wait...";
-        QDBusServiceWatcher *serviceWatcher = new QDBusServiceWatcher(serviceName, QDBusConnection::systemBus());
-        QObject::connect(serviceWatcher, &QDBusServiceWatcher::serviceUnregistered, [serviceName](const QString &service) {
-            if (service == serviceName) {
+        QDBusServiceWatcher *serviceWatcher = new QDBusServiceWatcher(DSS_DBUS::accountsService, QDBusConnection::systemBus());
+        QObject::connect(serviceWatcher, &QDBusServiceWatcher::serviceUnregistered, [](const QString &service) {
+            if (service == DSS_DBUS::accountsService) {
                 qCritical() << "ERROR: accounts service unregistered";
             }
         });

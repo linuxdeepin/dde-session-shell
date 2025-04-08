@@ -10,6 +10,8 @@
 
 #include <DDBusSender>
 
+#include "dbusconstant.h"
+
 WarningContent::WarningContent(QWidget *parent)
     : SessionBaseWindow(parent)
     , m_model(nullptr)
@@ -18,7 +20,7 @@ WarningContent::WarningContent(QWidget *parent)
     , m_failures(0)
 {
     setAccessibleName("WarningContent");
-    m_inhibitorBlacklists << "NetworkManager" << "ModemManager" << "com.deepin.daemon.Power";
+    m_inhibitorBlacklists << "NetworkManager" << "ModemManager" << DSS_DBUS::sessionPowerService;
     setTopFrameVisible(false);
     setBottomFrameVisible(false);
 }
@@ -87,7 +89,11 @@ QList<InhibitWarnView::InhibitorData> WarningContent::listInhibitors(const Sessi
                 if (inhibitor.uid != currentUser->uid() && inhibitor.uid != 0)
                     continue;
 
+#ifndef ENABLE_DSS_SNIPE
                 if (inhibitor.what.split(':', QString::SkipEmptyParts).contains(type)
+#else
+                if (inhibitor.what.split(':', Qt::SkipEmptyParts).contains(type)
+#endif
                         && !m_inhibitorBlacklists.contains(inhibitor.who)) {
 
                     // 待机时，非block暂不处理，因为目前没有倒计时待机功能
@@ -114,7 +120,7 @@ QList<InhibitWarnView::InhibitorData> WarningContent::listInhibitors(const Sessi
 
                     if (connection.interface()->isServiceRegistered(inhibitor.who)) {
 
-                        QDBusInterface ifc(inhibitor.who, "/com/deepin/InhibitHint", "com.deepin.InhibitHint", connection);
+                        QDBusInterface ifc(inhibitor.who, DSS_DBUS::inhibitHintPath, DSS_DBUS::inhibitHintService, connection);
                         QDBusMessage msg = ifc.call("Get", qgetenv("LANG"), inhibitor.why);
                         if (msg.type() == QDBusMessage::ReplyMessage) {
                             InhibitHint inhibitHint = qdbus_cast<InhibitHint>(msg.arguments().at(0).value<QDBusArgument>());

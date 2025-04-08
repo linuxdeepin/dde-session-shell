@@ -6,18 +6,18 @@
 #define DBUSLOCKFRONTSERVICE_H
 
 #include "dbuslockagent.h"
+
 #include <QDBusAbstractAdaptor>
-#include <QtCore/QObject>
-#include <QtDBus/QtDBus>
 
 QT_BEGIN_NAMESPACE
 class QByteArray;
 template<class T> class QList;
 template<class Key, class Value> class QMap;
 class QString;
-class QStringList;
 class QVariant;
 QT_END_NAMESPACE
+
+const QString lockFrontService = "org.deepin.dde.LockFront1";
 
 /*
  * Proxy class for interface com.deepin.dde.lockFront
@@ -25,7 +25,11 @@ QT_END_NAMESPACE
 class DBusLockFrontService: public QDBusAbstractAdaptor
 {
     Q_OBJECT
+#ifndef ENABLE_DSS_SNIPE
     Q_CLASSINFO("D-Bus Interface", "com.deepin.dde.lockFront")
+#else
+    Q_CLASSINFO("D-Bus Interface", "org.deepin.dde.LockFront1")
+#endif
 
 public:
     explicit DBusLockFrontService(DBusLockAgent *parent);

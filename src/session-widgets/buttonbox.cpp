@@ -10,6 +10,7 @@
 #include <QPainter>
 #include <QButtonGroup>
 #include <QHBoxLayout>
+#include <QPainterPath>
 
 const int IconSize = 26;
 const int Radius = 10;

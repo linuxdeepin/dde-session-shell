@@ -7,6 +7,8 @@
 #include <DSysInfo>
 
 #include <QDebug>
+
+#include "dbusconstant.h"
 #include "dconfig_helper.h"
 
 DCORE_USE_NAMESPACE
@@ -39,9 +41,11 @@ SessionBaseModel::SessionBaseModel(QObject *parent)
     , m_enableShellBlackMode(DConfigHelper::instance()->getConfig("enableShellBlack", true).toBool())
     , m_visibleShutdownWhenRebootOrShutdown(DConfigHelper::instance()->getConfig("visibleShutdownWhenRebootOrShutdown", true).toBool())
 {
+#ifndef ENABLE_DSS_SNIPE
     if (QGSettings::isSchemaInstalled("com.deepin.dde.power")) {
         m_powerGsettings = new QGSettings("com.deepin.dde.power", "/com/deepin/dde/power/", this);
     }
+#endif
 }
 
 SessionBaseModel::~SessionBaseModel()
@@ -50,6 +54,7 @@ SessionBaseModel::~SessionBaseModel()
     delete m_loginedUsers;
 }
 
+#ifndef ENABLE_DSS_SNIPE
 QVariant SessionBaseModel::getPowerGSettings(const QString &node, const QString &key)
 {
     QVariant value = valueByQSettings<QVariant>(node, key, true);
@@ -58,6 +63,7 @@ QVariant SessionBaseModel::getPowerGSettings(const QString &node, const QString 
     }
     return value;
 }
+#endif
 
 std::shared_ptr<User> SessionBaseModel::findUserByUid(const uint uid) const
 {
@@ -475,7 +481,7 @@ void SessionBaseModel::updateLoginedUserList(const QString &list)
                 // 排除非正常登录用户
                 continue;
             }
-            const QString path = QString("/com/deepin/daemon/Accounts/User") + QString::number(uid);
+            const QString path = QString(DSS_DBUS::accountsUserPath).arg(QString::number(uid));
             if (!m_loginedUsers->contains(path)) {
                 // 对于通过自定义窗口输入的账户(域账户), 此时账户还没添加进来，导致下面m_users->value(path)为空指针，调用会导致程序奔溃
                 // 因此在登录时，对于新增的账户，调用addUser先将账户添加进来，然后再去更新对应账户的登录状态

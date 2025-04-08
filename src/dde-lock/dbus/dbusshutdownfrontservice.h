@@ -6,16 +6,14 @@
 #define DBUSSHUTDOWNFRONTSERVICE_H
 
 #include "dbusshutdownagent.h"
+
 #include <QDBusAbstractAdaptor>
-#include <QtCore/QObject>
-#include <QtDBus/QtDBus>
 
 QT_BEGIN_NAMESPACE
 class QByteArray;
 template<class T> class QList;
 template<class Key, class Value> class QMap;
 class QString;
-class QStringList;
 class QVariant;
 QT_END_NAMESPACE
 
@@ -25,7 +23,11 @@ QT_END_NAMESPACE
 
 class DBusShutdownFrontService : public QDBusAbstractAdaptor {
     Q_OBJECT
+#ifndef ENABLE_DSS_SNIPE
     Q_CLASSINFO("D-Bus Interface", "com.deepin.dde.shutdownFront")
+#else
+    Q_CLASSINFO("D-Bus Interface", "org.deepin.dde.ShutdownFront1")
+#endif
 
 public:
     explicit DBusShutdownFrontService(DBusShutdownAgent *parent);

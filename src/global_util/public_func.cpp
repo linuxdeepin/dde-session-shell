@@ -10,7 +10,6 @@
 #include <QDateTime>
 #include <QDebug>
 #include <QFile>
-#include <QGSettings>
 #include <QTranslator>
 #include <QJsonDocument>
 #include <QApplication>
@@ -22,6 +21,12 @@
 #include <X11/Xlib.h>
 #include <X11/extensions/Xfixes.h>
 #include <X11/extensions/Xrandr.h>
+
+#ifndef ENABLE_DSS_SNIPE
+#include <QGSettings>
+#else
+#include <QDBusInterface>
+#endif
 
 using namespace std;
 
@@ -196,6 +201,7 @@ bool checkPictureCanRead(const QString &fileName)
  */
 bool isDeepinAuth()
 {
+#ifndef ENABLE_DSS_SNIPE
     const char* controlId = "com.deepin.dde.auth.control";
     if (QGSettings::isSchemaInstalled(controlId)) {
         const char *controlPath = "/com/deepin/dde/auth/control/";
@@ -207,15 +213,25 @@ bool isDeepinAuth()
     #endif
         return useDeepinAuth;
     }
+#else
+    // TODO this gsetting config provided by 域管
+#endif
     return true;
 }
 
 uint timeFromString(QString time)
 {
+#ifndef ENABLE_DSS_SNIPE
     if (time.isEmpty()) {
         return QDateTime::currentDateTime().toTime_t();
     }
     return QDateTime::fromString(time, Qt::ISODateWithMs).toLocalTime().toTime_t();
+#else
+    if (time.isEmpty()) {
+        return QDateTime::currentDateTime().toSecsSinceEpoch();
+    }
+    return QDateTime::fromString(time, Qt::ISODateWithMs).toLocalTime().toSecsSinceEpoch();
+#endif
 }
 
 void setAppType(int type)
@@ -334,3 +350,24 @@ void configWebEngine()
         QNetworkProxy::setApplicationProxy(proxyList[0]);
     }
 }
+
+#ifdef ENABLE_DSS_SNIPE
+bool isSleepLock()
+{
+    QDBusInterface powerInterface("org.deepin.dde.Power1",
+        "/org/deepin/dde/Power1", "org.deepin.dde.Power1", QDBusConnection::sessionBus());
+
+    if (!powerInterface.isValid()) {
+        qCritical() << powerInterface.lastError().message();
+        return true; // default
+    }
+
+    QVariant value = powerInterface.property("SleepLock");
+    if (!value.isValid()) {
+        qCritical() << "read SleepLock property failed";
+        return true; // default
+    }
+
+    return value.toBool();
+}
+#endif

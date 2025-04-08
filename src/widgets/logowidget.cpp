@@ -2,9 +2,7 @@
 //
 // SPDX-License-Identifier: GPL-3.0-or-later
 
-#include <QTextCodec>
 #include <QPalette>
-#include <DSysInfo>
 
 #include "public_func.h"
 #include "util_updateui.h"
@@ -107,7 +105,7 @@ QString LogoWidget::getVersion()
     if (DSysInfo::uosType() == DSysInfo::UosServer) {
         version = QString("%1").arg(DSysInfo::majorVersion());
     } else if (DSysInfo::isDeepin()) {
-        version = QString("%1 %2").arg(DSysInfo::majorVersion()).arg(DSysInfo::uosEditionName(m_locale));
+        version = QString("%1 %2").arg(DSysInfo::majorVersion()).arg(DSysInfo::uosEditionName(QLocale(m_locale)));
     } else {
         version = QString("%1 %2").arg(DSysInfo::productVersion()).arg(DSysInfo::productTypeString());
     }

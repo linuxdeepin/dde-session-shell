@@ -26,6 +26,8 @@
 #include <QLocalSocket>
 #include <QMouseEvent>
 
+#include "dbusconstant.h"
+
 using namespace dss;
 using namespace dss::module;
 DCORE_USE_NAMESPACE
@@ -76,12 +78,12 @@ void LockContent::init(SessionBaseModel *model)
     // 异步获取CPU硬件信息，判断是否为PANGU CPU
     // FIXME: CPU硬件信息可能会改且其它的机型也可能会有PANGU CPU，这里的判断不准确
     if (m_model->appType() == AuthCommon::Lock) {
-        QDBusInterface interface("com.deepin.daemon.SystemInfo",
-            "/com/deepin/daemon/SystemInfo",
+        QDBusInterface interface(DSS_DBUS::systemInfoService,
+            DSS_DBUS::systemInfoPath,
             "org.freedesktop.DBus.Properties",
             QDBusConnection::sessionBus(),
             this);
-        QDBusPendingReply<QDBusVariant> reply = interface.asyncCall("Get", "com.deepin.daemon.SystemInfo", "CPUHardware");
+        QDBusPendingReply<QDBusVariant> reply = interface.asyncCall("Get", DSS_DBUS::systemInfoService, "CPUHardware");
         QDBusPendingCallWatcher* watcher = new QDBusPendingCallWatcher(reply, this);
         connect(watcher, &QDBusPendingCallWatcher::finished, this, [this, watcher] {
             QDBusPendingReply<QDBusVariant> reply = *watcher;
@@ -208,7 +210,7 @@ void LockContent::initConnections()
             setCenterContent(m_authWidget, 0, Qt::AlignTop, calcTopSpacing(m_authWidget->getTopSpacing()));
     });
 
-    connect(m_wmInter, &__wm::WorkspaceSwitched, this, &LockContent::currentWorkspaceChanged);
+    connect(m_wmInter, &com::deepin::wm::WorkspaceSwitched, this, &LockContent::currentWorkspaceChanged);
     connect(m_localServer, &QLocalServer::newConnection, this, &LockContent::onNewConnection);
     connect(m_controlWidget, &ControlWidget::notifyKeyboardLayoutHidden, this, [this]{
         if (!m_model->isUseWayland() && isVisible() && window()->windowHandle()) {
@@ -452,7 +454,7 @@ void LockContent::setMPRISEnable(const bool state)
 
 void LockContent::enableSystemShortcut(const QStringList &shortcuts, bool enabled, bool isPersistent)
 {
-    QDBusInterface inter("com.deepin.daemon.Keybinding", "/com/deepin/daemon/Keybinding", "com.deepin.daemon.Keybinding", QDBusConnection::sessionBus());
+    QDBusInterface inter(DSS_DBUS::keybindingService, DSS_DBUS::keybindingPath, DSS_DBUS::keybindingService, QDBusConnection::sessionBus());
     QList<QVariant> argumentList;
     argumentList << QVariant::fromValue(shortcuts) << QVariant::fromValue(enabled) << QVariant::fromValue(isPersistent);
     inter.asyncCallWithArgumentList(QStringLiteral("EnableSystemShortcut"), argumentList);
@@ -869,7 +871,7 @@ void LockContent::tryGrabKeyboard(bool exitIfFailed)
             .call();
 
         DDBusSender()
-            .service("com.deepin.daemon.ScreenSaver")
+            .service(DSS_DBUS::screenSaveService)
             .path("/org/freedesktop/ScreenSaver")
             .interface("org.freedesktop.ScreenSaver")
             .method(QString("SimulateUserActivity"))

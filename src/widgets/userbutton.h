@@ -5,20 +5,21 @@
 #ifndef USERBUTTON_H
 #define USERBUTTON_H
 
-#include <QGraphicsDropShadowEffect>
 #include <QGraphicsOpacityEffect>
-#include <QPushButton>
-#include <QtGui/QPaintEvent>
-#include <QVBoxLayout>
-#include <QObject>
-#include <QLabel>
-#include <QPropertyAnimation>
-#include <com_deepin_daemon_accounts_user.h>
+#include <QPaintEvent>
+
 #include <memory>
 
 #include "useravatar.h"
 
+#ifndef ENABLE_DSS_SNIPE
+#include <com_deepin_daemon_accounts_user.h>
 using UserInter = com::deepin::daemon::accounts::User;
+#else
+#include "userinterface.h"
+
+using UserInter = org::deepin::dde::accounts1::User;
+#endif
 
 static const int USER_ICON_WIDTH = 180;
 static const int USER_ICON_HEIGHT = 180;

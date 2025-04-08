@@ -22,6 +22,8 @@
 
 #include <DConfig>
 
+#include "dbusconstant.h"
+
 DCORE_USE_NAMESPACE
 
 namespace dss {
@@ -154,7 +156,7 @@ void LoginModule::initConnect()
     qInfo() << "Whether connect `PrepareForSleep`: " << isConIsSleep;
 
 
-    bool isConnectSuccess = QDBusConnection::systemBus().connect("com.deepin.daemon.Authenticate", "/com/deepin/daemon/Authenticate/Fingerprint","com.deepin.daemon.Authenticate.Fingerprint",
+    bool isConnectSuccess = QDBusConnection::systemBus().connect(DSS_DBUS::authenticateService, DSS_DBUS::fingerprintAuthPath, DSS_DBUS::fingerprintAuthInterface,
                                                     "VerifyStatus", this, SLOT(slotIdentifyStatus(const QString &, const int, const QString &)));
     qInfo() << "Whether connect `VerifyStatus`: " << isConnectSuccess;
 
@@ -168,8 +170,7 @@ void LoginModule::startCallHuaweiFingerprint()
         sendAuthTypeToSession(AuthType::AT_Fingerprint);
     };
 
-    QDBusMessage m = QDBusMessage::createMethodCall("com.deepin.daemon.Authenticate", "/com/deepin/daemon/Authenticate/Fingerprint",
-                                                                             "com.deepin.daemon.Authenticate.Fingerprint",
+    QDBusMessage m = QDBusMessage::createMethodCall(DSS_DBUS::authenticateService, DSS_DBUS::fingerprintAuthPath, DSS_DBUS::fingerprintAuthInterface,
                                                                              "IdentifyWithMultipleUser");
     // 将消息发送到Dbus
     QDBusPendingCall identifyCall = QDBusConnection::systemBus().asyncCall(m);
@@ -504,8 +505,8 @@ void LoginModule::slotPrepareForSleep(bool active)
 
 void LoginModule::stopIdentify()
 {
-    QDBusMessage m = QDBusMessage::createMethodCall("com.deepin.daemon.Authenticate", "/com/deepin/daemon/Authenticate/Fingerprint",
-                                                                             "com.deepin.daemon.Authenticate.Fingerprint",
+    QDBusMessage m = QDBusMessage::createMethodCall(DSS_DBUS::authenticateService, DSS_DBUS::fingerprintAuthPath,
+                                                                             DSS_DBUS::fingerprintAuthInterface,
                                                                              "StopIdentifyWithMultipleUser");
     // 将消息发送到Dbus
     QDBusMessage mes = QDBusConnection::systemBus().call(m);

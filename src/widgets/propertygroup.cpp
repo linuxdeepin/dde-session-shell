@@ -68,8 +68,13 @@ void PropertyGroup::addProperty(const QByteArray &propertyName)
 
     m_signalMapperMap[propertyName] = mapper;
 
+#if QT_VERSION >= QT_VERSION_CHECK(6, 0, 0)
+    connect(mapper, static_cast<void (QSignalMapper::*)(QObject *)>(&QSignalMapper::mappedObject),
+            this, &PropertyGroup::onObjectPropertyChanged);
+#else
     connect(mapper, static_cast<void (QSignalMapper::*)(QObject *)>(&QSignalMapper::mapped),
             this, &PropertyGroup::onObjectPropertyChanged);
+#endif
 }
 
 void PropertyGroup::removeProperty(const QByteArray &propertyName)

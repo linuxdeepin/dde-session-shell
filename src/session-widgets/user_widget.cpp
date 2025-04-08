@@ -48,7 +48,11 @@ void UserWidget::initUI()
     /* 用户全名 */
     m_displayNameWidget->setAccessibleName(QStringLiteral("NameWidget"));
     QHBoxLayout *nameLayout = new QHBoxLayout(m_displayNameWidget);
+#if QT_VERSION >= QT_VERSION_CHECK(6, 0, 0)
+    nameLayout->setContentsMargins(0, 0, 0, 0);
+#else
     nameLayout->setMargin(0);
+#endif
 
     nameLayout->addStretch();
     QPixmap pixmap = DHiDPIHelper::loadNxPixmap(":/misc/images/select.svg");
@@ -58,7 +62,11 @@ void UserWidget::initUI()
     m_loginState->setVisible(m_user->isLogin());
     QVBoxLayout *loginStateLayout = new QVBoxLayout;
     loginStateLayout->setSpacing(0);
+#if QT_VERSION >= QT_VERSION_CHECK(6, 0, 0)
+    loginStateLayout->setContentsMargins(0, 0, 0, 0);
+#else
     loginStateLayout->setMargin(0);
+#endif
     loginStateLayout->addSpacing(4);
     loginStateLayout->addWidget(m_loginState);
     nameLayout->addLayout(loginStateLayout);
@@ -101,7 +109,11 @@ void UserWidget::initUI()
     m_blurEffectWidget->setBlurRectYRadius(BlurRadius);
 
     m_mainLayout->setSpacing(0);
+#if QT_VERSION >= QT_VERSION_CHECK(6, 0, 0)
+    m_mainLayout->setContentsMargins(0, 0, 0, 0);
+#else
     m_mainLayout->setMargin(0);
+#endif
     m_mainLayout->addWidget(m_avatar);
     m_mainLayout->addSpacing(4);
     m_mainLayout->addWidget(m_displayNameWidget);

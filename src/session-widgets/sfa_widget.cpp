@@ -97,7 +97,11 @@ void SFAWidget::initConnections()
     connect(m_accountEdit, &DLineEditEx::textChanged, this, [this](const QString &value) {
         m_lockButton->setEnabled(!value.isEmpty());
     });
+#if DTK_VERSION < DTK_VERSION_CHECK(6, 0, 0, 0)
     connect(SpacerItemBinder::instance(), &SpacerItemBinder::requestInvalidateLayout, m_mainLayout, &QVBoxLayout::invalidate);
+#else
+    connect(&SpacerItemBinder::ref(), &SpacerItemBinder::requestInvalidateLayout, m_mainLayout, &QVBoxLayout::invalidate);
+#endif
     connect(PluginManager::instance(), &PluginManager::pluginAboutToBeRemoved, this, [this] (const QString &key) {
         qCInfo(DDE_SHELL) << key << " about to be removed, destruct custom auth now";
         auto it = m_customAuths.find(key);
@@ -1468,7 +1472,7 @@ void SFAWidget::chooseAuthType(const AuthFlags authFlags)
             // 上一次认证成功的类型是自定义认证
             if (m_currentAuthType == AT_Custom) {
                 if (!m_customAuths.isEmpty()) {
-                    m_currentAuthType = AT_Custom + 1;
+                    m_currentAuthType = (int)AT_Custom + 1;
                     // 获取上次自定义认证的类型
                     const auto lastCustomAuth = m_user->lastCustomAuth();
                     qCInfo(DDE_SHELL) << "Last custom auth:" << lastCustomAuth;

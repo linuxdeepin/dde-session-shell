@@ -107,7 +107,10 @@ void SessionBaseWindow::initUI()
     //整理代码顺序，让子部件层级清晰明了,
     //同时方便计算中间区域的大小,使用QFrame替换了QScrollArea
     m_centerTopLayout = new QHBoxLayout;
+#if QT_VERSION >= QT_VERSION_CHECK(6, 0, 0)
+#else
     m_centerTopLayout->setMargin(0);
+#endif
     m_centerTopLayout->setSpacing(0);
 
     m_centerTopFrame = new QFrame;
@@ -117,11 +120,19 @@ void SessionBaseWindow::initUI()
     m_centerTopFrame->setAutoFillBackground(false);
 
     m_centerLayout = new QHBoxLayout;
+#if QT_VERSION >= QT_VERSION_CHECK(6, 0, 0)
+    m_centerLayout->setContentsMargins(0, 0, 0, 0);
+#else
     m_centerLayout->setMargin(0);
+#endif
     m_centerLayout->setSpacing(0);
 
     m_centerVLayout = new QVBoxLayout;
+#if QT_VERSION >= QT_VERSION_CHECK(6, 0, 0)
+    m_centerVLayout->setContentsMargins(0, 0, 0, 0);
+#else
     m_centerVLayout->setMargin(0);
+#endif
     m_centerVLayout->setSpacing(0);
     m_centerVLayout->addSpacerItem(m_centerSpacerItem);
     m_centerVLayout->addLayout(m_centerLayout);
@@ -135,15 +146,26 @@ void SessionBaseWindow::initUI()
     m_rightBottomLayout = new QHBoxLayout;
     m_centerBottomLayout = new QHBoxLayout;
 
+#if QT_VERSION >= QT_VERSION_CHECK(6, 0, 0)
+    m_leftBottomLayout->setContentsMargins(0, 0, 0, 0);
+    m_centerBottomLayout->setContentsMargins(0, 0, 0, 0);
+    m_rightBottomLayout->setContentsMargins(0, 0, 0, 0);
+#else
     m_leftBottomLayout->setMargin(0);
-    m_leftBottomLayout->setSpacing(0);
     m_centerBottomLayout->setMargin(0);
-    m_centerBottomLayout->setSpacing(0);
     m_rightBottomLayout->setMargin(0);
+#endif
+
+    m_leftBottomLayout->setSpacing(0);
+    m_centerBottomLayout->setSpacing(0);
     m_rightBottomLayout->setSpacing(0);
 
     QHBoxLayout *bottomLayout = new QHBoxLayout;
+#if QT_VERSION >= QT_VERSION_CHECK(6, 0, 0)
+    bottomLayout->setContentsMargins(0, 0, 0, 0);
+#else
     bottomLayout->setMargin(0);
+#endif
     bottomLayout->setSpacing(0);
     bottomLayout->addLayout(m_leftBottomLayout, 3);
     bottomLayout->addLayout(m_centerBottomLayout, 2);

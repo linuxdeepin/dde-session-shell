@@ -39,10 +39,18 @@ void UserNameWidget::initialize()
 {
     setAccessibleName("UserNameWidget");
     QVBoxLayout *vLayout = new QVBoxLayout;
+#if QT_VERSION >= QT_VERSION_CHECK(6, 0, 0)
+    vLayout->setContentsMargins(0, 0, 0, 0);
+#else
     vLayout->setMargin(0);
+#endif
     vLayout->setSpacing(0);
     QHBoxLayout *hLayout = new QHBoxLayout;
+#if QT_VERSION >= QT_VERSION_CHECK(6, 0, 0)
+    hLayout->setContentsMargins(0, 0, 0, 0);
+#else
     hLayout->setMargin(0);
+#endif
     hLayout->setContentsMargins(FullNameContentsMargins);
 
     m_userPicLabel = new DLabel(this);
@@ -66,7 +74,11 @@ void UserNameWidget::initialize()
     DFontSizeManager::instance()->bind(m_fullNameLabel, static_cast<DFontSizeManager::SizeType>(fontSize));
 
     QHBoxLayout *displayNameHLayout = new QHBoxLayout;
+#if QT_VERSION >= QT_VERSION_CHECK(6, 0, 0)
+    displayNameHLayout->setContentsMargins(0, 0, 0, 0);
+#else
     displayNameHLayout->setMargin(0);
+#endif
     displayNameHLayout->setSpacing(0);
     QPixmap isDomainUserpixmap = QIcon::fromTheme(":/misc/images/domainUser.svg").pixmap(24, 24);
     m_domainUserLabel = new DLabel(this);

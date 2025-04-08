@@ -22,6 +22,8 @@
 #include <libintl.h>
 #include <unistd.h>
 
+#include "dbusconstant.h"
+
 #define DOMAIN_BASE_UID 10000
 
 using namespace Auth;
@@ -33,11 +35,11 @@ LockWorker::LockWorker(SessionBaseModel *const model, QObject *parent)
     , m_authenticating(false)
     , m_isThumbAuth(false)
     , m_authFramework(new DeepinAuthFramework(this))
-    , m_lockInter(new DBusLockService("com.deepin.dde.LockService", "/com/deepin/dde/LockService", QDBusConnection::systemBus(), this))
-    , m_hotZoneInter(new DBusHotzone("com.deepin.daemon.Zone", "/com/deepin/daemon/Zone", QDBusConnection::sessionBus(), this))
+    , m_lockInter(new DBusLockService(DSS_DBUS::lockService, DSS_DBUS::lockServicePath, QDBusConnection::systemBus(), this))
+    , m_hotZoneInter(new DBusHotzone(DSS_DBUS::zoneService, DSS_DBUS::zonePath, QDBusConnection::sessionBus(), this))
     , m_resetSessionTimer(new QTimer(this))
     , m_limitsUpdateTimer(new QTimer(this))
-    , m_sessionManagerInter(new SessionManagerInter("com.deepin.SessionManager", "/com/deepin/SessionManager", QDBusConnection::sessionBus(), this))
+    , m_sessionManagerInter(new SessionManagerInter(DSS_DBUS::sessionManagerService, DSS_DBUS::sessionManagerPath, QDBusConnection::sessionBus(), this))
     , m_switchosInterface(new HuaWeiSwitchOSInterface("com.huawei", "/com/huawei/switchos", QDBusConnection::sessionBus(), this))
     , m_kglobalaccelInter(nullptr)
     , m_kwinInter(nullptr)
@@ -51,11 +53,21 @@ LockWorker::LockWorker(SessionBaseModel *const model, QObject *parent)
 
     m_resetSessionTimer->setInterval(15000);
 
+#ifndef ENABLE_DSS_SNIPE
     if (m_gsettings != nullptr && m_gsettings->keys().contains("authResetTime")){
         int resetTime = m_gsettings->get("auth-reset-time").toInt();
         if(resetTime > 0)
            m_resetSessionTimer->setInterval(resetTime);
     }
+#else
+    if (!m_dConfig) {
+        m_dConfig = DConfig::create("org.deepin.dde.session-shell", "org.deepin.dde.session-shell", QString(), this);
+    }
+    int resetTime = m_dConfig->value("authResetTime", 15000).toInt();
+    if (resetTime > 0) {
+        m_resetSessionTimer->setInterval(resetTime);
+    }
+#endif
 
     m_resetSessionTimer->setSingleShot(true);
     connect(m_resetSessionTimer, &QTimer::timeout, this, [this] {
@@ -146,7 +158,11 @@ void LockWorker::initConnections()
             return;
         }
 
+#ifndef ENABLE_DSS_SNIPE
         const bool sleepLock = m_model->getPowerGSettings("", "sleepLock").toBool();
+#else
+        const bool sleepLock = isSleepLock();
+#endif
         qCInfo(DDE_SHELL) << "Lock screen when system wakes up: " << sleepLock << ", is visible:" << m_model->visible();
         if (isSleep) {
             endAuthentication(m_account, AT_All);
@@ -207,7 +223,7 @@ void LockWorker::initConnections()
         if (oldOwner == "")
             return;
 
-        if (name == "com.deepin.daemon.Authenticate" && newOwner != "" && m_model->visible() && m_sessionManagerInter->locked()) {
+        if (name == DSS_DBUS::authenticateService && newOwner != "" && m_model->visible() && m_sessionManagerInter->locked()) {
             m_resetSessionTimer->stop();
             endAuthentication(m_account, AT_All);
             createAuthentication(m_model->currentUser()->name());
@@ -247,7 +263,7 @@ void LockWorker::initData()
 
     m_model->setUserlistVisible(valueByQSettings<bool>("", "userlist", true));
     /* com.deepin.udcp.iam */
-    QDBusInterface ifc("com.deepin.udcp.iam", "/com/deepin/udcp/iam", "com.deepin.udcp.iam", QDBusConnection::systemBus(), this);
+    QDBusInterface ifc(DSS_DBUS::udcpIamService, DSS_DBUS::udcpIamPath, DSS_DBUS::udcpIamService, QDBusConnection::systemBus(), this);
     const bool allowShowCustomUser = (!m_model->userlistVisible()) || valueByQSettings<bool>("", "loginPromptInput", false) ||
         ifc.property("Enable").toBool() || checkIsADDomain();
     m_model->setAllowShowCustomUser(allowShowCustomUser);
@@ -290,8 +306,13 @@ void LockWorker::initData()
 
 void LockWorker::initConfiguration()
 {
+#ifndef ENABLE_DSS_SNIPE
     m_model->setAlwaysShowUserSwitchButton(getGSettings("", "switchuser").toInt() == AuthInterface::Always);
     m_model->setAllowShowUserSwitchButton(getGSettings("", "switchuser").toInt() == AuthInterface::Ondemand);
+#else
+    m_model->setAlwaysShowUserSwitchButton(getDconfigValue("switchUser", Ondemand).toInt() == AuthInterface::Always);
+    m_model->setAllowShowUserSwitchButton(getDconfigValue("switchUser", Ondemand).toInt() == AuthInterface::Ondemand);
+#endif
 
     checkPowerInfo();
 }
@@ -425,7 +446,11 @@ void LockWorker::onAuthStateChanged(const int type, const int state, const QStri
 
 void LockWorker::doPowerAction(const SessionBaseModel::PowerAction action)
 {
+#ifndef ENABLE_DSS_SNIPE
     bool sleepLock = m_model->getPowerGSettings("", "sleepLock").toBool();
+#else
+    bool sleepLock = isSleepLock();
+#endif
     qCInfo(DDE_SHELL) << "Do power action:" << action;
     switch (action) {
     case SessionBaseModel::PowerAction::RequireSuspend:
@@ -434,10 +459,17 @@ void LockWorker::doPowerAction(const SessionBaseModel::PowerAction action)
         m_model->setCurrentModeState(SessionBaseModel::ModeStatus::PasswordMode);
 
         int delayTime = 500;
+#ifndef ENABLE_DSS_SNIPE
         if(m_gsettings && m_gsettings->keys().contains("delaytime")){
             delayTime = m_gsettings->get("delaytime").toInt();
             qCInfo(DDE_SHELL) << "DelayTime : " << delayTime;
         }
+#else
+        if (m_dConfig) {
+            delayTime = m_dConfig->value("delayTime", 500).toInt();
+            qInfo() << "delayTime : " << delayTime;
+        }
+#endif
         if (delayTime < 0) {
             delayTime = 500;
         }
@@ -457,10 +489,17 @@ void LockWorker::doPowerAction(const SessionBaseModel::PowerAction action)
         m_model->setCurrentModeState(SessionBaseModel::ModeStatus::PasswordMode);
 
         int delayTime = 500;
+#ifndef ENABLE_DSS_SNIPE
         if(m_gsettings && m_gsettings->keys().contains("delaytime")){
             delayTime = m_gsettings->get("delaytime").toInt();
             qCInfo(DDE_SHELL) << "DelayTime : " << delayTime;
         }
+#else
+        if (m_dConfig) {
+            delayTime = m_dConfig->value("delayTime", 500).toInt();
+            qInfo() << "delayTime : " << delayTime;
+        }
+#endif
         if (delayTime < 0) {
             delayTime = 500;
         }
@@ -545,12 +584,18 @@ void LockWorker::doPowerAction(const SessionBaseModel::PowerAction action)
 
 bool LockWorker::isCheckPwdBeforeRebootOrShut()
 {
+#ifndef ENABLE_DSS_SNIPE
     if (QGSettings::isSchemaInstalled("com.deepin.dde.session-shell")) {
         QGSettings updateSettings("com.deepin.dde.session-shell", QByteArray(), this);
         if (updateSettings.keys().contains("checkpwd")) {
              return updateSettings.get("checkpwd").toBool();
         }
     }
+#else
+    if (m_dConfig) {
+        return m_dConfig->value("checkpwd", false).toBool();
+    }
+#endif
     return false;
 }
 
@@ -658,7 +703,11 @@ void LockWorker::createAuthentication(const QString &account)
         if (user_ptr->isNoPasswordLogin()) {
             qCInfo(DDE_SHELL) << "User is no password login";
             // 无密码登录锁定后也属于锁屏，需要设置lock属性
+#ifndef ENABLE_DSS_SNIPE
             if (m_model->getPowerGSettings("", "sleepLock").toBool()) {
+#else
+            if (isSleepLock()) {
+#endif
                 setLocked(true);
             } else if (m_model->isQuickLoginProcess()) {
                 //若此次程序拉起为快速登录流程，需要锁屏

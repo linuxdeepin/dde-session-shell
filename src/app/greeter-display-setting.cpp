@@ -2,6 +2,7 @@
 //
 // SPDX-License-Identifier: GPL-3.0-or-later
 #include "constants.h"
+#include "dbusconstant.h"
 
 #include <QDBusInterface>
 #include <QDBusReply>
@@ -28,9 +29,9 @@ const bool IsWayland = qgetenv("XDG_SESSION_TYPE").contains("wayland");
 // Load system cursor --end
 
 bool isScaleConfigExists() {
-    QDBusInterface configInter("com.deepin.system.Display",
-                                                     "/com/deepin/system/Display",
-                                                     "com.deepin.system.Display",
+    QDBusInterface configInter(DSS_DBUS::systemDisplayService,
+                                                     DSS_DBUS::systemDisplayPath,
+                                                     DSS_DBUS::systemDisplayService,
                                                     QDBusConnection::systemBus());
     if (!configInter.isValid()) {
         return false;
@@ -179,9 +180,9 @@ double getScaleFormConfig()
         dconfig = nullptr;
     }
 
-    QDBusInterface configInter("com.deepin.system.Display",
-                                                     "/com/deepin/system/Display",
-                                                     "com.deepin.system.Display",
+    QDBusInterface configInter(DSS_DBUS::systemDisplayService,
+                                                     DSS_DBUS::systemDisplayPath,
+                                                     DSS_DBUS::systemDisplayService,
                                                     QDBusConnection::systemBus());
     if (!configInter.isValid()) {
         return defaultScaleFactor;

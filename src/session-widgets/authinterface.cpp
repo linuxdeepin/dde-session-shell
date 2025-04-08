@@ -5,6 +5,7 @@
 #include "authinterface.h"
 #include "sessionbasemodel.h"
 #include "userinfo.h"
+#include "dbusconstant.h"
 
 #include <QProcessEnvironment>
 #include <QFile>
@@ -17,19 +18,26 @@ using namespace Auth;
 AuthInterface::AuthInterface(SessionBaseModel *const model, QObject *parent)
     : QObject(parent)
     , m_model(model)
-    , m_accountsInter(new AccountsInter("com.deepin.daemon.Accounts", "/com/deepin/daemon/Accounts", QDBusConnection::systemBus(), this))
-    , m_loginedInter(new LoginedInter("com.deepin.daemon.Accounts", "/com/deepin/daemon/Logined", QDBusConnection::systemBus(), this))
+    , m_accountsInter(new AccountsInter(DSS_DBUS::accountsService, DSS_DBUS::accountsPath, QDBusConnection::systemBus(), this))
+    , m_loginedInter(new LoginedInter(DSS_DBUS::accountsService, DSS_DBUS::loginedPath, QDBusConnection::systemBus(), this))
     , m_login1Inter(new DBusLogin1Manager("org.freedesktop.login1", "/org/freedesktop/login1", QDBusConnection::systemBus(), this))
-    , m_powerManagerInter(new PowerManagerInter("com.deepin.daemon.PowerManager", "/com/deepin/daemon/PowerManager", QDBusConnection::systemBus(), this))
+    , m_powerManagerInter(new PowerManagerInter(DSS_DBUS::powerManagerService, DSS_DBUS::powerManagerPath, QDBusConnection::systemBus(), this))
     , m_dbusInter(new DBusObjectInter("org.freedesktop.DBus", "/org/freedesktop/DBus", QDBusConnection::systemBus(), this))
     , m_lastLogoutUid(0)
     , m_currentUserUid(0)
     , m_loginUserList(0)
 {
+#ifndef ENABLE_DSS_SNIPE
     // 需要先初始化m_gsettings
     if (QGSettings::isSchemaInstalled("com.deepin.dde.session-shell")) {
         m_gsettings = new QGSettings("com.deepin.dde.session-shell", "/com/deepin/dde/session-shell/", this);
     }
+#else
+    if (!m_dConfig) {
+        m_dConfig = Dtk::Core::DConfig::create("org.deepin.dde.session-shell", "org.deepin.dde.session-shell", QString(), this);
+    }
+#endif
+
 
     if (m_login1Inter->isValid()) {
        QString session_self = m_login1Inter->GetSessionByPID(0).value().path();
@@ -52,7 +60,7 @@ void AuthInterface::onUserListChanged(const QStringList &list)
     QStringList tmpList;
     for (std::shared_ptr<User> u : m_model->userList()) {
         if (u->type() == User::Native)
-            tmpList << ACCOUNTS_DBUS_PREFIX + QString::number(u->uid());
+            tmpList << QString(DSS_DBUS::accountsUserPath).arg(QString::number(u->uid()));
     }
 
     for (const QString &u : list) {
@@ -175,6 +183,7 @@ bool AuthInterface::checkHaveDisplay(const QJsonArray &array)
     return false;
 }
 
+#ifndef ENABLE_DSS_SNIPE
 QVariant AuthInterface::getGSettings(const QString& node, const QString& key)
 {
     QVariant value = valueByQSettings<QVariant>(node, key, true);
@@ -183,6 +192,16 @@ QVariant AuthInterface::getGSettings(const QString& node, const QString& key)
     }
     return value;
 }
+#else
+QVariant AuthInterface::getDconfigValue(const QString &key, const QVariant &fallbackValue)
+{
+    if (m_dConfig) {
+        return m_dConfig->value(key, fallbackValue);
+    }
+
+    return fallbackValue;
+}
+#endif
 
 bool AuthInterface::isLogined(uint uid)
 {
@@ -196,27 +215,44 @@ bool AuthInterface::isDeepin()
 #ifdef QT_DEBUG
     return true;
 #else
+
+#ifndef ENABLE_DSS_SNIPE
     return getGSettings("","useDeepinAuth").toBool();
+#else
+    return getDconfigValue("useDeepinAuth", true).toBool();
+#endif
+
 #endif
 }
 
 void AuthInterface::checkConfig()
 {
+#ifndef ENABLE_DSS_SNIPE
     m_model->setAlwaysShowUserSwitchButton(getGSettings("","switchuser").toInt() == AuthInterface::Always);
     m_model->setAllowShowUserSwitchButton(getGSettings("","switchuser").toInt() == AuthInterface::Ondemand);
+#else
+    m_model->setAlwaysShowUserSwitchButton(getDconfigValue("switchUser", Ondemand).toInt() == AuthInterface::Always);
+    m_model->setAllowShowUserSwitchButton(getDconfigValue("switchUser", Ondemand).toInt() == AuthInterface::Ondemand);
+#endif
 }
 
 void AuthInterface::checkPowerInfo()
 {
     // 替换接口org.freedesktop.login1 为com.deepin.sessionManager,原接口的是否支持待机和休眠的信息不准确
     QProcessEnvironment env = QProcessEnvironment::systemEnvironment();
+#ifndef ENABLE_DSS_SNIPE
     bool can_sleep = env.contains(POWER_CAN_SLEEP) ? QVariant(env.value(POWER_CAN_SLEEP)).toBool()
                                                    : getGSettings("Power","sleep").toBool() && m_powerManagerInter->CanSuspend();
-    m_model->setCanSleep(can_sleep);
-
     bool can_hibernate = env.contains(POWER_CAN_HIBERNATE) ? QVariant(env.value(POWER_CAN_HIBERNATE)).toBool()
                                                            : getGSettings("Power","hibernate").toBool() && m_powerManagerInter->CanHibernate();
+#else
+    bool can_sleep = env.contains(POWER_CAN_SLEEP) ? QVariant(env.value(POWER_CAN_SLEEP)).toBool()
+                                                   : getDconfigValue("sleep", true).toBool() && m_powerManagerInter->CanSuspend();
+    bool can_hibernate = env.contains(POWER_CAN_HIBERNATE) ? QVariant(env.value(POWER_CAN_HIBERNATE)).toBool()
+                                                           : getDconfigValue("hibernate", true).toBool() && m_powerManagerInter->CanHibernate();
+#endif
 
+    m_model->setCanSleep(can_sleep);
     m_model->setHasSwap(can_hibernate);
 }
 

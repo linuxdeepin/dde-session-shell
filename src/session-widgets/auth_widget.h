@@ -83,7 +83,11 @@ public:
     static void addWidget(QWidget* w, QBoxLayout* layout, Qt::Alignment alignment = Qt::AlignVCenter, int h = 10)
     {
         QSpacerItem* item = new QSpacerItem(0, h);
+#if DTK_VERSION < DTK_VERSION_CHECK(6, 0, 0, 0)
         SpacerItemBinder::instance()->bind(w, item, QSize(0, h));
+#else
+        SpacerItemBinder::ref().bind(w, item, QSize(0, h));
+#endif
         layout->addWidget(w, 0, alignment);
         layout->addSpacerItem(item);
     }

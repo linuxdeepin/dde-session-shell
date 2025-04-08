@@ -2,6 +2,7 @@
 //
 // SPDX-License-Identifier: GPL-3.0-or-later
 
+#ifndef ENABLE_DSS_SNIPE
 #include "gsettingwatcher.h"
 
 #include <QGSettings>
@@ -104,3 +105,5 @@ void GSettingWatcher::onStatusModeChanged(const QString &key)
         }
     }
 }
+
+#endif // ENABLE_DSS_SNIPE

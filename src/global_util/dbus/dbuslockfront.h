@@ -10,6 +10,8 @@
 #include <QMetaObject>
 #include <QMetaProperty>
 
+#include "dbusconstant.h"
+
 /*
  * Proxy class for interface com.deepin.dde.lockFront
  */
@@ -23,7 +25,7 @@ class DBusLockFront: public QDBusAbstractInterface
         if (3 != arguments.count())
             return;
         QString interfaceName = msg.arguments().at(0).toString();
-        if (interfaceName !="com.deepin.dde.lockFront")
+        if (interfaceName != DSS_DBUS::lockFrontService)
             return;
         QVariantMap changedProps = qdbus_cast<QVariantMap>(arguments.at(1).value<QDBusArgument>());
         foreach(const QString &prop, changedProps.keys()) {
@@ -38,7 +40,7 @@ class DBusLockFront: public QDBusAbstractInterface
    }
 public:
     static inline const char *staticInterfaceName()
-    { return "com.deepin.dde.lockFront"; }
+    { return DSS_DBUS::lockFrontService.toStdString().c_str(); }
 
 public:
     explicit DBusLockFront(QObject *parent = 0);

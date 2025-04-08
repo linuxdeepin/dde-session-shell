@@ -2,6 +2,8 @@
 //
 // SPDX-License-Identifier: GPL-3.0-or-later
 
+#ifndef ENABLE_DSS_SNIPE
+
 #ifndef GSETTINGWATCHER_H
 #define GSETTINGWATCHER_H
 
@@ -35,3 +37,5 @@ private:
 };
 
 #endif // GSETTINGWATCHER_H
+
+#endif // ENABLE_DSS_SNIPE

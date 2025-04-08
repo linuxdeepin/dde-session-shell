@@ -172,7 +172,11 @@ public:
     // Warning: 不要增加虚函数，即使在最后面（如果派生类也有虚函数，那么虚表寻址也会错误）
 };
 
+#ifndef ENABLE_DSS_SNIPE
 typedef Q_DECL_DEPRECATED LoginModuleInterface LoginModuleInterfaceV2;
+#else
+Q_DECL_DEPRECATED typedef LoginModuleInterface LoginModuleInterfaceV2;
+#endif
 
 } // namespace module
 } // namespace dss

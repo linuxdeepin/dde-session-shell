@@ -8,15 +8,14 @@
 #include "authinterface.h"
 #include "dbushotzone.h"
 #include "dbuslockservice.h"
-#include "dbuslogin1manager.h"
 #include "deepinauthframework.h"
 #include "sessionbasemodel.h"
 #include "switchos_interface.h"
 #include "userinfo.h"
 
 #include <QObject>
-#include <QWidget>
 
+#ifndef ENABLE_DSS_SNIPE
 #include <com_deepin_daemon_accounts.h>
 #include <com_deepin_daemon_accounts_user.h>
 #include <com_deepin_daemon_logined.h>
@@ -26,6 +25,17 @@ using AccountsInter = com::deepin::daemon::Accounts;
 using UserInter = com::deepin::daemon::accounts::User;
 using LoginedInter = com::deepin::daemon::Logined;
 using SessionManagerInter = com::deepin::SessionManager;
+#else
+#include "accounts1interface.h"
+#include "loginedinterface.h"
+#include "userinterface.h"
+#include "sessionmanager1interface.h"
+
+using AccountsInter = org::deepin::dde::Accounts1;
+using UserInter = org::deepin::dde::accounts1::User;
+using LoginedInter = org::deepin::dde::Logined;
+using SessionManagerInter = org::deepin::dde::SessionManager1;
+#endif
 
 class SessionBaseModel;
 class LockWorker : public Auth::AuthInterface

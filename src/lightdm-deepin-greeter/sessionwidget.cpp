@@ -7,12 +7,13 @@
 #include "dconfig_helper.h"
 
 #include <QApplication>
-#include <QDesktopWidget>
 #include <QLabel>
 #include <QFile>
 #include <QSettings>
 #include <QPropertyAnimation>
 #include <QString>
+
+#include "dbusconstant.h"
 
 static const int SessionButtonWidth = 160;
 static const int SessionButtonHeight = 160;
@@ -66,8 +67,8 @@ SessionWidget::SessionWidget(QWidget *parent)
 
     // 判断显卡是否支持wayland
     if (m_allowSwitchingToWayland) {
-        QDBusInterface systemDisplayInter("com.deepin.system.Display", "/com/deepin/system/Display",
-                "com.deepin.system.Display", QDBusConnection::systemBus(), this);
+        QDBusInterface systemDisplayInter(DSS_DBUS::systemDisplayService, DSS_DBUS::systemDisplayPath,
+                DSS_DBUS::systemDisplayService, QDBusConnection::systemBus(), this);
         QDBusReply<bool> reply  = systemDisplayInter.call("SupportWayland");
         if (QDBusError::NoError == reply.error().type())
             m_allowSwitchingToWayland = reply.value();

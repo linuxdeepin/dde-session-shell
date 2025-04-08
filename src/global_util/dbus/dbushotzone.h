@@ -14,6 +14,8 @@
 #include <QtCore/QVariant>
 #include <QtDBus/QtDBus>
 
+#include "dbusconstant.h"
+
 /*
  * Proxy class for interface com.deepin.daemon.Zone
  */
@@ -26,7 +28,7 @@ class DBusHotzone: public QDBusAbstractInterface
         if (3 != arguments.count())
             return;
         QString interfaceName = msg.arguments().at(0).toString();
-        if (interfaceName !="com.deepin.daemon.Zone")
+        if (interfaceName != DSS_DBUS::zoneService)
             return;
         QVariantMap changedProps = qdbus_cast<QVariantMap>(arguments.at(1).value<QDBusArgument>());
         QStringList keys = changedProps.keys();
@@ -42,7 +44,11 @@ class DBusHotzone: public QDBusAbstractInterface
    }
 public:
     static inline const char *staticInterfaceName()
+#ifndef ENABLE_DSS_SNIPE
     { return "com.deepin.daemon.Zone"; }
+#else
+    { return "org.deepin.dde.Zone1"; }
+#endif
 
 public:
     DBusHotzone(const QString &service, const QString &path, const QDBusConnection &connection, QObject *parent = 0);

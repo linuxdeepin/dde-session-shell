@@ -8,17 +8,20 @@
 #include "authcommon.h"
 
 #include <QObject>
-#include <QPointer>
 
+#ifndef ENABLE_DSS_SNIPE
 #include <com_deepin_daemon_authenticate.h>
 #include <com_deepin_daemon_authenticate_session2.h>
-#include <memory>
-
-#define AUTHENTICATE_SERVICE "com.deepin.daemon.Authenticate"
 
 using AuthInter = com::deepin::daemon::Authenticate;
 using AuthControllerInter = com::deepin::daemon::authenticate::Session;
+#else
+#include "authenticate1interface.h"
+#include "session2interface.h"
 
+using AuthInter = org::deepin::dde::Authenticate1;
+using AuthControllerInter = org::deepin::dde::authenticate1::Session;
+#endif
 
 class DeepinAuthFramework : public QObject
 {

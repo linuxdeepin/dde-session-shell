@@ -4,14 +4,15 @@ aux_source_directory(. LOCK_TEST)
 
 set(LOCK_TEST_SRCS
     ${LOCK_TEST}
-    ${authority_DBUS_SCRS}
+    ${AUTH_DBUS_SCRS}
     ${GLOBAL_UTILS}
     ${GLOBAL_UTILS_DBUS}
     ${GLOBAL_UTILS_KEYBOARDMONITOR}
     ${WIDGETS}
     ${SESSION_WIDGETS}
-    ${haweiswitchos_DBUS_SCRS}
+    ${SWITCHOS_DBUS_SCRS}
     ${AUTHENTICATE}
+    ${DBUS_DATA_TYPES}
     ${PLUGIN_MANAGER}
     ${PROJECT_SOURCE_DIR}/src/dde-lock/lockframe.cpp
     ${PROJECT_SOURCE_DIR}/src/dde-lock/lockworker.cpp
@@ -31,33 +32,38 @@ add_executable(${BIN_NAME}
 target_include_directories(${BIN_NAME} PUBLIC
     ${DTKWIDGET_INCLUDE_DIR}
     ${DTKCORE_INCLUDE_DIR}
-    ${DFrameworkDBus_INCLUDE_DIRS}
-    ${Qt5Gui_PRIVATE_INCLUDE_DIRS}
-    ${QGSettings_INCLUDE_DIRS}
     ${PAM_INCLUDE_DIR}
     ${XCB_EWMH_INCLUDE_DIRS}
-    ${Qt5X11Extras_INCLUDE_DIRS}
     ${PROJECT_BINARY_DIR}
     ${PROJECT_SOURCE_DIR}/src/dde-lock
     ${PROJECT_SOURCE_DIR}/src/dde-lock/dbus
 )
+if (DISABLE_DSS_SNIPE)
+    target_include_directories(${BIN_NAME} PUBLIC
+        ${DFrameworkDBus_INCLUDE_DIRS}
+        ${Qt5Gui_PRIVATE_INCLUDE_DIRS}
+        ${QGSettings_INCLUDE_DIRS}
+        ${Qt5X11Extras_INCLUDE_DIRS}
+    )
+endif ()
 
 target_link_libraries(${BIN_NAME} PRIVATE
-    ${Qt5Test_LIBRARIES}
-    ${DFrameworkDBus_LIBRARIES}
-    ${DtkWidget_LIBRARIES}
-    ${DtkCore_LIBRARIES}
-    ${Qt5Widgets_LIBRARIES}
-    ${Qt5DBus_LIBRARIES}
-    ${QGSettings_LIBRARIES}
+    Qt${QT_VERSION_MAJOR}::Test
+    Dtk${DTK_VERSION_MAJOR}::Widget
+    Dtk${DTK_VERSION_MAJOR}::Core
     ${GTEST_LIBRARIES}
     ${Qt_LIBS}
     ${PAM_LIBRARIES}
     ${XCB_EWMH_LIBRARIES}
-    ${Qt5X11Extras_LIBRARIES}
-    ${Qt5Network_LIBRARIES}
-    KF5::WaylandClient
     -lpthread
     -lm
     -lcrypto
 )
+if (DISABLE_DSS_SNIPE)
+    target_link_libraries(${BIN_NAME} PRIVATE
+        ${DFrameworkDBus_LIBRARIES}
+        ${QGSettings_LIBRARIES}
+        ${Qt5X11Extras_LIBRARIES}
+        KF5::WaylandClient
+    )
+endif ()

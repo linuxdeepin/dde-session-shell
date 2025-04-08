@@ -10,6 +10,8 @@
 #include <memory>
 #include <pwd.h>
 
+#include "dbusconstant.h"
+
 #define DEFAULT_AVATAR ":/img/default_avatar.svg"
 #define DEFAULT_BACKGROUND "/usr/share/backgrounds/default_background.jpg"
 
@@ -241,7 +243,7 @@ QString User::userPwdName(const uid_t uid) const
 NativeUser::NativeUser(const QString &path, QObject *parent)
     : User(parent)
     , m_path(path)
-    , m_userInter(new UserInter("com.deepin.daemon.Accounts", path, QDBusConnection::systemBus(), this))
+    , m_userInter(new UserInter(DSS_DBUS::accountsService, path, QDBusConnection::systemBus(), this))
 {
     initConnections();
     initData();
@@ -250,8 +252,8 @@ NativeUser::NativeUser(const QString &path, QObject *parent)
 
 NativeUser::NativeUser(const uid_t &uid, QObject *parent)
     : User(parent)
-    , m_path("/com/deepin/daemon/Accounts/User" + QString::number(uid))
-    , m_userInter(new UserInter("com.deepin.daemon.Accounts", m_path, QDBusConnection::systemBus(), this))
+    , m_path(QString(DSS_DBUS::accountsUserPath).arg(QString::number(uid)))
+    , m_userInter(new UserInter(DSS_DBUS::accountsService, m_path, QDBusConnection::systemBus(), this))
 {
     initConnections();
     initData();
@@ -261,7 +263,7 @@ NativeUser::NativeUser(const uid_t &uid, QObject *parent)
 NativeUser::NativeUser(const NativeUser &user)
     : User(user)
     , m_path(user.path())
-    , m_userInter(new UserInter("com.deepin.daemon.Accounts", m_path, QDBusConnection::systemBus(), this))
+    , m_userInter(new UserInter(DSS_DBUS::accountsService, m_path, QDBusConnection::systemBus(), this))
 {
     initConnections();
 }

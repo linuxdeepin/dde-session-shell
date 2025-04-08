@@ -16,8 +16,6 @@
 
 class QJsonDocument;
 
-#define ACCOUNTS_DBUS_PREFIX "/com/deepin/daemon/Accounts/User"
-
 static const int APP_TYPE_LOCK = 0;
 static const int APP_TYPE_LOGIN = 1;
 
@@ -84,5 +82,9 @@ bool checkVersion(const QString &target, const QString &base);
  * @brief 配置 qwebengine 相关环境
  */
 void configWebEngine();
+
+#ifdef ENABLE_DSS_SNIPE
+bool isSleepLock();
+#endif
 
 #endif // PUBLIC_FUNC_H

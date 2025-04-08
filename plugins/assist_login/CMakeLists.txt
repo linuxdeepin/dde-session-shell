@@ -1,16 +1,14 @@
-find_package(QT NAMES Qt5 COMPONENTS Widgets Network REQUIRED)
-find_package(Qt${QT_VERSION_MAJOR} COMPONENTS Widgets REQUIRED)
+find_package(Qt${QT_VERSION_MAJOR} COMPONENTS Widgets Network REQUIRED)
 find_package(PkgConfig REQUIRED)
-
 
 pkg_check_modules(SSL REQUIRED IMPORTED_TARGET libcrypto libssl openssl)
 
 link_libraries(
-        ${Qt_LIBS}
-        Qt${QT_VERSION_MAJOR}::Widgets
-        PkgConfig::SSL
-        ${DtkCore_LIBRARIES}
-        ${DtkWidget_LIBRARIES}
+    ${Qt_LIBS}
+    Qt${QT_VERSION_MAJOR}::Widgets
+    PkgConfig::SSL
+    Dtk${DTK_VERSION_MAJOR}::Widget
+    Dtk${DTK_VERSION_MAJOR}::Core
 )
 
 set(LIB_NAME assist-login)

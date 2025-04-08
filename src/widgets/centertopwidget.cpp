@@ -72,7 +72,7 @@ void CenterTopWidget::setCurrentUser(User *user)
     }
 
     auto locale = qApp->applicationName() == "dde-lock" ? QLocale::system().name() : user->locale();
-    m_timeWidget->updateLocale(locale);
+    m_timeWidget->updateLocale(QLocale(locale));
     m_timeWidget->set24HourFormat(user->isUse24HourFormat());
     m_timeWidget->setWeekdayFormatType(user->weekdayFormat());
     m_timeWidget->setShortDateFormat(user->shortDateFormat());
@@ -93,7 +93,7 @@ void CenterTopWidget::updateTimeFormat(bool use24)
 {
     if (!m_currentUser.isNull()) {
         auto locale = qApp->applicationName() == "dde-lock" ? QLocale::system().name() : m_currentUser->locale();
-        m_timeWidget->updateLocale(locale);
+        m_timeWidget->updateLocale(QLocale(locale));
         m_timeWidget->set24HourFormat(use24);
         m_timeWidget->setVisible(true);
     }

@@ -8,10 +8,12 @@
 #include "authcommon.h"
 #include "userinfo.h"
 
-#include <DSysInfo>
-
 #include <QObject>
+#ifndef ENABLE_DSS_SNIPE
 #include <QGSettings>
+#else
+#include <DConfig>
+#endif
 
 #include <memory>
 #include <types/mfainfolist.h>
@@ -222,8 +224,9 @@ public slots:
     void updatePINLen(const int PINLen);
     void updatePrompt(const QString &prompt);
 
+#ifndef ENABLE_DSS_SNIPE
     QVariant getPowerGSettings(const QString &node, const QString &key);
-
+#endif
 signals:
     void authTipsMessage(const QString &message, AuthFailedType type = KEYBOARD);
     void authFailedMessage(const QString &message, AuthFailedType type = KEYBOARD);
@@ -300,8 +303,11 @@ private:
     QMap<QString, std::shared_ptr<User>> *m_loginedUsers;
     UpdatePowerMode m_updatePowerMode;
     ContentType m_currentContentType;
+#ifndef ENABLE_DSS_SNIPE
     QGSettings* m_powerGsettings = nullptr;
-
+#else
+    Dtk::Core::DConfig *m_powerConfig = nullptr;
+#endif
     bool m_lightdmPamStarted; // 标志lightdmpam是否已经开启，主要用于greeter,lock不涉及lightdm
     AuthResult m_authResult; // 记录认证结果
     bool m_enableShellBlackMode;

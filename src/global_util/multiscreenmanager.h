@@ -5,15 +5,21 @@
 #ifndef MULTISCREENMANAGER_H
 #define MULTISCREENMANAGER_H
 
-#include <QObject>
 #include <QWidget>
 #include <QScreen>
 #include <QMap>
 #include <functional>
-#include <QTimer>
+
+#ifdef ENABLE_DSS_SNIPE
+#include "systemdisplay1interface.h"
+
+using SystemDisplayInter = org::deepin::dde::Display1;
+#else
 #include <com_deepin_system_systemdisplay.h>
 
 using SystemDisplayInter = com::deepin::system::Display;
+#endif
+
 
 const static int COPY_MODE = 1;
 const static int EXTENDED_MODE = 2;

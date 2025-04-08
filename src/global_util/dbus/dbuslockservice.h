@@ -20,6 +20,8 @@
 #include <QtCore/QVariant>
 #include <QtDBus/QtDBus>
 
+#include "dbusconstant.h"
+
 /*
  * Proxy class for interface com.deepin.dde.lock
  */
@@ -28,7 +30,7 @@ class DBusLockService: public QDBusAbstractInterface
     Q_OBJECT
 public:
     static inline const char *staticInterfaceName()
-    { return "com.deepin.dde.LockService"; }
+    { return DSS_DBUS::lockService.toStdString().c_str(); }
 
     enum EventType {
         PromptQuestion = 1,

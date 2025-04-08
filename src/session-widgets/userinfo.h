@@ -12,10 +12,13 @@
 #include <QObject>
 #include <QJsonObject>
 
+#ifndef ENABLE_DSS_SNIPE
 #include <com_deepin_daemon_accounts_user.h>
-
 using UserInter = com::deepin::daemon::accounts::User;
-
+#else
+#include "userinterface.h"
+using UserInter = org::deepin::dde::accounts1::User;
+#endif
 class User : public QObject
 {
     Q_OBJECT

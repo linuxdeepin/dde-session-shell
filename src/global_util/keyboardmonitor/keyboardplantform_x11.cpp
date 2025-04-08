@@ -5,11 +5,14 @@
 #include "keyboardplantform_x11.h"
 #include "constants.h"
 
+#ifdef ENABLE_DSS_SNIPE
+#include <QGuiApplication>
+#else
 #include <QX11Info>
+#endif
 #include <QDebug>
 
 #include <X11/X.h>
-#include <QX11Info>
 #include <X11/XKBlib.h>
 #include <X11/extensions/XInput.h>
 #include <X11/extensions/XInput2.h>
@@ -18,7 +21,6 @@
 #include <X11/extensions/XTest.h>
 
 #include <stdio.h>
-#include <stdlib.h>
 
 static int xi2_opcode;
 
@@ -135,6 +137,7 @@ int KeyboardPlatformX11::listen(Display *display)
     return EXIT_SUCCESS;
 }
 
+#ifndef ENABLE_DSS_SNIPE
 KeyboardPlatformX11::KeyboardPlatformX11(QObject *parent)
     : KeyBoardPlatform(parent)
 {
@@ -224,3 +227,92 @@ void KeyboardPlatformX11::ungrabKeyboard()
 
     XUngrabKeyboard(d, CurrentTime);
 }
+#else
+KeyboardPlatformX11::KeyboardPlatformX11(QObject *parent)
+    : KeyBoardPlatform(parent)
+{
+    if (auto x11Application = qGuiApp->nativeInterface<QNativeInterface::QX11Application>())
+        m_display = x11Application->display();
+}
+
+bool KeyboardPlatformX11::isCapsLockOn()
+{
+    bool result = false;
+    unsigned int n = 0;
+    if (m_display) {
+        XkbGetIndicatorState(m_display, XkbUseCoreKbd, &n);
+        result = (n & 0x01) != 0;
+    }
+
+    return result;
+}
+
+bool KeyboardPlatformX11::isNumLockOn()
+{
+    bool result = false;
+    unsigned int n = 0;
+    if (!m_display)
+        return false;
+
+    XkbGetIndicatorState(m_display, XkbUseCoreKbd, &n);
+    result = (n & 0x02) != 0;
+
+    return result;
+}
+
+bool KeyboardPlatformX11::setNumLockStatus(const bool &on)
+{
+    if (!m_display)
+        return false;
+
+    XKeyboardState x;
+    XGetKeyboardControl(m_display, &x);
+    const bool numLockEnabled = x.led_mask & 2;
+
+    if (numLockEnabled == on) {
+        return true;
+    }
+
+    // Get the keycode for XK_Caps_Lock keysymbol
+    unsigned int keycode = XKeysymToKeycode(m_display, XK_Num_Lock);
+
+    // Simulate Press
+    int pressExit = XTestFakeKeyEvent(m_display, keycode, True, CurrentTime);
+    XFlush(m_display);
+
+    // Simulate Release
+    int releseExit = XTestFakeKeyEvent(m_display, keycode, False, CurrentTime);
+    XFlush(m_display);
+
+    return pressExit == 0 && releseExit == 0;
+}
+
+void KeyboardPlatformX11::run()
+{
+    Display* display = XOpenDisplay(nullptr);
+    int event, error;
+
+    if (!XQueryExtension(display, "XInputExtension", &xi2_opcode, &event, &error)) {
+        fprintf(stderr, "XInput2 not available.\n");
+        return;
+    }
+
+    if (!xinput_version(display)) {
+        fprintf(stderr, "XInput2 extension not available\n");
+        return;
+    }
+
+    select_events(display);
+    listen(display);
+}
+
+void KeyboardPlatformX11::ungrabKeyboard()
+{
+    if (!m_display) {
+        fprintf(stderr, "display pointer is NULL when try ungrab keyboard.\n");
+        return;
+    }
+
+    XUngrabKeyboard(m_display, CurrentTime);
+}
+#endif

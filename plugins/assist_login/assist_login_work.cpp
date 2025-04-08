@@ -7,6 +7,7 @@
 #include <QDBusReply>
 
 #include "assist_login_work.h"
+#include "dbusconstant.h"
 
 const QString SocketServiceName = "dde-assist-login";
 
@@ -60,7 +61,7 @@ void dss::module::AssistLoginWork::onGetAuthResult()
 void dss::module::AssistLoginWork::onStartAuth(const QString &user, const QString &passwd)
 {
     qDebug() << Q_FUNC_INFO << user;
-    QDBusInterface dssInterface("com.deepin.daemon.Accounts", "/com/deepin/daemon/Accounts", "com.deepin.daemon.Accounts",
+    QDBusInterface dssInterface(DSS_DBUS::accountsService, DSS_DBUS::accountsPath, DSS_DBUS::accountsService,
                  QDBusConnection::systemBus());
     QDBusReply<QString> data = dssInterface.call("FindUserByName", user);
     if (!data.isValid()) {

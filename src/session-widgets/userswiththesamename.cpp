@@ -146,7 +146,7 @@ bool UsersWithTheSameName::findUsers(const QString nativeUserName, const QString
 void UsersWithTheSameName::addUserPanel(QList<UserPanel *> &list)
 {
     //多用户的情况按照其uid排序，升序排列，符合账户先后创建顺序
-    qSort(list.begin(), list.end(), [](UserPanel *w1, UserPanel *w2) {
+    std::sort(list.begin(), list.end(), [](UserPanel *w1, UserPanel *w2) {
         return (w1->uid() < w2->uid());
     });
     for (int index = 0; index < list.size(); ++index) {

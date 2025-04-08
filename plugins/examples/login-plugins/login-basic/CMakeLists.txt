@@ -12,22 +12,26 @@ set(CMAKE_AUTOMOC ON)
 # 启用 qrc 资源文件的支持
 set(CMAKE_AUTORCC ON)
 
+find_package(Qt6 COMPONENTS Core QUIET)
+if (Qt6_FOUND)
+    set(QT_VERSION_MAJOR 6)
+    set(DTK_VERSION_MAJOR 6)
+else ()
+    set(QT_VERSION_MAJOR 5)
+    set(DTK_VERSION_MAJOR 5)
+endif ()
+
 # 指定所有源码文件
 # 使用了 cmake 的 file 命令，递归查找项目目录下所有头文件和源码文件
 # 并将结果放入 SRCS 变量中，方便后续取用
 file(GLOB_RECURSE SRCS "*.h" "*.cpp")
 
 # 指定要用到的库
-# 使用了 cmake 的 find_package 命令，查找库 Qt5Widgets 等，
+# 使用了 cmake 的 find_package 命令，查找库 Qt对应版本的模块，如Widgets等，
 # REQUIRED 参数表示如果没有找到则报错
 # find_package 命令在找到并加载指定的库之后会设置一些变量
-# 常用的有：
-# <库名>_FOUND          是否找到（Qt5Widgets_FOUND）
-# <库名>_DIR            在哪个目录下找到的（Qt5Widgets_DIR）
-# <库名>_INCLUDE_DIRS   有哪些头文件目录（Qt5Widgets_INCLUDE_DIRS）
-# <库名>_LIBRARIES      有哪些库文件（Qt5Widgets_LIBRARIES）
-find_package(Qt5Widgets REQUIRED)
-find_package(DtkWidget REQUIRED)
+find_package(Qt${QT_VERSION_MAJOR} REQUIRED COMPONENTS Widgets)
+find_package(Dtk${DTK_VERSION_MAJOR} REQUIRED COMPONENTS Widget)
 find_package(DdeSessionShell REQUIRED)
 
 # find_package 命令还可以用来加载 cmake 的功能模块
@@ -59,17 +63,17 @@ set_target_properties(${PLUGIN_NAME} PROPERTIES LIBRARY_OUTPUT_DIRECTORY ./)
 # 变量 ${DtkWidget_INCLUDE_DIRS} 是在前面执行 find_package 命令时引入的
 # 当出现编译失败提示找不到某些库的头文件时应该检查此处是否将所有需要的头文件都包含了
 target_include_directories(${PLUGIN_NAME} PUBLIC
-    ${Qt5Widgets_INCLUDE_DIRS}
+    Qt${QT_VERSION_MAJOR}::Widgets
     ${DtkWidget_INCLUDE_DIRS}
     ${DdeSessionShell_INCLUDE_DIRS}
 )
 
 # 设置目标要使用的链接库
-# 变量 ${DtkWidget_LIBRARIES} 和 ${Qt5Widgets_LIBRARIES} 是在前面执行 find_package 命令时引入的
+# 变量 Dtk${DTK_VERSION_MAJOR}::Widget 和 Qt${QT_VERSION_MAJOR}::Widgets 是在前面执行 find_package 命令时引入的
 # 当出现运行时错误提示某些符号没有定义时应该检查此处是否将所有用的库都写在了这里
 target_link_libraries(${PLUGIN_NAME} PRIVATE
-    ${Qt5Widgets_LIBRARIES}
-    ${DtkWidget_LIBRARIES}
+    Qt${QT_VERSION_MAJOR}::Widgets
+    Dtk${DTK_VERSION_MAJOR}::Widget
     ${DdeSessionShell_LIBRARIES}
 )
 

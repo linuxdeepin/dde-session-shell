@@ -24,7 +24,11 @@ public:
     ~ShutdownWidget() override;
     void setModel(SessionBaseModel * const model);
     void onStatusChanged(SessionBaseModel::ModeStatus status);
+#ifndef ENABLE_DSS_SNIPE
     bool enableState(const QString &gsettingsValue);
+#else
+    bool enableState(int settingsValue);
+#endif
     static void onDConfigPropertyChanged(const QString &key, const QVariant &value, QObject *objPtr);
 
 public slots:
@@ -34,7 +38,7 @@ public slots:
     void recoveryLayout();
     void onRequirePowerAction(SessionBaseModel::PowerAction powerAction, bool needConfirm);
     void setUserSwitchEnable(bool enable);
-    void onEnable(const QString &gsettingsName, bool enable);
+    void onEnable(const QString &key, bool enable);
     void updateLocale(std::shared_ptr<User> user);
 
 protected:
