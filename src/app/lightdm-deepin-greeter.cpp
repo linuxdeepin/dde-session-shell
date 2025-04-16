@@ -97,6 +97,7 @@ int main(int argc, char* argv[])
 
     DLogManager::setLogFormat("%{time}{yyyy-MM-dd, HH:mm:ss.zzz} [%{type:-7}] [ %{function:-35} %{line}] %{message}\n");
     DLogManager::registerConsoleAppender();
+    DLogManager::registerJournalAppender();
 
     QDBusConnectionInterface *interface = QDBusConnection::systemBus().interface();
     if (!interface->isServiceRegistered(DSS_DBUS::accountsService)) {
