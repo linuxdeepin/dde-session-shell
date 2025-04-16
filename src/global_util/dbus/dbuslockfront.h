@@ -40,7 +40,11 @@ class DBusLockFront: public QDBusAbstractInterface
    }
 public:
     static inline const char *staticInterfaceName()
-    { return DSS_DBUS::lockFrontService.toStdString().c_str(); }
+#ifndef ENABLE_DSS_SNIPE
+    { return "com.deepin.dde.lockFront"; }
+#else
+    { return "org.deepin.dde.LockFront1"; }
+#endif
 
 public:
     explicit DBusLockFront(QObject *parent = 0);

@@ -30,7 +30,11 @@ class DBusLockService: public QDBusAbstractInterface
     Q_OBJECT
 public:
     static inline const char *staticInterfaceName()
-    { return DSS_DBUS::lockService.toStdString().c_str(); }
+#ifndef ENABLE_DSS_SNIPE
+    { return "com.deepin.dde.LockService"; }
+#else
+    { return "org.deepin.dde.LockService1"; }
+#endif
 
     enum EventType {
         PromptQuestion = 1,
