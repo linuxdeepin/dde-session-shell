@@ -756,11 +756,13 @@ void AuthPassword::updateResetPasswordUI()
         return;
     }
 
+#ifndef ENABLE_DSS_SNIPE
     if (m_resetPasswordMessageVisible) {
         showResetPasswordMessage();
     } else {
         closeResetPasswordMessage();
     }
+#endif
 }
 
 bool AuthPassword::isShowResetPasswordMessage()
