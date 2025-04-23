@@ -359,10 +359,14 @@ void FullScreenBackground::showEvent(QShowEvent *event)
         activateWindow();
     }
 
+#ifndef ENABLE_DSS_SNIPE
     // setScreen中有设置updateGeometry，单屏不需要再次设置
     if (qApp->screens().size() > 1) {
         updateGeometry();
     }
+#else
+    updateGeometry();
+#endif
 
     // 显示的时候需要置顶，截图在上方的话无法显示锁屏 见Bug-140545
     raise();
