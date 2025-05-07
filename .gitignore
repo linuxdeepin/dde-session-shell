@@ -29,3 +29,6 @@ build*/
 tests/report/*
 .transifexrc
 .cache/
+
+# for snipe
+src/global_util/dbus/*
