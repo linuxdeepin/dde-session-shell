@@ -92,6 +92,7 @@ protected:
     void updateWallpaper(const QString &path);
     void refreshBackground(SessionBaseModel::ModeStatus status);
     void refreshLayout(SessionBaseModel::ModeStatus status);
+    void showTrayPopup(QWidget *trayWidget, QWidget *contentWidget, const bool callShowForce = false);
 
     void initUI();
     void initConnections();
@@ -102,36 +103,36 @@ protected:
     void enableSystemShortcut(const QStringList &shortcuts, bool enabled, bool isPersistent);
 
 protected:
-    SessionBaseModel *m_model;
-    ControlWidget *m_controlWidget;
-    CenterTopWidget *m_centerTopWidget;
-    ShutdownWidget *m_shutdownFrame;
-    QPointer<QWidget> m_virtualKB;
+    SessionBaseModel *m_model = nullptr;
+    ControlWidget *m_controlWidget = nullptr;
+    CenterTopWidget *m_centerTopWidget = nullptr;
+    ShutdownWidget *m_shutdownFrame = nullptr;
+    QPointer<QWidget> m_virtualKB = nullptr;
     std::shared_ptr<User> m_user;
     QList<QMetaObject::Connection> m_currentUserConnects;
-    LogoWidget *m_logoWidget;
+    LogoWidget *m_logoWidget = nullptr;
     MediaWidget *m_mediaWidget = nullptr;
-    com::deepin::wm *m_wmInter;
-    QWidget *m_loginWidget;
+    com::deepin::wm *m_wmInter = nullptr;
+    QWidget *m_loginWidget = nullptr;
 
-    SFAWidget *m_sfaWidget;
-    MFAWidget *m_mfaWidget;
-    AuthWidget *m_authWidget;
-    FullManagedAuthWidget *m_fmaWidget;
-    UserFrameList *m_userListWidget;
+    SFAWidget *m_sfaWidget = nullptr;
+    MFAWidget *m_mfaWidget = nullptr;
+    AuthWidget *m_authWidget = nullptr;
+    FullManagedAuthWidget *m_fmaWidget = nullptr;
+    UserFrameList *m_userListWidget = nullptr;
 
     int m_failures = 0;
-    QLocalServer *m_localServer;
+    QLocalServer *m_localServer = nullptr;
     SessionBaseModel::ModeStatus m_currentModeStatus;
-    bool m_initialized;
-    bool m_isUserSwitchVisible;
-    PopupWindow *m_popWin;
-    QPointer<QWidget> m_currentTray;
+    bool m_initialized = false;
+    bool m_isUserSwitchVisible = false;
+    PopupWindow *m_popWin = nullptr;
+    QPointer<QWidget> m_currentTray = nullptr;
 
-    bool m_isPANGUCpu;
-    bool m_MPRISEnable;
-    bool m_showMediaWidget;
-    bool m_hasResetPasswordDialog;
+    bool m_isPANGUCpu = false;
+    bool m_MPRISEnable = false;
+    bool m_showMediaWidget = false;
+    bool m_hasResetPasswordDialog = false;
 };
 
 #endif // LOCKCONTENT_H
