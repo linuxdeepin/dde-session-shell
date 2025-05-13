@@ -38,6 +38,7 @@ class QMenu;
 class SessionBaseModel;
 class KBLayoutListView;
 class TipsWidget;
+class PopupWindow;
 
 const int BlurRadius = 15;
 const int BlurTransparency = 70;
@@ -106,6 +107,7 @@ signals:
     void requestSwitchVirtualKB();
     void requestKeyboardLayout(const QPoint &pos);
     void requestShowModule(const QString &name, const bool callShowForce = false);
+    void requestShowTrayModule(QWidget *trayWidget, QWidget *contentWidget, const bool callShowForce = false);
     void notifyKeyboardLayoutHidden();
 
 public slots:
@@ -157,12 +159,11 @@ private:
     QMap<QString, bool> m_modulesVisible;
 
     QMenu *m_contextMenu;
-    TipsWidget *m_tipsWidget;
+    PopupWindow *m_tipsWidget = nullptr;
     const SessionBaseModel *m_model;
 
-    DArrowRectangle *m_arrowRectWidget;
-    KBLayoutListView *m_kbLayoutListView;   // 键盘布局列表
-    DFloatingButton *m_keyboardBtn;         // 键盘布局按钮
+    KBLayoutListView *m_kbLayoutListView = nullptr;   // 键盘布局列表
+    FloatingButton *m_keyboardBtn = nullptr;          // 键盘布局按钮
     std::shared_ptr<User> m_curUser;
     QList<QMetaObject::Connection> m_connectionList;
     bool m_onboardBtnVisible;

@@ -5,11 +5,10 @@
 #include "controlwidget.h"
 #include "sessionbasemodel.h"
 #include "kblayoutlistview.h"
-#include "modules_loader.h"
-#include "tipswidget.h"
 #include "public_func.h"
 #include "plugin_manager.h"
 #include "dconfig_helper.h"
+#include "popupwindow.h"
 
 #include <DFloatingButton>
 #include <DArrowRectangle>
@@ -88,10 +87,7 @@ void FloatingButton::paintEvent(QPaintEvent *event)
 ControlWidget::ControlWidget(const SessionBaseModel *model, QWidget *parent)
     : QWidget(parent)
     , m_contextMenu(new QMenu(this))
-    , m_tipsWidget(new TipsWidget())
-    , m_arrowRectWidget(new DArrowRectangle(DArrowRectangle::ArrowBottom, this))
-    , m_kbLayoutListView(nullptr)
-    , m_keyboardBtn(nullptr)
+    , m_tipsWidget(new PopupWindow(parent))
     , m_onboardBtnVisible(true)
     , m_doGrabKeyboard(true)
     , m_canShowMenu(true)
@@ -143,26 +139,6 @@ void ControlWidget::initKeyboardLayoutList()
     const QStringList languageList = language.split(";");
     if (!languageList.isEmpty())
         static_cast<QAbstractButton *>(m_keyboardBtn)->setText(languageList.at(0).toUpper());
-
-    // 无特效模式时，让窗口圆角
-    m_arrowRectWidget->setProperty("_d_radius_force", true);
-    m_arrowRectWidget->setWindowFlags(Qt::Popup | Qt::FramelessWindowHint | Qt::NoDropShadowWindowHint | Qt::WindowStaysOnTopHint);
-    m_arrowRectWidget->setMargin(0);
-    m_arrowRectWidget->setShadowBlurRadius(20);
-    m_arrowRectWidget->setRadius(6);
-    m_arrowRectWidget->setShadowYOffset(2);
-    m_arrowRectWidget->setShadowXOffset(0);
-    m_arrowRectWidget->setArrowWidth(18);
-    m_arrowRectWidget->setArrowHeight(10);
-    m_arrowRectWidget->setMinimumWidth(DDESESSIONCC::KEYBOARD_LAYOUT_WIDTH);
-    m_arrowRectWidget->setMaximumSize(DDESESSIONCC::KEYBOARD_LAYOUT_WIDTH, DDESESSIONCC::LAYOUT_BUTTON_HEIGHT * 7);
-    m_arrowRectWidget->setFocusPolicy(Qt::NoFocus);
-    m_arrowRectWidget->setBackgroundColor(QColor(235, 235, 235, int(0.05 * 255)));
-    m_arrowRectWidget->installEventFilter(this);
-
-    QPalette pal = m_arrowRectWidget->palette();
-    pal.setColor(DPalette::Inactive, DPalette::Base, QColor(235, 235, 235, int(0.05 * 255)));
-    setPalette(pal);
 
     connect(m_kbLayoutListView, &KBLayoutListView::itemClicked, this, &ControlWidget::onItemClicked);
 }
@@ -399,16 +375,16 @@ void ControlWidget::addModule(TrayPlugin *trayModule)
     });
 
     connect(button, &FloatingButton::requestShowTips, this, [=] {
-        if (trayModule->itemTipsWidget() && !trayModule->content()->isVisible()) {
+        if (trayModule->itemTipsWidget() && !trayModule->content()->isVisible() && topLevelWidget()) {
             m_tipsWidget->setContent(trayModule->itemTipsWidget());
             // 因为密码框需要一直获取焦点，会导致TipsWidget在间隙时间内的Visible变为false
             // DArrowRectangle::show中当Visible为false时会activateWindow，抢占密码框焦点
             // 所以这里手动设置visible为true
-            int x = mapToGlobal(button->pos()).x() + button->width() / 2;
-            int y = mapToGlobal(button->pos()).y();
+            int x = mapTo(topLevelWidget(), button->pos()).x() + button->width() / 2;
+            int y = mapTo(topLevelWidget(), button->pos()).y();
             m_tipsWidget->move(x, y);
             m_tipsWidget->setVisible(true);
-            m_tipsWidget->show(x, y);
+            m_tipsWidget->show(QPoint(x, y));
         }
     });
 
@@ -636,14 +612,7 @@ void ControlWidget::setKBLayoutVisible()
     if (!layoutButton)
         return;
 
-    if (!m_arrowRectWidget->getContent()) {
-        m_arrowRectWidget->setContent(m_kbLayoutListView);
-    }
-    m_arrowRectWidget->resize(m_kbLayoutListView->size() + QSize(0, 10));
-
-    QPoint pos = QPoint(mapToGlobal(layoutButton->pos()).x() + layoutButton->width() / 2, mapToGlobal(layoutButton->pos()).y());
-    m_arrowRectWidget->move(pos.x(), pos.y());
-    m_arrowRectWidget->setVisible(!m_arrowRectWidget->isVisible());
+    Q_EMIT requestShowTrayModule(layoutButton, m_kbLayoutListView);
 }
 
 void ControlWidget::setKeyboardType(const QString &str)
@@ -681,7 +650,8 @@ void ControlWidget::onItemClicked(const QString &str)
         currentText = currentText.split("/").last();
 
     static_cast<QAbstractButton *>(m_keyboardBtn)->setText(currentText.toUpper());
-    m_arrowRectWidget->hide();
+    // hide keyboard layout popup
+    Q_EMIT requestShowTrayModule(m_keyboardBtn, m_kbLayoutListView);
     m_curUser->setKeyboardLayout(str);
 }
 
@@ -720,10 +690,6 @@ bool ControlWidget::eventFilter(QObject *watched, QEvent *event)
         if (event->type() == QEvent::Enter) {
             m_index = m_btnList.indexOf(btn);
         }
-    }
-
-    if (watched == m_arrowRectWidget && event->type() == QEvent::Hide) {
-        emit notifyKeyboardLayoutHidden();
     }
 
 #else

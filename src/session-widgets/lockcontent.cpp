@@ -7,7 +7,6 @@
 #include "controlwidget.h"
 #include "logowidget.h"
 #include "mfa_widget.h"
-#include "modules_loader.h"
 #include "popupwindow.h"
 #include "sessionbasemodel.h"
 #include "sfa_widget.h"
@@ -34,25 +33,10 @@ DCORE_USE_NAMESPACE
 
 LockContent::LockContent(QWidget *parent)
     : SessionBaseWindow(parent)
-    , m_model(nullptr)
-    , m_controlWidget(nullptr)
-    , m_centerTopWidget(nullptr)
-    , m_virtualKB(nullptr)
     , m_wmInter(new com::deepin::wm("com.deepin.wm", "/com/deepin/wm", QDBusConnection::sessionBus(), this))
-    , m_sfaWidget(nullptr)
-    , m_mfaWidget(nullptr)
-    , m_authWidget(nullptr)
-    , m_fmaWidget(nullptr)
-    , m_userListWidget(nullptr)
     , m_localServer(new QLocalServer(this))
     , m_currentModeStatus(SessionBaseModel::ModeStatus::NoStatus)
-    , m_initialized(false)
-    , m_isUserSwitchVisible(false)
-    , m_popWin(nullptr)
-    , m_isPANGUCpu(false)
-    , m_MPRISEnable(false)
     , m_showMediaWidget(DConfigHelper::instance()->getConfig(SHOW_MEDIA_WIDGET, false).toBool())
-    , m_hasResetPasswordDialog(false)
 {
 
 }
@@ -143,7 +127,7 @@ void LockContent::initUI()
     m_logoWidget->setAccessibleName("LogoWidget");
     setLeftBottomWidget(m_logoWidget);
 
-    m_controlWidget = new ControlWidget(m_model);
+    m_controlWidget = new ControlWidget(m_model, this);
     m_controlWidget->setAccessibleName("ControlWidget");
     setRightBottomWidget(m_controlWidget);
 
@@ -176,6 +160,7 @@ void LockContent::initConnections()
     });
     connect(m_controlWidget, &ControlWidget::requestSwitchVirtualKB, this, &LockContent::toggleVirtualKB);
     connect(m_controlWidget, &ControlWidget::requestShowModule, this, &LockContent::showModule);
+    connect(m_controlWidget, &ControlWidget::requestShowTrayModule, this, &LockContent::showTrayPopup);
 
     // 刷新背景单独与onStatusChanged信号连接，避免在showEvent事件时调用onStatusChanged而重复刷新背景，减少刷新次数
     connect(m_model, &SessionBaseModel::onStatusChanged, this, &LockContent::onStatusChanged);
@@ -212,12 +197,6 @@ void LockContent::initConnections()
 
     connect(m_wmInter, &com::deepin::wm::WorkspaceSwitched, this, &LockContent::currentWorkspaceChanged);
     connect(m_localServer, &QLocalServer::newConnection, this, &LockContent::onNewConnection);
-    connect(m_controlWidget, &ControlWidget::notifyKeyboardLayoutHidden, this, [this]{
-        if (!m_model->isUseWayland() && isVisible() && window()->windowHandle()) {
-            qCDebug(DDE_SHELL) << "Grab keyboard after keyboard layout hidden";
-            window()->windowHandle()->setKeyboardGrabEnabled(true);
-        }
-    });
 
     connect(m_model, &SessionBaseModel::showUserList, this, &LockContent::showUserList);
     connect(m_model, &SessionBaseModel::showLockScreen, this, &LockContent::showLockScreen);
@@ -697,38 +676,7 @@ void LockContent::showModule(const QString &name, const bool callShowForce)
             qCWarning(DDE_SHELL) << "TrayButton or plugin`s content is null";
             return;
         }
-
-        if (!m_popWin) {
-            m_popWin = new PopupWindow(this);
-            connect(m_model, &SessionBaseModel::visibleChanged, this, [this] (const bool visible) {
-                if (!visible) {
-                    m_popWin->hide();
-                }
-            });
-            connect(m_popWin, &PopupWindow::visibleChanged, this, [this] (bool visible) {
-                m_controlWidget->setCanShowMenu(!visible);
-            });
-            connect(qobject_cast<FloatingButton*>(m_currentTray), &FloatingButton::buttonHide, m_popWin, &PopupWindow::hide);
-            connect(this, &LockContent::parentChanged, this, [this] {
-                if (m_popWin && m_popWin->isVisible()) {
-                    const QPoint &point = mapFromGlobal(m_currentTray->mapToGlobal(QPoint(m_currentTray->size().width() / 2, 0)));
-                    m_popWin->show(point);
-                }
-            });
-        }
-
-        // 隐藏后需要removeEventFilter，后期优化
-        for (auto child : this->findChildren<QWidget*>()) {
-            child->removeEventFilter(this);
-            child->installEventFilter(this);
-        }
-
-        if (!m_popWin->getContent() || m_popWin->getContent() != plugin->content())
-            m_popWin->setContent(plugin->content());
-        const QPoint &point = mapFromGlobal(m_currentTray->mapToGlobal(QPoint(m_currentTray->size().width() / 2, 0)));
-        // 插件图标不显示，窗口不显示
-        if (m_currentTray->isVisible())
-            callShowForce ? m_popWin->show(point) : m_popWin->toggle(point);
+        showTrayPopup(m_currentTray, plugin->content());
         break;
     }
     default:
@@ -748,7 +696,6 @@ bool LockContent::eventFilter(QObject *watched, QEvent *e)
         if ((watched == m_currentTray || isChild) && e->type() == QEvent::Enter) {
             Q_EMIT qobject_cast<FloatingButton*>(m_currentTray)->requestHideTips();
         } else if (watched != m_currentTray && !isChild && e->type() == QEvent::MouseButtonRelease) {
-            QMouseEvent *ev = static_cast<QMouseEvent *>(e);
             if (!m_popWin->geometry().contains(this->mapFromGlobal(QCursor::pos()))) {
                 m_popWin->hide();
             }
@@ -930,6 +877,62 @@ void LockContent::refreshLayout(SessionBaseModel::ModeStatus status)
 {
     setTopFrameVisible(status != SessionBaseModel::ModeStatus::ShutDownMode);
     setBottomFrameVisible(status != SessionBaseModel::ModeStatus::ShutDownMode);
+}
+
+void LockContent::showTrayPopup(QWidget *trayWidget, QWidget *contentWidget, const bool callShowForce)
+{
+    if (!trayWidget || !contentWidget) {
+        return;
+    }
+
+    if (!m_popWin) {
+        m_popWin = new PopupWindow(this);
+        connect(m_model, &SessionBaseModel::visibleChanged, this, [this] (const bool visible) {
+            if (!visible) {
+                m_popWin->hide();
+            }
+        });
+        connect(m_popWin, &PopupWindow::visibleChanged, this, [this] (bool visible) {
+            m_controlWidget->setCanShowMenu(!visible);
+            // BUG-134087, tray popup窗口隐藏后，锁屏界面需要重新抓取键盘
+            if (!visible && !m_model->isUseWayland() && isVisible() && window()->windowHandle()) {
+                qCDebug(DDE_SHELL) << "Grab keyboard after keyboard layout hidden";
+                window()->windowHandle()->setKeyboardGrabEnabled(true);
+            }
+        });
+        
+        connect(this, &LockContent::parentChanged, this, [this] {
+            if (m_popWin && m_popWin->isVisible()) {
+                const QPoint &point = mapFromGlobal(m_currentTray->mapToGlobal(QPoint(m_currentTray->size().width() / 2, 0)));
+                m_popWin->show(point);
+            }
+        });
+
+        // for BUG-256133
+        connect(m_model, &SessionBaseModel::onStatusChanged, this, [this] (SessionBaseModel::ModeStatus status) {
+            if (status != SessionBaseModel::ModeStatus::PasswordMode) {
+                m_popWin->hide();
+            }
+        });
+    }
+
+    m_currentTray = trayWidget;
+    
+    // 隐藏后需要removeEventFilter，后期优化
+    for (auto child : this->findChildren<QWidget*>()) {
+        child->removeEventFilter(this);
+        child->installEventFilter(this);
+    }
+
+    if (!m_popWin->getContent() || m_popWin->getContent() != contentWidget)
+        m_popWin->setContent(contentWidget);
+
+    const QPoint point = mapFromGlobal(m_currentTray->mapToGlobal(QPoint(m_currentTray->size().width() / 2, 0)));
+    // 插件图标不显示，窗口不显示
+    if (m_currentTray->isVisible()) {
+        m_popWin->move(point.x(), point.y());
+        callShowForce ? m_popWin->show(point) : m_popWin->toggle(point);
+    }
 }
 
 void LockContent::keyPressEvent(QKeyEvent *event)
