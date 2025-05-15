@@ -1209,6 +1209,11 @@ void GreeterWorker::prepareShutdownSound()
 {
     QDBusInterface soundPlayerInter("org.deepin.dde.SoundThemePlayer1", "/org/deepin/dde/SoundThemePlayer1",
         "org.deepin.dde.SoundThemePlayer1", QDBusConnection::systemBus());
-    soundPlayerInter.call("PrepareShutdownSound", static_cast<int>(m_model->currentUser()->uid()));
+    if (!soundPlayerInter.isValid() || !m_model->currentUser()) {
+        qCWarning(DDE_SHELL) << "Sound player interface is not valid or current user is null:" << soundPlayerInter.isValid();
+        return;
+    }
+
+    //soundPlayerInter.call("PrepareShutdownSound", static_cast<int>(m_model->currentUser()->uid()));
 }
 #endif
