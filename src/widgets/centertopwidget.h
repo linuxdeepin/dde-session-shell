@@ -34,6 +34,17 @@ private:
     void setTopTipText(const QString &text);
     void updateTopTipWidget();
 
+#ifdef ENABLE_DSS_SNIPE
+private slots:
+    void onUserRegionFormatValueChanged(const QDBusMessage &dbusMessage);
+
+private:
+    QString getRegionFormatConfigPath(const User *user) const;
+    QString getRegionFormatValue(const QString &userConfigDbusPath, const QString& key) const;
+    void updateRegionFormatConnection(const User *user);
+    void updateUserDateTimeFormat();
+#endif // ENABLE_DSS_SNIPE
+
 private:
     QPointer<User> m_currentUser;
     TimeWidget *m_timeWidget;

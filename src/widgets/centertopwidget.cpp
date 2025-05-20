@@ -17,6 +17,12 @@ using namespace DDESESSIONCC;
 const int TOP_TIP_MAX_LENGTH = 60;
 const int TOP_TIP_SPACING = 10;
 
+#ifdef ENABLE_DSS_SNIPE
+static const QString localeNameKey = "localeName";
+static const QString longDateFormatKey = "longDateFormat";
+static const QString shortTimeFormatKey = "shortTimeFormat";
+#endif // ENABLE_DSS_SNIPE
+
 CenterTopWidget::CenterTopWidget(QWidget *parent)
     : QWidget(parent)
     , m_currentUser(nullptr)
@@ -64,6 +70,9 @@ void CenterTopWidget::setCurrentUser(User *user)
         return;
     }
 
+#ifdef ENABLE_DSS_SNIPE
+    updateRegionFormatConnection(user);
+#endif // ENABLE_DSS_SNIPE
     m_currentUser = QPointer<User>(user);
     if (!m_currentUser.isNull()) {
         for (auto connect : m_currentUserConnects) {
@@ -86,6 +95,10 @@ void CenterTopWidget::setCurrentUser(User *user)
     QTimer::singleShot(0, this, [this, user] {
         updateTimeFormat(user->isUse24HourFormat());
     });
+
+#ifdef ENABLE_DSS_SNIPE
+    updateUserDateTimeFormat();
+#endif // ENABLE_DSS_SNIPE
 }
 
 
@@ -157,3 +170,89 @@ void CenterTopWidget::onDConfigPropertyChanged(const QString &key, const QVarian
     }
 }
 
+#ifdef ENABLE_DSS_SNIPE
+void CenterTopWidget::onUserRegionFormatValueChanged(const QDBusMessage &dbusMessage)
+{
+    QList<QVariant> arguments = dbusMessage.arguments();
+    if (1 != arguments.count())
+        return;
+
+    QString key = dbusMessage.arguments().at(0).toString();
+    if (key == localeNameKey || key == shortTimeFormatKey || key == longDateFormatKey) {
+        updateUserDateTimeFormat();
+    }
+}
+
+QString CenterTopWidget::getRegionFormatConfigPath(const User *user) const
+{
+    if (!user)
+        return QString();
+
+    QDBusInterface configInter("org.desktopspec.ConfigManager", "/", "org.desktopspec.ConfigManager", QDBusConnection::systemBus());
+    if (!configInter.isValid()) {
+        qWarning("Can't acquire config manager. error:\"%s\"",
+                 qPrintable(QDBusConnection::systemBus().lastError().message()));
+        return QString();
+    }
+    QDBusReply<QDBusObjectPath> dbusReply = configInter.call("acquireManagerV2",
+                                                             (uint)user->uid(),
+                                                             QString(QCoreApplication::applicationName()),
+                                                             QString("org.deepin.region-format"),
+                                                             QString(""));
+    if (configInter.lastError().isValid() ) {
+        qWarning("Call failed: %s", qPrintable(configInter.lastError().message()));
+        return QString();
+    }
+    return dbusReply.value().path();
+}
+
+QString CenterTopWidget::getRegionFormatValue(const QString &userConfigDbusPath, const QString &key) const
+{
+    if (userConfigDbusPath.isEmpty())
+        return QString();
+    QDBusInterface managerInter("org.desktopspec.ConfigManager", userConfigDbusPath, "org.desktopspec.ConfigManager.Manager", QDBusConnection::systemBus());
+    QDBusReply<QVariant> reply = managerInter.call("value", key);
+    if (managerInter.lastError().isValid() ) {
+        qWarning("Call failed: %s", qPrintable(managerInter.lastError().message()));
+        return QString();
+    }
+    return reply.value().toString();
+}
+
+void CenterTopWidget::updateRegionFormatConnection(const User *user)
+{
+    if (!user) {
+        return;
+    }
+
+    // disconnect old user
+    if (m_currentUser) {
+        QString dbusPath = getRegionFormatConfigPath(m_currentUser);
+        if (dbusPath.isEmpty())
+            return;
+        QDBusConnection::systemBus().disconnect("org.desktopspec.ConfigManager", dbusPath, "org.desktopspec.ConfigManager.Manager",
+                                                "valueChanged", "s", this,
+                                                SLOT(onUserRegionFormatValueChanged(const QDBusMessage&))); 
+    }
+
+    // connect new user
+    QString dbusPath = getRegionFormatConfigPath(user);
+    if (dbusPath.isEmpty())
+        return;
+    
+    QDBusConnection::systemBus().connect("org.desktopspec.ConfigManager", dbusPath, "org.desktopspec.ConfigManager.Manager",
+                                         "valueChanged", "s", this,
+                                         SLOT(onUserRegionFormatValueChanged(const QDBusMessage&)));
+}
+
+void CenterTopWidget::updateUserDateTimeFormat()
+{
+    QString userConfigDbusPath = getRegionFormatConfigPath(m_currentUser);
+
+    QString localeName = qApp->applicationName() == "dde-lock" ? QLocale::system().name() : getRegionFormatValue(userConfigDbusPath, localeNameKey);
+    QString shortTimeFormat = getRegionFormatValue(userConfigDbusPath, shortTimeFormatKey);
+    QString longDateFormat = getRegionFormatValue(userConfigDbusPath, longDateFormatKey);
+
+    m_timeWidget->updateLocale(localeName, shortTimeFormat, longDateFormat);
+}
+#endif // ENABLE_DSS_SNIPE
