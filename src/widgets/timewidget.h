@@ -23,6 +23,10 @@ public:
     void updateLocale(const QLocale &locale);
     QSize sizeHint() const override;
 
+#ifdef ENABLE_DSS_SNIPE
+    void updateLocale(const QString &locale, const QString &shortTimeFormat = "", const QString &longDateFormat = "");
+#endif // ENABLE_DSS_SNIPE
+
 public Q_SLOTS:
     void setWeekdayFormatType(int type);
     void setShortDateFormat(int type);
@@ -42,6 +46,11 @@ private:
     int m_weekdayIndex = 0;
     int m_shortDateIndex = 0;
     int m_shortTimeIndex = 0;
+
+#ifdef ENABLE_DSS_SNIPE
+    QString m_shortTimeFormat;
+    QString m_longDateFormat;
+#endif // ENABLE_DSS_SNIPE
 };
 
 #endif // TIMEWIDGET_H
