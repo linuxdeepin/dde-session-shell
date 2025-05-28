@@ -17,7 +17,12 @@ QT_TRANSLATE_NOOP("ShutdownWidget", "Suspend"),
 QT_TRANSLATE_NOOP("ShutdownWidget", "Hibernate")
 #endif
 
+#ifdef ENABLE_DSS_SNIPE
+const QString LASTORE_DCONFIG_NAME = "org.deepin.dde.lastore";
+#else
 const QString LASTORE_DCONFIG_NAME = "org.deepin.lastore";
+#endif
+
 const QString LASTORE_DAEMON_STATUS = "lastore-daemon-status";
 const int IS_UPDATE_READY       = 1 << 0;
 const int IS_UPDATE_DISABLED    = 1 << 1;
