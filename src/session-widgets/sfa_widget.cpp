@@ -1189,6 +1189,8 @@ void SFAWidget::showEvent(QShowEvent *event)
 {
     AuthWidget::showEvent(event);
 
+    updateSpaceItem();
+    QTimer::singleShot(0, this, &SFAWidget::updateBlurEffectGeometry);
     QTimer::singleShot(0, this, &SFAWidget::updateFocus);
 }
 
