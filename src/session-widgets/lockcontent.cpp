@@ -676,7 +676,7 @@ void LockContent::showModule(const QString &name, const bool callShowForce)
             qCWarning(DDE_SHELL) << "TrayButton or plugin`s content is null";
             return;
         }
-        showTrayPopup(m_currentTray, plugin->content());
+        showTrayPopup(m_currentTray, plugin->content(), callShowForce);
         break;
     }
     default:

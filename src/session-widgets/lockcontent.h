@@ -84,7 +84,7 @@ protected:
 
 protected:
     void toggleVirtualKB();
-    void showModule(const QString &name, const bool callShowForce = false);
+    void showModule(const QString &name, const bool callShowForce);
     void updateVirtualKBPosition();
     void onUserListChanged(QList<std::shared_ptr<User>> list);
     void tryGrabKeyboard(bool exitIfFalied = true);
@@ -92,7 +92,7 @@ protected:
     void updateWallpaper(const QString &path);
     void refreshBackground(SessionBaseModel::ModeStatus status);
     void refreshLayout(SessionBaseModel::ModeStatus status);
-    void showTrayPopup(QWidget *trayWidget, QWidget *contentWidget, const bool callShowForce = false);
+    void showTrayPopup(QWidget *trayWidget, QWidget *contentWidget, const bool callShowForce);
 
     void initUI();
     void initConnections();
