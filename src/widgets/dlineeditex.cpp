@@ -99,8 +99,10 @@ void DLineEditEx::startAnimation()
     }
     m_loadSlider->show();
     m_loadSlider->resize(40, height());
-    m_animation->setStartValue(QPoint(0 - 40, 0));
-    m_animation->setEndValue(QPoint(width(), 0));
+    // 动画块距离右侧的距离10px结束
+    int endX = (width() - m_loadSlider->width() - 10) > 0 ? width() - m_loadSlider->width() - 10 : width();
+    m_animation->setStartValue(QPoint(0, 0));
+    m_animation->setEndValue(QPoint(endX, 0));
     m_animation->start();
 }
 
