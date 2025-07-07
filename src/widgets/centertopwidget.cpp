@@ -19,7 +19,7 @@ const int TOP_TIP_SPACING = 10;
 
 #ifdef ENABLE_DSS_SNIPE
 static const QString localeNameKey = "localeName";
-static const QString longDateFormatKey = "longDateFormat";
+static const QString shortDateFormatKey = "shortDateFormat";
 static const QString shortTimeFormatKey = "shortTimeFormat";
 #endif // ENABLE_DSS_SNIPE
 
@@ -178,7 +178,7 @@ void CenterTopWidget::onUserRegionFormatValueChanged(const QDBusMessage &dbusMes
         return;
 
     QString key = dbusMessage.arguments().at(0).toString();
-    if (key == localeNameKey || key == shortTimeFormatKey || key == longDateFormatKey) {
+    if (key == localeNameKey || key == shortTimeFormatKey || key == shortDateFormatKey) {
         updateUserDateTimeFormat();
     }
 }
@@ -251,8 +251,8 @@ void CenterTopWidget::updateUserDateTimeFormat()
 
     QString localeName = qApp->applicationName() == "dde-lock" ? QLocale::system().name() : getRegionFormatValue(userConfigDbusPath, localeNameKey);
     QString shortTimeFormat = getRegionFormatValue(userConfigDbusPath, shortTimeFormatKey);
-    QString longDateFormat = getRegionFormatValue(userConfigDbusPath, longDateFormatKey);
+    QString shortDateFormat = getRegionFormatValue(userConfigDbusPath, shortDateFormatKey);
 
-    m_timeWidget->updateLocale(localeName, shortTimeFormat, longDateFormat);
+    m_timeWidget->updateLocale(localeName, shortTimeFormat, shortDateFormat);
 }
 #endif // ENABLE_DSS_SNIPE

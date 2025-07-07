@@ -82,9 +82,9 @@ void TimeWidget::refreshTime()
     m_dateLabel->setText(m_locale.toString(QDateTime::currentDateTime(), date_format));
 
 #ifdef ENABLE_DSS_SNIPE
-    if (!m_shortTimeFormat.isEmpty() && !m_longDateFormat.isEmpty()) {
+    if (!m_shortTimeFormat.isEmpty() && !m_shortDateFormat.isEmpty()) {
         m_timeLabel->setText(m_locale.toString(QTime::currentTime(), m_shortTimeFormat));
-        m_dateLabel->setText(m_locale.toString(QDate::currentDate(), m_longDateFormat));
+        m_dateLabel->setText(m_locale.toString(QDate::currentDate(), m_shortDateFormat + " " + weekdayFormat.at(m_weekdayIndex)));
     }
 #endif // ENABLE_DSS_SNIPE
 }
@@ -131,13 +131,13 @@ QSize TimeWidget::sizeHint() const
 }
 
 #ifdef ENABLE_DSS_SNIPE
-void TimeWidget::updateLocale(const QString &locale, const QString &shortTimeFormat, const QString &longDateFormat)
+void TimeWidget::updateLocale(const QString &locale, const QString &shortTimeFormat, const QString &shortDateFormat)
 {
     m_locale = QLocale(locale);
     if (!shortTimeFormat.isEmpty())
         m_shortTimeFormat = shortTimeFormat;
-    if (!longDateFormat.isEmpty())
-        m_longDateFormat = longDateFormat;
+    if (!shortDateFormat.isEmpty())
+        m_shortDateFormat = shortDateFormat;
     
     refreshTime();
 }
