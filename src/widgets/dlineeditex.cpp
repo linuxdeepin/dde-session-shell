@@ -28,7 +28,7 @@ void LoadSlider::paintEvent(QPaintEvent *event)
     QLinearGradient grad(0, height() / 2, width(), height() / 2);
     grad.setColorAt(0.0, Qt::transparent);
     grad.setColorAt(1.0, m_loadSliderColor);
-    painter.fillRect(0, 1, width(), height() - 2, grad);
+    painter.fillRect(0, 0, width(), height() - 1, grad);
 
     QWidget::paintEvent(event);
 }
