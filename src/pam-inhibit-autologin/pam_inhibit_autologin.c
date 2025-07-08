@@ -1,3 +1,7 @@
+// SPDX-FileCopyrightText: 2011 - 2025 UnionTech Software Technology Co., Ltd.
+//
+// SPDX-License-Identifier: GPL-3.0-or-later
+
 #include <security/pam_ext.h>
 #include <security/pam_modules.h>
 #include <security/_pam_types.h>

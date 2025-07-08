@@ -1,3 +1,9 @@
+/*
+ * SPDX-FileCopyrightText: 2021 - 2022 UnionTech Software Technology Co., Ltd.
+ *
+ * SPDX-License-Identifier: GPL-3.0-or-later
+ */
+
 QPushButton#sendButton {
     background-color: rgba(255, 255, 255, 76);
     color: white;
