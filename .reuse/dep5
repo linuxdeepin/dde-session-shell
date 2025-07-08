@@ -8,13 +8,18 @@ Files: README.md README.zh_CN.md
 Copyright: None
 License: CC-BY-4.0
 
+# cmake
+Files: cmake/*.in cmake/*.cmake
+Copyright: None
+License: CC0-1.0
+
 # xml2cpp
 Files: src/global_util/dbus/*
 Copyright: The Qt Company Ltd.
 License: CC0-1.0
 
 # Project file
-Files: *.pro *.qrc *CMakeLists.txt *.cmake qt-theme.ini files/* scripts/* src/lightdm-deepin-greeter/deepin-greeter
+Files: *.pro *.qrc *CMakeLists.txt *.cmake qt-theme.ini files/* scripts/* src/lightdm-deepin-greeter/deepin-greeter .project
 Copyright: None
 License: CC0-1.0
 
@@ -24,7 +29,7 @@ Copyright: UnionTech Software Technology Co., Ltd.
 License: GPL-3.0-or-later
 
 # png svg
-Files: src/widgets/img/* misc/images/* src/session-widgets/img/*
+Files: src/widgets/img/* misc/images/* src/session-widgets/img/* plugins/examples/login-plugins/login-udcp/images/*
 Copyright: UnionTech Software Technology Co., Ltd.
 License: GPL-3.0-or-later
 
