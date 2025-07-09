@@ -33,6 +33,12 @@ ModulesLoader::~ModulesLoader()
 {
     quit();
     wait();
+    
+    QMutexLocker locker(&m_mutex);
+    for (auto &loader : m_pluginLoaders) {
+        cleanupPluginLoader(loader);
+    }
+    m_pluginLoaders.clear();
 }
 
 ModulesLoader& ModulesLoader::instance()
@@ -78,7 +84,7 @@ void ModulesLoader::findModule(const QString& path)
         }
 
         qCInfo(DDE_SHELL) << "About to process " << module;
-        auto loader = new QPluginLoader(path);
+        auto loader = std::unique_ptr<QPluginLoader>(new QPluginLoader(path));
 
         // 检查兼容性
         const QJsonObject meta = loader->metaData().value("MetaData").toObject();
@@ -134,7 +140,8 @@ void ModulesLoader::findModule(const QString& path)
             loader->moveToThread(qApp->thread());
 
         QMutexLocker locker(&m_mutex);
-        m_pluginLoaders.insert(moduleInstance->key(), QPointer<QPluginLoader>(loader));
+        m_pluginLoaders.insert(moduleInstance->key(), QPointer<QPluginLoader>(loader.get()));
+        loader.release(); // 释放所有权，防止 QPluginLoader 被析构
         PluginManager::instance()->addPlugin(moduleInstance, version);
     }
     m_loadLoginModule = true;
@@ -268,6 +275,7 @@ bool ModulesLoader::isPluginEnabled(const QFileInfo& module)
             auto dbusInterface = new QDBusInterface(service, targetPath, interface, dbusConnection);
             if (!dbusInterface || !dbusInterface->isValid()) {
                 qCWarning(DDE_SHELL) << "Check plugin enabled dbus interface is not valid.";
+                dbusInterface->deleteLater();
                 return false;
             }
             const bool pluginEnabled = dbusInterface->property(property.toStdString().c_str()).toBool();
@@ -343,6 +351,14 @@ void ModulesLoader::unloadPlugin(const QString& path)
             qCInfo(DDE_SHELL) << "Unload plugin loader";
             pair.second->unload();
         }
+    }
+}
+
+void ModulesLoader::cleanupPluginLoader(QPluginLoader* loader)
+{
+    if (loader) {
+        loader->unload();
+        loader->deleteLater();
     }
 }
 
