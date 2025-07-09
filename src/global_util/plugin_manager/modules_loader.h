@@ -40,6 +40,7 @@ private:
     bool isPluginEnabled(const QFileInfo &module);
     bool contains(const QString &pluginFile) const;
     QPair<QString, QPluginLoader*> getPluginLoader(const QString &pluginFile) const;
+    void cleanupPluginLoader(QPluginLoader* loader);
 
     static void onDConfigPropertyChanged(const QString &key, const QVariant &value, QObject *objPtr);
 
