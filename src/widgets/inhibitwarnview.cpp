@@ -244,14 +244,14 @@ void InhibitWarnView::initUi()
     m_acceptBtn->setObjectName("AcceptButton");
     m_acceptBtn->setFixedSize(ButtonWidth, ButtonHeight);
     m_acceptBtn->setFocusPolicy(Qt::StrongFocus);
-    m_acceptBtn->setNormalPixmap(acceptIcon.pixmap(iconSize * devicePixelRatioF()));
-    m_acceptBtn->setHoverPixmap(acceptIcon.pixmap(iconSize * devicePixelRatioF()));
+    m_acceptBtn->setNormalPixmap(acceptIcon.pixmap(iconSize));
+    m_acceptBtn->setHoverPixmap(acceptIcon.pixmap(iconSize));
 
     QIcon iconCancelNormal = QIcon::fromTheme(":/img/inhibitview/cancel_normal.svg");
     QIcon iconCancelHover = QIcon::fromTheme(":/img/inhibitview/cancel_hover.svg");
 
-    m_cancelBtn->setNormalPixmap(iconCancelNormal.pixmap(iconSize * devicePixelRatioF()));
-    m_cancelBtn->setHoverPixmap(iconCancelHover.pixmap(iconSize * devicePixelRatioF()));
+    m_cancelBtn->setNormalPixmap(iconCancelNormal.pixmap(iconSize));
+    m_cancelBtn->setHoverPixmap(iconCancelHover.pixmap(iconSize));
 
     m_cancelBtn->setObjectName("CancelButton");
     m_cancelBtn->setFixedSize(ButtonWidth, ButtonHeight);
