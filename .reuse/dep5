@@ -19,7 +19,7 @@ Copyright: The Qt Company Ltd.
 License: CC0-1.0
 
 # Project file
-Files: *.pro *.qrc *CMakeLists.txt *.cmake qt-theme.ini files/* scripts/* src/lightdm-deepin-greeter/deepin-greeter .project
+Files: *.pro *.qrc *CMakeLists.txt *.cmake qt-theme.ini files/* scripts/* src/lightdm-deepin-greeter/deepin-greeter .project .syncexclude
 Copyright: None
 License: CC0-1.0
 
