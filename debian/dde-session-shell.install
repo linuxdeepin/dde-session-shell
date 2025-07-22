@@ -2,7 +2,8 @@ etc
 usr/bin
 usr/share/applications
 usr/share/deepin-debug-config
-usr/share/dsg
+usr/share/dsg/configs/org.deepin.dde.lightdm-deepin-greeter/org.deepin.dde.lightdm-deepin-greeter.json
+usr/share/dsg/configs/org.deepin.dde.lock/org.deepin.dde.lock.json
 usr/share/glib-2.0
 usr/share/xgreeters
 usr/share/dbus-1
