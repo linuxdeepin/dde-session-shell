@@ -1,0 +1,21 @@
+#!/bin/sh
+
+set -e
+
+if getent passwd deepin-password-admin >/dev/null; then
+    if which deluser >/dev/null; then
+        deluser --system deepin-password-admin -q || echo "Could not remove deepin-password-admin user."
+    fi
+fi
+
+if getent group deepin-password-admin >/dev/null; then
+    if which delgroup >/dev/null; then
+        delgroup --system deepin-password-admin || echo "Could not remove deepin-password-admin group."
+    fi
+fi
+
+chown deepin-daemon:deepin-daemon /usr/lib/dde-control-center/reset-pattern-dialog
+chmod 500 /usr/lib/dde-control-center/reset-pattern-dialog
+
+#DEBHELPER#
+exit 0
