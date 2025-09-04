@@ -44,13 +44,14 @@ Depends: ${shlibs:Depends}, ${misc:Depends}, ${dist:Depends},
  libssl1.1,
  libxcb-util0 | libxcb-util1,
  dde-dconfig-daemon,
- dde-wayland-config(>>1.0.10-1)
+ dde-wayland-config(>>1.0.10-1),
+ dss-wechat-auth-plugin
 Provides: lightdm-greeter,
  deepin-greeter-wayland
 Recommends: onboard,
+ dss-captcha-plugin,
  dss-network-plugin,
- dde-wallpaper-cache,
- dss-wechat-auth-plugin
+ dde-wallpaper-cache
 Conflicts: dde-workspace,
  deepin-notifications,
  dde-session-ui (<< 5.0.0),
@@ -70,3 +71,18 @@ Architecture: any
 Depends: ${shlibs:Depends}, ${misc:Depends}
 Description: deepin desktop-environment - dde-session-shell module development files
  DDE Session Shell module development files of deepin desktop-environment
+
+Package: dde-gesture-login
+Architecture: any
+Depends: ${shlibs:Depends}, ${misc:Depends}, ${dist:Depends},
+ deepin-desktop-schemas (>=5.9.14),
+ dde-daemon (>=5.13.12),
+ startdde (>=5.10.24),
+ deepin-authenticate(>=1.2.27),
+ libssl-dev,
+ dde-dconfig-daemon,
+ dde-wayland-config(>>1.0.10-1)
+Conflicts: dss-gesture-login-plugin
+Description: deepin desktop-environment - dde-session-shell login plugin files
+ reset-pattern-dialog - modify gesture password enrolled, or create new gesture password
+ liblogin-gesture.so - support gesture password login on greeter and lock

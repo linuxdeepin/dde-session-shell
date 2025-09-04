@@ -1,0 +1,6 @@
+usr/share/dde-gesture-login/translations
+usr/lib/dde-session-shell/modules/liblogin-gesture.so
+usr/lib/dde-control-center/reset-pattern-dialog
+usr/share/dsg/configs/org.deepin.dde.lock/org.deepin.dde.dss-login-gesture.json
+usr/share/dsg/configs/org.deepin.dde.lightdm-deepin-greeter/org.deepin.dde.dss-login-gesture.json
+lib/dde-session-shell/modules/config.d/login-gesture.json
