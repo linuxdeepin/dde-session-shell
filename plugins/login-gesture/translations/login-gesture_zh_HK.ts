@@ -1,6 +1,4 @@
-<?xml version="1.0" encoding="utf-8"?>
-<!DOCTYPE TS>
-<TS version="2.1" language="zh_CN">
+<?xml version="1.0" ?><!DOCTYPE TS><TS version="2.1" language="zh_HK">
 <context>
     <name>gestureLogin::TranslastionDoc</name>
     <message>
@@ -48,10 +46,6 @@
         <translation>與上次繪製不一致，請重新繪製</translation>
     </message>
     <message>
-        <source>Drawing error, Contact the administrator to reset</source>
-        <translation>繪製錯誤，可聯系管理員重置</translation>
-    </message>
-    <message>
         <source>Device is locked, unlocked after %1 minutes</source>
         <translation>設備已鎖定，%1分鐘後解鎖</translation>
     </message>
@@ -66,6 +60,10 @@
     <message>
         <source>Modified successfully</source>
         <translation>修改成功</translation>
+    </message>
+    <message>
+        <source>Drawing error, Contact the administrator to reset</source>
+        <translation>繪製錯誤，可聯系管理員重置</translation>
     </message>
     <message>
         <source>Cancel</source>

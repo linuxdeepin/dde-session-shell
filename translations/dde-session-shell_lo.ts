@@ -372,11 +372,11 @@
     <name>UpdateWorker</name>
     <message>
         <source>Update</source>
-        <translation type="unfinished"/>
+        <translation>ປັບປຸງໃຫ້ທັນ</translation>
     </message>
     <message>
         <source>Please plug in and then install updates.</source>
-        <translation type="unfinished"/>
+        <translation>ກະລຸນາສຽບແລະຫຼັງຈາກນັ້ນຕິດຕັ້ງການປັບປຸງ.</translation>
     </message>
 </context>
 <context>
