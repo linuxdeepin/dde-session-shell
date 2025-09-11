@@ -216,14 +216,14 @@
     </message>
     <message>
         <source>Terminal locked, please contact administrator</source>
-        <translation type="unfinished"/>
+        <translation>Terminal verrouillé, veuillez contacter l&apos;administrateur.</translation>
     </message>
 </context>
 <context>
     <name>DeepinAuthFramework</name>
     <message>
         <source>Wrong Password</source>
-        <translation type="unfinished"/>
+        <translation>Mauvais mot de passe</translation>
     </message>
 </context>
 <context>
@@ -245,14 +245,14 @@
     </message>
     <message>
         <source>The reason of inhibit.</source>
-        <translation type="unfinished"/>
+        <translation>La raison de ce blocage.</translation>
     </message>
 </context>
 <context>
     <name>LighterGreeter</name>
     <message>
         <source>Standard Mode</source>
-        <translation type="unfinished"/>
+        <translation>Mode standard</translation>
     </message>
 </context>
 <context>
@@ -353,7 +353,7 @@
     <name>UdcpMFALoginWidget</name>
     <message>
         <source>发送验证码</source>
-        <translation type="unfinished"/>
+        <translation>Envoyer le code de vérification</translation>
     </message>
     <message>
         <source>请输入手机号</source>
