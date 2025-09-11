@@ -357,15 +357,15 @@
     </message>
     <message>
         <source>请输入手机号</source>
-        <translation type="unfinished"/>
+        <translation>Veuillez saisir votre numéro de téléphone portable.</translation>
     </message>
     <message>
         <source>请输入验证码</source>
-        <translation type="unfinished"/>
+        <translation>Veuillez saisir le code de vérification</translation>
     </message>
     <message>
         <source>获取验证码</source>
-        <translation type="unfinished"/>
+        <translation>Obtenir le code de vérification</translation>
     </message>
 </context>
 <context>
@@ -383,19 +383,19 @@
     <name>UsersWithTheSameName</name>
     <message>
         <source>Return</source>
-        <translation type="unfinished"/>
+        <translation>Retour</translation>
     </message>
     <message>
         <source>Please select the account for login</source>
-        <translation type="unfinished"/>
+        <translation>Veuillez sélectionner le compte pour vous connecter.</translation>
     </message>
     <message>
         <source>Local Account</source>
-        <translation type="unfinished"/>
+        <translation>Compte local</translation>
     </message>
     <message>
         <source>Domain Account</source>
-        <translation type="unfinished"/>
+        <translation>Compte de domaine</translation>
     </message>
 </context>
 <context>
