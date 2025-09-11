@@ -75,7 +75,7 @@
     </message>
     <message>
         <source>Drawing error, %1 chances left. Contact the administrator to reset</source>
-        <translation type="unfinished"/>
+        <translation>Error de dibuix, queden %1 intents. Poseu-vos en contacte amb l&apos;administrador per restablir-lo.</translation>
     </message>
     <message>
         <source>Setup completed Start unlock</source>
