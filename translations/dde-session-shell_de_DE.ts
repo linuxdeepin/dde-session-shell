@@ -230,7 +230,7 @@
     <name>GreeterWorker</name>
     <message>
         <source>Wrong account</source>
-        <translation type="unfinished"/>
+        <translation>Falsches Konto</translation>
     </message>
     <message>
         <source>Wrong Password</source>
