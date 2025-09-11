@@ -87,11 +87,11 @@
     </message>
     <message>
         <source>Minimum 4 points, please redraw</source>
-        <translation type="unfinished"/>
+        <translation>Com a mínim 4 punts. Torneu a fer el dibuix</translation>
     </message>
     <message>
         <source>Contact the administrator to reset</source>
-        <translation type="unfinished"/>
+        <translation>Poseu-vos en contacte amb l&apos;administrador per restablir-lo.</translation>
     </message>
 </context>
 </TS>
