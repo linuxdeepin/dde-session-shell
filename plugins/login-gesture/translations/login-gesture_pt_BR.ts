@@ -3,7 +3,7 @@
     <name>gestureLogin::TranslastionDoc</name>
     <message>
         <source>Gesture password is enabled</source>
-        <translation>A senha por gesto está ativada</translation>
+        <translation>A senha por gestos está ativada</translation>
     </message>
     <message>
         <source>For first time use, please set the gesture password first</source>
