@@ -47,7 +47,7 @@
     </message>
     <message>
         <source>Device is locked, unlocked after %1 minutes</source>
-        <translation type="unfinished"/>
+        <translation>L&apos;appareil est verrouillé, déverrouillé après %1 minutes</translation>
     </message>
     <message>
         <source>Modify gesture password</source>
