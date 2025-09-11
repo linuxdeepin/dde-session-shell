@@ -27,7 +27,7 @@
     </message>
     <message>
         <source>Device unavailable!</source>
-        <translation>Appareil indisponible !</translation>
+        <translation>Appareil indisponible !</translation>
     </message>
 </context>
 <context>
