@@ -466,22 +466,22 @@
     </message>
     <message>
         <source>Closing the programs and shutting down, please wait...</source>
-        <translation type="unfinished"/>
+        <translation>Fermeture des programmes et arrêt du système, veuillez patienter...</translation>
     </message>
     <message>
         <source>Closing the programs and rebooting, please wait...</source>
-        <translation type="unfinished"/>
+        <translation>Fermeture des programmes et redémarrage, veuillez patienter...</translation>
     </message>
     <message>
         <source>Closing the programs and logging out, please wait...</source>
-        <translation type="unfinished"/>
+        <translation>Fermeture des programmes et déconnexion, veuillez patienter...</translation>
     </message>
 </context>
 <context>
     <name>dss::module::AssistLoginWidget</name>
     <message>
         <source>Automatic login</source>
-        <translation type="unfinished"/>
+        <translation>Connexion automatique</translation>
     </message>
 </context>
 <context>
