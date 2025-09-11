@@ -372,11 +372,11 @@
     <name>UpdateWorker</name>
     <message>
         <source>Update</source>
-        <translation type="unfinished"/>
+        <translation>Mise à jour</translation>
     </message>
     <message>
         <source>Please plug in and then install updates.</source>
-        <translation type="unfinished"/>
+        <translation>Veuillez brancher l&apos;appareil, puis installer les mises à jour.</translation>
     </message>
 </context>
 <context>
@@ -402,7 +402,7 @@
     <name>WarningContent</name>
     <message>
         <source>The programs are preventing the computer from shutting down, and forcing shut down may cause data loss.</source>
-        <translation>Les programmes empêchent l&apos;ordinateur de s&apos;éteindre et forcer l&apos;arrêt peut entraîner une perte de données.</translation>
+        <translation>Des programmes empêchent l&apos;ordinateur de s&apos;éteindre et forcer l&apos;arrêt peut entraîner une perte de données.</translation>
     </message>
     <message>
         <source>To close the program, click Cancel, and then close the program.</source>
@@ -410,19 +410,19 @@
     </message>
     <message>
         <source>The programs are preventing the computer from reboot, and forcing reboot may cause data loss.</source>
-        <translation>Les programmes empêchent l&apos;ordinateur de redémarrer et forcer le redémarrage peut entraîner une perte de données.</translation>
+        <translation>Des programmes empêchent l&apos;ordinateur de redémarrer et forcer le redémarrage peut entraîner une perte de données.</translation>
     </message>
     <message>
         <source>The programs are preventing the computer from suspend, and forcing suspend may cause data loss.</source>
-        <translation>Les programmes empêchent l&apos;ordinateur de se suspendre et forcer la suspension peut entraîner une perte de données.</translation>
+        <translation>Des programmes empêchent l&apos;ordinateur de se suspendre et forcer la suspension peut entraîner une perte de données.</translation>
     </message>
     <message>
         <source>The programs are preventing the computer from hibernate, and forcing hibernate may cause data loss.</source>
-        <translation>Les programmes empêchent l&apos;ordinateur de mettre en veille prolongée et forcer la mise en veille prolongée peut entraîner une perte de données.</translation>
+        <translation>Des programmes empêchent l&apos;ordinateur de mettre en veille prolongée et forcer la mise en veille prolongée peut entraîner une perte de données.</translation>
     </message>
     <message>
         <source>The programs are preventing the computer from log out, and forcing log out may cause data loss.</source>
-        <translation>Les programmes empêchent l&apos;ordinateur de se déconnecter et forcer la déconnexion peut entraîner une perte de données.</translation>
+        <translation>Des programmes empêchent l&apos;ordinateur de se déconnecter et forcer la déconnexion peut entraîner une perte de données.</translation>
     </message>
     <message>
         <source>Shut down</source>
@@ -446,7 +446,7 @@
     </message>
     <message>
         <source>Are you sure you want to shut down?</source>
-        <translation>Êtes-vous sûr de vouloir arrêter ?</translation>
+        <translation>Êtes-vous sûr de vouloir éteindre ?</translation>
     </message>
     <message>
         <source>Are you sure you want to reboot?</source>
@@ -458,11 +458,11 @@
     </message>
     <message>
         <source>Update and Shut Down</source>
-        <translation type="unfinished"/>
+        <translation>Mettre à jour et arrêter</translation>
     </message>
     <message>
         <source>Update and Reboot</source>
-        <translation type="unfinished"/>
+        <translation>Mettre à jour et redémarrer</translation>
     </message>
     <message>
         <source>Closing the programs and shutting down, please wait...</source>
