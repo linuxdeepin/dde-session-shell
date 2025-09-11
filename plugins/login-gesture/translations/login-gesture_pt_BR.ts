@@ -19,7 +19,7 @@
     </message>
     <message>
         <source>Please draw the gesture password again</source>
-        <translation>Desenhe a senha por gesto novamente</translation>
+        <translation>Desenhe a senha por gestos novamente</translation>
     </message>
     <message>
         <source>Setup completed Start login</source>
