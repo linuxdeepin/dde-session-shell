@@ -79,11 +79,11 @@
     </message>
     <message>
         <source>Setup completed Start unlock</source>
-        <translation type="unfinished"/>
+        <translation>Configuració del desbloqueig d&apos;inici completat</translation>
     </message>
     <message>
         <source>Unlock with gesture password</source>
-        <translation type="unfinished"/>
+        <translation>Desbloqueja amb contrasenya de gest</translation>
     </message>
     <message>
         <source>Minimum 4 points, please redraw</source>
