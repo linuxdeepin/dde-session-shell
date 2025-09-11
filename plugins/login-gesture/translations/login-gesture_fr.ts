@@ -63,27 +63,27 @@
     </message>
     <message>
         <source>Drawing error, Contact the administrator to reset</source>
-        <translation type="unfinished"/>
+        <translation>Erreur de dessin, contactez l&apos;administrateur pour réinitialiser</translation>
     </message>
     <message>
         <source>Cancel</source>
-        <translation type="unfinished"/>
+        <translation>Annuler</translation>
     </message>
     <message>
         <source>Ok</source>
-        <translation type="unfinished"/>
+        <translation>Ok</translation>
     </message>
     <message>
         <source>Drawing error, %1 chances left. Contact the administrator to reset</source>
-        <translation type="unfinished"/>
+        <translation>Erreur de dessin, %1 chances restantes. Contactez l&apos;administrateur pour réinitialiser.</translation>
     </message>
     <message>
         <source>Setup completed Start unlock</source>
-        <translation type="unfinished"/>
+        <translation>Configuration terminée Démarrer le déverrouillage</translation>
     </message>
     <message>
         <source>Unlock with gesture password</source>
-        <translation type="unfinished"/>
+        <translation>Déverrouiller avec un mot de passe gestuel</translation>
     </message>
     <message>
         <source>Minimum 4 points, please redraw</source>
