@@ -87,11 +87,11 @@
     </message>
     <message>
         <source>Minimum 4 points, please redraw</source>
-        <translation type="unfinished"/>
+        <translation>Minimum 4 points, veuillez redessiner</translation>
     </message>
     <message>
         <source>Contact the administrator to reset</source>
-        <translation type="unfinished"/>
+        <translation>Contactez l&apos;administrateur pour réinitialiser</translation>
     </message>
 </context>
 </TS>
