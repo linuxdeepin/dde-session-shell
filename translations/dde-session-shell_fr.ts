@@ -84,19 +84,19 @@
     <name>AuthPasskey</name>
     <message>
         <source>Please plug in the security key</source>
-        <translation type="unfinished"/>
+        <translation>Veuillez insérer la clé de sécurité.</translation>
     </message>
     <message>
         <source>Verification successful</source>
-        <translation type="unfinished"/>
+        <translation>Vérification réussie</translation>
     </message>
     <message>
         <source>Verification failed</source>
-        <translation type="unfinished"/>
+        <translation>Échec de la vérification</translation>
     </message>
     <message>
         <source>Identifying the security key</source>
-        <translation type="unfinished"/>
+        <translation>Identification de la clé de sécurité</translation>
     </message>
 </context>
 <context>
@@ -212,7 +212,7 @@
     </message>
     <message>
         <source>Your password has expired. Please contact the administrator to change it</source>
-        <translation type="unfinished"/>
+        <translation>Votre mot de passe a expiré, veuillez contacter votre administrateur pour le changer</translation>
     </message>
     <message>
         <source>Terminal locked, please contact administrator</source>
