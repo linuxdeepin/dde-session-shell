@@ -47,7 +47,7 @@
     </message>
     <message>
         <source>Device is locked, unlocked after %1 minutes</source>
-        <translation type="unfinished"/>
+        <translation>Het apparaat wordt over %1 minuten ontgrendeld</translation>
     </message>
     <message>
         <source>Modify gesture password</source>
@@ -63,31 +63,31 @@
     </message>
     <message>
         <source>Drawing error, Contact the administrator to reset</source>
-        <translation type="unfinished"/>
+        <translation>Fout tijdens tekenen - neem contact op met de beheerder</translation>
     </message>
     <message>
         <source>Cancel</source>
-        <translation type="unfinished"/>
+        <translation>Annuleren</translation>
     </message>
     <message>
         <source>Ok</source>
-        <translation type="unfinished"/>
+        <translation>Oké</translation>
     </message>
     <message>
         <source>Drawing error, %1 chances left. Contact the administrator to reset</source>
-        <translation type="unfinished"/>
+        <translation>Fout tijdens tekenen - nog %1 pogingen te gaan; neem anders contact op met de beheerder</translation>
     </message>
     <message>
         <source>Setup completed Start unlock</source>
-        <translation type="unfinished"/>
+        <translation>Het instellen is voltooid</translation>
     </message>
     <message>
         <source>Unlock with gesture password</source>
-        <translation type="unfinished"/>
+        <translation>Ontgrendelen met gebarenwachtwoord</translation>
     </message>
     <message>
         <source>Minimum 4 points, please redraw</source>
-        <translation type="unfinished"/>
+        <translation>Het gebaar dient uit minimaal 4 punten te bestaan</translation>
     </message>
     <message>
         <source>Contact the administrator to reset</source>
