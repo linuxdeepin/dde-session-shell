@@ -7,7 +7,7 @@
     </message>
     <message>
         <source>For first time use, please set the gesture password first</source>
-        <translation>Para usar pela primeira vez, defina a senha por gesto</translation>
+        <translation>No primeiro uso, defina a senha por gestos</translation>
     </message>
     <message>
         <source>Set gesture password</source>
