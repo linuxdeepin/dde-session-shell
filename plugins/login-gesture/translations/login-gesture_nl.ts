@@ -91,7 +91,7 @@
     </message>
     <message>
         <source>Contact the administrator to reset</source>
-        <translation type="unfinished"/>
+        <translation>Neem contact op met de beheerder</translation>
     </message>
 </context>
 </TS>
