@@ -8,6 +8,3 @@
 #   * .github
 # are always ignored
 .syncexclude
-translations
-*.ts
-ts
