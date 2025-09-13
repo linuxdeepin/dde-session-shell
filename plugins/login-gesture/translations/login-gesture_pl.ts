@@ -63,7 +63,7 @@
     </message>
     <message>
         <source>Drawing error, Contact the administrator to reset</source>
-        <translation type="unfinished"/>
+        <translation>Błąd rysowania, skontaktuj się z administratorem, aby zresetować</translation>
     </message>
     <message>
         <source>Cancel</source>
