@@ -75,7 +75,7 @@
     </message>
     <message>
         <source>Drawing error, %1 chances left. Contact the administrator to reset</source>
-        <translation type="unfinished"/>
+        <translation>Błąd rysowania, pozostały %1 próby. Skontaktuj się z administratorem, aby zresetować</translation>
     </message>
     <message>
         <source>Setup completed Start unlock</source>
@@ -83,15 +83,15 @@
     </message>
     <message>
         <source>Unlock with gesture password</source>
-        <translation type="unfinished"/>
+        <translation>Odblokuj za pomocą wzoru hasła</translation>
     </message>
     <message>
         <source>Minimum 4 points, please redraw</source>
-        <translation type="unfinished"/>
+        <translation>Co najmniej 4 punkty, narysuj ponownie.</translation>
     </message>
     <message>
         <source>Contact the administrator to reset</source>
-        <translation type="unfinished"/>
+        <translation>Skontaktuj się z administratorem, aby zresetować</translation>
     </message>
 </context>
 </TS>
