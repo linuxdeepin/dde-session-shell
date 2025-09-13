@@ -47,7 +47,7 @@
     </message>
     <message>
         <source>Device is locked, unlocked after %1 minutes</source>
-        <translation type="unfinished"/>
+        <translation>Urządzenie zablokowane, odblokowanie za %1 minut</translation>
     </message>
     <message>
         <source>Modify gesture password</source>
@@ -63,7 +63,7 @@
     </message>
     <message>
         <source>Drawing error, Contact the administrator to reset</source>
-        <translation>Błąd rysowania, skontaktuj się z administratorem, aby zresetować</translation>
+        <translation>Błąd rysowania, skontaktuj się z administratorem, aby zresetować hasło</translation>
     </message>
     <message>
         <source>Cancel</source>
@@ -75,7 +75,7 @@
     </message>
     <message>
         <source>Drawing error, %1 chances left. Contact the administrator to reset</source>
-        <translation>Błąd rysowania, pozostały %1 próby. Skontaktuj się z administratorem, aby zresetować</translation>
+        <translation>Błąd rysowania, pozostały %1 próby. Skontaktuj się z administratorem, aby zresetować hasło</translation>
     </message>
     <message>
         <source>Setup completed Start unlock</source>
@@ -91,7 +91,7 @@
     </message>
     <message>
         <source>Contact the administrator to reset</source>
-        <translation>Skontaktuj się z administratorem, aby zresetować</translation>
+        <translation>Skontaktuj się z administratorem, aby zresetować hasło</translation>
     </message>
 </context>
 </TS>
