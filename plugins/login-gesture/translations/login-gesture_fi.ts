@@ -47,7 +47,7 @@
     </message>
     <message>
         <source>Device is locked, unlocked after %1 minutes</source>
-        <translation type="unfinished"/>
+        <translation>Tietokone on lukittu, avataan %1 minuutin kuluttua</translation>
     </message>
     <message>
         <source>Modify gesture password</source>
