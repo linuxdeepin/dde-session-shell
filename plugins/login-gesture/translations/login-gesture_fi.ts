@@ -15,11 +15,11 @@
     </message>
     <message>
         <source>Please draw a gesture password</source>
-        <translation>Piirrä ele salasanaksi</translation>
+        <translation>Piirrä ele</translation>
     </message>
     <message>
         <source>Please draw the gesture password again</source>
-        <translation>Piirrä ele salasanaksi uudelleen</translation>
+        <translation>Piirrä ele uudelleen</translation>
     </message>
     <message>
         <source>Setup completed Start login</source>
@@ -27,15 +27,15 @@
     </message>
     <message>
         <source>Forgot gesture password</source>
-        <translation>Unohda ele salasana</translation>
+        <translation>Unohda ele</translation>
     </message>
     <message>
         <source>Sign in with gesture password</source>
-        <translation>Kirjaudu sisään ele salasanalla</translation>
+        <translation>Kirjaudu sisään eleellä</translation>
     </message>
     <message>
         <source>Gesture password has been reset</source>
-        <translation>Ele salasana on nollattu</translation>
+        <translation>Ele on nollattu</translation>
     </message>
     <message>
         <source>Please reset the gesture password</source>
