@@ -87,11 +87,11 @@
     </message>
     <message>
         <source>Minimum 4 points, please redraw</source>
-        <translation type="unfinished"/>
+        <translation>Vähintään 4 pistettä, piirrä uudelleen</translation>
     </message>
     <message>
         <source>Contact the administrator to reset</source>
-        <translation type="unfinished"/>
+        <translation>Ota yhteyttä järjestelmänvalvojaan nollaamista varten</translation>
     </message>
 </context>
 </TS>
