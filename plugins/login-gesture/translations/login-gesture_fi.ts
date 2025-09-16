@@ -39,7 +39,7 @@
     </message>
     <message>
         <source>Please reset the gesture password</source>
-        <translation>Nollaa eleen salasana</translation>
+        <translation>Nollaa ele</translation>
     </message>
     <message>
         <source>Inconsistent with the last drawing, please redraw</source>
@@ -51,11 +51,11 @@
     </message>
     <message>
         <source>Modify gesture password</source>
-        <translation>Muokkaa eleen salasanaa</translation>
+        <translation>Muokkaa elettä</translation>
     </message>
     <message>
         <source>Please draw the current gesture password</source>
-        <translation>Piirrä nykyinen ele salasana</translation>
+        <translation>Piirrä nykyinen ele</translation>
     </message>
     <message>
         <source>Modified successfully</source>
