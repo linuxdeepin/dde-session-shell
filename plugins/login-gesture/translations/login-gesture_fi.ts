@@ -7,11 +7,11 @@
     </message>
     <message>
         <source>For first time use, please set the gesture password first</source>
-        <translation>Kun käytät ensimmäistä kertaa, aseta ensin ele salasanaksi</translation>
+        <translation>Kun käytät ensimmäistä kertaa, aseta ensin ele</translation>
     </message>
     <message>
         <source>Set gesture password</source>
-        <translation>Aseta ele salasanaksi</translation>
+        <translation>Aseta ele</translation>
     </message>
     <message>
         <source>Please draw a gesture password</source>
