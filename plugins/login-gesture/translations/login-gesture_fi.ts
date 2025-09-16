@@ -79,11 +79,11 @@
     </message>
     <message>
         <source>Setup completed Start unlock</source>
-        <translation type="unfinished"/>
+        <translation>Asennus valmis, aloita lukituksen avaaminen</translation>
     </message>
     <message>
         <source>Unlock with gesture password</source>
-        <translation type="unfinished"/>
+        <translation>Avaa lukitus eleellä</translation>
     </message>
     <message>
         <source>Minimum 4 points, please redraw</source>
