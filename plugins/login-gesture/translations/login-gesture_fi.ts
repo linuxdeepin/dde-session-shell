@@ -75,7 +75,7 @@
     </message>
     <message>
         <source>Drawing error, %1 chances left. Contact the administrator to reset</source>
-        <translation type="unfinished"/>
+        <translation>Piirtovirhe, %1 yritystä jäljellä. Ota yhteyttä järjestelmänvalvojaan nollaamista varten.</translation>
     </message>
     <message>
         <source>Setup completed Start unlock</source>
