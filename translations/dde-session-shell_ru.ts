@@ -259,7 +259,7 @@
     <name>LockContent</name>
     <message>
         <source>Lock Screen</source>
-        <translation>Экран Блокировки</translation>
+        <translation>Экран блокировки</translation>
     </message>
     <message>
         <source>Failed to lock screen</source>
@@ -335,11 +335,11 @@
     </message>
     <message>
         <source>Update and Shut Down</source>
-        <translation>Обновить и Выключить</translation>
+        <translation>Обновить и выключить</translation>
     </message>
     <message>
         <source>Update and Reboot</source>
-        <translation>Обновить и Перезагрузить</translation>
+        <translation>Обновить и перезагрузить</translation>
     </message>
 </context>
 <context>
@@ -458,11 +458,11 @@
     </message>
     <message>
         <source>Update and Shut Down</source>
-        <translation>Обновить и Выключить</translation>
+        <translation>Обновить и выключить</translation>
     </message>
     <message>
         <source>Update and Reboot</source>
-        <translation>Обновить и Перезагрузить</translation>
+        <translation>Обновить и перезагрузить</translation>
     </message>
     <message>
         <source>Closing the programs and shutting down, please wait...</source>
