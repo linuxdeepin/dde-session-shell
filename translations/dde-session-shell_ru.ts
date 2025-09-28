@@ -127,7 +127,7 @@
     </message>
     <message numerus="yes">
         <source>Please try again %n minutes later</source>
-        <translation type="unfinished"><numerusform></numerusform><numerusform></numerusform><numerusform></numerusform><numerusform></numerusform></translation>
+        <translation><numerusform>Пожалуйста, повторите через %n мин.</numerusform><numerusform>Пожалуйста, повторите через %n мин.</numerusform><numerusform>Пожалуйста, повторите через %n мин.</numerusform><numerusform>Пожалуйста, повторите через %n мин.</numerusform></translation>
     </message>
     <message>
         <source>Reset Password</source>
@@ -146,7 +146,7 @@
     </message>
     <message numerus="yes">
         <source>Please try again %n minutes later</source>
-        <translation type="unfinished"><numerusform></numerusform><numerusform></numerusform><numerusform></numerusform><numerusform></numerusform></translation>
+        <translation><numerusform>Пожалуйста, повторите через %n мин.</numerusform><numerusform>Пожалуйста, повторите через %n мин.</numerusform><numerusform>Пожалуйста, повторите через %n мин.</numerusform><numerusform>Пожалуйста, повторите через %n мин.</numerusform></translation>
     </message>
     <message>
         <source>Reset Password</source>
@@ -165,7 +165,7 @@
     </message>
     <message numerus="yes">
         <source>Verification failed, %n chances left</source>
-        <translation type="unfinished"><numerusform></numerusform><numerusform></numerusform><numerusform></numerusform><numerusform></numerusform></translation>
+        <translation><numerusform>Проверка не удалась, осталось попыток: %n</numerusform><numerusform>Проверка не удалась, осталось попыток: %n</numerusform><numerusform>Проверка не удалась, осталось попыток: %n</numerusform><numerusform>Проверка не удалась, осталось попыток: %n</numerusform></translation>
     </message>
     <message>
         <source>Verification failed, only one chance left</source>
@@ -185,7 +185,7 @@
     </message>
     <message numerus="yes">
         <source>Please try again %n minute(s) later</source>
-        <translation type="unfinished"><numerusform></numerusform><numerusform></numerusform><numerusform></numerusform><numerusform></numerusform></translation>
+        <translation><numerusform>Пожалуйста, попробуйте снова через %n мин.</numerusform><numerusform>Пожалуйста, попробуйте снова через %n мин.</numerusform><numerusform>Пожалуйста, попробуйте снова через %n мин.</numerusform><numerusform>Пожалуйста, попробуйте снова через %n мин.</numerusform></translation>
     </message>
     <message>
         <source>Please try again 1 minute later</source>
