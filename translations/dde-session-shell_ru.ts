@@ -223,7 +223,7 @@
     <name>DeepinAuthFramework</name>
     <message>
         <source>Wrong Password</source>
-        <translation type="unfinished"/>
+        <translation>Неверный пароль</translation>
     </message>
 </context>
 <context>
@@ -245,7 +245,7 @@
     </message>
     <message>
         <source>The reason of inhibit.</source>
-        <translation type="unfinished"/>
+        <translation>Причина подавления.</translation>
     </message>
 </context>
 <context>
