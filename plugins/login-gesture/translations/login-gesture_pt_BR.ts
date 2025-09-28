@@ -3,7 +3,7 @@
     <name>gestureLogin::TranslastionDoc</name>
     <message>
         <source>Gesture password is enabled</source>
-        <translation>Senha por gestos está ativada</translation>
+        <translation>A senha por gestos está ativada</translation>
     </message>
     <message>
         <source>For first time use, please set the gesture password first</source>
@@ -31,11 +31,11 @@
     </message>
     <message>
         <source>Sign in with gesture password</source>
-        <translation>Entrar com a senha por gesto</translation>
+        <translation>Entrar com a senha por gestos</translation>
     </message>
     <message>
         <source>Gesture password has been reset</source>
-        <translation>A senha por gesto foi redefinida</translation>
+        <translation>A senha por gestos foi redefinida</translation>
     </message>
     <message>
         <source>Please reset the gesture password</source>
