@@ -11,7 +11,7 @@
     </message>
     <message numerus="yes">
         <source>Verification failed, %n chances left</source>
-        <translation type="unfinished"><numerusform></numerusform><numerusform></numerusform><numerusform></numerusform><numerusform></numerusform></translation>
+        <translation><numerusform>Проверка не удалась, осталось попыток: %n</numerusform><numerusform>Проверка не удалась, осталось попыток: %n</numerusform><numerusform>Проверка не удалась, осталось попыток: %n</numerusform><numerusform>Проверка не удалась, осталось попыток: %n</numerusform></translation>
     </message>
     <message>
         <source>Verification failed, only one chance left</source>
@@ -42,7 +42,7 @@
     </message>
     <message numerus="yes">
         <source>Verification failed, %n chances left</source>
-        <translation type="unfinished"><numerusform></numerusform><numerusform></numerusform><numerusform></numerusform><numerusform></numerusform></translation>
+        <translation><numerusform>Проверка не удалась, осталось попыток: %n</numerusform><numerusform>Проверка не удалась, осталось попыток: %n</numerusform><numerusform>Проверка не удалась, осталось попыток: %n</numerusform><numerusform>Проверка не удалась, осталось попыток: %n</numerusform></translation>
     </message>
     <message>
         <source>Verification failed, only one chance left</source>
@@ -65,7 +65,7 @@
     </message>
     <message numerus="yes">
         <source>Verification failed, %n chances left</source>
-        <translation type="unfinished"><numerusform></numerusform><numerusform></numerusform><numerusform></numerusform><numerusform></numerusform></translation>
+        <translation><numerusform>Проверка не удалась, осталось попыток: %n</numerusform><numerusform>Проверка не удалась, осталось попыток: %n</numerusform><numerusform>Проверка не удалась, осталось попыток: %n</numerusform><numerusform>Проверка не удалась, осталось попыток: %n</numerusform></translation>
     </message>
     <message>
         <source>Verification failed, only one chance left</source>
@@ -107,7 +107,7 @@
     </message>
     <message numerus="yes">
         <source>Verification failed, %n chances left</source>
-        <translation type="unfinished"><numerusform></numerusform><numerusform></numerusform><numerusform></numerusform><numerusform></numerusform></translation>
+        <translation><numerusform>Проверка не удалась, осталось попыток: %n</numerusform><numerusform>Проверка не удалась, осталось попыток: %n</numerusform><numerusform>Проверка не удалась, осталось попыток: %n</numerusform><numerusform>Проверка не удалась, осталось попыток: %n</numerusform></translation>
     </message>
     <message>
         <source>Verification failed, only one chance left</source>
