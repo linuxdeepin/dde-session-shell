@@ -23,7 +23,7 @@
     </message>
     <message>
         <source>Setup completed Start login</source>
-        <translation>Configuração completa; entrar</translation>
+        <translation>Configuração concluída. Entrar</translation>
     </message>
     <message>
         <source>Forgot gesture password</source>
