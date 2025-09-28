@@ -15,7 +15,7 @@
     </message>
     <message>
         <source>Verification failed, only one chance left</source>
-        <translation>Проверка не удалась, у Вас осталась одна попытка</translation>
+        <translation>Проверка не удалась, у вас осталась одна попытка</translation>
     </message>
     <message>
         <source>Verify your Face ID</source>
