@@ -3,11 +3,11 @@
     <name>AuthFace</name>
     <message>
         <source>Face ID</source>
-        <translation>Идентификация лица</translation>
+        <translation>Face ID</translation>
     </message>
     <message>
         <source>Verification successful</source>
-        <translation>Проверка прошла успешно</translation>
+        <translation>Успешная проверка</translation>
     </message>
     <message numerus="yes">
         <source>Verification failed, %n chances left</source>
@@ -15,7 +15,7 @@
     </message>
     <message>
         <source>Verification failed, only one chance left</source>
-        <translation>Проверка не удалась, у вас осталась одна попытка</translation>
+        <translation>Проверка не удалась, осталась одна попытка</translation>
     </message>
     <message>
         <source>Verify your Face ID</source>
@@ -46,7 +46,7 @@
     </message>
     <message>
         <source>Verification failed, only one chance left</source>
-        <translation>Проверка не удалась, осталась только одна попытка</translation>
+        <translation>Проверка не удалась, осталась одна попытка</translation>
     </message>
     <message>
         <source>Fingerprint locked, use password please</source>
