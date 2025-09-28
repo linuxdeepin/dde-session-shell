@@ -103,7 +103,7 @@
     <name>AuthPassword</name>
     <message>
         <source>Verification successful</source>
-        <translation>Проверка прошла успешно</translation>
+        <translation>Успешная проверка</translation>
     </message>
     <message numerus="yes">
         <source>Verification failed, %n chances left</source>
@@ -127,7 +127,7 @@
     </message>
     <message numerus="yes">
         <source>Please try again %n minutes later</source>
-        <translation><numerusform>Пожалуйста, повторите через %n мин.</numerusform><numerusform>Пожалуйста, повторите через %n мин.</numerusform><numerusform>Пожалуйста, повторите через %n мин.</numerusform><numerusform>Пожалуйста, повторите через %n мин.</numerusform></translation>
+        <translation><numerusform>Пожалуйста, повторите через %n мин.</numerusform><numerusform>Пожалуйста, повторите через %n мин.</numerusform><numerusform>Пожалуйста, повторите через %n мин.</numerusform><numerusform>Повторите попытку через %n мин.</numerusform></translation>
     </message>
     <message>
         <source>Reset Password</source>
@@ -146,7 +146,7 @@
     </message>
     <message numerus="yes">
         <source>Please try again %n minutes later</source>
-        <translation><numerusform>Пожалуйста, повторите через %n мин.</numerusform><numerusform>Пожалуйста, повторите через %n мин.</numerusform><numerusform>Пожалуйста, повторите через %n мин.</numerusform><numerusform>Пожалуйста, повторите через %n мин.</numerusform></translation>
+        <translation><numerusform>Пожалуйста, повторите через %n мин.</numerusform><numerusform>Пожалуйста, повторите через %n мин.</numerusform><numerusform>Пожалуйста, повторите через %n мин.</numerusform><numerusform>Повторите попытку через %n мин.</numerusform></translation>
     </message>
     <message>
         <source>Reset Password</source>
