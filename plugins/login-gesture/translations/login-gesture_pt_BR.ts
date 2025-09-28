@@ -15,7 +15,7 @@
     </message>
     <message>
         <source>Please draw a gesture password</source>
-        <translation>Desenhe uma senha por gestos</translation>
+        <translation>Desenhe a senha por gestos</translation>
     </message>
     <message>
         <source>Please draw the gesture password again</source>
@@ -55,7 +55,7 @@
     </message>
     <message>
         <source>Please draw the current gesture password</source>
-        <translation>Desenhe a senha por gesto atual</translation>
+        <translation>Desenhe a senha por gestos atual</translation>
     </message>
     <message>
         <source>Modified successfully</source>
