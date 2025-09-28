@@ -63,7 +63,7 @@
     </message>
     <message>
         <source>Drawing error, Contact the administrator to reset</source>
-        <translation>Erro ao desenhar. Contate o administrador para redefinir</translation>
+        <translation>Desenho incorreto. Contate o administrador para redefinir</translation>
     </message>
     <message>
         <source>Cancel</source>
@@ -75,7 +75,7 @@
     </message>
     <message>
         <source>Drawing error, %1 chances left. Contact the administrator to reset</source>
-        <translation type="unfinished"/>
+        <translation>Desenho incorreto. Restam %1 tentativas. Contate o administrador para redefinir</translation>
     </message>
     <message>
         <source>Setup completed Start unlock</source>
@@ -91,7 +91,7 @@
     </message>
     <message>
         <source>Contact the administrator to reset</source>
-        <translation type="unfinished"/>
+        <translation>Contate o administrador para redefinir</translation>
     </message>
 </context>
 </TS>
