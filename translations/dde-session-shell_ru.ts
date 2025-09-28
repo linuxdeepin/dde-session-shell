@@ -146,7 +146,7 @@
     </message>
     <message numerus="yes">
         <source>Please try again %n minutes later</source>
-        <translation><numerusform>Пожалуйста, повторите через %n мин.</numerusform><numerusform>Пожалуйста, повторите через %n мин.</numerusform><numerusform>Пожалуйста, повторите через %n мин.</numerusform><numerusform>Повторите попытку через %n мин.</numerusform></translation>
+        <translation><numerusform>Повторите попытку через %n мин.</numerusform><numerusform>Повторите попытку через %n мин.</numerusform><numerusform>Повторите попытку через %n мин.</numerusform><numerusform>Повторите попытку через %n мин.</numerusform></translation>
     </message>
     <message>
         <source>Reset Password</source>
@@ -169,7 +169,7 @@
     </message>
     <message>
         <source>Verification failed, only one chance left</source>
-        <translation>Проверка не удалась, у Вас осталась одна попытка</translation>
+        <translation>Проверка не удалась, осталась одна попытка</translation>
     </message>
     <message>
         <source>Wrong PIN</source>
@@ -189,11 +189,11 @@
     </message>
     <message>
         <source>Please try again 1 minute later</source>
-        <translation>Повторите попытку через 1 минуту.</translation>
+        <translation>Повторите попытку через 1 минуту</translation>
     </message>
     <message numerus="yes">
         <source>Please try again %n minutes later</source>
-        <translation><numerusform>Пожалуйста, попробуйте снова через %n мин.</numerusform><numerusform>Пожалуйста, попробуйте снова через %n мин.</numerusform><numerusform>Пожалуйста, попробуйте снова через %n мин.</numerusform><numerusform>Пожалуйста, попробуйте снова через %n мин.</numerusform></translation>
+        <translation><numerusform>Повторите попытку через %n мин.</numerusform><numerusform>Повторите попытку через %n мин.</numerusform><numerusform>Повторите попытку через %n мин.</numerusform><numerusform>Повторите попытку через %n мин.</numerusform></translation>
     </message>
 </context>
 <context>
