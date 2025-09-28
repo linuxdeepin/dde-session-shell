@@ -193,7 +193,7 @@
     </message>
     <message numerus="yes">
         <source>Please try again %n minutes later</source>
-        <translation type="unfinished"><numerusform></numerusform><numerusform></numerusform><numerusform></numerusform><numerusform></numerusform></translation>
+        <translation><numerusform>Пожалуйста, попробуйте снова через %n мин.</numerusform><numerusform>Пожалуйста, попробуйте снова через %n мин.</numerusform><numerusform>Пожалуйста, попробуйте снова через %n мин.</numerusform><numerusform>Пожалуйста, попробуйте снова через %n мин.</numerusform></translation>
     </message>
 </context>
 <context>
@@ -204,7 +204,7 @@
     </message>
     <message numerus="yes">
         <source>Your password will expire in %n days, please change it timely</source>
-        <translation type="unfinished"><numerusform></numerusform><numerusform></numerusform><numerusform></numerusform><numerusform></numerusform></translation>
+        <translation><numerusform>Срок действия вашего пароля истечет через %n д., пожалуйста, своевременно измените его</numerusform><numerusform>Срок действия вашего пароля истечет через %n д., пожалуйста, своевременно измените его</numerusform><numerusform>Срок действия вашего пароля истечет через %n д., пожалуйста, своевременно измените его</numerusform><numerusform>Срок действия вашего пароля истечет через %n д., пожалуйста, своевременно измените его</numerusform></translation>
     </message>
     <message>
         <source>Password expired, please change</source>
