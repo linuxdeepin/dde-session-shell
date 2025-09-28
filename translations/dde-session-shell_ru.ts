@@ -92,7 +92,7 @@
     </message>
     <message>
         <source>Verification failed</source>
-        <translation>Проверка завершилась неудачно</translation>
+        <translation>Проверка не удалась</translation>
     </message>
     <message>
         <source>Identifying the security key</source>
