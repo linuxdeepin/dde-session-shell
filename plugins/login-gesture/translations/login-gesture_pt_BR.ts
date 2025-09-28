@@ -39,7 +39,7 @@
     </message>
     <message>
         <source>Please reset the gesture password</source>
-        <translation>Redefina a senha por gestos</translation>
+        <translation>Redefinir senha por gestos</translation>
     </message>
     <message>
         <source>Inconsistent with the last drawing, please redraw</source>
@@ -47,11 +47,11 @@
     </message>
     <message>
         <source>Device is locked, unlocked after %1 minutes</source>
-        <translation type="unfinished"/>
+        <translation>O dispositivo está bloqueado, aguarde %1 minutos</translation>
     </message>
     <message>
         <source>Modify gesture password</source>
-        <translation>Modificar a senha por gesto</translation>
+        <translation>Alterar senha por gestos</translation>
     </message>
     <message>
         <source>Please draw the current gesture password</source>
