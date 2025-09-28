@@ -27,7 +27,7 @@
     </message>
     <message>
         <source>Forgot gesture password</source>
-        <translation>Esqueci a senha por gesto</translation>
+        <translation>Esqueci a senha por gestos</translation>
     </message>
     <message>
         <source>Sign in with gesture password</source>
