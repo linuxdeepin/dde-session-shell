@@ -87,7 +87,7 @@
     </message>
     <message>
         <source>Minimum 4 points, please redraw</source>
-        <translation type="unfinished"/>
+        <translation>Mínimo de 4 pontos. Desenhe novamente</translation>
     </message>
     <message>
         <source>Contact the administrator to reset</source>
