@@ -39,7 +39,7 @@
     </message>
     <message>
         <source>Please reset the gesture password</source>
-        <translation>Redefinir a senha por gesto</translation>
+        <translation>Redefina a senha por gestos</translation>
     </message>
     <message>
         <source>Inconsistent with the last drawing, please redraw</source>
