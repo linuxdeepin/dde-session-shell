@@ -59,7 +59,7 @@
     </message>
     <message>
         <source>Modified successfully</source>
-        <translation>Modificação bem-sucedida</translation>
+        <translation>Alteração bem-sucedida</translation>
     </message>
     <message>
         <source>Drawing error, Contact the administrator to reset</source>
