@@ -383,19 +383,19 @@
     <name>UsersWithTheSameName</name>
     <message>
         <source>Return</source>
-        <translation type="unfinished"/>
+        <translation>Возврат</translation>
     </message>
     <message>
         <source>Please select the account for login</source>
-        <translation type="unfinished"/>
+        <translation>Пожалуйста, выберите учетную запись для входа</translation>
     </message>
     <message>
         <source>Local Account</source>
-        <translation type="unfinished"/>
+        <translation>Локальная учетная запись</translation>
     </message>
     <message>
         <source>Domain Account</source>
-        <translation type="unfinished"/>
+        <translation>Аккаунт домена</translation>
     </message>
 </context>
 <context>
