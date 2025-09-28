@@ -43,7 +43,7 @@
     </message>
     <message>
         <source>Inconsistent with the last drawing, please redraw</source>
-        <translation>Incompatível com o último desenho; desenhe novamente</translation>
+        <translation>O desenho não confere com o anterior, tente novamente</translation>
     </message>
     <message>
         <source>Device is locked, unlocked after %1 minutes</source>
