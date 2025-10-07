@@ -75,11 +75,11 @@
     </message>
     <message>
         <source>Drawing error, %1 chances left. Contact the administrator to reset</source>
-        <translation type="unfinished"/>
+        <translation>Gabim vizatimi, edhe %1 prova. Lidhuni me përgjegjësin për ta ricakuar</translation>
     </message>
     <message>
         <source>Setup completed Start unlock</source>
-        <translation type="unfinished"/>
+        <translation>Ujdisja u plotësua. Nisni shkyçjen</translation>
     </message>
     <message>
         <source>Unlock with gesture password</source>
