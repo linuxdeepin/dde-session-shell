@@ -47,7 +47,7 @@
     </message>
     <message>
         <source>Device is locked, unlocked after %1 minutes</source>
-        <translation type="unfinished"/>
+        <translation>Pajisja është e kyçur, shkyçet pas %1 minutash</translation>
     </message>
     <message>
         <source>Modify gesture password</source>
@@ -63,7 +63,7 @@
     </message>
     <message>
         <source>Drawing error, Contact the administrator to reset</source>
-        <translation type="unfinished"/>
+        <translation>Gabim vizatimi, lidhuni me përgjegjësin për ta ricakuar</translation>
     </message>
     <message>
         <source>Cancel</source>
@@ -87,11 +87,11 @@
     </message>
     <message>
         <source>Minimum 4 points, please redraw</source>
-        <translation type="unfinished"/>
+        <translation>Minimumi 4 pika, ju lutemi, rivizatojeni</translation>
     </message>
     <message>
         <source>Contact the administrator to reset</source>
-        <translation type="unfinished"/>
+        <translation>Lidhuni me përgjegjësin për ta ricaktuar</translation>
     </message>
 </context>
 </TS>
