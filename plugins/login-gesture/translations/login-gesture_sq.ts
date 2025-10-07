@@ -55,7 +55,7 @@
     </message>
     <message>
         <source>Please draw the current gesture password</source>
-        <translation>Ju lutemi, vizatoni fjalëkalimin e tanishëm të gjesteve</translation>
+        <translation>Ju lutemi, vizatoni fjalëkalimin e tanishëm me gjeste</translation>
     </message>
     <message>
         <source>Modified successfully</source>
@@ -67,11 +67,11 @@
     </message>
     <message>
         <source>Cancel</source>
-        <translation type="unfinished"/>
+        <translation>Anuloje</translation>
     </message>
     <message>
         <source>Ok</source>
-        <translation type="unfinished"/>
+        <translation>OK</translation>
     </message>
     <message>
         <source>Drawing error, %1 chances left. Contact the administrator to reset</source>
@@ -83,7 +83,7 @@
     </message>
     <message>
         <source>Unlock with gesture password</source>
-        <translation type="unfinished"/>
+        <translation>Shkyçe me fjalëkalim me gjeste</translation>
     </message>
     <message>
         <source>Minimum 4 points, please redraw</source>
