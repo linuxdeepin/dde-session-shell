@@ -83,15 +83,15 @@
     </message>
     <message>
         <source>Unlock with gesture password</source>
-        <translation type="unfinished"/>
+        <translation>Hareket şifresiyle kilidi açın</translation>
     </message>
     <message>
         <source>Minimum 4 points, please redraw</source>
-        <translation type="unfinished"/>
+        <translation>En az 4 nokta, lütfen yeniden çizin</translation>
     </message>
     <message>
         <source>Contact the administrator to reset</source>
-        <translation type="unfinished"/>
+        <translation>Sıfırlamak için yöneticiyle iletişime geçin</translation>
     </message>
 </context>
 </TS>
