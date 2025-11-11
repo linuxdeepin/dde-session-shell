@@ -353,7 +353,7 @@
     <name>UdcpMFALoginWidget</name>
     <message>
         <source>发送验证码</source>
-        <translation>Doğrulama kodunu gönder</translation>
+        <translation type="unfinished"/>
     </message>
     <message>
         <source>请输入手机号</source>
@@ -383,19 +383,19 @@
     <name>UsersWithTheSameName</name>
     <message>
         <source>Return</source>
-        <translation type="unfinished"/>
+        <translation>Geri dön</translation>
     </message>
     <message>
         <source>Please select the account for login</source>
-        <translation type="unfinished"/>
+        <translation>Lütfen giriş yapmak için hesabı seçin</translation>
     </message>
     <message>
         <source>Local Account</source>
-        <translation type="unfinished"/>
+        <translation>Yerel Hesap</translation>
     </message>
     <message>
         <source>Domain Account</source>
-        <translation type="unfinished"/>
+        <translation>Alan Adı Hesabı</translation>
     </message>
 </context>
 <context>
