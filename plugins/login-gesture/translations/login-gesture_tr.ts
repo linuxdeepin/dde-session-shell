@@ -47,7 +47,7 @@
     </message>
     <message>
         <source>Device is locked, unlocked after %1 minutes</source>
-        <translation type="unfinished"/>
+        <translation>Cihaz kilitli, %1 dakika sonra kilidi açılıyor</translation>
     </message>
     <message>
         <source>Modify gesture password</source>
@@ -63,23 +63,23 @@
     </message>
     <message>
         <source>Drawing error, Contact the administrator to reset</source>
-        <translation type="unfinished"/>
+        <translation>Çizim hatası, sıfırlamak için yöneticiyle iletişime geçin</translation>
     </message>
     <message>
         <source>Cancel</source>
-        <translation type="unfinished"/>
+        <translation>Vazgeç</translation>
     </message>
     <message>
         <source>Ok</source>
-        <translation type="unfinished"/>
+        <translation>Tamam</translation>
     </message>
     <message>
         <source>Drawing error, %1 chances left. Contact the administrator to reset</source>
-        <translation type="unfinished"/>
+        <translation>Çizim hatası, %1 deneme kaldı. Sıfırlamak için yöneticiyle iletişime geçin</translation>
     </message>
     <message>
         <source>Setup completed Start unlock</source>
-        <translation type="unfinished"/>
+        <translation>Kurulum tamamlandı. Kilidi açmaya başla</translation>
     </message>
     <message>
         <source>Unlock with gesture password</source>
