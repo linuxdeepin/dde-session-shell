@@ -470,7 +470,7 @@
     </message>
     <message>
         <source>Closing the programs and rebooting, please wait...</source>
-        <translation>Programlar kapatılıp yeniden başlatıyor, lütfen bekleyin...</translation>
+        <translation>Programlar kapatılıp yeniden başlatılıyor, lütfen bekleyin...</translation>
     </message>
     <message>
         <source>Closing the programs and logging out, please wait...</source>
@@ -481,7 +481,7 @@
     <name>dss::module::AssistLoginWidget</name>
     <message>
         <source>Automatic login</source>
-        <translation type="unfinished"/>
+        <translation>Otomatik giriş</translation>
     </message>
 </context>
 <context>
