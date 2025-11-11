@@ -84,19 +84,19 @@
     <name>AuthPasskey</name>
     <message>
         <source>Please plug in the security key</source>
-        <translation type="unfinished"/>
+        <translation>Lütfen güvenlik anahtarını takın</translation>
     </message>
     <message>
         <source>Verification successful</source>
-        <translation type="unfinished"/>
+        <translation>Doğrulama başarılı</translation>
     </message>
     <message>
         <source>Verification failed</source>
-        <translation type="unfinished"/>
+        <translation>Doğrulama başarısız oldu</translation>
     </message>
     <message>
         <source>Identifying the security key</source>
-        <translation type="unfinished"/>
+        <translation>Güvenlik anahtarının tanımlanması</translation>
     </message>
 </context>
 <context>
@@ -212,18 +212,18 @@
     </message>
     <message>
         <source>Your password has expired. Please contact the administrator to change it</source>
-        <translation type="unfinished"/>
+        <translation>Şifrenizin süresi doldu. Lütfen değiştirmek için yöneticiyle iletişime geçin</translation>
     </message>
     <message>
         <source>Terminal locked, please contact administrator</source>
-        <translation type="unfinished"/>
+        <translation>Terminal kilitlendi, lütfen yöneticiyle iletişime geçin</translation>
     </message>
 </context>
 <context>
     <name>DeepinAuthFramework</name>
     <message>
         <source>Wrong Password</source>
-        <translation type="unfinished"/>
+        <translation>Yanlış Şifre</translation>
     </message>
 </context>
 <context>
