@@ -466,15 +466,15 @@
     </message>
     <message>
         <source>Closing the programs and shutting down, please wait...</source>
-        <translation type="unfinished"/>
+        <translation>Programlar ve sistem kapatılıyor, lütfen bekleyin...</translation>
     </message>
     <message>
         <source>Closing the programs and rebooting, please wait...</source>
-        <translation type="unfinished"/>
+        <translation>Programlar kapatılıp yeniden başlatıyor, lütfen bekleyin...</translation>
     </message>
     <message>
         <source>Closing the programs and logging out, please wait...</source>
-        <translation type="unfinished"/>
+        <translation>Programlar kapatılıp çıkış yapılıyor, lütfen bekleyin...</translation>
     </message>
 </context>
 <context>
