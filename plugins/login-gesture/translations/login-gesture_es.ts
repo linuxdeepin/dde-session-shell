@@ -63,7 +63,7 @@
     </message>
     <message>
         <source>Drawing error, Contact the administrator to reset</source>
-        <translation>Dibujo incorrecto. Contacte con el administrador para restablecerlo.</translation>
+        <translation>Patrón incorrecto. Contacte con el administrador para restablecerlo.</translation>
     </message>
     <message>
         <source>Cancel</source>
@@ -79,15 +79,15 @@
     </message>
     <message>
         <source>Setup completed Start unlock</source>
-        <translation type="unfinished"/>
+        <translation>Configuración completada. Iniciar desbloqueo.</translation>
     </message>
     <message>
         <source>Unlock with gesture password</source>
-        <translation type="unfinished"/>
+        <translation>Desbloquea con contraseña gestual</translation>
     </message>
     <message>
         <source>Minimum 4 points, please redraw</source>
-        <translation type="unfinished"/>
+        <translation>Mínimo 4 puntos, por favor vuelva a dibujar.</translation>
     </message>
     <message>
         <source>Contact the administrator to reset</source>
