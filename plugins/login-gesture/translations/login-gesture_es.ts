@@ -75,7 +75,7 @@
     </message>
     <message>
         <source>Drawing error, %1 chances left. Contact the administrator to reset</source>
-        <translation>Dibujo incorrecto, quedan 1 oportunidad. Contacta con el administrador para reiniciar.</translation>
+        <translation>Patrón incorrecto, quedan 1 oportunidad. Contacta con el administrador para reiniciar.</translation>
     </message>
     <message>
         <source>Setup completed Start unlock</source>
@@ -91,7 +91,7 @@
     </message>
     <message>
         <source>Contact the administrator to reset</source>
-        <translation type="unfinished"/>
+        <translation>Póngase en contacto con la administrador para restablecer</translation>
     </message>
 </context>
 </TS>
