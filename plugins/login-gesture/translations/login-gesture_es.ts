@@ -63,7 +63,7 @@
     </message>
     <message>
         <source>Drawing error, Contact the administrator to reset</source>
-        <translation>Error de dibujo. Contacte con el administrador para restablecerlo.</translation>
+        <translation>Dibujo incorrecto. Contacte con el administrador para restablecerlo.</translation>
     </message>
     <message>
         <source>Cancel</source>
@@ -75,7 +75,7 @@
     </message>
     <message>
         <source>Drawing error, %1 chances left. Contact the administrator to reset</source>
-        <translation type="unfinished"/>
+        <translation>Dibujo incorrecto, quedan 1 oportunidad. Contacta con el administrador para reiniciar.</translation>
     </message>
     <message>
         <source>Setup completed Start unlock</source>
