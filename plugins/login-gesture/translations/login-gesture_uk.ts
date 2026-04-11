@@ -79,7 +79,7 @@
     </message>
     <message>
         <source>Setup completed Start unlock</source>
-        <translation type="unfinished"/>
+        <translation>Налаштування завершено. Можна починати</translation>
     </message>
     <message>
         <source>Unlock with gesture password</source>
