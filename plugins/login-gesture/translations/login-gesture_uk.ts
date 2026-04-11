@@ -83,15 +83,15 @@
     </message>
     <message>
         <source>Unlock with gesture password</source>
-        <translation type="unfinished"/>
+        <translation>Розблокувати за допомогою жесту</translation>
     </message>
     <message>
         <source>Minimum 4 points, please redraw</source>
-        <translation type="unfinished"/>
+        <translation>Мінімум 4 точки, будь ласка, повторіть малювання</translation>
     </message>
     <message>
         <source>Contact the administrator to reset</source>
-        <translation type="unfinished"/>
+        <translation>Для скидання зверніться до адміністратора</translation>
     </message>
 </context>
 </TS>
