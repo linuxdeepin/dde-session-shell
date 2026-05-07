@@ -836,9 +836,15 @@ void LockContent::tryGrabKeyboard(bool exitIfFailed)
             .path("/org/freedesktop/Notifications")
             .interface("org.freedesktop.Notifications")
             .method(QString("Notify"))
-            .arg(QString("dde-lock"))     // appName
+#ifndef ENABLE_DSS_SNIPE
+            .arg(tr("Lock Screen"))
             .arg(static_cast<uint>(0))
             .arg(QString(""))
+#else
+            .arg(QString("dde-lock"))     // appName
+            .arg(static_cast<uint>(0))
+            .arg(QString("notification-lock-screen-failed"))
+#endif
             .arg(QString(""))
             .arg(tr("Failed to lock screen"))
             .arg(QStringList())
