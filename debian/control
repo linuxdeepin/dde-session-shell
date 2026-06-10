@@ -34,6 +34,7 @@ Package: dde-session-shell
 Architecture: any
 Depends: ${shlibs:Depends}, ${misc:Depends}, ${dist:Depends},
  deepin-desktop-schemas (>=5.9.14),
+ deepin-security-loader,
  libdframeworkdbus2 (>=5.4.10),
  dde-daemon (>=5.13.12),
  startdde (>=5.10.24),
