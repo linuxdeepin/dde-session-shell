@@ -13,3 +13,4 @@ usr/share/dde-session-shell
 usr/share/lightdm/lightdm.conf.d
 usr/lib/dde-session-shell/modules/libone-key-login.so
 usr/lib/*/security
+usr/libexec/deepin
