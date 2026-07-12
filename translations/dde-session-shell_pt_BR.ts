@@ -346,7 +346,7 @@
     <name>SystemMonitor</name>
     <message>
         <source>Start system monitor</source>
-        <translation>Monitor de Sistema</translation>
+        <translation>Monitor do Sistema</translation>
     </message>
 </context>
 <context>
