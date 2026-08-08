@@ -43,15 +43,15 @@
     </message>
     <message>
         <source>Inconsistent with the last drawing, please redraw</source>
-        <translation type="unfinished"/>
+        <translation>Inconsistência com o último desenho, por favor redesenhe</translation>
     </message>
     <message>
         <source>Device is locked, unlocked after %1 minutes</source>
-        <translation type="unfinished"/>
+        <translation>O dispositivo está trancado, desbloqueado após %1 minutos</translation>
     </message>
     <message>
         <source>Modify gesture password</source>
-        <translation type="unfinished"/>
+        <translation>Modificar a palavra-passe gestual</translation>
     </message>
     <message>
         <source>Please draw the current gesture password</source>
