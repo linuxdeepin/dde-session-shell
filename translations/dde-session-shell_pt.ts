@@ -204,7 +204,7 @@
     </message>
     <message numerus="yes">
         <source>Your password will expire in %n days, please change it timely</source>
-        <translation type="unfinished"><numerusform></numerusform><numerusform></numerusform><numerusform></numerusform></translation>
+        <translation><numerusform>A sua palavra-passe expirará dentro de %n dias, por favor altere-a atempadamente</numerusform><numerusform>A sua palavra-passe expirará dentro de %n dias. Altere-a atempadamente</numerusform><numerusform>A sua palavra-passe vai expirar dentro de %1 dias. Por favor altere-a atempadamente.</numerusform></translation>
     </message>
     <message>
         <source>Password expired, please change</source>
@@ -212,18 +212,18 @@
     </message>
     <message>
         <source>Your password has expired. Please contact the administrator to change it</source>
-        <translation type="unfinished"/>
+        <translation>A sua palavra-passe expirou. Por favor contacte o administrador para a alterar</translation>
     </message>
     <message>
         <source>Terminal locked, please contact administrator</source>
-        <translation type="unfinished"/>
+        <translation>Terminal trancado, por favor contacte o administrador</translation>
     </message>
 </context>
 <context>
     <name>DeepinAuthFramework</name>
     <message>
         <source>Wrong Password</source>
-        <translation type="unfinished"/>
+        <translation>Palavra-passe Errada</translation>
     </message>
 </context>
 <context>
