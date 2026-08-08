@@ -84,19 +84,19 @@
     <name>AuthPasskey</name>
     <message>
         <source>Please plug in the security key</source>
-        <translation type="unfinished"/>
+        <translation>Por favor introduza a chave de segurança </translation>
     </message>
     <message>
         <source>Verification successful</source>
-        <translation type="unfinished"/>
+        <translation>Verificação bem sucedida</translation>
     </message>
     <message>
         <source>Verification failed</source>
-        <translation type="unfinished"/>
+        <translation>Verificação falhada</translation>
     </message>
     <message>
         <source>Identifying the security key</source>
-        <translation type="unfinished"/>
+        <translation>A identificar a chave de segurança</translation>
     </message>
 </context>
 <context>
