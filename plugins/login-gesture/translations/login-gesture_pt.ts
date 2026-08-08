@@ -55,27 +55,27 @@
     </message>
     <message>
         <source>Please draw the current gesture password</source>
-        <translation type="unfinished"/>
+        <translation>Por favor desenhe a palavra-passe gestual atual</translation>
     </message>
     <message>
         <source>Modified successfully</source>
-        <translation type="unfinished"/>
+        <translation>Modificado com sucesso</translation>
     </message>
     <message>
         <source>Drawing error, Contact the administrator to reset</source>
-        <translation type="unfinished"/>
+        <translation>Erro de desenho. Contacte o administrador para repor</translation>
     </message>
     <message>
         <source>Cancel</source>
-        <translation type="unfinished"/>
+        <translation>Cancelar</translation>
     </message>
     <message>
         <source>Ok</source>
-        <translation type="unfinished"/>
+        <translation>Ok</translation>
     </message>
     <message>
         <source>Drawing error, %1 chances left. Contact the administrator to reset</source>
-        <translation type="unfinished"/>
+        <translation>Erro de desenho, restam %1 oportunidades. Contacte o administrador para repor</translation>
     </message>
     <message>
         <source>Setup completed Start unlock</source>
