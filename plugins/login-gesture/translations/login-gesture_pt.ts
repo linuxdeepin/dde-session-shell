@@ -91,7 +91,7 @@
     </message>
     <message>
         <source>Contact the administrator to reset</source>
-        <translation type="unfinished"/>
+        <translation>Contacte o administrador para repor</translation>
     </message>
 </context>
 </TS>
