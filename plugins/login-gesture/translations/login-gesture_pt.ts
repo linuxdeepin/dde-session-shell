@@ -79,15 +79,15 @@
     </message>
     <message>
         <source>Setup completed Start unlock</source>
-        <translation type="unfinished"/>
+        <translation>Instalação completa. Iniciar desbloqueio</translation>
     </message>
     <message>
         <source>Unlock with gesture password</source>
-        <translation type="unfinished"/>
+        <translation>Destrancar com palavra-passe gestual</translation>
     </message>
     <message>
         <source>Minimum 4 points, please redraw</source>
-        <translation type="unfinished"/>
+        <translation>Mínimo 4 pontos, por favor redesenhe</translation>
     </message>
     <message>
         <source>Contact the administrator to reset</source>
