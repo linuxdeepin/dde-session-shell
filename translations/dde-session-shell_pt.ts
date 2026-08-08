@@ -353,19 +353,19 @@
     <name>UdcpMFALoginWidget</name>
     <message>
         <source>发送验证码</source>
-        <translation>发送验证码</translation>
+        <translation type="unfinished"/>
     </message>
     <message>
         <source>请输入手机号</source>
-        <translation>请输入手机号</translation>
+        <translation type="unfinished"/>
     </message>
     <message>
         <source>请输入验证码</source>
-        <translation>请输入验证码</translation>
+        <translation type="unfinished"/>
     </message>
     <message>
         <source>获取验证码</source>
-        <translation>获取验证码</translation>
+        <translation type="unfinished"/>
     </message>
 </context>
 <context>
@@ -466,22 +466,22 @@
     </message>
     <message>
         <source>Closing the programs and shutting down, please wait...</source>
-        <translation>A fechar os programas e encerrar, por favor aguarde...</translation>
+        <translation>A fechar os programas e a encerrar, por favor aguarde...</translation>
     </message>
     <message>
         <source>Closing the programs and rebooting, please wait...</source>
-        <translation type="unfinished"/>
+        <translation>A fechar os programas e a reiniciar, por favor aguarde...</translation>
     </message>
     <message>
         <source>Closing the programs and logging out, please wait...</source>
-        <translation type="unfinished"/>
+        <translation>A fechar os programas a sair da sessão, por favor aguarde...</translation>
     </message>
 </context>
 <context>
     <name>dss::module::AssistLoginWidget</name>
     <message>
         <source>Automatic login</source>
-        <translation type="unfinished"/>
+        <translation>Início de sessão automático</translation>
     </message>
 </context>
 <context>
