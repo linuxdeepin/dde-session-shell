@@ -11,15 +11,15 @@
     </message>
     <message>
         <source>Set gesture password</source>
-        <translation type="unfinished"/>
+        <translation>Definir palavra-passe gestual</translation>
     </message>
     <message>
         <source>Please draw a gesture password</source>
-        <translation type="unfinished"/>
+        <translation>Por favor desenhe uma palavra-passe gestual</translation>
     </message>
     <message>
         <source>Please draw the gesture password again</source>
-        <translation type="unfinished"/>
+        <translation>Por favor desenhe novamente a palavra-passe gestual</translation>
     </message>
     <message>
         <source>Setup completed Start login</source>
