@@ -23,23 +23,23 @@
     </message>
     <message>
         <source>Setup completed Start login</source>
-        <translation type="unfinished"/>
+        <translation>Instalação completa. Iniciar sessão</translation>
     </message>
     <message>
         <source>Forgot gesture password</source>
-        <translation type="unfinished"/>
+        <translation>Esquecer palavra-passe gestual</translation>
     </message>
     <message>
         <source>Sign in with gesture password</source>
-        <translation type="unfinished"/>
+        <translation>Iniciar sessão com palavra-passe gestual</translation>
     </message>
     <message>
         <source>Gesture password has been reset</source>
-        <translation type="unfinished"/>
+        <translation>A palavra-passe gestual foi reposta</translation>
     </message>
     <message>
         <source>Please reset the gesture password</source>
-        <translation type="unfinished"/>
+        <translation>Por favor reponha a palavra-passe gestual</translation>
     </message>
     <message>
         <source>Inconsistent with the last drawing, please redraw</source>
