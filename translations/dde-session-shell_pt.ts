@@ -458,15 +458,15 @@
     </message>
     <message>
         <source>Update and Shut Down</source>
-        <translation type="unfinished"/>
+        <translation>Atualizar e Encerrar</translation>
     </message>
     <message>
         <source>Update and Reboot</source>
-        <translation type="unfinished"/>
+        <translation>Atualizar e Reiniciar</translation>
     </message>
     <message>
         <source>Closing the programs and shutting down, please wait...</source>
-        <translation type="unfinished"/>
+        <translation>A fechar os programas e encerrar, por favor aguarde...</translation>
     </message>
     <message>
         <source>Closing the programs and rebooting, please wait...</source>
