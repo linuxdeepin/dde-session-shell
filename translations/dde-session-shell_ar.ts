@@ -372,11 +372,11 @@
     <name>UpdateWorker</name>
     <message>
         <source>Update</source>
-        <translation type="unfinished"/>
+        <translation>تحديث</translation>
     </message>
     <message>
         <source>Please plug in and then install updates.</source>
-        <translation type="unfinished"/>
+        <translation>يرجى توصيل الجهاز بمصدر الطاقة ثم تثبيت التحديثات.</translation>
     </message>
 </context>
 <context>
