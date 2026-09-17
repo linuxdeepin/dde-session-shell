@@ -160,8 +160,15 @@ void DLineEditEx::paintEvent(QPaintEvent *event)
         // 使用 elidedText 确保文本过长时在右侧显示省略号，而不是换行
         QFontMetrics fm(pa.font());
         const QString &placeholderText = lineEdit()->placeholderText();
-        QString elidedText = fm.elidedText(placeholderText, Qt::ElideRight, rect().width());
-        pa.drawText(rect(), Qt::AlignCenter | Qt::TextSingleLine, elidedText);
+        // 读取内部 QLineEdit 的 textMargins，计算扣除图标区域后的有效文本 rect
+        // 避免占位文本与右侧图标（大写状态、密码显示、密码提示等）重叠
+        QRect leRect = lineEdit()->geometry();
+        QMargins textMargins = lineEdit()->textMargins();
+        QRect textRect(leRect.x() + textMargins.left(), rect().y(),
+                       leRect.width() - textMargins.left() - textMargins.right(),
+                       rect().height());
+        QString elidedText = fm.elidedText(placeholderText, Qt::ElideRight, textRect.width());
+        pa.drawText(textRect, Qt::AlignCenter | Qt::TextSingleLine, elidedText);
 
         // 当文本被省略时，设置 tooltip 显示完整文本
         if (elidedText != placeholderText) {
