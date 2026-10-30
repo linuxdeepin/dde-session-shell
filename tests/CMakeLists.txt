@@ -1,3 +1,7 @@
+# SPDX-FileCopyrightText: 2026 UnionTech Software Technology Co., Ltd.
+#
+# SPDX-License-Identifier: GPL-3.0-or-later
+
 find_package(Qt${QT_VERSION_MAJOR} COMPONENTS Test DBus REQUIRED)
 find_package(GTest REQUIRED)
 ADD_COMPILE_OPTIONS(-fno-access-control)

@@ -1,3 +1,7 @@
+# SPDX-FileCopyrightText: 2026 UnionTech Software Technology Co., Ltd.
+#
+# SPDX-License-Identifier: GPL-3.0-or-later
+
 # 设置运行此配置所需的 cmake 的最低版本
 cmake_minimum_required(VERSION 3.11)
 
@@ -6,6 +10,8 @@ set(PLUGIN_NAME login-basic)
 
 # 设置项目名称
 project(${PLUGIN_NAME})
+
+add_compile_definitions(QT_NO_KEYWORDS)
 
 # 启用 qt moc 的支持
 set(CMAKE_AUTOMOC ON)

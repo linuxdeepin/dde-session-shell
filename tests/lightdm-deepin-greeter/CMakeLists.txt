@@ -1,3 +1,7 @@
+# SPDX-FileCopyrightText: 2026 UnionTech Software Technology Co., Ltd.
+#
+# SPDX-License-Identifier: GPL-3.0-or-later
+
 set(BIN_NAME lightdm-deepin-greeter-test)
 
 aux_source_directory(. GREETER_TEST)

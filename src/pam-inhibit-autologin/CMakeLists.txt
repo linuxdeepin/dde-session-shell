@@ -1,3 +1,7 @@
+# SPDX-FileCopyrightText: 2026 UnionTech Software Technology Co., Ltd.
+#
+# SPDX-License-Identifier: GPL-3.0-or-later
+
 set(PAM_LIB_NAME "pam_inhibit_autologin")
 
 file(GLOB_RECURSE LIB_SRCS
