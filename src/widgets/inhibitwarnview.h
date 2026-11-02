@@ -53,7 +53,7 @@ public:
     void setAcceptVisible(const bool acceptable);
     bool hasInhibit() const;
 
-signals:
+Q_SIGNALS:
     void cancelled() const;
     void actionInvoked() const;
 
@@ -66,7 +66,7 @@ private:
     void initUi();
     void initConnection();
 
-private slots:
+private Q_SLOTS:
     void onAccept();
 
 private:

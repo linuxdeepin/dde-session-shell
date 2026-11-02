@@ -47,7 +47,7 @@ void FullManagedLoginModule::reset()
 void FullManagedLoginModule::initUI()
 {
     if (m_loginWidget) {
-        emit m_loginWidget->reset();
+        Q_EMIT m_loginWidget->reset();
         return;
     }
 

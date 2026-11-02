@@ -18,7 +18,7 @@ public:
     explicit MediaWidget(QWidget *parent = nullptr);
     void initMediaPlayer();
 
-private slots:
+private Q_SLOTS:
     void changeVisible();
 
 private:

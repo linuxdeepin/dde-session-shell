@@ -29,13 +29,13 @@ public:
     void start();
     void close();
 
-signals:
+Q_SIGNALS:
     void inputFinished();                           // 第二次输入token合法并完成
 
 private:
     void initConnection();
 
-private slots:
+private Q_SLOTS:
     void onSaveToken(const QString &token);
 
 private:

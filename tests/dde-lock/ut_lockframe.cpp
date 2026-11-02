@@ -41,8 +41,8 @@ TEST_F(UT_LockFrame, frame)
 
 TEST_F(UT_LockFrame, connection)
 {
-    emit m_model->prepareForSleep(false);
-    emit m_model->authFinished(true);
+    Q_EMIT m_model->prepareForSleep(false);
+    Q_EMIT m_model->authFinished(true);
 }
 
 TEST_F(UT_LockFrame, event)

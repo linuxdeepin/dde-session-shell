@@ -39,12 +39,12 @@ public:
     void showResetPasswordMessage();
     void closeResetPasswordMessage();
 
-signals:
+Q_SIGNALS:
     void focusChanged(const bool);
     void lineEditTextChanged(const QString &); // 数据同步
     void requestShowKeyboardList();            // 显示键盘布局列表
     void resetPasswordMessageVisibleChanged(const bool isVisible);
-public slots:
+public Q_SLOTS:
     void setResetPasswordMessageVisible(const bool isVisible);
     void updateResetPasswordUI();
 protected:

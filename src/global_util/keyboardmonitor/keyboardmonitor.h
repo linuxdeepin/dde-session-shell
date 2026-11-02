@@ -24,7 +24,7 @@ public:
     bool setNumLockStatus(const bool &on);
     void ungrabKeyboard();
 
-signals:
+Q_SIGNALS:
     void capsLockStatusChanged(bool on);
     void numLockStatusChanged(bool on);
     void initialized();

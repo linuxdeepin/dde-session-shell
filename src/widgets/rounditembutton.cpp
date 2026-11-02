@@ -120,7 +120,7 @@ void RoundItemButton::mouseReleaseEvent(QMouseEvent* e)
         updateState(Pressed);
 
     if (m_state != Disabled)
-        emit clicked();
+        Q_EMIT clicked();
 }
 
 void RoundItemButton::paintEvent(QPaintEvent* event)
@@ -283,7 +283,7 @@ void RoundItemButton::updateState(const RoundItemButton::State state)
 {
     if (m_state != state) {
         m_state = state;
-        emit stateChanged(state);
+        Q_EMIT stateChanged(state);
     }
 
     QAbstractButton::setChecked(m_state == Checked);

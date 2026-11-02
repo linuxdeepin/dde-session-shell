@@ -54,7 +54,7 @@ public:
     void hideButton();
     void setColor(QColor color);
 
-signals:
+Q_SIGNALS:
     void mousePress();
     void requestDelete();
     void userAvatarClicked();

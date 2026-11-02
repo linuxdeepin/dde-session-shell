@@ -26,7 +26,7 @@ public:
 
     void setRadius(int radius) { m_radius = radius; }
 
-signals:
+Q_SIGNALS:
     void requestAction();
     void mouseEnter();
     void mouseLeave();

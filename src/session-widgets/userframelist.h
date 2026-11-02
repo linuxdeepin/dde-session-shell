@@ -30,7 +30,7 @@ public:
     void updateLayout(int width);
     static void onDConfigPropertyChanged(const QString &key, const QVariant &value, QObject* objPtr);
 
-signals:
+Q_SIGNALS:
     void requestSwitchUser(std::shared_ptr<User> user);
     void clicked();
 

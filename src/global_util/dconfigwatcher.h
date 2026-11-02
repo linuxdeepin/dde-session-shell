@@ -22,7 +22,7 @@ public:
     void erase(const QString &key, QWidget *binder);
     const int getStatus(const QString &key);
 
-signals:
+Q_SIGNALS:
     void enableChanged(const QString &key, bool enable);
 
 private:

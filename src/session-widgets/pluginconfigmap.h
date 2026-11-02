@@ -35,7 +35,7 @@ public:
     static PluginConfigMap &instance();
     const PluginConfig *getConfig();
 
-public slots:
+public Q_SLOTS:
     void requestAddConfig(ConfigIndex index, const PluginConfig *);
     void requestRemoveConfig(ConfigIndex);
 

@@ -29,7 +29,7 @@ VirtualKBInstance::~VirtualKBInstance()
 void VirtualKBInstance::init()
 {
     if (m_virtualKBWidget) {
-        emit initFinished();
+        Q_EMIT initFinished();
         return;
     }
 
@@ -51,7 +51,7 @@ void VirtualKBInstance::init()
             m_virtualKBWidget->hide();
 
             QTimer::singleShot(300, [this] {
-                emit initFinished();
+                Q_EMIT initFinished();
             });
         });
         connect(m_virtualKBProcess, SIGNAL(finished(int)), this, SLOT(onVirtualKBProcessFinished(int)));

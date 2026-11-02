@@ -34,7 +34,7 @@ public:
     bool isPluginLoaded() const;
     virtual bool isUserSwitchButtonVisiable() const override;
 
-public slots:
+public Q_SLOTS:
     void onRequestChangeAuth(const AuthCommon::AuthType authType);
 
 protected:

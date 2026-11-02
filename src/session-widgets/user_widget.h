@@ -38,7 +38,7 @@ public:
     int heightHint() const;
     static void onDConfigPropertyChanged(const QString &key, const QVariant &value, QObject *objPtr);
 
-signals:
+Q_SIGNALS:
     void clicked();
 
 

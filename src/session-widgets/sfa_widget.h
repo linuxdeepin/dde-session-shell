@@ -41,7 +41,7 @@ public:
     void setAuthState(const AuthCommon::AuthType type, const AuthCommon::AuthState state, const QString &message) override;
     int getTopSpacing() const override;
 
-public slots:
+public Q_SLOTS:
     void onRetryButtonVisibleChanged(bool visible);
     void onRequestChangeAuth(AuthCommon::AuthType authType);
     void onLightdmPamStartChanged();

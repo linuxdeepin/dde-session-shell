@@ -69,7 +69,7 @@ public:
 
     AssistLoginWidget * assistLoginWidget() const { return m_assistLoginWidget; }
 
-signals:
+Q_SIGNALS:
     void focusChanged(const bool);
     void lineEditTextChanged(const QString &); // 数据同步
     void requestChangeFocus();                 // 切换焦点
@@ -83,7 +83,7 @@ signals:
     void passwordErrorTipsClearChanged(const bool isClear);
     void requestSendExtraInfo(const QString &info);
 
-public slots:
+public Q_SLOTS:
     void setResetPasswordMessageVisible(const bool isVisible, bool fromResetDialog = false);
     void updateResetPasswordUI();
     void onReadyToAuthChanged(bool ready);

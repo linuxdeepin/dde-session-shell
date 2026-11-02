@@ -47,12 +47,12 @@ public:
     void setPressPic(const QString &path);
     void setRedPointVisible(bool visible);
 
-signals:
+Q_SIGNALS:
     void stateChanged(const State state);
     void clicked();
     void iconChanged();
 
-private slots:
+private Q_SLOTS:
     void updateIcon();
     inline void setState(const State state) {updateState(state);}
 

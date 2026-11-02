@@ -27,7 +27,7 @@ public:
     };
     QList<LayoutItem> KeyboardLayoutList;
 
-public slots:
+public Q_SLOTS:
     QStringList lookUpKeyboardList(QStringList keyboardList_key);
     QString lookUpKeyboardKey(const QString &keyboard_value);
 

@@ -164,7 +164,7 @@ void InhibitButton::paintEvent(QPaintEvent *event)
 void InhibitButton::mouseReleaseEvent(QMouseEvent *event)
 {
     Q_UNUSED(event);
-    emit clicked();
+    Q_EMIT clicked();
     return;
 }
 
@@ -173,7 +173,7 @@ void InhibitButton::keyPressEvent(QKeyEvent *event)
     switch (event->key()) {
     case Qt::Key_Return:
     case Qt::Key_Enter:
-        emit clicked();
+        Q_EMIT clicked();
         break;
     }
     QWidget::keyPressEvent(event);

@@ -72,7 +72,7 @@ void DConfigWatcher::onStatusModeChanged(const QString &key)
     for (auto mapUnit = m_map.begin(); mapUnit != m_map.end(); ++mapUnit) {
         if (key == mapUnit.key()) {
             setStatus(key, mapUnit.value());
-            emit enableChanged(key, mapUnit.value()->isEnabled());
+            Q_EMIT enableChanged(key, mapUnit.value()->isEnabled());
         }
     }
 }

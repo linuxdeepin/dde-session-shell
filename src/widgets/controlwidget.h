@@ -100,7 +100,7 @@ public:
     QWidget *getTray(const QString &name);
     static void onDConfigPropertyChanged(const QString &key, const QVariant &value, QObject *objPtr);
 
-signals:
+Q_SIGNALS:
     void requestSwitchUser();
     void requestShutdown();
     void requestSwitchSession();
@@ -110,7 +110,7 @@ signals:
     void requestShowTrayModule(QWidget *trayWidget, QWidget *contentWidget, const bool callShowForce = false);
     void notifyKeyboardLayoutHidden();
 
-public slots:
+public Q_SLOTS:
     void addModule(TrayPlugin *module);
     void removeModule(TrayPlugin *module);
     void setVirtualKBVisible(bool visible);

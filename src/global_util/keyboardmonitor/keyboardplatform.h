@@ -20,7 +20,7 @@ public:
     virtual void run() = 0;
     virtual void ungrabKeyboard() = 0;
 
-signals:
+Q_SIGNALS:
     void capsLockStatusChanged(bool on);
     void numLockStatusChanged(bool on);
     void initialized();

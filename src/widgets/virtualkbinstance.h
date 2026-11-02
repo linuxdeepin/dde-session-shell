@@ -19,10 +19,10 @@ public:
     void init();
     void stopVirtualKBProcess();
 
-public slots:
+public Q_SLOTS:
     void onVirtualKBProcessFinished(int exitCode);
 
-signals:
+Q_SIGNALS:
     void initFinished();
 
 protected:

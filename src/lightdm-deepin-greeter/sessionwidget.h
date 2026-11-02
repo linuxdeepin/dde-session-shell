@@ -29,11 +29,11 @@ public:
     const QString currentSessionKey() const;
     const QString currentSessionOwner() const { return m_currentUser; }
 
-signals:
+Q_SIGNALS:
     void sessionChanged(const QString &sessionName);
     void notifyHideSessionFrame();
 
-public slots:
+public Q_SLOTS:
     void switchToUser(const QString &userName);
     void leftKeySwitch();
     void rightKeySwitch();
@@ -47,7 +47,7 @@ protected:
     void focusOutEvent(QFocusEvent *event) Q_DECL_OVERRIDE;
     void showEvent(QShowEvent *event) Q_DECL_OVERRIDE;
 
-private slots:
+private Q_SLOTS:
     void loadSessionList();
     void onSessionButtonClicked();
 

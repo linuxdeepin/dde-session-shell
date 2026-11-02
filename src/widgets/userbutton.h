@@ -44,10 +44,10 @@ public:
 
     std::shared_ptr<User> userInfo() const { return m_user; }
 
-signals:
+Q_SIGNALS:
     void opacityChanged();
 
-public slots:
+public Q_SLOTS:
     void setImageSize(const AvatarSize &avatarsize);
 
     void show();

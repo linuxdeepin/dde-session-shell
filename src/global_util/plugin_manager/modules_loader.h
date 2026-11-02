@@ -24,7 +24,7 @@ public:
     void setLoadLoginModule(bool loadLoginModule) { m_loadLoginModule = loadLoginModule; }
     void setModel(SessionBaseModel *model);
 
-signals:
+Q_SIGNALS:
     void loadPluginsFinished();
 
 protected:

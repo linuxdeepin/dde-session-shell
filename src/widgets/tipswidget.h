@@ -13,7 +13,7 @@ public:
     explicit TipsWidget(QWidget *parent = nullptr);
     void setContent(QWidget *content);
 
-public slots:
+public Q_SLOTS:
     void show(int x, int y) override;
 
 protected:

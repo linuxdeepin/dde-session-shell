@@ -24,10 +24,10 @@ public:
     void initData(const QStringList &buttons);
     void updateList(const QString &str);
 
-signals:
+Q_SIGNALS:
     void itemClicked(const QString &str);
 
-public slots:
+public Q_SLOTS:
     void onItemClick(const QModelIndex &index);
 
 private:

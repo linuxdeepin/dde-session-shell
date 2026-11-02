@@ -115,7 +115,7 @@ public:
     virtual void updatePasswordExpiredState(ExpiredState state, int dayLeft);
     virtual void updateUserInfo() { }
 
-signals:
+Q_SIGNALS:
     void avatarChanged(const QString &);
     void autoLoginStateChanged(const bool);
     void desktopBackgroundChanged(const QString &);
@@ -186,7 +186,7 @@ public:
     void updatePasswordExpiredInfo() override;
     virtual void updateUserInfo() override;
 
-private slots:
+private Q_SLOTS:
     void updateAvatar(const QString &path);
     void updateAutomaticLogin(const bool autoLoginState);
     void updateDesktopBackgrounds(const QStringList &backgrounds);

@@ -43,7 +43,7 @@ private:
     int getDisplayModeByConfig(const QString &config) const;
     void updateFrame();
 
-private slots:
+private Q_SLOTS:
     void onDisplayModeChanged(const QString &);
     void checkLockFrameLocation();
 

@@ -42,7 +42,7 @@ private:
     QWidget* createCancelButton();
     QLabel *createTitleIcon(const QIcon &icon);
 
-private slots:
+private Q_SLOTS:
     void onInputFinished();
 
 private:

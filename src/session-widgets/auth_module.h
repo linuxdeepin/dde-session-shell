@@ -78,7 +78,7 @@ public:
     inline bool isMFA() const { return m_authFactorType == DDESESSIONCC::MultiAuthFactor; }
     bool isLocked() const;
 
-signals:
+Q_SIGNALS:
     void activeAuth(const AuthCommon::AuthType);
     void authFinished(const AuthCommon::AuthState);
     void requestAuthenticate();

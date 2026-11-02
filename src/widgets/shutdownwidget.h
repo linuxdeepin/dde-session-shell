@@ -31,7 +31,7 @@ public:
 #endif
     static void onDConfigPropertyChanged(const QString &key, const QVariant &value, QObject *objPtr);
 
-public slots:
+public Q_SLOTS:
     void leftKeySwitch();
     void rightKeySwitch();
     void runSystemMonitor();

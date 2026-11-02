@@ -37,11 +37,11 @@ public:
 
     static QPair<QString, QJsonDocument> parseMessage(const QString &message);
 
-signals:
+Q_SIGNALS:
     void trayPluginAdded(TrayPlugin *);
     void pluginAboutToBeRemoved(const QString &key);
 
-private slots:
+private Q_SLOTS:
     void broadcastCurrentUser();
 
 private:

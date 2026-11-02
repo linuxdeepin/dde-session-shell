@@ -23,9 +23,9 @@ public:
     void resizeEvent(QResizeEvent *event) override;
     static void onDConfigPropertyChanged(const QString &key, const QVariant &value, QObject* objPtr);
 
-signals:
+Q_SIGNALS:
 
-public slots:
+public Q_SLOTS:
     void updateTimeFormat(bool use24);
 
 
@@ -35,7 +35,7 @@ private:
     void updateTopTipWidget();
 
 #ifdef ENABLE_DSS_SNIPE
-private slots:
+private Q_SLOTS:
     void onUserRegionFormatValueChanged(const QDBusMessage &dbusMessage);
 
 private:

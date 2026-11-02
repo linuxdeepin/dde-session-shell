@@ -141,7 +141,7 @@ void AssistLoginWidget::setAuthData(const LoginPlugin::AuthCallbackData &callbac
 
     if (!account.isEmpty()) {
         qCInfo(DDE_SHELL) << Q_FUNC_INFO << "requestSendToken: " << account << token;
-        emit requestSendToken(account, token);
+        Q_EMIT requestSendToken(account, token);
     }
 }
 

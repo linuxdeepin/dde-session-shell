@@ -33,7 +33,7 @@ public:
     void hide();
     void setAuthStatueVisible(bool visible);
 
-signals:
+Q_SIGNALS:
     void focusChanged(const bool);
     void lineEditTextChanged(const QString &); // 数据同步
     void requestChangeFocus();                 // 切换焦点

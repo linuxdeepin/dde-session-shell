@@ -15,7 +15,7 @@ public:
     explicit AppEventFilter(QObject *parent = nullptr);
     bool eventFilter(QObject *watched, QEvent *event) override;
 
-signals:
+Q_SIGNALS:
     void userIsActive();
 };
 

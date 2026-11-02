@@ -23,7 +23,7 @@ public:
     explicit LoginWindow(SessionBaseModel *const model, QWidget *parent = nullptr);
     ~LoginWindow();
 
-signals:
+Q_SIGNALS:
     void requestSwitchToUser(std::shared_ptr<User> user);
     void requestSetKeyboardLayout(std::shared_ptr<User> user, const QString &layout);
 

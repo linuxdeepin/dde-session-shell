@@ -33,10 +33,10 @@ protected:
 #endif
     bool eventFilter(QObject *o, QEvent *e) override;
 
-signals:
+Q_SIGNALS:
     void visibleChanged(bool visible);
 
-private slots:
+private Q_SLOTS:
     void ensureRaised();
 
 private:

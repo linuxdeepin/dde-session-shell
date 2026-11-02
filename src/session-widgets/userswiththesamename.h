@@ -20,7 +20,7 @@ public:
     explicit UsersWithTheSameName(SessionBaseModel *model, QWidget *parent = nullptr);
     bool findUsers(const QString nativeUserName, const QString &doMainAccountDetail);
 
-signals:
+Q_SIGNALS:
     void requestCheckAccount(const QString &account, bool switchUser = true);
     void clicked();
 

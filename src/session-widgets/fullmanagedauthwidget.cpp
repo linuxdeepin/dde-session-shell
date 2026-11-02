@@ -203,7 +203,7 @@ void FullManagedAuthWidget::checkAuthResult(const AuthType type, const AuthState
     // 人脸和虹膜是手动点击解锁按钮后发送，无需处理
     if (type == AT_All && state == AS_Success) {
         if (m_customAuth && m_customAuth->authState() == AS_Success) {
-            emit authFinished();
+            Q_EMIT authFinished();
         }
 
         if (m_customAuth) {
