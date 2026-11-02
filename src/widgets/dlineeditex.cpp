@@ -196,7 +196,7 @@ bool DLineEditEx::eventFilter(QObject *watched, QEvent *event)
             && keyEvent->key() == Qt::Key_Tab
             && keyEvent->modifiers() == Qt::NoModifier
             && !this->text().isEmpty()) {
-            emit this->returnPressed();
+            Q_EMIT this->returnPressed();
             return true;
         }
     }
