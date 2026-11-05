@@ -4,19 +4,15 @@ Priority: optional
 Maintainer: Deepin Sysdev <sysdev@deepin.com>
 Build-Depends: debhelper (>= 8.0.0), pkg-config,
  cmake,
- qtbase5-dev,
- liblightdm-qt5-3-dev | liblightdm-qt-dev,
+ qt6-base-dev,
+ qt6-svg-dev,
+ qt6-tools-dev,
+ qt6-tools-dev-tools,
+ qt6-declarative-dev,
+ liblightdm-qt6-3-dev,
  libxcb-ewmh-dev,
- libqt5x11extras5-dev,
- libgsettings-qt-dev,
- libqt5svg5-dev,
  libglib2.0-dev,
- libdtkwidget-dev,
- libdtkcore5-bin,
- qtdeclarative5-dev,
- qttools5-dev-tools,
  libpam0g-dev,libsystemd-dev,
- libdframeworkdbus-dev,
  deepin-gettext-tools,
  libxtst-dev,
  libxcursor-dev,
@@ -24,8 +20,9 @@ Build-Depends: debhelper (>= 8.0.0), pkg-config,
  libgtest-dev,
  libx11-xcb-dev,
  libssl-dev,
- libdtkcore-dev,
- libkf5wayland-dev,
+ libdtk6core-dev,
+ libdtk6core-bin,
+ libdtk6widget-dev,
  dde-api-dev (>>5.6.3)
 Standards-Version: 3.9.4
 Homepage: http://www.deepin.org/
@@ -73,17 +70,3 @@ Depends: ${shlibs:Depends}, ${misc:Depends}
 Description: deepin desktop-environment - dde-session-shell module development files
  DDE Session Shell module development files of deepin desktop-environment
 
-Package: dde-gesture-login
-Architecture: any
-Depends: ${shlibs:Depends}, ${misc:Depends}, ${dist:Depends},
- deepin-desktop-schemas (>=5.9.14),
- dde-daemon (>=5.13.12),
- startdde (>=5.10.24),
- deepin-authenticate(>=1.2.27),
- libssl-dev,
- dde-dconfig-daemon,
- dde-wayland-config(>>1.0.10-1)
-Conflicts: dss-gesture-login-plugin
-Description: deepin desktop-environment - dde-session-shell login plugin files
- reset-pattern-dialog - modify gesture password enrolled, or create new gesture password
- liblogin-gesture.so - support gesture password login on greeter and lock
