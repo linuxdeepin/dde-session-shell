@@ -1,4 +1,4 @@
-// SPDX-FileCopyrightText: 2021 - 2024 UnionTech Software Technology Co., Ltd.
+// SPDX-FileCopyrightText: 2021 - 2026 UnionTech Software Technology Co., Ltd.
 //
 // SPDX-License-Identifier: GPL-3.0-or-later
 
@@ -166,7 +166,7 @@ QString WayPointModel::getToken() const
 {
     qDebug() << int(m_currentMode);
     QString rst = "";
-    foreach (auto index, m_selectedPoints) {
+    Q_FOREACH (auto index, m_selectedPoints) {
         rst.append(kContent.value(index, ""));
     }
 

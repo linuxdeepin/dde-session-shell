@@ -133,7 +133,7 @@ void UserFrameList::addUser(const std::shared_ptr<User> user)
 void UserFrameList::removeUser(const std::shared_ptr<User> user)
 {
     qCDebug(DDE_SHELL) << "User frame list remove user:" << user->path();
-    foreach (auto w, m_loginWidgets) {
+    Q_FOREACH (auto w, m_loginWidgets) {
         if (w->uid() == user->uid()) {
             m_loginWidgets.removeOne(w);
 
@@ -230,7 +230,7 @@ void UserFrameList::switchPreviousUser()
 
 void UserFrameList::onOtherPageChanged(const QVariant &value)
 {
-    foreach (auto w, m_loginWidgets) {
+    Q_FOREACH (auto w, m_loginWidgets) {
         w->setSelected(w->uid() == value.toUInt());
     }
 }
@@ -241,7 +241,7 @@ void UserFrameList::onUserListChanged(const QList<std::shared_ptr<User> > &list)
     m_loginWidgets.clear();
     currentSelectedUser = nullptr;
 
-    foreach(auto user, list) {
+    Q_FOREACH(auto user, list) {
        handlerBeforeAddUser(user);
     }
 }

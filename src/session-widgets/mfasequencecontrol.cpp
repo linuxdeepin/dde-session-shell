@@ -114,7 +114,7 @@ void MFASequenceControl::doNextAuth(int finishedAuth)
 
         // 是否所有认证已结束
         auto allFinishedType = 0;
-        foreach (auto type, m_configAuthList) {
+        Q_FOREACH (auto type, m_configAuthList) {
             allFinishedType |= type;
         }
 
@@ -164,7 +164,7 @@ void MFASequenceControl::toLocalConfig(const QJsonObject &obj)
         return;
     }
 
-    foreach (auto type, authTypeList) {
+    Q_FOREACH (auto type, authTypeList) {
         m_configAuthList.push_back(type.toInt());
     }
 
@@ -193,7 +193,7 @@ void MFASequenceControl::updateAuthSequence()
 
     auto isolateAuthList = m_isolateWidgets.keys();
     bool isolateActive = false;
-    foreach (auto isolate, isolateAuthList) {
+    Q_FOREACH (auto isolate, isolateAuthList) {
         if (isolate & m_authType) {
             if (m_isolateWidgets.value(isolate, nullptr) != nullptr) {
                 isolateActive = true;

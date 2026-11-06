@@ -729,7 +729,7 @@ void AuthPassword::showResetPasswordMessage()
     // 只能使用findChildren找到对应的图标控件来设置图标大小进行规避
     // DFloatingMessage中有两个按钮一个是DIconButton,另一个是继承于DIconButton的DDialogCloseButton，需要区分
     QList<DIconButton *> btnList = m_resetPasswordFloatingMessage->findChildren<DIconButton *>();
-    foreach (const auto iconButton, btnList) {
+    Q_FOREACH (const auto iconButton, btnList) {
         DDialogCloseButton *closeButton = qobject_cast<DDialogCloseButton *>(iconButton);
         if (closeButton) {
             continue;

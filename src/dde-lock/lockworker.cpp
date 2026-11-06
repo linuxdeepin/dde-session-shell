@@ -1009,7 +1009,7 @@ void LockWorker::disableGlobalShortcutsForWayland(const bool enable)
                                               ->getConfig("enableShortcutForLock", QStringList())
                                               .toStringList();
     if (!shortCutList.isEmpty()) {
-        foreach (const QString &shortcut, shortCutList) {
+        Q_FOREACH (const QString &shortcut, shortCutList) {
             reply = m_kglobalaccelInter->call("setActiveByUniqueName", shortcut, true);
             if (!reply.isValid()) {
                 qCWarning(DDE_SHELL) << "Call `setActiveByUniqueName` failed, error: " << reply.error();

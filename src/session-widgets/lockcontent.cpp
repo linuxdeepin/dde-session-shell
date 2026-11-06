@@ -762,7 +762,7 @@ void LockContent::onUserListChanged(QList<std::shared_ptr<User>> list)
 
     int userList = list.size();
     if (!m_model->isServerModel() && !m_model->userlistVisible()) {
-        foreach (auto user, list) {
+        Q_FOREACH (auto user, list) {
             if (user->name() == "...") {
                 userList--;
             }

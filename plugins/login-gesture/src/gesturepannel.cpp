@@ -1,4 +1,4 @@
-// SPDX-FileCopyrightText: 2021 - 2024 UnionTech Software Technology Co., Ltd.
+// SPDX-FileCopyrightText: 2021 - 2026 UnionTech Software Technology Co., Ltd.
 //
 // SPDX-License-Identifier: GPL-3.0-or-later
 
@@ -124,7 +124,7 @@ void GesturePannel::mouseMoveEvent(QMouseEvent *event)
 {
     if (m_pathStarted) {
         m_currentPos = event->pos();
-        foreach (auto rect, m_widRects) {
+        Q_FOREACH (auto rect, m_widRects) {
             if (rect.contains(m_currentPos)) {
                 auto wid = m_widRects.key(rect);
                 Q_EMIT wid->arrived(wid->id());
@@ -144,7 +144,7 @@ void GesturePannel::paintEvent(QPaintEvent *event)
     if (WayPointModel::instance()->currentPoints().size()) {
         QVector<QPointF> wayPoints;
         auto currentSelected = WayPointModel::instance()->currentPoints();
-        foreach (auto index, currentSelected) {
+        Q_FOREACH (auto index, currentSelected) {
             wayPoints.push_back(m_itemRects.value(index).center());
         }
 

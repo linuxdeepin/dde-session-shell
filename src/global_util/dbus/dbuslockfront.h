@@ -1,4 +1,4 @@
-// SPDX-FileCopyrightText: 2011 - 2022 UnionTech Software Technology Co., Ltd.
+// SPDX-FileCopyrightText: 2011 - 2026 UnionTech Software Technology Co., Ltd.
 //
 // SPDX-License-Identifier: GPL-3.0-or-later
 
@@ -28,7 +28,7 @@ class DBusLockFront: public QDBusAbstractInterface
         if (interfaceName != DSS_DBUS::lockFrontService)
             return;
         QVariantMap changedProps = qdbus_cast<QVariantMap>(arguments.at(1).value<QDBusArgument>());
-        foreach(const QString &prop, changedProps.keys()) {
+        Q_FOREACH(const QString &prop, changedProps.keys()) {
         const QMetaObject* self = metaObject();
             for (int i=self->propertyOffset(); i < self->propertyCount(); ++i) {
                 QMetaProperty p = self->property(i);
