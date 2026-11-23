@@ -28,6 +28,7 @@
 #include <QMouseEvent>
 
 #include "dbusconstant.h"
+#include "dbuslogin1manager.h"
 
 using namespace dss;
 using namespace dss::module;
@@ -36,13 +37,17 @@ DCORE_USE_NAMESPACE
 // 通过 logind D-Bus 接口判断当前 session 是否为远程会话
 static bool isRemoteSession()
 {
-    QDBusInterface iface("org.freedesktop.login1",
-                         "/org/freedesktop/login1/session/self",
-                         "org.freedesktop.login1.Session",
-                         QDBusConnection::systemBus());
-    if (!iface.isValid()) {
+    const auto bus = QDBusConnection::systemBus();
+    DBusLogin1Manager login1("org.freedesktop.login1", "/org/freedesktop/login1", bus);
+    QDBusReply<QDBusObjectPath> session = login1.GetSessionByPID(0);
+    // The lock service runs outside the graphical session's scope.
+    if (!session.isValid() && !qEnvironmentVariableIsEmpty("XDG_SESSION_ID"))
+        session = login1.GetSession(qEnvironmentVariable("XDG_SESSION_ID"));
+    if (!session.isValid())
         return false;
-    }
+
+    QDBusInterface iface("org.freedesktop.login1", session.value().path(),
+                         "org.freedesktop.login1.Session", bus);
     return iface.property("Remote").toBool();
 }
 
@@ -900,8 +905,8 @@ void LockContent::onUserListChanged(QList<std::shared_ptr<User>> list)
         }
     }
 
-    // 远程会话下锁屏界面隐藏切换用户选项，登录界面不限制
-    bool hideForRemote = isRemoteSession() && m_model->appType() == AuthCommon::Lock;
+    // 仅远程锁屏和桌面电源菜单强制隐藏，登录界面按原有条件判断。
+    bool hideForRemote = m_model->appType() == AuthCommon::Lock && isRemoteSession();
     bool enable = !hideForRemote && (alwaysShowUserSwitchButton || (allowShowUserSwitchButton && (userList > (m_model->isServerModel() ? 0 : 1)))) && haveLoginedUser;
 
     bool controlEnable = enable && (m_model->userlistVisible() || m_model->currentUser()->name() != "...");
