@@ -33,6 +33,19 @@ using namespace dss;
 using namespace dss::module;
 DCORE_USE_NAMESPACE
 
+// 通过 logind D-Bus 接口判断当前 session 是否为远程会话
+static bool isRemoteSession()
+{
+    QDBusInterface iface("org.freedesktop.login1",
+                         "/org/freedesktop/login1/session/self",
+                         "org.freedesktop.login1.Session",
+                         QDBusConnection::systemBus());
+    if (!iface.isValid()) {
+        return false;
+    }
+    return iface.property("Remote").toBool();
+}
+
 LockContent::LockContent(QWidget *parent)
     : SessionBaseWindow(parent)
     , m_wmInter(new com::deepin::wm("com.deepin.wm", "/com/deepin/wm", QDBusConnection::sessionBus(), this))
@@ -887,7 +900,9 @@ void LockContent::onUserListChanged(QList<std::shared_ptr<User>> list)
         }
     }
 
-    bool enable = (alwaysShowUserSwitchButton || (allowShowUserSwitchButton && (userList > (m_model->isServerModel() ? 0 : 1)))) && haveLoginedUser;
+    // 远程会话下锁屏界面隐藏切换用户选项，登录界面不限制
+    bool hideForRemote = isRemoteSession() && m_model->appType() == AuthCommon::Lock;
+    bool enable = !hideForRemote && (alwaysShowUserSwitchButton || (allowShowUserSwitchButton && (userList > (m_model->isServerModel() ? 0 : 1)))) && haveLoginedUser;
 
     bool controlEnable = enable && (m_model->userlistVisible() || m_model->currentUser()->name() != "...");
     m_controlWidget->setUserSwitchEnable(controlEnable);
