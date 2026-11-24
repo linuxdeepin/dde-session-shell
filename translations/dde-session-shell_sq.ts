@@ -3,15 +3,15 @@
     <name>ActiveSessionConfirmWidget</name>
     <message>
         <source>Confirm Login</source>
-        <translation type="unfinished"/>
+        <translation>Ripohoni Hyrjen</translation>
     </message>
     <message>
         <source>Cancel</source>
-        <translation type="unfinished"/>
+        <translation>Anuloje</translation>
     </message>
     <message>
         <source>This account is already logged in elsewhere. Continuing will force logout the existing session. Proceed with login?</source>
-        <translation type="unfinished"/>
+        <translation>Te kjo llogari është bërë hyrje tashmë nga diku tjetër. Vazhdimi do të sjellë daljen nga sesioni ekzistues. Të vazhdohet me hyrjen?</translation>
     </message>
     <message>
         <source>Two remote users are already signed in, which is the maximum allowed. Wait for a remote user to sign out, then try again.</source>
