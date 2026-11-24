@@ -3,19 +3,19 @@
     <name>ActiveSessionConfirmWidget</name>
     <message>
         <source>Confirm Login</source>
-        <translation>كىرىشنى جەزملەش</translation>
+        <translation type="unfinished"/>
     </message>
     <message>
         <source>Cancel</source>
-        <translation>بىكار قىلىش</translation>
+        <translation type="unfinished"/>
     </message>
     <message>
         <source>This account is already logged in elsewhere. Continuing will force logout the existing session. Proceed with login?</source>
-        <translation>بۇ ھېسابات باشقا جايدا كىرگەن. داۋاملىق كىرسىڭىز، مەۋجۇت سېسسىيە زورلۇق بىلەن تاقىلىدۇ. يەنىلا كىرمەكچىمۇ؟</translation>
+        <translation type="unfinished"/>
     </message>
     <message>
         <source>Two remote users are already signed in, which is the maximum allowed. Wait for a remote user to sign out, then try again.</source>
-        <translation>ھازىر يىراقتىن كىرگەن 2 ئىشلەتكۈچى بار بولۇپ، ئىشلەتكۈچى سانى ئەڭ يۇقىرى چەككە يەتتى. باشقا يىراقتىن كىرگەن ئىشلەتكۈچى چېكىنىپ چىققاندىن كېيىن قايتا سىناڭ.</translation>
+        <translation type="unfinished"/>
     </message>
 </context>
 <context>
