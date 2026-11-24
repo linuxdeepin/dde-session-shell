@@ -15,7 +15,7 @@
     </message>
     <message>
         <source>Two remote users are already signed in, which is the maximum allowed. Wait for a remote user to sign out, then try again.</source>
-        <translation type="unfinished"/>
+        <translation>Kanë bërë tashmë hyrjen dy përdorues të largët, çka është maksimumi i lejuar. Prisni që të dalë një përdorues i largët, mandej riprovoni.</translation>
     </message>
 </context>
 <context>
