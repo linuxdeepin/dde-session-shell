@@ -3,11 +3,11 @@
     <name>ActiveSessionConfirmWidget</name>
     <message>
         <source>Confirm Login</source>
-        <translation type="unfinished"/>
+        <translation>Potwierdź logowanie</translation>
     </message>
     <message>
         <source>Cancel</source>
-        <translation type="unfinished"/>
+        <translation>Anuluj</translation>
     </message>
     <message>
         <source>This account is already logged in elsewhere. Continuing will force logout the existing session. Proceed with login?</source>
