@@ -15,7 +15,7 @@
     </message>
     <message>
         <source>Two remote users are already signed in, which is the maximum allowed. Wait for a remote user to sign out, then try again.</source>
-        <translation type="unfinished"/>
+        <translation>Dos usuaris remots ja han iniciat la sessió, la qual cosa és el màxim permès. Espereu que un usuari remot tanqui la sessió i torneu-ho a provar.</translation>
     </message>
 </context>
 <context>
