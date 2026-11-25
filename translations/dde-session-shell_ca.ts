@@ -3,15 +3,15 @@
     <name>ActiveSessionConfirmWidget</name>
     <message>
         <source>Confirm Login</source>
-        <translation type="unfinished"/>
+        <translation>Confirmeu l&apos;inici de sessió</translation>
     </message>
     <message>
         <source>Cancel</source>
-        <translation type="unfinished"/>
+        <translation>Cancel·la</translation>
     </message>
     <message>
         <source>This account is already logged in elsewhere. Continuing will force logout the existing session. Proceed with login?</source>
-        <translation type="unfinished"/>
+        <translation>Aquest compte ja ha iniciat la sessió en un altre lloc. Si continueu, es forçarà el tancament de la sessió existent. Voleu procedir amb l&apos;inici de sessió?</translation>
     </message>
     <message>
         <source>Two remote users are already signed in, which is the maximum allowed. Wait for a remote user to sign out, then try again.</source>
