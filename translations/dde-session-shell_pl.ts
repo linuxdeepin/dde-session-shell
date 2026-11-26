@@ -11,7 +11,7 @@
     </message>
     <message>
         <source>This account is already logged in elsewhere. Continuing will force logout the existing session. Proceed with login?</source>
-        <translation type="unfinished"/>
+        <translation>Ktoś już zalogował się na to konto w innym miejscu. Kontynuacja zakończy istniejącą sesję. Czy na pewno chcesz się zalogować?</translation>
     </message>
     <message>
         <source>Two remote users are already signed in, which is the maximum allowed. Wait for a remote user to sign out, then try again.</source>
