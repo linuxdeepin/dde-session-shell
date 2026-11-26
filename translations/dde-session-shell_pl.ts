@@ -15,7 +15,7 @@
     </message>
     <message>
         <source>Two remote users are already signed in, which is the maximum allowed. Wait for a remote user to sign out, then try again.</source>
-        <translation type="unfinished"/>
+        <translation>Osiągnięto limit dwóch zalogowanych użytkowników zdalnych. Poczekaj, aż jeden z nich się wyloguje i spróbuj ponownie.</translation>
     </message>
 </context>
 <context>
