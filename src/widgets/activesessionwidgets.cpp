@@ -49,6 +49,7 @@ void ActiveSessionConfirmWidget::initUI()
     setAccessibleName("ActiveSessionConfirmWidget");
 
     m_avatar->setAvatarSize(kAvatarSize);
+    m_avatar->setObjectName("Avatar_4");
 
     m_userNameLabel->setAlignment(Qt::AlignCenter);
     DFontSizeManager::instance()->bind(m_userNameLabel, DFontSizeManager::T2, QFont::Light);
