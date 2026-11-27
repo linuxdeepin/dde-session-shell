@@ -1,6 +1,10 @@
 name: Call synchronize to dde-session-shell-snipe
 on:
   pull_request_target:
+    types: [closed]
+    branches:
+      - master
+      - develop/2500u3
     paths-ignore:
       - "debian/**"
       - "archlinux/**"
@@ -9,12 +13,81 @@ on:
       - ".github/**"
       - ".tx/**"
 
+permissions:
+  contents: read
+
+concurrency:
+  group: synchronize-to-snipe-${{ github.event.pull_request.number }}
+  cancel-in-progress: false
+
 jobs:
   call-synchronize:
-    uses: linuxdeepin/dtk/.github/workflows/synchronize-to-dtk6.yml@master
-    secrets: inherit
-    with:
-      dest_repo: linuxdeepin/dde-session-shell-snipe
-      source_repo: ${{ github.event.pull_request.head.repo.full_name }}
-      source_ref: ${{ github.event.pull_request.head.ref }}
-      pull_number: ${{ github.event.pull_request.number }}
+    if: github.event.pull_request.merged == true
+    runs-on: ubuntu-latest
+    env:
+      GH_TOKEN: ${{ secrets.CI_ROBOT_PAT }}
+      DEST_REPO: linuxdeepin/dde-session-shell-snipe
+      BASE_BRANCH: ${{ github.event.pull_request.base.ref }}
+      SOURCE_REPO: ${{ github.repository }}
+      PULL_NUMBER: ${{ github.event.pull_request.number }}
+    steps:
+      - name: Checkout merged source
+        uses: actions/checkout@v4
+        with:
+          ref: ${{ github.event.pull_request.merge_commit_sha }}
+          path: source
+          persist-credentials: false
+
+      - name: Checkout matching destination branch
+        uses: actions/checkout@v4
+        with:
+          token: ${{ secrets.CI_ROBOT_PAT }}
+          repository: ${{ env.DEST_REPO }}
+          ref: ${{ env.BASE_BRANCH }}
+          path: dest
+
+      - name: Synchronize merged files and create PR
+        shell: bash
+        run: |
+          set -euo pipefail
+          sync_branch="sync-pr-${PULL_NUMBER}-nosync"
+          git -C dest switch -C "$sync_branch"
+
+          rsync_options=(
+            -avzp --checksum --delete
+            --exclude=.git --exclude=.github --exclude=.obs
+            --exclude=debian --exclude=archlinux --exclude=rpm
+          )
+          if [[ -f source/.syncexclude ]]; then
+            rsync_options+=(--exclude-from=source/.syncexclude)
+          fi
+          rsync "${rsync_options[@]}" source/ dest/
+
+          cd dest
+          git add --all
+          if git diff --cached --quiet; then
+            echo "No changes to synchronize to ${DEST_REPO}:${BASE_BRANCH}."
+            exit 0
+          fi
+
+          git config user.name "deepin-ci-robot"
+          git config user.email "packages@deepin.org"
+          source_pr="https://github.com/${SOURCE_REPO}/pull/${PULL_NUMBER}"
+          git commit \
+            -m "sync: from ${SOURCE_REPO}" \
+            -m "Synchronize merged source files to ${BASE_BRANCH}." \
+            -m "Source-pull-request: ${source_pr}"
+          git push --force --set-upstream origin "$sync_branch"
+
+          existing_pr=$(gh pr list --repo "$DEST_REPO" \
+            --base "$BASE_BRANCH" --head "$sync_branch" --state open \
+            --json number --jq '.[0].number // empty')
+          if [[ -z "$existing_pr" ]]; then
+            body_file=$(mktemp)
+            printf 'Synchronize merged source files to `%s`.\n\nSource-pull-request: %s\n' \
+              "$BASE_BRANCH" "$source_pr" > "$body_file"
+            gh pr create --repo "$DEST_REPO" \
+              --base "$BASE_BRANCH" --head "$sync_branch" \
+              --title "sync: from ${SOURCE_REPO} to ${BASE_BRANCH}" \
+              --body-file "$body_file"
+          fi
